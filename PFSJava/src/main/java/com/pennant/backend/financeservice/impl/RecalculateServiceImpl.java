@@ -52,8 +52,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
-						&& (i != sdSize - 1) && i != 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);

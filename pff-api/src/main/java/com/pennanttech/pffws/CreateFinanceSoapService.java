@@ -16,16 +16,13 @@ public interface CreateFinanceSoapService {
 	FinanceDetail createFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finance")
-	FinanceDetail createFinanceWithWIF(@WebParam(name = "finance") FinanceDetail financeDetail)
-			throws ServiceException;
+	FinanceDetail createFinanceWithWIF(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finReference")
-	FinanceDetail getFinanceDetails(@WebParam(name = "finReference") String finReference)
-			throws ServiceException;
+	FinanceDetail getFinanceDetails(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
 	@WebResult(name = "finance")
-	FinanceDetail getFinInquiryDetails(@WebParam(name = "finReference") String finReference)
-			throws ServiceException;
+	FinanceDetail getFinInquiryDetails(@WebParam(name = "finReference") String finReference) throws ServiceException;
 
 	@WebResult(name = "finance")
 	FinanceInquiry getFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
@@ -35,16 +32,14 @@ public interface CreateFinanceSoapService {
 			throws ServiceException;
 
 	@WebResult(name = "finance")
-	WSReturnStatus updateFinance(@WebParam(name = "finance") FinanceDetail financeDetail)
-			throws ServiceException;
+	WSReturnStatus updateFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finance")
 	WSReturnStatus rejectFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
-	
-	
+
 	@WebResult(name = "finance")
 	FinanceInquiry getPendingFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
-	
+
 	@WebResult(name = "finance")
 	WSReturnStatus cancelFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 

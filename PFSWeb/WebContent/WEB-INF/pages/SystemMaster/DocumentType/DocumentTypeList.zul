@@ -67,7 +67,7 @@
 									<listbox id="sortOperator_documentCategory" width="43px" mold="select" rows="1" />
 									<hbox>
 										<uppercasebox id="docTypeCategory" width="200px" />
-										<button id="btndocTypeCategory" image="/images/icons/LOVSearch.png"  tooltiptext="${c:l('label_DocumentTypes_btnSearchDocCategory.tooltiptext')}" />
+										<button id="btndocTypeCategory" image="/images/icons/LOVSearch.png" tooltiptext="${c:l('label_DocumentTypes_btnSearchDocCategory.tooltiptext')}" />
 									</hbox>
 									<label id="label_DocumentTypeSearch_DocTypeIsActive" value="${c:l('label_DocumentTypeSearch_DocTypeIsActive.value')}" />
 									<listbox id="sortOperator_docTypeIsActive" width="43px" mold="select" rows="1" />

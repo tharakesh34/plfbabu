@@ -304,7 +304,7 @@ public interface FinanceDetailService {
 	void executeAutoFinRejectProcess();
 
 	List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type);
-	
+
 	List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF);
 
 	//Linked Loans
@@ -319,6 +319,6 @@ public interface FinanceDetailService {
 	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
 
 	FinanceMain getFinanceMainForRateReport(String finReference, String type);
-	
+
 	String getFinanceMainByRcdMaintenance(String reference, String type);
 }

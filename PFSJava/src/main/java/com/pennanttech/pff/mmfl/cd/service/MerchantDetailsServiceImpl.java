@@ -16,7 +16,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 import com.pennattech.pff.mmfl.cd.dao.MerchantDetailsDAO;
 
-public class MerchantDetailsServiceImpl  extends GenericService<MerchantDetails> implements MerchantDetailsService {
+public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> implements MerchantDetailsService {
 	private static final Logger logger = Logger.getLogger(MerchantDetailsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;

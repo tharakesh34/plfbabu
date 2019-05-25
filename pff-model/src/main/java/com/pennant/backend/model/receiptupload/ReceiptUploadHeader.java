@@ -55,26 +55,26 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entity {
 
-	private static final long			serialVersionUID	= -4601315178356280082L;
+	private static final long serialVersionUID = -4601315178356280082L;
 
-	private long						uploadHeaderId		= Long.MIN_VALUE;
-	private String						fileLocation		= null;
-	private String						fileName			= null;
-	private Date						transactionDate		= null;
-	private int							totalRecords		= 0;
-	private int							successCount		= 0;
-	private int							failedCount			= 0;
-	private boolean						newRecord;
-	private String						entityCode;
-	private String						entityCodeDesc;
-	private int                         uploadProgress;
-	private long                        receiptId;
+	private long uploadHeaderId = Long.MIN_VALUE;
+	private String fileLocation = null;
+	private String fileName = null;
+	private Date transactionDate = null;
+	private int totalRecords = 0;
+	private int successCount = 0;
+	private int failedCount = 0;
+	private boolean newRecord;
+	private String entityCode;
+	private String entityCodeDesc;
+	private int uploadProgress;
+	private long receiptId;
 
-	private ReceiptUploadHeader			befImage;
+	private ReceiptUploadHeader befImage;
 
-	private LoggedInUser				userDetails;
+	private LoggedInUser userDetails;
 
-	private List<ReceiptUploadDetail>	receiptUploadList	= new ArrayList<>();
+	private List<ReceiptUploadDetail> receiptUploadList = new ArrayList<>();
 
 	public ReceiptUploadHeader() {
 		super();
@@ -89,7 +89,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 		excludeFields.add("entityCodeDesc");
 		excludeFields.add("uploadProgress");
 		excludeFields.add("receiptId");
-		
+
 		return excludeFields;
 	}
 
@@ -199,7 +199,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	public void setEntityCode(String entityCode) {
 		this.entityCode = entityCode;
 	}
-	
+
 	public String getEntityCodeDesc() {
 		return entityCodeDesc;
 	}
@@ -207,7 +207,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	public void setEntityCodeDesc(String entityCodeDesc) {
 		this.entityCodeDesc = entityCodeDesc;
 	}
-	
+
 	public int getUploadProgress() {
 		return uploadProgress;
 	}
@@ -223,7 +223,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	public void setReceiptId(long receiptId) {
 		this.receiptId = receiptId;
 	}
-	
+
 	public long getUploadHeaderId() {
 		return uploadHeaderId;
 	}

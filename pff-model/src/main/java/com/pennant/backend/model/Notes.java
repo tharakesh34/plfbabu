@@ -60,39 +60,39 @@ import com.pennanttech.pennapps.core.model.AbstractEntity;
 /**
  * Model class for the <b>Notes table</b>.<br>
  */
-@XmlType(propOrder = {"reference", "usrLogin","inDate", "remarkType", "alignType", "remarks"})
+@XmlType(propOrder = { "reference", "usrLogin", "inDate", "remarkType", "alignType", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Notes extends AbstractEntity implements Entity {
 	private static final long serialVersionUID = -8921214349365225047L;
 
 	private long noteId = Long.MIN_VALUE;
 	private String moduleName = "";
-	
+
 	@XmlElement(name = "finReference")
 	private String reference = "";
-	
+
 	@XmlElement
 	private String remarkType = "";
-	
+
 	@XmlElement
 	private String alignType = "";
-	
+
 	@XmlElement
 	private String remarks = "";
-	
+
 	@XmlElement
 	private String usrLogin = "";
-	
+
 	@XmlElement(name = "inputDate")
 	private Date inDate;
-	
+
 	private String roleCode = "";
 	private String roleDesc = "";
 	private String usrName = "";
 	private String usrFName = "";
 	private String usrMName = "";
 	private String usrLName = "";
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("inDate");
@@ -255,7 +255,7 @@ public class Notes extends AbstractEntity implements Entity {
 	public void setInDate(Date inDate) {
 		this.inDate = inDate;
 	}
-	
+
 	public String getFullName(String firstName, String middleName, String lastName) {
 		String fullName = "", delimiter = " ";
 		if (!StringUtils.isBlank(firstName)) {

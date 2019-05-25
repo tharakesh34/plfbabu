@@ -1214,7 +1214,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		aChequeHeader.setNextTaskId(getNextTaskId());
 		aChequeHeader.setRoleCode(getRole());
 		aChequeHeader.setNextRoleCode(getNextRoleCode());
-		if(aChequeHeader.getChequeDetailList() == null || aChequeHeader.getChequeDetailList().isEmpty()) {
+		if (aChequeHeader.getChequeDetailList() == null || aChequeHeader.getChequeDetailList().isEmpty()) {
 			aChequeHeader = null;
 		} else {
 

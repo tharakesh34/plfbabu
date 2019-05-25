@@ -55,11 +55,11 @@ public interface FinExcessAmountDAO {
 	void updateExcess(FinExcessAmount excess);
 
 	FinExcessAmount getFinExcessAmount(String finreference, String amountType);
-	
+
 	FinExcessMovement getFinExcessMovement(long excessID, String movementFrom, Date schDate);
 
 	int updateExcessReserve(FinExcessAmount excessMovement);
-	
+
 	int updateReserveUtilization(FinExcessAmount excessMovement);
 
 	List<FinExcessMovement> getFinExcessAmount(long presentmentid);

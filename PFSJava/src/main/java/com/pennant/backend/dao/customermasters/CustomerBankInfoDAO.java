@@ -82,15 +82,24 @@ public interface CustomerBankInfoDAO {
 	int getCustomerBankInfoByBank(String bankCode, String type);
 
 	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
-	
+
 	List<BankInfoDetail> getBankInfoDetailById(long id, Date monthYear, String type);
+
 	List<BankInfoDetail> getBankInfoDetailById(long id, String type);
+
 	void save(BankInfoDetail bankInfoDetail, String type);
+
 	void update(BankInfoDetail bankInfoDetail, String type);
+
 	void delete(BankInfoDetail bankInfoDetail, String type);
+
 	List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear, int day, String type);
+
 	List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear, String type);
-	void save(List<BankInfoSubDetail>  bankInfoSubDetails, String type);
-	void update(BankInfoSubDetail  bankInfoSubDetail, String type);
-	void delete(List<BankInfoSubDetail>  bankInfoSubDetails, String type);
+
+	void save(List<BankInfoSubDetail> bankInfoSubDetails, String type);
+
+	void update(BankInfoSubDetail bankInfoSubDetail, String type);
+
+	void delete(List<BankInfoSubDetail> bankInfoSubDetails, String type);
 }

@@ -548,9 +548,9 @@ public class DisbursementInstCtrl {
 				//				if (StringUtils.equals(main.getAdvType(), AdvanceType.AE.name())) {
 				//					totdisbAmt = totdisbAmt.subtract(main.getAdvanceEMI());
 				//				}
-			} /*else {
-				totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb());
-			}*/
+			} /*
+				 * else { totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb()); }
+				 */
 			totdisbAmt = totdisbAmt.add(financeDisbursement.getDisbAmount());
 		}
 

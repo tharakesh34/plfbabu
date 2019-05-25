@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
 	<window id="window_ReportingManagerDialog" border="normal" apply="${reportingManagerDialogCtrl}" width="700px"
@@ -17,13 +16,10 @@
 						<toolbar align="start" sclass="toolbar-start">
 							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
-								sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">
@@ -31,11 +27,10 @@
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton"
-								visible="false" />
-							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -55,8 +50,7 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_BusinessVerticalId"
-									value="${c:l('label_ReportingManangerDialog_BusinessVerticalId.value')}" />
+								<label id="label_BusinessVerticalId" value="${c:l('label_ReportingManangerDialog_BusinessVerticalId.value')}" />
 								<hbox>
 									<extendedcombobox id="businessvertical" width="300px" />
 								</hbox>
@@ -69,8 +63,7 @@
 
 							</row>
 							<row>
-								<label id="label_LoanType"
-									value="${c:l('label_ReportingManangerDialog_LoanType.value')}" />
+								<label id="label_LoanType" value="${c:l('label_ReportingManangerDialog_LoanType.value')}" />
 								<hbox>
 									<extendedcombobox id="fintype" width="300px" />
 								</hbox>
@@ -83,8 +76,7 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_ReporingTo"
-									value="${c:l('label_ReportingManangerDialog_ReporingTo.value')}" />
+								<label id="label_ReporingTo" value="${c:l('label_ReportingManangerDialog_ReporingTo.value')}" />
 
 								<extendedcombobox id="reportingto" width="300px" />
 							</row>
@@ -97,8 +89,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

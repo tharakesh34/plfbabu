@@ -755,7 +755,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 		if (this.docOriginal.isChecked() && !this.docBarcode.isReadonly()) {
 			this.docBarcode.setConstraint(
-			new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
+					new PTStringValidator(Labels.getLabel("label_FinDocumentDetailDialog_DocumentBarcode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 

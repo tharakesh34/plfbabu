@@ -71,8 +71,8 @@ public class FinEODEvent implements Serializable {
 	private List<String> finMainUpdateFields = new ArrayList<String>(1);
 
 	// IND AS : Income / Expense Amortization 
-	private List<ProjectedAccrual> 		projectedAccrualList 	= new ArrayList<ProjectedAccrual>(1);
-	private List<ProjectedAmortization> incomeAMZList 			= new ArrayList<ProjectedAmortization>(1);
+	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<ProjectedAccrual>(1);
+	private List<ProjectedAmortization> incomeAMZList = new ArrayList<ProjectedAmortization>(1);
 	private Date appDate;
 
 	public FinanceMain getFinanceMain() {
@@ -398,7 +398,7 @@ public class FinEODEvent implements Serializable {
 	public void setProvisions(List<Provision> provisions) {
 		this.provisions = provisions;
 	}
-	
+
 	public List<FinExcessAmount> getFinExcessAmounts() {
 		return finExcessAmounts;
 	}
@@ -406,7 +406,7 @@ public class FinEODEvent implements Serializable {
 	public void setFinExcessAmounts(List<FinExcessAmount> finExcessAmounts) {
 		this.finExcessAmounts = finExcessAmounts;
 	}
-	
+
 	public List<ProjectedAccrual> getProjectedAccrualList() {
 		return projectedAccrualList;
 	}

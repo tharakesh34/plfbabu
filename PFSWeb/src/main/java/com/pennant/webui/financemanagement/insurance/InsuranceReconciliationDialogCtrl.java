@@ -107,8 +107,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/insuranceDetails/insuranceDetailsDialog.zul
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/insuranceDetails/insuranceDetailsDialog.zul
  * file. <br>
  */
 public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDetails> {
@@ -133,7 +132,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	protected Combobox reconReasonCategory;
 	protected Textbox remarks;
 	private InsuranceDetails insuranceDetails;
-	
+
 	//Accounting
 	protected Tab tabPostingDetails;
 	protected Tabpanel tabPanelPostingDetails;
@@ -145,7 +144,6 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	private FinanceMainDAO financeMainDAO;
 	private CustomerDAO customerDAO;
 	private CollateralSetupDAO collateralSetupDAO;
-	
 
 	private transient InsuranceReconciliationListCtrl insuranceDetailsListCtrl;
 	private transient InsuranceDetailService insuranceDetailService;
@@ -171,8 +169,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -203,7 +200,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.insuranceDetails);
@@ -234,7 +231,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		this.toleranceAmt.setReadonly(true);
 
 		ComponentsCtrl.applyForward(tabPostingDetails, "onSelect=onSelectTab");
-		
+
 		this.remarks.setMaxlength(500);
 		setStatusDetails();
 
@@ -259,7 +256,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -293,12 +290,11 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnDelete(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -307,8 +303,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -380,7 +375,8 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		this.policyNumber.setValue(details.getPolicyNumber());
 		this.flpDays.setValue(String.valueOf(details.getFreeLockPeriod()));
 		this.loanType.setValue(details.getFinType());
-		VasCustomer customer = getInsuranceDetailService().getVasCustomerDetails(details.getFinReference(), details.getPostingAgainst()) ;
+		VasCustomer customer = getInsuranceDetailService().getVasCustomerDetails(details.getFinReference(),
+				details.getPostingAgainst());
 		if (customer != null) {
 			String custCifName = "";
 			custCifName = custCifName.concat(customer.getCustCIF());
@@ -389,10 +385,10 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 			}
 			this.custCif.setValue(custCifName);
 		}
-		
+
 		this.premiumAmt.setValue(PennantAppUtil.formateAmount(details.getInsurancePremium(), getCcyFormat()));
 		this.partnerPremiumAmt.setValue(PennantAppUtil.formateAmount(details.getPartnerPremium(), getCcyFormat()));
-		
+
 		BigDecimal reconAmount = details.getPartnerPremium().subtract(details.getInsurancePremium());
 		this.insuranceDetails.setAdjAmount(reconAmount);
 		if (BigDecimal.ZERO.compareTo(reconAmount) == 1) {
@@ -403,7 +399,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		}
 		this.reconAmt.setValue(PennantAppUtil.formateAmount(reconAmount, getCcyFormat()));
 		this.toleranceAmt.setValue(PennantAppUtil.formateAmount(details.getTolaranceAmount(), getCcyFormat()));
-		
+
 		this.remarks.setValue(details.getManualReconRemarks());
 		fillComboBox(this.reconReasonCategory, details.getManualReconResCategory(), this.reconReasonCategoryList, "");
 		this.recordStatus.setValue(details.getRecordStatus());
@@ -517,8 +513,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -539,7 +534,8 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		this.tabPanelPostingDetails.setVisible(true);
 		this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
 		if (!onLoadProcess) {
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ, AccountEventConstants.ACCEVENT_INSADJ);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ,
+					AccountEventConstants.ACCEVENT_INSADJ);
 			final HashMap<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", insuranceDetails);
 			map.put("acSetID", accountsetId);
@@ -553,7 +549,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Method for Executing Accounting Details
 	 * 
@@ -611,7 +607,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private boolean validateAccounting(boolean validate) {
 		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
 				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
@@ -622,14 +618,16 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		}
 		return validate;
 	}
-	
+
 	public void onSelectTab(ForwardEvent event) throws Exception {
 		doClearMessage();
 		appendAccountingDetailTab(this.insuranceDetails, false);
 	}
+
 	/**
 	 * Deletes a insuranceDetails object from database.<br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	private void doDelete() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -730,7 +728,8 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -803,7 +802,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doProcess(InsuranceDetails detail, String tranType) throws Exception {
@@ -892,7 +891,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
@@ -958,6 +957,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 	private int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType

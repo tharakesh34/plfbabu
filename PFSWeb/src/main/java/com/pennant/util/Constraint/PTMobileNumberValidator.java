@@ -34,7 +34,7 @@ public class PTMobileNumberValidator implements Constraint {
 	}
 
 	@Override
-	public void validate(Component comp, Object value)  {
+	public void validate(Component comp, Object value) {
 		String errorMessage = getErrorMessage(value);
 		if (StringUtils.isNotBlank(errorMessage)) {
 			throw new WrongValueException(comp, errorMessage);

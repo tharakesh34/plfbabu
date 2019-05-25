@@ -59,7 +59,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	private long failedCount;
 	private long borrowerCount;
 	private long creditfacilityCount;
-    
+
 	@Autowired
 	private CIBILService cibilService;
 
@@ -97,7 +97,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 			/* Prepare the data and store in CIBIL_CUSTOMER_EXTRACT table */
 			cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_CORP);
-			
+
 			totalRecords = cibilService.getotalRecords(PennantConstants.PFF_CUSTCTG_CORP);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
 
@@ -185,7 +185,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		fileInfo.setFailedCount(failedCount);
 		fileInfo.setSuccessCount(successCount);
 		fileInfo.setRemarks(remarks);
-		
+
 		cibilService.updateFileStatus(fileInfo);
 
 		logger.debug(Literal.LEAVING);
@@ -645,10 +645,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			}
 
 			for (FinanceEnquiry loan : finances) {
-				if(!StringUtils.equals(finReference, loan.getFinReference())) {
+				if (!StringUtils.equals(finReference, loan.getFinReference())) {
 					continue;
 				}
-								
+
 				Record record = new Record();
 
 				/* Segment Identifier */
@@ -963,7 +963,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "");
 
 				writer.write(record);
-				
+
 				creditfacilityCount++;
 				try {
 					new GuarantorSegment(writer, loan.getFinGuarenters()).write();
@@ -992,7 +992,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			if (CollectionUtils.isEmpty(guarenters)) {
 				return;
 			}
-			
+
 			for (CustomerDetails customerDetails : guarenters) {
 				Customer customer = customerDetails.getCustomer();
 				List<CustomerDocument> documents = customerDetails.getCustomerDocumentsList();
@@ -1216,7 +1216,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 				/* Other ID */
 				addField(record, "");
-				
+
 				CustomerAddres custAddress = null;
 				for (CustomerAddres addres : addressList) {
 					if (StringUtils.equals(String.valueOf(addres.getCustAddrPriority()),
@@ -1225,11 +1225,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						break;
 					}
 				}
-				
+
 				if (custAddress == null) {
 					custAddress = new CustomerAddres();
 				}
-				
+
 				setAddressDetails(custAddress, customerPhoneNumbers, record);
 
 				/* Filler */
@@ -1346,7 +1346,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		public void write() throws Exception {
 			Record record = new Record();
-		    /*Segment Identifier*/
+			/* Segment Identifier */
 			addField(record, "TS");
 			/* Number of Borrower Segments */
 			addField(record, String.valueOf(borrowerCount));
@@ -1498,7 +1498,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 		/* Fax Number(s) */
 		addField(record, fax.toString());
-		
+
 		/* Filters */
 		addField(record, "");
 	}
@@ -1515,7 +1515,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		if (value == null) {
 			value = BigDecimal.ZERO;
 		}
-		
+
 		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());

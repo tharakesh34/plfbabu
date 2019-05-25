@@ -458,14 +458,14 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aBulkProcessHeader.setFromDate(DateUtility
-					.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
+			aBulkProcessHeader.setFromDate(
+					DateUtility.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aBulkProcessHeader.setToDate(DateUtility
-					.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat)));
+			aBulkProcessHeader.setToDate(
+					DateUtility.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -498,8 +498,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 		if (this.recalFromDateRow.isVisible()) {
 			try {
 				if (this.calFromDate.getValue() != null) {
-					aBulkProcessHeader.setReCalFromDate(DateUtility.getDBDate(
-							DateUtility.format(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
+					aBulkProcessHeader.setReCalFromDate(DateUtility
+							.getDBDate(DateUtility.format(this.calFromDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 
 			} catch (WrongValueException we) {
@@ -507,8 +507,8 @@ public class BulkDefermentChangeDialogCtrl extends GFCBaseCtrl<BulkProcessDetail
 			}
 			try {
 				if (this.calToDate.getValue() != null) {
-					aBulkProcessHeader.setReCalToDate(DateUtility.getDBDate(
-							DateUtility.format(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
+					aBulkProcessHeader.setReCalToDate(DateUtility
+							.getDBDate(DateUtility.format(this.calToDate.getValue(), PennantConstants.DBDateFormat)));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);

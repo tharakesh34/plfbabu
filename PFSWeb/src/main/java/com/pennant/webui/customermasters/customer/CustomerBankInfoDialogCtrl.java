@@ -168,7 +168,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Row row_lwowRatio;
 	protected Row row_ccLimit;
 	protected Row row_typeOfBanks;
-	
+
 	protected Intbox creditTranNo;
 	protected CurrencyBox creditTranAmt;
 	protected CurrencyBox creditTranAvg;
@@ -195,15 +195,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Textbox lwowRatio;
 	protected Textbox ccLimit;
 	protected Combobox typeOfBanks;
-	
 
 	//BHFL
 	protected Button button_CustomerBankInfoDialog_btnAccBehaviour;
 	protected Toolbar toolBar_AccBehaviour;
 	protected Listbox listBoxAccBehaviour;
 	protected Listheader listHead_AccBehaviour;
-	
-	
+
 	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
 	// not auto wired variables
@@ -226,7 +224,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private String monthlyIncome = SysParamUtil.getValueAsString(SMTParameterConstants.MONTHLY_INCOME_REQ); // FIXME
 	private int configDay = SysParamUtil.getValueAsInt(SMTParameterConstants.BANKINFO_DAYS); // FIXME
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -437,57 +435,57 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug("Leaving");
 	}
 
-	
 	public void onClick$button_CustomerBankInfoDialog_btnAccBehaviour(Event event) {
 		logger.debug(Literal.ENTERING);
 		BankInfoDetail bankInfoDetail = new BankInfoDetail();
 		bankInfoDetail.setNewRecord(true);
 		int keyValue = 0;
-		
+
 		List<Listitem> bankInfoList = listBoxAccBehaviour.getItems();
-		if(bankInfoList != null && !bankInfoList.isEmpty()){
+		if (bankInfoList != null && !bankInfoList.isEmpty()) {
 			for (Listitem detail : bankInfoList) {
 				BankInfoDetail bankInfo = (BankInfoDetail) detail.getAttribute("data");
-				if(bankInfo.getKeyValue() > keyValue){
+				if (bankInfo.getKeyValue() > keyValue) {
 					keyValue = bankInfo.getKeyValue();
 				}
 			}
 		}
-		bankInfoDetail.setKeyValue(keyValue+1);
-		
+		bankInfoDetail.setKeyValue(keyValue + 1);
+
 		renderItem(bankInfoDetail);
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	private void doFillBankInfoDetails() {
 		logger.debug(Literal.ENTERING);
 
 		this.listBoxAccBehaviour.getItems().clear();
 		int size = getBankInfoDetails().size();
 		for (int i = 0; i < size; i++) {
-			if(!StringUtils.equals(getBankInfoDetails().get(i).getRecordType(),PennantConstants.RECORD_TYPE_DEL) &&
-					!StringUtils.equals(getBankInfoDetails().get(i).getRecordType(),PennantConstants.RECORD_TYPE_CAN)){
+			if (!StringUtils.equals(getBankInfoDetails().get(i).getRecordType(), PennantConstants.RECORD_TYPE_DEL)
+					&& !StringUtils.equals(getBankInfoDetails().get(i).getRecordType(),
+							PennantConstants.RECORD_TYPE_CAN)) {
 				renderItem(getBankInfoDetails().get(i));
 			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	private void renderItem(BankInfoDetail bankInfoDetail){
+
+	private void renderItem(BankInfoDetail bankInfoDetail) {
 		Listitem listItem = new Listitem();
 		Listcell listCell;
 		Hbox hbox;
 		Space space;
 		boolean isReadOnly = isReadOnly("CustomerBankInfoDialog_AccountType");
-		
+
 		// Month Year
 		listCell = new Listcell();
 		Datebox monthYear = new Datebox();
 		monthYear.setFormat(PennantConstants.monthYearFormat);
-		if(bankInfoDetail.isNew() && StringUtils.isEmpty(bankInfoDetail.getRecordType())){
+		if (bankInfoDetail.isNew() && StringUtils.isEmpty(bankInfoDetail.getRecordType())) {
 			readOnlyComponent(false, monthYear);
-		}else{
+		} else {
 			readOnlyComponent(true, monthYear);
 		}
 		monthYear.setValue(bankInfoDetail.getMonthYear());
@@ -515,27 +513,29 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		Row row;
 		CurrencyBox box;
 		Label label;
-		
+
 		int balCount = 0;
 		for (int j = 1; j <= configDay; j++) {
 			balCount++;
 			row = new Row();
 			//Day
 			label = new Label();
-			label.setValue(j+"0th");
+			label.setValue(j + "0th");
 			hbox = new Hbox();
 			space = new Space();
 			space.setSpacing("2px");
 			space.setSclass("mandatory");
 			//Balance
 			box = new CurrencyBox();
-			box.setId("balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(balCount)));
+			box.setId("balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
+					.concat(String.valueOf(balCount)));
 			box.setBalUnvisible(true);
 			box.setFormat(PennantApplicationUtil.getAmountFormate(2));
 			box.setScale(2);
-			if(bankInfoDetail.getBankInfoSubDetails().size() > 0){
-				box.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(j-1).getBalance(), 0));
-			}else{
+			if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
+				box.setValue(PennantApplicationUtil
+						.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(j - 1).getBalance(), 0));
+			} else {
 				box.setValue(BigDecimal.ZERO);
 			}
 			box.setReadonly(isReadOnly);
@@ -610,7 +610,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		space.setSclass("mandatory");
 		creditAmt.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		creditAmt.setScale(2);
-		creditAmt.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getCreditAmt(),2));
+		creditAmt.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getCreditAmt(), 2));
 		creditAmt.setReadonly(isReadOnly);
 		hbox.appendChild(space);
 		hbox.appendChild(creditAmt);
@@ -628,7 +628,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		space.setSclass("mandatory");
 		bounceInWard.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		bounceInWard.setScale(2);
-		bounceInWard.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBounceIn(),2));
+		bounceInWard.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBounceIn(), 2));
 		bounceInWard.setReadonly(isReadOnly);
 		hbox.appendChild(space);
 		hbox.appendChild(bounceInWard);
@@ -646,7 +646,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		space.setSclass("mandatory");
 		bounceOutWard.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		bounceOutWard.setScale(2);
-		bounceOutWard.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBounceOut(),2));
+		bounceOutWard.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getBounceOut(), 2));
 		bounceOutWard.setReadonly(isReadOnly);
 		hbox.appendChild(space);
 		hbox.appendChild(bounceOutWard);
@@ -701,18 +701,18 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(button);
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
-		
+
 		listItem.setAttribute("data", bankInfoDetail);
 		this.listBoxAccBehaviour.appendChild(listItem);
 	}
-	
+
 	public void onClickAccBehaviourButtonDelete(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Listitem item = (Listitem) event.getData();
 		listBoxAccBehaviour.removeItemAt(item.getIndex());
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * when the "save" button is clicked. <br>
 	 * 
@@ -855,13 +855,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.typeOfBanks.setValue(aCustomerBankInfo.getTypeOfBanks());
 
 		this.recordStatus.setValue(aCustomerBankInfo.getRecordStatus());
-		
-		if(aCustomerBankInfo.getBankInfoDetails().size() > 0){
+
+		if (aCustomerBankInfo.getBankInfoDetails().size() > 0) {
 			Cloner cloner = new Cloner();
 			CustomerBankInfo detail = (CustomerBankInfo) cloner.deepClone(aCustomerBankInfo);
 			List<BankInfoDetail> bankInfoDetails = detail.getBankInfoDetails();
 			for (int i = 0; i < bankInfoDetails.size(); i++) {
-				bankInfoDetails.get(i).setKeyValue(i+1);
+				bankInfoDetails.get(i).setKeyValue(i + 1);
 			}
 			setBankInfoDetails(bankInfoDetails);
 			doFillBankInfoDetails();
@@ -1078,7 +1078,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		logger.debug(Literal.ENTERING);
 
 		HashMap<Date, BankInfoDetail> hashMap = new HashMap<>();
-		
+
 		List<BankInfoDetail> infoList = customerBankInfo.getBankInfoDetails();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		for (Listitem listitem : listBoxAccBehaviour.getItems()) {
@@ -1116,31 +1116,31 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				getCompValuetoBean(listitem, "bounceInWard");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				getCompValuetoBean(listitem, "bounceOutWard");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				getCompValuetoBean(listitem, "closingBal");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				getCompValuetoBean(listitem, "odCCLimit");
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			showErrorDetails(wve);
 			BankInfoDetail bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
 
@@ -1189,10 +1189,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			hashMap.put(bankInfoDetail.getMonthYear(), bankInfoDetail);
 		}
-		
+
 		//
 		for (BankInfoDetail detail : bankInfoDetails) {
-			if(!hashMap.containsKey(detail.getMonthYear())){
+			if (!hashMap.containsKey(detail.getMonthYear())) {
 				if (StringUtils.isBlank(detail.getRecordType())) {
 					detail.setNewRecord(true);
 					detail.setVersion(detail.getVersion() + 1);
@@ -1204,12 +1204,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				}
 			}
 		}
-		
+
 		setBankInfoDetails(bankInfoDetails);
 		logger.debug(Literal.LEAVING);
 		return true;
 	}
-	
+
 	private void showErrorDetails(ArrayList<WrongValueException> wve) {
 		logger.debug(Literal.ENTERING);
 
@@ -1232,21 +1232,22 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	private AuditHeader newBankInfoDetailProcess(BankInfoDetail detail, List<BankInfoDetail> infoList ,String tranType) {
+
+	private AuditHeader newBankInfoDetailProcess(BankInfoDetail detail, List<BankInfoDetail> infoList,
+			String tranType) {
 		boolean recordAdded = false;
 
 		AuditHeader auditHeader = new AuditHeader();
 		String[] valueParm = new String[1];
 		String[] errParm = new String[1];
-		valueParm[0] = String.valueOf(DateUtility.format(detail.getMonthYear(),PennantConstants.monthYearFormat));
+		valueParm[0] = String.valueOf(DateUtility.format(detail.getMonthYear(), PennantConstants.monthYearFormat));
 		errParm[0] = "Monthyear" + ":" + valueParm[0];
-		
+
 		bankInfoDetails = new ArrayList<>();
 
 		if (CollectionUtils.isNotEmpty(infoList)) {
 			for (int i = 0; i < infoList.size(); i++) {
-				if (DateUtility.compare(detail.getMonthYear(),infoList.get(i).getMonthYear()) == 0) {
+				if (DateUtility.compare(detail.getMonthYear(), infoList.get(i).getMonthYear()) == 0) {
 					if (detail.isNewRecord() && StringUtils.isEmpty(detail.getRecordType())) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
@@ -1293,7 +1294,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		return auditHeader;
 	}
-	
+
 	@SuppressWarnings({ "deprecation" })
 	private void getCompValuetoBean(Listitem listitem, String comonentId) {
 		BankInfoDetail bankInfoDetail = null;
@@ -1301,19 +1302,20 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
 		switch (comonentId) {
 		case "monthYear":
-			 
+
 			Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
 			Datebox monthYear = (Datebox) hbox1.getLastChild();
 			Clients.clearWrongValue(monthYear);
 			Date monthYearValue = monthYear.getValue();
 			if (!monthYear.isDisabled()) {
-				if(monthYearValue == null){
+				if (monthYearValue == null) {
 					throw new WrongValueException(monthYear,
 							Labels.getLabel("FIELD_IS_MAND", new String[] { "Month Year" }));
-				}else{
+				} else {
 					monthYearValue.setDate(1);
 					if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
-						throw new WrongValueException(monthYear, Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
+						throw new WrongValueException(monthYear,
+								Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
 					}
 				}
 			}
@@ -1321,16 +1323,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			bankInfoDetail.setMonthYear(monthYearValue);
 			break;
 		case "balance":
-			bankInfoDetail = getDayBalanceList(listitem, "balance",bankInfoDetail);
+			bankInfoDetail = getDayBalanceList(listitem, "balance", bankInfoDetail);
 			break;
 		case "debitNo":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "debitNo");
 			Intbox debitNo = (Intbox) hbox3.getLastChild();
 			Clients.clearWrongValue(debitNo);
 			if (!debitNo.isReadonly() && debitNo.getValue() == null) {
-				throw new WrongValueException(debitNo,
-						Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
-			}else if(!debitNo.isReadonly() && debitNo.getValue() <= 0){
+				throw new WrongValueException(debitNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
+			} else if (!debitNo.isReadonly() && debitNo.getValue() <= 0) {
 				throw new WrongValueException(debitNo,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
 			}
@@ -1355,9 +1356,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			Intbox creditNo = (Intbox) hbox5.getLastChild();
 			Clients.clearWrongValue(creditNo);
 			if (!creditNo.isReadonly() && creditNo.getValue() == null) {
-				throw new WrongValueException(creditNo,
-						Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
-			} else if(!creditNo.isReadonly() && creditNo.getValue() <= 0){
+				throw new WrongValueException(creditNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
+			} else if (!creditNo.isReadonly() && creditNo.getValue() <= 0) {
 				throw new WrongValueException(creditNo,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
 			}
@@ -1429,7 +1429,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			break;
 		}
 	}
-	
+
 	private Component getComponent(Listitem listitem, String listcellId) {
 		List<Listcell> listcels = listitem.getChildren();
 
@@ -1447,43 +1447,43 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		}
 		return null;
 	}
-	
+
 	private BankInfoDetail getDayBalanceList(Listitem listitem, String listcellId, BankInfoDetail bankInfoDetail) {
 		List<Listcell> listcels = listitem.getChildren();
 		BigDecimal balance = BigDecimal.ZERO;
 		List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
 		for (Listcell listcell : listcels) {
 			String id = StringUtils.trimToNull(listcell.getId());
-			
+
 			if (id == null) {
 				continue;
 			}
-			
+
 			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
 				for (int i = 1; i <= this.configDay; i++) {
 					//Label day = (Label) listcell.getFellowIfAny("day"+i);
-					CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency".concat(
-							String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
+					CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
+							.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
 					Clients.clearWrongValue(balanceValue);
 					if (balanceValue.getValidateValue() != null) {
-						balance  = balanceValue.getValidateValue();
+						balance = balanceValue.getValidateValue();
 					}
 					if (!(balanceValue.isReadonly()) && (balance.intValue() <= 0)) {
 						throw new WrongValueException(balanceValue,
 								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
 					}
-					
+
 					BankInfoSubDetail subDetail = null;
-					if(list != null && !list.isEmpty()){
+					if (list != null && !list.isEmpty()) {
 						for (BankInfoSubDetail subDtl : list) {
-							if(subDtl.getDay() == i){
+							if (subDtl.getDay() == i) {
 								subDetail = subDtl;
 							}
 						}
 					}
-					
-					if(subDetail == null){
+
+					if (subDetail == null) {
 						subDetail = new BankInfoSubDetail();
 						subDetail.setMonthYear(bankInfoDetail.getMonthYear());
 						subDetail.setDay(i);
@@ -1496,7 +1496,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		bankInfoDetail.setBankInfoSubDetails(list);
 		return bankInfoDetail;
 	}
-	
+
 	/**
 	 * when clicks on button "CommitmentRef"
 	 * 
@@ -1905,27 +1905,22 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalAvg"));
 
 		/*
-		 * this.bankBranch.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_BankBranch"));
-		 * this.fromDate.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_FromDate"));
-		 * this.fromDate.setReadonly(isReadOnly("CustomerBankInfoDialog_ToDate")
-		 * ); this.repaymentFrom.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_RepaymentFrom"));
-		 * this.NoOfMonthsBanking.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_NoOfMonthsBanking"));
-		 * this.lwowRatio.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_lwowRatio"));
-		 * this.ccLimit.setReadonly(isReadOnly("CustomerBankInfoDialog_CCLimit")
-		 * ); this.typeOfBanks.setReadonly(isReadOnly(
-		 * "CustomerBankInfoDialog_TypeOfBanks"));
+		 * this.bankBranch.setReadonly(isReadOnly( "CustomerBankInfoDialog_BankBranch"));
+		 * this.fromDate.setReadonly(isReadOnly( "CustomerBankInfoDialog_FromDate"));
+		 * this.fromDate.setReadonly(isReadOnly("CustomerBankInfoDialog_ToDate") );
+		 * this.repaymentFrom.setReadonly(isReadOnly( "CustomerBankInfoDialog_RepaymentFrom"));
+		 * this.NoOfMonthsBanking.setReadonly(isReadOnly( "CustomerBankInfoDialog_NoOfMonthsBanking"));
+		 * this.lwowRatio.setReadonly(isReadOnly( "CustomerBankInfoDialog_lwowRatio"));
+		 * this.ccLimit.setReadonly(isReadOnly("CustomerBankInfoDialog_CCLimit") );
+		 * this.typeOfBanks.setReadonly(isReadOnly( "CustomerBankInfoDialog_TypeOfBanks"));
 		 */
-		 
-		if(monthlyIncome != null && StringUtils.equals(monthlyIncome, PennantConstants.YES)){
+
+		if (monthlyIncome != null && StringUtils.equals(monthlyIncome, PennantConstants.YES)) {
 			this.toolBar_AccBehaviour.setVisible(true);
 			this.listBoxAccBehaviour.setVisible(true);
-			this.button_CustomerBankInfoDialog_btnAccBehaviour.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME Rightname
-			
+			this.button_CustomerBankInfoDialog_btnAccBehaviour
+					.setVisible(!isReadOnly("CustomerBankInfoDialog_EodBalAvg")); //FIXME Rightname
+
 			this.row_creditTranNo.setVisible(false);
 			this.row_creditTranAmt.setVisible(false);
 			this.row_creditTranAvg.setVisible(false);
@@ -1945,18 +1940,14 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.row_eodBalMax.setVisible(false);
 			this.row_eodBalAvg.setVisible(false);
 			/*
-			 * this.row_bankBranch.setVisible(false);
-			 * this.row_fromDate.setVisible(false);
-			 * this.row_toDate.setVisible(false);
-			 * this.row_repaymentFrom.setVisible(false);
-			 * this.row_noOfMonthsBanking.setVisible(false);
-			 * this.row_lwowRatio.setVisible(false);
-			 * this.row_ccLimit.setVisible(false);
-			 * this.row_typeOfBanks.setVisible(false);
+			 * this.row_bankBranch.setVisible(false); this.row_fromDate.setVisible(false);
+			 * this.row_toDate.setVisible(false); this.row_repaymentFrom.setVisible(false);
+			 * this.row_noOfMonthsBanking.setVisible(false); this.row_lwowRatio.setVisible(false);
+			 * this.row_ccLimit.setVisible(false); this.row_typeOfBanks.setVisible(false);
 			 */
-			
+
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -2036,7 +2027,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.ccLimit.setReadonly(true);
 		this.typeOfBanks.setReadonly(true);
 
-
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -2111,7 +2101,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (!saveBankInfoList(aCustomerBankInfo)) {
 			return;
 		}
-		
+
 		customerBankInfo.setBankInfoDetails(getBankInfoDetails());
 		// Write the additional validations as per below example
 		// get the selected branch object from the listBox

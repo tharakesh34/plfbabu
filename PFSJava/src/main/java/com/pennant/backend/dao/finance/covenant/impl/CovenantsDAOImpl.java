@@ -470,13 +470,13 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		return new ArrayList<>();
 
 	}
-	
+
 	@Override
 	public List<Covenant> getCovenants(String finReference) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append("select C.Frequency, NextFrequencyDate, CovenantTypeCode, CovenantTypeDescription");
 		sql.append(", DocType, DocTypeName from covenants_aview c");
 		sql.append(" inner join COVENANT_TYPES_AVIEW ct on ct.id = c.covenantTypeId");

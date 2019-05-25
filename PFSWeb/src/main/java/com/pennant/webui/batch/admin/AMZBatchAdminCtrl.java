@@ -89,8 +89,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Batch/AMZBatchAdmin.zul
- * file.
+ * This is the controller class for the /WEB-INF/pages/Batch/AMZBatchAdmin.zul file.
  */
 public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 
@@ -445,8 +444,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	/**
-	 * This method render the Defined Executions for which value date matched
-	 * with Current value date
+	 * This method render the Defined Executions for which value date matched with Current value date
 	 * 
 	 * @param ExecutionStatus
 	 *            (status)
@@ -601,7 +599,9 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 		}
 
 		if (source.getExecutionContext().containsKey(AmortizationConstants.DATA_TOTALFINANCES)) {
-			destination.setTotalFinances(((Number) (source.getExecutionContext().get(AmortizationConstants.DATA_TOTALFINANCES))).longValue());
+			destination.setTotalFinances(
+					((Number) (source.getExecutionContext().get(AmortizationConstants.DATA_TOTALFINANCES)))
+							.longValue());
 		}
 
 		destination.setExecutionName(source.getStepName());

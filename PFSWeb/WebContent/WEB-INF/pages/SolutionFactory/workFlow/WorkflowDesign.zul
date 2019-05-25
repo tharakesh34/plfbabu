@@ -18,7 +18,8 @@
 
 		//alert(frames[5].contentWindow);
 
-		var arrFrames = parent.document.getElementsByTagName("IFRAME");
+		var arrFrames =
+		parent.document.getElementsByTagName("IFRAME");
 
 		for (var i = 0; i &lt; arrFrames.length; i++) {
 		alert(arrFrames[i].id);
@@ -39,9 +40,11 @@
 		// message handler
 		window.addEventListener('message', function (e) {
 		// check message origin
-		if ( e.origin === 'http://192.168.1.162:8080/activiti-app/' ) {
+		if ( e.origin ===
+		'http://192.168.1.162:8080/activiti-app/' ) {
 		var task = e.data['task']; // task received in postMessage
-		switch ( task ) { // postMessage tasks
+		switch ( task )
+		{ // postMessage tasks
 
 		case 'clear' :
 		clearGreeting();

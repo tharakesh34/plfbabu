@@ -1156,7 +1156,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		String ruleString = "";
 		try {
 			for (int i = 0; i < queryFieldArray.length; i++) {
-				if(App.DATABASE == Database.POSTGRES){
+				if (App.DATABASE == Database.POSTGRES) {
 					for (Object dbRuleField : fieldNameList) {
 						if (dbRuleField instanceof PGobject) {
 							PGobject pGobject = (PGobject) dbRuleField;

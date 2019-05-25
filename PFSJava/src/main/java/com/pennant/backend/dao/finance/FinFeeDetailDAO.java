@@ -81,7 +81,7 @@ public interface FinFeeDetailDAO {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	List<FinFeeDetail> getAMZFinFeeDetails(String finRef, String type);
-	
+
 	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference, String type);
 
 	FinFeeDetail getFeeDetailByExtReference(String loanReference, long feeTypeId, String tableType);
@@ -91,6 +91,6 @@ public interface FinFeeDetailDAO {
 	List<FinFeeDetail> getDMFinFeeDetailByFinRef(String id, String type);
 
 	boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee);
-	
+
 	public List<FinFeeDetail> getPreviousAdvPayments(String finReferee);
 }

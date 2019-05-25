@@ -97,28 +97,28 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	private String getString(List<Object> finHeaderList, int index) {
-		if(finHeaderList.size() <= index) {
+		if (finHeaderList.size() <= index) {
 			return "";
 		}
-		
+
 		return String.valueOf(finHeaderList.get(index));
 	}
-	
+
 	private Date getDate(List<Object> finHeaderList, int index) {
-		if(finHeaderList.size() <= index) {
+		if (finHeaderList.size() <= index) {
 			return null;
 		}
-		
+
 		return (Date) finHeaderList.get(index);
 	}
-	
+
 	private boolean getBoolean(List<Object> finHeaderList, int index) {
-		if(finHeaderList.size() <= index) {
+		if (finHeaderList.size() <= index) {
 			return false;
 		}
-		
+
 		return (Boolean) finHeaderList.get(index);
 	}
 
@@ -128,8 +128,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (finHeaderList != null) {
 			this.finHeaderList = finHeaderList;
 		}
-		
-		
+
 		this.finBasic_finType.setValue(getString(finHeaderList, 0));
 		this.finBasic_finCcy.setValue(getString(finHeaderList, 1));
 		this.finBasic_scheduleMethod.setValue(getString(finHeaderList, 2));

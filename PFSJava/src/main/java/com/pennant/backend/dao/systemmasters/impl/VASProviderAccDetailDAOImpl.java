@@ -264,11 +264,12 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		sql.append(" Where ProviderId = :ProviderId AND EntityCode = :EntityCode");
 		logger.trace(Literal.SQL + sql.toString());
 
-		MapSqlParameterSource source =  new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ProviderId", providerId);
 		source.addValue("EntityCode", entityCode);
-		
-		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASProviderAccDetail.class);
+
+		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VASProviderAccDetail.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -276,14 +277,15 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT id, providerId,entityCode, paymentMode, bankBranchID, accountNumber,");
 		sql.append(" receivableAdjustment, reconciliationAmount, active, ");
-		
+
 		if ("_view".equalsIgnoreCase(type)) {
 			sql.append("entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode,");
 		}
@@ -292,11 +294,12 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		sql.append(type);
 		sql.append(" Where ProviderId = :ProviderId");
 		logger.trace(Literal.SQL + sql.toString());
-		
-		MapSqlParameterSource source =  new MapSqlParameterSource();
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ProviderId", providerId);
-		
-		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASProviderAccDetail.class);
+
+		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(VASProviderAccDetail.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {

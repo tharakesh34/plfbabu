@@ -166,7 +166,5 @@ public class Commodity extends CommodityType {
 	public void setCustomerTemplateName(String customerTemplateName) {
 		this.customerTemplateName = customerTemplateName;
 	}
-	
-	
 
 }

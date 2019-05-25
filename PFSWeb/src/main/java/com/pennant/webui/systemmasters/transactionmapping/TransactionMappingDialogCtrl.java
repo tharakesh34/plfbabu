@@ -305,7 +305,6 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			this.mid.setDescription(mapping.getStoreName());
 		}
 
-
 		this.dealerName.setText(mapping.getDealerName());
 
 		this.active.setChecked(mapping.isActive());
@@ -426,14 +425,13 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		logger.debug(Literal.ENTERING);
 
 		if (!this.posId.isReadonly()) {
-			this.posId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TransactionMapping_POSId.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
+			this.posId.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_POSId.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
 		if (!this.dealerCode.isReadonly()) {
-			this.dealerCode.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_TransactionMapping_DealerCode.value"),
+			this.dealerCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_DealerCode.value"),
 							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
@@ -449,9 +447,8 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		}
 
 		if (!this.tid.isReadonly()) {
-			this.tid
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_TID.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
+			this.tid.setConstraint(new PTStringValidator(Labels.getLabel("label_TransactionMapping_TID.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
 		logger.debug(Literal.LEAVING);

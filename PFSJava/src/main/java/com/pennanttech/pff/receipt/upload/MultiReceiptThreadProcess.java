@@ -38,7 +38,8 @@ public class MultiReceiptThreadProcess {
 
 		@Override
 		public void run() {
-			logger_.debug("Runnable started ReceiptId:"+ ((FinReceiptData) auditHeader.getModelData()).getReceiptHeader().getReceiptID());
+			logger_.debug("Runnable started ReceiptId:"
+					+ ((FinReceiptData) auditHeader.getModelData()).getReceiptHeader().getReceiptID());
 			logger_.debug("Runnable started ThreadId:" + Thread.currentThread().getId());
 			logger_.debug("Run: " + Thread.currentThread().getName());
 
@@ -48,11 +49,11 @@ public class MultiReceiptThreadProcess {
 				e.printStackTrace();
 			}
 
-			logger_.debug("Runnable ended Receiptd:"+ ((FinReceiptData) auditHeader.getModelData()).getReceiptHeader().getReceiptID());
+			logger_.debug("Runnable ended Receiptd:"
+					+ ((FinReceiptData) auditHeader.getModelData()).getReceiptHeader().getReceiptID());
 			logger_.debug("Runnable ended ThreadId:" + Thread.currentThread().getId());
 		}
 	}
-
 
 	public void processThread(Map<Long, FinReceiptHeader> finReceiptHeaderMap, List<AuditHeader> auditHeaderList,
 			long batchId) {
@@ -72,7 +73,8 @@ public class MultiReceiptThreadProcess {
 			ExecutorService executor = Executors.newFixedThreadPool(noOfThreads); // Creating Fixed size of thread pool for executing the task parallel
 			for (AuditHeader audiHead : auditHeaderList) {
 				executor.execute(new MultiReceiptThread(audiHead)); // submitting task to executor thread pool
-				sucReceiptIdList.add(((FinReceiptData) audiHead.getAuditDetail().getModelData()).getReceiptHeader().getReceiptID()); // adding into success list
+				sucReceiptIdList.add(
+						((FinReceiptData) audiHead.getAuditDetail().getModelData()).getReceiptHeader().getReceiptID()); // adding into success list
 			}
 			executor.shutdown();
 		} catch (RejectedExecutionException e) {

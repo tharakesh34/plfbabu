@@ -370,16 +370,16 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 					this.emailId.setValue(filter.getValue().toString());
 				} else if ("bussCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bussCommenceDate, filter);
-					this.bussCommenceDate.setValue(
-							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.bussCommenceDate
+							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("servCommenceDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_servCommenceDate, filter);
-					this.servCommenceDate.setValue(
-							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.servCommenceDate
+							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("bankRelationshipDate".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_bankRelationshipDate, filter);
-					this.bankRelationshipDate.setValue(
-							DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
+					this.bankRelationshipDate
+							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
 				} else if ("paidUpCapital".equals(filter.getProperty())) {
 					SearchOperators.restoreNumericOperator(this.sortOperator_paidUpCapital, filter);
 					this.paidUpCapital.setValue(filter.getValue().toString());
@@ -620,8 +620,9 @@ public class CorporateCustomerDetailSearchCtrl extends GFCBaseCtrl<CorporateCust
 				if (searchOpId == -1) {
 					// do nothing
 				} else {
-					so.addFilter(new Filter("bankRelationshipDate", DateUtility.format(
-							this.bankRelationshipDate.getValue(), PennantConstants.DBDateFormat), searchOpId));
+					so.addFilter(new Filter("bankRelationshipDate",
+							DateUtility.format(this.bankRelationshipDate.getValue(), PennantConstants.DBDateFormat),
+							searchOpId));
 				}
 			}
 		}

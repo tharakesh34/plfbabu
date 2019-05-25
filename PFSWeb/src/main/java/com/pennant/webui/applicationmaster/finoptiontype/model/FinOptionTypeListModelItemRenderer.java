@@ -56,7 +56,6 @@ import com.pennant.backend.model.applicationmaster.FinOptionType;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -64,14 +63,12 @@ import com.pennanttech.pff.staticlist.AppStaticList;
 public class FinOptionTypeListModelItemRenderer implements ListitemRenderer<FinOptionType>, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private transient List<Property> listFrequencies = AppStaticList.getFrequencies();
 
 	public FinOptionTypeListModelItemRenderer() {
 		super();
 	}
-	
-	
 
 	@Override
 	public void render(Listitem item, FinOptionType finOptionType, int count) throws Exception {
@@ -93,7 +90,7 @@ public class FinOptionTypeListModelItemRenderer implements ListitemRenderer<FinO
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onOptionTypeItemDoubleClicked");
 	}
-	
+
 	private String getFrequencies(String frequency) {
 		for (Property property : listFrequencies) {
 			if (StringUtils.equals(property.getKey().toString(), frequency)) {

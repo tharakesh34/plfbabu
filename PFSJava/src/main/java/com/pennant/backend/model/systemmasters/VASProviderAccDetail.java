@@ -60,8 +60,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>VASProviderAccDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "id", "providerId","entityCode", "paymentMode","bankCode", "bankBranchID", "accountNumber", "receivableAdjustment",
-		"reconciliationAmount", "active" })
+@XmlType(propOrder = { "id", "providerId", "entityCode", "paymentMode", "bankCode", "bankBranchID", "accountNumber",
+		"receivableAdjustment", "reconciliationAmount", "active" })
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VASProviderAccDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -151,6 +151,7 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 	public String getPaymentMode() {
 		return paymentMode;
 	}
+
 	public String getEntityCode() {
 		return entityCode;
 	}

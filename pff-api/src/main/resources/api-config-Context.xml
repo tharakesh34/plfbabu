@@ -151,17 +151,18 @@
 	</bean>
 
 	<bean id="aPILogDetailDAO" class="com.pennanttech.util.APILogDetailDAOImpl" parent="secBasicDao" />
-	
+
 	<!-- Remarks Controller -->
 	<bean id="remarksController" class="com.pennanttech.controller.RemarksController" autowire="byName" scope="prototype"></bean>
-	
-	<!-- Miscellaneous Controller -->	
-	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName" scope="prototype">
+
+	<!-- Miscellaneous Controller -->
+	<bean id="miscellaneousController" class="com.pennanttech.controller.MiscellaneousServiceController" autowire="byName"
+		scope="prototype">
 	</bean>
-	
+
 	<!-- Document Controller -->
-	<bean id="documentController"  class="com.pennanttech.controller.DocumentController" autowire="byName" scope="prototype"/>
-	
+	<bean id="documentController" class="com.pennanttech.controller.DocumentController" autowire="byName" scope="prototype" />
+
 	<bean id="refundUploadController" class="com.pennanttech.controller.RefundUploadController" autowire="byName"
 		scope="prototype">
 	</bean>

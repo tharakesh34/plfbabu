@@ -85,6 +85,7 @@ public class ExtendedFieldCtrl {
 
 	/**
 	 * Setting the multiple objects into bindings for setting the default values.
+	 * 
 	 * @param objectList
 	 * @throws ScriptException
 	 */
@@ -97,6 +98,7 @@ public class ExtendedFieldCtrl {
 
 	/**
 	 * Rendering data
+	 * 
 	 * @throws ScriptException
 	 */
 	private void renderData() throws ScriptException {
@@ -830,13 +832,14 @@ public class ExtendedFieldCtrl {
 
 	/**
 	 * Getting the component value.
+	 * 
 	 * @param componentId
 	 * @return
 	 */
 	public Component getComponent(String componentId) {
 		return generator.getWindow().getFellowIfAny(componentId);
 	}
-	
+
 	/**
 	 * @param parentTab
 	 *            the parentTab to set
@@ -986,5 +989,5 @@ public class ExtendedFieldCtrl {
 	public void setValues(Map<String, Object> fieldValueMap) {
 		this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
 	}
-	
+
 }

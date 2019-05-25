@@ -1658,7 +1658,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		logger.debug(Literal.LEAVING);
 		return financeScheduleDetail;
 	}
-	
+
 	@Override
 	public void updateSchPaid(FinanceScheduleDetail curSchd) {
 		logger.debug(Literal.ENTERING);
@@ -1666,10 +1666,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		StringBuilder sql = new StringBuilder("Update FinScheduleDetails set");
 		sql.append(" SchdPftPaid = :SchdPftPaid");
 		sql.append(", SchPftPaid = :SchPftPaid");
-		
+
 		sql.append(", SchdPriPaid = :SchdPriPaid");
 		sql.append(", SchPriPaid = :SchPriPaid");
-		
+
 		sql.append(", TDSPaid = :TDSPaid");
 		sql.append(" where FinReference =:FinReference And SchDate = :SchDate");
 
@@ -1684,8 +1684,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	/**
 	 * Getting fin schedule details for rate report
 	 */
@@ -1724,7 +1723,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
-	
 	/**
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
@@ -1734,7 +1732,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	 *            (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
-	@Override  
+	@Override
 	public FinanceMain getFinanceMainForRateReport(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
 

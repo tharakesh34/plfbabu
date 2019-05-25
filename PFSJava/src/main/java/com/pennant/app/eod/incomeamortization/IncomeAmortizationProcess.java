@@ -44,7 +44,6 @@ package com.pennant.app.eod.incomeamortization;
 
 public class IncomeAmortizationProcess {
 
-
 	// Need to delete this file, NOT REQUIRED
 
 }

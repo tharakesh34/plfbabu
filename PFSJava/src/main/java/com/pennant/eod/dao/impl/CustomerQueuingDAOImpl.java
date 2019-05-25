@@ -533,7 +533,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public long getCustQueuingCount() {
 

@@ -328,16 +328,16 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		long serviceUID = Long.MIN_VALUE;		
+		long serviceUID = Long.MIN_VALUE;
 		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst= new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());		
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
 				if (serviceUID == Long.MIN_VALUE) {
 					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
@@ -459,7 +459,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, tableType.getSuffix(),
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -708,7 +708,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		
+
 		long serviceUID = Long.MIN_VALUE;
 		for (FinServiceInstruction finServInst : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
@@ -733,7 +733,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, "_Temp",
-					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(),serviceUID);
+					financeDetail.getFinScheduleData().getFinanceMain(), financeDetail.getModuleDefiner(), serviceUID);
 			auditDetailList.addAll(details);
 		}
 
@@ -951,7 +951,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
 			details = processingDocumentDetailsList(details, "", financeDetail.getFinScheduleData().getFinanceMain(),
-					financeDetail.getModuleDefiner(),serviceUID);
+					financeDetail.getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}

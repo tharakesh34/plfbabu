@@ -20,13 +20,10 @@ import com.pennanttech.pff.core.TableType;
 
 public class DealerGroupServiceImpl extends GenericService<DealerGroup> implements DealerGroupService {
 
-	
 	private static final Logger logger = Logger.getLogger(DealerGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private DealerGroupDAO dealerGroupDAO;
-	
-	
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -43,10 +40,6 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 	public void setDealerGroupDAO(DealerGroupDAO dealerGroupDAO) {
 		this.dealerGroupDAO = dealerGroupDAO;
 	}
-
-
-
-	
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -127,9 +120,11 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 		getDealerGroupDAO().delete(dealerGroup, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(dealerGroup.getRecordType())) {
-			/*auditHeader.getAuditDetail().setBefImage(((DealerGroupDAO) dealerGroup).getDealerGroup(dealerGroup.getId(), ""));*/
-			auditHeader.getAuditDetail()
-			.setBefImage(dealerGroupDAO.getDealerGroup(dealerGroup.getDealerGroupId(), ""));
+			/*
+			 * auditHeader.getAuditDetail().setBefImage(((DealerGroupDAO)
+			 * dealerGroup).getDealerGroup(dealerGroup.getId(), ""));
+			 */
+			auditHeader.getAuditDetail().setBefImage(dealerGroupDAO.getDealerGroup(dealerGroup.getDealerGroupId(), ""));
 		}
 
 		if (dealerGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -185,6 +180,7 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
+
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -196,6 +192,7 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
+
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -212,12 +209,11 @@ public class DealerGroupServiceImpl extends GenericService<DealerGroup> implemen
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		
+
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-
 
 }

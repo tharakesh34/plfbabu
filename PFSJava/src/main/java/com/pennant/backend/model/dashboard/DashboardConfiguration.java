@@ -56,8 +56,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>DashboardDetail table</b>.<br>
  *
  */
-@XmlType(propOrder = { "dashboardCode", "dashboardType", "drillDownChart", "dimension",
-		"caption", "multiSeries", "seriesType", "seriesValues" })
+@XmlType(propOrder = { "dashboardCode", "dashboardType", "drillDownChart", "dimension", "caption", "multiSeries",
+		"seriesType", "seriesValues" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class DashboardConfiguration extends AbstractWorkflowEntity {
 

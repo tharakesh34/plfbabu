@@ -82,7 +82,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select Id, entity, code, clusterType, name, parent, parentType");
-		
+
 		if (type.contains("View")) {
 			sql.append(", EntityDesc, ParentCode, ParentName");
 		}
@@ -296,8 +296,7 @@ public class ClusterDAOImpl extends SequenceDao<Cluster> implements ClusterDAO {
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("entity", entity);
 
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), source, rowMapper);

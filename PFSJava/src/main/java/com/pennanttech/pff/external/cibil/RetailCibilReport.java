@@ -221,8 +221,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	 * <li>It is a Required segment.</li>
 	 * <li>It is of a fixed size of 146 bytes.</li>
 	 * <li>It occurs only once per update file.</li>
-	 * <li>All the fields must be provided; otherwise, the entire data input
-	 * file is rejected.</li>
+	 * <li>All the fields must be provided; otherwise, the entire data input file is rejected.</li>
 	 *
 	 */
 	public class HeaderSegment {
@@ -257,8 +256,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PN Segment describes personal consumer information, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 174
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 174 bytes.</li>
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
@@ -325,15 +323,13 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	/**
 	 * The PT Segment contains the known phone numbers of the consumer, and:
-	 * <li>This is a Required segment if at least one valid ID segment (with ID
-	 * Type of 01, 02, 03, 04, or 06) is not present.</li>
-	 * <li>It is variable in length and can be of a maximum size of 28
-	 * bytes.</li>
+	 * <li>This is a Required segment if at least one valid ID segment (with ID Type of 01, 02, 03, 04, or 06) is not
+	 * present.</li>
+	 * <li>It is variable in length and can be of a maximum size of 28 bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
-	 * <li>For accounts opened on/after June 1, 2007, at least one valid
-	 * Telephone (PT) segment or at least one valid Identification (ID) segment
-	 * (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the
-	 * record is rejected.</li>
+	 * <li>For accounts opened on/after June 1, 2007, at least one valid Telephone (PT) segment or at least one valid
+	 * Identification (ID) segment (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the record is
+	 * rejected.</li>
 	 *
 	 */
 	public class TelephoneSegment {
@@ -371,8 +367,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The EC Segment contains the email address of the consumer, and:
 	 * <li>This is a When Available segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 81
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 81 bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
 	 */
 	public class EmailContactSegment {
@@ -406,12 +401,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PA Segment contains the known address of the consumer, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 259
-	 * bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 259 bytes.</li>
 	 * <li>This can occur maximum of 5 times per record.</li>
 	 * <li>Any extra PA Segments after the 5th one will be rejected.</li>
-	 * <li>At least one valid PA Segment is required. All invalid PA Segments
-	 * will be rejected.</li>
+	 * <li>At least one valid PA Segment is required. All invalid PA Segments will be rejected.</li>
 	 * <li>It can be provided as free format in Address Line Fields 1-5.</li>
 	 *
 	 */
@@ -538,7 +531,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
 				BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
 				BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
- 
+
 				amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
 						.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid))));
 

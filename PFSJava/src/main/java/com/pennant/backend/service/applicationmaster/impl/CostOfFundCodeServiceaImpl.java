@@ -350,9 +350,9 @@ public class CostOfFundCodeServiceaImpl extends GenericService<CostOfFundCode> i
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		
 		// Dependency Validation : checking COF Code in RMTFinanceTypes
-		if (costOfFundCode != null && StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, costOfFundCode.getRecordType())) {
+		if (costOfFundCode != null
+				&& StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, costOfFundCode.getRecordType())) {
 			boolean isExists = getFinanceTypeDAO().isCostOfFundsExist(costOfFundCode.getCofCode(), "_View");
 			if (isExists) {
 				String[] parameters = new String[1];

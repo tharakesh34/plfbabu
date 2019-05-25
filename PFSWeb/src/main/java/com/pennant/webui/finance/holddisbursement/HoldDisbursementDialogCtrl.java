@@ -100,7 +100,6 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 	protected Decimalbox holdLimitAmount;
 	protected Textbox remarks;
 
-
 	private HoldDisbursement holdDisbursement; // overhanded per param
 
 	private transient HoldDisbursementListCtrl holdDisbursementListCtrl; // overhanded per param
@@ -375,39 +374,27 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 			wve.add(we);
 		}
 		//Total Loan Amt
-		/*try {
-			if (this.totalLoanAmt.getValue() != null) {
-				aHoldDisbursement.setTotalLoanAmt(PennantApplicationUtil.unFormateAmount(this.totalLoanAmt.getValue(),
-						PennantConstants.defaultCCYDecPos));
-			} else {
-				aHoldDisbursement.setTotalLoanAmt(BigDecimal.ZERO);
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try { if (this.totalLoanAmt.getValue() != null) {
+		 * aHoldDisbursement.setTotalLoanAmt(PennantApplicationUtil.unFormateAmount(this.totalLoanAmt.getValue(),
+		 * PennantConstants.defaultCCYDecPos)); } else { aHoldDisbursement.setTotalLoanAmt(BigDecimal.ZERO); } } catch
+		 * (WrongValueException we) { wve.add(we); }
+		 */
 		//Disbursed Amount
-		/*try {
-			if (this.disbursedAmount.getValue() != null) {
-				aHoldDisbursement.setDisbursedAmount(PennantApplicationUtil
-						.unFormateAmount(this.disbursedAmount.getValue(), PennantConstants.defaultCCYDecPos));
-			} else {
-				aHoldDisbursement.setDisbursedAmount(BigDecimal.ZERO);
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try { if (this.disbursedAmount.getValue() != null) {
+		 * aHoldDisbursement.setDisbursedAmount(PennantApplicationUtil .unFormateAmount(this.disbursedAmount.getValue(),
+		 * PennantConstants.defaultCCYDecPos)); } else { aHoldDisbursement.setDisbursedAmount(BigDecimal.ZERO); } }
+		 * catch (WrongValueException we) { wve.add(we); }
+		 */
 		//Hold Limit Amount
-		/*try {
-			if (this.holdLimitAmount.getValue() != null) {
-				aHoldDisbursement.setHoldLimitAmount(PennantApplicationUtil.unFormateAmount(
-						this.totalLoanAmt.getValue().subtract(this.disbursedAmount.getValue()),
-						PennantConstants.defaultCCYDecPos));
-			} else {
-				aHoldDisbursement.setHoldLimitAmount(BigDecimal.ZERO);
-			}
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}*/
+		/*
+		 * try { if (this.holdLimitAmount.getValue() != null) {
+		 * aHoldDisbursement.setHoldLimitAmount(PennantApplicationUtil.unFormateAmount(
+		 * this.totalLoanAmt.getValue().subtract(this.disbursedAmount.getValue()), PennantConstants.defaultCCYDecPos));
+		 * } else { aHoldDisbursement.setHoldLimitAmount(BigDecimal.ZERO); } } catch (WrongValueException we) {
+		 * wve.add(we); }
+		 */
 		//Remarks
 		try {
 			aHoldDisbursement.setRemarks(this.remarks.getValue());
@@ -501,7 +488,6 @@ public class HoldDisbursementDialogCtrl extends GFCBaseCtrl<HoldDisbursement> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_HoldDisbursementDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_NAME, false));
 		}
-
 
 		logger.debug(Literal.LEAVING);
 	}

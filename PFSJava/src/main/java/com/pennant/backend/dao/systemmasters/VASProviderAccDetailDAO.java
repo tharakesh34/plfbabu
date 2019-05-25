@@ -60,8 +60,7 @@ public interface VASProviderAccDetailDAO extends BasicCrudDao<VASProviderAccDeta
 	VASProviderAccDetail getVASProviderAccDetail(long id, String type);
 
 	/**
-	 * Checks whether another record exists with the key attributes in the
-	 * specified table type.
+	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
 	 * @param id
 	 *            id of the VASProviderAccDetail.

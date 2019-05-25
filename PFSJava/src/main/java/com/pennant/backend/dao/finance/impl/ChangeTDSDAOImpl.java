@@ -72,7 +72,7 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-		} 
+		}
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
@@ -88,13 +88,12 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		sql.append(" where FINREFERENCE=:Finreference and SCHDATE<=:SchDate)");
 
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		MapSqlParameterSource detail = new MapSqlParameterSource();
 		detail.addValue("Finreference", reference);
 		detail.addValue("SchDate", appDate);
 
-		
-		logger.debug(Literal.LEAVING);		
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(sql.toString(), detail, Boolean.class);
 
 	}

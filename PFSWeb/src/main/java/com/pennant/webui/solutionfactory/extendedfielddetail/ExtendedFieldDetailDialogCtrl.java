@@ -175,11 +175,11 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Row rowExtAddtionalFilters;
 	protected Listbox listBoxAddtionalFilters;
 	protected Button btnAddFilters;
-	
+
 	//Values taken from Scripts
 	protected Row rowValFromScript;
 	protected Checkbox valFromScript;
-	
+
 	private List<ValueLabel> fieldNames = new ArrayList<>();
 	private List<ValueLabel> extendedParents = new ArrayList<>();
 	private List<ValueLabel> filterList = PennantStaticListUtil.getFilters();
@@ -663,8 +663,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 									throw new WrongValueException(rangeFrom,
 											Labels.getLabel("FIELD_IS_MAND", new String[] { "From Date" }));
 								}
-								value = value + "," + DateUtility.format(rangeFrom.getValue(),
-										PennantConstants.dateTimeFormat);
+								value = value + ","
+										+ DateUtility.format(rangeFrom.getValue(), PennantConstants.dateTimeFormat);
 							}
 
 							if (this.parent_fieldConstraint.getFellowIfAny("range_To") != null) {
@@ -678,8 +678,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 									throw new WrongValueException(rangeTo, Labels.getLabel("DATE_ALLOWED_MINDATE",
 											new String[] { "To Date", "From Date" }));
 								}
-								value = value + "," + DateUtility.format(rangeTo.getValue(),
-										PennantConstants.dateTimeFormat);
+								value = value + ","
+										+ DateUtility.format(rangeTo.getValue(), PennantConstants.dateTimeFormat);
 							}
 
 						} else if ("FUTURE_DAYS".equals(value) || "PAST_DAYS".equals(value)) {
@@ -1134,9 +1134,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		aExtendedFieldDetail.setValFromScript(this.valFromScript.isChecked());
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 

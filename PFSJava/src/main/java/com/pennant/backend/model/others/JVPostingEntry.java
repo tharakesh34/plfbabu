@@ -43,7 +43,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JVPostingEntry table</b>.<br>
  * 
  */
-@XmlType(propOrder = {"txnAmount", "txnCode", "account"})
+@XmlType(propOrder = { "txnAmount", "txnCode", "account" })
 @XmlRootElement(name = "postingEntry")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JVPostingEntry extends AbstractWorkflowEntity implements Entity {

@@ -12,8 +12,8 @@ import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
-@XmlType(propOrder = { "customer", "customerDedupList", "addressList", "customerPhoneNumList",
-		"customerEMailList", "returnStatus" })
+@XmlType(propOrder = { "customer", "customerDedupList", "addressList", "customerPhoneNumList", "customerEMailList",
+		"returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class ProspectCustomerDetails extends AbstractWorkflowEntity implements Entity {
 
@@ -24,7 +24,6 @@ public class ProspectCustomerDetails extends AbstractWorkflowEntity implements E
 
 	@XmlElement
 	private String custCtgCode;
-
 
 	@XmlElementWrapper(name = "dedups")
 	@XmlElement(name = "dedup")
@@ -48,7 +47,6 @@ public class ProspectCustomerDetails extends AbstractWorkflowEntity implements E
 	public void setCustCtgCode(String custCtgCode) {
 		this.custCtgCode = custCtgCode;
 	}
-
 
 	public List<CustomerDedup> getCustomerDedupList() {
 		return customerDedupList;

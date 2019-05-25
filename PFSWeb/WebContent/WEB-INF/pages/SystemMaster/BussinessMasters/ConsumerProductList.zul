@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_product" apply="${consumerProductListCtrl}" border="none" width="100%">
@@ -18,8 +17,8 @@
 							autodisable="button_ProductList_ProductListSearch,print,button_ProductList_NewProduct,btnRefresh,help"
 							tooltiptext="${c:l('button_ProductList_ProductSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
-							autodisable="button_ProductList_ProductSearch,print,button_ProductList_NewProduct,btnRefresh,help"
-							tooltiptext="${c:l('button_ProductList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
+							autodisable="button_ProductList_ProductSearch,print,button_ProductList_NewProduct,btnRefresh,help" tooltiptext="${c:l('button_ProductList_PrintList.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -51,56 +50,46 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_ProductList_ModelId"
-										value="${c:l('label_ProductList_ModelId.value')}" />
+									<label id="label_ProductList_ModelId" value="${c:l('label_ProductList_ModelId.value')}" />
 									<listbox id="sortOperator_ModelId" width="43px" mold="select" rows="1" />
 									<uppercasebox id="modelId" width="100px" maxlength="50" />
-									<label id="label_ProductList_AssetDescription"
-										value="${c:l('label_ProductList_AssetDescription.value')}" />
+									<label id="label_ProductList_AssetDescription" value="${c:l('label_ProductList_AssetDescription.value')}" />
 									<listbox id="sortOperator_AssetDescription" width="43px" mold="select" rows="1" />
 									<textbox id="assetDescription" width="100px" maxlength="50" />
 								</row>
 
 								<row>
-									<label id="label_ProductList_ModelStatus"
-										value="${c:l('label_ProductList_ModelStatus.value')}" />
+									<label id="label_ProductList_ModelStatus" value="${c:l('label_ProductList_ModelStatus.value')}" />
 									<listbox id="sortOperator_ModelStatus" width="43px" mold="select" rows="1" />
 									<textbox id="modelStatus" width="100px" maxlength="50" />
-									<label id="label_ProductList_Active"
-										value="${c:l('label_ProductList_Active.value')}" />
+									<label id="label_ProductList_Active" value="${c:l('label_ProductList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" />
 									<textbox id="active" width="100px" maxlength="50" />
 								</row>
 
 								<row>
-									<label id="label_ProductList_RecordStatus"
-										value="${c:l('label_ProductList_RecordStatus.value')}" />
+									<label id="label_ProductList_RecordStatus" value="${c:l('label_ProductList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_ProductList_RecordType"
-										value="${c:l('label_ProductList_RecordType.value')}" />
+									<label id="label_ProductList_RecordType" value="${c:l('label_ProductList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
 
-						<listbox id="listBoxProduct" emptyMessage="${c:l('listbox.emptyMessage')}"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
-							span="true">
+						<listbox id="listBoxProduct" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_ModelId" label="${c:l('listheader_ManufacturerName.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_AssetDescription"
-									label="${c:l('listheader_AssetDescription.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ModelStatus" label="${c:l('listheader_ModelStatus.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto"
+								<listheader id="listheader_ModelId" label="${c:l('listheader_ManufacturerName.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
+								<listheader id="listheader_AssetDescription" label="${c:l('listheader_AssetDescription.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
+								<listheader id="listheader_ModelStatus" label="${c:l('listheader_ModelStatus.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

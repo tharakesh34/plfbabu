@@ -32,6 +32,6 @@ public interface FinServiceInstrutionDAO {
 
 	List<LMSServiceLog> getLMSServiceLogList(String notificationFlag);
 
-	void updateNotificationFlag(String notificationFlag,long id);
+	void updateNotificationFlag(String notificationFlag, long id);
 
 }

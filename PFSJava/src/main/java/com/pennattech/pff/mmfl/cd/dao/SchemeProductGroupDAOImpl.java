@@ -18,7 +18,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 
-public class SchemeProductGroupDAOImpl  extends SequenceDao<SchemeProductGroup> implements SchemeProductGroupDAO {
+public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> implements SchemeProductGroupDAO {
 	private static Logger logger = Logger.getLogger(SchemeProductGroupDAOImpl.class);
 
 	public SchemeProductGroupDAOImpl() {
@@ -66,7 +66,8 @@ public class SchemeProductGroupDAOImpl  extends SequenceDao<SchemeProductGroup> 
 		sql.append("(SchemeProductGroupId, PromotionId, ProductGroupCode, POSVendor, Active, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append("(:schemeProductGroupId, :promotionId, :productGroupCode, :POSVendor , :active, :Version , :LastMntBy, :LastMntOn");
+		sql.append(
+				"(:schemeProductGroupId, :promotionId, :productGroupCode, :POSVendor , :active, :Version , :LastMntBy, :LastMntOn");
 		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (schemeProductGroup.getSchemeProductGroupId() == Long.MIN_VALUE) {
@@ -171,6 +172,5 @@ public class SchemeProductGroupDAOImpl  extends SequenceDao<SchemeProductGroup> 
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-
 
 }

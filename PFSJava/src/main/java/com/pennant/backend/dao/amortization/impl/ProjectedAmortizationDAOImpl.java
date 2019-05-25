@@ -71,7 +71,7 @@ import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortization>
-implements ProjectedAmortizationDAO {
+		implements ProjectedAmortizationDAO {
 
 	private static Logger logger = Logger.getLogger(ProjectedAmortizationDAOImpl.class);
 
@@ -108,18 +108,20 @@ implements ProjectedAmortizationDAO {
 	public List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finRef) {
 
 		ProjectedAmortization projectedAMZ = new ProjectedAmortization();
-		projectedAMZ.setFinReference(finRef); 
+		projectedAMZ.setFinReference(finRef);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, CalculatedOn,");
-		selectSql.append(" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
+		selectSql.append(
+				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active");
 		selectSql.append(" From IncomeAmortization");
 		selectSql.append(" Where FinReference = :FinReference");
 
 		//logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projectedAMZ);
 
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -151,10 +153,14 @@ implements ProjectedAmortizationDAO {
 	public void saveBatchIncomeAMZ(List<ProjectedAmortization> amortizationList) {
 
 		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization");
-		insertSql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn,");
-		insertSql.append(" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
-		insertSql.append(" Values(:FinReference, :CustID, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType, :LastMntOn, :CalculatedOn,");
-		insertSql.append(" :CalcFactor, :Amount, :ActualAmount, :AMZMethod, :MonthEndDate, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
+		insertSql.append(
+				" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn,");
+		insertSql.append(
+				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
+		insertSql.append(
+				" Values(:FinReference, :CustID, :FinType, :ReferenceID, :IncomeTypeID, :IncomeType, :LastMntOn, :CalculatedOn,");
+		insertSql.append(
+				" :CalcFactor, :Amount, :ActualAmount, :AMZMethod, :MonthEndDate, :AmortizedAmount, :UnAmortizedAmount, :CurMonthAmz, :PrvMonthAmz, :Active)");
 
 		//logger.debug("insertSql: " + insertSql.toString());
 
@@ -175,7 +181,8 @@ implements ProjectedAmortizationDAO {
 		StringBuilder updateSql = new StringBuilder("Update IncomeAmortization SET ");
 		updateSql.append(" LastMntOn = :LastMntOn, CalculatedOn = :CalculatedOn, CalcFactor = :CalcFactor,");
 		updateSql.append(" Amount = :Amount, ActualAmount = :ActualAmount, AMZMethod = :AMZMethod, Active = :Active");
-		updateSql.append(" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
+		updateSql.append(
+				" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
 
 		//logger.debug("updateSql: " + updateSql.toString());
 
@@ -191,9 +198,11 @@ implements ProjectedAmortizationDAO {
 	public void updateBatchIncomeAMZAmounts(List<ProjectedAmortization> amzList) {
 
 		StringBuilder updateSql = new StringBuilder("Update IncomeAmortization SET ");
-		updateSql.append(" MonthEndDate = :MonthEndDate, CalculatedOn = :CalculatedOn, AmortizedAmount = :AmortizedAmount, UnAmortizedAmount = :UnAmortizedAmount,");
+		updateSql.append(
+				" MonthEndDate = :MonthEndDate, CalculatedOn = :CalculatedOn, AmortizedAmount = :AmortizedAmount, UnAmortizedAmount = :UnAmortizedAmount,");
 		updateSql.append(" CurMonthAmz = :CurMonthAmz, PrvMonthAmz = :PrvMonthAmz, Active = :Active");
-		updateSql.append(" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
+		updateSql.append(
+				" Where FinReference = :FinReference AND ReferenceID = :ReferenceID AND IncomeType = :IncomeType");
 
 		//logger.debug("updateSql: " + updateSql.toString());
 
@@ -204,7 +213,7 @@ implements ProjectedAmortizationDAO {
 	/**
 	 * @param reference
 	 * @param prvMonthEndDate
-	 * @return 
+	 * @return
 	 */
 	@Override
 	public ProjectedAccrual getPrvProjectedAccrual(String finRef, Date prvMonthEndDate, String type) {
@@ -215,7 +224,8 @@ implements ProjectedAmortizationDAO {
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		selectSql.append(" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS ");
+		selectSql.append(
+				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS ");
 
 		selectSql.append(" From ProjectedAccruals");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -226,7 +236,8 @@ implements ProjectedAmortizationDAO {
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAccrual.class);
 
 		try {
 			projAcc = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -239,7 +250,7 @@ implements ProjectedAmortizationDAO {
 
 	/**
 	 * @param prvMonthEndDate
-	 * @return 
+	 * @return
 	 */
 	@Override
 	public void preparePrvProjectedAccruals(Date prvMonthEndDate) {
@@ -256,10 +267,13 @@ implements ProjectedAmortizationDAO {
 
 		// insert previous ACCRUALS into working table
 		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" INSERT INTO ProjectedAccruals_WORK ( FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		insertSql.append(" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
+		insertSql.append(
+				" INSERT INTO ProjectedAccruals_WORK ( FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
+		insertSql.append(
+				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
 		insertSql.append(" SELECT FinReference, AccruedOn, PftAccrued, CumulativeAccrued, ");
-		insertSql.append(" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS");
+		insertSql.append(
+				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS");
 
 		insertSql.append(" FROM ProjectedAccruals");
 		insertSql.append(" Where AccruedOn = :AccruedOn");
@@ -287,7 +301,8 @@ implements ProjectedAmortizationDAO {
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAccrual.class);
 
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -315,7 +330,8 @@ implements ProjectedAmortizationDAO {
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAcc);
-		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAccrual.class);
+		RowMapper<ProjectedAccrual> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAccrual.class);
 
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -329,9 +345,11 @@ implements ProjectedAmortizationDAO {
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ProjectedAccruals");
 		insertSql.append(" (FinReference, AccruedOn, PftAccrued, CumulativeAccrued,");
-		insertSql.append(" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
+		insertSql.append(
+				" POSAccrued, CumulativePOS, NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd, AvgPOS)");
 		insertSql.append(" Values(:FinReference, :AccruedOn, :PftAccrued, :CumulativeAccrued,");
-		insertSql.append(" :POSAccrued, :CumulativePOS, :NoOfDays, :CumulativeDays, :AMZPercentage, :PartialPaidAmt, :PartialAMZPerc, :MonthEnd, :AvgPOS)");
+		insertSql.append(
+				" :POSAccrued, :CumulativePOS, :NoOfDays, :CumulativeDays, :AMZPercentage, :PartialPaidAmt, :PartialAMZPerc, :MonthEnd, :AvgPOS)");
 
 		//logger.debug("insertSql: " + insertSql.toString());
 
@@ -378,7 +396,7 @@ implements ProjectedAmortizationDAO {
 	/**
 	 * @param reference
 	 * @param prvMonthEndDate
-	 * @return 
+	 * @return
 	 */
 	@Override
 	public List<ProjectedAmortization> getPrvProjIncomeAMZ(String finRef, Date prvMonthEndDate) {
@@ -397,7 +415,8 @@ implements ProjectedAmortizationDAO {
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(projAMZ);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		return this.namedParameterJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
@@ -459,8 +478,8 @@ implements ProjectedAmortizationDAO {
 		logger.debug("Entering");
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select T1.MONTHENDDATE from AMORTIZATIONLOG T1 INNER JOIN "); 
-		selectSql.append(" (Select MAX(ID) ID from AMORTIZATIONLOG Where STATUS = 2) T2 ON T1.ID = T2.ID "); 
+		selectSql.append(" Select T1.MONTHENDDATE from AMORTIZATIONLOG T1 INNER JOIN ");
+		selectSql.append(" (Select MAX(ID) ID from AMORTIZATIONLOG Where STATUS = 2) T2 ON T1.ID = T2.ID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -520,18 +539,22 @@ implements ProjectedAmortizationDAO {
 		if (App.DATABASE == Database.ORACLE) {
 
 			selectSql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
-			selectSql.append(" WHERE ( EndTime IS NULL OR Status = "+ EodConstants.PROGRESS_FAILED +" ) AND ROWNUM = 1 ORDER BY Id DESC");
+			selectSql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
+					+ " ) AND ROWNUM = 1 ORDER BY Id DESC");
 
 		} else if (App.DATABASE == Database.SQL_SERVER) {
 
-			selectSql.append(" Select TOP 1 Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
-			selectSql.append(" WHERE ( EndTime IS NULL OR Status = "+ EodConstants.PROGRESS_FAILED +" ) ORDER BY Id DESC");
+			selectSql.append(
+					" Select TOP 1 Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM AmortizationLog ");
+			selectSql.append(
+					" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED + " ) ORDER BY Id DESC");
 		}
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -596,13 +619,15 @@ implements ProjectedAmortizationDAO {
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" Select Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy  FROM CalAvgPOSLog ");
-		selectSql.append(" WHERE ( EndTime IS NULL OR Status = "+ EodConstants.PROGRESS_FAILED +" ) AND ROWNUM = 1 ORDER BY Id DESC");
+		selectSql.append(" WHERE ( EndTime IS NULL OR Status = " + EodConstants.PROGRESS_FAILED
+				+ " ) AND ROWNUM = 1 ORDER BY Id DESC");
 
 		//logger.debug("selectSql: " + selectSql.toString());
 
 		ProjectedAmortization amzLog = new ProjectedAmortization();
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amzLog);
-		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProjectedAmortization.class);
+		RowMapper<ProjectedAmortization> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ProjectedAmortization.class);
 
 		try {
 			amzLog = namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -683,11 +708,14 @@ implements ProjectedAmortizationDAO {
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 		amortizationQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 
-		StringBuilder selectSql = new StringBuilder(" SELECT COUNT(FinReference) from IncomeAmortization Where FinReference IN ");
-		selectSql.append(" ( Select DISTINCT FinReference from AmortizationQueuing where Progress = :Progress) AND ActualAmount > 0");
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT COUNT(FinReference) from IncomeAmortization Where FinReference IN ");
+		selectSql.append(
+				" ( Select DISTINCT FinReference from AmortizationQueuing where Progress = :Progress) AND ActualAmount > 0");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amortizationQueuing);
-		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+				Long.class);
 
 		logger.debug("Leaving");
 		return progressCount;
@@ -749,20 +777,26 @@ implements ProjectedAmortizationDAO {
 		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
 
 		StringBuilder insertSql = new StringBuilder("Insert Into IncomeAmortization ");
-		insertSql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
-		insertSql.append(" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)" );
+		insertSql.append(
+				" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
+		insertSql.append(
+				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active)");
 
-		insertSql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FeeID ReferenceID, T1.FeeTypeID IncomeTypeID, :IncomeType, ");
+		insertSql.append(
+				" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FeeID ReferenceID, T1.FeeTypeID IncomeTypeID, :IncomeType, ");
 		insertSql.append(" :LastMntOn, :CalculatedOn, T1.TaxPercent CalcFactor, ");
-		insertSql.append(" T1.ActualAmount - T1.WaivedAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate, 0 AmortizedAmount, ");
+		insertSql.append(
+				" T1.ActualAmount - T1.WaivedAmount Amount, 0 ActualAmount, T3.AMZMethod, :MonthEndDate, 0 AmortizedAmount, ");
 		insertSql.append(" 0 UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active ");
 
 		insertSql.append(" From FinFeeDetail T1 ");
 		insertSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1 ");
 		insertSql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FinReference = T3.FinReference ");
 
-		insertSql.append(" WHERE T1.ActualAmount - T1.WaivedAmount > 0 AND (T1.POSTDATE >= :MonthStartDate AND T1.POSTDATE <= :MonthEndDate) ");
-		insertSql.append(" AND T1.FeeID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
+		insertSql.append(
+				" WHERE T1.ActualAmount - T1.WaivedAmount > 0 AND (T1.POSTDATE >= :MonthStartDate AND T1.POSTDATE <= :MonthEndDate) ");
+		insertSql.append(
+				" AND T1.FeeID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType)");
 
 		logger.debug("insertSql : " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
@@ -784,8 +818,10 @@ implements ProjectedAmortizationDAO {
 		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_FEE);
 
 		StringBuilder updateSql = new StringBuilder(" MERGE INTO INCOMEAMORTIZATION T1 ");
-		updateSql.append(" USING ( Select REFERENCEID, INCOMETYPE, ROUND((Amount * 100)/(100 + CalcFactor)) ActualAmount ");
-		updateSql.append(" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType AND CalculatedOn = :CalculatedOn ) T2 ");
+		updateSql.append(
+				" USING ( Select REFERENCEID, INCOMETYPE, ROUND((Amount * 100)/(100 + CalcFactor)) ActualAmount ");
+		updateSql.append(
+				" From INCOMEAMORTIZATION Where INCOMETYPE = :IncomeType AND CalculatedOn = :CalculatedOn ) T2 ");
 
 		updateSql.append(" ON (T1.REFERENCEID = T2.REFERENCEID AND T1.INCOMETYPE = T2.INCOMETYPE) ");
 		updateSql.append(" WHEN MATCHED THEN UPDATE SET T1.ACTUALAMOUNT = T2.ACTUALAMOUNT, ");
@@ -814,17 +850,22 @@ implements ProjectedAmortizationDAO {
 		source.addValue("IncomeType", AmortizationConstants.AMZ_INCOMETYPE_EXPENSE);
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into IncomeAmortization ");
-		insertSql.append(" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
-		insertSql.append(" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active) ");
+		insertSql.append(
+				" (FinReference, CustID, FinType, ReferenceID, IncomeTypeID, IncomeType, LastMntOn, CalculatedOn, ");
+		insertSql.append(
+				" CalcFactor, Amount, ActualAmount, AMZMethod, MonthEndDate, AmortizedAmount, UnAmortizedAmount, CurMonthAmz, PrvMonthAmz, Active) ");
 
-		insertSql.append(" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FINEXPENSEID ReferenceID, T1.EXPENSETYPEID IncomeTypeID, :IncomeType, :LastMntOn, ");
-		insertSql.append(" :CalculatedOn, 0 CalcFactor, T1.AMOUNT, T1.AMOUNT ACTUALAMOUNT, T3.AMZMethod, :MonthEndDate, ");
+		insertSql.append(
+				" SELECT T3.FinReference, T3.CUSTID, T3.FINTYPE, T1.FINEXPENSEID ReferenceID, T1.EXPENSETYPEID IncomeTypeID, :IncomeType, :LastMntOn, ");
+		insertSql.append(
+				" :CalculatedOn, 0 CalcFactor, T1.AMOUNT, T1.AMOUNT ACTUALAMOUNT, T3.AMZMethod, :MonthEndDate, ");
 		insertSql.append(" 0 AmortizedAmount, T1.AMOUNT UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, :Active");
 
 		insertSql.append(" FROM FINEXPENSEDETAILS T1 ");
 		insertSql.append(" INNER JOIN EXPENSETYPES T2 ON T1.EXPENSETYPEID = T2.EXPENSETYPEID AND T2.AMORTREQ = 1 ");
 		insertSql.append(" INNER JOIN FINPFTDETAILS T3 ON T1.FINREFERENCE = T3.FINREFERENCE ");
-		insertSql.append(" WHERE T1.AMOUNT > 0 AND T1.FINEXPENSEID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType) ");
+		insertSql.append(
+				" WHERE T1.AMOUNT > 0 AND T1.FINEXPENSEID NOT IN (Select ReferenceID From INCOMEAMORTIZATION WHERE IncomeType = :IncomeType) ");
 
 		logger.debug("insertSql : " + insertSql.toString());
 		this.namedParameterJdbcTemplate.update(insertSql.toString(), source);
@@ -844,11 +885,14 @@ implements ProjectedAmortizationDAO {
 
 		StringBuilder deleteSql = new StringBuilder();
 
-		/* deleteSql.append(" DELETE (SELECT * FROM ProjectedIncomeAMZ T1 ");
-		deleteSql.append(" INNER JOIN AmortizationQueuing T2 ON T1.FinReference = T2.FinReference ");
-		deleteSql.append(" WHERE T1.MonthEndDate >= :MonthEndDate) "); */
+		/*
+		 * deleteSql.append(" DELETE (SELECT * FROM ProjectedIncomeAMZ T1 ");
+		 * deleteSql.append(" INNER JOIN AmortizationQueuing T2 ON T1.FinReference = T2.FinReference ");
+		 * deleteSql.append(" WHERE T1.MonthEndDate >= :MonthEndDate) ");
+		 */
 
-		deleteSql.append(" Delete From ProjectedIncomeAMZ  Where FinReference IN (Select FinReference From AmortizationQueuing) ");
+		deleteSql.append(
+				" Delete From ProjectedIncomeAMZ  Where FinReference IN (Select FinReference From AmortizationQueuing) ");
 		deleteSql.append(" AND MonthEndDate >= :MonthEndDate ");
 
 		logger.debug("deleteSql : " + deleteSql.toString());
@@ -873,9 +917,9 @@ implements ProjectedAmortizationDAO {
 		logger.debug("sql1 : " + sql.toString());
 		this.namedParameterJdbcTemplate.update(sql.toString(), source);
 
-
 		// insert into working table
-		sql = new StringBuilder(" INSERT INTO ProjectedIncomeAMZ_WORK SELECT * FROM PROJECTEDINCOMEAMZ WHERE MonthEndDate < :MonthEndDate");
+		sql = new StringBuilder(
+				" INSERT INTO ProjectedIncomeAMZ_WORK SELECT * FROM PROJECTEDINCOMEAMZ WHERE MonthEndDate < :MonthEndDate");
 		logger.debug("sql2 : " + sql.toString());
 		this.namedParameterJdbcTemplate.update(sql.toString(), source);
 
@@ -915,7 +959,8 @@ implements ProjectedAmortizationDAO {
 	public void createIndexProjIncomeAMZ() {
 		logger.debug("Entering");
 
-		StringBuilder indexSql = new StringBuilder(" CREATE INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ (MONTHENDDATE)");
+		StringBuilder indexSql = new StringBuilder(
+				" CREATE INDEX IDX_PROJINCAMZ_EOM ON PROJECTEDINCOMEAMZ (MONTHENDDATE)");
 		logger.debug("indexSql : " + indexSql.toString());
 		this.namedParameterJdbcTemplate.update(indexSql.toString(), new MapSqlParameterSource());
 
@@ -963,8 +1008,10 @@ implements ProjectedAmortizationDAO {
 		Date curMonthStart = DateUtility.getMonthStart(amzMonth);
 		amortizationQueuing.setMonthEndDate(curMonthStart);
 
-		StringBuilder insertSql = new StringBuilder( "INSERT INTO AmortizationQueuing (FINREFERENCE, CUSTID, EODDATE, THREADID, PROGRESS, STARTTIME, EODPROCESS) ");
-		insertSql.append(" SELECT FinReference, CustID, :EodDate, :ThreadId, :Progress, :StartTime, :EodProcess From FinanceMain ");
+		StringBuilder insertSql = new StringBuilder(
+				"INSERT INTO AmortizationQueuing (FINREFERENCE, CUSTID, EODDATE, THREADID, PROGRESS, STARTTIME, EODPROCESS) ");
+		insertSql.append(
+				" SELECT FinReference, CustID, :EodDate, :ThreadId, :Progress, :StartTime, :EodProcess From FinanceMain ");
 		insertSql.append(" WHERE (ClosedDate IS NULL OR ClosedDate >= :MonthEndDate) ");
 		insertSql.append(" AND FinReference IN (Select FinReference From IncomeAmortization) ");
 
@@ -984,10 +1031,12 @@ implements ProjectedAmortizationDAO {
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 		amortizationQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinReference) from AmortizationQueuing where Progress = :Progress");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT COUNT(FinReference) from AmortizationQueuing where Progress = :Progress");
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(amortizationQueuing);
-		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+		long progressCount = this.namedParameterJdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
+				Long.class);
 
 		logger.debug("Leaving");
 		return progressCount;

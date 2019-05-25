@@ -111,7 +111,7 @@ public interface JVPostingService {
 	void deleteIAEntries(long batchReference);
 
 	long getBatchRerbyExpRef(String expReference);
-	
+
 	List<ErrorDetail> doMiscellaneousValidations(JVPosting posting);
 
 }

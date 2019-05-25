@@ -110,6 +110,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * validate Account History
 	 * 
@@ -292,8 +293,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 			if (String.join("|", "INCOME,EXPENSE").contains(trialBalance.getAccountType())) {
 				boolean isFound = false;
 				for (TrailBalance trBalance : financialOpeningBal) {
-					
-					if(trBalance.getOpeningBalance()==null){
+
+					if (trBalance.getOpeningBalance() == null) {
 						trBalance.setOpeningBalance(BigDecimal.ZERO);
 					}
 
@@ -309,17 +310,16 @@ public class TrailBalanceEngine extends DataEngineExport {
 				}
 
 				if (isFound) {
-					
+
 					trialBalance.setOpeningBalanceType(getSignOfBalanceType(trialBalance.getOpeningBalance()));
-					
+
 				} else {
-					
+
 					trialBalance.setOpeningBalanceType(getSignOfBalanceType(openingBal.getOpeningBalance()));
 				}
 			}
 		}
 		openingBals = null;
-
 
 		// Get credit and Debit amount
 		List<TrailBalance> creditAndDeditAmt = getCreditAndDebitAmt();
@@ -339,7 +339,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			} else {
 				trialBalance.setCreditAmount(creditDebitAmount.getCreditAmount());
 			}
-			
+
 			if (creditDebitAmount.getDebitAmount() == null) {
 				trialBalance.setDebitAmount(BigDecimal.ZERO);
 			} else {
@@ -352,7 +352,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		for (Entry<String, TrailBalance> entry : accounts.entrySet()) {
 			trialBalance = entry.getValue();
 			BigDecimal openingBal = trialBalance.getOpeningBalance();
-			
+
 			if (trialBalance.getOpeningBalance() == null
 					|| trialBalance.getOpeningBalance().compareTo(BigDecimal.ZERO) == 0) {
 				trialBalance.setOpeningBalance(BigDecimal.ZERO);
@@ -361,7 +361,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 				} else {
 					trialBalance.setOpeningBalanceType("Cr");
 				}
-			} 
+			}
 
 			if (ImplementationConstants.NEGATE_SIGN_TB) {
 				if (trialBalance.getOpeningBalanceType().equals("Dr")) {
@@ -377,7 +377,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 					(openingBal.subtract(trialBalance.getDebitAmount())).add(trialBalance.getCreditAmount()));
 
 			trialBalance.setClosingBalanceType(getSignOfBalanceType(trialBalance.getClosingBalance()));
-			
+
 			trialBalance.setClosingBalance(trialBalance.getClosingBalance().abs());
 		}
 
@@ -391,7 +391,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	private List<TrailBalance> getCreditAndDebitAmt() {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = new StringBuilder();
 
@@ -421,7 +421,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
 			sql.append(" GROUP BY C.ACCOUNT,C.HOSTACCOUNT");
 		}
-		
 
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", fromDate);
@@ -442,6 +441,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 	/**
 	 * Based on given from date, return financial end date
+	 * 
 	 * @return finance last year date
 	 */
 	private Date getFinanceEndDate() {
@@ -452,7 +452,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		} else {
 			year = DateUtility.getYear(fromDate);
 		}
-		
+
 		String month = SysParamUtil.getValueAsString("FINANCIAL_YEAR_END_MONTH");
 		String date = "31";// default value;
 
@@ -474,9 +474,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 			return openingBal.getAccount();
 		}
 	}
-	
-	private String getSignOfBalanceType(BigDecimal balance){
-		
+
+	private String getSignOfBalanceType(BigDecimal balance) {
+
 		if (balance.compareTo(BigDecimal.ZERO) > 0) {
 			if (ImplementationConstants.NEGATE_SIGN_TB) {
 				return "Cr";
@@ -766,8 +766,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(
 				" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 where T2.postdate < :postdate group by T2.accountid) T2");
 		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
-		sql.append(
-				" where T1.EntityCode = :EntityCode and T1.postamount<>0  and  T1.POSTDATE < :postdate ");
+		sql.append(" where T1.EntityCode = :EntityCode and T1.postamount<>0  and  T1.POSTDATE < :postdate ");
 
 		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
 			String[] arr = stateCode.split(",");
@@ -805,12 +804,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" SELECT distinct T1.account,T5.ACBALANCE openingBalance,RB.BRANCHPROVINCE stateCode, ");
 		sql.append(" ATG.GROUPCODE accountType,AT.ACTYPEDESC accountTypeDes From postings T1 ");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = T1.POSTBRANCH ");
-		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT=T1.ACCOUNT " );
+		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT=T1.ACCOUNT ");
 		sql.append(" INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE ");
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID ");
 		sql.append(" INNER JOIN ( Select T1.ACCOUNTID,T1.ACBALANCE, T1.POSTDATE from ACCOUNTSHISTORY T1 ");
 		sql.append(" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 ");
-		
+
 		if (App.DATABASE == Database.POSTGRES) {
 			sql.append(" where to_char(T2.postdate,'dd-MM-yyyy')<= :FROMDATE group by T2.accountid) T2 ");
 		} else {
@@ -818,7 +817,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		}
 		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
 		sql.append("  where atg.GROUPCODE in ('EXPENSE','INCOME') and T1.EntityCode = :EntityCode ");
-		
+
 		if (App.DATABASE == Database.POSTGRES) {
 			sql.append(" and T1.postamount<>0 and to_char(T1.POSTDATE,'dd-MM-yyyy')<= :FROMDATE ");
 		} else {
@@ -1064,10 +1063,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 		MapSqlParameterSource parmsource = new MapSqlParameterSource();
 		BigDecimal closingBal = getPreviousFinancialYearBalances(getFinanceEndDate());
 		closingBal = PennantApplicationUtil.formateAmount(closingBal, PennantConstants.defaultCCYDecPos);
-		
+
 		closingBaltype = getSignOfBalanceType(closingBal);
 		closingBal = closingBal.abs();
-		
+
 		sql = new StringBuilder();
 		String accountCode = parameters.get("PRFT_LOSS_GLCODE");
 		sql.append(
@@ -1133,7 +1132,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		String closingBaltype = "";
 		BigDecimal closingBal = BigDecimal.ZERO;
-		
+
 		closingBal = getPreviousFinancialYearBalances(getFinanceEndDate());
 		closingBal = PennantApplicationUtil.formateAmount(closingBal, PennantConstants.defaultCCYDecPos);
 
@@ -1148,7 +1147,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		datesMap.addValue("CLOSINGBALTYPE", closingBaltype);
 		datesMap.addValue("HEADERID", headerId);
 
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_FILE");
 		sql.append(" (ACCOUNT, DESCRIPTION, OPENINGBAL, CLOSINGBAL, CLOSINGBALTYPE, OPENINGBALTYPE)");
@@ -1161,7 +1159,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	/**
-	 * get previous finance year postamount for group code expense and income 
+	 * get previous finance year postamount for group code expense and income
+	 * 
 	 * @param finanaceEndDate
 	 * @return postamount till date
 	 */

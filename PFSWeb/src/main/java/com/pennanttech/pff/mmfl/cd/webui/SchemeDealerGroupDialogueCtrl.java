@@ -64,7 +64,8 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 	@Override
 	protected String getReference() {
-		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.schemeDealerGroup.getSchemeDealerGroupId()));
+		StringBuilder referenceBuffer = new StringBuilder(
+				String.valueOf(this.schemeDealerGroup.getSchemeDealerGroupId()));
 		return referenceBuffer.toString();
 	}
 
@@ -363,8 +364,8 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		}
 
 		if (!this.dealerGroupCode.isReadonly()) {
-			this.dealerGroupCode.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_SchemeDealerGroupList_DealerGroupCode.value"), true, false));
+			this.dealerGroupCode.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_SchemeDealerGroupList_DealerGroupCode.value"), true, false));
 		}
 
 		logger.debug(Literal.LEAVING);

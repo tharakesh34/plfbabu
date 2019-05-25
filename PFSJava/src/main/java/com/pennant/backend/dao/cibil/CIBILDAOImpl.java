@@ -180,16 +180,18 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustDistrict, pvc.pccityname CustAddrcity,");
+		sql.append(
+				" select cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet, CustDistrict, pvc.pccityname CustAddrcity,");
 		sql.append(" CustAddrLine1, CustAddrLine2, sm.code CustAddrProvince, CustAddrZIP , CustAddrCountry");
 		sql.append(" from CustomerAddresses ca");
 		sql.append(" left join cibil_address_types_mapping am on am.address_type = ca.custaddrtype");
 		sql.append(" and am.segment_type = :segment_type");
 		sql.append(" left join cibil_address_types cat on cat.code = am.Code and cat.segment_type = am.segment_type");
-		sql.append(" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE  and sm.segment_type  = am.segment_type");
+		sql.append(
+				" left join cibil_states_mapping sm on sm.CPPROVINCE = ca.CUSTADDRPROVINCE  and sm.segment_type  = am.segment_type");
 		sql.append(" left join RMTProvinceVsCity pvc on pvc.PCCITY=ca.CustAddrcity");
 		sql.append(" where CUSTID = :CUSTID");
-		
+
 		if (!PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 			sql.append(" and custAddrPriority = :custAddrPriority");
 		}
@@ -381,7 +383,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			return jdbcTemplate.queryForObject(sql.toString(), parameterSource, rowMapper);
 
 		} catch (Exception e) {
-			throw new AppException("Please configure the CIBIL member details for "+bureauType+".");
+			throw new AppException("Please configure the CIBIL member details for " + bureauType + ".");
 		}
 
 	}

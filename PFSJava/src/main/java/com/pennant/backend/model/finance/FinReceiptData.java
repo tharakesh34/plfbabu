@@ -432,7 +432,7 @@ public class FinReceiptData {
 	public void setFCDueChanged(boolean isFCDueChanged) {
 		this.isFCDueChanged = isFCDueChanged;
 	}
-	
+
 	public boolean isEnquiry() {
 		return isEnquiry;
 	}
@@ -440,7 +440,7 @@ public class FinReceiptData {
 	public void setEnquiry(boolean isEnquiry) {
 		this.isEnquiry = isEnquiry;
 	}
-	
+
 	public boolean isCalReq() {
 		return isCalReq;
 	}

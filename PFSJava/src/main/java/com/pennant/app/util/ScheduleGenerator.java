@@ -674,9 +674,10 @@ public class ScheduleGenerator {
 					.containsKey(DateUtility.getDate(
 							DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
 							PennantConstants.DBDateFormat))) {
-				schedule = finScheduleData.getScheduleMap().get(DateUtility.getDate(
-						DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
-						PennantConstants.DBDateFormat));
+				schedule = finScheduleData.getScheduleMap()
+						.get(DateUtility.getDate(
+								DateUtility.format(financeMain.getGrcPeriodEndDate(), PennantConstants.DBDateFormat),
+								PennantConstants.DBDateFormat));
 			} else {
 
 				schedule = new FinanceScheduleDetail();
@@ -788,17 +789,17 @@ public class ScheduleGenerator {
 				Calendar calendar = frequencyDetails.getScheduleList().get(i);
 				FinanceScheduleDetail schedule = null;
 
-				if (finScheduleData.getScheduleMap().containsKey(DateUtility
-						.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)))) {
+				if (finScheduleData.getScheduleMap().containsKey(
+						DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)))) {
 
-					schedule = finScheduleData.getScheduleMap().get(DateUtility
-							.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+					schedule = finScheduleData.getScheduleMap().get(
+							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
 				} else {
 					schedule = new FinanceScheduleDetail();
-					schedule.setSchDate(DateUtility
-							.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
-					schedule.setDefSchdDate(DateUtility
-							.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+					schedule.setSchDate(
+							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
+					schedule.setDefSchdDate(
+							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
 				}
 
 				//SET various schedule flags
@@ -887,8 +888,7 @@ public class ScheduleGenerator {
 			schFrqList = new ArrayList<>();
 			for (int i = 0; i < frequencyDetails.getScheduleList().size(); i++) {
 				Calendar calendar = frequencyDetails.getScheduleList().get(i);
-				Date insDate = DateUtility
-						.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat));
+				Date insDate = DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat));
 
 				if (DateUtility.compare(finScheduleData.getFinanceMain().getFinStartDate(), insDate) == 0) {
 					continue;

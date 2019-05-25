@@ -562,7 +562,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		setComponentAccessType("LimitHeaderDialog_ExpiryDate", tempReadOnly, expiryDate, null, label_ExpiryDate);
 		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, reviewDate, null, label_ReviewDate);
 		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, active, null, label_ReviewDate);
-		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, validateMaturityDate, null, label_ReviewDate);
+		setComponentAccessType("LimitHeaderDialog_ReviewDate", tempReadOnly, validateMaturityDate, null,
+				label_ReviewDate);
 		setExtAccess("LimitHeaderDialog_LimitStructureCode", tempReadOnly, this.limitStructureCode, row4);
 		readOnlyComponent(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"), remarks);
 		btnDelete.setVisible(false);

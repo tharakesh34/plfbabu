@@ -398,7 +398,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.space_Code.setClass(PennantConstants.mandateSclass);
 		}
 		this.zipCode.setMaxlength(8);
-		
 
 		this.productCtg.setModuleName("VASProductCategory");
 		this.productCtg.setMandatoryStyle(true);
@@ -478,7 +477,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.windowTitle.setValue(Agencies.TVAGENCY.getValue());
 		} else if (module.equals(Agencies.PDAGENCY.getKey())) {
 			this.windowTitle.setValue(Agencies.PDAGENCY.getValue());
-		}else if (module.equals(Agencies.DMA.getKey())) {
+		} else if (module.equals(Agencies.DMA.getKey())) {
 			this.windowTitle.setValue(Agencies.DMA.getValue());
 		} else if (module.equals(Agencies.DSA.getKey())) {
 			this.windowTitle.setValue(Agencies.DSA.getValue());
@@ -890,7 +889,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			aVehicleDealer.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -1025,7 +1024,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			Object object = this.bankBranchCode.getAttribute("BankBranchID");
 			if (object != null) {
 				aVehicleDealer.setBankBranchID(Long.parseLong(object.toString()));
-			} 
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1068,9 +1067,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	private void setGSTValidation() {
 		Clients.clearWrongValue(this.taxNumber);
 		if (!this.taxNumber.getValue().substring(2, 12).equals(this.panNumber.getValue())) {
-			throw new WrongValueException(this.taxNumber,
-					Labels.getLabel("FIELD_NOT_VALID",
-							new String[] { Labels.getLabel("label_VehicleDealerDialog_TAXNumber.value") }));
+			throw new WrongValueException(this.taxNumber, Labels.getLabel("FIELD_NOT_VALID",
+					new String[] { Labels.getLabel("label_VehicleDealerDialog_TAXNumber.value") }));
 		}
 	}
 
@@ -1201,7 +1199,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.zipCode.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_ZipCode.value"),
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
-		
+
 		if (!this.productCtg.isReadonly() && this.productCtg.isVisible()) {
 			this.productCtg.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VehicleDealerDialog_ProductCtg.value"), null, true, true));
@@ -1398,7 +1396,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.sellerType.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_SellerType"));
 		this.cityName.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_dealerCity"));
 		this.zipCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_ZipCode"));
-		
+
 		this.productCtg.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
 		this.shortCode.setReadonly(isReadOnly("VehicleDealerDialog_VASM_Code"));
 		this.active.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_Active"));
@@ -1407,8 +1405,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.uidNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_UidNumber"));
 		this.taxNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
 		this.fromProvince.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_FromProvince"));
-		this.toProvince.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_ToProvince"));
-		this.accountNo.setReadonly(isReadOnly("VehicleDealerDialog_"+module+"_AccountNo"));
+		this.toProvince.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_ToProvince"));
+		this.accountNo.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_AccountNo"));
 		this.accountType.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_AccountType"));
 		this.bankBranchCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_BankBranchId"));
 		// this.code.setReadonly(false);

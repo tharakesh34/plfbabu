@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.Cluster;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,7 +65,6 @@ public class ClusterListModelItemRenderer implements ListitemRenderer<Cluster>, 
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, Cluster cluster, int count) throws Exception {
 

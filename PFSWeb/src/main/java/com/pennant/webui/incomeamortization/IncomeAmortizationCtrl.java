@@ -43,20 +43,20 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
-	private static final long			serialVersionUID	= 1L;
-	private static final Logger			logger				= Logger.getLogger(IncomeAmortizationCtrl.class);
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(IncomeAmortizationCtrl.class);
 
-	protected Window					window_IncomeAmortization;
-	protected Borderlayout				borderLayout_IncomeAmortization;
+	protected Window window_IncomeAmortization;
+	protected Borderlayout borderLayout_IncomeAmortization;
 
-	protected Tabbox 					tabbox;
-	protected Button					btn_Start;
-	protected Button					btnRefresh;
-	protected Combobox					monthEndDate;
-	protected Label						label_Status;
+	protected Tabbox tabbox;
+	protected Button btn_Start;
+	protected Button btnRefresh;
+	protected Combobox monthEndDate;
+	protected Label label_Status;
 
-	protected Timer						timer;
-	private boolean						isInitialise = false;
+	protected Timer timer;
+	private boolean isInitialise = false;
 
 	private List<ValueLabel> datesList = new ArrayList<>();
 	private transient IncomeAmortizationService incomeAmortizationService;
@@ -104,7 +104,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Start the process
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void onClick$btn_Start(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -154,6 +155,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * timer event
+	 * 
 	 * @param event
 	 */
 	public void onTimer$timer(Event event) {
@@ -258,7 +260,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	}
 
 	/**
-	 * Method for checking amortization status 
+	 * Method for checking amortization status
 	 */
 	private void doCheckAmzProcess(boolean isTimerEvent) {
 
@@ -297,7 +299,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * 
 	 * @param readOnly
 	 */
-	private void doReadOnly(boolean readOnly){
+	private void doReadOnly(boolean readOnly) {
 
 		this.btn_Start.setDisabled(readOnly);
 		this.btnRefresh.setDisabled(readOnly);
@@ -410,14 +412,14 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 		}
 		smallList.add(finRefList.subList(i, finRefList.size()));
 
-		for (List<String> list : smallList) {/*
-			List<FinanceMain> financeList = this.incomeAmortizationService.getFinMainListByFinRef(list);
-			finalFinList.addAll(financeList);
-
-		 */}
+		for (List<String> list : smallList) {
+			/*
+			 * List<FinanceMain> financeList = this.incomeAmortizationService.getFinMainListByFinRef(list);
+			 * finalFinList.addAll(financeList);
+			 * 
+			 */}
 		return finalFinList;
 	}
-
 
 	// getters / setters
 

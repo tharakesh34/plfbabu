@@ -112,7 +112,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 	protected Row collateralRow;
 	protected ExtendedCombobox collteralType;
-	
+
 	protected Row entityCodeRow;
 	private ExtendedCombobox entityCode;
 
@@ -172,19 +172,19 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			if (arguments.containsKey("finType")) {
 				this.finType = (String) arguments.get("finType");
 			}
-			
+
 			if (arguments.containsKey("waivedFlag")) {
 				this.waivedFlag = (boolean) arguments.get("waivedFlag");
 			}
-			
+
 			if (arguments.containsKey("financeDetail")) {
 				this.setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 			}
-			
+
 			if (arguments.containsKey("jointAccountDetails")) {
 				this.setJointAccountDetails((List<JointAccountDetail>) arguments.get("jointAccountDetails"));
 			}
-			
+
 			doSetFieldProperties();
 		} catch (Exception e) {
 			closeDialog();
@@ -333,7 +333,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			FinanceMain financeMain = (FinanceMain) this.loanType.getAttribute("financeMain");
 			vasRecording.setEntityCode(financeMain.getEntityCode());
 			vasRecording.setEntityDesc(financeMain.getLovDescEntityCode());
-		
+
 		} else if (isFinanceProcess && getFinanceDetail() != null) {
 			vasRecording.setEntityCode(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityCode());
 			vasRecording.setEntityDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityDesc());
@@ -639,6 +639,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 
 		logger.debug("Leaving " + event.toString());
 	}
+
 	/**
 	 * When user clicks on button "loanType" button
 	 * 

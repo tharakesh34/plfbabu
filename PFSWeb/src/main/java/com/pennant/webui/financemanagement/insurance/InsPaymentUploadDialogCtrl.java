@@ -62,22 +62,22 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	private static final Logger logger = Logger.getLogger(InsPaymentUploadDialogCtrl.class);
 
 	protected Window window_InsPaymentUploadDialog;
-	
+
 	protected ExtendedCombobox entityCode;
 	protected ExtendedCombobox companyCode;
 	protected Textbox fileName;
-	
+
 	protected Intbox noOfInsurances;
 	protected Checkbox adjustReceivables;
 	protected Intbox noOfPayments;
 	protected Intbox noOfReceivables;
 	protected CurrencyBox totalPayableAmt;
 	protected CurrencyBox totalReceviableAmt;
-	
+
 	protected CurrencyBox paymentAmount;
 	protected Datebox paymentDate;
 	protected ExtendedCombobox partnerBank;
-	
+
 	protected Textbox ifscCode;
 	protected Textbox micrCode;
 	protected Textbox bankBranch;
@@ -90,13 +90,13 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	protected Label cityName;
 	protected Textbox accountHolderName;
 	protected Textbox phoneNumber;
-	
+
 	protected Timer timer;
 	protected Rows panelRows;
 	protected Button btnUpload;
 	protected Button btnImport;
 	protected Button btnValidate;
-	
+
 	private Configuration config = null;
 	private Media media = null;
 	private DataEngineStatus INSURANCE_PAYMENT_UPLOAD = new DataEngineStatus("INSURANCE_PAYMENT_UPLOAD");
@@ -104,9 +104,10 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	private InsurancePaymentInstructions paymentInstructionsFromFile = null;
 	private transient InsPaymentUploadListCtrl insPaymentUploadListCtrl;
 	private boolean validate = false;
-	
+
 	private DataEngineConfig dataEngineConfig;
 	private InsuranceFileImportService insuranceFileImportService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -127,8 +128,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -154,10 +154,10 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			this.paymentInstructions.setBefImage(insPaymentUpload);
 
 			doSetFieldProperties();
-			
+
 			config = dataEngineConfig.getConfigurationByName("INSURANCE_PAYMENT_UPLOAD");
 			doFillPanel(config, INSURANCE_PAYMENT_UPLOAD);
-			
+
 			doCheckRights();
 			doShowDialog(this.paymentInstructions);
 		} catch (Exception e) {
@@ -187,7 +187,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		this.companyCode.setValueType(DataType.LONG);
 		this.companyCode.setValidateColumns(new String[] { "DealerId" });
 		this.companyCode.setButtonDisabled(true);
-		
+
 		this.partnerBank.setMandatoryStyle(true);
 		this.partnerBank.setMaxlength(LengthConstants.LEN_MASTER_CODE);
 		this.partnerBank.setModuleName("PartnerBank");
@@ -197,7 +197,6 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
 		this.partnerBank.setButtonDisabled(true);
 
-		
 		this.totalPayableAmt.setProperties(false, getCcyFormat());
 		this.totalReceviableAmt.setProperties(false, getCcyFormat());
 		this.paymentAmount.setProperties(false, getCcyFormat());
@@ -205,7 +204,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		this.paymentAmount.setReadonly(true);
 		this.totalPayableAmt.setReadonly(true);
 		this.totalReceviableAmt.setReadonly(true);
-		
+
 		this.totalPayableAmt.setTextBoxWidth(200);
 		this.totalReceviableAmt.setTextBoxWidth(200);
 		this.paymentDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -293,7 +292,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			this.btnCtrl.setInitNew();
 			this.entityCode.focus();
 		}
-		
+
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
@@ -303,7 +302,6 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
@@ -341,8 +339,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -354,14 +351,12 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 
 		logger.debug(Literal.LEAVING);
 	}
- 
-	
-  /****************File Reading and Browsing **********************/
+
+	/**************** File Reading and Browsing **********************/
 	/**
-	 * This Method/Event for getting the uploaded document should be comma
-	 * separated values and then read the document and setting the values to the
-	 * Lead VO and added those vos to the List and it also shows the information
-	 * about where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
+	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
+	 * where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -385,7 +380,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		validate = false;
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onClick$btnImport(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -402,18 +397,19 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 
 	private void importFile() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		
-		ProcessData processData = new ProcessData(getUserWorkspace().getUserDetails().getLoginId(), INSURANCE_PAYMENT_UPLOAD, Long.valueOf(this.companyCode.getValue()), this.entityCode.getValue(),this);
+
+		ProcessData processData = new ProcessData(getUserWorkspace().getUserDetails().getLoginId(),
+				INSURANCE_PAYMENT_UPLOAD, Long.valueOf(this.companyCode.getValue()), this.entityCode.getValue(), this);
 		this.btnSave.setDisabled(true);
 		this.btnImport.setDisabled(true);
 		this.btnValidate.setDisabled(true);
 		Thread thread = new Thread(processData);
 		thread.start();
 		Thread.sleep(1000);
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public class ProcessData extends Thread {
 		private long userId;
 		private DataEngineStatus status;
@@ -421,7 +417,8 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		private String entityCode;
 		private InsPaymentUploadDialogCtrl dialogCtrl;
 
-		public ProcessData(long userId, DataEngineStatus status, long providerId, String entityCode, InsPaymentUploadDialogCtrl dialogCtrl) {
+		public ProcessData(long userId, DataEngineStatus status, long providerId, String entityCode,
+				InsPaymentUploadDialogCtrl dialogCtrl) {
 			this.userId = userId;
 			this.status = status;
 			this.entityCode = entityCode;
@@ -432,14 +429,15 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		@Override
 		public void run() {
 			try {
-				getInsuranceFileImportService().processPaymentUploadsFile(userId, status, getMedia(), providerId, entityCode,  dialogCtrl);
+				getInsuranceFileImportService().processPaymentUploadsFile(userId, status, getMedia(), providerId,
+						entityCode, dialogCtrl);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				MessageUtil.showError(e.getMessage());
 			}
 		}
 	}
-	
+
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
 		ProcessExecution pannel = new ProcessExecution();
 		pannel.setId(config.getName());
@@ -476,7 +474,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			}
 		}
 	}
-	
+
 	public void onTimer$timer(Event event) {
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
@@ -502,8 +500,9 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			}
 		}
 	}
-	/****************File Reading and Browsing **********************/
-	
+
+	/**************** File Reading and Browsing **********************/
+
 	public void onClick$btnValidate(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		doWriteComponentsToBean(new InsurancePaymentInstructions(), false);
@@ -511,15 +510,15 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		validate = true;
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Setting the Components data from From file import
 	 */
 	private void setDataFromFile() {
 		InsurancePaymentInstructions instructions = getPaymentInstructionsFromFile();
 		if (instructions != null) {
-			
-			LinkedHashMap<Long, String>  adviseRefMap= 	instructions.getAdviseRefMap();
+
+			LinkedHashMap<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 			if (adviseRefMap.size() > 0) {
 				instructions = getInsuranceFileImportService().getManualAdvises(instructions);
 			}
@@ -537,7 +536,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			this.paymentInstructions.setVasRecordindList(instructions.getVasRecordindList());
 		}
 	}
-	
+
 	public void onFulfill$companyCode(Event event) throws InterruptedException {
 		this.companyCode.setConstraint("");
 		this.companyCode.clearErrorMessage();
@@ -555,7 +554,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 				this.companyCode.setValue(String.valueOf(details.getDealerId()));
 				this.companyCode.setDescription(details.getDealerName());
 				setVasProviderAcctDetails(details.getDealerId());
-			}   else {
+			} else {
 				clearVasProviderAcctDetails();
 				this.accountNumber.setValue("");
 				this.paymentMode.setValue("");
@@ -563,7 +562,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		}
 		logger.debug("Leaving " + event.toString());
 	}
-	
+
 	private void clearVasProviderAcctDetails() {
 		this.ifscCode.setValue("");
 		this.micrCode.setValue("");
@@ -579,10 +578,13 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	}
 
 	private void setVasProviderAcctDetails(long providerId) {
-		VASProviderAccDetail providerAccDetail = getInsuranceFileImportService().getVASProviderAccDetByPRoviderId(providerId, this.entityCode.getValue());
+		VASProviderAccDetail providerAccDetail = getInsuranceFileImportService()
+				.getVASProviderAccDetByPRoviderId(providerId, this.entityCode.getValue());
 		if (providerAccDetail != null) {
-			BankBranch bankBranch = getInsuranceFileImportService().getBankBranchById(providerAccDetail.getBankBranchID());
-			VehicleDealer vehicleDealer = getInsuranceFileImportService().getProviderDetails(providerAccDetail.getProviderId());
+			BankBranch bankBranch = getInsuranceFileImportService()
+					.getBankBranchById(providerAccDetail.getBankBranchID());
+			VehicleDealer vehicleDealer = getInsuranceFileImportService()
+					.getProviderDetails(providerAccDetail.getProviderId());
 			this.adjustReceivables.setChecked(providerAccDetail.isReceivableAdjustment());
 			if (bankBranch != null) {
 				this.ifscCode.setValue(bankBranch.getIFSC());
@@ -611,7 +613,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		}
 
 	}
-	
+
 	/**
 	 * Based On Entity field,Partner Bank will be Filtered
 	 * 
@@ -653,7 +655,6 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		logger.debug("Leaving");
 	}
 
-
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -673,8 +674,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		logger.debug(Literal.LEAVING);
 	}
 
-
-	public void doWriteComponentsToBean(InsurancePaymentInstructions instructions,boolean isSave) {
+	public void doWriteComponentsToBean(InsurancePaymentInstructions instructions, boolean isSave) {
 		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
@@ -683,7 +683,8 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (DateUtility.compare(this.paymentDate.getValue(), DateUtility.getAppDate()) < 0 && !paymentDate.isDisabled()) {
+			if (DateUtility.compare(this.paymentDate.getValue(), DateUtility.getAppDate()) < 0
+					&& !paymentDate.isDisabled()) {
 				throw new WrongValueException(this.paymentDate,
 						"Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
 			}
@@ -691,7 +692,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			instructions.setPaymentType(this.paymentMode.getValue());
 		} catch (WrongValueException we) {
@@ -727,52 +728,60 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			// noOfInsurances
 			try {
 				if (this.noOfInsurances.intValue() <= 0) {
-					throw new WrongValueException(this.noOfInsurances, "Number Of Insurances should be greater than 0. Please import the file. ");
+					throw new WrongValueException(this.noOfInsurances,
+							"Number Of Insurances should be greater than 0. Please import the file. ");
 				}
 				instructions.setNoOfInsurances(this.noOfInsurances.intValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			// noOfPayments
 			try {
 				if (this.noOfPayments.intValue() <= 0) {
-					throw new WrongValueException(this.noOfPayments, "Number Of Payments should be greater than 0. Please import the file. ");
+					throw new WrongValueException(this.noOfPayments,
+							"Number Of Payments should be greater than 0. Please import the file. ");
 				}
 				instructions.setNoOfPayments(this.noOfPayments.intValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			// totalPayableAmt
 			try {
 				if (this.totalPayableAmt.getActualValue().compareTo(BigDecimal.ZERO) <= 0) {
-					throw new WrongValueException(this.totalPayableAmt, "Total Payble amount should be greater than 0. Please import the file. ");
+					throw new WrongValueException(this.totalPayableAmt,
+							"Total Payble amount should be greater than 0. Please import the file. ");
 				}
-				instructions.setPayableAmount(PennantAppUtil.unFormateAmount(this.totalPayableAmt.getActualValue(), getCcyFormat()));
+				instructions.setPayableAmount(
+						PennantAppUtil.unFormateAmount(this.totalPayableAmt.getActualValue(), getCcyFormat()));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			// paymentAmount
 			try {
-				if ((this.noOfReceivables.intValue() < 0) && (this.paymentAmount.getActualValue().compareTo(BigDecimal.ZERO) <= 0)) {
-					throw new WrongValueException(this.paymentAmount, " Payble amount should be greater than 0. Please import the file. ");
+				if ((this.noOfReceivables.intValue() < 0)
+						&& (this.paymentAmount.getActualValue().compareTo(BigDecimal.ZERO) <= 0)) {
+					throw new WrongValueException(this.paymentAmount,
+							" Payble amount should be greater than 0. Please import the file. ");
 				}
-				instructions.setPaymentAmount(PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), getCcyFormat()));
+				instructions.setPaymentAmount(
+						PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), getCcyFormat()));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			// total Receviable Amt
-			instructions.setReceivableAmount(PennantAppUtil.unFormateAmount(this.totalReceviableAmt.getActualValue(), getCcyFormat()));
+			instructions.setReceivableAmount(
+					PennantAppUtil.unFormateAmount(this.totalReceviableAmt.getActualValue(), getCcyFormat()));
 			instructions.setNoOfReceivables(this.noOfReceivables.intValue());
 			instructions.setAdjustedReceivable(this.adjustReceivables.isChecked());
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 		if (!wve.isEmpty()) {
@@ -790,20 +799,21 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (!validate) {
 			MessageUtil.showError("Please click on validate button and validate.");
 			this.btnValidate.setFocus(true);
 			return;
 		}
-		
+
 		final InsurancePaymentInstructions paymentInstructions = new InsurancePaymentInstructions();
 		BeanUtils.copyProperties(this.paymentInstructions, paymentInstructions);
-		
+
 		doWriteComponentsToBean(paymentInstructions, true);
-		
+
 		if (paymentInstructions.getPayableAmount().compareTo(paymentInstructions.getReceivableAmount()) == 0) {
-			MessageUtil.showMessage("Total Payble amount and Total Receivable amounts are equal, So there is no inaurance payment download.");
+			MessageUtil.showMessage(
+					"Total Payble amount and Total Receivable amounts are equal, So there is no inaurance payment download.");
 		}
 
 		paymentInstructions.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
@@ -827,7 +837,7 @@ public class InsPaymentUploadDialogCtrl extends GFCBaseCtrl<InsurancePaymentInst
 	private int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
-	
+
 	public InsuranceFileImportService getInsuranceFileImportService() {
 		return insuranceFileImportService;
 	}

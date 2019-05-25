@@ -16,5 +16,5 @@ public interface MerchantDetailsService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
-	
+
 }

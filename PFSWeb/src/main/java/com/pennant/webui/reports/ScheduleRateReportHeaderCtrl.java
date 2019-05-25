@@ -83,8 +83,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Reports/ScheduleRateReportHeaderDialogCtrl.zul file.
+ * This is the controller class for the /WEB-INF/pages/Reports/ScheduleRateReportHeaderDialogCtrl.zul file.
  */
 public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReportHeader> {
 	private static final long serialVersionUID = 4678287540046204660L;
@@ -118,7 +117,6 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 	public void onCreate$window_ScheduleRateReportHeaderDialogCtrl(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		
 		// Set the page level components.
 		setPageComponents(window_ScheduleRateReportHeaderDialogCtrl);
 
@@ -184,15 +182,16 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		doSetValidation();
 
 		doWriteComponentsToBean(this.scheduleRateReportHeader);
-		
-		ScheduleRateReportHeader header = prepareSchdRateReportData(this.scheduleRateReportHeader,this.finReference.getValidatedValue(), 
-				this.startDate.getValue(), this.endDate.getValue());
+
+		ScheduleRateReportHeader header = prepareSchdRateReportData(this.scheduleRateReportHeader,
+				this.finReference.getValidatedValue(), this.startDate.getValue(), this.endDate.getValue());
 
 		List<Object> list = new ArrayList<Object>();
 		list.add(header.getRateReports());
 
 		try {
-			ReportGenerationUtil.generateReport("FINENQ_ScheduleRateReport", header, list, getUserWorkspace().getLoggedInUser().getFullName(), this.excel.isChecked());
+			ReportGenerationUtil.generateReport("FINENQ_ScheduleRateReport", header, list,
+					getUserWorkspace().getLoggedInUser().getFullName(), this.excel.isChecked());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -269,8 +268,8 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		logger.debug(Literal.LEAVING);
 	}
 
-	private ScheduleRateReportHeader prepareSchdRateReportData(ScheduleRateReportHeader rateReportHeader, String finReference,
-			Date startDate, Date endDate) {
+	private ScheduleRateReportHeader prepareSchdRateReportData(ScheduleRateReportHeader rateReportHeader,
+			String finReference, Date startDate, Date endDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = this.financeDetailService.getFinanceMainForRateReport(finReference, "_AView");
@@ -282,12 +281,13 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		rateReportHeader.setFinReference(financeMain.getFinReference());
 		rateReportHeader
 				.setDisbursedAmt(PennantApplicationUtil.amountFormate(financeMain.getFinCurrAssetValue(), formatter));
-		rateReportHeader.setInstDaysBasis(PennantStaticListUtil.getlabelDesc(financeMain.getProfitDaysBasis(), PennantStaticListUtil.getProfitDaysBasis()));
+		rateReportHeader.setInstDaysBasis(PennantStaticListUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+				PennantStaticListUtil.getProfitDaysBasis()));
 
 		// Schedule Details
 		List<FinanceScheduleDetail> scheduleDetails = this.financeDetailService
 				.getFinSchdDetailsForRateReport(finReference);
-		
+
 		scheduleDetails = sortSchdDetails(scheduleDetails);
 
 		List<ScheduleRateReport> rateReportsList = new ArrayList<>();
@@ -303,10 +303,10 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
 			prvSchd = scheduleDetails.get(i - 1);
-			if (DateUtility.compare(curSchd.getSchDate(), startDate) < 0){
+			if (DateUtility.compare(curSchd.getSchDate(), startDate) < 0) {
 				continue;
 			}
-			if((DateUtility.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)){
+			if ((DateUtility.compare(curSchd.getSchDate(), endDate) > 0 && endDateCompleted)) {
 				break;
 			}
 
@@ -360,13 +360,13 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 					+ rateReport.getStartDate() + "/t" + rateReport.getEndDate() + "/t" + rateReport.getDays() + "/t"
 					+ rateReport.getRate() + "/t" + rateReport.getCalcPft());
 		}
-		
+
 		rateReportHeader.setRateReports(rateReportsList);
 
 		logger.debug(Literal.LEAVING);
 		return rateReportHeader;
 	}
-	
+
 	public static List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {
 
 		if (financeScheduleDetail != null && financeScheduleDetail.size() > 0) {
@@ -395,8 +395,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {

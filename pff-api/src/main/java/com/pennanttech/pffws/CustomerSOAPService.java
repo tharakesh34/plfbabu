@@ -163,10 +163,10 @@ public interface CustomerSOAPService {
 
 	public WSReturnStatus deleteCustomerDocument(
 			@WebParam(name = "customer") CustomerDocumentDetail customerDocumentDetail) throws ServiceException;
-	
+
 	@WebResult(name = "customer")
 	public AgreementData getCustomerAgreement(AgreementRequest agrRequest) throws ServiceException;
-	
+
 	@WebResult(name = "customer")
 	public ProspectCustomerDetails getDedupCustomer(
 			@WebParam(name = "customerDetails") ProspectCustomerDetails prospectCustomerDetails);

@@ -254,8 +254,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 	public void saveLegalDetails(FinanceDetail financeDetail, Object apiHeader) {
 
 		List<CollateralAssignment> collateralAssignmentList = financeDetail.getCollateralAssignmentList();
-		List<LegalDetail> legalDetails=financeDetail.getLegalDetailsList();
-		
+		List<LegalDetail> legalDetails = financeDetail.getLegalDetailsList();
+
 		if (CollectionUtils.isEmpty(collateralAssignmentList)) {
 			return;
 		}
@@ -302,18 +302,18 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 								legal.setNewRecord(true);
 								doSetLegalProperties(legal);
 								long legalId = Long.valueOf(getLegalDetailDAO().save(legal, TableType.TEMP_TAB));
-								
+
 								//Legal Applicant Details
 								if (legal.getApplicantDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getApplicantDetailList())) {
 									for (LegalApplicantDetail applicantDetail : legal.getApplicantDetailList()) {
-										if(applicantDetail.isNew()){
+										if (applicantDetail.isNew()) {
 											applicantDetail.setLegalId(legalId);
 											legalApplicantDetailDAO.save(applicantDetail, TableType.TEMP_TAB);
 										}
 									}
 								}
-								
+
 								//Legal Property Details
 								if (legal.getPropertyDetailList() != null
 										&& !CollectionUtils.isEmpty(legal.getPropertyDetailList())) {
@@ -324,7 +324,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 										}
 									}
 								}
-								
+
 								//Legal Document Details
 								if (legal.getDocumentList() != null
 										&& !CollectionUtils.isEmpty(legal.getDocumentList())) {
@@ -1259,8 +1259,8 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			int seqNum = 0;
 			for (LegalDocument legalDocument : documentList) {
 				if (legalDocument.getDocumentDate() != null) {
-					legalDocument.setDocumentDateStr(DateUtility.format(legalDocument.getDocumentDate(),
-							DateFormat.SHORT_DATE.getPattern()));
+					legalDocument.setDocumentDateStr(
+							DateUtility.format(legalDocument.getDocumentDate(), DateFormat.SHORT_DATE.getPattern()));
 					legalDocument.setDocumentAcceptedName(PennantStaticListUtil.getlabelDesc(
 							legalDocument.getDocumentAccepted(), PennantStaticListUtil.getDocumentAcceptedList()));
 					legalDocument.setDocumentTypeApproveName(PennantStaticListUtil.getlabelDesc(
@@ -1988,7 +1988,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 			queryDetail.setRaisedOn(new Timestamp(System.currentTimeMillis()));
 			queryDetail.setNewRecord(true);
 
-			List<DocumentDetails>  documentDetails=aLegalDetail.getQueryDetail().getDocumentDetailsList();
+			List<DocumentDetails> documentDetails = aLegalDetail.getQueryDetail().getDocumentDetailsList();
 			if (documentDetails != null && !CollectionUtils.isEmpty(documentDetails)) {
 				for (DocumentDetails documen : documentDetails) {
 					documen.setLastMntBy(aLegalDetail.getLastMntBy());
@@ -2021,6 +2021,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		}
 
 	}
+
 	@Override
 	public void deleteList(String finReference, TableType tempTab) {
 		this.legalDetailDAO.delete(finReference, tempTab);

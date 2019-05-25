@@ -147,9 +147,10 @@ public class LatePayInterestService extends ServiceHelper {
 			Date dateNext = odcrNext.getMovementDate();
 
 			BigDecimal penaltyRate = getPenaltyRate(finScheduleDetails, dateCur, lpiMargin);
-			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(), financeMain.getProfitDaysBasis(),
-					penaltyRate);
-			penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(), financeMain.getRoundingTarget());
+			BigDecimal penalty = CalculationUtil.calInterest(dateCur, dateNext, odcrCur.getFinCurODPri(),
+					financeMain.getProfitDaysBasis(), penaltyRate);
+			penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(),
+					financeMain.getRoundingTarget());
 
 			odcrCur.setODDays(DateUtility.getDaysBetween(dateCur, dateNext));
 			odcrCur.setPenaltyAmtPerc(penaltyRate);
@@ -159,7 +160,8 @@ public class LatePayInterestService extends ServiceHelper {
 			fod.setLPIAmt(fod.getLPIAmt().add(penalty));
 		}
 
-		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), financeMain.getCalRoundingMode(), financeMain.getRoundingTarget()));
+		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), financeMain.getCalRoundingMode(),
+				financeMain.getRoundingTarget()));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 
 		//if the record added for calculation it should not be displayed in screen.

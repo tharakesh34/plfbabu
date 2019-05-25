@@ -1200,7 +1200,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getFinanceCancellationService().doApprove(auditHeader,true);
+						auditHeader = getFinanceCancellationService().doApprove(auditHeader, true);
 
 						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;

@@ -149,7 +149,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	@Autowired
 	private transient CustomerDetailsService customerDetailsService;
 	private boolean fromLoanOrg;
-	
+
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
 
@@ -205,7 +205,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 			PersonalDiscussion personalDiscussion = new PersonalDiscussion();
 			BeanUtils.copyProperties(this.personalDiscussion, personalDiscussion);
 			this.personalDiscussion.setBefImage(personalDiscussion);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.personalDiscussion.isWorkflow(), this.personalDiscussion.getWorkflowId(),
 					this.personalDiscussion.getNextTaskId());

@@ -1627,8 +1627,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		//		}
 
 		if (this.rowPartnerBank.isVisible()) {
-			this.partnerBank.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
+			this.partnerBank.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_MandateDialog_PartnerBank.value"), null, true, false));
 		}
 	}
 

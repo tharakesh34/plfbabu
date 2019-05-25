@@ -469,11 +469,11 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		fillComboBox(this.screenCode, aFinanceWorkFlow.getScreenCode(), PennantStaticListUtil.getScreenCodes(), "");
 		fillComboBox(this.finEvent, aFinanceWorkFlow.getFinEvent(), sortFinanceEvents(list), "");
 		this.workFlowType.setValue(aFinanceWorkFlow.getWorkFlowType());
-	
+
 		if (StringUtils.equals(moduleName, PennantConstants.WORFLOW_MODULE_VAS)) {
 			fillComboBox(this.finEvent, aFinanceWorkFlow.getFinEvent(), PennantStaticListUtil.getVasEvents(), "");
 		}
-	
+
 		if (aFinanceWorkFlow.isNewRecord()) {
 			this.finType.setDescription("");
 			this.workFlowType.setDescription("");

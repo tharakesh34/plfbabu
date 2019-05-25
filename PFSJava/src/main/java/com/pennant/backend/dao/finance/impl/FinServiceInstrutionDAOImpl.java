@@ -63,7 +63,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			throw e;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param finServiceInstruction
@@ -305,17 +305,17 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	@Override
 	public List<LMSServiceLog> getLMSServiceLogList(String notificationFlag) {
 		logger.debug(Literal.ENTERING);
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		
+
 		StringBuilder sql = new StringBuilder("Select Id,Event, FinReference, OldRate, NewRate, EffectiveDate,");
 		sql.append(" NotificationFlag From LMSServiceLog Where  NotificationFlag = :NotificationFlag ");
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		source.addValue("NotificationFlag", notificationFlag);
-		
+
 		RowMapper<LMSServiceLog> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(LMSServiceLog.class);
-		
+
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}

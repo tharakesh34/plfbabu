@@ -533,7 +533,7 @@ public class CurrencyBox extends Hbox {
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void setBalUnvisible(boolean isUnVisible, boolean setEnd) {
 		logger.debug("Entering");
 

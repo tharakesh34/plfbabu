@@ -179,16 +179,16 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		FinanceDetail financeDetail = provision.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		long serviceUID = Long.MIN_VALUE;		
+		long serviceUID = Long.MIN_VALUE;
 		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst= new FinServiceInstruction();
-			finServInst.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());		
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
 				if (serviceUID == Long.MIN_VALUE) {
 					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
@@ -224,7 +224,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain,FinanceConstants.FINSER_EVENT_PROVISION,serviceUID);
+			details = processingDocumentDetailsList(details, tableType, financeMain,
+					FinanceConstants.FINSER_EVENT_PROVISION, serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -336,7 +337,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		FinanceDetail financeDetail = provision.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData()
+				.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 		//Provision Postings Process
@@ -356,7 +358,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeMain,FinanceConstants.FINSER_EVENT_PROVISION,serviceUID);
+			details = processingDocumentDetailsList(details, "", financeMain, FinanceConstants.FINSER_EVENT_PROVISION,
+					serviceUID);
 			auditHeader.setAuditDetails(details);
 		}
 
@@ -420,7 +423,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		FinanceMain financeMain = provision.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		String tranType = PennantConstants.TRAN_DEL;
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData()
+				.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 		// Cancel All Transactions done by Finance Reference
@@ -437,8 +441,9 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = provision.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details,  "_Temp",
-					provision.getFinanceDetail().getFinScheduleData().getFinanceMain(),provision.getFinanceDetail().getModuleDefiner(),serviceUID);
+			details = processingDocumentDetailsList(details, "_Temp",
+					provision.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					provision.getFinanceDetail().getModuleDefiner(), serviceUID);
 			auditHeader.setAuditDetails(details);
 			listDocDeletion(provision.getFinanceDetail(), "_Temp");
 		}

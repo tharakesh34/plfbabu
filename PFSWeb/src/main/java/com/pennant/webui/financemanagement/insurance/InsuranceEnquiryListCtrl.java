@@ -113,7 +113,7 @@ public class InsuranceEnquiryListCtrl extends GFCBaseListCtrl<InsuranceDetails> 
 		filters[0] = new Filter("ProductCtg", VASConsatnts.VAS_CATEGORY_VASI, Filter.OP_EQUAL);
 		this.searchObject.addFilterAnd(filters);
 	}
-	
+
 	public InsuranceEnquiryListCtrl() {
 		super();
 	}

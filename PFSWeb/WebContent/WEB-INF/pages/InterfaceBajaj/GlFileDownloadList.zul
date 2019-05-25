@@ -25,102 +25,92 @@
 				</hbox>
 			</div>
 
-		<borderlayout id="borderLayout_GlFileDownloadList">
-			<north border="none" />
-			<center border="none">
-				<div>
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
-						<columns>
+			<borderlayout id="borderLayout_GlFileDownloadList">
+				<north border="none" />
+				<center border="none">
+					<div>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding-left:5px; padding-right:5px;">
+							<columns>
 								<column width="20%" />
 								<column width="30%" />
 								<column width="20%" />
 								<column width="30%" />
 							</columns>
-						<rows>
-						   <row>
-								<label id="label_EntityCode"
-									value="${c:l('label_MandateDialog_EntityCode.value')}" />
-								<extendedcombobox id="entityCode" />
-								
-								<label id="id_dimension" value="${c:l('label_GLFileList_Dimension.value')}" />
-								<hbox spacing="2px" id="hbox_Dimension">
-									<space spacing="2px" sclass="mandatory"/>
-									<combobox id="dimention" width="200px" readonly="true" />
-								</hbox>
-							</row>
+							<rows>
+								<row>
+									<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
+									<extendedcombobox id="entityCode" />
 
-						   <row id="row_State" visible="false">
-						   	<label id="label_StateCode"
-						   		value="${c:l('label_TrailBalance_StateCode.value')}" />
-						   	<hbox id="hbox_collateralType">
-						   		<space id="space_stateType"
-						   			spacing="2px" sclass="mandatory" />
-						   		<textbox id="stateCode" width="175px"
-						   			readonly="true" />
-						   		<button id="btnSearchState"
-						   			image="/images/icons/LOVSearch.png" />
-						   	</hbox>
-						   </row>
-						   <row id="row_DateSelection">
-								<label
-									value="${c:l('label_TrailBalance_FromDate.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<datebox id="fromdate"
-										width="130px" />
-								</hbox>
+									<label id="id_dimension" value="${c:l('label_GLFileList_Dimension.value')}" />
+									<hbox spacing="2px" id="hbox_Dimension">
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="dimention" width="200px" readonly="true" />
+									</hbox>
+								</row>
 
-								<label
-									value="${c:l('label_TrailBalance_ToDate.value')}" />
-								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<datebox id="toDate" width="130px" />
-								</hbox>
-							</row>
+								<row id="row_State" visible="false">
+									<label id="label_StateCode" value="${c:l('label_TrailBalance_StateCode.value')}" />
+									<hbox id="hbox_collateralType">
+										<space id="space_stateType" spacing="2px" sclass="mandatory" />
+										<textbox id="stateCode" width="175px" readonly="true" />
+										<button id="btnSearchState" image="/images/icons/LOVSearch.png" />
+									</hbox>
+								</row>
+								<row id="row_DateSelection">
+									<label value="${c:l('label_TrailBalance_FromDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="fromdate" width="130px" />
+									</hbox>
+
+									<label value="${c:l('label_TrailBalance_ToDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="toDate" width="130px" />
+									</hbox>
+								</row>
 
 
-							<row id="row_MonthSelection">
-								<label value="${c:l('label_GLFileList_Months.value')}" />
-								<hbox spacing="2px">
-									<space spacing="2px" sclass="mandatory"/>
-									<combobox id="months" width="200px" readonly="true" />
-								</hbox>
-							</row>
-							
+								<row id="row_MonthSelection">
+									<label value="${c:l('label_GLFileList_Months.value')}" />
+									<hbox spacing="2px">
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="months" width="200px" readonly="true" />
+									</hbox>
+								</row>
 
-						</rows>
-					</grid>
-					<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true" fixedLayout="true">
-						<listhead sizable="true">
-							<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}"  hflex="min" />
-							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_ProcessedDate.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_Downlaod.label')}"  hflex="min" />
-						</listhead>
-					</listbox>
-					
-					<listbox id="listBoxFileDownloadTrailBalance" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-						height="100%" multiple="false" sizedByContent="true" span="true" fixedLayout="true">
-						<listhead sizable="true">
-							<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_UserName.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_FromDate.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_ToDate.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_ExtractionDate.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
-							<listheader label="${c:l('listheader_Downlaod.label')}"  hflex="min" />
-						</listhead>
-					</listbox>
-				</div>
-			</center>
-			<south border="none">
-				<paging id="pagingFileDownloadList" />
-			</south>
-		</borderlayout>
+
+							</rows>
+						</grid>
+						<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%"
+							multiple="false" sizedByContent="true" span="true" fixedLayout="true">
+							<listhead sizable="true">
+								<listheader label="${c:l('listheader_DisbursementFileDownloadName.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_ProcessedDate.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_Downlaod.label')}" hflex="min" />
+							</listhead>
+						</listbox>
+
+						<listbox id="listBoxFileDownloadTrailBalance" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
+							height="100%" multiple="false" sizedByContent="true" span="true" fixedLayout="true">
+							<listhead sizable="true">
+								<listheader label="${c:l('listheader_FileName.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_UserName.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_FromDate.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_ToDate.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_ExtractionDate.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_Status.label')}" hflex="min" />
+								<listheader label="${c:l('listheader_Downlaod.label')}" hflex="min" />
+							</listhead>
+						</listbox>
+					</div>
+				</center>
+				<south border="none">
+					<paging id="pagingFileDownloadList" />
+				</south>
+			</borderlayout>
+		</window>
 	</window>
-</window>
 </zk>

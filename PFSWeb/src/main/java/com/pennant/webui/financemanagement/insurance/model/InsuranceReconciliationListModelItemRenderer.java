@@ -14,6 +14,7 @@ public class InsuranceReconciliationListModelItemRenderer implements ListitemRen
 	public InsuranceReconciliationListModelItemRenderer() {
 		super();
 	}
+
 	private static final long serialVersionUID = -4499074360503828269L;
 
 	@Override

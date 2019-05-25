@@ -352,22 +352,26 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
-	
+
 	Map<String, Object> getGSTDataMap(String finReference);
-	
+
 	Map<String, Object> getGSTDataMap(long custId);
 
 	boolean isFinActive(String finReference);
-	
+
 	String getFinanceMainByRcdMaintenance(String finReference, String type);
 
 	void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize);
-	
+
 	// Income Amortization
 	FinanceMain getFinanceForIncomeAMZ(String finReference);
+
 	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
+
 	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
+
 	FinanceMain getFinanceMainByOldFinReference(String oldFinReference);
+
 	// Calculate Average POS
 	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
 }

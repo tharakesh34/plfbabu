@@ -104,7 +104,7 @@ public class ScriptValidationResultCtrl extends GFCBaseCtrl<ScriptError> {
 		} else {
 			this.window_ScriptValidationResult.setHeight(variables.size() * 55 + "px");
 		}
-		
+
 		this.window_ScriptValidationResult.doModal();
 		logger.debug("Leaving" + event.toString());
 	}

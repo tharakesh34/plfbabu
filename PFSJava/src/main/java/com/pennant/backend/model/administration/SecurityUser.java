@@ -110,7 +110,7 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private List<ReportingManager> reportingManagersList;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String lovDescFirstName;
-	
+
 	private boolean accessToAllBranches;
 
 	public Set<String> getExcludeFields() {

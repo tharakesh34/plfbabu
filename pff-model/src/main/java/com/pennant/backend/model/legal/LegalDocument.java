@@ -106,7 +106,7 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	private String documentDateStr;
 	private String documentAcceptedName;
 	private String documentTypeApproveName;
-	
+
 	// --- Document Tracking fields -----//
 	@XmlElement(name = "docHolder")
 	private String documentHolderProperty;
@@ -384,6 +384,5 @@ public class LegalDocument extends AbstractWorkflowEntity implements Entity {
 	public void setDocumentMortgage(boolean documentMortgage) {
 		this.documentMortgage = documentMortgage;
 	}
-	
-	
+
 }

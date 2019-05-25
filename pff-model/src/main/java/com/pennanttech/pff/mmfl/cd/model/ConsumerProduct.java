@@ -79,7 +79,6 @@ public class ConsumerProduct extends AbstractWorkflowEntity {
 		MaxAmount = maxAmount;
 	}
 
-
 	public String getChannel() {
 		return channel;
 	}

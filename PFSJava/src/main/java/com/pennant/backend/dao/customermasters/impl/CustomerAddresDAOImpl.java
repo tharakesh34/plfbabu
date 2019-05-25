@@ -442,7 +442,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 			selectSql.append(", lovDescCustAddrTypeName, lovDescCustAddrCityName,");
 			selectSql.append(" lovDescCustAddrProvinceName, lovDescCustAddrCountryName, lovDescCustAddrZip");
 		}
-		
+
 		selectSql.append(" FROM CustomerAddresses");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustID = :CustID AND CustAddrPriority = :CustAddrPriority");

@@ -179,11 +179,11 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

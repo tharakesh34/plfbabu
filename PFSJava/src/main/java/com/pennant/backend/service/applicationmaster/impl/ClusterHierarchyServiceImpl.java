@@ -64,8 +64,7 @@ import com.pennanttech.pff.core.TableType;
 /**
  * Service implementation for methods that depends on <b>ClusterHierarchey</b>.<br>
  */
-public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy>
-		implements ClusterHierarchyService {
+public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy> implements ClusterHierarchyService {
 	private static final Logger logger = Logger.getLogger(ClusterHierarchyServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -94,7 +93,6 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 	 * @param clusterHierarchyDAO
 	 *            the clusterHierarchyDAO to set
 	 */
-
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -262,8 +260,7 @@ public class ClusterHierarchyServiceImpl extends GenericService<ClusterHierarchy
 		}
 
 		tranType = PennantConstants.TRAN_DEL;
-		
-	
+
 		clusterHierarchey.setRoleCode("");
 		clusterHierarchey.setNextRoleCode("");
 		clusterHierarchey.setTaskId("");

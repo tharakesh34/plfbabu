@@ -419,9 +419,8 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.modelId.isReadonly()) {
-			this.modelId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
 		if (!this.modelDescription.isReadonly()) {
@@ -443,29 +442,27 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		}
 
 		if (!this.minAmount.isReadonly()) {
-			this.minAmount.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_ProductList_MinimumAmount.value"), 2, false, false));
+			this.minAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_ProductList_MinimumAmount.value"), 2, false, false));
 		}
 
 		if (!this.maxAmount.isReadonly()) {
-			this.maxAmount.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_ProductList_MaximumAmount.value"), 2, false, false));
+			this.maxAmount.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_ProductList_MaximumAmount.value"), 2, false, false));
 		}
 
 		if (!this.modelStatus.isReadonly()) {
-			this.modelStatus
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelStatus.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.modelStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelStatus.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
-		if(!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
-			if(this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue())  == 1)
-			{
+		if (!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
+			if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
 				throw new WrongValueException(this.minAmount,
 						Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

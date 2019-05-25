@@ -112,10 +112,9 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 	@XmlElement(name = "cif")
 	private String custCIF;
 	private String custShrtName;
-	
+
 	private String sezCertificateNo;
 	private Date sezValueDate;
-	
 
 	public boolean isNew() {
 		return isNewRecord();

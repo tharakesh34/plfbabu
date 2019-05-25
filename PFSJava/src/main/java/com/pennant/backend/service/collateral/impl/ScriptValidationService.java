@@ -37,9 +37,9 @@ public class ScriptValidationService {
 
 		Bindings bindings = new SimpleBindings();
 		ScriptErrors defaults = new ScriptErrors();
-	 
+
 		setObjectsTobindings(bindings);
-		
+
 		bindings.put("defaults", defaults);
 		if (paramMap != null) {
 			bindings.putAll(paramMap);
@@ -47,12 +47,11 @@ public class ScriptValidationService {
 		getScriptEngine().eval(script, bindings);
 
 		logger.debug(Literal.LEAVING);
-		return defaults	;
+		return defaults;
 	}
 
 	/**
-	 * Setting the multiple objects into bindings for setting the default values
-	 * to components from prescript
+	 * Setting the multiple objects into bindings for setting the default values to components from prescript
 	 * 
 	 * @param bindings
 	 */
@@ -77,7 +76,7 @@ public class ScriptValidationService {
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -122,6 +121,5 @@ public class ScriptValidationService {
 	public void setObjectList(List<Object> objectList) {
 		this.objectList = objectList;
 	}
-	 
 
 }

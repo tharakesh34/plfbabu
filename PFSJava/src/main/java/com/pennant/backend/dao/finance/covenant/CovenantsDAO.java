@@ -53,7 +53,7 @@ public interface CovenantsDAO {
 	Covenant getCovenant(long id, String module, TableType tableType);
 
 	List<Covenant> getCovenants(String finReference, String module, TableType tableType);
-	
+
 	List<CovenantDocument> getCovenantDocuments(long covenantId, TableType tableType);
 
 	void deleteByFinRef(String finReference, String tableType);
@@ -63,11 +63,11 @@ public interface CovenantsDAO {
 	void delete(Covenant finCovenantType, TableType tableType);
 
 	String save(Covenant aFinCovenantType, TableType tableType);
-	
+
 	void saveDocuments(List<CovenantDocument> covenantDocuments, TableType tableType);
 
 	void update(Covenant aFinCovenantType, TableType tableType);
-	
+
 	void updateDocuments(List<CovenantDocument> covenantDocuments, TableType tableType);
 
 	boolean isExists(Covenant finCovenantType, TableType tableType);
@@ -75,7 +75,7 @@ public interface CovenantsDAO {
 	void deleteDocuments(List<CovenantDocument> documents, TableType tableType);
 
 	List<Covenant> getCovenantsAlertList();
-	
+
 	List<Covenant> getCovenants(String finReference);
 
 }

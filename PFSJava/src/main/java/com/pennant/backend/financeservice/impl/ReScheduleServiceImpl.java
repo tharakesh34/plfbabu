@@ -129,8 +129,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 
 				Date eventFromDate = FrequencyUtil.getNextDate(finServiceInstruction.getRepayFrq(), 1,
 						finServiceInstruction.getFromDate(), "A", false, 0).getNextFrequencyDate();
-				eventFromDate = DateUtility
-						.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));
+				eventFromDate = DateUtility.getDBDate(DateUtility.format(eventFromDate, PennantConstants.DBDateFormat));
 				financeMain.setEventFromDate(eventFromDate);
 			}
 
@@ -157,8 +156,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
 				recalToDate = calendar.getTime();
-				recalToDate = DateUtility
-						.getDBDate(DateUtility.format(recalToDate, PennantConstants.DBDateFormat));
+				recalToDate = DateUtility.getDBDate(DateUtility.format(recalToDate, PennantConstants.DBDateFormat));
 			}
 			scheduleDateList = null;
 
@@ -182,8 +180,8 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					startRepayCalDate, recalToDate);
 		} else {
 			if (finServiceInstruction.getNextRepayDate() != null) {
-				startRepayCalDate = DateUtility.getDBDate(DateUtility
-						.format(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
+				startRepayCalDate = DateUtility.getDBDate(
+						DateUtility.format(finServiceInstruction.getNextRepayDate(), PennantConstants.DBDateFormat));
 			} else {
 				startRepayCalDate = FrequencyUtil
 						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)

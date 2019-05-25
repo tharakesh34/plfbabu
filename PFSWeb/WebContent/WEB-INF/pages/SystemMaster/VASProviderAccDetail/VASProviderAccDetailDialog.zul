@@ -2,63 +2,40 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_VASProviderAccDetailDialog" border="normal"
-		apply="${vASProviderAccDetailDialogCtrl}" width="100%" height="100%"
-		sizable="false">
+	<window id="window_VASProviderAccDetailDialog" border="normal" apply="${vASProviderAccDetailDialogCtrl}" width="100%"
+		height="100%" sizable="false">
 
 		<borderlayout id="borderlayoutVASProviderAccDetail">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew"
-								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnEdit"
-								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete"
-								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnSave"
-								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnCancel"
-								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnNotes"
-								tooltiptext="${c:l('btnNotes.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_VASProviderAccDetailDialog.title')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_VASProviderAccDetailDialog.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" visible="false" />
-							<button id="btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -66,8 +43,7 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="15%" />
 							<column width="35%" />
@@ -76,92 +52,66 @@
 						</columns>
 						<rows>
 							<row id="row0">
-								<label id="label_EntityCode"
-									value="${c:l('label_VASProviderAccDetailDialog_EntityCode.value')}" />
+								<label id="label_EntityCode" value="${c:l('label_VASProviderAccDetailDialog_EntityCode.value')}" />
 								<hbox>
 									<extendedcombobox id="entityCode" />
 								</hbox>
-								<label id="label_ProviderId"
-									value="${c:l('label_VASProviderAccDetailDialog_ProviderId.value')}" />
+								<label id="label_ProviderId" value="${c:l('label_VASProviderAccDetailDialog_ProviderId.value')}" />
 								<hbox>
 									<extendedcombobox id="providerId" />
 								</hbox>
 							</row>
 							<row id="row1">
-								<label id="label_PaymentMode"
-									value="${c:l('label_VASProviderAccDetailDialog_PaymentMode.value')}" />
+								<label id="label_PaymentMode" value="${c:l('label_VASProviderAccDetailDialog_PaymentMode.value')}" />
 								<hbox>
-									<space id="space_PaymentMode"
-										spacing="2px" sclass="mandatory" />
+									<space id="space_PaymentMode" spacing="2px" sclass="mandatory" />
 									<combobox id="paymentMode" />
 								</hbox>
 							</row>
 							<row id="row2">
-								<label id="label_BankBranchID"
-									value="${c:l('label_VASProviderAccDetailDialog_BankBranchID.value')}" />
+								<label id="label_BankBranchID" value="${c:l('label_VASProviderAccDetailDialog_BankBranchID.value')}" />
 								<hbox>
 									<extendedcombobox id="bankBranchID" />
 								</hbox>
-								<label id="label_BankName"
-									value="${c:l('label_VASProviderAccDetailDialog_BankCode.value')}" />
+								<label id="label_BankName" value="${c:l('label_VASProviderAccDetailDialog_BankCode.value')}" />
 								<hbox>
-									<space id="space_bankName"
-										spacing="2px" />
-									<textbox id="bankName"
-										maxlength="20" width="162px" />
-									<label id="bankNameDesc"
-										style="margin-left:10px;display:inline-block;padding-top:3px;">
+									<space id="space_bankName" spacing="2px" />
+									<textbox id="bankName" maxlength="20" width="162px" />
+									<label id="bankNameDesc" style="margin-left:10px;display:inline-block;padding-top:3px;">
 									</label>
 								</hbox>
 							</row>
 							<row id="row3">
-								<label id="label_MICR"
-									value="${c:l('label_VASProviderAccDetailDialog_MICRCode.value')}" />
+								<label id="label_MICR" value="${c:l('label_VASProviderAccDetailDialog_MICRCode.value')}" />
 								<hbox>
-									<space id="space_MICR"
-										spacing="2px" />
-									<textbox id="micrCode"
-										maxlength="20" width="162px" />
+									<space id="space_MICR" spacing="2px" />
+									<textbox id="micrCode" maxlength="20" width="162px" />
 								</hbox>
-								<label id="label_IFSC"
-									value="${c:l('label_VASProviderAccDetailDialog_IFSCCode.value')}" />
+								<label id="label_IFSC" value="${c:l('label_VASProviderAccDetailDialog_IFSCCode.value')}" />
 								<hbox>
-									<space id="space_IFSC"
-										spacing="2px" />
-									<textbox id="ifscCode"
-										maxlength="20" width="162px" />
+									<space id="space_IFSC" spacing="2px" />
+									<textbox id="ifscCode" maxlength="20" width="162px" />
 								</hbox>
 							</row>
 							<row id="row4">
-								<label id="label_AccountNumber"
-									value="${c:l('label_VASProviderAccDetailDialog_AccountNumber.value')}" />
+								<label id="label_AccountNumber" value="${c:l('label_VASProviderAccDetailDialog_AccountNumber.value')}" />
 								<hbox>
-									<space id="space_AccountNumber"
-										spacing="2px" sclass="mandatory" />
-									<uppercasebox id="accountNumber"
-										maxlength="20" width="162px" />
+									<space id="space_AccountNumber" spacing="2px" sclass="mandatory" />
+									<uppercasebox id="accountNumber" maxlength="20" width="162px" />
 								</hbox>
-								<label id="label_ReceivableAdjustment"
-									value="${c:l('label_VASProviderAccDetailDialog_ReceivableAdjustment.value')}" />
+								<label id="label_ReceivableAdjustment" value="${c:l('label_VASProviderAccDetailDialog_ReceivableAdjustment.value')}" />
 								<hbox>
-									<space
-										id="space_receivableAdjustment" spacing="2px" />
-									<checkbox id="receivableAdjustment"
-										checked="false" />
+									<space id="space_receivableAdjustment" spacing="2px" />
+									<checkbox id="receivableAdjustment" checked="false" />
 								</hbox>
 							</row>
 							<row id="row5">
-								<label id="label_ReconciliationAmount"
-									value="${c:l('label_VASProviderAccDetailDialog_ReconciliationAmount.value')}" />
-								<currencyBox width="180px"
-									id="reconciliationAmount" />
-								<label id="label_Active"
-									value="${c:l('label_VASProviderAccDetailDialog_Active.value')}" />
+								<label id="label_ReconciliationAmount" value="${c:l('label_VASProviderAccDetailDialog_ReconciliationAmount.value')}" />
+								<currencyBox width="180px" id="reconciliationAmount" />
+								<label id="label_Active" value="${c:l('label_VASProviderAccDetailDialog_Active.value')}" />
 								<hbox>
-									<space id="space_Active"
-										spacing="2px" />
-									<checkbox id="active"
-										checked="false" />
+									<space id="space_Active" spacing="2px" />
+									<checkbox id="active" checked="false" />
 								</hbox>
 							</row>
 						</rows>
@@ -173,9 +123,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

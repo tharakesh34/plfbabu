@@ -342,7 +342,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}
-	
+
 	private DisbursementResponse getDisbursementResponse() {
 		return disbursementResponse == null ? defaultDisbursementResponse : disbursementResponse;
 	}
@@ -356,6 +356,5 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void setDisbursementResponse(DisbursementResponse disbursementResponse) {
 		this.disbursementResponse = disbursementResponse;
 	}
-	
-	
+
 }

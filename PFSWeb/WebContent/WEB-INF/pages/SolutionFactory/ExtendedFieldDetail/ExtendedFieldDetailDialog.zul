@@ -96,8 +96,7 @@
 								</hbox>
 							</row>
 							<row id="rowValFromScript" visible="false">
-								<label
-									value="${c:l('label_ExtendedFieldDetailDialog_ValFromScript.value')}" />
+								<label value="${c:l('label_ExtendedFieldDetailDialog_ValFromScript.value')}" />
 								<hbox>
 									<space spacing="2px" />
 									<checkbox id="valFromScript" checked="false" />

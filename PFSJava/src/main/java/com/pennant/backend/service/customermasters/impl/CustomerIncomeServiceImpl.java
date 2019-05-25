@@ -376,13 +376,13 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 			if (incomeType != null && (customerIncome.getMargin() == null
 					|| customerIncome.getMargin().compareTo(BigDecimal.ZERO) == 0)) {
-				if(incomeType.getMargin()==null) {
+				if (incomeType.getMargin() == null) {
 					customerIncome.setMargin(BigDecimal.ZERO);
 				} else {
 					customerIncome.setMargin(incomeType.getMargin());
 				}
 			}
-			
+
 			if (incomeType != null && incomeType.getMargin() != null
 					&& customerIncome.getMargin().compareTo(new BigDecimal(10000)) > 0) {
 				ErrorDetail errorDetail = new ErrorDetail();

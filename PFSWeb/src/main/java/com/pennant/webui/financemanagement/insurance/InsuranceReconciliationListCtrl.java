@@ -64,17 +64,15 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 		super.queueTableName = "InsuranceDetails_View";
 		super.enquiryTableName = "InsuranceDetails_View";
 	}
-	
+
 	protected void doAddFilters() {
 		super.doAddFilters();
 		this.searchObject.addFilterEqual("ReconStatus", InsuranceConstants.RECON_STATUS_MANUAL);
 		this.searchObject.addFilterEqual("IssuanceStatus", InsuranceConstants.ISSUED);
 	}
 
-
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -103,8 +101,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -114,8 +111,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param entityCodeName
 	 *            An event sent to the event handler of the component.
@@ -126,8 +122,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -144,8 +139,8 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -199,8 +194,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

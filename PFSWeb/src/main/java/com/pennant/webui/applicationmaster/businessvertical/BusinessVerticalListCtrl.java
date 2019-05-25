@@ -95,11 +95,11 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 	protected Textbox code; // autowired
 	protected Textbox description; // autowired
 	protected Checkbox active;
-	
+
 	protected Listbox sortOperator_code;
 	protected Listbox sortOperator_description;
 	protected Listbox sortOperator_active;
-	
+
 	private transient BusinessVerticalService businessVerticalService;
 
 	/**
@@ -133,11 +133,13 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 
 		// Register buttons and fields.
 		registerButton(button_BusinessVerticalList_BusinessVerticalSearch);
-		registerButton(button_BusinessVerticalList_NewBusinessVertical, "button_BusinessVerticalList_NewBusinessVertical", true);
+		registerButton(button_BusinessVerticalList_NewBusinessVertical,
+				"button_BusinessVerticalList_NewBusinessVertical", true);
 
 		registerField("id");
 		registerField("code", listheader_code, SortOrder.NONE, code, sortOperator_code, Operators.STRING);
-		registerField("description", listheader_description, SortOrder.NONE, description, sortOperator_description, Operators.STRING);
+		registerField("description", listheader_description, SortOrder.NONE, description, sortOperator_description,
+				Operators.STRING);
 		registerField("active", listheader_active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
 		// Render the page and display the data.
 		doRenderPage();
@@ -184,7 +186,6 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -195,7 +196,7 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 
 	public void onBusinessVerticalItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxBusinessVertical.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -205,13 +206,13 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  id = ");
-		whereCond.append( businessvertical.getId());
+		whereCond.append(businessvertical.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(businessvertical.getVersion());
-	
+
 		if (doCheckAuthority(businessvertical, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && businessvertical.getWorkflowId() == 0) {
@@ -221,10 +222,10 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -237,9 +238,10 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("businessVertical", businessvertical);
 		arg.put("businessVerticalListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BusinessVertical/BusinessVerticalDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/ApplicationMaster/BusinessVertical/BusinessVerticalDialog.zul",
+					null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -267,7 +269,7 @@ public class BusinessVerticalListCtrl extends GFCBaseListCtrl<BusinessVertical> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

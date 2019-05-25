@@ -87,7 +87,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		StringBuilder insertSql = new StringBuilder("Insert Into FinODPenaltyRates");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(" (FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
-		insertSql.append(" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount )");
+		insertSql.append(
+				" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount )");
 		insertSql.append(
 				" Values(:FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
 		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount )");
@@ -116,7 +117,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
 				" (LogKey, FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays,");
-		insertSql.append(" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount )");
+		insertSql.append(
+				" ODChargeCalOn , ODChargeAmtOrPerc ,ODAllowWaiver , ODMaxWaiverPerc, oDRuleCode, ODMinCapAmount )");
 		insertSql.append(
 				" Values(:LogKey , :FinReference ,:FinEffectDate, :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, :ODChargeCalOn, ");
 		insertSql.append(" :ODChargeAmtOrPerc, :ODAllowWaiver , :ODMaxWaiverPerc, :oDRuleCode, :ODMinCapAmount )");

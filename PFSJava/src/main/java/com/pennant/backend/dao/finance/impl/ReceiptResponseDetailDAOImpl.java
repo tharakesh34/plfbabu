@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,11 +69,11 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetail> implements ReceiptResponseDetailDAO {
 
 	private static Logger logger = Logger.getLogger(ReceiptResponseDetailDAOImpl.class);
-	
+
 	public ReceiptResponseDetailDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public long saveReceiptResponseFileHeader(String fileName) {
 		logger.debug(Literal.ENTERING);
@@ -122,9 +121,9 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadDetail);
 		RowMapper<ReceiptUploadDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ReceiptUploadDetail.class);
-		
+
 		List<ReceiptUploadDetail> detailsList = new ArrayList<>();
-		
+
 		try {
 
 			detailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
@@ -132,7 +131,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 			logger.error(e);
 			detailsList = new ArrayList<>();
 		}
-        
+
 		logger.debug(Literal.LEAVING);
 		return detailsList;
 	}
@@ -152,20 +151,19 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		selectSql.append(" Where ID = :ID");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		
+
 		RowMapper<UploadAlloctionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(UploadAlloctionDetail.class);
-		
-        
+
 		List<UploadAlloctionDetail> uploadAlloctionDetailsList = new ArrayList<>();
-		
+
 		try {
 			uploadAlloctionDetailsList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (DataAccessException e) {
 			logger.error(e);
 			uploadAlloctionDetailsList = new ArrayList<>();
 		}
-		
+
 		logger.debug("Leaving");
 		return uploadAlloctionDetailsList;
 	}
@@ -178,7 +176,8 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 
 		StringBuffer query = new StringBuffer();
 		query.append(" UPDATE ReceiptBatchFileHeader SET EndTime = :EndTime, TotalRecords = :TotalRecords,");
-		query.append(" SUCCESSRECORDS = :SucessRecords, FAILEDRECORDS = :FailedRecords, Remarks = :Remarks Where ID = :ID");
+		query.append(
+				" SUCCESSRECORDS = :SucessRecords, FAILEDRECORDS = :FailedRecords, Remarks = :Remarks Where ID = :ID");
 
 		source.addValue("EndTime", DateUtility.getSysDate());
 		source.addValue("TotalRecords", recordCount);
@@ -196,7 +195,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	@Override
@@ -213,8 +212,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 		source.addValue("PICKUPFLAG", 1);
 		source.addValue("PICKUPBATCHID", jobid);
 		source.addValue("RESPONSESTATUS", receiptresponseDetail.getUploadStatus());
-		
-		
+
 		source.addValue("ERRORMESSAGE", receiptresponseDetail.getReason());
 		source.addValue("PICKUPDATE", DateUtility.getAppDate());
 		source.addValue("Id", receiptresponseDetail.getId());
@@ -247,11 +245,12 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
 	 * update jobid ,as not to pick up again
+	 * 
 	 * @param jobid
 	 */
 	@Override
@@ -272,7 +271,7 @@ public class ReceiptResponseDetailDAOImpl extends SequenceDao<ReceiptUploadDetai
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 }

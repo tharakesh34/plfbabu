@@ -68,7 +68,6 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	private String branchSwiftBrnCde;
 	private String branchProvince;
 	private LoggedInUser userDetails;
-	
 
 	//for SecurityUserAccess Table
 	private String entity;
@@ -350,5 +349,5 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 	public void setBranches(Map<String, Object> branches) {
 		this.branches = branches;
 	}
-	
+
 }

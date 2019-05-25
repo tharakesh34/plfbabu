@@ -175,7 +175,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Uppercasebox shortCode;
 	protected Checkbox active;
 	protected Textbox remarks;
-	
+
 	//New Fields for Insurance
 	protected Combobox modeOfPayment;
 	protected Combobox allowFeeType;
@@ -188,7 +188,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected Textbox txtFileName;
 	protected Rows panelRows;
 	protected Timer timer;
-	
+
 	protected Tabbox tabBoxIndexCenter;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
@@ -231,7 +231,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	protected boolean preScriptValidated = false;
 	protected boolean postScriptValidated = false;
 	private List<ValueLabel> listFlpCalculatedOn = PennantStaticListUtil.getFlpCalculatedList();
-	
+
 	private Configuration config = null;
 	private DataEngineStatus VAS_PREMIUM_CALCULATION_UPLOAD = new DataEngineStatus("VAS_PREMIUM_CALCULATION_UPLOAD");
 	private List<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
@@ -307,7 +307,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			} else {
 				setVASConfigurationListCtrl(null);
 			}
-			
+
 			config = dataEngineConfig.getConfigurationByName("VAS_PREMIUM_CALCULATION_UPLOAD");
 			doFillPanel(config, VAS_PREMIUM_CALCULATION_UPLOAD);
 
@@ -315,7 +315,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(getVASConfiguration());
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -643,15 +643,15 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.cancellationFeeType.setReadonly(isReadOnly("VASConfigurationDialog_CancellationFeeType"));
 		this.flpCalculatedOn.setDisabled(isReadOnly("VASConfigurationDialog_FLPCalculatedOn"));
 		this.shortCode.setReadonly(isReadOnly("VASConfigurationDialog_ShortCode"));
-		
+
 		this.modeOfPayment.setDisabled(isReadOnly("VASConfigurationDialog_ModeOfPayment"));
 		this.allowFeeType.setDisabled(isReadOnly("VASConfigurationDialog_AllowFeeType"));
 		this.medicalApplicable.setDisabled(isReadOnly("VASConfigurationDialog_MedicalApplicable"));
-		
+
 		this.btnImport.setDisabled(isReadOnly("VASConfigurationDialog_FileImport"));
 		this.btnUpload.setDisabled(isReadOnly("VASConfigurationDialog_btnUplaod"));
 		this.txtFileName.setReadonly(true);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -751,7 +751,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		filters[0] = new Filter("DealerType", VASConsatnts.VASAGAINST_VASM, Filter.OP_EQUAL);
 		filters[1] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.manufacturer.setFilters(filters);
-
 
 		this.feeAccounting.setMandatoryStyle(true);
 		setPropertiesForAEExtCombobox(this.feeAccounting, AccountEventConstants.ACCEVENT_VAS_FEE);
@@ -998,7 +997,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.grpBox_FileImport.setVisible(false);
 		}
 	}
-	
+
 	/**
 	 * CALL THE RESULT ZUL FILE
 	 * 
@@ -1042,13 +1041,13 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			if (!isPostValidation) {
 				return noerrors;
 			}
-			
+
 			// if no errors
 			if (variables != null && errors.size() == 0) {
 				// check for new declared variables
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
-					if(isPostValidation){
+					if (isPostValidation) {
 						if (!"errors".equals(variable.get("name"))) {
 							if (!fieldNames.contains(variable.get("name"))) {
 								// if new variables found throw error message
@@ -1210,12 +1209,14 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		this.postValidationTab.setDisabled(!aVASConfiguration.isPostValidationReq());
 		this.preValidationReq.setChecked(aVASConfiguration.isPreValidationReq());
 		this.postValidationReq.setChecked(aVASConfiguration.isPostValidationReq());
-		
-		fillComboBox(this.modeOfPayment, aVASConfiguration.getModeOfPayment(), PennantStaticListUtil.getVasModeOfPayments(),"");
-		fillComboBox(this.allowFeeType, aVASConfiguration.getAllowFeeType(), PennantStaticListUtil.getVasAllowFeeTypes(),"");
+
+		fillComboBox(this.modeOfPayment, aVASConfiguration.getModeOfPayment(),
+				PennantStaticListUtil.getVasModeOfPayments(), "");
+		fillComboBox(this.allowFeeType, aVASConfiguration.getAllowFeeType(),
+				PennantStaticListUtil.getVasAllowFeeTypes(), "");
 		this.medicalApplicable.setChecked(aVASConfiguration.isMedicalApplicable());
 		vasfeeVisibility(aVASConfiguration.getAllowFeeType());
-		
+
 		if (aVASConfiguration.isNewRecord()) {
 			if (isCopyProcess) {
 				this.feeAccounting.setDescription(aVASConfiguration.getFeeAccountingName());
@@ -1262,7 +1263,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		visibleComponents(aVASConfiguration.getFreeLockPeriod());
 		// Extended Field Details tab
 		appendExtendedFieldsTab();
-		
+
 		//Premium Calculation File Upload
 		setPremiumCalcDetList(aVASConfiguration.getPremiumCalcDetList());
 
@@ -1410,28 +1411,28 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Mode Of Payment
 		try {
 			aVASConfiguration.setModeOfPayment(this.modeOfPayment.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Allow Fee Type
 		try {
 			aVASConfiguration.setAllowFeeType(this.allowFeeType.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		//Medical Applicable
 		try {
 			aVASConfiguration.setMedicalApplicable(this.medicalApplicable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Pre Validation Required
 		try {
 			aVASConfiguration.setPreValidationReq(this.preValidationReq.isChecked());
@@ -1548,9 +1549,10 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			this.vasType.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_VASConfigurationDialog_VASType.value"), null, true, true));
 		}
-		
+
 		//vasFee
-		if (!this.vasFee.isReadonly() && !(VASConsatnts.VAS_ALLOWFEE_AUTO.equals(this.allowFeeType.getSelectedItem().getValue()))) {
+		if (!this.vasFee.isReadonly()
+				&& !(VASConsatnts.VAS_ALLOWFEE_AUTO.equals(this.allowFeeType.getSelectedItem().getValue()))) {
 			this.vasFee.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_VASConfigurationDialog_VASFee.value"), getCcyFormat(), true, false));
 		}
@@ -1593,15 +1595,19 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_VASConfigurationDialog_Remarks.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
-	
+
 		//Allow Fee types
 		if (!this.allowFeeType.isDisabled()) {
-			this.allowFeeType.setConstraint(new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"), PennantStaticListUtil.getVasAllowFeeTypes(), true));
+			this.allowFeeType.setConstraint(
+					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_AllowFeeType.value"),
+							PennantStaticListUtil.getVasAllowFeeTypes(), true));
 		}
-		
+
 		//Allow Mode Of Payments
 		if (!this.modeOfPayment.isDisabled()) {
-			this.modeOfPayment.setConstraint(new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"), PennantStaticListUtil.getVasModeOfPayments(), true));
+			this.modeOfPayment.setConstraint(
+					new PTListValidator(Labels.getLabel("label_VASConfigurationDialog_ModeOfPayment.value"),
+							PennantStaticListUtil.getVasModeOfPayments(), true));
 		}
 
 		logger.debug("Leaving");
@@ -2172,7 +2178,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 		doSetValidation();
 		doWriteComponentsToBean(new VASConfiguration(), false);
-		
+
 		doFileValidations();
 		try {
 			if (errorMsg != null) {
@@ -2225,6 +2231,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 			}
 		}
 	}
+
 	private void doFileValidations() {
 		logger.debug(Literal.ENTERING);
 
@@ -2275,7 +2282,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		}
 	}
 
-
 	public void onTimer$timer(Event event) {
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
@@ -2304,7 +2310,7 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	}
 
 	//File import related changes end//
-	
+
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.vASConfiguration.getId());
@@ -2357,7 +2363,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	public void setMedia(Media media) {
 		this.media = media;
 	}
-
 
 	public List<VASPremiumCalcDetails> getPremiumCalcDetList() {
 		return premiumCalcDetList;

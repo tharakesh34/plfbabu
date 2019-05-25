@@ -83,8 +83,8 @@ public interface SecurityUserDAO {
 	List<Entity> getEntityList(String entity);
 
 	void saveDivBranchDetails(List<SecurityUserDivBranch> securityUserDivBranchList, String type);
-	
+
 	List<SecurityUser> getSecUsersByRoles(String[] roles);
-	
+
 	SecurityUser getSecurityUserAccessToAllBranches(long id);
 }

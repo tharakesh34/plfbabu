@@ -7,13 +7,16 @@
 
 	<style>
 		.filter .z-menu-item-inner-m .z-menu-item-btn {font-weight:bold;}
-		.filtered .z-menu-item-inner-m .z-menu-item-btn {color:#008bb6;font-weight: bold;}
+		.filtered .z-menu-item-inner-m .z-menu-item-btn
+		{color:#008bb6;font-weight: bold;}
 		.z-menubar-hor td.demo-sep{background: 0 none; border-left: 1px solid #ACACAC;}
 		.z-toolbar a, .z-toolbar a:visited, .z-toolbar a:hover {border: none;}
-		.z-toolbar-start {float: none;} .z-toolbar {padding:0;}
+		.z-toolbar-start {float: none;} .z-toolbar
+		{padding:0;}
 		.chooser-popup div.z-popup-cl {border: none;} .chooser-popup
 		.z-popup-cnt {padding: 0;}
-		.chooser-popup .z-groupbox{-moz-border-radius: 1px 1px 1px 1px;}
+		.chooser-popup
+		.z-groupbox{-moz-border-radius: 1px 1px 1px 1px;}
 	</style>
 
 	<window id="win_Calendar" apply="com.pennant.webui.masters.calendar.HolidayCalendarCtrl" height="100%">

@@ -23,13 +23,13 @@ public class CalAvgPOSProcess extends Thread {
 
 	private static final Logger logger = Logger.getLogger(CalAvgPOSProcess.class);
 
-	private List<FinanceMain> 			financeList = null;
-	private ProjectedAmortization 		projectedAmortization = null;
-	private IncomeAmortizationService 	incomeAmortizationService;
+	private List<FinanceMain> financeList = null;
+	private ProjectedAmortization projectedAmortization = null;
+	private IncomeAmortizationService incomeAmortizationService;
 
-	Date 				startDate = null;
-	public AtomicLong	finCount = null;
-	public int 			finListSize = 0;
+	Date startDate = null;
+	public AtomicLong finCount = null;
+	public int finListSize = 0;
 
 	public CalAvgPOSProcess() {
 		super();
@@ -64,10 +64,12 @@ public class CalAvgPOSProcess extends Thread {
 			// Increment and Update Log status
 			finCount.addAndGet(financeList.size());
 			if (finListSize == finCount.get()) {
-				this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_SUCCESS, projectedAmortization.getId()); // 2
+				this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_SUCCESS,
+						projectedAmortization.getId()); // 2
 			}
 		} catch (Exception e) {
-			this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_FAILED, projectedAmortization.getId()); // 3
+			this.incomeAmortizationService.updateCalAvgPOSStatus(EodConstants.PROGRESS_FAILED,
+					projectedAmortization.getId()); // 3
 			logger.error("Exception: ", e);
 		}
 
@@ -82,7 +84,7 @@ public class CalAvgPOSProcess extends Thread {
 	 * 
 	 * @param startDate
 	 * @param monthEndDate
-	 * @return 
+	 * @return
 	 */
 	private List<FinEODEvent> prepareFinDataForAMZandAccruals(Date startDate, Date monthEndDate,
 			List<FinanceMain> financeList) {

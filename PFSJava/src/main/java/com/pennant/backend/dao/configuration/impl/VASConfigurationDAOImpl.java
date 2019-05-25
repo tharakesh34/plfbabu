@@ -340,7 +340,6 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		return count;
 	}
 
-
 	@Override
 	public void savePremiumCalcDetails(List<VASPremiumCalcDetails> premiumCalcDetList, String tableType) {
 		logger.debug("Entering");
@@ -359,7 +358,7 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
-	
+
 	@Override
 	public List<VASPremiumCalcDetails> getPremiumCalcDetails(String productCode, String tableType) {
 		logger.debug("Entering");

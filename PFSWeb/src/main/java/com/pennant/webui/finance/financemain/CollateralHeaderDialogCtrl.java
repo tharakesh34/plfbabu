@@ -327,7 +327,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				this.listBoxAssetTypeHeader.setHeight(150 + "px");
 				this.window_CollateralAssignmentDialog.setHeight(this.borderLayoutHeight - 80 + "px");
 			}
-			
+
 			if (enqiryModule) {
 				btnNew_CollateralAssignment.setVisible(false);
 				btnNew_AssetType.setVisible(false);
@@ -440,10 +440,12 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	private int getFormat() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
 		int ccyFormat = 0;
-		if(getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl){
+		if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl) {
 			ccyFormat = 2;
-		}else if(getFinanceMainDialogCtrl() != null && !(getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl)){
-			ccyFormat  = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat").invoke(getFinanceMainDialogCtrl());
+		} else if (getFinanceMainDialogCtrl() != null
+				&& !(getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl)) {
+			ccyFormat = (int) getFinanceMainDialogCtrl().getClass().getMethod("getCcyFormat")
+					.invoke(getFinanceMainDialogCtrl());
 		}
 		return ccyFormat;
 	}

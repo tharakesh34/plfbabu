@@ -137,7 +137,7 @@ public class CustEODEvent extends AbstractEntity {
 	public void setProvisionRule(String provisionRule) {
 		this.provisionRule = provisionRule;
 	}
-	
+
 	public String getAmzMethodRule() {
 		return amzMethodRule;
 	}

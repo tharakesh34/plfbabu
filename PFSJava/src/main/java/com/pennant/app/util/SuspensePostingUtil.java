@@ -141,7 +141,7 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setDataMap(dataMap);
 
 		aeEvent.setEOD(false);
-		
+
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			aeEvent.setEOD(true);

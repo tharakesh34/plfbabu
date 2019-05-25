@@ -59,7 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>CollateralAssignment table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "collateralRef", "assignPerc","assignmentReference" })
+@XmlType(propOrder = { "collateralRef", "assignPerc", "assignmentReference" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class CollateralAssignment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
@@ -277,7 +277,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	}
 
 	//### 16-05-2018 End Development Item 82
-		public String getAssignmentReference() {
+	public String getAssignmentReference() {
 		return assignmentReference;
 	}
 

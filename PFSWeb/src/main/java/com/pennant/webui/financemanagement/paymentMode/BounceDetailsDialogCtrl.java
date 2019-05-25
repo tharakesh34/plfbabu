@@ -49,7 +49,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 
 			if (arguments.containsKey("details")) {
 				this.allocList = (List<ReceiptAllocationDetail>) arguments.get("details");
-			} 
+			}
 			if (arguments.containsKey("buttonId")) {
 				this.buttonId = (String) arguments.get("buttonId");
 				setButtonId(this.buttonId);
@@ -77,7 +77,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 	}
 
 	public void doFillDetails(List<ReceiptAllocationDetail> details) {
-		
+
 		logger.debug("Entering");
 		this.listDetails.getItems().clear();
 		Listitem item = null;
@@ -88,32 +88,29 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		BigDecimal curPaidAmt = BigDecimal.ZERO;
 		BigDecimal curWaiverAmt = BigDecimal.ZERO;
 		BigDecimal remainingAmt = BigDecimal.ZERO;
-		for (ReceiptAllocationDetail allocate :details) {
-			
+		for (ReceiptAllocationDetail allocate : details) {
+
 			item = new Listitem();
-			
+
 			lc = new Listcell(allocate.getTypeDesc());
 			lc.setStyle("font-weight:bold;color: #191a1c;");
 			lc.setParent(item);
-			
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getTotRecv(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			rcdAmount = rcdAmount.add(allocate.getTotRecv());
-			
-			
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getInProcess(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			inProgressAmt = inProgressAmt.add(allocate.getInProcess());
-			
-			
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueAmount(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			curDueAmt = curDueAmt.add(allocate.getDueAmount());
-			
-			
+
 			lc = new Listcell();
 			CurrencyBox allocationPaid = new CurrencyBox();
 			allocationPaid.setStyle("text-align:right;");
@@ -121,26 +118,24 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			setProps(allocationPaid, false, 2, 120);
 			allocationPaid.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidAmount(), 2));
 			allocationPaid.setReadonly(true);
-			
 
 			lc.appendChild(allocationPaid);
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			curPaidAmt = curPaidAmt.add(allocate.getPaidAmount());
-			
 
-			
 			// Amount Setting
-			
-			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueAmount().subtract(allocate.getPaidAmount()), 2));
+
+			lc = new Listcell(PennantApplicationUtil
+					.amountFormate(allocate.getDueAmount().subtract(allocate.getPaidAmount()), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			remainingAmt = remainingAmt.add(curDueAmt.subtract(curPaidAmt));
-			
+
 			this.listDetails.appendChild(item);
 		}
-		addFooter(rcdAmount, inProgressAmt,curDueAmt,curPaidAmt,curWaiverAmt,remainingAmt, 2);
-			
+		addFooter(rcdAmount, inProgressAmt, curDueAmt, curPaidAmt, curWaiverAmt, remainingAmt, 2);
+
 		logger.debug("Leaving");
 	}
 
@@ -182,21 +177,21 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(curPaidAmt, formatter));
 		label.setId("AllocateAmount_curPaidAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(curWaiverAmt, formatter));
 		label.setId("AllocateAmount_curWaiverAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(remainingAmt, formatter));
 		label.setId("AllocateAmount_remainingAmt");
@@ -205,25 +200,24 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc.setParent(item);
 
 		this.listDetails.appendChild(item);
-		
+
 	}
-	
+
 	public void doFillFeeDetails(List<FinFeeDetail> details) {
 
 		logger.debug("Entering");
 
 		this.listDetails.getItems().clear();
-		
+
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
 		doClose(this.btnSave.isVisible());
 		logger.debug("Leaving" + event.toString());
 
 	}
-
 
 	public String getButtonId() {
 		return buttonId;
@@ -232,6 +226,5 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 	public void setButtonId(String buttonId) {
 		this.buttonId = buttonId;
 	}
-
 
 }

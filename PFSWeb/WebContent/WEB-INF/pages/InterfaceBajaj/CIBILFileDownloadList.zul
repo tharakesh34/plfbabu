@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_CIBILFileDownloadList" apply="${cibilFileDownloadListCtrl}" border="none" width="100%">
@@ -21,8 +20,8 @@
 
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, btnexecute"
-							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
+							autodisable="button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, btnexecute" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
 			</div>
@@ -42,13 +41,13 @@
 								<row>
 									<label value="File Type" />
 									<listbox id="sortOperatorFileType" width="43px" mold="select" rows="1" />
-									<combobox id="fileType"/>
+									<combobox id="fileType" />
 								</row>
 							</rows>
 						</grid>
 
-						<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%"
-							height="100%" multiple="false" sizedByContent="true" span="true">
+						<listbox id="listBoxFileDownload" emptyMessage="${c:l('listbox.emptyMessage')}" width="100%" height="100%"
+							multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
 								<listheader label="File Type" />
 								<listheader label="${c:l('listheader_FileName.label')}" />

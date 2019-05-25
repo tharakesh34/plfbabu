@@ -54,7 +54,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BankInfoSubDetail table</b>.<br>
  * 
  */
-public class BankInfoSubDetail extends AbstractWorkflowEntity{
+public class BankInfoSubDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long bankId;
@@ -66,11 +66,11 @@ public class BankInfoSubDetail extends AbstractWorkflowEntity{
 	private String lovValue;
 	private BankInfoSubDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

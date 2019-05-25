@@ -2768,7 +2768,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 								RoundingMode.HALF_DOWN);
 					}
 				}
-				
+
 				lc = new Listcell(PennantApplicationUtil.amountFormate(utilizedAmt, getCcyFormat()));
 				lc.setStyle("text-align:right;");
 				item.appendChild(lc);

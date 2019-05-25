@@ -544,7 +544,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		
+
 		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
 
 		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
@@ -556,8 +556,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				this.row1.setVisible(false);
 			}
 			this.row2.setVisible(false);
-			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC) &&
-					!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
+			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
+					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row3.setVisible(false);
 			}
 			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {

@@ -287,8 +287,8 @@ public class ReceiptResponseProcess {
 
 		// Realization Date
 		try {
-			reqJson.put("realizationDate", DateUtility.format(receiptUploadDetail.getRealizationDate(),
-					PennantConstants.APIDateFormatter));
+			reqJson.put("realizationDate",
+					DateUtility.format(receiptUploadDetail.getRealizationDate(), PennantConstants.APIDateFormatter));
 		} catch (Exception e) {
 			if (StringUtils.isEmpty(errorCode)) {
 				errorMsg = Labels.getLabel("inValid_RealizationDate");

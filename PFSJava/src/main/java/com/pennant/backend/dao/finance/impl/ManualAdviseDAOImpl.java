@@ -1236,7 +1236,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug("Leaving");
 		return list;
 	}
-	
+
 	@Override
 	public List<ManualAdvise> getPreviousAdvPayments(String finReference) {
 		StringBuilder sql = new StringBuilder();

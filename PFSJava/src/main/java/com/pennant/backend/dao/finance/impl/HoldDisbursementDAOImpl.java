@@ -71,19 +71,20 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 	public HoldDisbursementDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public HoldDisbursement getHoldDisbursement(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" finReference, hold, totalLoanAmt, disbursedAmount, holdLimitAmount, remarks, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From HoldDisbursement");
 		sql.append(type);
 		sql.append("  where finReference = :finReference");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -102,21 +103,22 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 
 		logger.debug(Literal.LEAVING);
 		return holdDisbursement;
-	}		
-	
+	}
+
 	@Override
-	public String save(HoldDisbursement holdDisbursement,TableType tableType) {
+	public String save(HoldDisbursement holdDisbursement, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into HoldDisbursement");
+		StringBuilder sql = new StringBuilder(" insert into HoldDisbursement");
 		sql.append(tableType.getSuffix());
 		sql.append("(finReference, hold, totalLoanAmt, disbursedAmount, holdLimitAmount, remarks, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :finReference, :hold, :totalLoanAmt, :disbursedAmount, :holdLimitAmount, :remarks, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -130,14 +132,14 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(holdDisbursement.getFinReference());
-	}	
+	}
 
 	@Override
-	public void update(HoldDisbursement holdDisbursement,TableType tableType) {
+	public void update(HoldDisbursement holdDisbursement, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update HoldDisbursement" );
+		StringBuilder sql = new StringBuilder("update HoldDisbursement");
 		sql.append(tableType.getSuffix());
 		sql.append("  set hold = :hold, totalLoanAmt = :totalLoanAmt, disbursedAmount = :disbursedAmount, ");
 		sql.append(" holdLimitAmount = :holdLimitAmount, remarks = :remarks, ");
@@ -146,10 +148,10 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where finReference = :finReference ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(holdDisbursement);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -157,7 +159,7 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -251,4 +253,4 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 		return count > 0 ? true : false;
 	}
 
-}	
+}

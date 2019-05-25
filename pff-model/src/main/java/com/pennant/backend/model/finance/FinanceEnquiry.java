@@ -462,7 +462,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	public void setOdDays(int odDays) {
 		this.odDays = odDays;
 	}
-	
+
 	public int getCurODDays() {
 		return curODDays;
 	}

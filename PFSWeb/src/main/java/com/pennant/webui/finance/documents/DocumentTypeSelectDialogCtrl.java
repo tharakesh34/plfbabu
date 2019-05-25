@@ -263,7 +263,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				|| DocumentCategories.FINANCE.getKey().equals(module)
 				|| DocumentCategories.COLLATERAL.getKey().equals(module)
 				|| DocumentCategories.SAMPLING.getKey().equals(module)
-			    || DocumentCategories.VERIFICATION_PD.getKey().equals(module)){
+				|| DocumentCategories.VERIFICATION_PD.getKey().equals(module)) {
 			this.docCategory.setFilters(new Filter[] { new Filter("CategoryCode", module, Filter.OP_EQUAL) });
 		} else {
 			if (module == null) {

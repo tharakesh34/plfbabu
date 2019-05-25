@@ -678,7 +678,6 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		this.entityCode = entityCode;
 	}
 
-
 	public String getReEnterBeneficiaryAccNo() {
 		return reEnterBeneficiaryAccNo;
 	}
@@ -694,6 +693,5 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	public void setProviderId(long providerId) {
 		this.providerId = providerId;
 	}
-
 
 }

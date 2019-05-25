@@ -208,12 +208,12 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 	public VehicleDealer getDealerShortCodes(String shortCode) {
 		return getVehicleDealerDAO().getDealerShortCodes(shortCode);
 	}
-	
+
 	@Override
 	public VehicleDealer getDealerShortCode(long providerId) {
 		return getVehicleDealerDAO().getDealerShortCode(providerId);
 	}
-	
+
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do

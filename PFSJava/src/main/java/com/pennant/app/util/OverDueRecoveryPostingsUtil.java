@@ -119,8 +119,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate, ManualAdviseMovements movement,
-			Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader)
+	public List<Object> recoveryPayment(FinanceMain financeMain, Date dateValueDate, Date postDate,
+			ManualAdviseMovements movement, Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -153,7 +153,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		amountCodes.setPenaltyPaid(movement.getPaidAmount());
 		amountCodes.setPenaltyWaived(movement.getWaivedAmount());
-		amountCodes.setPaymentType(rpyQueueHeader.getPayType()); 
+		amountCodes.setPaymentType(rpyQueueHeader.getPayType());
 		aeEvent.setPostRefId(rpyQueueHeader.getReceiptId());
 		aeEvent.setPostingId(financeMain.getPostingId());
 		aeEvent.setEOD(false);
@@ -162,14 +162,15 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		if (!phase.equals(PennantConstants.APP_PHASE_DAY)) {
 			aeEvent.setEOD(true);
 		}
-		
+
 		// LPP Receivable Amounts setting for Accounting difference
 		FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO().getFinTaxReceivable(financeMain.getFinReference(), "LPP");
-		if(taxRcv != null){
-			
-			if(taxRcv.getReceivableAmount().compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0){
+		if (taxRcv != null) {
+
+			if (taxRcv.getReceivableAmount()
+					.compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0) {
 				amountCodes.setPenaltyRcv(taxRcv.getReceivableAmount());
-			}else{
+			} else {
 				amountCodes.setPenaltyRcv(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived()));
 			}
 		}
@@ -195,38 +196,38 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		if (excludeFees != null) {
 			dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 		}
-		
+
 		// GST Field Details
 		dataMap.put("LPP_CGST_P", movement.getPaidCGST());
 		dataMap.put("LPP_SGST_P", movement.getPaidSGST());
 		dataMap.put("LPP_UGST_P", movement.getPaidUGST());
 		dataMap.put("LPP_IGST_P", movement.getPaidIGST());
-		
-		if(taxRcv != null){
-			if(taxRcv.getCGST().compareTo(movement.getPaidCGST()) < 0){
+
+		if (taxRcv != null) {
+			if (taxRcv.getCGST().compareTo(movement.getPaidCGST()) < 0) {
 				dataMap.put("LPP_CGST_R", taxRcv.getCGST());
-			}else{
+			} else {
 				dataMap.put("LPP_CGST_R", movement.getPaidCGST());
 			}
-			
-			if(taxRcv.getSGST().compareTo(movement.getPaidSGST()) < 0){
+
+			if (taxRcv.getSGST().compareTo(movement.getPaidSGST()) < 0) {
 				dataMap.put("LPP_SGST_R", taxRcv.getSGST());
-			}else{
+			} else {
 				dataMap.put("LPP_SGST_R", movement.getPaidSGST());
 			}
-			
-			if(taxRcv.getUGST().compareTo(movement.getPaidUGST()) < 0){
+
+			if (taxRcv.getUGST().compareTo(movement.getPaidUGST()) < 0) {
 				dataMap.put("LPP_UGST_R", taxRcv.getUGST());
-			}else{
+			} else {
 				dataMap.put("LPP_UGST_R", movement.getPaidUGST());
 			}
-			
-			if(taxRcv.getIGST().compareTo(movement.getPaidIGST()) < 0){
+
+			if (taxRcv.getIGST().compareTo(movement.getPaidIGST()) < 0) {
 				dataMap.put("LPP_IGST_R", taxRcv.getIGST());
-			}else{
+			} else {
 				dataMap.put("LPP_IGST_R", movement.getPaidIGST());
 			}
-		}else{
+		} else {
 			addZeroifNotContains(dataMap, "LPP_CGST_R");
 			addZeroifNotContains(dataMap, "LPP_SGST_R");
 			addZeroifNotContains(dataMap, "LPP_UGST_R");
@@ -261,18 +262,18 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 		aeEvent.getAeAmountCodes().setPenaltyPaid(BigDecimal.ZERO);
 		aeEvent.getAeAmountCodes().setPenaltyWaived(BigDecimal.ZERO);
-		
+
 		// GST Invoice data resetting based on Accounting Process
 		String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-		if(StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)){
+		if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 			movement.setPaidAmount(movement.getPaidAmount().subtract(amountCodes.getPenaltyRcv()));
 			movement.setPaidCGST(movement.getPaidCGST().subtract(new BigDecimal(dataMap.get("LPP_CGST_R").toString())));
 			movement.setPaidSGST(movement.getPaidSGST().subtract(new BigDecimal(dataMap.get("LPP_SGST_R").toString())));
 			movement.setPaidUGST(movement.getPaidUGST().subtract(new BigDecimal(dataMap.get("LPP_UGST_R").toString())));
 			movement.setPaidIGST(movement.getPaidIGST().subtract(new BigDecimal(dataMap.get("LPP_IGST_R").toString())));
-			
+
 			// Update Receivable Tax details to make future postings correctly
-			if(taxRcv != null){
+			if (taxRcv != null) {
 				taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().subtract(amountCodes.getPenaltyRcv()));
 				taxRcv.setCGST(taxRcv.getCGST().subtract(new BigDecimal(dataMap.get("LPP_CGST_R").toString())));
 				taxRcv.setSGST(taxRcv.getSGST().subtract(new BigDecimal(dataMap.get("LPP_SGST_R").toString())));
@@ -282,13 +283,13 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
 			}
 		}
-		
+
 		List<Object> returnList = new ArrayList<>();
 		returnList.add(aeEvent);
-		
+
 		// GST Invoice 
-		if(movement != null && movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 
-				&& aeEvent.isPostingSucess() && aeEvent.getLinkedTranId() > 0){
+		if (movement != null && movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 && aeEvent.isPostingSucess()
+				&& aeEvent.getLinkedTranId() > 0) {
 
 			List<ManualAdviseMovements> advMovements = new ArrayList<>();
 			advMovements.add(movement);
@@ -300,8 +301,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			finScheduleData.setFinanceType(financeType);
 			financeDetail.setFinScheduleData(finScheduleData);
 			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-					advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT,	financeMain.getFinReference(), false);
-			
+					advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(),
+					false);
+
 			// Saving Tax Income Details
 			FinTaxIncomeDetail taxIncome = new FinTaxIncomeDetail();
 			taxIncome.setRepayID(rpyQueueHeader.getReceiptId());
@@ -312,17 +314,17 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			taxIncome.setUGST(movement.getPaidUGST());
 			taxIncome.setIGST(movement.getPaidIGST());
 			getFinODAmzTaxDetailDAO().saveTaxIncome(taxIncome);
-			
+
 			returnList.add(taxIncome);
-			
-		}else{
+
+		} else {
 			returnList.add(null);
 		}
 
 		logger.debug("Leaving");
 		return returnList;
 	}
-	
+
 	private void addZeroifNotContains(Map<String, Object> dataMap, String key) {
 		if (dataMap != null) {
 			if (!dataMap.containsKey(key)) {
@@ -1019,7 +1021,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
-	
 	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
 		return finODAmzTaxDetailDAO;
 	}
@@ -1043,7 +1044,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	public void setAssignmentDealDAO(AssignmentDealDAO assignmentDealDAO) {
 		this.assignmentDealDAO = assignmentDealDAO;
 	}
-	
+
 	public FinanceTypeDAO getFinanceTypeDAO() {
 		return financeTypeDAO;
 	}
@@ -1051,7 +1052,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
-	
+
 	public GSTInvoiceTxnService getGstInvoiceTxnService() {
 		return gstInvoiceTxnService;
 	}

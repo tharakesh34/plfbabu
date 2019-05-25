@@ -480,13 +480,14 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					.getClass().getMethod("getDocumentDetailDialogCtrl").invoke(financeMainDialogCtrl);
 
 			String document = SysParamUtil.getValueAsString("DISB_DOC");
-			if(documentDetailDialogCtrl != null){
+			if (documentDetailDialogCtrl != null) {
 				for (DocumentDetails details : documentDetailDialogCtrl.getDocumentDetailsList()) {
 					if (StringUtils.equalsIgnoreCase(details.getDocCategory(), document)) {
 						return details;
 					}
 				}
-			}}
+			}
+		}
 		logger.debug("Leaving");
 		return null;
 

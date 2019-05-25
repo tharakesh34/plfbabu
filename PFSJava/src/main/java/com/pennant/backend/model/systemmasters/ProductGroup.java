@@ -8,23 +8,19 @@ import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class ProductGroup extends AbstractWorkflowEntity implements Entity{
+public class ProductGroup extends AbstractWorkflowEntity implements Entity {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	private long productGroupId;
 	private String modelId;
 	private String productCategoryId;
 	private boolean active;
 	private String channel;
-	
-	
 
-	
 	@XmlTransient
 	private boolean newRecord = false;
 	@XmlTransient
@@ -34,14 +30,14 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity{
 
 	public ProductGroup() {
 		super();
-		
+
 	}
-	
+
 	public ProductGroup(long id) {
 		super();
 		this.setId(id);
 	}
-	
+
 	public long getProductGroupId() {
 		return productGroupId;
 	}
@@ -57,11 +53,6 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity{
 	public void setModelId(String modelId) {
 		this.modelId = modelId;
 	}
-
-	
-	
-
-	
 
 	public String getProductCategoryId() {
 		return productCategoryId;
@@ -95,7 +86,6 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity{
 		this.newRecord = newRecord;
 	}
 
-
 	public ProductGroup getBefImage() {
 		return befImage;
 	}
@@ -126,9 +116,10 @@ public class ProductGroup extends AbstractWorkflowEntity implements Entity{
 
 	@Override
 	public void setId(long id) {
-		this.productGroupId=id;
-		
+		this.productGroupId = id;
+
 	}
+
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}

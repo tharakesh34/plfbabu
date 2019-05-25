@@ -1186,7 +1186,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			this.gb_documentDetailsTracking.setVisible(false);
 		}
 
-		
 		logger.debug(Literal.LEAVING);
 	}
 

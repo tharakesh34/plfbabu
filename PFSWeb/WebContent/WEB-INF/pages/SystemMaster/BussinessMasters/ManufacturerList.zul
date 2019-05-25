@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_manufacturer" apply="${manufacturerListCtrl}" border="none" width="100%">
@@ -51,55 +50,44 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_ManufacturerList_ManufacturerName"
-										value="${c:l('label_ManufacturerList_ManufacturerName.value')}" />
+									<label id="label_ManufacturerList_ManufacturerName" value="${c:l('label_ManufacturerList_ManufacturerName.value')}" />
 									<listbox id="sortOperator_ManufacturerName" width="43px" mold="select" rows="1" />
 									<textbox id="manufacturerName" width="100px" maxlength="50" />
-									<label id="label_ManufacturerList_Description"
-										value="${c:l('label_ManufacturerList_Description.value')}" />
+									<label id="label_ManufacturerList_Description" value="${c:l('label_ManufacturerList_Description.value')}" />
 									<listbox id="sortOperator_Description" width="43px" mold="select" rows="1" />
 									<textbox id="description" width="100px" maxlength="50" />
 								</row>
 
 								<row>
-									<label id="label_ManufacturerList_Channel"
-										value="${c:l('label_ManufacturerList_Channel.value')}" />
+									<label id="label_ManufacturerList_Channel" value="${c:l('label_ManufacturerList_Channel.value')}" />
 									<listbox id="sortOperator_Channel" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="channel" />
-									<label id="label_ManufacturerList_Active"
-										value="${c:l('label_ManufacturerList_Active.value')}" />
+									<label id="label_ManufacturerList_Active" value="${c:l('label_ManufacturerList_Active.value')}" />
 									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" />
 									<textbox id="active" width="100px" maxlength="50" />
 								</row>
 								<row>
-									<label id="label_ManufacturerList_RecordStatus"
-										value="${c:l('label_ManufacturerList_RecordStatus.value')}" />
+									<label id="label_ManufacturerList_RecordStatus" value="${c:l('label_ManufacturerList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_ManufacturerList_RecordType"
-										value="${c:l('label_CovenantTypeList_RecordType.value')}" />
+									<label id="label_ManufacturerList_RecordType" value="${c:l('label_CovenantTypeList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
 
-						<listbox id="listBoxManufacturer" emptyMessage="${c:l('listbox.emptyMessage')}"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
-							span="true">
+						<listbox id="listBoxManufacturer" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_ManufacturerName"
-									label="${c:l('listheader_ManufacturerName.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_Description" label="${c:l('listheader_Description.label')}"
+								<listheader id="listheader_ManufacturerName" label="${c:l('listheader_ManufacturerName.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_Channel" label="${c:l('listheader_Channel.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto"
+								<listheader id="listheader_Description" label="${c:l('listheader_Description.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_Channel" label="${c:l('listheader_Channel.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

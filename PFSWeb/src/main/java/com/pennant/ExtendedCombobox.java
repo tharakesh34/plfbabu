@@ -197,7 +197,7 @@ public class ExtendedCombobox extends Hbox {
 
 		if (list == null && inputAllowed && !this.textbox.isReadonly()) {
 			validateValue(false);
-		} else if(CollectionUtils.isNotEmpty(list)){
+		} else if (CollectionUtils.isNotEmpty(list)) {
 			selectFromDefinedList();
 		}
 

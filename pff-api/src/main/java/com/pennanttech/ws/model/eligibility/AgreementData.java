@@ -5,16 +5,16 @@ import com.pennant.backend.model.WSReturnStatus;
 public class AgreementData {
 
 	private String cif;
-	
-	private byte [] docContent;
-	
+
+	private byte[] docContent;
+
 	private WSReturnStatus returnStatus;
 
-	public byte [] getDocContent() {
+	public byte[] getDocContent() {
 		return docContent;
 	}
 
-	public void setDocContent(byte [] docContent) {
+	public void setDocContent(byte[] docContent) {
 		this.docContent = docContent;
 	}
 
@@ -33,6 +33,5 @@ public class AgreementData {
 	public void setCif(String cif) {
 		this.cif = cif;
 	}
-	
-	
+
 }

@@ -76,15 +76,12 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	private ManualAdviseDAO manualAdviseDAO;
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * BMTInsuranceDetailss/BMTInsuranceDetailss_Temp by using
-	 * InsuranceDetailsDAO's save method b) Update the Record in the table.
-	 * based on the module workFlow Configuration. by using
-	 * InsuranceDetailsDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * BMTInsuranceDetailss/BMTInsuranceDetailss_Temp by using InsuranceDetailsDAO's save method b) Update the Record in
+	 * the table. based on the module workFlow Configuration. by using InsuranceDetailsDAO's update method 3) Audit the
+	 * record in to AuditHeader and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -116,7 +113,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		} else {
 			getInsuranceDetailDAO().updateInsuranceDetails(insuranceDetails, tableType.getSuffix());
 		}
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
@@ -183,16 +180,16 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(insuranceDetails);
-		
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-	
+
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -211,7 +208,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -234,17 +231,15 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
-		
+
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -261,10 +256,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getInsuranceDetailsDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getInsuranceDetailsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -291,22 +285,22 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	private long executeAccountingProcess(InsuranceDetails details) throws Exception {
 		VASRecording vasRecording = getVASRecordingByRef(details.getReference());
 		details.setEntityCode(vasRecording.getEntityCode());
 		return executeInsPartnerAccountingProcess(details, vasRecording);
 	}
 
-	
 	/**
-	 * The premium amount (Vasfee) and the policy amount received during the file upload difference amount 
-	 * Accounting process
+	 * The premium amount (Vasfee) and the policy amount received during the file upload difference amount Accounting
+	 * process
 	 */
 	@Override
-	public long executeInsPartnerAccountingProcess(InsuranceDetails details, VASRecording vASRecording) throws Exception {
+	public long executeInsPartnerAccountingProcess(InsuranceDetails details, VASRecording vASRecording)
+			throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// VasconfigurationDetails
 		vASRecording.setVasConfiguration(getVASConfigurationByCode(vASRecording.getProductCode()));
 
@@ -340,24 +334,25 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			aeEvent.setCustID(collateralSetup.getDepositorId());
 			aeEvent.setBranch(customer.getCustDftBranch());
 		}
-		
+
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
-		
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
-		
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ, AccountEventConstants.ACCEVENT_INSADJ);
+
+		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_INSADJ,
+				AccountEventConstants.ACCEVENT_INSADJ);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
-		
+
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}
 
 	private long executeInsPaymentsAccountingProcess(InsurancePaymentInstructions details) {
-		
+
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
 		aeEvent.setEntityCode(details.getEntityCode());
@@ -370,10 +365,10 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
 		}
-		
+
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCode(details.getProviderId());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
-		
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
@@ -384,9 +379,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}
-	
-	 
-	private long executePaymentsAccountingProcess(VASRecording vASRecording, InsurancePaymentInstructions details) throws InterfaceException {
+
+	private long executePaymentsAccountingProcess(VASRecording vASRecording, InsurancePaymentInstructions details)
+			throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -429,7 +424,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
-		
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
@@ -440,15 +435,15 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}
-	
+
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode) {
 		return getvASConfigurationService().getApprovedVASConfigurationByCode(productCode, false);
 	}
-	
+
 	@Override
 	public List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId) {
-		return	getManualAdviseDAO().getManualAdviseByRefAndFeeId(adviseType, feeTypeId);		
+		return getManualAdviseDAO().getManualAdviseByRefAndFeeId(adviseType, feeTypeId);
 	}
 
 	@Override
@@ -459,7 +454,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		if (details.getAdviseRefMap().size() > 0) {
 			processMaualAdvisePayments(details);
 		}
-		
+
 		//Accounting for Total Amount paid to insurance provider.
 		if (details.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {
 			Cloner cloner = new Cloner();
@@ -468,7 +463,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			payToPatner.setReceivableAmount(BigDecimal.ZERO);
 			details.setLinkedTranId(executeInsPaymentsAccountingProcess(payToPatner));
 		}
-		
+
 		//Accounting for the individual Insurances payment. 
 		Cloner cloner = new Cloner();
 		InsurancePaymentInstructions newDetails = cloner.deepClone(details);
@@ -509,8 +504,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		LinkedHashMap<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 		for (Long feeTypeId : adviseRefMap.keySet()) {
 			boolean completed = false;
-			List<ManualAdvise> manualAdvises = getManualAdviseDAO().getManualAdviseByRefAndFeeId(
-					FinanceConstants.MANUAL_ADVISE_RECEIVABLE, feeTypeId);
+			List<ManualAdvise> manualAdvises = getManualAdviseDAO()
+					.getManualAdviseByRefAndFeeId(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, feeTypeId);
 
 			for (ManualAdvise manualAdvise : manualAdvises) {
 				receivableAmount = receivableAmount.add(manualAdvise.getBalanceAmt());
@@ -541,7 +536,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void updateUtilizedAmts(InsurancePaymentInstructions instructions, ManualAdvise manualAdvise) {
 		// Update PaidAmount
 		getManualAdviseDAO().updatePaidAmountOnly(manualAdvise.getAdviseID(), manualAdvise.getBalanceAmt());
@@ -568,7 +563,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			executePaymentsAccountingProcess(vasRecording, instructionsForRecivable);
 		}
 	}
-	
+
 	@Override
 	public InsuranceDetails getInsurenceDetailsById(long id) {
 		return getInsuranceDetailDAO().getInsurenceDetailsById(id, "_View");
@@ -596,9 +591,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	@Override
 	public VASRecording getVASRecording(String vasReference, String vasStatus) {
-		 return getvASRecordingService().getVASRecording(vasReference, vasStatus);
+		return getvASRecordingService().getVASRecording(vasReference, vasStatus);
 	}
-	
+
 	@Override
 	public void updateVasStatus(String status, String vasReference) {
 		getvASRecordingService().updateVasStatus(status, vasReference);
@@ -608,6 +603,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType) {
 		return getvASProviderAccDetailService().getVASProviderAccDetByPRoviderId(providerId, entityCode, tableType);
 	}
+
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType) {
 		return getvASProviderAccDetailService().getVASProviderAccDetByPRoviderId(providerId, tableType);
@@ -617,6 +613,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	public VasCustomer getVasCustomerDetails(String finReference, String postingAgainst) {
 		return getvASRecordingService().getVasCustomerDetails(finReference, postingAgainst);
 	}
+
 	@Override
 	public BankBranch getBankBranchById(long bankBranchID, String tableType) {
 		return getBankBranchDAO().getBankBranchById(bankBranchID, tableType);
@@ -626,7 +623,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	public VehicleDealer getProviderDetails(long dealerId, String tableType) {
 		return getVehicleDealerDAO().getVehicleDealerById(dealerId, tableType);
 	}
-	
+
 	@Override
 	public void updatePaymentStatus(InsurancePaymentInstructions instruction) {
 		getInsuranceDetailDAO().updatePaymentStatus(instruction);
@@ -664,6 +661,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	public BankBranchDAO getBankBranchDAO() {
 		return bankBranchDAO;
 	}

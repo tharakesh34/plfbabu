@@ -64,8 +64,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
- * Data access layer implementation for <code>FinMaintainInstruction</code> with
- * set of CRUD operations.
+ * Data access layer implementation for <code>FinMaintainInstruction</code> with set of CRUD operations.
  */
 
 public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstruction>
@@ -207,7 +206,8 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimit,");
+		sql.append(
+				" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimit,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(
@@ -244,9 +244,8 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event, TDSApplicable = :TDSApplicable, TdsPercentage = :TdsPercentage,"); 
-		sql.append(
-				" TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimit = :TdsLimit,");
+				" set FinMaintainId = :FinMaintainId, FinReference = :FinReference, Event = :Event, TDSApplicable = :TDSApplicable, TdsPercentage = :TdsPercentage,");
+		sql.append(" TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimit = :TdsLimit,");
 		sql.append(
 				" Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		sql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");

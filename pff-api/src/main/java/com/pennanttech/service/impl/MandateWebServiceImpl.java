@@ -65,7 +65,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	private FinanceTypeService financeTypeService;
 	private PartnerBankDAO partnerBankDAO;
 	private FinanceMainDAO financeMainDAO;
-	
+
 	/**
 	 * Method for create Mandate in PLF system.
 	 * 
@@ -381,10 +381,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				return returnStatus;
 			}
 		}
-		
+
 		//set mandate type 
 		mandateDetail.setMandateType(newMandate.getMandateType());
-		
+
 		logger.debug("Leaving");
 		return returnStatus;
 	}
@@ -431,15 +431,15 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
 		 * "finReference"; return getErrorDetails("90502", valueParm); }
 		 */
-		boolean alwmandate=ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG;
+		boolean alwmandate = ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG;
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
-			if(!alwmandate) {
-			int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
-			if (count <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = mandate.getOrgReference();
-				return getErrorDetails("90201", valueParm);
-			}
+			if (!alwmandate) {
+				int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
+				if (count <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = mandate.getOrgReference();
+					return getErrorDetails("90201", valueParm);
+				}
 			} else {
 				FinanceMain finMain = financeMainDAO.getFinanceMainParms(mandate.getOrgReference());
 				if (finMain == null) {
@@ -449,10 +449,10 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 				}
 			}
 			String type = "";
-			if(alwmandate) {
-			 type="_View";
+			if (alwmandate) {
+				type = "_View";
 			}
-			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(),type);
+			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(), type);
 			boolean validFinrefernce = true;
 			for (String finReference : finRefList) {
 				if (StringUtils.equals(finReference, mandate.getOrgReference())) {
@@ -769,12 +769,12 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 			}
 			if (mandate.isSwapIsActive()) {
 				//FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
-				String tableType="";
-				if(ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG){
+				String tableType = "";
+				if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
 					tableType = "_View";
 				}
-				
-				String finType=financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(),tableType);
+
+				String finType = financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(), tableType);
 				String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
 				if (StringUtils.isNotBlank(allowedRepayModes)) {
 					boolean isTypeFound = false;
@@ -863,7 +863,7 @@ public class MandateWebServiceImpl implements MandateRestService, MandateSoapSer
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
-	
+
 	@Autowired
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;

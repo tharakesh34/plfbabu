@@ -154,8 +154,7 @@ public class FeePostingController {
 			auditHeader = manualAdviseService.saveOrUpdate(auditHeader);
 			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().isEmpty()) {
 				for (ErrorDetail error : auditHeader.getOverideMessage()) {
-					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(error.getCode(), error.getError()));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(error.getCode(), error.getError()));
 					return response;
 				}
 			}
@@ -185,6 +184,7 @@ public class FeePostingController {
 
 	/**
 	 * Validate Payable/Receivable advise detail
+	 * 
 	 * @param manualAdvise
 	 * @return {@link FinFeeDetail}
 	 */
@@ -198,7 +198,7 @@ public class FeePostingController {
 			error.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", errorParam));
 			return error;
 		} else {
-			boolean isAdvise=false;
+			boolean isAdvise = false;
 			List<ValueLabel> adviseTypes = PennantStaticListUtil.getManualAdviseTypes();
 			for (ValueLabel adviseType : adviseTypes) {
 				if (manualAdvise.getAdviseType() == Integer.valueOf(adviseType.getValue())) {
@@ -284,9 +284,9 @@ public class FeePostingController {
 
 		if (financeDetail != null) {
 			FinTypeFees finTypeFee = new FinTypeFees();
-			financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(manualAdvise.getFinReference()));
+			financeDetail.setFinanceTaxDetail(
+					financeTaxDetailService.getApprovedFinanceTaxDetail(manualAdvise.getFinReference()));
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-
 
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
 

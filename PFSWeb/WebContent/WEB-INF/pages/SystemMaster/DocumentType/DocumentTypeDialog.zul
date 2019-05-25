@@ -5,7 +5,8 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_DocumentTypeDialog" border="normal" apply="${documentTypeDialogCtrl}" width="100%" height="100%" sizable="false">
+	<window id="window_DocumentTypeDialog" border="normal" apply="${documentTypeDialogCtrl}" width="100%" height="100%"
+		sizable="false">
 		<borderlayout id="borderlayoutDocumentType">
 			<north>
 				<div sclass="z-toolbar">
@@ -13,16 +14,16 @@
 
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 
@@ -35,8 +36,8 @@
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
 				</div>
@@ -68,22 +69,19 @@
 								<row>
 									<label id="label_DocumentTypeDialog_DocCategory" value="${c:l('label_DocumentTypeDialog_DocCategory.value')}" />
 									<extendedcombobox id="docCategory" />
-									<label id="label_DocumentTypeDialog_DocIsMandatory"
-										value="${c:l('label_DocumentTypeDialog_DocIsMandatory.value')}" />
+									<label id="label_DocumentTypeDialog_DocIsMandatory" value="${c:l('label_DocumentTypeDialog_DocIsMandatory.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="docIsMandatory" checked="false" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_DocumentTypeDialog_DocIsExDateMandatory"
-										value="${c:l('label_DocumentTypeDialog_DocIsExDateMandatory.value')}" />
+									<label id="label_DocumentTypeDialog_DocIsExDateMandatory" value="${c:l('label_DocumentTypeDialog_DocIsExDateMandatory.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="docExpDateIsMand" checked="false" />
 									</hbox>
-									<label id="label_DocumentTypeDialog_docIssueDateMand"
-										value="${c:l('label_DocumentTypeDialog_docIssueDateMand.value')}" />
+									<label id="label_DocumentTypeDialog_docIssueDateMand" value="${c:l('label_DocumentTypeDialog_docIssueDateMand.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="docIssueDateMand" checked="false" />
@@ -95,16 +93,14 @@
 										<space spacing="2px" />
 										<checkbox id="docIdNumMand" checked="false" />
 									</hbox>
-									<label id="label_DocumentTypeDialog_docIssuedAuthorityMand"
-										value="${c:l('label_DocumentTypeDialog_docIssuedAuthorityMand.value')}" />
+									<label id="label_DocumentTypeDialog_docIssuedAuthorityMand" value="${c:l('label_DocumentTypeDialog_docIssuedAuthorityMand.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="docIssuedAuthorityMand" checked="false" />
 									</hbox>
 								</row>
 								<row>
-									<label id="label_DocumentTypeDialog_DocTypeIsActive"
-										value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />
+									<label id="label_DocumentTypeDialog_DocTypeIsActive" value="${c:l('label_DocumentTypeDialog_DocTypeIsActive.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="docTypeIsActive" disabled="true" checked="false" />

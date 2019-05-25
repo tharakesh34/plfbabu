@@ -113,7 +113,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		limitHeader.setCustomerGroup(groupCode);
 
 		StringBuilder selectSql = new StringBuilder("Select HeaderId,  CustomerGroup, ResponsibleBranch, LimitCcy, ");
-		selectSql.append(" LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild,ValidateMaturityDate,");
+		selectSql.append(
+				" LimitExpiryDate, LimitRvwDate, LimitStructureCode, LimitSetupRemarks,Active,Rebuild,ValidateMaturityDate,");
 		selectSql.append("RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" , ShowLimitsIn, QueryDesc, CustGrpRO1, ResponsibleBranchName, StructureName, ");

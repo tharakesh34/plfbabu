@@ -2304,7 +2304,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 				if (DateUtility.compare(curSchd.getSchDate(), aFinanceMain.getFinStartDate()) == 0) {
 					advEMi = aFinanceMain.getAdvanceEMI();
 				}
-				
+
 				if (!AdvanceType.AE.name().equals(aFinanceMain.getAdvType())) {
 					advEMi = BigDecimal.ZERO;
 				}

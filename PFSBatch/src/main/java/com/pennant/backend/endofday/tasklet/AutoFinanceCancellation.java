@@ -12,11 +12,11 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.service.finance.FinanceDetailService;
 
-public class AutoFinanceCancellation  implements Tasklet  {
-	private Logger				logger	= Logger.getLogger(AutoFinanceCancellation.class);
+public class AutoFinanceCancellation implements Tasklet {
+	private Logger logger = Logger.getLogger(AutoFinanceCancellation.class);
 
 	private FinanceDetailService financeDetailService;
-	
+
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 		Date valueDate = DateUtility.getAppValueDate();

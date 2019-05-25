@@ -81,7 +81,8 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		StringBuilder sql = new StringBuilder();
 		sql.append("select id, usrid, businessvertical, product, fintype, branch, reportingto");
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append(", businessVerticalCode, businessVerticalDesc, productDesc, finTypeDesc,branchDesc, reportingToUserName");
+			sql.append(
+					", businessVerticalCode, businessVerticalDesc, productDesc, finTypeDesc,branchDesc, reportingToUserName");
 		}
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
@@ -147,7 +148,7 @@ public class ReportingManagerDAOImpl extends SequenceDao<ReportingManager> imple
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(ReportingManager reportingManager, TableType tableType) {
 		logger.debug(Literal.ENTERING);

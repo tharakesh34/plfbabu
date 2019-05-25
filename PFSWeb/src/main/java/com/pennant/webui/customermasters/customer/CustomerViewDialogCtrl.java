@@ -2064,8 +2064,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				Listitem item = new Listitem();
 				item.setHeight("50px");
 				Listcell lc;
-				lc = new Listcell(
-						DateUtility.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
+				lc = new Listcell(DateUtility.format(custChequeInfo.getMonthYear(), PennantConstants.monthYearFormat));
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
 				lc = new Listcell(PennantAppUtil.amountFormate(custChequeInfo.getTotChequePayment(), ccyFormatter));

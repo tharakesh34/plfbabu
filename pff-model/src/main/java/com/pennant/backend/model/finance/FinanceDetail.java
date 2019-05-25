@@ -99,7 +99,8 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 @XmlType(propOrder = { "finReference", "stp", "processStage", "finScheduleData", "foreClosureDetails",
 		"customerDetails", "advancePaymentsList", "mandate", "jountAccountDetailList", "gurantorsDetailList",
 		"documentDetailsList", "covenantTypeList", "collateralAssignmentList", "finFlagsDetails", "finFeeDetails",
-		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations", "returnStatus" })
+		"returnDataSetList", "collateralSetup", "financeTaxDetails", "extendedDetails", "receiptAllocations",
+		"returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceDetail implements java.io.Serializable {
@@ -250,7 +251,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean lvApprovalTab = false;
 	private boolean lvInitTab = false;
 	private boolean rcuApprovalTab = false;
-	private boolean rcuInitTab = false; 
+	private boolean rcuInitTab = false;
 	private boolean pdDetailTab = false;
 	private Map<String, String> showTabDetailMap = new HashMap<>();
 	@XmlElement

@@ -529,7 +529,6 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		List<AuditDetail> auditDetails = financeDetail.getAuditDetailMap().get("checkListDetails");
 
-		
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinanceCheckListReference finChecklistRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
 			finChecklistRef.setWorkflowId(0);

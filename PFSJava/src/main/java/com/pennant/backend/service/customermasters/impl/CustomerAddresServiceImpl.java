@@ -331,7 +331,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	public List<CustomerAddres> getApprovedCustomerAddresById(long id) {
 		return getCustomerAddresDAO().getCustomerAddresByCustomer(id, "_AView");
 	}
-	
+
 	@Override
 	public CustomerAddres getHighPriorityCustAddr(long custID) {
 		return getCustomerAddresDAO().getHighPriorityCustAddr(custID, "");

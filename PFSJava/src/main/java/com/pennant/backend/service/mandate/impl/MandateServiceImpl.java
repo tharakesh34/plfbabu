@@ -684,8 +684,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			if (mandate.getPartnerBankId() <= 0) {
 				String[] valueParm1 = new String[1];
 				valueParm1[0] = PennantJavaUtil.getLabel("label_MandateDialog_PartnerBank.value") + "Id";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail("90502", valueParm1)));
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm1)));
 			} else {
 				PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(mandate.getPartnerBankId(), "");
 				if (partnerBank == null) {
@@ -850,11 +849,11 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
 	}
-	
+
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
-	
+
 	@Autowired(required = false)
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;

@@ -63,7 +63,8 @@ public class SchemeDealerGroupDAOImpl extends SequenceDao<SchemeDealerGroup> imp
 
 		StringBuilder sql = new StringBuilder("insert into CD_SCHEME_DEALERGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append("(SchemeDealerGroupId, PromotionId, DealerGroupCode, Active, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(
+				"(SchemeDealerGroupId, PromotionId, DealerGroupCode, Active, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append("(:schemeDealerGroupId, :promotionId, :dealerGroupCode, :active, :Version , :LastMntBy, :LastMntOn");

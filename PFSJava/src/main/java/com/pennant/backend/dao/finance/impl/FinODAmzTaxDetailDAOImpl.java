@@ -124,7 +124,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public FinTaxReceivable getFinTaxReceivable(String finReference, String type) {
 		logger.debug(Literal.ENTERING);
@@ -140,7 +140,8 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxReceivable);
-		RowMapper<FinTaxReceivable> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTaxReceivable.class);
+		RowMapper<FinTaxReceivable> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTaxReceivable.class);
 
 		try {
 			taxReceivable = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -159,7 +160,8 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder updateSql = new StringBuilder("Update FinTaxReceivable");
-		updateSql.append(" Set ReceivableAmount = :ReceivableAmount, CGST = :CGST, IGST = :IGST, UGST = :UGST, SGST = :SGST ");
+		updateSql.append(
+				" Set ReceivableAmount = :ReceivableAmount, CGST = :CGST, IGST = :IGST, UGST = :UGST, SGST = :SGST ");
 		updateSql.append(" Where FinReference =:FinReference AND TaxFor=:TaxFor ");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -185,7 +187,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type) {
 		logger.debug(Literal.ENTERING);
@@ -201,7 +203,8 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
-		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinTaxIncomeDetail.class);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTaxIncomeDetail.class);
 
 		try {
 			taxIncomeDetail = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -212,7 +215,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		logger.debug(Literal.LEAVING);
 		return taxIncomeDetail;
 	}
-	
+
 	@Override
 	public boolean isDueCreatedForDate(String finReference, Date valueDate, String taxFor) {
 		logger.debug("Entering");

@@ -226,14 +226,14 @@ public class ManagerChequeListCtrl extends GFCBaseListCtrl<ManagerCheque> {
 					// do nothing
 				} else if (searchOpId == Filter.OP_BETWEEN) {
 					if (this.valueDate_one.getValue() != null) {
-						this.searchObject.addFilter(
-								new Filter("ValueDate", DateUtility.format(this.valueDate_one.getValue(),
-										PennantConstants.DBDateFormat), Filter.OP_GREATER_OR_EQUAL));
+						this.searchObject.addFilter(new Filter("ValueDate",
+								DateUtility.format(this.valueDate_one.getValue(), PennantConstants.DBDateFormat),
+								Filter.OP_GREATER_OR_EQUAL));
 					}
 					if (this.valueDate_two.getValue() != null) {
-						this.searchObject.addFilter(
-								new Filter("ValueDate", DateUtility.format(this.valueDate_two.getValue(),
-										PennantConstants.DBDateFormat), Filter.OP_LESS_OR_EQUAL));
+						this.searchObject.addFilter(new Filter("ValueDate",
+								DateUtility.format(this.valueDate_two.getValue(), PennantConstants.DBDateFormat),
+								Filter.OP_LESS_OR_EQUAL));
 					}
 				} else {
 					this.searchObject.addFilter(new Filter("ValueDate",

@@ -70,8 +70,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"custFNameLclLng", "custLng", "custDOB", "custCOB", "custNationality", "custGenderCode", "custMaritalSts",
 		"noOfDependents", "custTypeCode", "custSector", "custSubSector", "custSegment", "custSubSegment",
 		"custIndustry", "custGroupID", "custParentCountry", "custRiskCountry", "custIsStaff", "custStaffID",
-		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId","custShrtNameLclLng",
-		"returnStatus" })
+		"custEmpSts", "custDSA", "custDSADept", "custAddlDec1", "subCategory", "casteId", "religionId",
+		"custShrtNameLclLng", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class Customer extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2198471029043076055L;
@@ -110,7 +110,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	private String custFNameLclLng;
 	private String custMNameLclLng;
 	private String custLNameLclLng;
-	@XmlElement(name="othersName")
+	@XmlElement(name = "othersName")
 	private String custShrtNameLclLng;
 
 	private String custDftBranch;
@@ -340,10 +340,10 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String applicationNo;
 	private String branchProvince;
-	
+
 	private String legalconstitution;
 	private String businesscategory;
-		
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

@@ -242,7 +242,6 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	@Override
 	public void deleteByCOFCode(String cofCode, TableType tableType) {
 
@@ -258,7 +257,7 @@ public class CostOfFundDAOImpl extends BasicDao<CostOfFund> implements CostOfFun
 		logger.trace(Literal.SQL + sql.toString());
 		this.jdbcTemplate.update(sql.toString(), source);
 	}
-		
+
 	/**
 	 * Common method for CostOfFunds to get the costOfFund and get the List of objects less than passed Effective
 	 * CostOfFund Date

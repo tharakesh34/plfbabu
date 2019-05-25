@@ -17,7 +17,7 @@ public interface CommoditiesDAO extends BasicCrudDao<Commodity> {
 	void saveCommoditiesLog(MapSqlParameterSource mapdata);
 
 	Commodity getQueryOperation(Commodity commodity);
-	
+
 	void updateCommodity(Commodity commodity);
 
 }

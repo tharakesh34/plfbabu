@@ -103,7 +103,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	@Autowired
 	private SearchProcessor searchProcessor;
-	
+
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
 	@Autowired

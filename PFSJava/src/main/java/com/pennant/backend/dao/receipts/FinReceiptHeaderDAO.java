@@ -73,7 +73,8 @@ public interface FinReceiptHeaderDAO {
 	void updateLoanInActive(long receiptId);
 
 	// ### For MultiReceipt
-	void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail, Map<String, String> valueMap);
+	void saveMultiReceipt(FinReceiptHeader finReceiptHeader, FinReceiptDetail finReceiptDetail,
+			Map<String, String> valueMap);
 
 	void updateMultiReceiptLog(FinReceiptQueueLog finReceiptQueue);
 

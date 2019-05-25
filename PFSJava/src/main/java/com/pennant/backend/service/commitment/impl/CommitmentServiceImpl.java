@@ -578,7 +578,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 					if (commitment.isOpenAccount()) {
 						commitment.setCmtAccount((String) returnList.get(2));
 					}
-				} else if(returnList != null){
+				} else if (returnList != null) {
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
 					auditHeader.setErrorDetails(
 							new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),
@@ -596,7 +596,7 @@ public class CommitmentServiceImpl extends GenericService<Commitment> implements
 				List<Object> returnList = processPosting(commitment, AccountEventConstants.ACCEVENT_MNTCMT);
 				if (returnList != null && (returnList.get(3) == null)) {
 					linkTranid = (Long) returnList.get(1);
-				} else if(returnList != null) {
+				} else if (returnList != null) {
 					String errorMessage = StringUtils.trimToEmpty(returnList.get(3).toString());
 					auditHeader.setErrorDetails(
 							new ErrorDetail(errorMessage.substring(0, errorMessage.indexOf('-')).trim(),

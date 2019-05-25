@@ -1258,7 +1258,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 				}
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 

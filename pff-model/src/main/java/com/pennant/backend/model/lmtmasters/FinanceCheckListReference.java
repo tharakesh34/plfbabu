@@ -72,7 +72,8 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 	private long lovDescMaxAnsCount;
 	private long lovDescMinAnsCount;
 
-	private long  instructionUID =  Long.MIN_VALUE;
+	private long instructionUID = Long.MIN_VALUE;
+
 	public String getLovDescQuesDesc() {
 		return lovDescQuesDesc;
 	}

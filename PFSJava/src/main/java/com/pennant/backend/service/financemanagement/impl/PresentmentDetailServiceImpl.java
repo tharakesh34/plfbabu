@@ -381,18 +381,18 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 		//reverse the excess movement
 		reverseExcessMovements(presentmentId);
-		
+
 		this.getPresentmentDetailDAO().deletePresentmentDetails(presentmentId);
 		this.getPresentmentDetailDAO().deletePresentmentHeader(presentmentId);
 	}
-	
+
 	private void reverseExcessMovements(long presentmentId) {
 		List<FinExcessMovement> advlist = finExcessAmountDAO.getFinExcessAmount(presentmentId);
 		if (advlist != null && !advlist.isEmpty()) {
 			for (FinExcessMovement finExcessAmount : advlist) {
 				//update reserver and delete the movement
 				FinExcessAmount movement = finExcessAmountDAO.getFinExcessByID(finExcessAmount.getExcessID());
-				
+
 				movement.setReservedAmt(movement.getReservedAmt().subtract(finExcessAmount.getAmount()));
 				BigDecimal amount = movement.getAmount();
 				BigDecimal reservedAmt = movement.getReservedAmt();
@@ -501,7 +501,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Create a new Receipt
 	 * 
@@ -531,8 +530,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	// Creating the receipts If Schedule data is lessthan or equal to
 	// Application date.
-	private AuditHeader doCreateReceipts(PresentmentDetail presentmentDetail, LoggedInUser userDetails, PresentmentHeader header)
-			throws Exception {
+	private AuditHeader doCreateReceipts(PresentmentDetail presentmentDetail, LoggedInUser userDetails,
+			PresentmentHeader header) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -829,7 +828,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
 	}
-		
+
 	private PresentmentRequest getPresentmentRequest() {
 		return presentmentRequest == null ? defaultPresentmentRequest : presentmentRequest;
 	}

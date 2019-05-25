@@ -86,11 +86,9 @@
 														</hbox>
 													</row>
 													<row>
-														<label id="label_FinanceMainDialog_BusinessVertical"
-															value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+														<label id="label_FinanceMainDialog_BusinessVertical" value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 														<hbox>
-															<textbox id="businessVertical" width="250px"
-																readonly="true" />
+															<textbox id="businessVertical" width="250px" readonly="true" />
 														</hbox>
 													</row>
 													<row>
@@ -916,11 +914,11 @@
 														</hbox>
 													</row>
 													<row visible="true">
-													<hbox>
-														<label id="label_FinanceMainDialog_LPPRULE"
-															value="${c:l('label_FinanceMainDialog_LPPRULE.value')}" visible="false" />
-													</hbox>
-												</row>
+														<hbox>
+															<label id="label_FinanceMainDialog_LPPRULE" value="${c:l('label_FinanceMainDialog_LPPRULE.value')}"
+																visible="false" />
+														</hbox>
+													</row>
 													<row visible="true">
 														<label id="label_FinanceMainDialog_ODChargeType" value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
 														<hbox>
@@ -947,8 +945,7 @@
 														</hbox>
 													</row>
 													<row id="row_ODMinCapAmount" visible="false">
-														<label id="label_FinanceMainDialog_ODMinCapAmount"
-															value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
+														<label id="label_FinanceMainDialog_ODMinCapAmount" value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
 														<hbox>
 															<space id="space_ODMinCapAmount" spacing="2px" />
 															<decimalbox id="oDMinCapAmount" width="120px" />

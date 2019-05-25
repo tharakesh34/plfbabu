@@ -165,7 +165,7 @@
 			<menuItem id="menu_Item_SchemeDealerGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/SchemeDealerGroupList.zul"
 				rightName="menuItem_CDSchemeDealerGroup" />
 			<menuItem id="menu_Item_SchemeProductGroup" zulNavigation="/WEB-INF/pages/SystemMaster/BussinessMasters/SchemeProductGroupList.zul"
-				rightName="menuItem_CDSchemeProductGroup" />	
+				rightName="menuItem_CDSchemeProductGroup" />
 			<menuItem id="menu_Item_DealerMapping" zulNavigation="/WEB-INF/pages/SystemMaster/DealerMapping/DealerMappingList.zul"
 				rightName="menuItem_DealerMapping" />
 			<menuItem id="menu_Item_Dealer_Group" zulNavigation="/WEB-INF/pages/DealerGroup/DealerGroupList.zul"
@@ -516,7 +516,7 @@
 			<menuItem id="menu_Item_PaymentInstructions" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul"
 				rightName="menuItem_payment_PaymentInstructions" />
 			<menuItem id="menu_Item_ChangeTDS" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
-			rightName="menuItem_FinanceManagement_ChangeTDSApplicable" />
+				rightName="menuItem_FinanceManagement_ChangeTDSApplicable" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<!-- <menuItem id="menu_Item_Receipts" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul" rightName="menuItem_FinanceManagement_Receipts" 
@@ -717,12 +717,13 @@
 
 	<!-- Income Amortization -->
 	<menu id="menu_Category_IncomeAmortization" rightName="menuCat_Amortization">
-		 <menuItem id="menu_Item_AmortizationMethodRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AmortizationMethodRuleList.zul" rightName="menuItem_RulesFactory_AmortizationMethodRule" />
-		 <menuItem id="menu_Item_AMZProcess" zulNavigation="/WEB-INF/pages/Batch/AMZBatchAdmin.zul" rightName="menuItem_Amortization_IncomeAmortization" />
-	<!-- <menuItem id="menu_Item_CalAvgPOS" zulNavigation="/WEB-INF/pages/Amortization/CalAvgPOS.zul" rightName="menuItem_CustProfitability_CalAvgPOS"/> -->
-	<!-- <menuItem id="menu_Item_IncomeAmortization" zulNavigation="/WEB-INF/pages/Amortization/IncomeAmortization.zul" rightName="menuItem_Amortization_IncomeAmortization"/> -->
+		<menuItem id="menu_Item_AmortizationMethodRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/AmortizationMethodRuleList.zul"
+			rightName="menuItem_RulesFactory_AmortizationMethodRule" />
+		<menuItem id="menu_Item_AMZProcess" zulNavigation="/WEB-INF/pages/Batch/AMZBatchAdmin.zul" rightName="menuItem_Amortization_IncomeAmortization" />
+		<!-- <menuItem id="menu_Item_CalAvgPOS" zulNavigation="/WEB-INF/pages/Amortization/CalAvgPOS.zul" rightName="menuItem_CustProfitability_CalAvgPOS"/> -->
+		<!-- <menuItem id="menu_Item_IncomeAmortization" zulNavigation="/WEB-INF/pages/Amortization/IncomeAmortization.zul" rightName="menuItem_Amortization_IncomeAmortization"/> -->
 	</menu>
-   
+
 	<!-- Enquiry -->
 	<menu id="menu_Category_Enquiry">
 		<menu id="menu_Category_CustomerEnquiry">
@@ -896,7 +897,8 @@
 				/> -->
 			<menuItem id="menu_Item_AccountStmt" zulNavigation="/WEB-INF/pages/Reports/SOAReportGenerationDialog.zul"
 				rightName="menuItem_CustomerTemplates_SOA" />
-			<menuItem id="menu_Item_ScheduleRateReport" zulNavigation="/WEB-INF/pages/Reports/ScheduleRateReport.zul" rightName="menuItem_CustomerTemplates_ScheduleRateReport" />
+			<menuItem id="menu_Item_ScheduleRateReport" zulNavigation="/WEB-INF/pages/Reports/ScheduleRateReport.zul"
+				rightName="menuItem_CustomerTemplates_ScheduleRateReport" />
 			<menuItem id="menu_Item_NoObjectionCertificate" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_NoObjectionCertificate" />
 			<menuItem id="menu_Item_WelcomeLetter" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"

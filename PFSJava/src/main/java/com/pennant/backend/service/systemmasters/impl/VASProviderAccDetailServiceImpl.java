@@ -202,15 +202,15 @@ public class VASProviderAccDetailServiceImpl extends GenericService<VASProviderA
 	public VASProviderAccDetail getApprovedVASProviderAccDetail(long id) {
 		return getVASProviderAccDetailDAO().getVASProviderAccDetail(id, "_AView");
 	}
-	
+
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType) {
-		return getVASProviderAccDetailDAO().getVASProviderAccDetByPRoviderId(providerId, entityCode , tableType);
+		return getVASProviderAccDetailDAO().getVASProviderAccDetByPRoviderId(providerId, entityCode, tableType);
 	}
-	
+
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType) {
-		return getVASProviderAccDetailDAO().getVASProviderAccDetByPRoviderId(providerId , tableType);
+		return getVASProviderAccDetailDAO().getVASProviderAccDetByPRoviderId(providerId, tableType);
 	}
 
 	/**

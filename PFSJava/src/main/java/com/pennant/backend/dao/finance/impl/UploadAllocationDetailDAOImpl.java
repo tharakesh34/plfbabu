@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -63,14 +62,15 @@ import com.pennanttech.pennapps.core.resource.Literal;
  * DAO methods implementation for the <b>UploadHeader model</b> class.<br>
  * 
  */
-public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDetail> implements UploadAllocationDetailDAO {
+public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDetail>
+		implements UploadAllocationDetailDAO {
 
 	private static Logger logger = Logger.getLogger(UploadAllocationDetailDAOImpl.class);
-	
+
 	public UploadAllocationDetailDAOImpl() {
 		super();
 	}
-	
+
 	/**
 	 * This method insert new Records into UploadHeader or UploadHeader_Temp.
 	 * 
@@ -85,11 +85,10 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 	 * 
 	 */
 	@Override
-	public void save(List<UploadAlloctionDetail> listUploadAllocationDetail,long details,String rootId) {
+	public void save(List<UploadAlloctionDetail> listUploadAllocationDetail, long details, String rootId) {
 		logger.debug("Entering");
 
-		
-		for(UploadAlloctionDetail uploadAlloctionDetail:listUploadAllocationDetail){
+		for (UploadAlloctionDetail uploadAlloctionDetail : listUploadAllocationDetail) {
 			StringBuilder sql = new StringBuilder();
 			if (uploadAlloctionDetail.getUploadAlloctionDetailId() == Long.MIN_VALUE) {
 				uploadAlloctionDetail.setUploadAlloctionDetailId(getNextValue("SeqUploadAllocationDetail"));
@@ -97,29 +96,28 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 			}
 			uploadAlloctionDetail.setUploadDetailId(details);
 			uploadAlloctionDetail.setRootId(rootId);
-			
+
 			sql.append(" Insert Into UploadAlloctionDetails");
-			sql.append(" (UploadDetailId, UploadAlloctionDetailId,rootId,AllocationType, ReferenceCode, PaidAmount, WaivedAmount)");
-			sql.append(" Values (:UploadDetailId, :UploadAlloctionDetailId,:rootId, :allocationType, :referenceCode, :paidAmount, :waivedAmount)");
-			
+			sql.append(
+					" (UploadDetailId, UploadAlloctionDetailId,rootId,AllocationType, ReferenceCode, PaidAmount, WaivedAmount)");
+			sql.append(
+					" Values (:UploadDetailId, :UploadAlloctionDetailId,:rootId, :allocationType, :referenceCode, :paidAmount, :waivedAmount)");
 
 			logger.debug("sql: " + sql.toString());
 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadAlloctionDetail);
-			
+
 			try {
 				this.jdbcTemplate.update(sql.toString(), beanParameters);
 			} catch (DataAccessException e) {
 				logger.debug("Exception " + e.getMessage());
 			}
-			
+
 			logger.debug("Leaving");
-			
+
 		}
 	}
-	
-	
-	
+
 	@Override
 	public void delete(long receiptHeaderId) {
 		logger.debug(Literal.ENTERING);
@@ -131,7 +129,7 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 		logger.trace(Literal.SQL + deleteSql.toString());
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("UPLOADDETAILID", receiptHeaderId);
-		
+
 		try {
 			this.jdbcTemplate.update(deleteSql.toString(), paramSource);
 		} catch (DataAccessException e) {
@@ -159,5 +157,5 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 }

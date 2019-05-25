@@ -94,12 +94,12 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 	protected Button button_ClusterList_ClusterSearch;
 
 	// Search Fields
-	protected Textbox entity; 
-	protected Textbox code; 
-	protected Textbox clusterType; 
-	protected Textbox name; 
-	protected Intbox parent; 
-	protected Intbox parentType; 
+	protected Textbox entity;
+	protected Textbox code;
+	protected Textbox clusterType;
+	protected Textbox name;
+	protected Intbox parent;
+	protected Intbox parentType;
 
 	protected Listbox sortOperator_Entity;
 	protected Listbox sortOperator_Code;
@@ -147,9 +147,10 @@ public class ClusterListCtrl extends GFCBaseListCtrl<Cluster> {
 		registerField("ParentCode");
 		registerField("ParentName");
 		registerField("entity", listheader_Entity, SortOrder.NONE, entity, sortOperator_Entity, Operators.STRING);
-		registerField("clusterType", listheader_ClusterType, SortOrder.NONE, clusterType, sortOperator_ClusterType,Operators.NUMERIC);
+		registerField("clusterType", listheader_ClusterType, SortOrder.NONE, clusterType, sortOperator_ClusterType,
+				Operators.NUMERIC);
 		registerField("code", listheader_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("name",listheader_Name, SortOrder.NONE,name,sortOperator_Name,Operators.STRING);
+		registerField("name", listheader_Name, SortOrder.NONE, name, sortOperator_Name, Operators.STRING);
 		registerField("parent", listheader_Parent, SortOrder.NONE, parent, sortOperator_Parent, Operators.NUMERIC);
 		registerField("parentType");
 

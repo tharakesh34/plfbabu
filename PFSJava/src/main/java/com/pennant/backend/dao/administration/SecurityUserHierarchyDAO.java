@@ -58,12 +58,11 @@ public interface SecurityUserHierarchyDAO {
 	public List<SecurityUserHierarchy> getDownLevelUsers(SecurityUserHierarchy userHierarchy);
 
 	public List<SecurityUserHierarchy> getUpLevelUsers(SecurityUserHierarchy userHierarchy);
-	
+
 	public void getUpLevelUser(SecurityUserHierarchy userHierarchy);
-	
+
 	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy);
 
 	public void updateUserHierarchy(SecurityUserHierarchy userHierarchy, ReportingManager reportingTo);
-	
 
 }

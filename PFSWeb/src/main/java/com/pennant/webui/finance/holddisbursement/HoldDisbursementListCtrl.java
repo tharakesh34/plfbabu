@@ -96,16 +96,16 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 	// Search Fields
 	protected Textbox finReference; // autowired
 	protected Checkbox hold; // autowired
-  	protected Decimalbox totalLoanAmt; // autowired
-  	protected Decimalbox disbursedAmount; // autowired
-  	protected Decimalbox holdLimitAmount; // autowired
-	
+	protected Decimalbox totalLoanAmt; // autowired
+	protected Decimalbox disbursedAmount; // autowired
+	protected Decimalbox holdLimitAmount; // autowired
+
 	protected Listbox sortOperator_FinReference;
 	protected Listbox sortOperator_Hold;
 	protected Listbox sortOperator_TotalLoanAmt;
 	protected Listbox sortOperator_DisbursedAmount;
 	protected Listbox sortOperator_HoldLimitAmount;
-	
+
 	private transient HoldDisbursementService holdDisbursementService;
 
 	/**
@@ -139,14 +139,19 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 
 		// Register buttons and fields.
 		registerButton(button_HoldDisbursementList_HoldDisbursementSearch);
-		registerButton(button_HoldDisbursementList_NewHoldDisbursement, "button_HoldDisbursementList_NewHoldDisbursement", true);
+		registerButton(button_HoldDisbursementList_NewHoldDisbursement,
+				"button_HoldDisbursementList_NewHoldDisbursement", true);
 
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference, Operators.STRING);
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
+				Operators.STRING);
 		registerField("hold", listheader_Hold, SortOrder.NONE, hold, sortOperator_Hold, Operators.BOOLEAN);
-		registerField("totalLoanAmt", listheader_TotalLoanAmt, SortOrder.NONE, totalLoanAmt, sortOperator_TotalLoanAmt, Operators.NUMERIC);
-		registerField("disbursedAmount", listheader_DisbursedAmount, SortOrder.NONE, disbursedAmount, sortOperator_DisbursedAmount, Operators.NUMERIC);
-		registerField("holdLimitAmount", listheader_HoldLimitAmount, SortOrder.NONE, holdLimitAmount, sortOperator_HoldLimitAmount, Operators.NUMERIC);
-		registerField("remarks");		
+		registerField("totalLoanAmt", listheader_TotalLoanAmt, SortOrder.NONE, totalLoanAmt, sortOperator_TotalLoanAmt,
+				Operators.NUMERIC);
+		registerField("disbursedAmount", listheader_DisbursedAmount, SortOrder.NONE, disbursedAmount,
+				sortOperator_DisbursedAmount, Operators.NUMERIC);
+		registerField("holdLimitAmount", listheader_HoldLimitAmount, SortOrder.NONE, holdLimitAmount,
+				sortOperator_HoldLimitAmount, Operators.NUMERIC);
+		registerField("remarks");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -191,10 +196,8 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		doShowDialogPage(holdDisbursement);
 		// call the ZUL-file with the parameters packed in a map
 
-
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -206,7 +209,7 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 
 	public void onHoldDisbursementItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxHoldDisbursement.getSelectedItem();
 		final String finReference = (String) selectedItem.getAttribute("finReference");
@@ -216,18 +219,17 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		/*boolean financeDisbursementById = holdDisbursementService
-				.getFinanceDisbursementById(holddisbursement.getFinReference());
-		
-		if (financeDisbursementById) {
-			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019", null)));
-			logger.debug("Leaving");
-			return;
-		}*/
+		/*
+		 * boolean financeDisbursementById = holdDisbursementService
+		 * .getFinanceDisbursementById(holddisbursement.getFinReference());
+		 * 
+		 * if (financeDisbursementById) { MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019",
+		 * null))); logger.debug("Leaving"); return; }
+		 */
 
-		StringBuffer whereCond= new StringBuffer();
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  FinReference = '");
-		whereCond.append( holddisbursement.getFinReference());
+		whereCond.append(holddisbursement.getFinReference());
 		whereCond.append("' AND  version=");
 		whereCond.append(holddisbursement.getVersion());
 
@@ -240,10 +242,10 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -258,15 +260,15 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		arg.put("holdDisbursementListCtrl", this);
 		arg.put("moduleDefiner", "holdDisbursement");
 		try {
-			
+
 			if (holddisbursement.isNewRecord()) {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/ManualAdvise/SelectManualAdviseFinReferenceDialog.zul", null,
 						arg);
 			} else {
 				//arg.put("financeMain", financeMain);
-				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul",
-						null, arg);
+				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul", null,
+						arg);
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -294,7 +296,7 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

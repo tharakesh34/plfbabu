@@ -62,8 +62,7 @@ public class DealerMappingDAOImpl extends SequenceDao<DealerMapping> implements 
 		StringBuilder sql = new StringBuilder("Update CD_DealerMapping");
 		sql.append(tableType.getSuffix());
 
-		sql.append(
-				" set MerchantId=:MerchantId, StoreId=:StoreId, DealerCode=:DealerCode, Active = :Active");
+		sql.append(" set MerchantId=:MerchantId, StoreId=:StoreId, DealerCode=:DealerCode, Active = :Active");
 		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");

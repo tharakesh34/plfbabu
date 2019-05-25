@@ -71,15 +71,15 @@ public interface FinanceMainService {
 
 	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
 
-	List<String> getFinanceMainbyCustId(long custID,String type);
+	List<String> getFinanceMainbyCustId(long custID, String type);
 
 	FinanceMain getFinanceMainByFinRef(String finRefernce);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
-	
+
 	FinanceMain getFinanceByFinReference(String reference, String type);
 
 	String getFinanceTypeFinReference(String reference, String type);
-	
+
 	ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate);
 }

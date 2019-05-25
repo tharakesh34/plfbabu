@@ -32,7 +32,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
+public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 	/**
 	 * 
@@ -47,17 +47,17 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 	protected Window window_DealerGroupDialog;
 	protected Button btndealerCode;
 	protected Textbox dealerCode;
-//	protected ExtendedCombobox dealerCode; // autowired
+	//	protected ExtendedCombobox dealerCode; // autowired
 	protected ExtendedCombobox dealerCategory; // autowired
 	//protected ExtendedCombobox channel; // autowired
 	protected Button btnchannels;
 	protected Textbox txtchannel;
 	protected Checkbox active; // autowired
-	
+
 	private DealerGroup dealerGroup; // overhanded per param
 	private transient DealerGroupListCtrl dealerGroupListCtrl; // overhanded per param
 	private transient DealerGroupService dealerGroupService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -69,6 +69,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 	protected void doSetProperties() {
 		super.pageRightName = "DealerGroupDialog";
 	}
+
 	public void onCreate$window_DealerGroupDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -110,6 +111,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -160,6 +162,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSave();
@@ -178,27 +181,26 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		doEdit();
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-	
-
 		this.dealerCategory.setModuleName("Category");
-		
-		/*this.dealerCategory.setModuleName("LovFieldDetail");
-		this.dealerCategory.setMandatoryStyle(true);
-		this.dealerCategory.setValueColumn("FieldCodeValue");
-		this.dealerCategory.setDescColumn("ValueDesc");
-		this.dealerCategory.setDisplayStyle(2);
-		this.dealerCategory.setValidateColumns(new String[] { "FieldCodeValue" });
-		Filter dealerCategoryFilter[] = new Filter[1];
-		dealerCategoryFilter[0] = new Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
-		this.dealerCategory.setFilters(dealerCategoryFilter);*/
+
+		/*
+		 * this.dealerCategory.setModuleName("LovFieldDetail"); this.dealerCategory.setMandatoryStyle(true);
+		 * this.dealerCategory.setValueColumn("FieldCodeValue"); this.dealerCategory.setDescColumn("ValueDesc");
+		 * this.dealerCategory.setDisplayStyle(2); this.dealerCategory.setValidateColumns(new String[] {
+		 * "FieldCodeValue" }); Filter dealerCategoryFilter[] = new Filter[1]; dealerCategoryFilter[0] = new
+		 * Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
+		 * this.dealerCategory.setFilters(dealerCategoryFilter);
+		 */
 
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onFulfill$dealerCategory(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = dealerCategory.getObject();
@@ -209,11 +211,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 			if (dataObject instanceof LovFieldDetail) {
 				LovFieldDetail lovFieldDetail = (LovFieldDetail) dataObject;
 				this.dealerCategory.setObject(lovFieldDetail);
-				this.dealerCategory.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()), lovFieldDetail.getValueDesc());
+				this.dealerCategory.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()),
+						lovFieldDetail.getValueDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	public void onClick$btnchannels(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_DealerGroupDialog, "ChannelTypes",
@@ -225,7 +229,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		logger.debug("Leaving  " + event.toString());
 
 	}
-	
+
 	public void onClick$btndealerCode(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_DealerGroupDialog, "DealerMapping",
@@ -237,6 +241,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		logger.debug("Leaving  " + event.toString());
 
 	}
+
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
@@ -249,9 +254,6 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
-	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -299,7 +301,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-//dealer category
+		//dealer category
 		try {
 			aDealerGroup.setDealerCategoryId(this.dealerCategory.getValue());
 		} catch (WrongValueException we) {
@@ -338,7 +340,6 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -346,14 +347,15 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.dealerCode.isReadonly()) {
-			this.dealerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.dealerCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.dealerCategory.isReadonly()) {
-			this.dealerCategory.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.dealerCategory.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -406,6 +408,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		MessageUtil.showHelpWindow(event, super.window);
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -470,6 +473,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		dealerGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -533,7 +537,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		this.dealerCategory.setValue("");
 		this.txtchannel.setValue("");
 		//this.channel.setDescription("");
-		
+
 		this.active.setValue("");
 
 		logger.debug("Leaving");
@@ -767,6 +771,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 		doShowNotes(this.dealerGroup);
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -790,5 +795,5 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup>{
 	public void setDealerGroupService(DealerGroupService dealerGroupService) {
 		this.dealerGroupService = dealerGroupService;
 	}
-	
+
 }

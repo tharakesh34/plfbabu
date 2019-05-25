@@ -15,7 +15,7 @@ public interface FinOptionDAO extends BasicCrudDao<FinOption> {
 	public List<FinOption> getFinOptions(String finreference, TableType tableType);
 
 	public List<FinOption> getPutCallAlertList();
-	
+
 	public void deleteByFinRef(String loanReference, String tableType);
 
 }

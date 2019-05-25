@@ -101,6 +101,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	protected void doSetProperties() {
 		super.pageRightName = "";
 	}
+
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SelectInsuranceRebooking(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -111,20 +112,20 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 			if (arguments.containsKey("listCtrl")) {
 				this.insuranceRebookingListCtrl = (InsuranceRebookingListCtrl) arguments.get("listCtrl");
 			}
-			 
+
 			if (arguments.containsKey("module")) {
 				this.module = (String) arguments.get("module");
 			}
 
 			this.userRoleCodeList = (ArrayList<String>) arguments.get("role");
-			
+
 			if (this.vasRecording == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 			doSetFieldProperties();
 		} catch (Exception e) {
 			closeDialog();
-			logger.debug(Literal.EXCEPTION,e);
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 		setPageComponents(window_SelectInsuranceRebooking);
@@ -140,7 +141,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 		try {
 			this.window_SelectInsuranceRebooking.doModal();
 		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION,e);
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -153,13 +154,13 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder whereClause = getWhereClause();
-		
+
 		this.vasRefernce.setMandatoryStyle(true);
 		this.vasRefernce.setModuleName("VASRebooking");
 		this.vasRefernce.setValueColumn("VasReference");
 		this.vasRefernce.setDescColumn("ProductCode");
 		this.vasRefernce.setValidateColumns(new String[] { "VASReference" });
-		 
+
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("VASSTATUS", VASConsatnts.STATUS_CANCEL, Filter.OP_EQUAL);
 		this.vasRefernce.setFilters(filters);
@@ -185,8 +186,9 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 		sql.append(" AND ( STATUS = '");
 		sql.append(InsuranceConstants.ACTIVE);
 		sql.append("') ");
-		sql.append(" AND (VASReference not in (Select OldVasReference from VASRecording_Temp where OldVasReference is not null ))");
-	    sql.append(" AND ( ProductCode");
+		sql.append(
+				" AND (VASReference not in (Select OldVasReference from VASRecording_Temp where OldVasReference is not null ))");
+		sql.append(" AND ( ProductCode");
 		sql.append(" in ( Select FINTYPE from LMTFinanceWorkFlowDef_AView  Where MODULENAME = '");
 		sql.append(VASConsatnts.MODULE_NAME);
 		sql.append("'");
@@ -224,9 +226,9 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 		}
 		return whereClause.toString();
 	}
-	
+
 	public void onFulfill$vasRefernce(Event event) throws InterruptedException {
-		
+
 		Object dataObject = this.vasRefernce.getObject();
 		if (dataObject instanceof String) {
 			this.vasRefernce.setValue(dataObject.toString());
@@ -249,7 +251,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	}
 
 	public void onFulfill$primaryLinkRefernce(Event event) throws InterruptedException {
-		
+
 		Object dataObject = this.primaryLinkRefernce.getObject();
 		if (dataObject instanceof String) {
 			this.primaryLinkRefernce.setValue(dataObject.toString());
@@ -280,11 +282,11 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
-		
+
 		if (!doFieldValidation()) {
 			return;
 		}
-		
+
 		String vasEvent = null;
 		if (VASConsatnts.STATUS_REBOOKING.equals(module)) {
 			vasEvent = VASConsatnts.VAS_EVENT_REBOOKING;
@@ -294,7 +296,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 		//Basic details setting
 		vasRecording.setVasReference(this.vasRefernce.getValue());
 		vasRecording.setPrimaryLinkRef(this.primaryLinkRefernce.getValue());
-		
+
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
@@ -326,8 +328,8 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 			vasRecording.setWorkflowId(workFlowDetails.getWorkFlowId());
 			doLoadWorkFlow(vasRecording.isWorkflow(), vasRecording.getWorkflowId(), vasRecording.getNextTaskId());
 		}
-		vasRecording = getvASRecordingService().getVASRecordingForInsurance(vasRecording.getVasReference(), getRole(), vasEvent,
-				enqiryModule);
+		vasRecording = getvASRecordingService().getVASRecordingForInsurance(vasRecording.getVasReference(), getRole(),
+				vasEvent, enqiryModule);
 		vasRecording.setWorkflowId(workFlowDetails.getWorkFlowId());
 		vasRecording.setNewRecord(true);
 		showDetailView();
@@ -394,26 +396,27 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.vasRefernce.setConstraint("");
 		this.primaryLinkRefernce.setConstraint("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.vasRefernce.setErrorMessage("");
 		this.primaryLinkRefernce.setErrorMessage("");
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public FinanceWorkFlow getFinanceWorkFlow() {
 		return financeWorkFlow;
 	}
+
 	public void setFinanceWorkFlow(FinanceWorkFlow financeWorkFlow) {
 		this.financeWorkFlow = financeWorkFlow;
 	}
@@ -421,6 +424,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	public FinanceWorkFlowService getFinanceWorkFlowService() {
 		return financeWorkFlowService;
 	}
+
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
@@ -428,6 +432,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	public VASRecording getvASRecording() {
 		return vasRecording;
 	}
+
 	public void setvASRecording(VASRecording vASRecording) {
 		this.vasRecording = vASRecording;
 	}
@@ -435,6 +440,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	public InsuranceRebookingListCtrl getInsuranceRebookingListCtrl() {
 		return insuranceRebookingListCtrl;
 	}
+
 	public void setInsuranceRebookingListCtrl(InsuranceRebookingListCtrl InsuranceRebookingListCtrl) {
 		this.insuranceRebookingListCtrl = InsuranceRebookingListCtrl;
 	}
@@ -442,6 +448,7 @@ public class SelectInsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording
 	public VASRecordingService getvASRecordingService() {
 		return vASRecordingService;
 	}
+
 	public void setvASRecordingService(VASRecordingService vASRecordingService) {
 		this.vASRecordingService = vASRecordingService;
 	}

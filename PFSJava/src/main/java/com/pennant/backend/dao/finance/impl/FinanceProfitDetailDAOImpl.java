@@ -1184,5 +1184,4 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		logger.debug(Literal.LEAVING);
 	}
 
-
 }

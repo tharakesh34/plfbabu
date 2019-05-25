@@ -805,7 +805,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 		Date date = null;
 		if (list != null && !list.isEmpty()) {
-			
+
 			for (FinanceDisbursement disbursement : list) {
 				if (group && seq != disbursement.getDisbSeq()) {
 					continue;

@@ -107,7 +107,8 @@
 						<tabbox id="tabBoxIndexCenter" width="100%" height="100%">
 							<tabs id="tabsIndexCenter">
 								<tab id="basicDetailTab" label="${c:l('label_InsuranceReconciliationDialog_BasicDetailTab.value')}" />
-								<tab id="tabPostingDetails" label="${c:l('label_InsuranceReconciliationDialog_PostingDetailsTab.value')}" visible="false" />
+								<tab id="tabPostingDetails" label="${c:l('label_InsuranceReconciliationDialog_PostingDetailsTab.value')}"
+									visible="false" />
 							</tabs>
 
 							<tabpanels id="tabpanelsBoxIndexCenter">
@@ -162,18 +163,17 @@
 										</grid>
 									</groupbox>
 								</tabpanel>
-								
+
 								<!-- Postings -->
 								<tabpanel id="tabPanelPostingDetails" style="overflow:auto" visible="false" />
-								
+
 							</tabpanels>
 						</tabbox>
 					</groupbox>
 				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%"
-					closable="false">
+				<groupbox id="groupboxWf" width="99%" closable="false">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />

@@ -552,12 +552,13 @@ public class RepaymentProcessUtil {
 			// Capitalization Change Amount
 			cpzChg = cpzChg.add((BigDecimal) returnList.get(6));
 			rph.setCpzChg(cpzChg);
-			
+
 			// LPP Income Amount
 			FinTaxIncomeDetail taxIncome = (FinTaxIncomeDetail) returnList.get(8);
-			if(taxIncome != null){
+			if (taxIncome != null) {
 				uLpp = uLpp.add(taxIncome.getReceivedAmount());
-				uGstLpp = uGstLpp.add(taxIncome.getCGST().add(taxIncome.getSGST()).add(taxIncome.getUGST()).add(taxIncome.getIGST()));
+				uGstLpp = uGstLpp.add(
+						taxIncome.getCGST().add(taxIncome.getSGST()).add(taxIncome.getUGST()).add(taxIncome.getIGST()));
 			}
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
@@ -679,16 +680,18 @@ public class RepaymentProcessUtil {
 		if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
 			List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
 			FeeType bounceFee = null;
-			
+
 			// GST Invoice data resetting based on Accounting Process
 			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
 
 			for (ManualAdviseMovements movement : movements) {
-				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
-				
+				BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST())
+						.add(movement.getPaidUGST());
+
 				if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
-					
-					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+
+					ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(),
+							"_AView");
 					boolean prepareInvoice = false;
 					if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 						if (bounceFee == null) {
@@ -708,7 +711,7 @@ public class RepaymentProcessUtil {
 						movement.setTaxComponent(manualAdvise.getTaxComponent());
 						prepareInvoice = true;
 					}
-					
+
 					if (prepareInvoice) {
 						movementList.add(movement);
 					}
@@ -734,8 +737,8 @@ public class RepaymentProcessUtil {
 
 			BigDecimal amount = BigDecimal.ZERO;
 			String keyCode = null;
-			if (StringUtils.isEmpty(movement.getFeeTypeCode()) || 
-					StringUtils.equals(movement.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
+			if (StringUtils.isEmpty(movement.getFeeTypeCode())
+					|| StringUtils.equals(movement.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 
 				if (movementMap.containsKey("bounceChargePaid")) {
 					amount = movementMap.get("bounceChargePaid");

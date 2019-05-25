@@ -14,18 +14,17 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 
 @Produces("application/json")
 public interface MiscellaneousRestService {
-	
+
 	@POST
 	@Path("/miscellaneous/AddFinanceJVPostings")
 	WSReturnStatus createPosting(JVPosting posting) throws ServiceException;
-	
+
 	@POST
 	@Path("/miscellaneous/createDashboard")
 	DashBoardResponse createDashboard(DashBoardRequest dashboardRequest) throws ServiceException;
 
 	@POST
 	@Path(value = "/miscellaneous/CreateEligibility")
-	EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail)
-			throws ServiceException;
+	EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail) throws ServiceException;
 
 }

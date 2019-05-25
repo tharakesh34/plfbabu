@@ -93,7 +93,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Label label_title;
 	protected Label label_DepositDate;
 	protected Label label_Msg;
-	
+
 	protected Row row_DepositBank;
 	protected Row row_ReceiptStatus;
 	protected Row row_DepositDate;
@@ -130,7 +130,6 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected FinReceiptData receiptData = new FinReceiptData();
 	private transient WorkFlowDetails workFlowDetails = null;
 	private transient FinanceWorkFlowService financeWorkFlowService;
-
 
 	private FinanceEnquiry financeEnquiry;
 	private Customer customer;
@@ -177,7 +176,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (recId.iterator().hasNext()) {
 			rch = recHeaderMap.get(recId.iterator().next());
 		}
-		
+
 		if (arguments.containsKey("module")) {
 			module = (String) arguments.get("module");
 		}
@@ -234,17 +233,17 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.fundingAccount.setDescColumn("PartnerBankName");
 		this.fundingAccount.setValidateColumns(new String[] { "PartnerBankCode" });
 
-	/*	Filter fundingAcFilters[] = new Filter[4];
-		fundingAcFilters[0] = new Filter("Purpose", RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL);
-		fundingAcFilters[1] = new Filter("FinType", finReceiptHeader.getFinType(), Filter.OP_EQUAL);
-		fundingAcFilters[2] = new Filter("PaymentMode", finReceiptHeader.getReceiptMode(), Filter.OP_EQUAL);
-		if (RepayConstants.RECEIPTMODE_ONLINE.equals(finReceiptHeader.getReceiptMode())) {
-			fundingAcFilters[2] = new Filter("PaymentMode", finReceiptHeader.getSubReceiptMode(), Filter.OP_EQUAL);
-		}
-		fundingAcFilters[3] = new Filter("EntityCode",
-				finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityCode(),Filter.OP_EQUAL);
-		Filter.and(fundingAcFilters);
-		this.fundingAccount.setFilters(fundingAcFilters);*/
+		/*
+		 * Filter fundingAcFilters[] = new Filter[4]; fundingAcFilters[0] = new Filter("Purpose",
+		 * RepayConstants.RECEIPTTYPE_RECIPT, Filter.OP_EQUAL); fundingAcFilters[1] = new Filter("FinType",
+		 * finReceiptHeader.getFinType(), Filter.OP_EQUAL); fundingAcFilters[2] = new Filter("PaymentMode",
+		 * finReceiptHeader.getReceiptMode(), Filter.OP_EQUAL); if
+		 * (RepayConstants.RECEIPTMODE_ONLINE.equals(finReceiptHeader.getReceiptMode())) { fundingAcFilters[2] = new
+		 * Filter("PaymentMode", finReceiptHeader.getSubReceiptMode(), Filter.OP_EQUAL); } fundingAcFilters[3] = new
+		 * Filter("EntityCode",
+		 * finReceiptData.getFinanceDetail().getFinScheduleData().getFinanceType().getLovDescEntityCode(),Filter.
+		 * OP_EQUAL); Filter.and(fundingAcFilters); this.fundingAccount.setFilters(fundingAcFilters);
+		 */
 
 		this.depositDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.depositDate.setValue(appDate);
@@ -380,7 +379,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_DepositDate.isVisible()) {
-					finReceiptDetail.setDepositDate(this.depositDate.getValue());
+				finReceiptDetail.setDepositDate(this.depositDate.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -388,7 +387,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_DepositSlipNo.isVisible()) {
-			finReceiptDetail.setDepositNo(this.depositSlipNo.getValue());
+				finReceiptDetail.setDepositNo(this.depositSlipNo.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -396,7 +395,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_ReceiptStatus.isVisible()) {
-			finReceiptHeader.setReceiptModeStatus(getComboboxValue(this.receiptStatus));
+				finReceiptHeader.setReceiptModeStatus(getComboboxValue(this.receiptStatus));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -404,7 +403,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_BounceCode.isVisible()) {
-			finReceiptHeader.setBounceReason(this.bounceCode.getValidatedValue());
+				finReceiptHeader.setBounceReason(this.bounceCode.getValidatedValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -412,7 +411,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_CancelReason.isVisible()) {
-			finReceiptHeader.setCancelReason(this.cancelReason.getValidatedValue());
+				finReceiptHeader.setCancelReason(this.cancelReason.getValidatedValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -420,7 +419,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		try {
 			if (this.row_Remarks.isVisible()) {
-			finReceiptDetail.setRemarks(this.remarks.getValue());
+				finReceiptDetail.setRemarks(this.remarks.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -452,13 +451,13 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		if (this.row_DepositBank.isVisible()) {
-		this.fundingAccount.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_SelectReceiptDialog_FundingAccount.value"), null, true, true));
+			this.fundingAccount.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_SelectReceiptDialog_FundingAccount.value"), null, true, true));
 		}
 
 		if (row_DepositDate.isVisible()) {
-		this.depositDate.setConstraint(
-					new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(), DateUtility.getAppDate(),true));
+			this.depositDate.setConstraint(new PTDateValidator(label, true, finReceiptHeader.getReceiptDate(),
+					DateUtility.getAppDate(), true));
 		}
 
 		if (this.row_ReceiptStatus.isVisible()) {
@@ -537,15 +536,19 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						}
 
 						// Cash & Online Receipt Mode could not be realized
-						if(RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode()) || RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())){
-							MessageUtil.showError("Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Realized");
+						if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())
+								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+							MessageUtil.showError(
+									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Realized");
 							return;
 						}
 					} else if (RepayConstants.PAYSTATUS_BOUNCE.equals(finReceiptHeader.getReceiptModeStatus())) {
 						receiptHeader.setBounceDate(finReceiptDetail.getDepositDate());
 						receiptHeader.setBounceReason(finReceiptHeader.getBounceReason());
-						if(RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode()) || RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())){
-							MessageUtil.showError("Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Bounce");
+						if (RepayConstants.RECEIPTMODE_CASH.equals(receiptHeader.getReceiptMode())
+								|| RepayConstants.RECEIPTMODE_ONLINE.equals(receiptHeader.getReceiptMode())) {
+							MessageUtil.showError(
+									"Some selected Receipts' ReceiptMode are 'Cash' Or 'Online', So they could not be Bounce");
 							return;
 						}
 					} else {
@@ -601,7 +604,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			} else {
 				method = PennantConstants.method_saveOrUpdate;
 			}
-			
+
 			receiptData.getReceiptHeader().setBatchId(receiptHeader.getBatchId());
 			receiptData.getReceiptHeader().setVersion(receiptHeader.getVersion());
 			receiptData.getReceiptHeader().setRecordType(receiptHeader.getRecordType());
@@ -631,7 +634,8 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		try {
 			if (!receiptIdList.isEmpty()) {
-				MessageUtil.showError("Some selected Receipts have already been  'Realized', It could not be Realized Again. ReceiptId : "
+				MessageUtil.showError(
+						"Some selected Receipts have already been  'Realized', It could not be Realized Again. ReceiptId : "
 								+ String.join(",", receiptIdList));
 				return;
 			}
@@ -646,7 +650,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			e.printStackTrace();
 			MessageUtil.showError(e);
 		}
-		
+
 		finReceiptHeaderMap.clear();
 		refreshList();
 		FinReceiptHeader frh = ((FinReceiptData) auditHeaderList.get(0).getModelData()).getReceiptHeader();
@@ -707,8 +711,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_SCHDRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_REPAY;
 
-			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(),
-					FinanceConstants.FINSER_EVENT_EARLYRPY)) {
+			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 				eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
 
 			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(),
@@ -723,7 +726,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				ErrorDetail errorDetail = receiptService.doInstrumentValidation(receiptData);
 				if (errorDetail != null) {
 					ErrorDetail errorDtl = ErrorUtil.getErrorDetail(errorDetail);
-					MessageUtil.showError(errorDtl.getError());		
+					MessageUtil.showError(errorDtl.getError());
 					logger.debug("Leaving");
 					return new FinReceiptData();
 				}
@@ -745,7 +748,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				receiptHeader.setVersion(receiptHeader.getVersion() + 1);
 				tranType = PennantConstants.TRAN_UPD;
 			}
-			
+
 		}
 		logger.debug("Leaving");
 		return receiptData;
@@ -802,7 +805,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				nextRoleCode = getTaskOwner(nextTaskId);
 			}
 		}
-		
+
 		receiptHeader.setTaskId(taskId);
 		receiptHeader.setNextTaskId(nextTaskId);
 		receiptHeader.setRoleCode(roleCode);
@@ -810,6 +813,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * Get Audit Header Details
 	 */
@@ -824,13 +828,14 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		getReceiptListCtrl().doRefresh();
 	}
 
-	    class  MultiReceiptRunnable implements Runnable {
-		private  final Logger logger_ = Logger.getLogger(MultiReceiptRunnable.class);
+	class MultiReceiptRunnable implements Runnable {
+		private final Logger logger_ = Logger.getLogger(MultiReceiptRunnable.class);
 		private List<AuditHeader> auditHeaderList;
 		Map<Long, FinReceiptHeader> finReceiptHeaderMap;
 		long batchId;
 
-		public MultiReceiptRunnable(Map<Long, FinReceiptHeader> finReceiptHeaderMap, List<AuditHeader> auditList,long batchId) {
+		public MultiReceiptRunnable(Map<Long, FinReceiptHeader> finReceiptHeaderMap, List<AuditHeader> auditList,
+				long batchId) {
 			super();
 			this.auditHeaderList = auditList;
 			this.finReceiptHeaderMap = finReceiptHeaderMap;

@@ -76,7 +76,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul file.
+ * This is the controller class for the /WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul
+ * file.
  * 
  */
 public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAccDetail> {
@@ -109,7 +110,7 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 	protected Checkbox receivableAdjustment; // autowired
 	protected Textbox reconciliationAmount; // autowired
 	protected Checkbox active; // autowired
-	
+
 	protected Listbox sortOperator_ProviderId;
 	protected Listbox sortOperator_PaymentMode;
 	protected Listbox sortOperator_BankBranchID;
@@ -117,7 +118,7 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 	protected Listbox sortOperator_ReceivableAdjustment;
 	protected Listbox sortOperator_ReconciliationAmount;
 	protected Listbox sortOperator_Active;
-	private List<ValueLabel> listPaymentMode=PennantStaticListUtil.getPaymentType();
+	private List<ValueLabel> listPaymentMode = PennantStaticListUtil.getPaymentType();
 
 	private transient VASProviderAccDetailService vASProviderAccDetailService;
 
@@ -146,26 +147,36 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 	public void onCreate$window_VASProviderAccDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_VASProviderAccDetailList, borderLayout_VASProviderAccDetailList, listBoxVASProviderAccDetail,
-				pagingVASProviderAccDetailList);
+		setPageComponents(window_VASProviderAccDetailList, borderLayout_VASProviderAccDetailList,
+				listBoxVASProviderAccDetail, pagingVASProviderAccDetailList);
 		setItemRender(new VASProviderAccDetailListModelItemRenderer());
 
 		// Register buttons and fields.
 		registerButton(button_VASProviderAccDetailList_VASProviderAccDetailSearch);
-		registerButton(button_VASProviderAccDetailList_NewVASProviderAccDetail, "button_VASProviderAccDetailList_NewVASProviderAccDetail", true);
+		registerButton(button_VASProviderAccDetailList_NewVASProviderAccDetail,
+				"button_VASProviderAccDetailList_NewVASProviderAccDetail", true);
 		List<String> excludeFiles = new ArrayList<String>();
 		excludeFiles.add(DisbursementConstants.PAYMENT_TYPE_CASH);
 		excludeFiles.add(DisbursementConstants.PAYMENT_TYPE_ESCROW);
 		fillComboBox(this.paymentMode, PennantConstants.List_Select, listPaymentMode, excludeFiles);
 		registerField("id");
 		//registerField("providerDesc");
-		registerField("providerDesc", listheader_ProviderId, SortOrder.NONE, providerId, sortOperator_ProviderId, Operators.STRING);
-		registerField("paymentMode", listheader_PaymentMode, SortOrder.NONE, paymentMode, sortOperator_PaymentMode, Operators.STRING);
-		registerField("accountNumber", listheader_AccountNumber, SortOrder.NONE, accountNumber, sortOperator_AccountNumber, Operators.STRING);
-/*		registerField("bankBranchID", listheader_BankBranchID, SortOrder.NONE, bankBranchID, sortOperator_BankBranchID, Operators.STRING);*/
+		registerField("providerDesc", listheader_ProviderId, SortOrder.NONE, providerId, sortOperator_ProviderId,
+				Operators.STRING);
+		registerField("paymentMode", listheader_PaymentMode, SortOrder.NONE, paymentMode, sortOperator_PaymentMode,
+				Operators.STRING);
+		registerField("accountNumber", listheader_AccountNumber, SortOrder.NONE, accountNumber,
+				sortOperator_AccountNumber, Operators.STRING);
 		/*
-		registerField("receivableAdjustment", listheader_ReceivableAdjustment, SortOrder.NONE, receivableAdjustment, sortOperator_ReceivableAdjustment, Operators.BOOLEAN);
-		registerField("reconciliationAmount", listheader_ReconciliationAmount, SortOrder.NONE, reconciliationAmount, sortOperator_ReconciliationAmount, Operators.STRING);*/
+		 * registerField("bankBranchID", listheader_BankBranchID, SortOrder.NONE, bankBranchID,
+		 * sortOperator_BankBranchID, Operators.STRING);
+		 */
+		/*
+		 * registerField("receivableAdjustment", listheader_ReceivableAdjustment, SortOrder.NONE, receivableAdjustment,
+		 * sortOperator_ReceivableAdjustment, Operators.BOOLEAN); registerField("reconciliationAmount",
+		 * listheader_ReconciliationAmount, SortOrder.NONE, reconciliationAmount, sortOperator_ReconciliationAmount,
+		 * Operators.STRING);
+		 */
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
@@ -213,7 +224,6 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
@@ -224,7 +234,7 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 
 	public void onVASProviderAccDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxVASProviderAccDetail.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -234,13 +244,13 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( vasprovideraccdetail.getId());
+		whereCond.append(vasprovideraccdetail.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(vasprovideraccdetail.getVersion());
-	
+
 		if (doCheckAuthority(vasprovideraccdetail, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && vasprovideraccdetail.getWorkflowId() == 0) {
@@ -250,10 +260,10 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -266,9 +276,10 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("vASProviderAccDetail", vasprovideraccdetail);
 		arg.put("vASProviderAccDetailListCtrl", this);
-		
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailDialog.zul", null, arg);
+			Executions.createComponents(
+					"/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -296,7 +307,7 @@ public class VASProviderAccDetailListCtrl extends GFCBaseListCtrl<VASProviderAcc
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 

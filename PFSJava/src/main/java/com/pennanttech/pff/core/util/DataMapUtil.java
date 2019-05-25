@@ -117,10 +117,10 @@ public final class DataMapUtil {
 
 		covenant = financeDetail.getCovenant();
 		data.putAll(getDataMap(covenant, FieldPrefix.Covenant.getPrefix()));
-		
+
 		finOption = financeDetail.getFinOption();
 		data.putAll(getDataMap(finOption, FieldPrefix.Putcall.getPrefix()));
-		
+
 		collateralRevaluation = financeDetail.getCollateralRevaluation();
 		data.putAll(getDataMap(collateralRevaluation, FieldPrefix.CollateralLTVBreachs.getPrefix()));
 

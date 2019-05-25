@@ -451,7 +451,7 @@ public class Branch extends AbstractWorkflowEntity {
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
 	}
-	
+
 	public Long getClusterId() {
 		return clusterId;
 	}

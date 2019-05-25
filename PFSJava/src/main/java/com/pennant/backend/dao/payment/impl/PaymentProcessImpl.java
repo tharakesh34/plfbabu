@@ -77,7 +77,6 @@ public class PaymentProcessImpl implements PaymentProcess {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	//Processing the Insurance payments 
 	@Override
 	public void processInsPayments(InsurancePaymentInstructions instruction) {
@@ -93,7 +92,8 @@ public class PaymentProcessImpl implements PaymentProcess {
 			} else {
 				AEEvent aeEvent = new AEEvent();
 				aeEvent.setLinkedTranId(instruction.getLinkedTranId());
-				List<ReturnDataSet> list = postingsPreparationUtil.postReversalsByLinkedTranID(instruction.getLinkedTranId());
+				List<ReturnDataSet> list = postingsPreparationUtil
+						.postReversalsByLinkedTranID(instruction.getLinkedTranId());
 				aeEvent.setReturnDataSet(list);
 				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
@@ -113,7 +113,8 @@ public class PaymentProcessImpl implements PaymentProcess {
 	}
 
 	public void addToCustomerBeneficiary(PaymentInstruction instruction, long cusID) {
-		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(), instruction.getBankBranchId(), "_View");
+		int count = beneficiaryDAO.getBeneficiaryByBankBranchId(instruction.getAccountNo(),
+				instruction.getBankBranchId(), "_View");
 		if (count == 0) {
 			Beneficiary beneficiary = new Beneficiary();
 			beneficiary.setCustID(cusID);

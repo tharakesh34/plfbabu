@@ -2530,8 +2530,9 @@
 		scope="prototype">
 		<property name="feeReceiptService" ref="feeReceiptService" />
 	</bean>
-	
-	<bean id="selectFeeReceiptListCtrl" class="com.pennant.webui.financemanagement.receipts.SelectFeeReceiptListCtrl" parent="basisListCtrl" scope="prototype">
+
+	<bean id="selectFeeReceiptListCtrl" class="com.pennant.webui.financemanagement.receipts.SelectFeeReceiptListCtrl"
+		parent="basisListCtrl" scope="prototype">
 	</bean>
 
 	<bean id="feeReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.FeeReceiptDialogCtrl" parent="basisListCtrl"
@@ -4202,20 +4203,20 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="builderCompanyService" ref="builderCompanyService" />
 	</bean>
-	
+
 	<!-- DealerGroup -->
-	<bean id="dealerGroupListCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupListCtrl"
-		parent="basisListCtrl" scope="prototype">
+	<bean id="dealerGroupListCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupListCtrl" parent="basisListCtrl"
+		scope="prototype">
 		<property name="dealerGroupService" ref="dealerGroupService" />
 	</bean>
-	<bean id="dealerGroupDialogCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupDialogCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="dealerGroupDialogCtrl" class="com.pennant.webui.systemmasters.dealergroup.DealerGroupDialogCtrl" parent="basisCtrl"
+		scope="prototype">
 		<property name="dealerGroupService" ref="dealerGroupService" />
 	</bean>
-	
+
 	<!-- Product Group -->
-	<bean id="productGroupListCtrl" class="com.pennant.webui.systemmasters.productgroup.ProductGroupListCtrl"
-		parent="basisListCtrl" scope="prototype">
+	<bean id="productGroupListCtrl" class="com.pennant.webui.systemmasters.productgroup.ProductGroupListCtrl" parent="basisListCtrl"
+		scope="prototype">
 		<property name="productGroupService" ref="productGroupService" />
 	</bean>
 	<bean id="productGroupDialogCtrl" class="com.pennant.webui.systemmasters.productgroup.ProductGroupDialogCtrl"
@@ -4399,7 +4400,7 @@
 		parent="basisListCtrl">
 		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
-	
+
 	<!-- GST -->
 	<bean id="dataExtractionListCtrl" class="com.pennant.webui.dataextraction.DataExtractionListCtrl" parent="basisListCtrl"
 		scope="prototype">
@@ -5090,12 +5091,12 @@
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 		<property name="securityUserDAO" ref="securityUserDAO" />
 	</bean>
-	
+
 	<bean id="selectReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectReceiptDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
 	</bean>
-	
+
 	<bean id="receiptsEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptsEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="ruleService" ref="ruleService" />
@@ -5118,44 +5119,44 @@
 	<bean id="bounceDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
-		<!-- Commodity Type -->	
+
+	<!-- Commodity Type -->
 	<bean id="commodityTypeListCtrl" class="com.pennanttech.pff.commodity.webui.CommodityTypeListCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="commodityTypeService" ref="commodityTypeService" />
-	</bean>
-
-	<bean id="commodityTypeDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommodityTypeDialogueCtrl"
-		parent="basisCtrl" scope="prototype">
 		<property name="commodityTypeService" ref="commodityTypeService" />
 	</bean>
-	
-	<!-- Commodities -->	
-	<bean id="commoditiesListCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesListCtrl" parent="basisListCtrl"
+
+	<bean id="commodityTypeDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommodityTypeDialogueCtrl" parent="basisCtrl"
 		scope="prototype">
-			<property name="commoditiesService" ref="commoditiesService" />
+		<property name="commodityTypeService" ref="commodityTypeService" />
 	</bean>
 
-	<bean id="commoditiesDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesDialogueCtrl"
-		parent="basisCtrl" scope="prototype">
+	<!-- Commodities -->
+	<bean id="commoditiesListCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="commoditiesService" ref="commoditiesService" />
+	</bean>
+
+	<bean id="commoditiesDialogueCtrl" class="com.pennanttech.pff.commodity.webui.CommoditiesDialogueCtrl" parent="basisCtrl"
+		scope="prototype">
 		<property name="commoditiesService" ref="commoditiesService" />
 	</bean>
 
 	<bean id="commodityTypeDAO" class="com.pennanttech.pff.commodity.dao.CommodityTypeDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="commodityFileUploadCtrl" class="com.pennanttech.framework.component.dataengine.CommodityFileUploadCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="commodityFileUploadResponce" ref="commodityFileUploadResponce" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
-	</bean>	
-	
+	</bean>
+
 	<bean name="commodityFileUploadResponce" class="com.pennanttech.pff.commodity.webui.CommodityFileUploadResponce">
 		<property name="dataSource" ref="dataSource" />
 		<property name="commoditiesDAO" ref="commoditiesDAO" />
 		<property name="commoditiesService" ref="commoditiesService" />
 		<property name="commodityTypeDAO" ref="commodityTypeDAO" />
 	</bean>
-	
+
 
 	<!--============ Personal Discussion Module ============== -->
 	<bean id="personalDiscussionListCtrl" class="com.pennant.webui.verification.personaldiscussion.PersonalDiscussionListCtrl"
@@ -5166,101 +5167,101 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-	<!-- Manufacturer -->	
+	<!-- Manufacturer -->
 	<bean id="manufacturerListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerListCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="manufacturerService" ref="manufacturerService" />
+		<property name="manufacturerService" ref="manufacturerService" />
 	</bean>
-	
+
 	<bean id="manufacturerDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ManufacturerDialogueCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="manufacturerService" ref="manufacturerService" />
+		<property name="manufacturerService" ref="manufacturerService" />
 	</bean>
-	
-	<!-- ConsumerProduct -->	
+
+	<!-- ConsumerProduct -->
 	<bean id="consumerProductListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductListCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="consumerProductService" ref="consumerProductService" />
+		<property name="consumerProductService" ref="consumerProductService" />
 	</bean>
-	
-	<bean id="consumerProductDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductDialogueCtrl" parent="basisListCtrl"
-		scope="prototype">
-			<property name="consumerProductService" ref="consumerProductService" />
+
+	<bean id="consumerProductDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.ConsumerProductDialogueCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="consumerProductService" ref="consumerProductService" />
 	</bean>
 
 	<bean id="dealerMappingListCtrl" class="com.pennant.webui.amtmasters.dealermapping.DealerMappingListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="dealerMappingService" ref="dealerMappingService" />
 	</bean>
-		
-	<!-- MerchantDetails -->	
+
+	<!-- MerchantDetails -->
 	<bean id="merchantDetailsListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsListCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="merchantDetailsService" ref="merchantDetailsService" />
+		<property name="merchantDetailsService" ref="merchantDetailsService" />
 	</bean>
-	
-	<bean id="merchantDetailsDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsDialogueCtrl" parent="basisListCtrl"
-		scope="prototype">
-			<property name="merchantDetailsService" ref="merchantDetailsService" />
+
+	<bean id="merchantDetailsDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.MerchantDetailsDialogueCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="merchantDetailsService" ref="merchantDetailsService" />
 	</bean>
 
 	<bean id="dealerMappingDialogCtrl" class="com.pennant.webui.amtmasters.dealermapping.DealerMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-	<property name="dealerMappingService" ref="dealerMappingService" />
-	</bean>
-	
-	<!-- SchemeDealerGroup -->	
-	<bean id="schemeDealerGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupListCtrl" parent="basisListCtrl"
-		scope="prototype">
-			<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
-	</bean>
-	
-	<bean id="schemeDealerGroupDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupDialogueCtrl" parent="basisListCtrl"
-		scope="prototype">
-			<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
+		<property name="dealerMappingService" ref="dealerMappingService" />
 	</bean>
 
-	<!-- SchemeProductGroup -->	
+	<!-- SchemeDealerGroup -->
+	<bean id="schemeDealerGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupListCtrl" parent="basisListCtrl"
+		scope="prototype">
+		<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
+	</bean>
+
+	<bean id="schemeDealerGroupDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeDealerGroupDialogueCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="schemeDealerGroupService" ref="schemeDealerGroupService" />
+	</bean>
+
+	<!-- SchemeProductGroup -->
 	<bean id="schemeProductGroupListCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeProductGroupListCtrl" parent="basisListCtrl"
 		scope="prototype">
-			<property name="schemeProductGroupService" ref="schemeProductGroupService" />
+		<property name="schemeProductGroupService" ref="schemeProductGroupService" />
 	</bean>
-	
-	<bean id="schemeProductGroupDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeProductGroupDialogueCtrl" parent="basisListCtrl"
-		scope="prototype">
-			<property name="schemeProductGroupService" ref="schemeProductGroupService" />
+
+	<bean id="schemeProductGroupDialogueCtrl" class="com.pennanttech.pff.mmfl.cd.webui.SchemeProductGroupDialogueCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="schemeProductGroupService" ref="schemeProductGroupService" />
 	</bean>
 
 	<bean id="transactionMappingListCtrl" class="com.pennant.webui.systemmasters.transactionmapping.TransactionMappingListCtrl"
 		parent="basisListCtrl" scope="prototype">
-			<property name="transactionMappingService" ref="transactionMappingService"/>
+		<property name="transactionMappingService" ref="transactionMappingService" />
 	</bean>
-	
+
 	<bean id="transactionMappingDialogCtrl" class="com.pennant.webui.systemmasters.transactionmapping.TransactionMappingDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-			<property name="transactionMappingService" ref="transactionMappingService"/>
+		<property name="transactionMappingService" ref="transactionMappingService" />
 	</bean>
-	
-	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl" parent="basisCtrl"
-		scope="prototype">
+
+	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
 		<property name="receiptCalculator" ref="receiptCalculator" />
-	</bean>	
+	</bean>
 	<bean id="changeTDSDialogCtrl" class="com.pennant.webui.finance.financemain.ChangeTDSDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="changeTDSService" ref="changeTDSService" />
 
 	</bean>
 	<!-- Income Amortization One Time Activity -->
-	<bean id="incomeAmortizationCtrl" class="com.pennant.webui.incomeamortization.IncomeAmortizationCtrl" parent="basisCtrl" scope="prototype">
-		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
- 	</bean>
-
-	<!-- Calculate Average POS -->
-	<bean id="calAvgPOSCtrl" class="com.pennant.webui.incomeamortization.CalAvgPOSCtrl"
-		parent="basisCtrl" scope="prototype">
+	<bean id="incomeAmortizationCtrl" class="com.pennant.webui.incomeamortization.IncomeAmortizationCtrl" parent="basisCtrl"
+		scope="prototype">
 		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
 	</bean>
-	
+
+	<!-- Calculate Average POS -->
+	<bean id="calAvgPOSCtrl" class="com.pennant.webui.incomeamortization.CalAvgPOSCtrl" parent="basisCtrl" scope="prototype">
+		<property name="incomeAmortizationService" ref="incomeAmortizationService" />
+	</bean>
+
 	<!-- Amortization Process -->
 	<bean id="amzBatchAdminCtrl" class="com.pennant.webui.batch.admin.AMZBatchAdminCtrl" parent="basisCtrl" scope="prototype">
 		<property name="dataSource" ref="dataSource" />

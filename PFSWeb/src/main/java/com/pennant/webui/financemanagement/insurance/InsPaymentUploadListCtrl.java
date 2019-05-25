@@ -62,8 +62,7 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -85,7 +84,7 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 				Operators.STRING);
 		registerField("paymentType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType,
 				Operators.STRING);
-		
+
 		// Render the page and display the data.
 		doRenderPage();
 		doSetFieldProperties();
@@ -94,22 +93,21 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.listheader_RecordStatus.setVisible(true);
 		this.listheader_RecordType.setVisible(true);
-		
+
 		this.entityCode.setModuleName("Entity");
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -119,8 +117,7 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param entityCodeName
 	 *            An event sent to the event handler of the component.
@@ -131,8 +128,7 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -167,8 +163,7 @@ public class InsPaymentUploadListCtrl extends GFCBaseListCtrl<InsurancePaymentIn
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

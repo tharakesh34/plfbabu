@@ -680,7 +680,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
 		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 
-		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id,""));
+		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id, ""));
 		customerDetails.setCollateraldetailList(getCollateralSetupDAO().getApprovedCollateralByCustId(id, type));
 
 		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {
@@ -1882,8 +1882,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						if (empDetail.getCustEmpFrom().compareTo(empDetail.getCustEmpTo()) > 0) {
 							ErrorDetail errorDetail = new ErrorDetail();
 							String[] valueParm = new String[2];
-							valueParm[0] = "employment startDate:" + DateUtility.format(empDetail.getCustEmpFrom(),
-									PennantConstants.XMLDateFormat);
+							valueParm[0] = "employment startDate:"
+									+ DateUtility.format(empDetail.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 							valueParm[1] = "employment endDate:"
 									+ DateUtility.format(empDetail.getCustEmpTo(), PennantConstants.XMLDateFormat);
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm));

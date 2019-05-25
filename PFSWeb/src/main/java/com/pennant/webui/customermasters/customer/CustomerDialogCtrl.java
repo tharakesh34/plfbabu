@@ -6655,7 +6655,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
 		this.PdVerificationDialogCtrl = PdVerificationDialogCtrl;
-		
+
 	}
 
 }

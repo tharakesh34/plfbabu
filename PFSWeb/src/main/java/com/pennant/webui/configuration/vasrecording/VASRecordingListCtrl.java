@@ -193,7 +193,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	protected void doAddFilters() {
 		super.doAddFilters();
 		if (VASConsatnts.STATUS_CANCEL.equals(module)) {
-			
+
 			StringBuilder sql = new StringBuilder();
 			sql.append(
 					"(((RecordType IS NULL OR RecordType='')  AND VasStatus != 'C') OR (VasStatus = 'C' AND RecordType IS NOT NULL)) AND ( ProductCtg != '");
@@ -205,7 +205,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			filters[1] = new Filter("FinanceProcess", 0, Filter.OP_EQUAL);
 			filters[2] = new Filter("ProductCtg", VASConsatnts.VAS_CATEGORY_VASI, Filter.OP_NOT_EQUAL);
 			this.searchObject.addFilterAnd(filters);
-		} else if("E".equals(module)){
+		} else if ("E".equals(module)) {
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("ProductCtg", VASConsatnts.VAS_CATEGORY_VASI, Filter.OP_NOT_EQUAL);
 			this.searchObject.addFilterAnd(filters);

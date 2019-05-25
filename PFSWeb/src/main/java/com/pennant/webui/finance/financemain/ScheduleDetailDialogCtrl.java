@@ -1572,7 +1572,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 							StringUtils.isEmpty(schdl_noOfTerms.getValue()) ? "0" : schdl_noOfTerms.getValue())
 							+ advTerms + " Payments"));
 
-
 			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
 			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
 					securityUser.getUsrLName());

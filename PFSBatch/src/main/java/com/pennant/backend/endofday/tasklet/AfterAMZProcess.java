@@ -73,10 +73,8 @@ public class AfterAMZProcess implements Tasklet {
 		// copy previous AMZ data from Working table to main table
 		projectedAmortizationDAO.copyPrvProjAMZ();
 
-
 		// create indexes on PROJECTEDINCOMEAMZ table
 		projectedAmortizationDAO.createIndexProjIncomeAMZ();
-
 
 		// update amortization month
 		SysParamUtil.updateParamDetails(AmortizationConstants.AMZ_MONTHEND, amzMonth.toString());

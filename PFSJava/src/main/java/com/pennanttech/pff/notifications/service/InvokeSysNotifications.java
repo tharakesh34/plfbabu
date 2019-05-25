@@ -240,7 +240,7 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								}
 								builder.setOMElement(builder, data.getKey(), value);
 							}
-							
+
 							System.out.println((builder.getEnvelope().toString()));
 							logExecutionDetails(builder.getEnvelope().toString().getBytes("UTF-8"), id, email,
 									mobileNum, (int) systemNotifications.getId(), map);

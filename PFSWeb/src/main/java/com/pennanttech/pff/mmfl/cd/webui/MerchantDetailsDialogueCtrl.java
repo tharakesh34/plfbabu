@@ -610,8 +610,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 		if (!this.peakTransPerDay.isReadonly()) {
 			if (this.peakTransPerDay.getValue() != 0) {
-				this.peakTransPerDay.setConstraint(
-						new PTNumberValidator(Labels.getLabel("label_MerchantDetails_PeakTransPerDay.value"), true, false));
+				this.peakTransPerDay.setConstraint(new PTNumberValidator(
+						Labels.getLabel("label_MerchantDetails_PeakTransPerDay.value"), true, false));
 			}
 
 		}

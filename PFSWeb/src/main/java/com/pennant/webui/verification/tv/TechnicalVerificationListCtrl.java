@@ -202,7 +202,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxTechnicalVerification.getSelectedItem();
 		long id = (long) selectedItem.getAttribute("id");
-		String agentName =(String)selectedItem.getAttribute("AgentName");
+		String agentName = (String) selectedItem.getAttribute("AgentName");
 		TechnicalVerification tv = technicalVerificationService.getTechnicalVerification(id, "_View");
 
 		if (tv == null) {
@@ -235,7 +235,7 @@ public class TechnicalVerificationListCtrl extends GFCBaseListCtrl<TechnicalVeri
 	 * @param fieldinvestigation
 	 *            The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(TechnicalVerification technicalVerification,String agentName) {
+	private void doShowDialogPage(TechnicalVerification technicalVerification, String agentName) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();

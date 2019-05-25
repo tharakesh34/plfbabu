@@ -38,7 +38,7 @@ public class ConsumerProductListCtrl extends GFCBaseListCtrl<ConsumerProduct> {
 	protected Listheader listheader_AssetDescription;
 	protected Listheader listheader_ModelStatus;
 	protected Listheader listheader_Active;
-	
+
 	// checkRights
 	protected Button button_ProductList_NewProduct;
 	protected Button button_ProductList_ProductListSearch;
@@ -169,8 +169,8 @@ public class ConsumerProductListCtrl extends GFCBaseListCtrl<ConsumerProduct> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param Consumer Product
-	 *            The entity that need to be passed to the dialog.
+	 * @param Consumer
+	 *            Product The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(ConsumerProduct consumerProduct) {
 		logger.debug(Literal.ENTERING);

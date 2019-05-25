@@ -1,54 +1,53 @@
 package com.pennanttech.pff.model;
 
-
 import java.util.Date;
 
 public class CollectionCustomerDetail {
-	private long 			custId;
-	private String 			custCIF;
-	private String 			custCoreBank;
-	private String 			custCtgCode; 
-	private String 			custTypeCode;
-	private String 			custSalutationCode;
-	private String			custFName;
-	private String 			custMName;
-	private String 			custLName;
-	private String 			custShrtName;
-	private String 			custGenderCode;
-	private Date 			custDOB;
-	private String 			custMaritalSts;
-	private String 			custSector;
-	private String 			custSubSector;
-	private String 			custIndustry;
-	private String 			custProfession;
-	private String 			custSegment;
-	private String 			custSubSegment;
-	private String 			custDSA;
-	private String 			custDSADept;
-	private String 			resAddrHNbr;
-	private String 			resFlatNbr;
-	private String 			resAddrStreet;
-	private String 			resAddrLine1;
-	private String 			resAddrLine2;
-	private String 			resPoBox;
-	private String 			resAddrCity;
-	private String 			resAddrProvince;
-	private String 			resAddrCountry;
-	private String 			resAddrZip;
-	private String 			offAddrHNbr;
-	private String 			offFlatNbr;
-	private String 			offAddrStreet;
-	private String 			offAddrLine1;
-	private String 			offAddrLine2;
-	private String 			offPoBox;
-	private String 			offAddrCity;
-	private String 			offAddrProvince;
-	private String 			offAddrCountry;
-	private String 			offAddrZip;
-	private String 			phoneNumber1;
-	private String 			phoneNumber2;
-	private String 			custEMail1;
-	private String 			custEmail2;
+	private long custId;
+	private String custCIF;
+	private String custCoreBank;
+	private String custCtgCode;
+	private String custTypeCode;
+	private String custSalutationCode;
+	private String custFName;
+	private String custMName;
+	private String custLName;
+	private String custShrtName;
+	private String custGenderCode;
+	private Date custDOB;
+	private String custMaritalSts;
+	private String custSector;
+	private String custSubSector;
+	private String custIndustry;
+	private String custProfession;
+	private String custSegment;
+	private String custSubSegment;
+	private String custDSA;
+	private String custDSADept;
+	private String resAddrHNbr;
+	private String resFlatNbr;
+	private String resAddrStreet;
+	private String resAddrLine1;
+	private String resAddrLine2;
+	private String resPoBox;
+	private String resAddrCity;
+	private String resAddrProvince;
+	private String resAddrCountry;
+	private String resAddrZip;
+	private String offAddrHNbr;
+	private String offFlatNbr;
+	private String offAddrStreet;
+	private String offAddrLine1;
+	private String offAddrLine2;
+	private String offPoBox;
+	private String offAddrCity;
+	private String offAddrProvince;
+	private String offAddrCountry;
+	private String offAddrZip;
+	private String phoneNumber1;
+	private String phoneNumber2;
+	private String custEMail1;
+	private String custEmail2;
 
 	public CollectionCustomerDetail() {
 
@@ -414,6 +413,5 @@ public class CollectionCustomerDetail {
 
 	public void setCustEmail2(String custEmail2) {
 		this.custEmail2 = custEmail2;
-	}		
+	}
 }
-

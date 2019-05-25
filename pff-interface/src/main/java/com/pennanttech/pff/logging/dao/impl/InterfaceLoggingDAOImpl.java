@@ -110,7 +110,7 @@ public class InterfaceLoggingDAOImpl extends SequenceDao<InterfaceLogDetail> imp
 	public long getSequence(String seqName) {
 		return getNextValue(seqName);
 	}
-	
+
 	@Override
 	public void setDataSource(DataSource dataSource) {
 		super.setDataSource(dataSource);

@@ -100,7 +100,7 @@ public class Presentment {
 	private Date chequeDate;
 
 	//getter and setter
-	
+
 	public String getChequeSerialNo() {
 		return chequeSerialNo;
 	}
@@ -124,7 +124,7 @@ public class Presentment {
 	public void setPartnerBankName(String partnerBankName) {
 		this.partnerBankName = partnerBankName;
 	}
-		
+
 	public String getIFSC() {
 		return IFSC;
 	}
@@ -136,7 +136,7 @@ public class Presentment {
 	public Long getReturnCode() {
 		return returnCode;
 	}
-	
+
 	public void setReturnCode(Long returnCode) {
 		this.returnCode = returnCode;
 	}

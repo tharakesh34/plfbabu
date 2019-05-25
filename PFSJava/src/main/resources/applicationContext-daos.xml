@@ -5535,8 +5535,8 @@
 	<!-- ====================================================== -->
 
 	<bean id="accountInterfaceService" class="com.pennant.Interface.service.impl.AccountInterfaceServiceImpl">
-		<!-- <property name="accountDetailProcess" ref="accountDetailProcess" />
-		<property name="accountDataProcess" ref="accountDataProcess" /> -->
+		<!-- <property name="accountDetailProcess" ref="accountDetailProcess" /> <property name="accountDataProcess" ref="accountDataProcess" 
+			/> -->
 	</bean>
 
 	<bean id="customerInterfaceService" class="com.pennant.Interface.service.impl.CustomerInterfaceServiceImpl">

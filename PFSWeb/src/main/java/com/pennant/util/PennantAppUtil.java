@@ -230,7 +230,7 @@ public class PennantAppUtil {
 		}
 		return moduleName;
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#getLabelDesc} instead.
@@ -238,7 +238,7 @@ public class PennantAppUtil {
 	public static String getlabelDesc(String value, List<ValueLabel> list) {
 		return PennantApplicationUtil.getLabelDesc(value, list);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#getValueDesc} instead.
@@ -246,7 +246,7 @@ public class PennantAppUtil {
 	public static String getValueDesc(String label, List<ValueLabel> list) {
 		return PennantApplicationUtil.getValueDesc(label, list);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
@@ -254,7 +254,7 @@ public class PennantAppUtil {
 	public static BigDecimal unFormateAmount(BigDecimal amount, int dec) {
 		return PennantApplicationUtil.unFormateAmount(amount, dec);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#formateAmount} instead.
@@ -262,7 +262,7 @@ public class PennantAppUtil {
 	public static BigDecimal formateAmount(BigDecimal amount, int dec) {
 		return PennantApplicationUtil.formateAmount(amount, dec);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#amountFormate} instead.
@@ -270,7 +270,7 @@ public class PennantAppUtil {
 	public static String amountFormate(BigDecimal amount, int dec) {
 		return PennantApplicationUtil.amountFormate(amount, dec);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#unFormateAmount} instead.
@@ -278,7 +278,7 @@ public class PennantAppUtil {
 	public static BigDecimal unFormateAmount(String amount, int dec) {
 		return PennantApplicationUtil.unFormateAmount(amount, dec);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#formatAmount} instead.
@@ -286,7 +286,7 @@ public class PennantAppUtil {
 	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 		return PennantApplicationUtil.formatAmount(value, decPos, debitCreditSymbol);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#formateLong} instead.
@@ -294,7 +294,7 @@ public class PennantAppUtil {
 	public static String formateLong(long longValue) {
 		return PennantApplicationUtil.formateLong(longValue);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#formateInt} instead.
@@ -302,7 +302,7 @@ public class PennantAppUtil {
 	public static String formateInt(int intValue) {
 		return PennantApplicationUtil.formateInt(intValue);
 	}
-	
+
 	/**
 	 * 
 	 * @deprecated use {@link PennantApplicationUtil#getPercentageValue} instead.
@@ -325,7 +325,6 @@ public class PennantAppUtil {
 		return formatedDate;
 	}
 
-	
 	public static Time getTime(Date date) {
 		Time time = null;
 		if (date != null) {
@@ -1651,10 +1650,10 @@ public class PennantAppUtil {
 		return appList;
 	}
 
-	public static List<Long> getLimitHeaderCustomer(boolean customer,boolean rule) {
+	public static List<Long> getLimitHeaderCustomer(boolean customer, boolean rule) {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		List<Long> limitHeader=new ArrayList<Long>();
+		List<Long> limitHeader = new ArrayList<Long>();
 
 		JdbcSearchObject<LimitHeader> searchObject = new JdbcSearchObject<LimitHeader>(LimitHeader.class);
 
@@ -2234,11 +2233,12 @@ public class PennantAppUtil {
 
 		return null;
 	}
-	
+
 	public static ArrayList<ValueLabel> getReceiptModesByFinType(String finType) {
 		ArrayList<ValueLabel> receiptModesList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-		JdbcSearchObject<FinTypeReceiptModes> searchObject = new JdbcSearchObject<FinTypeReceiptModes>(FinTypeReceiptModes.class);
+		JdbcSearchObject<FinTypeReceiptModes> searchObject = new JdbcSearchObject<FinTypeReceiptModes>(
+				FinTypeReceiptModes.class);
 		searchObject.addSort("ReceiptMode", false);
 		searchObject.addTabelName("FinTypeReceiptModes");
 		searchObject.addFilterEqual("FinType", finType);
@@ -2247,9 +2247,8 @@ public class PennantAppUtil {
 
 		List<FinTypeReceiptModes> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
-			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()),
-					PennantAppUtil.getlabelDesc(appList.get(i).getReceiptMode(),
-							PennantStaticListUtil.getReceiptModes()));
+			ValueLabel receiptMode = new ValueLabel(String.valueOf(appList.get(i).getReceiptMode()), PennantAppUtil
+					.getlabelDesc(appList.get(i).getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
 			receiptModesList.add(receiptMode);
 		}
 		return receiptModesList;

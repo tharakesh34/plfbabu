@@ -402,7 +402,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		FeeType feeType = new FeeType();
 		feeType.setAdviseType(adviceType);
-		
+
 		StringBuilder selectSql = new StringBuilder("Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active,");
 		selectSql.append(" ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable,");
 		selectSql.append(" TaxComponent,refundable From FeeTypes");

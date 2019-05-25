@@ -263,7 +263,7 @@ public class FinServiceInstruction extends AbstractWorkflowEntity implements Ent
 	private String fromBranch;
 	@XmlElement
 	private String toBranch;
-	
+
 	private long instructionUID = Long.MIN_VALUE;
 	private long linkedTranID = 0;
 

@@ -200,7 +200,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			if (arguments.get("enqiryModule") != null) {
 				enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (arguments.get("agentName") != null) {
 				this.agencyName = (String) arguments.get("agentName");
 			}

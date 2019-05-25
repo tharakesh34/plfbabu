@@ -193,11 +193,10 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				userRole = arguments.get("role").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, super.pageRightName);
 			}
-			
+
 			if (arguments.containsKey("enqiryModule")) {
-				enqiryModule=true;
+				enqiryModule = true;
 			}
-			
 
 			this.finTypeFees.setWorkflowId(0);
 			doLoadWorkFlow(this.finTypeFees.isWorkflow(), this.finTypeFees.getWorkflowId(),
@@ -811,7 +810,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.btnSave.setDisabled(true);
 			this.btnDelete.setDisabled(true);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);

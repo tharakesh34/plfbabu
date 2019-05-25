@@ -35,7 +35,8 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		sql.append(" AlertsRequired, AlertType, AlertToRoles, UserTemplate, CustomerTemplate");
 
 		if (type.contains("View")) {
-			sql.append(", CommodityTypeCode, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode"); 
+			sql.append(
+					", CommodityTypeCode, UserTemplateName, CustomerTemplateName, userTemplateCode, customerTemplateCode");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
@@ -102,7 +103,8 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		StringBuilder sql = new StringBuilder("Update Commodities");
 		sql.append(tableType.getSuffix());
 		sql.append(" set Description = :Description, CurrentValue = :CurrentValue, HSNCode = :HSNCode,");
-		sql.append(" AlertsRequired= :AlertsRequired, AlertType= :AlertType, AlertToRoles= :AlertToRoles, UserTemplate= :UserTemplate, CustomerTemplate= :CustomerTemplate");
+		sql.append(
+				" AlertsRequired= :AlertsRequired, AlertType= :AlertType, AlertToRoles= :AlertToRoles, UserTemplate= :UserTemplate, CustomerTemplate= :CustomerTemplate");
 		sql.append(", Active = :Active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -166,7 +168,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("CommodityType", commodity.getCommodityType());
 		paramSource.addValue("code", commodity.getCode());
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -269,7 +271,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
 	public void updateCommodity(Commodity commodity) {
 		logger.debug(Literal.ENTERING);

@@ -87,8 +87,7 @@ import com.pennanttech.service.AmazonS3Bucket;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/FileDownload/DisbursementFileDownloadList.zul
  * file.<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
@@ -188,28 +187,27 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
 		String segmentType = fileType.getSelectedItem().getValue();
-		
-		
+
 		try {
-		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-			retailCibilReport.generateReport();
-		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(segmentType)) {
-			corporateCibilReport.generateReport();
-		} else {
-			MessageUtil.showError("File Type cannot be blank.");
-			return;
-		}
+			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+				retailCibilReport.generateReport();
+			} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(segmentType)) {
+				corporateCibilReport.generateReport();
+			} else {
+				MessageUtil.showError("File Type cannot be blank.");
+				return;
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		search();
 	}
-	
-	public void onChange$fileType(Event event) throws Exception {	
+
+	public void onChange$fileType(Event event) throws Exception {
 		search();
 	}
-	
+
 	public void onClick_Downlaod(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		try {

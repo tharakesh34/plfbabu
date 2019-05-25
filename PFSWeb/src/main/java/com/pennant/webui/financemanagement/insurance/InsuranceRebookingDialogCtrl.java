@@ -164,8 +164,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Insurance/InsuranceRebookingDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/Insurance/InsuranceRebookingDialog.zul file. <br>
  */
 public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private static final long serialVersionUID = 1L;
@@ -173,7 +172,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	protected Window window_InsuranceRebooking;
 	protected Label windowTitle;
- 
+
 	protected ExtendedCombobox productCode;
 	protected Combobox postingAgainst;
 	protected Textbox primaryLinkRef;
@@ -189,10 +188,10 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected ExtendedCombobox dmaId;
 	protected ExtendedCombobox fulfilOfficerId;
 	protected ExtendedCombobox referralId;
-	
+
 	protected Button viewInfo;
 	protected Button btnSearchSelection;
-	
+
 	protected Row row_Vasfee;
 	protected Textbox entityCode;
 	protected Label entityDesc;
@@ -207,7 +206,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	protected Textbox oldPolicyNumber;
 	protected Textbox customerCif;
 	protected Label customerShortName;
-	
+
 	//Status details from Maintenance
 	protected Groupbox gb_MaintenanceDetails;
 	protected Textbox status;
@@ -241,7 +240,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private transient JointAccountDetailService jointAccountDetailService;
 	private transient VehicleDealerService vehicleDealerService;
 	private transient InsuranceDetailService insuranceDetailService;
-	
+
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private Window mainWindow = null;
 
@@ -300,8 +299,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -381,8 +379,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -397,8 +394,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -449,7 +445,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (this.vASRecording.isNewRecord()) {
 			this.btnCancel.setVisible(false);
 			this.btnSearchSelection.setDisabled(false);
@@ -503,7 +499,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 		}
 		this.btnSave.setVisible(true);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -684,7 +680,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		// save it to database
 		try {
 			if (doProcess(aVASRecording, tranType)) {
-				
+
 				// User Notifications Message/Alert
 				try {
 					if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -971,8 +967,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVASRecording
 	 * @throws InterruptedException
@@ -1021,7 +1016,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		
+
 		if (maintaintanceProcess) {
 			doReadOnlyComponents();
 			this.btnDelete.setVisible(false);
@@ -1134,16 +1129,19 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.customerCif.setValue(aVASRecording.getVasCustomer().getCustCIF());
 			this.customerShortName.setValue(aVASRecording.getVasCustomer().getCustShrtName());
 		} else if (maintaintanceProcess) {
-			InsuranceDetails insuranceDetails= getInsuranceDetailService().getInsurenceDetailsByRef(aVASRecording.getVasReference(), "_View");
+			InsuranceDetails insuranceDetails = getInsuranceDetailService()
+					.getInsurenceDetailsByRef(aVASRecording.getVasReference(), "_View");
 			this.gb_MaintenanceDetails.setVisible(true);
 			this.status.setValue(aVASRecording.getStatus());
 			this.surrenderAmount.setValue(PennantAppUtil.formateAmount(aVASRecording.getCancelAmt(), getCcyFormat()));
-			if(insuranceDetails != null){
-				this.reconciled.setChecked(InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetails.getReconStatus()));
-				this.claimAmount.setValue(PennantAppUtil.formateAmount(insuranceDetails.getPartnerPremium(), getCcyFormat()));
+			if (insuranceDetails != null) {
+				this.reconciled
+						.setChecked(InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetails.getReconStatus()));
+				this.claimAmount
+						.setValue(PennantAppUtil.formateAmount(insuranceDetails.getPartnerPremium(), getCcyFormat()));
 			}
 		}
-		
+
 		vASConfiguration = aVASRecording.getVasConfiguration();
 		if (aVASRecording.isNewRecord()) {
 			this.dsaId.setDescription("");
@@ -1214,7 +1212,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.space_FeePaymentMode.setSclass("");
 		this.feePaymentMode.setDisabled(isReadOnly("InsuranceMaintananceRebookingDialog_FeePaymentMode"));
 		this.feePaymentMode.setDisabled(true);
-
 
 		// vasReference
 		if (aVASRecording.isNewRecord() && rebookingProcess && !enqiryModule) {
@@ -1481,8 +1478,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		final HashMap<String, Object> map = getDefaultArguments();
 		map.put("documentDetails", getVASRecording().getDocuments());
 		map.put("financeMainDialogCtrl", this);
-		map.put("moduleName",VASConsatnts.MODULE_NAME);
-		map.put("isEditable",!isReadOnly("InsuranceMaintananceRebookingDialog_FeePaymentMode"));
+		map.put("moduleName", VASConsatnts.MODULE_NAME);
+		map.put("isEditable", !isReadOnly("InsuranceMaintananceRebookingDialog_FeePaymentMode"));
 		if (enqiryModule) {
 			map.put("enqModule", true);
 		}
@@ -1552,7 +1549,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		logger.debug(Literal.LEAVING);
 	}
 
- 	/**
+	/**
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
@@ -1590,8 +1587,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		return validationSuccess;
 
 	}
-
-	
 
 	/**
 	 * Method for fetching Currency format of selected currency
@@ -1740,7 +1735,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Term Insurance Lien
 		try {
 			aVASRecording.setTermInsuranceLien(this.termInsuranceLien.isChecked());
@@ -1922,7 +1917,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	public void doReadOnly() {
 		logger.debug(Literal.ENTERING);
-		
+
 		doReadOnlyComponents();
 
 		if (isWorkFlowEnabled()) {
@@ -1930,7 +1925,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				userAction.getItemAtIndex(i).setDisabled(true);
 			}
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
@@ -1969,15 +1964,15 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);
 		if (!enqiryModule) {
 			this.btnNew.setVisible(getUserWorkspace().isAllowed("button_InsuranceMaintananceRebookingDialog_btnNew"));
 			this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_InsuranceMaintananceRebookingDialog_btnEdit"));
-			this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_InsuranceMaintananceRebookingDialog_btnDelete"));
+			this.btnDelete
+					.setVisible(getUserWorkspace().isAllowed("button_InsuranceMaintananceRebookingDialog_btnDelete"));
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_InsuranceMaintananceRebookingDialog_btnSave"));
 			this.btnCancel.setVisible(false);
 		}
@@ -2021,7 +2016,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.valueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.accrualTillDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.recurringDate.setFormat(DateFormat.SHORT_DATE.getPattern());
@@ -2044,12 +2039,12 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.waivedAmt.setProperties(false, getCcyFormat());
 		this.renewalFee.setProperties(false, getCcyFormat());
 		this.renewalFee.setWidth("100px");
-		
+
 		this.surrenderAmount.setProperties(false, getCcyFormat());
 		this.claimAmount.setProperties(false, getCcyFormat());
 		this.surrenderAmount.setDisabled(true);
 		this.claimAmount.setDisabled(true);
-		
+
 		this.providerName.setMaxlength(100);
 		this.policyNumber.setMaxlength(50);
 
@@ -2096,8 +2091,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection
-	 * method and makes tab visibility based on parameter
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -2236,18 +2231,18 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			aeEvent.setCcy(collateralSetup.getCollateralCcy());
 			aeEvent.setCustID(collateralSetup.getDepositorId());
 		}
-		
+
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(getVASRecording().getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
-		
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		getVASRecording().getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.getAcSetIDList().add(vASConfiguration.getFeeAccounting());
 		List<ReturnDataSet> returnSetEntries = getEngineExecution().getAccEngineExecResults(aeEvent).getReturnDataSet();
 		getVASRecording().setReturnDataSetList(returnSetEntries);
 		accountingSetEntries.addAll(returnSetEntries);
-	
+
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
 		}
@@ -2395,7 +2390,6 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		getScriptValidationService().setObjectList(objectList);
 	}
 
-	 
 	/**
 	 * Formatting the customer data
 	 * 
@@ -2619,11 +2613,9 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 	/*********************** Extended fields script execution data setup end ********************/
 
-	
 	//Primary link reference info
 	/**
-	 * When user clicks on button "Search Selection based on posting Against"
-	 * button
+	 * When user clicks on button "Search Selection based on posting Against" button
 	 * 
 	 * @param event
 	 */
@@ -2690,8 +2682,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/*
-	 * Display the Customer, Loan or collateral details based on postingAgainst
-	 * type
+	 * Display the Customer, Loan or collateral details based on postingAgainst type
 	 */
 	private void doSearchSlectionInfo(String stmtType) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -2741,17 +2732,16 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public long getCustomerIDNumber() {
 		if (vASRecording.getVasCustomer() != null) {
 			return vASRecording.getVasCustomer().getCustomerId();
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * Method for fetching Customer Basic Details for Document Details
-	 * processing
+	 * Method for fetching Customer Basic Details for Document Details processing
 	 * 
 	 * @return
 	 */
@@ -2766,7 +2756,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		return custBasicDetails;
 	}
-	
+
 	@Override
 	protected String getReference() {
 		return this.vasReference.getValue();

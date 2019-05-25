@@ -124,7 +124,7 @@ public class EventManager implements ServletContextListener {
 		if (recipients == null) {
 			recipients = new String[0];
 		}
-		
+
 		for (String recipient : recipients) {
 			boolean online = activeUsers.get(recipient) == null ? false : activeUsers.get(recipient);
 

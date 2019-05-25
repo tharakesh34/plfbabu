@@ -1,49 +1,48 @@
 package com.pennanttech.pff.model;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class CollectionFinanceDetail {
 
-	private int 					id;
-	private String 					loanReference;
-	private String 					custCif;
-	private String 					loanType;
-	private String 					loanTypeDesc;
-	private String 					currency;
-	private String 					productCode;
-	private String 					productDesc;
-	private String 					branchCode;
-	private String 					branchName;
-	private Date 					finStartDate;
-	private Date 					maturityDate;
-	private int 					NOInst = 0;
-	private int 					NOPaidInst = 0;
-	private int 					NOODInst = 0;
-	private Date 					firstRepayDate;
-	private BigDecimal 				firstrepayamount;
-	private Date				 	NSchdDate;
-	private BigDecimal 				NSchdPri = BigDecimal.ZERO;
-	private BigDecimal 				NSchdPft = BigDecimal.ZERO;
-	private BigDecimal 				NSchdPriDue = BigDecimal.ZERO;
-	private BigDecimal 				NSchdPftDue = BigDecimal.ZERO;
-	private int 					totOutStandingAmt;
-	private Date 					overDueDate;
-	private int 					curODDays = 0;
-	private int 					actualODDays = 0;
-	private int 					dueBucket = 0;
-	private BigDecimal 				ODPrincipal = BigDecimal.ZERO;
-	private BigDecimal 				ODProfit = BigDecimal.ZERO;
-	private BigDecimal 				PenaltyPaid = BigDecimal.ZERO;
-	private BigDecimal 				PenaltyDue = BigDecimal.ZERO;
-	private BigDecimal 				PenaltyWaived = BigDecimal.ZERO;
-	private BigDecimal 				bounceCharges;
-	private String 					FinStatus;
-	private String 					FinStsReason;
-	private String 					FinStsWorst;
-	private boolean 				FinActive;
-	private char 					recordStatus;
+	private int id;
+	private String loanReference;
+	private String custCif;
+	private String loanType;
+	private String loanTypeDesc;
+	private String currency;
+	private String productCode;
+	private String productDesc;
+	private String branchCode;
+	private String branchName;
+	private Date finStartDate;
+	private Date maturityDate;
+	private int NOInst = 0;
+	private int NOPaidInst = 0;
+	private int NOODInst = 0;
+	private Date firstRepayDate;
+	private BigDecimal firstrepayamount;
+	private Date NSchdDate;
+	private BigDecimal NSchdPri = BigDecimal.ZERO;
+	private BigDecimal NSchdPft = BigDecimal.ZERO;
+	private BigDecimal NSchdPriDue = BigDecimal.ZERO;
+	private BigDecimal NSchdPftDue = BigDecimal.ZERO;
+	private int totOutStandingAmt;
+	private Date overDueDate;
+	private int curODDays = 0;
+	private int actualODDays = 0;
+	private int dueBucket = 0;
+	private BigDecimal ODPrincipal = BigDecimal.ZERO;
+	private BigDecimal ODProfit = BigDecimal.ZERO;
+	private BigDecimal PenaltyPaid = BigDecimal.ZERO;
+	private BigDecimal PenaltyDue = BigDecimal.ZERO;
+	private BigDecimal PenaltyWaived = BigDecimal.ZERO;
+	private BigDecimal bounceCharges;
+	private String FinStatus;
+	private String FinStsReason;
+	private String FinStsWorst;
+	private boolean FinActive;
+	private char recordStatus;
 
 	public CollectionFinanceDetail() {
 		super();
@@ -357,4 +356,3 @@ public class CollectionFinanceDetail {
 	}
 
 }
-

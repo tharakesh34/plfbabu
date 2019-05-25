@@ -1,34 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_DepositDetailModelDialog" apply="${depositDetailModelDialogCtrl}"
-		width="50%" height="30%">
+	<window id="window_DepositDetailModelDialog" apply="${depositDetailModelDialogCtrl}" width="50%" height="30%">
 
 		<borderlayout id="borderLayout_DepositDetailModel">
 			<north>
 				<div sclass="z-toolbar">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnSave" label="Save"
-								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnSave,btnClose"
+							<button id="btnSave" label="Save" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnSave,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label value="${c:l('DepositDetails')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('DepositDetails')}" sclass="label-heading" />
 						</toolbar>
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnClose" label="Close"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnSave,btnClose"
+							<button id="btnClose" label="Close" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnSave,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -36,41 +26,32 @@
 			</north>
 			<center border="none">
 				<groupbox>
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px; padding:0px;">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px; padding:0px;">
 						<columns>
 							<column width="250px" />
 							<column />
 						</columns>
 						<rows>
-							<row >
-								<label
-									id="label_DepositDetailModel_DepositDate"
-									value="${c:l('label_DepositDetailModel_DepositDate.value')}"
+							<row>
+								<label id="label_DepositDetailModel_DepositDate" value="${c:l('label_DepositDetailModel_DepositDate.value')}"
 									style="padding-left:12px;" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" />
-									<datebox id="depositDialog_depositDate" width="150px"/>
+									<space spacing="2px" sclass="mandatory" />
+									<datebox id="depositDialog_depositDate" width="150px" />
 								</hbox>
 							</row>
-							<row >
-									<label
-										id="label_DepositDetailModel_DepositBank"
-										value="${c:l('label_DepositDetailModel_DepositBank.value')}"
-										style="padding-left:12px;" />
-									<hbox>
-										<extendedcombobox id="depositDialog_depositBank" />
-									</hbox>
+							<row>
+								<label id="label_DepositDetailModel_DepositBank" value="${c:l('label_DepositDetailModel_DepositBank.value')}"
+									style="padding-left:12px;" />
+								<hbox>
+									<extendedcombobox id="depositDialog_depositBank" />
+								</hbox>
 							</row>
-							<row >
-									<label
-										id="label_DepositDetailModel_SlipNo"
-										value="${c:l('label_DepositDetailModel_SlipNo.value')}"
-										style="padding-left:12px;" />
-									<hbox>
-										<textbox id="slipNo" width="150px" />
-									</hbox>
+							<row>
+								<label id="label_DepositDetailModel_SlipNo" value="${c:l('label_DepositDetailModel_SlipNo.value')}" style="padding-left:12px;" />
+								<hbox>
+									<textbox id="slipNo" width="150px" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

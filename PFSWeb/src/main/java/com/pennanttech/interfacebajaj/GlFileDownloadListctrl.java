@@ -259,7 +259,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		if (isTrailBalance) {
 			list.add("TRIAL_BALANCE_EXPORT_STATE");
 			list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
-			
+
 		} else {
 			list.add("GL_TRANSACTION_EXPORT");
 			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
@@ -365,7 +365,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 			try {
-				
+
 				//if(this.toDate.g)
 				if (this.toDate != null && this.fromdate != null) {
 					if ((DateUtility.getYearsBetween(DateUtility.getYearStartDate(this.fromdate.getValue()),
@@ -392,9 +392,9 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 								throw new WrongValueException(this.toDate,
 										"To Date and From Date should be with in financial Year");
 							}
-							
-							if(DateUtility.getYearsBetween(DateUtility.getYearStartDate(this.fromdate.getValue()),
-									DateUtility.getYearStartDate(this.toDate.getValue()))>1){
+
+							if (DateUtility.getYearsBetween(DateUtility.getYearStartDate(this.fromdate.getValue()),
+									DateUtility.getYearStartDate(this.toDate.getValue())) > 1) {
 								throw new WrongValueException(this.toDate,
 										"To Date and From Date should be with in financial Year");
 							}

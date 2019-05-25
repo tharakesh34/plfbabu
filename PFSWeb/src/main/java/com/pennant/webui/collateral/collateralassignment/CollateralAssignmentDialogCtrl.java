@@ -151,7 +151,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 					getUserWorkspace().allocateRoleAuthorities(getRole(), "CollateralAssignmentDetailDialog");
 				}
 			}
-			if(!enqiryModule){
+			if (!enqiryModule) {
 				doLoadWorkFlow(this.collateralAssignment.isWorkflow(), this.collateralAssignment.getWorkflowId(),
 						this.collateralAssignment.getNextTaskId());
 
@@ -419,7 +419,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		try {
 			doWriteBeanToComponents(collateralAssignment);
 			this.groupboxWf.setVisible(false);
-			if(enqiryModule) {
+			if (enqiryModule) {
 				btnDelete.setVisible(false);
 				btnSave.setVisible(false);
 				btnEdit.setVisible(false);
@@ -898,7 +898,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		if (StringUtils.equals(ImplementationConstants.COLLATERAL_ADJ, CollateralConstants.COLLATERAL_REQ_ADJ)) {
 
 			BigDecimal utilizedAmt = BigDecimal.ZERO;
-			
+
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 
 			if (PennantConstants.COLLATERAL_LTV_CHECK_FINAMT.equals(financeType.getFinLTVCheck())) {
@@ -907,7 +907,6 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 			} else {
 				utilizedAmt = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinAmount();
 			}
-
 
 			BigDecimal assignedVal = BigDecimal.ZERO;
 

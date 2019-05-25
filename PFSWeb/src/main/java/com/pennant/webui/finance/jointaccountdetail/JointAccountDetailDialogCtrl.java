@@ -217,9 +217,9 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	CustomerDetailsService customerDetailsService;
 	@Autowired
 	private SamplingService samplingService;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	public String newCustCIF;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -521,22 +521,22 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	/**
 	 * To fill customer data
 	 */
-	private void setCustomersData(){
-		if(this.custCIF.getValue() == null || this.custCIF.getValue().isEmpty()){
+	private void setCustomersData() {
+		if (this.custCIF.getValue() == null || this.custCIF.getValue().isEmpty()) {
 			this.custCIFName.setValue("");
 			this.gb_JointAccountPrimaryJoint.setVisible(false);
 			this.gb_JointAccountSecondaryJoint.setVisible(false);
 			this.gb_JointAccountGuarantorJoint.setVisible(false);
-		}else{
+		} else {
 			customer = getCustomer(this.custCIF.getValue());
-			if(customer != null){
+			if (customer != null) {
 				this.custCIF.setValue(customer.getCustCIF());
 				this.custCIFName.setValue(customer.getCustShrtName());
 				this.custID.setValue(customer.getCustID());
 			}
-			if(customer.getCustCoreBank()!= null && StringUtils.isNotEmpty(customer.getCustCoreBank())){
+			if (customer.getCustCoreBank() != null && StringUtils.isNotEmpty(customer.getCustCoreBank())) {
 				this.row1.setVisible(false);
-			}else{
+			} else {
 				this.row1.setVisible(false);
 				this.includeRepay.setChecked(false);
 				this.repayAccountId.setValue("");
@@ -544,37 +544,37 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		setCustomerDetails(customer);
 	}
-	
+
 	/*
 	 * Method to get the Customer Address Details when CustID is Entered
 	 */
-	
-	public Customer getCustomer(String custCIF){
+
+	public Customer getCustomer(String custCIF) {
 		logger.debug("Entering");
 		Customer customer = null;
-		JdbcSearchObject<Customer> searchObject=new JdbcSearchObject<Customer>(Customer.class);
+		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
 		searchObject.addTabelName("Customers_AEView");
 		searchObject.addFilterEqual("CustCIF", custCIF);
 		List<Customer> customers = pagedListService.getBySearchObject(searchObject);
-		if(customers!=null && !customers.isEmpty()){
+		if (customers != null && !customers.isEmpty()) {
 			return customers.get(0);
 		}
 		logger.debug("Leaving");
-		
+
 		return customer;
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		
+
 		List<Filter> filterList = new ArrayList<>();
 		for (int i = 0; i < this.cif.length; i++) {
 			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
 		}
-		
+
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
@@ -583,7 +583,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -591,7 +591,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -605,7 +606,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	public HashMap<String, Object> getDefaultArguments() {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
@@ -613,7 +614,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("moduleCode", moduleCode);
 		return map;
 	}
-	
+
 	public void setCustomerDetails(Customer customer) {
 		if (customer != null) {
 			BigDecimal currentExpoSure = BigDecimal.ZERO;
@@ -664,11 +665,10 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.guarantorList = null;
 		}
 	}
-	
-	
+
 	/**
 	 * @param event
-	 *  Event for Create a new customer
+	 *            Event for Create a new customer
 	 */
 	public void onClick$btn_NewCust(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -678,7 +678,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CoreCustomerSelect.zul", null, map);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
 	 * 
@@ -702,7 +702,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -726,7 +726,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 		logger.debug("Leaving");
 	}
-	
+
 	public void onClick$viewCustInfo(Event event) {
 		if ((!this.custCIF.isDisabled()) && (this.custID.getValue() == null || this.custID.getValue() == 0)) {
 			throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_INVALID",

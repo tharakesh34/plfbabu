@@ -368,8 +368,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 				if (custEmpDetails.getCustEmpTo() != null) {
 					if (custEmpDetails.getCustEmpFrom().compareTo(custEmpDetails.getCustEmpTo()) > 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "employment startDate:" + DateUtility.format(custEmpDetails.getCustEmpFrom(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "employment startDate:"
+								+ DateUtility.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "employment endDate:"
 								+ DateUtility.format(custEmpDetails.getCustEmpTo(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");
@@ -378,8 +378,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 					if (custEmpDetails.getCustEmpTo().compareTo(DateUtility.getAppDate()) != -1 || SysParamUtil
 							.getValueAsDate("APP_DFT_START_DATE").compareTo(custEmpDetails.getCustEmpTo()) >= 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "employment endDate" + DateUtility.format(custEmpDetails.getCustEmpFrom(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "employment endDate"
+								+ DateUtility.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90319", "", valueParm), "EN");
 						auditDetail.setErrorDetail(errorDetail);
 					}
@@ -401,8 +401,8 @@ public class CustomerEmploymentDetailServiceImpl extends GenericService<Customer
 				if (custEmpDetails.getCustEmpFrom() != null && customer.getCustDOB() != null) {
 					if (custEmpDetails.getCustEmpFrom().before(customer.getCustDOB())) {
 						String[] valueParm = new String[2];
-						valueParm[0] = "employment startDate:" + DateUtility.format(custEmpDetails.getCustEmpFrom(),
-								PennantConstants.XMLDateFormat);
+						valueParm[0] = "employment startDate:"
+								+ DateUtility.format(custEmpDetails.getCustEmpFrom(), PennantConstants.XMLDateFormat);
 						valueParm[1] = "Cust DOB:"
 								+ DateUtility.format(customer.getCustDOB(), PennantConstants.XMLDateFormat);
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65029", "", valueParm), "EN");

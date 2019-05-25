@@ -302,7 +302,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		doShowNotes(this.reportingManager);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$reportingto(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = reportingto.getObject();
@@ -416,8 +416,6 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			branch = branch2.getBranchCode();
 		}
 
-		
-
 		if (businessVerticalId != null) {
 			++filterSize;
 		}
@@ -433,9 +431,9 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		if (branch != null) {
 			++filterSize;
 		}
-		
+
 		Filter[] filters = new Filter[filterSize];
-		int index =0;
+		int index = 0;
 		if (businessVerticalId != null) {
 			filters[index++] = new Filter("businessVerticalCode", businessVerticalId);
 		}
@@ -668,27 +666,24 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.usrid.isReadonly()) {
-			this.usrid
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_UserId.value"),null,true));
+			this.usrid.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_UserId.value"), null, true));
 		}
 		if (!this.businessvertical.isReadonly()) {
 			this.businessvertical.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_ReportingManangerDialog_BusinessVerticalId.value"), null, false));
 		}
 		if (!this.productcode.isReadonly()) {
-			this.productcode
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_Product.value"),
-							null, false));
+			this.productcode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_Product.value"), null, false));
 		}
 		if (!this.fintype.isReadonly()) {
-			this.fintype.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_LoanType.value"),
-							null, false));
+			this.fintype.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ReportingManangerDialog_LoanType.value"), null, false));
 		}
 		if (!this.branchcode.isReadonly()) {
-			this.branchcode
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_Branch.value"),
-							null, false));
+			this.branchcode.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ReportingManangerDialog_Branch.value"), null, false));
 		}
 		if (!this.reportingto.isReadonly()) {
 			this.reportingto.setConstraint(new PTStringValidator(

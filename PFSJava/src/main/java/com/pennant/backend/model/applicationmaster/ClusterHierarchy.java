@@ -84,9 +84,9 @@ public class ClusterHierarchy extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("clusterTypes");
 		return excludeFields;
-		
+
 	}
-	
+
 	public List<ClusterHierarchy> getClusterTypes() {
 		return clusterTypes;
 	}

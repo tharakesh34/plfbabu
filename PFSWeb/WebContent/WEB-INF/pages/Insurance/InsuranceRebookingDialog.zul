@@ -4,20 +4,26 @@
 
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:ca="http://www.zkoss.org/2005/zk/client/attribute" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	
+
 	<window>
-		<window id="window_InsuranceRebooking" border="normal" apply="${insuranceRebookingDialogCtrl}" width="100%" height="100%" sizable="false">
+		<window id="window_InsuranceRebooking" border="normal" apply="${insuranceRebookingDialogCtrl}" width="100%"
+			height="100%" sizable="false">
 			<borderlayout id="borderlayoutVASRecording">
 				<north>
 					<div sclass="z-toolbar" style="padding:0">
 						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 							<!-- COMMON BUTTONS -->
 							<toolbar align="start" sclass="toolbar-start">
-								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
+								<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 								<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 							</toolbar>
 							<!-- SEARCH AREA -->
@@ -26,8 +32,10 @@
 							</toolbar>
 							<!-- CRUD BUTTONS -->
 							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
-								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
+									autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDeletebtnSave,btnCancel,btnNotes,btnHelp,btnClose"
+									sclass="z-toolbarbutton" />
 							</toolbar>
 						</hbox>
 					</div>
@@ -53,24 +61,24 @@
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_OldLoanRef.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="oldPrimaryLinkRef"  width="175px" readonly="true"/>
+													<textbox id="oldPrimaryLinkRef" width="175px" readonly="true" />
 												</hbox>
-												<label  value="${c:l('label_insuranceRebookingDialogCtrl_OldInsuranceRef.value')}" />
+												<label value="${c:l('label_insuranceRebookingDialogCtrl_OldInsuranceRef.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="oldInsuranceRef" width="175px" readonly="true"/>
+													<textbox id="oldInsuranceRef" width="175px" readonly="true" />
 												</hbox>
 											</row>
 											<row>
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_OldPolicyNumber.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="oldPolicyNumber"  width="175px" readonly="true"/>
+													<textbox id="oldPolicyNumber" width="175px" readonly="true" />
 												</hbox>
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_CustomerCiF.value')}" />
 												<hbox>
-												    <space spacing="2px" />
-													<textbox id="customerCif"  width="175px" readonly="true"/>
+													<space spacing="2px" />
+													<textbox id="customerCif" width="175px" readonly="true" />
 													<label id="customerShortName" style="margin-left:10px;display:inline-block;padding-top:3px;" />
 												</hbox>
 											</row>
@@ -91,19 +99,19 @@
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_Status.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<textbox id="status"  width="175px" readonly="true"/>
+													<textbox id="status" width="175px" readonly="true" />
 												</hbox>
-												<label  value="${c:l('label_insuranceRebookingDialogCtrl_Reconciled.value')}" />
+												<label value="${c:l('label_insuranceRebookingDialogCtrl_Reconciled.value')}" />
 												<hbox>
 													<space spacing="2px" />
-													<checkbox id="reconciled" disabled="true"/>
+													<checkbox id="reconciled" disabled="true" />
 												</hbox>
 											</row>
 											<row>
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_SurrenderAmount.value')}" />
-												<currencyBox id="surrenderAmount"/>
+												<currencyBox id="surrenderAmount" />
 												<label value="${c:l('label_insuranceRebookingDialogCtrl_ClaimAmount.value')}" />
-												<currencyBox id="claimAmount"/>
+												<currencyBox id="claimAmount" />
 											</row>
 										</rows>
 									</grid>
@@ -131,7 +139,8 @@
 												<hbox>
 													<space id="space_PrimaryLinkRef" spacing="2px" sclass="mandatory" />
 													<uppercasebox id="primaryLinkRef" width="140px" />
-													<button id="btnSearchSelection" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/LOVSearch.png" visible="false" />
+													<button id="btnSearchSelection" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}"
+														image="/images/icons/LOVSearch.png" visible="false" />
 													<button id="viewInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
 												</hbox>
 												<label id="label_VasReference" value="${c:l('label_InsuranceRebookingDialog_VasReference.value')}" />
@@ -197,45 +206,43 @@
 												</hbox>
 											</row>
 											<row>
-											 	<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="allowFeeType" width="180px" />
 												</hbox>
-												<label
-													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<combobox id="modeOfPayment" width="180px"/>
+													<combobox id="modeOfPayment" width="180px" />
 												</hbox>
 											</row>
 											<row>
-											 	<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
 												<hbox>
-													<space spacing="2px"/>
-													<checkbox id="termInsuranceLien"/>
+													<space spacing="2px" />
+													<checkbox id="termInsuranceLien" />
 												</hbox>
 												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
 												<hbox>
-													<space spacing="2px"/>
-													<checkbox id="medicalApplicable"/>
+													<space spacing="2px" />
+													<checkbox id="medicalApplicable" />
 												</hbox>
 											</row>
 											<row id="row_TermInsuranceLien">
-											 	<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="providerName" width="180px" />
 												</hbox>
-												<label
-													value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<textbox id="policyNumber" width="180px"/>
+													<textbox id="policyNumber" width="180px" />
 												</hbox>
 											</row>
 											<row id="row_MedicalStatus">
-											 	<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
+												<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="medicalStatus" width="180px" />

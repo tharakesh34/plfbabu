@@ -149,8 +149,8 @@ public class GSTCalculator {
 			if (dataMap.get("CustBranch") != null) {
 				custBranch = dataMap.get("CustBranch").toString();
 			}
-			
-			if(dataMap.get("CustProvince") != null) {
+
+			if (dataMap.get("CustProvince") != null) {
 				custProvince = dataMap.get("CustProvince").toString();
 			}
 
@@ -197,14 +197,19 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 
-		String strEmpty = ""; 
-		
+		String strEmpty = "";
+
 		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference);
-		String finBranch = (Object) dataMap.get("FinBranch") == null ? strEmpty : ((Object) dataMap.get("FinBranch")).toString();
-		String custBranch = (Object) dataMap.get("CustBranch") == null ? strEmpty : String.valueOf((Object) dataMap.get("CustBranch"));
-		String custProvince = (Object) dataMap.get("CustProvince") == null ? strEmpty : String.valueOf((Object) dataMap.get("CustProvince"));
-		String custCountry = (Object) dataMap.get("CustCountry") == null ? strEmpty : String.valueOf((Object) dataMap.get("CustCountry"));
-		String finCCY = (Object) dataMap.get("FinCCY") == null ? strEmpty : String.valueOf((Object) dataMap.get("FinCCY"));
+		String finBranch = (Object) dataMap.get("FinBranch") == null ? strEmpty
+				: ((Object) dataMap.get("FinBranch")).toString();
+		String custBranch = (Object) dataMap.get("CustBranch") == null ? strEmpty
+				: String.valueOf((Object) dataMap.get("CustBranch"));
+		String custProvince = (Object) dataMap.get("CustProvince") == null ? strEmpty
+				: String.valueOf((Object) dataMap.get("CustProvince"));
+		String custCountry = (Object) dataMap.get("CustCountry") == null ? strEmpty
+				: String.valueOf((Object) dataMap.get("CustCountry"));
+		String finCCY = (Object) dataMap.get("FinCCY") == null ? strEmpty
+				: String.valueOf((Object) dataMap.get("FinCCY"));
 
 		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);

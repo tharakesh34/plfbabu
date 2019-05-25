@@ -933,8 +933,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	/**
-	 * prepare finance detail object with required data to process finance
-	 * origination.<br>
+	 * prepare finance detail object with required data to process finance origination.<br>
 	 * 
 	 * @param financeDetail
 	 * @param loanWithWIF
@@ -1671,14 +1670,11 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setEntityCode(entityCode);
 			// workflow
 			/*
-			 * financeDetail.getMandate().setWorkflowId(financeMain.
-			 * getWorkflowId());
-			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode())
-			 * ; financeDetail.getMandate().setNextRoleCode(financeMain.
-			 * getNextRoleCode());
+			 * financeDetail.getMandate().setWorkflowId(financeMain. getWorkflowId());
+			 * financeDetail.getMandate().setRoleCode(financeMain.getRoleCode()) ;
+			 * financeDetail.getMandate().setNextRoleCode(financeMain. getNextRoleCode());
 			 * financeDetail.getMandate().setTaskId(financeMain.getTaskId());
-			 * financeDetail.getMandate().setNextTaskId(financeMain.
-			 * getNextTaskId());
+			 * financeDetail.getMandate().setNextTaskId(financeMain. getNextTaskId());
 			 */
 
 			// mandate details
@@ -2604,7 +2600,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				receiptHeaderMap.put(header.getReceiptID(), header);
 			}
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																		// existing
+																			// existing
 																		// finfee
 																		// details
 																		// list
@@ -2615,7 +2611,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0) {
 						if (finFeeDetail.getFinFeeReceipts() != null && finFeeDetail.getFinFeeReceipts().size() > 0) {
 							for (FinFeeReceipt feeReceipt : finFeeDetail.getFinFeeReceipts()) {// iterating
-																								// receipt
+																									// receipt
 																								// details
 								if (receiptHeaderMap.containsKey(feeReceipt.getReceiptID())) {
 
@@ -2646,8 +2642,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						}
 					}
 				} /*
-					 * else{//Throw error if fee code does not exist in request
-					 * and break the loop
+					 * else{//Throw error if fee code does not exist in request and break the loop
 					 * 
 					 * }
 					 */
@@ -2723,7 +2718,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		if (detail.getFinFeeDetailList() != null && detail.getFinFeeDetailList().size() > 0 && errorDetails.isEmpty()) {
 			for (FinFeeDetail feeDtl : detail.getFinFeeDetailList()) {// iterating
-																		// existing
+																			// existing
 																		// finfee
 																		// details
 																		// list

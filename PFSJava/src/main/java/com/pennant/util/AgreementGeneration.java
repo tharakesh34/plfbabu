@@ -767,18 +767,16 @@ public class AgreementGeneration implements Serializable {
 						externalLiabilityDetail.setBalanceTenure(String.valueOf(extLiability.getBalanceTenure()));
 						externalLiabilityDetail
 								.setBounceInstalments(String.valueOf(extLiability.getBounceInstalments()));
-						externalLiabilityDetail.setPrincipalOutStanding(
-								PennantApplicationUtil.amountFormate(extLiability.getPrincipalOutstanding(),
-										formatter));
+						externalLiabilityDetail.setPrincipalOutStanding(PennantApplicationUtil
+								.amountFormate(extLiability.getPrincipalOutstanding(), formatter));
 						externalLiabilityDetail.setOverDueAmount(
 								PennantApplicationUtil.amountFormate(extLiability.getOverdueAmount(), formatter));
 						externalLiabilityDetail.setIsFoir(String.valueOf(extLiability.isFoir()));
 						externalLiabilityDetail.setFinStatus(extLiability.getFinStatus());
 						externalLiabilityDetail.setSource(PennantApplicationUtil.getLabelDesc(
 								String.valueOf(extLiability.getSource()), PennantStaticListUtil.getSourceInfoList()));
-						externalLiabilityDetail
-								.setCheckedBy(
-										PennantApplicationUtil.getLabelDesc(String.valueOf(extLiability.getCheckedBy()),
+						externalLiabilityDetail.setCheckedBy(
+								PennantApplicationUtil.getLabelDesc(String.valueOf(extLiability.getCheckedBy()),
 										PennantStaticListUtil.getTrackCheckList()));
 						externalLiabilityDetail.setSecurityDetails(extLiability.getSecurityDetails());
 						externalLiabilityDetail.setLoanpurpose(extLiability.getLoanPurpose());
@@ -2187,13 +2185,11 @@ public class AgreementGeneration implements Serializable {
 
 	private void populateBankingDetails(AgreementDetail agreement, int formatter, String applicantType,
 			CustomerDetails custdetails) {
-		
-		if(custdetails == null) {
+
+		if (custdetails == null) {
 			return;
 		}
-		
-		
-		
+
 		List<CustomerBankInfo> customerBankInfoList = custdetails.getCustomerBankInfoList();
 		for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
 			BankingDetail bankingDetail = agreement.new BankingDetail();
@@ -3835,7 +3831,7 @@ public class AgreementGeneration implements Serializable {
 		}
 
 	}
-	
+
 	public byte[] getCustomerAgreementGeneration(CustomerAgreementDetail custAgreementDetail, String templatepath,
 			String templateFile) {
 		logger.debug(" Entering ");
@@ -3857,7 +3853,7 @@ public class AgreementGeneration implements Serializable {
 		}
 		logger.debug(" Leaving ");
 		return null;
-		
+
 	}
 
 	// ******************************************************//
@@ -3920,5 +3916,4 @@ public class AgreementGeneration implements Serializable {
 		this.masterDefService = masterDefService;
 	}
 
-	
 }

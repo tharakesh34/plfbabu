@@ -72,6 +72,7 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 
 		return excludeFields;
 	}
+
 	public FinTaxDetails() {
 		super();
 	}
@@ -279,6 +280,7 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 	public void setAdviseAmount(BigDecimal adviseAmount) {
 		this.adviseAmount = adviseAmount;
 	}
+
 	public BigDecimal getTotal() {
 		return total;
 	}

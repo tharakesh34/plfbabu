@@ -416,9 +416,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		onChangeAlertTypes(listitem);
-		
+
 		this.recordStatus.setValue(option.getRecordStatus());
-		
+
 		this.finOptionRows.appendChild(listitem);
 	}
 

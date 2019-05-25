@@ -1069,8 +1069,8 @@ public class NotificationService {
 		if (lmsServiceLog != null && lmsServiceLog.getEvent() != null) {
 			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
 		}
-	
-		return declaredFieldValues;	
+
+		return declaredFieldValues;
 	}
 
 	private void sendEmailNotification(Notification emailMessage) {
@@ -1317,5 +1317,5 @@ public class NotificationService {
 	public void setSmsEngine(SmsEngine smsEngine) {
 		this.smsEngine = smsEngine;
 	}
-	
+
 }

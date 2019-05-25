@@ -699,7 +699,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		return null;
 	}
-	
+
 	@Override
 	public List<FinExcessMovement> getFinExcessAmount(long presentmentid) {
 		logger.debug(Literal.ENTERING);
@@ -716,10 +716,11 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("MovementType", "I");
 		source.addValue("TranType", "I");
 
-		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinExcessMovement.class);
+		RowMapper<FinExcessMovement> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinExcessMovement.class);
 		return this.jdbcTemplate.query(sql.toString(), source, rowMapper);
 	}
-	
+
 	@Override
 	public FinExcessAmount getFinExcessByID(long excessID) {
 		logger.debug(Literal.ENTERING);
@@ -751,7 +752,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		sql.append(" DELETE from FinExcessMovement");
 		sql.append(" where ReceiptID = :ReceiptID and MovementType = :MovementType ");
 		sql.append(" and TranType = :TranType");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -760,8 +761,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("TranType", "I");
 
 		return this.jdbcTemplate.update(sql.toString(), source);
-		
+
 	}
-	
 
 }

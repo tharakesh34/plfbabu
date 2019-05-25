@@ -60,7 +60,7 @@
 									<listbox id="sortOperator_dealerCode" width="43px" mold="select" rows="1" />
 									<textbox id="dealerCode" width="300px" maxlength="100" />
 								</row>
-								
+
 								<row>
 									<label id="label_TransactionMappingSearch_DealerName" value="${c:l('label_TransactionMapping_DealerName.value')}" />
 									<listbox id="sortOperator_dealerName" width="43px" mold="select" rows="1" />
@@ -70,12 +70,12 @@
 									<listbox id="sortOperator_MID" width="43px" mold="select" rows="1" />
 									<textbox id="mid" width="300px" maxlength="100" />
 								</row>
-								
+
 								<row id="row_AlwWorkflow">
 									<label id="label_TransactionMappingSearch_RecordStatus" value="${c:l('label_TransactionMapping_TID.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" />
-									
+
 									<label id="label_TransactionMappingSearch_RecordType" value="${c:l('label_TransactionMapping_Active.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
@@ -85,16 +85,13 @@
 						<listbox id="listBoxTransactionMapping" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
 							sizedByContent="true" multiple="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
 							<listhead sizable="true">
-								<listheader id="listheader_POSId" label="${c:l('listheader_POSId.label')}"
-									sort="auto" hflex="min" />
+								<listheader id="listheader_POSId" label="${c:l('listheader_POSId.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_DealerCode" label="${c:l('listheader_DealerCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_DealerName" label="${c:l('listheader_DealerName.label')}" sort="auto"
-									 hflex="min" />
-								<listheader id="listheader_MID" label="${c:l('listheader_MID.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_TID" label="${c:l('listheader_TID.label')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_MID" label="${c:l('listheader_MID.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_TID" label="${c:l('listheader_TID.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />

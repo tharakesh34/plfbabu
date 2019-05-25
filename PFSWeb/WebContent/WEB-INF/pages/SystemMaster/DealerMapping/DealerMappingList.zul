@@ -60,12 +60,12 @@
 									<listbox id="sortOperator_storeName" width="43px" mold="select" rows="1" />
 									<textbox id="storeName" width="300px" maxlength="100" />
 								</row>
-								
+
 								<row id="row_AlwWorkflow">
 									<label id="label_DealerMappingSearch_RecordStatus" value="${c:l('label_DealerMappingSearch_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" />
-									
+
 									<label id="label_DealerMappingSearch_RecordType" value="${c:l('label_DealerMappingSearch_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
@@ -75,15 +75,13 @@
 						<listbox id="listBoxDealerMapping" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
 							sizedByContent="true" multiple="false" span="true" emptyMessage="${c:l('listbox.emptyMessage')}">
 							<listhead sizable="true">
-								<listheader id="listheader_MerchantName" label="${c:l('listheader_MerchantName.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_StoreName" label="${c:l('listheader_StoreName.label')}" sort="auto"
+								<listheader id="listheader_MerchantName" label="${c:l('listheader_MerchantName.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_StoreAddress" label="${c:l('listheader_StoreAddress.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_StoreCity" label="${c:l('listheader_StoreCity.label')}" sort="auto"
+								<listheader id="listheader_StoreName" label="${c:l('listheader_StoreName.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_StoreAddress" label="${c:l('listheader_StoreAddress.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_StoreID" label="${c:l('listheader_StoreID.label')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_StoreCity" label="${c:l('listheader_StoreCity.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_StoreID" label="${c:l('listheader_StoreID.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_DealerCode" label="${c:l('listheader_DealerCode.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />

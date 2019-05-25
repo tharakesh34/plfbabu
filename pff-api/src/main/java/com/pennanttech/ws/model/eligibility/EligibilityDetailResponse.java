@@ -6,11 +6,11 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 
 public class EligibilityDetailResponse {
-	
+
 	private List<FinanceEligibilityDetail> eligibilityDetails;
 
 	private WSReturnStatus returnStatus;
-	
+
 	public EligibilityDetailResponse() {
 		super();
 	}

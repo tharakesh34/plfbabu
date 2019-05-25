@@ -68,6 +68,6 @@ public interface BankBranchDAO {
 	BankBranch getBankBrachByMicr(String micr, String type);
 
 	int getBankBranchByMICR(final String mICR, long id, String type);
-	
+
 	BankBranch getBankBrachByIFSCandMICR(String ifsc, String micr, String type); //Refund Upload
 }

@@ -102,9 +102,9 @@ public class CustomerEligibilityCheck implements Serializable {
 	private BigDecimal disbursedAmount = BigDecimal.ZERO;
 	private String eligibilityMethod;
 	private boolean disbOnGrace = false;
-    private int activeLoansOnFinType = 0;
+	private int activeLoansOnFinType = 0;
 	private int totalLoansOnFinType = 0;
-	
+
 	//Payment type check
 	private boolean chequeOrDDAvailable;
 	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
@@ -849,6 +849,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public int getActiveLoansOnFinType() {
 		return activeLoansOnFinType;
 	}
+
 	public void setActiveLoansOnFinType(int activeLoansOnFinType) {
 		this.activeLoansOnFinType = activeLoansOnFinType;
 	}
@@ -856,6 +857,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	public int getTotalLoansOnFinType() {
 		return totalLoansOnFinType;
 	}
+
 	public void setTotalLoansOnFinType(int totalLoansOnFinType) {
 		this.totalLoansOnFinType = totalLoansOnFinType;
 	}

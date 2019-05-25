@@ -65,8 +65,7 @@ public class ManufacturerDAOImpl extends SequenceDao<Manufacturer> implements Ma
 		sql.append("(ManufacturerId, Name, Description, Channel, Active, Version, LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
-		sql.append(
-				"(:manufacturerId, :name, :description, :channel, :active, :Version , :LastMntBy, :LastMntOn");
+		sql.append("(:manufacturerId, :name, :description, :channel, :active, :Version , :LastMntBy, :LastMntOn");
 		sql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (manufacturer.getManufacturerId() == Long.MIN_VALUE) {

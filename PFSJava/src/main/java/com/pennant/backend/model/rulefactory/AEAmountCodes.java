@@ -1498,7 +1498,6 @@ public class AEAmountCodes implements Serializable {
 		this.intTdsAdjusted = intTdsAdjusted;
 	}
 
-
 	public BigDecimal getEmiDue() {
 		return emiDue;
 	}

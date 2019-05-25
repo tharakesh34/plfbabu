@@ -220,8 +220,7 @@ public class BulkDefermentChangeCtrl extends GFCBaseListCtrl<BulkDefermentChange
 		Date fromDate = DateUtility
 				.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat));
 
-		Date toDate = DateUtility
-				.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat));
+		Date toDate = DateUtility.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat));
 
 		setDefermentChangeFinances(getFinanceDetailService().getBulkDefermentFinList(fromDate, toDate));
 		getPagedListWrapper().initList(getDefermentChangeFinances(), this.listBoxDefermentFinance, new Paging());

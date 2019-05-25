@@ -43,7 +43,6 @@
 
 package com.pennant.backend.dao.finance.impl;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -71,51 +70,53 @@ import com.pennanttech.pff.core.util.QueryUtil;
 public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader> implements ReceiptUploadHeaderDAO {
 
 	private static Logger logger = Logger.getLogger(ReceiptUploadHeaderDAOImpl.class);
-	
+
 	public ReceiptUploadHeaderDAOImpl() {
 		super();
 	}
-	
+
 	@Override
 	public UploadHeader getUploadHeader(long uploadId) {
 		logger.debug("Entering");
-		
+
 		UploadHeader uploadHeader = new UploadHeader();
 		uploadHeader.setUploadId(uploadId);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module,EntityCode,UPLOADPROGRESS," );
-		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		selectSql.append(
+				" SELECT UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module,EntityCode,UPLOADPROGRESS,");
+		selectSql.append(
+				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From UploadHeader");
 		selectSql.append(" WHERE  UploadId = :UploadId ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadHeader);
 		RowMapper<UploadHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadHeader.class);
-		
+
 		try {
 			uploadHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			uploadHeader = null;
 		}
-		
+
 		logger.debug("Leaving");
-		
+
 		return uploadHeader;
 	}
 
 	@Override
 	public boolean isFileNameExist(String fileName) {
 		logger.debug("Entering");
-		
+
 		long count = 0;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT UploadHeaderId From receiptUploadheader_view");
 		selectSql.append(" WHERE  FileName = :FileName");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FileName", fileName);
-		
+
 		try {
 			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Long.class);
 		} catch (EmptyResultDataAccessException e) {
@@ -123,14 +124,14 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		}
 
 		logger.debug("Leaving");
-		
+
 		if (count > 0) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public long save(ReceiptUploadHeader receiptUploadHeader, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -141,7 +142,8 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" (UploadHeaderId, FileName, Transactiondate, TotalRecords,SuccessCount,FailedCount, Version,");
 		sql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId,EntityCode,UPLOADPROGRESS)");
-		sql.append(" values (:UploadHeaderId, :FileName, :transactionDate, :TotalRecords, :SuccessCount, :FailedCount ,:Version,");
+		sql.append(
+				" values (:UploadHeaderId, :FileName, :transactionDate, :TotalRecords, :SuccessCount, :FailedCount ,:Version,");
 		sql.append(" :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId,:entityCode,:uploadProgress)");
 
@@ -163,7 +165,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		logger.debug(Literal.LEAVING);
 		return receiptUploadHeader.getUploadHeaderId();
 	}
-	
+
 	@Override
 	public void update(ReceiptUploadHeader receiptUploadHeader, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -175,7 +177,8 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		sql.append(" TotalRecords = :TotalRecords, Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,entityCode=:entityCode,uploadProgress=:uploadProgress");
+		sql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId,entityCode=:entityCode,uploadProgress=:uploadProgress");
 		sql.append(" where UploadHeaderId = :UploadHeaderId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -191,7 +194,6 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	@Override
 	public void delete(ReceiptUploadHeader receiptUploadHeader, TableType tableType) {
@@ -209,14 +211,13 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		try {
 			this.jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
-			logger.error(e);;
+			logger.error(e);
+			;
 		}
-
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	@Override
 	public ReceiptUploadHeader getReceiptHeaderById(long receiptId, String type) {
 		logger.debug(Literal.ENTERING);
@@ -225,7 +226,8 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		receiptUploadHeader.setUploadHeaderId(receiptId);
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select UploadHeaderId, FileName, Transactiondate, TotalRecords,SuccessCount,FailedCount,entityCode,UPLOADPROGRESS,");
+		selectSql.append(
+				" Select UploadHeaderId, FileName, Transactiondate, TotalRecords,SuccessCount,FailedCount,entityCode,UPLOADPROGRESS,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  RECEIPTUPLOADHEADER");
@@ -234,7 +236,8 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(receiptUploadHeader);
-		RowMapper<ReceiptUploadHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReceiptUploadHeader.class);
+		RowMapper<ReceiptUploadHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ReceiptUploadHeader.class);
 
 		try {
 			receiptUploadHeader = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
@@ -246,9 +249,10 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		logger.debug(Literal.LEAVING);
 		return receiptUploadHeader;
 	}
-	
+
 	/**
-	 * update success count and failed count for perticular receiptid 
+	 * update success count and failed count for perticular receiptid
+	 * 
 	 * @param uploadHeaderId
 	 * @param sucessCount
 	 * @param failedCount
@@ -277,6 +281,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 
 	/**
 	 * update download status in table
+	 * 
 	 * @param uploadHeaderId
 	 * @param receiptDownloaded
 	 */
@@ -289,8 +294,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		spMapSqlParameterSource.addValue("UploadHeaderId", uploadHeaderId);
 
 		StringBuilder updateSql = new StringBuilder("Update RECEIPTUPLOADHEADER_temp");
-		updateSql
-				.append(" Set UploadProgress = :UploadProgress ");
+		updateSql.append(" Set UploadProgress = :UploadProgress ");
 		updateSql.append(" Where UploadHeaderId =:UploadHeaderId");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -298,31 +302,32 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		try {
 			this.jdbcTemplate.update(updateSql.toString(), spMapSqlParameterSource);
 		} catch (DataAccessException e) {
-           logger.error("Exception:"+e);
+			logger.error("Exception:" + e);
 		}
 
 		logger.debug("Leaving");
 	}
 
 	/**
-	 * check whether particular record download with status 1 in uploadprocess 
+	 * check whether particular record download with status 1 in uploadprocess
+	 * 
 	 * @param uploadHeaderId
 	 * @param receiptDownloaded
 	 */
 	@Override
 	public boolean isFileDownlaoded(long uploadHeaderId, int receiptDownloaded) {
-        logger.debug("Entering");
-		
+		logger.debug("Entering");
+
 		int receiptCount = 0;
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT count(*) From receiptUploadheader_view");
 		selectSql.append(" WHERE  UploadHeaderId = :UploadHeaderId and UPLOADPROGRESS= :UPLOADPROGRESS ");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("UploadHeaderId", uploadHeaderId);
 		source.addValue("UPLOADPROGRESS", receiptDownloaded);
-		
+
 		try {
 			receiptCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
@@ -330,7 +335,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		}
 
 		logger.debug("Leaving");
-		
+
 		if (receiptCount > 0) {
 			return true;
 		} else {

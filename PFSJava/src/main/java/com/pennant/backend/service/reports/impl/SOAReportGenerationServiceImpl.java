@@ -1340,7 +1340,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 							gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
-								manualAdvise.getTaxComponent());
+									manualAdvise.getTaxComponent());
 						}
 
 						soaTranReport.setEvent(manualAdvPrentmentNotIn + finRef);
@@ -1687,7 +1687,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 							// if (finFeeDetail.isOriginationFee()) {} Removed this as part of Advance Interest/Advance EMI Changes.
 
-
 							if (finFeeDetail.getRemainingFee() != null) {
 								debitAmount = finFeeDetail.getRemainingFee();
 							}
@@ -1720,7 +1719,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 								soaTransactionReports.add(soaTranReport);
 							}
-						
+
 						} else {
 							if (paidAmount != null && paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 								soaTranReport = new SOATransactionReport();

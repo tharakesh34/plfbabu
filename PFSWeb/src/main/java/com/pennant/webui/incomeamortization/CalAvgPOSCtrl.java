@@ -43,21 +43,21 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
  */
 public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
-	private static final long			serialVersionUID	= 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Logger			logger				= Logger.getLogger(CalAvgPOSCtrl.class);
+	private static final Logger logger = Logger.getLogger(CalAvgPOSCtrl.class);
 
-	protected Window					window_CalAvgPOS;
-	protected Borderlayout				borderLayout_CalAvgPOS;
+	protected Window window_CalAvgPOS;
+	protected Borderlayout borderLayout_CalAvgPOS;
 
-	protected Tabbox 					tabbox;
-	protected Button					btn_Start;
-	protected Button					btnRefresh;
-	protected Combobox					monthEndDate;
-	protected Label						label_Status;
+	protected Tabbox tabbox;
+	protected Button btn_Start;
+	protected Button btnRefresh;
+	protected Combobox monthEndDate;
+	protected Label label_Status;
 
-	protected Timer						timer;
-	private boolean						isInitialise = false;
+	protected Timer timer;
+	private boolean isInitialise = false;
 
 	private List<ValueLabel> datesList = new ArrayList<>();
 	private transient IncomeAmortizationService incomeAmortizationService;
@@ -106,7 +106,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Method for Preparing Month End List
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
 	private void prepareMonthEndList() throws ParseException {
 
@@ -120,7 +121,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Start the process
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void onClick$btn_Start(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -164,7 +166,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Start the process
-	 * @throws ParseException 
+	 * 
+	 * @throws ParseException
 	 */
 	public void onClick$btnRefresh(Event event) throws ParseException {
 		logger.debug(Literal.ENTERING);
@@ -181,6 +184,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * timer event
+	 * 
 	 * @param event
 	 */
 	public void onTimer$timer(Event event) {
@@ -252,7 +256,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 			//  Log the activity details
 			ProjectedAmortization projectedAmortization = new ProjectedAmortization();
 			AtomicLong finCount = new AtomicLong();
-			finListSize = financeList.size(); 
+			finListSize = financeList.size();
 
 			projectedAmortization.setMonthEndDate(monthEndDate);
 			projectedAmortization.setStatus(EodConstants.PROGRESS_IN_PROCESS); // 1
@@ -270,8 +274,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 					financeList_Thread = new ArrayList<FinanceMain>();
 					financeList_Thread.add(financeList.get(i));
 
-					calAvgPOSProcess = new CalAvgPOSProcess(projectedAmortization, financeList_Thread,
-							finCount, finListSize, this.incomeAmortizationService, startDate);
+					calAvgPOSProcess = new CalAvgPOSProcess(projectedAmortization, financeList_Thread, finCount,
+							finListSize, this.incomeAmortizationService, startDate);
 					calAvgPOSProcess.start();
 
 					if (!this.timer.isRunning()) {
@@ -296,8 +300,8 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 							financeList.remove(financeList.get(0));
 						}
 
-						calAvgPOSProcess = new CalAvgPOSProcess(projectedAmortization, financeList_Thread,
-								finCount, finListSize, this.incomeAmortizationService, startDate);
+						calAvgPOSProcess = new CalAvgPOSProcess(projectedAmortization, financeList_Thread, finCount,
+								finListSize, this.incomeAmortizationService, startDate);
 						calAvgPOSProcess.start();
 
 						if (!this.timer.isRunning()) {
@@ -313,7 +317,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	}
 
 	/**
-	 * Method for checking amortization status 
+	 * Method for checking amortization status
 	 */
 	private void doCheckAmzProcess(boolean isTimerEvent) {
 
@@ -351,7 +355,7 @@ public class CalAvgPOSCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * 
 	 * @param readOnly
 	 */
-	private void doReadOnly(boolean readOnly){
+	private void doReadOnly(boolean readOnly) {
 
 		this.btn_Start.setDisabled(readOnly);
 		this.btnRefresh.setDisabled(readOnly);

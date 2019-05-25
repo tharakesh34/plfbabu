@@ -33,18 +33,18 @@ public class LMSServiceLogAlerts {
 
 	public void sendAlerts() {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<LMSServiceLog> lmsServiceLogs = finServiceInstrutionDAO.getLMSServiceLogList(PennantConstants.NO);
 		for (LMSServiceLog lmsServiceLog : lmsServiceLogs) {
 			sendAlert(lmsServiceLog);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void sendAlert(LMSServiceLog lmsServiceLog) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceDetail financeDetail = new FinanceDetail();
 		CustomerDetails customerDetails = new CustomerDetails();
 
@@ -59,9 +59,9 @@ public class LMSServiceLogAlerts {
 		customerDetailsService.setCustomerBasicDetails(customerDetails);
 
 		financeDetail.setLmsServiceLog(lmsServiceLog);
-		
+
 		List<String> emails = new ArrayList<>();
-		
+
 		for (CustomerEMail customerEmail : customerDetails.getCustomerEMailList()) {
 			if (customerEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 				if (StringUtils.isNotEmpty(customerEmail.getCustEMail())) {
@@ -69,7 +69,7 @@ public class LMSServiceLogAlerts {
 				}
 			}
 		}
- 
+
 		Notification lmsServiceNotifyCust = new Notification();
 		lmsServiceNotifyCust.setTemplateCode(PennantConstants.ADD_RATE_CHANGE_NOTIFICATION);
 		lmsServiceNotifyCust.setKeyReference(financeDetail.getFinReference());
@@ -77,18 +77,18 @@ public class LMSServiceLogAlerts {
 		lmsServiceNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_RATECHG);
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
 		lmsServiceNotifyCust.setEmails(emails);
-		
+
 		long lmsServiceNotifyId = sendNotification(financeDetail, lmsServiceNotifyCust);
 
 		if (lmsServiceNotifyId > 0) {
-			finServiceInstrutionDAO.updateNotificationFlag(PennantConstants.YES,lmsServiceLog.getId());
+			finServiceInstrutionDAO.updateNotificationFlag(PennantConstants.YES, lmsServiceLog.getId());
 		}
 		logger.debug(Literal.LEAVING);
 	}
 
 	private long sendNotification(FinanceDetail financeDetail, Notification notification) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (CollectionUtils.isEmpty(notification.getEmails())) {
 			return 0;
 		}

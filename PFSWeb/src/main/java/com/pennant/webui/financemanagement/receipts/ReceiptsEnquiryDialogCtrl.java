@@ -633,7 +633,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setDescColumn("Code");
 		this.collectionAgentId.setDisplayStyle(2);
 		this.collectionAgentId.setValidateColumns(new String[] { "Id" });
-		
+
 		// Post Branch
 		this.postBranch.setModuleName("Branch");
 		this.postBranch.setValueColumn("BranchCode");
@@ -886,8 +886,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.realizationDate.setValue(rch.getRealizationDate());
 		}
 
-		fillComboBox(this.receiptModeStatus, rch.getReceiptModeStatus(), PennantStaticListUtil.getEnquiryReceiptModeStatus(),
-				"");
+		fillComboBox(this.receiptModeStatus, rch.getReceiptModeStatus(),
+				PennantStaticListUtil.getEnquiryReceiptModeStatus(), "");
 	}
 
 	private void resetModeStatus(String status) {

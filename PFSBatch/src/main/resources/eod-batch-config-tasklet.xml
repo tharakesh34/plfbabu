@@ -24,7 +24,7 @@
 	</bean>
 
 	<!-- MicroEOD -->
-	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD"/>
+	<bean id="microEODTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEOD" />
 
 	<bean id="microEODMonitorTaskLet" class="com.pennant.backend.endofday.tasklet.MicroEODMonitor">
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -292,10 +292,10 @@
 
 
 	<bean id="collateralRevaluationProcessor" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationProcessor"
-		scope="step" parent="basicDao"/>
+		scope="step" parent="basicDao" />
 
 	<bean id="collateralRevaluationRowMapper" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationRowMapper"
 		scope="step" />
 	<bean id="collateralRevaluationItemWriter" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter"
-		scope="step" parent="basicDao"/>	
+		scope="step" parent="basicDao" />
 </beans>

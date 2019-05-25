@@ -68,7 +68,7 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 	private String lovValue;
 	private LegalECDetail befImage;
 	private LoggedInUser userDetails;
-	
+
 	private String ecNumber;
 	private Date ecFrom;
 	private Date ecTo;
@@ -217,5 +217,5 @@ public class LegalECDetail extends AbstractWorkflowEntity implements Entity {
 	public void setEcType(String ecType) {
 		this.ecType = ecType;
 	}
-	
+
 }

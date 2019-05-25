@@ -87,7 +87,7 @@
 									</hbox>
 									<label id="label_FinDocumentDetailDialog_DocumentBarcode" value="${c:l('label_FinDocumentDetailDialog_DocumentBarcode.value')}" />
 									<hbox>
-										<space spacing="2px" sclass="mandatory"/>
+										<space spacing="2px" sclass="mandatory" />
 										<textbox id="docBarcode" width="150px" />
 									</hbox>
 								</row>

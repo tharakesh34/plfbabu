@@ -1,4 +1,5 @@
 package com.pennant.webui.systemmasters.productgroup;
+
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
+public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ProductGroupListCtrl.class);
 
@@ -84,10 +85,10 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
 		registerButton(button_ProductGroupList_ProductGroupListSearch);
 		registerButton(button_ProductGroupList_NewProductGroup, "button_ProductGroupList_NewProductGroup", true);
 		registerField("ProductGroupId");
-		registerField("modelId", listheader_ModelCode, SortOrder.NONE, modelId,
-				sortOperator_ModelCode, Operators.STRING);
-		registerField("productCategoryId", listheader_ProductCategory, SortOrder.ASC, productCategoryId, sortOperator_ProductCategory,
+		registerField("modelId", listheader_ModelCode, SortOrder.NONE, modelId, sortOperator_ModelCode,
 				Operators.STRING);
+		registerField("productCategoryId", listheader_ProductCategory, SortOrder.ASC, productCategoryId,
+				sortOperator_ProductCategory, Operators.STRING);
 		registerField("Active", listheader_Active, SortOrder.ASC, active, sortOperator_Active, Operators.STRING);
 		registerField("Channel", listheader_Channel, SortOrder.ASC, channel, sortOperator_Channel, Operators.STRING);
 		doRenderPage();
@@ -176,8 +177,7 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
 		arg.put("productGroupListCtrl", this);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/ProductGroup/ProductGroupDialog.zul", null,
-					arg);
+			Executions.createComponents("/WEB-INF/pages/ProductGroup/ProductGroupDialog.zul", null, arg);
 		} catch (Exception e) {
 			logger.error("Exception:", e);
 			MessageUtil.showError(e);
@@ -225,6 +225,7 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onClick$print(Event event) {
 		doPrintResults();
 	}
@@ -244,6 +245,5 @@ public class ProductGroupListCtrl extends GFCBaseListCtrl<ProductGroup>{
 	public void setProductGroupService(ProductGroupService productGroupService) {
 		this.productGroupService = productGroupService;
 	}
-
 
 }

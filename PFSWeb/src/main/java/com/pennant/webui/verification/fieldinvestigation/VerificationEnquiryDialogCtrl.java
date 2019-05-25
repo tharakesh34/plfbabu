@@ -179,7 +179,7 @@ public class VerificationEnquiryDialogCtrl extends GFCBaseCtrl<Verification> {
 					}
 					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUApproval.zul",
 							this.rcuDetailTabPanel, map);
-				}else if (verificationType == VerificationType.PD.getKey()
+				} else if (verificationType == VerificationType.PD.getKey()
 						&& (!(financeDetail.isTvInitTab() || financeDetail.isTvApprovalTab()))) {
 					this.pdDetailTab.setVisible(true);
 					if (!isSelected) {

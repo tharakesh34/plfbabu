@@ -320,12 +320,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Decimalbox finODTotPenaltyBal;
 	protected Label label_FinanceMainDialog_CollRef;
 	protected Space space_CollRef;
-	protected Row						row_SancationAmount;
-	protected Decimalbox				sanctionAmt;
-	protected Decimalbox				utilizedAmt;
-	protected Row						row_AvailableAmt;
-	protected Decimalbox				availableAmt;
-	
+	protected Row row_SancationAmount;
+	protected Decimalbox sanctionAmt;
+	protected Decimalbox utilizedAmt;
+	protected Row row_AvailableAmt;
+	protected Decimalbox availableAmt;
 
 	// Overdue Penalty Details
 	protected Checkbox applyODPenalty;
@@ -536,7 +535,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (event.getTarget().getParent().getParent() != null) {
 				tabPanel_dialogWindow = (Tabpanel) event.getTarget().getParent().getParent();
 			}
-			
+
 			if (arguments.containsKey("financeDetail")) {
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 				setFinanceDetail(financeDetail);
@@ -1157,7 +1156,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		fillComboBox(this.roundingMode, aFinanceMain.getCalRoundingMode(), PennantStaticListUtil.getRoundingModes(),
 				"");
-		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())){
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinanceMain.getProductCategory())) {
 			this.row_SancationAmount.setVisible(false);
 			this.row_AvailableAmt.setVisible(false);
 		}
@@ -1197,10 +1196,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.setValue(PennantAppUtil.formateAmount(financeSummary.getFinODTotPenaltyBal(), formatter));
 
 			this.utilisedDef.setValue(financeSummary.getUtilizedDefCnt());
-			
-			this.sanctionAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(),formatter));
-			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUtilizedAmt(),formatter));
-			this.availableAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue().subtract(financeSummary.getUnPaidPrincipal()),formatter));
+
+			this.sanctionAmt.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter));
+			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUtilizedAmt(), formatter));
+			this.availableAmt.setValue(PennantAppUtil.formateAmount(
+					aFinanceMain.getFinAssetValue().subtract(financeSummary.getUnPaidPrincipal()), formatter));
 		}
 
 		// Contributor Header Details
@@ -1430,10 +1430,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// tasks #1152 Business Vertical Tagged with Loan
 		if (aFinanceMain.getBusinessVertical() != null) {
-			this.businessVertical.setValue(aFinanceMain.getBusinessVerticalCode()+" - "+aFinanceMain.getBusinessVerticalDesc());
+			this.businessVertical
+					.setValue(aFinanceMain.getBusinessVerticalCode() + " - " + aFinanceMain.getBusinessVerticalDesc());
 			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
-		}else{
-			this.businessVertical.setAttribute("Id", null );
+		} else {
+			this.businessVertical.setAttribute("Id", null);
 		}
 
 		logger.debug("Leaving");

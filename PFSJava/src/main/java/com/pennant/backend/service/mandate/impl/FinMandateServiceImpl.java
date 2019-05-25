@@ -462,12 +462,9 @@ public class FinMandateServiceImpl implements FinMandateService {
 				}
 
 				/*
-				 * //BarCode Unique Validation int count =
-				 * mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
-				 * "_View"); if (count > 0) {
-				 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
-				 * ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1,
-				 * valueParm1), null)); }
+				 * //BarCode Unique Validation int count = mandateDAO.getBarCodeCount(barCode, mandate.getMandateID(),
+				 * "_View"); if (count > 0) { auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new
+				 * ErrorDetails(PennantConstants.KEY_FIELD, "41001", errParm1, valueParm1), null)); }
 				 */
 			}
 		}

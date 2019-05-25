@@ -372,7 +372,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		this.sezCertificateNo.setMaxlength(100);
 		this.sezValueDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		if (isTaxMand) {
 			this.space_taxNumber.setSclass(PennantConstants.mandateSclass);
 		}
@@ -1529,8 +1529,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (StringUtils.isNotEmpty(value)) {
 			this.sezValueDate.setSclass(PennantConstants.mandateSclass);
 			if (this.sezValueDate.isVisible() && !this.sezValueDate.isReadonly()) {
-				this.sezValueDate.setConstraint(
-						new PTDateValidator(Labels.getLabel("label_FinanceTaxDetailDialog_SEZCertificateNumber.value"), true));
+				this.sezValueDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_FinanceTaxDetailDialog_SEZCertificateNumber.value"), true));
 			}
 		} else {
 			this.sezValueDate.setSclass("");
@@ -1538,6 +1538,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			this.sezValueDate.setConstraint("");
 		}
 	}
+
 	/**
 	 * used only for Loan Origination
 	 * 

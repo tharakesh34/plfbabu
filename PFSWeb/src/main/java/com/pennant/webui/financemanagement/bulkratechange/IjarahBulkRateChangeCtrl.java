@@ -213,8 +213,7 @@ public class IjarahBulkRateChangeCtrl extends GFCBaseListCtrl<BulkProcessDetails
 		Date fromDate = DateUtility
 				.getDBDate(DateUtility.format(this.fromDate.getValue(), PennantConstants.DBDateFormat));
 
-		Date toDate = DateUtility
-				.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat));
+		Date toDate = DateUtility.getDBDate(DateUtility.format(this.toDate.getValue(), PennantConstants.DBDateFormat));
 
 		setRateChangeFinances(getFinanceDetailService().getIjaraBulkRateFinList(fromDate, toDate));
 		getPagedListWrapper().initList(getRateChangeFinances(), this.listBoxIjarahFinance, new Paging());

@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @author rahul.k 
- *     This class uses for generating report for
- *     EarlySettlement(Closing the loan before maturity date)
+ * @author rahul.k This class uses for generating report for EarlySettlement(Closing the loan before maturity date)
  */
 public class ForeClosureReport implements Serializable {
 	/**
@@ -373,7 +371,7 @@ public class ForeClosureReport implements Serializable {
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
 	}
-	
+
 	public String getChrgTillDate() {
 		return chrgTillDate;
 	}
@@ -381,6 +379,5 @@ public class ForeClosureReport implements Serializable {
 	public void setChrgTillDate(String chrgTillDate) {
 		this.chrgTillDate = chrgTillDate;
 	}
-
 
 }

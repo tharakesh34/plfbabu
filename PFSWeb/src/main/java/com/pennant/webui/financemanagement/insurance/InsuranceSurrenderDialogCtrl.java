@@ -97,8 +97,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/insuranceDetails/insuranceDetailsDialog.zul
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/insuranceDetails/insuranceDetailsDialog.zul
  * file. <br>
  */
 public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
@@ -121,7 +120,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	protected Combobox activity;
 	protected Checkbox cancellationAfterFLP;
-	protected Intbox  dayPassedFLPdays;
+	protected Intbox dayPassedFLPdays;
 	protected CurrencyBox premiumAmount;
 	protected CurrencyBox cancelAmount;
 	protected Textbox serviceReqNumber;
@@ -131,7 +130,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private VASRecording vASRecording;
 	private Label label_CancellationAfterFLP;
 	private long accountsetId;
-	
+
 	private transient InsuranceRebookingListCtrl insuranceRebookingListCtrl;
 	private transient VASRecordingService vASRecordingService;
 	private transient InsuranceDetailService insuranceDetailService;
@@ -157,8 +156,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -189,7 +187,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), this.pageRightName);
 			}
-			
+
 			doSetFieldProperties();
 			doCheckRights();
 			doShowDialog(this.vASRecording);
@@ -236,7 +234,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -270,12 +268,11 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void onClick$btnDelete(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -284,8 +281,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -357,12 +353,13 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.flpDays.setValue(vasRecording.getFlpDays() + "");
 		this.loanType.setValue(vasRecording.getFinType());
 		this.premiumAmount.setValue(PennantApplicationUtil.formateAmount(vasRecording.getFee(), getCcyFormat()));
-		
+
 		VASConfiguration configuration = vasRecording.getVasConfiguration();
 		if (configuration.getFreeLockPeriod() > 0) {
-			InsuranceDetails insuranceDetails = getInsuranceDetailService().getInsurenceDetailsByRef(vasRecording.getVasReference(), "_View");
+			InsuranceDetails insuranceDetails = getInsuranceDetailService()
+					.getInsurenceDetailsByRef(vasRecording.getVasReference(), "_View");
 			if (insuranceDetails != null) {
-				
+
 				this.policyNumber.setValue(insuranceDetails.getPolicyNumber());
 				if (configuration.getFlpCalculatedOn().equals(FinanceConstants.FLPCALCULATED_TYPE_ON_ISSUANCEDATE)) {
 					this.flpCalculatedOn.setValue(insuranceDetails.getIssuanceDate());
@@ -371,7 +368,8 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					this.flpCalculatedOn.setValue(vasRecording.getValueDate());
 				}
 				if (this.flpCalculatedOn.getValue() != null) {
-					int differentDays = DateUtility.getDaysBetween(DateUtility.getAppDate(), this.flpCalculatedOn.getValue());
+					int differentDays = DateUtility.getDaysBetween(DateUtility.getAppDate(),
+							this.flpCalculatedOn.getValue());
 					differentDays = differentDays - configuration.getFreeLockPeriod();
 					if (differentDays < 0) {
 						this.dayPassedFLPdays.setValue(0);
@@ -379,12 +377,13 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						this.dayPassedFLPdays.setValue(differentDays);
 					}
 				}
-			} 
-		}  else {
+			}
+		} else {
 			this.dayPassedFLPdays.setValue(0);
 		}
 
-		VasCustomer customer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(), vasRecording.getPostingAgainst());
+		VasCustomer customer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(),
+				vasRecording.getPostingAgainst());
 		if (customer != null) {
 			String custCifName = "";
 			custCifName = custCifName.concat(customer.getCustCIF());
@@ -397,9 +396,8 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		setCancelFLP(vasRecording.getVasStatus());
 		this.serviceReqNumber.setValue(vasRecording.getServiceReqNumber());
 		this.cancellationAfterFLP.setChecked(vasRecording.isCancelAfterFLP());
-		this.cancelAmount
-				.setValue(PennantApplicationUtil.formateAmount(vasRecording.getCancelAmt(), getCcyFormat()));
-		
+		this.cancelAmount.setValue(PennantApplicationUtil.formateAmount(vasRecording.getCancelAmt(), getCcyFormat()));
+
 		this.reason.setValue(vasRecording.getReason());
 		this.remarks.setValue(vasRecording.getRemarks());
 		this.recordStatus.setValue(vasRecording.getRecordStatus());
@@ -463,7 +461,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			wve.add(we);
 		}
 		details.setInsuranceCancel(true);
-		
+
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
@@ -518,7 +516,8 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			this.tabPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setVisible(true);
 			this.tabPanelPostingDetails.setHeight(getListBoxHeight(7));
-			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS, AccountEventConstants.ACCEVENT_CANINS);
+			accountsetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CANINS,
+					AccountEventConstants.ACCEVENT_CANINS);
 			final HashMap<String, Object> map = new HashMap<>();
 			map.put("insuranceDetails", vasRecording);
 			map.put("acSetID", accountsetId);
@@ -532,7 +531,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -545,15 +544,14 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, false));
 		}
 		if (!this.activity.isDisabled()) {
-			this.activity.setConstraint(
-					new StaticListValidator(PennantStaticListUtil.getActivity(),
-							Labels.getLabel("label_InsuranceSurrenderDialog_Activity.value")));
+			this.activity.setConstraint(new StaticListValidator(PennantStaticListUtil.getActivity(),
+					Labels.getLabel("label_InsuranceSurrenderDialog_Activity.value")));
 		}
 		if (!this.cancelAmount.isDisabled()) {
 			this.cancelAmount.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_InsuranceSurrenderDialog_Amount.value"), getCcyFormat(), true, false));
 		}
-		 
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -570,8 +568,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -598,10 +595,10 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		}
 	}
 
-	
 	/**
 	 * Deletes a insuranceDetails object from database.<br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	private void doDelete() throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -703,18 +700,19 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	public void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		final VASRecording aVASRecording = new VASRecording();
 		BeanUtils.copyProperties(this.vASRecording, aVASRecording);
 		boolean isNew = false;
 
 		doSetValidation();
 		doWriteComponentsToBean(aVASRecording);
-		
+
 		// POP UP Message for cancellation.
 		if (VASConsatnts.STATUS_NORMAL.equals(this.vASRecording.getBefImage().getVasStatus())
 				&& VASConsatnts.STATUS_CANCEL.equals(aVASRecording.getVasStatus())) {
@@ -778,7 +776,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 *            (String)
 	 * 
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doProcess(VASRecording detail, String tranType) throws Exception {
@@ -867,7 +865,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	 * @param method
 	 *            (String)
 	 * @return boolean
-	 * @throws Exception 
+	 * @throws Exception
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
@@ -933,6 +931,7 @@ public class InsuranceSurrenderDialogCtrl extends GFCBaseCtrl<VASRecording> {
 	private int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType

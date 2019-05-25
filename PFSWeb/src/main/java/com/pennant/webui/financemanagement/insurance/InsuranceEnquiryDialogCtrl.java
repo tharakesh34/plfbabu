@@ -163,7 +163,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			if (arguments.containsKey("listCtrl")) {
 				this.insuranceEnquiryListCtrl = (InsuranceEnquiryListCtrl) arguments.get("listCtrl");
 			}
-			
+
 			InsuranceDetails insurenceDetailsByRef = insuranceDetailService
 					.getInsurenceDetailsByRef(getInsuranceDetails().getReference(), "_View");
 
@@ -177,7 +177,8 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				BeanUtils.copyProperties(insurenceDetailsByRef, getInsuranceDetails());
 			}
 
-			setVasRecording(getVasRecordingService().getVASRecordingForInsurance(getInsuranceDetails().getReference(), "", "enquiry", true));
+			setVasRecording(getVasRecordingService().getVASRecordingForInsurance(getInsuranceDetails().getReference(),
+					"", "enquiry", true));
 			doSetFieldProperties();
 			doWriteBeanToComponents();
 
@@ -221,7 +222,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.paymentMode.setValue(insuranceDetails.getPaymentMode());
 
 		appendExtendedFieldDetails(getVasRecording());
-		
+
 		// Status Details
 		String key = vasRecording.getVasStatus();
 		if (key != null) {
@@ -285,25 +286,24 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.policyNumber2.setValue(insuranceDetails.getPolicyNumber());
 		this.loanType2.setValue(vasRecording.getFinType());
-		
-		
+
 		//Insurance Partner Details
 		this.insStartDate.setValue(insuranceDetails.getStartDate());
 		this.insEndDate.setValue(insuranceDetails.getEndDate());
 		this.issDate.setValue(insuranceDetails.getIssuanceDate());
 		this.IssStatus.setValue(insuranceDetails.getIssuanceStatus());
 		this.insPartnerPremium
-		.setValue(PennantApplicationUtil.formateAmount(insuranceDetails.getInsurancePremium(), getCcyFormat()));
+				.setValue(PennantApplicationUtil.formateAmount(insuranceDetails.getInsurancePremium(), getCcyFormat()));
 		this.partnerReceviedDate.setValue(insuranceDetails.getPartnerReceivedDate());
 		this.insPendencyRsnCatgry.setValue(PennantStaticListUtil.getlabelDesc(
 				insuranceDetails.getPendencyReasonCategory(), PennantStaticListUtil.getReconReasonCategory()));
-		
+
 		this.insPendencyRsn.setValue(insuranceDetails.getPendencyReason());
 		this.insPendencyResReq.setChecked(insuranceDetails.isInsPendencyResReq());
 		this.fpr.setValue(insuranceDetails.getfPR());
 		this.policyStatus.setValue(insuranceDetails.getPolicyStatus());
 		this.handOverDate.setValue(insuranceDetails.getFormHandoverDate());
-	 
+
 		this.coverNote.setValue("");
 
 		//Dispatch Details
@@ -329,7 +329,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * This method is for append extended field details
 	 * 
@@ -347,8 +347,8 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		generator.setReadOnly(true);
 		VASConfiguration vasConfiguration = aVASRecording.getVasConfiguration();
 		ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
-		
-		ExtendedFieldRender extendedFieldRender= aVASRecording.getExtendedFieldRender();
+
+		ExtendedFieldRender extendedFieldRender = aVASRecording.getExtendedFieldRender();
 		Map<String, Object> fieldValuesMap = null;
 		if (extendedFieldRender != null && extendedFieldRender.getMapValues() != null) {
 			fieldValuesMap = extendedFieldRender.getMapValues();
@@ -364,6 +364,7 @@ public class InsuranceEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		logger.debug("Leaving");
 	}
+
 	public void onClick$btnClose(Event event) {
 		closeDialog();
 	}

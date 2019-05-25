@@ -21,29 +21,27 @@ public class ProductGroupListModelItemRenderer implements ListitemRenderer<Produ
 	@Override
 	public void render(Listitem item, ProductGroup productGroup, int index) throws Exception {
 		// TODO Auto-generated method stub
-				Listcell lc;
-				lc = new Listcell(productGroup.getModelId());
-				lc.setParent(item);
-				lc = new Listcell(String.valueOf(productGroup.getProductCategoryId()));
-				lc.setParent(item);
-				lc = new Listcell(String.valueOf(productGroup.getChannel()));
-				lc.setParent(item);
-				lc = new Listcell();
-				final Checkbox cbProductGroupIsActive = new Checkbox();
-				cbProductGroupIsActive.setDisabled(true);
-				cbProductGroupIsActive.setChecked(productGroup.isActive());
-				lc.appendChild(cbProductGroupIsActive);
-				
-				lc.setParent(item);
-				lc = new Listcell(productGroup.getRecordStatus());
-				lc.setParent(item);
-				lc = new Listcell(PennantJavaUtil.getLabel(productGroup.getRecordType()));
-				lc.setParent(item);
-				item.setAttribute("id", productGroup.getProductGroupId());
+		Listcell lc;
+		lc = new Listcell(productGroup.getModelId());
+		lc.setParent(item);
+		lc = new Listcell(String.valueOf(productGroup.getProductCategoryId()));
+		lc.setParent(item);
+		lc = new Listcell(String.valueOf(productGroup.getChannel()));
+		lc.setParent(item);
+		lc = new Listcell();
+		final Checkbox cbProductGroupIsActive = new Checkbox();
+		cbProductGroupIsActive.setDisabled(true);
+		cbProductGroupIsActive.setChecked(productGroup.isActive());
+		lc.appendChild(cbProductGroupIsActive);
 
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onProductGroupItemDoubleClicked");
+		lc.setParent(item);
+		lc = new Listcell(productGroup.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(productGroup.getRecordType()));
+		lc.setParent(item);
+		item.setAttribute("id", productGroup.getProductGroupId());
+
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onProductGroupItemDoubleClicked");
 	}
-
-	
 
 }

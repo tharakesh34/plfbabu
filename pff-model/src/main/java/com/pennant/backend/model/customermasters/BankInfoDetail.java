@@ -56,7 +56,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BankInfoDetail table</b>.<br>
  * 
  */
-public class BankInfoDetail extends AbstractWorkflowEntity{
+public class BankInfoDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long bankId;
@@ -70,7 +70,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 	private BigDecimal bounceOut = BigDecimal.ZERO;
 	private BigDecimal closingBal = BigDecimal.ZERO;
 	private BigDecimal oDCCLimit = BigDecimal.ZERO;
-	
+
 	private int keyValue = 0;
 
 	private boolean newRecord = false;
@@ -78,7 +78,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 	private BankInfoDetail befImage;
 	private LoggedInUser userDetails;
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -89,7 +89,7 @@ public class BankInfoDetail extends AbstractWorkflowEntity{
 		excludeFields.add("keyValue");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

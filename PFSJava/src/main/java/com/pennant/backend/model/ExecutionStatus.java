@@ -25,7 +25,7 @@ public class ExecutionStatus implements Serializable {
 	private int customerCount;
 	private int completed;
 	private Long totalCustomer;
-	
+
 	// IND AS : Amortization
 	private Long totalFinances;
 	private int financeCount;

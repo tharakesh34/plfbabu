@@ -63,11 +63,9 @@
 													<space spacing="2px" />
 													<textbox id="finDivisionName" width="250px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceMain Dialog_BusinessVertical"
-													value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+												<label id="label_FinanceMain Dialog_BusinessVertical" value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 												<hbox>
-													<textbox id="businessVertical" width="250px"
-														readonly="true" />
+													<textbox id="businessVertical" width="250px" readonly="true" />
 												</hbox>
 											</row>
 											<row visible="true">
@@ -329,41 +327,26 @@
 												<extendedcombobox id="eligibilityMethod" width="200px" />
 											</row>
 											<row id="row_SancationAmount">
-												<label
-														id="label_SancationAmt"
-														value="${c:l('label_FinanceMainDialog_SancationAmt.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<decimalbox
-															id="sanctionAmt" width="250px" readonly="true" />
-													</hbox>
-													<label
-														id="label_UtilizedAmt"
-														value="${c:l('label_FinanceMainDialog_UtilizedAmt.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<decimalbox
-															id="utilizedAmt" width="250px" readonly="true" />
-													</hbox>
-												</row>
-												<row id="row_AvailableAmt">
-												<label
-														id="label_AvailableAmt"
-														value="${c:l('label_FinanceMainDialog_AvailableAmt.value')}" />
-													<hbox>
-														<space
-															spacing="2px" />
-														<decimalbox
-															id="availableAmt" width="250px" readonly="true" />
-													</hbox>
-												</row>
-											<row id="row_LinkedFinRef"
-												visible="false">
-												<label
-													id="label_FinanceMainDialog_LinkedFinRef"
-													value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}" />
+												<label id="label_SancationAmt" value="${c:l('label_FinanceMainDialog_SancationAmt.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="sanctionAmt" width="250px" readonly="true" />
+												</hbox>
+												<label id="label_UtilizedAmt" value="${c:l('label_FinanceMainDialog_UtilizedAmt.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="utilizedAmt" width="250px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row_AvailableAmt">
+												<label id="label_AvailableAmt" value="${c:l('label_FinanceMainDialog_AvailableAmt.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="availableAmt" width="250px" readonly="true" />
+												</hbox>
+											</row>
+											<row id="row_LinkedFinRef" visible="false">
+												<label id="label_FinanceMainDialog_LinkedFinRef" value="${c:l('label_FinanceMainDialog_LinkedFinRef.value')}" />
 												<hbox>
 													<space spacing="2px" />
 													<textbox id="linkedFinRef" width="250px" readonly="true" />

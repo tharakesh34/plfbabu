@@ -77,7 +77,7 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("delete from user_hierarchy where UserId = :UserId");
-		
+
 		StringBuilder sql1 = new StringBuilder();
 		sql1.append("delete from user_hierarchy where Reporting_To = :UserId");
 
@@ -146,33 +146,33 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UserId", userHierarchy.getUserId());
 		parameterSource.addValue("Depth", 0);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from (");
 		sql.append("select UserId, Business_Vertical, Product, Fin_Type, Branch, Reporting_To, Depth");
 		sql.append(" from user_hierarchy where");
 		sql.append(" reporting_to = :UserId");
-		
+
 		if (userHierarchy.getBusinessVertical() != null) {
 			sql.append(" and Business_Vertical = :Business_Vertical");
 			parameterSource.addValue("Business_Vertical", userHierarchy.getBusinessVertical());
 		}
-		
+
 		if (userHierarchy.getProduct() != null) {
 			sql.append(" and Product = :Product");
 			parameterSource.addValue("Product", userHierarchy.getProduct());
 		}
-		
+
 		if (userHierarchy.getFinType() != null) {
 			sql.append(" and Fin_Type = :Fin_Type");
 			parameterSource.addValue("Fin_Type", userHierarchy.getFinType());
 		}
-		
+
 		if (userHierarchy.getBranch() != null) {
 			sql.append(" and Branch= :Branch");
 			parameterSource.addValue("Branch", userHierarchy.getBranch());
 		}
-		
+
 		sql.append(") t where Depth <> :Depth");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -199,12 +199,12 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 
 		StringBuilder sql = new StringBuilder();
 
-//		sql.append(" select reporting_to,depth from user_Hierarchy where userid =");
-//		sql.append("(select userId from user_hierarchy where userId = :ReportingTo and depth = :Depth)");
-//		sql.append(" and depth <> 0");
+		//		sql.append(" select reporting_to,depth from user_Hierarchy where userid =");
+		//		sql.append("(select userId from user_hierarchy where userId = :ReportingTo and depth = :Depth)");
+		//		sql.append(" and depth <> 0");
 
 		sql.append(" select reporting_to from user_hierarchy where userId = :UserId  and depth = :Depth");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<SecurityUserHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
@@ -248,9 +248,11 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 		StringBuilder sql = new StringBuilder("update user_Hierarchy");
 		sql.append(" set depth = ");
 		sql.append(" (select (max(depth)-1) as depth from user_hierarchy where reporting_to =");
-		sql.append(" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId)) where userId in");
+		sql.append(
+				" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId)) where userId in");
 		sql.append(" (select userId from user_Hierarchy where reporting_to =");
-		sql.append(" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId and depth <> 0)");
+		sql.append(
+				" (select reporting_to from user_hierarchy where userId = :UserId and reporting_to <> :UserId and depth <> 0)");
 		sql.append(" and userId <> :UserId");
 		sql.append(" and depth <> 0)");
 		sql.append(" and userId <> :UserId");
@@ -270,16 +272,16 @@ public class SecurityUserHierarchyDAOImpl extends SequenceDao<SecurityUserHierar
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("UserId", userHierarchy.getUserId());
 		parameterSource.addValue("reportingTo", reportingManager.getReportingTo());
-		
+
 		StringBuilder sql = new StringBuilder("update user_Hierarchy");
 		sql.append(" set depth = depth -1");
 		sql.append(" where UserId = :UserId and reporting_to = :reportingTo");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		//SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(userHierarchy);
 
 		//this.jdbcTemplate.update(sql.toString(), beanParameters);
 		this.jdbcTemplate.update(sql.toString(), parameterSource);
 	}
-	
+
 }

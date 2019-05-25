@@ -212,7 +212,7 @@ public class EodService {
 	public void setLoadFinanceData(LoadFinanceData loadFinanceData) {
 		this.loadFinanceData = loadFinanceData;
 	}
-	
+
 	public LoadFinanceData getLoadFinanceData() {
 		return loadFinanceData;
 	}

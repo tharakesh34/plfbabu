@@ -94,7 +94,8 @@ public class ConsumerProductDAOImpl extends SequenceDao<ConsumerProduct> impleme
 		StringBuilder sql = new StringBuilder("Update CD_PRODUCTS");
 		sql.append(tableType.getSuffix());
 		sql.append(" set ModelId = :modelId, ModelDescription = :modelDescription, ManufacturerId = :manufacturerId");
-		sql.append(", AssetDescription = :assetDescription, MinAmount = :MinAmount, MaxAmount = :MaxAmount, ModelStatus = :modelStatus");
+		sql.append(
+				", AssetDescription = :assetDescription, MinAmount = :MinAmount, MaxAmount = :MaxAmount, ModelStatus = :modelStatus");
 		sql.append(", Channel = :channel, Active = :active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus");
 		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");

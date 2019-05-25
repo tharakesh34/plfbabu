@@ -62,8 +62,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
-						&& (i != sdSize - 1) && i != 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 
 					if (DateUtility.compare(curSchd.getSchDate(),
 							finScheduleData.getFinanceMain().getEventFromDate()) >= 0

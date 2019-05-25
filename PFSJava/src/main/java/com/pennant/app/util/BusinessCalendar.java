@@ -455,8 +455,7 @@ public class BusinessCalendar implements Serializable {
 			} else if (handlerType.equals(HolidayHandlerTypes.MOVE_PREVIOUS)) {
 				tempDate.add(Calendar.DATE, -1);
 			}
-			if (!holidayListMap
-					.containsKey(DateUtility.format(tempDate.getTime(), PennantConstants.DBDateFormat))) {
+			if (!holidayListMap.containsKey(DateUtility.format(tempDate.getTime(), PennantConstants.DBDateFormat))) {
 				workingBussDateFound = true;
 			}
 		}

@@ -19,8 +19,8 @@ public interface InsuranceDetailService {
 
 	InsuranceDetails getInsurenceDetailsByRef(String reference, String tableType);
 
-	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId,String entityCode, String tableType);
-	
+	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType);
+
 	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType);
 
 	void updateVasStatus(String status, String vasReference);

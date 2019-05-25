@@ -72,8 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/report/CostOfFundsStatusReportDialogCtrl.zul file.
+ * This is the controller class for the /WEB-INF/pages/report/CostOfFundsStatusReportDialogCtrl.zul file.
  */
 public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHeader> {
 	private static final long serialVersionUID = 3184249234920071313L;
@@ -104,8 +103,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
 	 * 
 	 * 
 	 * @param event
@@ -273,8 +271,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReceiptUploadHeader
 	 * @throws Exception

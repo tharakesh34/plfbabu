@@ -1190,8 +1190,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		// Collateral Extended Field Details
 		if (collateralSetup.getExtendedFieldRenderList() != null
 				&& collateralSetup.getExtendedFieldRenderList().size() > 0) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(collateralSetup.getExtendedFieldRenderList(), auditTranType, method, null));
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(
+					collateralSetup.getExtendedFieldRenderList(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -2397,9 +2397,10 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			if (collateralSetup.getExtendedDetails() != null && !collateralSetup.getExtendedDetails().isEmpty()) {
 
 				for (ExtendedField details : collateralSetup.getExtendedDetails()) {
-					/*List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
-							exdFldConfig);
-					details.setExtendedFieldDataList(extList);*/
+					/*
+					 * List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
+					 * exdFldConfig); details.setExtendedFieldDataList(extList);
+					 */
 					int exdMandConfigCount = 0;
 					for (ExtendedFieldData extendedFieldData : details.getExtendedFieldDataList()) {
 						if (StringUtils.isBlank(extendedFieldData.getFieldName())) {
@@ -2440,7 +2441,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90297", "", null)));
 						return auditDetail;
 					}
-					List<ExtendedFieldData> extList =defultExtendedValues(details.getExtendedFieldDataList(),
+					List<ExtendedFieldData> extList = defultExtendedValues(details.getExtendedFieldDataList(),
 							exdFldConfig);
 					details.setExtendedFieldDataList(extList);
 				}
@@ -3126,7 +3127,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return new AuditHeader(aCollateralSetup.getCollateralRef(), null, null, null, auditDetail,
 				aCollateralSetup.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-    
+
 	//Collateral details
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,

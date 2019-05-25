@@ -55,6 +55,7 @@ public class ScheduleRateReport {
 	public String getInstNo() {
 		return instNo;
 	}
+
 	public void setInstNo(String instNo) {
 		this.instNo = instNo;
 	}
@@ -62,6 +63,7 @@ public class ScheduleRateReport {
 	public String getBalForPftCal() {
 		return balForPftCal;
 	}
+
 	public void setBalForPftCal(String balForPftCal) {
 		this.balForPftCal = balForPftCal;
 	}
@@ -69,6 +71,7 @@ public class ScheduleRateReport {
 	public String getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
@@ -76,6 +79,7 @@ public class ScheduleRateReport {
 	public String getEndDate() {
 		return endDate;
 	}
+
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
@@ -83,6 +87,7 @@ public class ScheduleRateReport {
 	public String getDays() {
 		return days;
 	}
+
 	public void setDays(String days) {
 		this.days = days;
 	}
@@ -90,6 +95,7 @@ public class ScheduleRateReport {
 	public String getRate() {
 		return rate;
 	}
+
 	public void setRate(String rate) {
 		this.rate = rate;
 	}
@@ -97,6 +103,7 @@ public class ScheduleRateReport {
 	public String getCalcPft() {
 		return calcPft;
 	}
+
 	public void setCalcPft(String calcPft) {
 		this.calcPft = calcPft;
 	}

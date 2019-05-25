@@ -310,7 +310,7 @@
 		<property name="eodFailPostingService" ref="eodFailPostingService" />
 	</bean>
 
-	<bean id="ddaInterfaceService" class="com.pennant.Interface.service.impl.DDAInterfaceServiceImpl"/>
+	<bean id="ddaInterfaceService" class="com.pennant.Interface.service.impl.DDAInterfaceServiceImpl" />
 
 	<bean name="ddaProcessService" class="com.pennant.backend.service.dda.impl.DDAProcessServiceImpl">
 		<property name="ddaProcessDAO" ref="ddaProcessDAO" />
@@ -681,7 +681,7 @@
 	<bean id="vehicleDealerService" class="com.pennant.backend.service.amtmasters.impl.VehicleDealerServiceImpl" />
 
 	<bean id="financeReferenceDetailService" class="com.pennant.backend.service.lmtmasters.impl.FinanceReferenceDetailServiceImpl" />
-		
+
 	<!--============ Customer Details ============== -->
 	<bean id="customerDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -720,31 +720,31 @@
 		parent="sequenceDao" />
 
 	<bean id="incomeDetailDAO" class="com.pennanttech.pff.dao.customer.income.IncomeDetailDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="customerEmploymentDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEmploymentDetailDAOImpl"
 		parent="sequenceDao" />
-	
+
 	<bean id="custEmployeeDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustEmployeeDetailDAOImpl"
 		parent="basicDao" />
-	
+
 	<bean id="customerRatingDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerRatingDAOImpl" parent="basicDao" />
-	
+
 	<bean id="customerEMailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerEMailDAOImpl" parent="basicDao" />
-	
+
 	<bean id="customerPhoneNumberDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerPhoneNumberDAOImpl"
 		parent="basicDao" />
-	
+
 	<bean id="customerDocumentDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDocumentDAOImpl"
 		parent="basicDao" />
-	
+
 	<bean id="customerBankInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerBankInfoDAOImpl"
 		parent="sequenceDao" />
-	
+
 	<bean id="customerChequeInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerChequeInfoDAOImpl"
 		parent="basicDao" />
-	
+
 	<bean id="directorDetailDAO" class="com.pennant.backend.dao.customermasters.impl.DirectorDetailDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -766,14 +766,14 @@
 	<bean name="customerServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerServiceImpl">
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
-	
+
 	<bean name="feeCalculator" class="com.pennant.app.util.FeeCalculator">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
-	
+
 	<bean name="receiptCalculator" class="com.pennant.app.util.ReceiptCalculator" scope="prototype">
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
@@ -787,7 +787,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
-	
+
 	<bean id="freemarkerMailConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean" />
 	<bean id="mailTemplateDAO" class="com.pennant.backend.dao.mail.impl.MailTemplateDAOImpl" parent="sequenceDao" />
 	<bean id="notesDAO" class="com.pennant.backend.dao.impl.NotesDAOImpl" parent="sequenceDao" />

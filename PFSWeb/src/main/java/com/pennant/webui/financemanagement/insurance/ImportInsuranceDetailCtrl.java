@@ -57,9 +57,8 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -87,10 +86,9 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma
-	 * separated values and then read the document and setting the values to the
-	 * Lead VO and added those vos to the List and it also shows the information
-	 * about where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
+	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
+	 * where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -120,10 +118,10 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 
 		Clients.clearWrongValue(this.vasManufacturer);
 		Clients.clearWrongValue(this.txtFileName);
-		
+
 		this.vasManufacturer.setErrorMessage("");
 		this.txtFileName.setErrorMessage("");
-		
+
 		if (StringUtils.trimToNull(this.vasManufacturer.getValue()) == null) {
 			throw new WrongValueException(this.vasManufacturer, Labels.getLabel("FIELD_IS_MAND",
 					new String[] { Labels.getLabel("label_ImportInsuranceDetails_CompanyID/VASManufacturer.value") }));
@@ -135,7 +133,7 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 
 		logger.debug(Literal.LEAVING);
 	}
- 
+
 	public void onClick$btnSave(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -156,16 +154,17 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 
 	private void doSave() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		
-		ProcessData processData = new ProcessData(getUserWorkspace().getLoggedInUser(), INSURANCE_FILE_IMPORT_STATUS, Long.valueOf(this.vasManufacturer.getValue()));
+
+		ProcessData processData = new ProcessData(getUserWorkspace().getLoggedInUser(), INSURANCE_FILE_IMPORT_STATUS,
+				Long.valueOf(this.vasManufacturer.getValue()));
 		this.btnSave.setDisabled(true);
 		Thread thread = new Thread(processData);
 		thread.start();
 		Thread.sleep(1000);
-	
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public class ProcessData extends Thread {
 		private LoggedInUser userDetails;
 		private DataEngineStatus status;
@@ -187,7 +186,7 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 			}
 		}
 	}
-	
+
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
 		ProcessExecution pannel = new ProcessExecution();
 		pannel.setId(config.getName());
@@ -224,7 +223,7 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 			}
 		}
 	}
-	
+
 	public void onTimer$timer(Event event) {
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
@@ -246,7 +245,7 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 			}
 		}
 	}
-	
+
 	// Getters and setters
 	public DataEngineConfig getDataEngineConfig() {
 		return dataEngineConfig;

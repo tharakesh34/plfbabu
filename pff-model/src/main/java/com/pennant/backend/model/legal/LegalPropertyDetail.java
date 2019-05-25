@@ -102,7 +102,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private LegalPropertyDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
-	
+
 	@XmlElement
 	private String urbanLandCeiling;
 	@XmlElement
@@ -119,7 +119,7 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private String nocObtainedFromLPA;
 	@XmlElement
 	private String anyMortgagePending;
-	
+
 	@XmlElement
 	private String northSideEastByWest;
 	@XmlElement
@@ -128,7 +128,6 @@ public class LegalPropertyDetail extends AbstractWorkflowEntity implements Entit
 	private String eastSideNorthBySouth;
 	@XmlElement
 	private String westSideSouthByNorth;
-	
 
 	public boolean isNew() {
 		return isNewRecord();

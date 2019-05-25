@@ -48,13 +48,18 @@ import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 public interface VASProviderAccDetailService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	VASProviderAccDetail getVASProviderAccDetail(long id);
+
 	VASProviderAccDetail getApprovedVASProviderAccDetail(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType);
-	
+
 	VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType);
 }

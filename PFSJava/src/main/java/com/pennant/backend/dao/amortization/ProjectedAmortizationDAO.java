@@ -53,61 +53,94 @@ public interface ProjectedAmortizationDAO {
 
 	// IncomeAmortization
 	List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finRef);
+
 	void saveBatchIncomeAMZ(List<ProjectedAmortization> amortizationList);
+
 	void updateBatchIncomeAMZ(List<ProjectedAmortization> amortizationList);
+
 	void updateBatchIncomeAMZAmounts(List<ProjectedAmortization> amortizationList);
 
 	// ProjectedAccruals
 	ProjectedAccrual getPrvProjectedAccrual(String finRef, Date prvMonthEndDate, String type);
+
 	void preparePrvProjectedAccruals(Date prvMonthEndDate);
+
 	List<ProjectedAccrual> getProjectedAccrualsByFinRef(String finRef);
+
 	List<ProjectedAccrual> getFutureProjectedAccrualsByFinRef(String finRef, Date curMonthEnd);
+
 	void saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList);
+
 	void deleteFutureProjAccrualsByFinRef(String finReference, Date curMonthStart);
+
 	void deleteAllProjAccrualsByFinRef(String finReference);
 
 	void deleteFutureProjAccruals(Date curMonthStart);
+
 	void deleteAllProjAccruals();
 
 	// ProjectedIncomeAMZ
 	List<ProjectedAmortization> getPrvProjIncomeAMZ(String finRef, Date prvMonthEndDate);
+
 	void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ);
+
 	void deleteFutureProjAMZByFinRef(String finReference, Date curMonthEnd);
+
 	void deleteAllProjIncomeAMZByFinRef(String finReference);
 
 	//One Time Activity
 	Date getPrvAMZMonthLog();
+
 	long saveAmortizationLog(ProjectedAmortization proAmortization);
+
 	boolean isAmortizationLogExist();
+
 	ProjectedAmortization getAmortizationLog();
-	void updateAmzStatus (long status, long amzId);
+
+	void updateAmzStatus(long status, long amzId);
 
 	// Calculate Average POS
 	public ProjectedAmortization getCalAvgPOSLog();
+
 	public long saveCalAvgPOSLog(ProjectedAmortization proAmortization);
+
 	public void updateBatchCalAvgPOS(List<ProjectedAccrual> projAccrualList);
+
 	public void updateCalAvgPOSStatus(long status, long amzId);
 
 	// Threads Implementation
 	void delete();
-	int prepareAmortizationQueue(Date appDate, boolean isEOMProcess);
-	long getCountByProgress();
-	long getTotalCountByProgress();
-	int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
-	int startEODForFinRef(String finReference);
-	void updateStatus(String finReference, int progress);
-	void updateFailed(AmortizationQueuing amortizationQueuing);
-	void logAmortizationQueuing();
 
+	int prepareAmortizationQueue(Date appDate, boolean isEOMProcess);
+
+	long getCountByProgress();
+
+	long getTotalCountByProgress();
+
+	int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
+
+	int startEODForFinRef(String finReference);
+
+	void updateStatus(String finReference, int progress);
+
+	void updateFailed(AmortizationQueuing amortizationQueuing);
+
+	void logAmortizationQueuing();
 
 	// Performance
 	String getAMZMethodByFinRef(String finReference);
+
 	void prepareAMZFeeDetails(Date monthEndDate, Date appDate);
+
 	void prepareAMZExpenseDetails(Date monthEndDate, Date appDate);
+
 	void updateActualAmount(Date appDate);
 
 	void deleteFutureProjAMZByMonthEnd(Date curMonthEnd);
+
 	void truncateAndInsertProjAMZ(Date curMonthEnd);
+
 	void copyPrvProjAMZ();
+
 	void createIndexProjIncomeAMZ();
 }

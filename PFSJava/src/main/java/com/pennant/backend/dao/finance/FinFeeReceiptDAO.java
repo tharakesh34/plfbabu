@@ -63,8 +63,8 @@ public interface FinFeeReceiptDAO {
 	boolean isFinFeeReceiptAllocated(long receiptID, String type);
 
 	List<FinFeeReceipt> getFinFeeReceiptByFeeId(long feeId, String type);
-	
+
 	BigDecimal getUpfrontFee(long feeId, String tableType);
-	
+
 	List<Map<String, Object>> getFeeDetails(String finReference);
 }

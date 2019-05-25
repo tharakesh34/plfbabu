@@ -47,10 +47,10 @@ public class CollectionDataDownloadProcess {
 
 		try {
 			String sql = "Truncate TABLE COLLECTION_FINANCEDETAILS ";
-			jdbcTemplate.update(sql.toString(),new HashMap<String, Object>() );
+			jdbcTemplate.update(sql.toString(), new HashMap<String, Object>());
 
 			sql = "Truncate TABLE  COLLECTION_CUSTOMERDETAILS";
-			jdbcTemplate.update(sql.toString(),new HashMap<String, Object>() );
+			jdbcTemplate.update(sql.toString(), new HashMap<String, Object>());
 		} catch (Exception e) {
 			System.out.println("Exception e" + e);
 			logger.debug("Leaving");
@@ -77,13 +77,12 @@ public class CollectionDataDownloadProcess {
 		selectSql.append("Select * from (SELECT ");
 		selectSql.append(" T1.FinReference LoanReference,T2.CustCIF CustCIF,");
 		selectSql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
-		selectSql
-				.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
-		selectSql.append(
-				" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
+		selectSql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
+		selectSql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
 		selectSql.append(" T1.NoInst NoInt,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
 		selectSql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
-		selectSql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
+		selectSql.append(
+				" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
 		selectSql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
 		selectSql.append(
 				" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket, T1.PenaltyPaid PenaltyPaid, ");
@@ -92,15 +91,15 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
 		selectSql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
 		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod ");
-		
+
 		selectSql.append("  FROM FinPftDetails T1 ");
 		selectSql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
 		selectSql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
 		selectSql.append("  INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
 		selectSql.append("   WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
-		
+
 		logger.trace("insertSql: " + selectSql.toString());
-		
+
 		count = jdbcTemplate.update(selectSql.toString(), new HashMap<String, Object>());
 		logger.debug("Leaving");
 		return count;
@@ -111,14 +110,14 @@ public class CollectionDataDownloadProcess {
 		StringBuilder selectSql = new StringBuilder(" SELECT ");
 		selectSql.append(" DISTINCT custcif  FROM FinPftDetails ");
 		selectSql.append("  WHERE (ODPrincipal+ODProfit) > 0 AND CurODDays >= 1 ");
-		
+
 		logger.trace("insertSql: " + selectSql.toString());
-		
+
 		List<String> list = jdbcTemplate.queryForList(selectSql.toString(), new MapSqlParameterSource(), String.class);
 
 		logger.debug("Number of Customers: " + list.size());
-		boolean offAddress=false;
-		boolean resAddress=false;
+		boolean offAddress = false;
+		boolean resAddress = false;
 		for (String custCIF : list) {
 
 			CollectionCustomerDetail customer = getCustomerByID(custCIF);
@@ -128,7 +127,8 @@ public class CollectionDataDownloadProcess {
 				List<CustomerAddres> customerAddres = getCustomerAddresByCustomer(customer.getCustId());
 				if (!customerAddres.isEmpty()) {
 					for (CustomerAddres custAdd : customerAddres) {
-						if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.office"), custAdd.getCustAddrType())) {
+						if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.office"),
+								custAdd.getCustAddrType())) {
 							customer.setOffAddrHNbr(custAdd.getCustAddrHNbr());
 							customer.setOffFlatNbr(custAdd.getCustFlatNbr());
 							customer.setOffAddrStreet(custAdd.getCustAddrStreet());
@@ -140,8 +140,9 @@ public class CollectionDataDownloadProcess {
 							customer.setOffAddrProvince(custAdd.getCustAddrProvince());
 							customer.setOffAddrCountry(custAdd.getCustAddrCountry());
 							customer.setOffAddrZip(custAdd.getCustAddrZIP());
-							offAddress=true;
-						}else if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.residence"), custAdd.getCustAddrType())) {
+							offAddress = true;
+						} else if (StringUtils.equalsIgnoreCase(App.getProperty("addresstype.residence"),
+								custAdd.getCustAddrType())) {
 							customer.setResFlatNbr(custAdd.getCustFlatNbr());
 							customer.setResAddrStreet(custAdd.getCustAddrStreet());
 							customer.setResAddrLine1(custAdd.getCustAddrLine1());
@@ -152,12 +153,12 @@ public class CollectionDataDownloadProcess {
 							customer.setResAddrProvince(custAdd.getCustAddrProvince());
 							customer.setResAddrCountry(custAdd.getCustAddrCountry());
 							customer.setResAddrZip(custAdd.getCustAddrZIP());
-							resAddress=true;
+							resAddress = true;
 						}
 					}
-					
-					if(!offAddress && !resAddress){
-						CustomerAddres resAdd= customerAddres.get(0);
+
+					if (!offAddress && !resAddress) {
+						CustomerAddres resAdd = customerAddres.get(0);
 						customer.setResFlatNbr(resAdd.getCustFlatNbr());
 						customer.setResAddrStreet(resAdd.getCustAddrStreet());
 						customer.setResAddrLine1(resAdd.getCustAddrLine1());
@@ -168,10 +169,10 @@ public class CollectionDataDownloadProcess {
 						customer.setResAddrProvince(resAdd.getCustAddrProvince());
 						customer.setResAddrCountry(resAdd.getCustAddrCountry());
 						customer.setResAddrZip(resAdd.getCustAddrZIP());
-						resAddress=true;
-						
+						resAddress = true;
+
 						if (customerAddres.size() >= 2) {
-							CustomerAddres offAdd= customerAddres.get(1);
+							CustomerAddres offAdd = customerAddres.get(1);
 							customer.setOffAddrHNbr(offAdd.getCustAddrHNbr());
 							customer.setOffFlatNbr(offAdd.getCustFlatNbr());
 							customer.setOffAddrStreet(offAdd.getCustAddrStreet());
@@ -187,7 +188,6 @@ public class CollectionDataDownloadProcess {
 					}
 				}
 
-				
 				List<CustomerPhoneNumber> phoneNumbers = getCustomerPhoneNumberByCustomer(customer.getCustId());
 				if (!phoneNumbers.isEmpty()) {
 					customer.setPhoneNumber1(phoneNumbers.get(0).getPhoneNumber());
@@ -218,9 +218,9 @@ public class CollectionDataDownloadProcess {
 						" :OffAddrHNbr, :OffFlatNbr , :OffAddrStreet, :OffAddrLine1, :OffAddrLine2, :OffPoBox, :OffAddrCity, :OffAddrProvince, ");
 				insertSql.append(
 						" :OffAddrCountry, :OffAddrZip, :phoneNumber1, :phoneNumber2, :custEMail1, :custEmail2)");
-				
+
 				logger.trace("insertSql: " + insertSql.toString());
-				
+
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 				jdbcTemplate.update(insertSql.toString(), beanParameters);
 			}
@@ -273,7 +273,8 @@ public class CollectionDataDownloadProcess {
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT  CustID, CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet,");
 		selectSql.append(" CustAddrLine1, CustAddrLine2, CustPOBox, CustAddrCity, CustAddrProvince,CustAddrPriority,");
-		selectSql.append(" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict");
+		selectSql.append(
+				" CustAddrCountry, CustAddrZIP, CustAddrPhone, CustAddrFrom,TypeOfResidence,CustAddrLine3,CustAddrLine4,CustDistrict");
 		selectSql.append(" FROM CustomerAddresses");
 		selectSql.append(" Where CustID = :custID order by CustAddrPriority desc");
 
@@ -293,7 +294,8 @@ public class CollectionDataDownloadProcess {
 		customerPhoneNumber.setPhoneCustID(id);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority");
+		selectSql.append(
+				"SELECT  PhoneCustID, PhoneTypeCode, PhoneCountryCode, PhoneAreaCode, PhoneNumber,PhoneTypePriority");
 		selectSql.append(" FROM  CustomerPhoneNumbers");
 		selectSql.append(" Where PhoneCustID =:PhoneCustID order by PhoneTypePriority desc");
 

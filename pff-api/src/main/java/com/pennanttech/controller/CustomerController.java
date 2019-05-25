@@ -77,7 +77,6 @@ public class CustomerController {
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AgreementGeneration agreementGeneration;
-	
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -97,8 +96,9 @@ public class CustomerController {
 		CustomerDetails response = null;
 		try {
 			Customer customer = customerDetails.getCustomer();
-			/*customer.setCustNationality("IN");
-			customer.setCustCOB("IN");*/
+			/*
+			 * customer.setCustNationality("IN"); customer.setCustCOB("IN");
+			 */
 			customer.setCustSourceID(APIConstants.FINSOURCE_ID_API);
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
@@ -419,11 +419,11 @@ public class CustomerController {
 
 			}
 		}
-		String docCategory=null;
-		if(StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)){
-			docCategory =(String) SysParamUtil.getValue("CUST_PRIMARY_ID_RETL_DOC_TYPE");
+		String docCategory = null;
+		if (StringUtils.equals(customerDetails.getCustomer().getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
+			docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_RETL_DOC_TYPE");
 		} else {
-			docCategory =(String) SysParamUtil.getValue("CUST_PRIMARY_ID_CORP_DOC_TYPE");
+			docCategory = (String) SysParamUtil.getValue("CUST_PRIMARY_ID_CORP_DOC_TYPE");
 		}
 		// customer document details
 		List<CustomerDocument> customerDocumentsList = customerDetails.getCustomerDocumentsList();
@@ -435,7 +435,7 @@ public class CustomerController {
 					curCustDocument.setVersion(1);
 					//curCustDocument.setCustDocImage(PennantApplicationUtil.decode(curCustDocument.getCustDocImage()));
 					curCustDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					
+
 					if (StringUtils.equals(curCustDocument.getCustDocCategory(), docCategory)) {
 						customerDetails.getCustomer().setCustCRCPR(curCustDocument.getCustDocTitle());
 					}
@@ -1262,7 +1262,7 @@ public class CustomerController {
 			customerDedup.setCustDOB(detail.getCustDOB());
 			customerDedup.setCustCRCPR(detail.getCustCRCPR());
 			customerDedup.setCustSector(detail.getCustSector());
-	
+
 			customerDedups.add(customerDedup);
 		}
 
@@ -1276,7 +1276,7 @@ public class CustomerController {
 		return response;
 
 	}
-	
+
 	private void setCustomerAddress(CustomerAgreementDetail agreement, List<CustomerAddres> addressList) {
 		if (addressList != null && !addressList.isEmpty()) {
 			if (addressList.size() == 1) {
@@ -1292,16 +1292,21 @@ public class CustomerController {
 			}
 		}
 	}
+
 	private void setAddressDetails(CustomerAgreementDetail agreement, CustomerAddres customerAddres) {
 		agreement.getCustCurrentAddres().setCustAddrHNbr(customerAddres.getCustAddrHNbr());
 		agreement.getCustCurrentAddres().setCustFlatNbr(StringUtils.trimToEmpty(customerAddres.getCustFlatNbr()));
 		agreement.getCustCurrentAddres().setCustPOBox(StringUtils.trimToEmpty(customerAddres.getCustPOBox()));
 		agreement.getCustCurrentAddres().setCustAddrStreet(StringUtils.trimToEmpty(customerAddres.getCustAddrStreet()));
-		agreement.getCustCurrentAddres().setCustAddrCountry(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
-		agreement.getCustCurrentAddres().setCustAddrProvince(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
-		agreement.getCustCurrentAddres().setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+		agreement.getCustCurrentAddres()
+				.setCustAddrCountry(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCountryName()));
+		agreement.getCustCurrentAddres()
+				.setCustAddrProvince(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrProvinceName()));
+		agreement.getCustCurrentAddres()
+				.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 		if (!PennantConstants.CITY_FREETEXT) {
-			agreement.getCustCurrentAddres().setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
+			agreement.getCustCurrentAddres()
+					.setCustAddrCity(StringUtils.trimToEmpty(customerAddres.getLovDescCustAddrCityName()));
 		}
 		agreement.getCustCurrentAddres().setCustDistrict(StringUtils.trimToEmpty(customerAddres.getCustDistrict()));
 		agreement.getCustCurrentAddres().setCustAddrLine4(StringUtils.trimToEmpty(customerAddres.getCustAddrLine4()));
@@ -1309,6 +1314,7 @@ public class CustomerController {
 		agreement.getCustCurrentAddres().setCustAddrLine2(StringUtils.trimToEmpty(customerAddres.getCustAddrLine2()));
 		agreement.getCustCurrentAddres().setCustAddrZIP(StringUtils.trimToEmpty(customerAddres.getCustAddrZIP()));
 	}
+
 	public static void sortCustomerAdress(List<CustomerAddres> list) {
 
 		if (list != null && !list.isEmpty()) {
@@ -1320,6 +1326,7 @@ public class CustomerController {
 			});
 		}
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -1372,6 +1379,7 @@ public class CustomerController {
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
+
 	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
 		return extendedFieldRenderDAO;
 	}
@@ -1379,6 +1387,7 @@ public class CustomerController {
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
+
 	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
 		this.agreementGeneration = agreementGeneration;
 	}

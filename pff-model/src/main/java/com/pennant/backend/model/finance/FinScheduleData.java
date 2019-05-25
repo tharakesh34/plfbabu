@@ -184,15 +184,15 @@ public class FinScheduleData implements Serializable {
 	private boolean isFlexiDisb;
 
 	private FinanceProfitDetail finPftDeatil;
-	
+
 	@XmlElementWrapper(name = "receiptAllocations")
 	@XmlElement(name = "allocation")
 	private List<ReceiptAllocationDetail> receiptAllocationList;
 
 	//GST Tax Map
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
-	
-	@XmlElement(name="hostReference")
+
+	@XmlElement(name = "hostReference")
 	private String oldFinReference;
 
 	public FinScheduleData() {

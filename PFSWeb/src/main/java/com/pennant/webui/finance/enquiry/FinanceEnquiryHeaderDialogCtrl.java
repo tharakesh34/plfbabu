@@ -221,7 +221,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DocumentDetailsDAO documentDetailsDAO;
 
 	private NotificationLogDetailsService notificationLogDetailsService;
-	
+
 	@Autowired
 	private CovenantsService covenantsService;
 
@@ -276,7 +276,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.setvASRecordingDialogCtrl((VASRecordingDialogCtrl) arguments.get("VASRecordingDialog"));
 			}
 			if (arguments.containsKey("insuranceRebookingDialog")) {
-				this.setInsuranceRebookingDialogCtrl((InsuranceRebookingDialogCtrl) arguments.get("insuranceRebookingDialog"));
+				this.setInsuranceRebookingDialogCtrl(
+						(InsuranceRebookingDialogCtrl) arguments.get("insuranceRebookingDialog"));
 			}
 
 			// Method for recall Enquiries
@@ -341,7 +342,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.grid_BasicDetails.setVisible(true);
 		this.btnPrint.setVisible(false);
 		this.row_ReqRePayment.setVisible(false);
-		
+
 		if ("FINENQ".equals(this.enquiryType)) {
 
 			FinanceDetail financeDetail = new FinanceDetail();
@@ -368,9 +369,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			// Collateral Details
-			financeDetail.setCollateralAssignmentList(getCollateralSetupService()
-					.getCollateralAssignmentByFinRef(this.finReference, FinanceConstants.MODULE_NAME,
-							fromApproved ? "_AView" : "_View"));
+			financeDetail.setCollateralAssignmentList(getCollateralSetupService().getCollateralAssignmentByFinRef(
+					this.finReference, FinanceConstants.MODULE_NAME, fromApproved ? "_AView" : "_View"));
 			financeDetail.setFinAssetTypesList(
 					getFinanceDetailService().getFinAssetTypesByFinRef(this.finReference, "_TView"));
 			financeDetail.setFinScheduleData(finScheduleData);
@@ -599,27 +599,25 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else if ("COVENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
-			
+
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
-			
+
 			if (ImplementationConstants.NEW_COVENANT_MODULE) {
 				List<Covenant> covenants;
 				covenants = covenantsService.getCovenants(this.finReference, "Loan", TableType.VIEW);
-				
+
 				FinanceMain financeMain = new FinanceMain();
 				financeMain.setFinStartDate(enquiry.getFinStartDate());
 				financeMain.setMaturityDate(enquiry.getMaturityDate());
-				
+
 				FinanceDetail financeDetail = new FinanceDetail();
 				financeDetail.getFinScheduleData().setFinReference(this.finReference);
 				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-				
-				
-				
+
 				financeDetail.setCovenants(covenants);
 				map.put("financeDetail", financeDetail);
 				map.put("enqiryModule", true);
-				
+
 				path = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 			} else {
 				List<FinCovenantType> finCovenants;
@@ -698,24 +696,24 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("enqiryModule", true);
 			path = "/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul";
 		}
-		
+
 		else if ("FINOPT".equals(this.enquiryType)) {
-			
+
 			FinanceMain financeMain = new FinanceMain();
 			financeMain.setFinStartDate(enquiry.getFinStartDate());
 			financeMain.setMaturityDate(enquiry.getMaturityDate());
-			
+
 			FinanceDetail financeDetail = new FinanceDetail();
 			financeDetail.getFinScheduleData().setFinReference(this.finReference);
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-			
-			List<FinOption> finOptions=finOptionService.getFinOptions(this.finReference, TableType.VIEW);
-			
+
+			List<FinOption> finOptions = finOptionService.getFinOptions(this.finReference, TableType.VIEW);
+
 			financeDetail.setFinOptions(finOptions);
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinOptionEnquiry.value"));
 			map.put("finReference", this.finReference);
-			map.put("financeDetail",financeDetail);
+			map.put("financeDetail", financeDetail);
 			map.put("enqiryModule", true);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Finance/FinOption/FinOptionList.zul";
@@ -898,10 +896,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
 
 					// Repayment Details
-					if(!this.reqRePayment.isChecked()){
+					if (!this.reqRePayment.isChecked()) {
 						for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
 							if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
-								ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
+								ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap
+										.get(rpyDetail.getFinSchdDate());
 								rpyDetailList.add(rpyDetail);
 								rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
 							} else {
@@ -1118,6 +1117,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setNotificationLogDetailsService(NotificationLogDetailsService notificationLogDetailsService) {
 		this.notificationLogDetailsService = notificationLogDetailsService;
 	}
+
 	public InsuranceRebookingDialogCtrl getInsuranceRebookingDialogCtrl() {
 		return insuranceRebookingDialogCtrl;
 	}

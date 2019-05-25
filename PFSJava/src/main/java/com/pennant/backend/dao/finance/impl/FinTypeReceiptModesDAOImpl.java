@@ -59,8 +59,8 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 	}
 
 	/**
-	 * This method Deletes the Record from the FinTypeReceiptModes or FinTypeVASProducts_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete Finance Flags by key finRef
+	 * This method Deletes the Record from the FinTypeReceiptModes or FinTypeVASProducts_Temp. if Record not deleted
+	 * then throws DataAccessException with error 41003. delete Finance Flags by key finRef
 	 * 
 	 * @param Sukuk
 	 *            Brokers (finType)
@@ -164,8 +164,7 @@ public class FinTypeReceiptModesDAOImpl extends BasicDao<FinTypeReceiptModes> im
 				.newInstance(FinTypeReceiptModes.class);
 
 		try {
-			finTypeReceiptModes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					typeRowMapper);
+			finTypeReceiptModes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			finTypeReceiptModes = null;

@@ -108,12 +108,12 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	private boolean postValidationReq;
 	private String preValidation;
 	private String postValidation;
-	
+
 	private Long feeType;
-    private String feeTypeCode;
-    private String feeTypeDesc;
-    private String flpCalculatedOn;
-    private String shortCode;
+	private String feeTypeCode;
+	private String feeTypeDesc;
+	private String flpCalculatedOn;
+	private String shortCode;
 	@XmlElement
 	private boolean active;
 	@XmlElement
@@ -132,11 +132,11 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	@XmlElementWrapper(name = "extendedFields")
 	@XmlElement(name = "extendedField")
 	private List<ExtendedFieldDetail> extendedFieldDetailList;
-	
+
 	private String modeOfPayment = "D";
 	private String allowFeeType = "M";
 	private boolean medicalApplicable;
-	
+
 	private long batchId;
 	private String fileName;
 	private List<VASPremiumCalcDetails> premiumCalcDetList = new ArrayList<>();
@@ -144,7 +144,7 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public VASConfiguration() {
 		super();
 	}

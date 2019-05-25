@@ -55,7 +55,8 @@ public class PresentmentExtractService extends AbstractFileExtractService
 	}
 
 	/**
-	 * @param notificationService the notificationService to set
+	 * @param notificationService
+	 *            the notificationService to set
 	 */
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;

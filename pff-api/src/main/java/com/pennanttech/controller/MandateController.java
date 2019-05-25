@@ -49,8 +49,6 @@ public class MandateController {
 	private FinanceMainService financeMainService;
 	private FinanceMainDAO financeMainDAO;
 
-	
-
 	/**
 	 * Method for create Mandate in PLF system.
 	 * 
@@ -286,7 +284,7 @@ public class MandateController {
 		WSReturnStatus response = null;
 		try {
 			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId(), mandateDetail.getMandateType(),"");
+					mandateDetail.getNewMandateId(), mandateDetail.getMandateType(), "");
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
@@ -331,23 +329,23 @@ public class MandateController {
 			} else {
 				response = (Mandate) auditHeader.getAuditDetail().getModelData();
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				
+
 				if (mandate.isSwapIsActive()) {
-					String type="";
+					String type = "";
 					int count = 0;
 
 					count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "", false);
-					if(count>0) {
-						type ="";
-					} else if(ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG){
-						 count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
-						 if(count>0) {
-							 type="_Temp";
-						 }
+					if (count > 0) {
+						type = "";
+					} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
+						count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
+						if (count > 0) {
+							type = "_Temp";
+						}
 					}
-					
+
 					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),
-							mandate.getMandateType(),type);
+							mandate.getMandateType(), type);
 				}
 				doEmptyResponseObject(response);
 			}
@@ -492,6 +490,7 @@ public class MandateController {
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}

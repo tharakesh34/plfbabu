@@ -26,7 +26,7 @@ import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 import com.pennanttech.pff.mmfl.cd.service.ConsumerProductService;
 import com.pennanttech.pff.mmfl.cd.service.MerchantDetailsService;
 
-public class MerchantDetailsListCtrl  extends GFCBaseListCtrl<MerchantDetails> {
+public class MerchantDetailsListCtrl extends GFCBaseListCtrl<MerchantDetails> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(MerchantDetailsListCtrl.class);
 
@@ -40,7 +40,7 @@ public class MerchantDetailsListCtrl  extends GFCBaseListCtrl<MerchantDetails> {
 	protected Listheader listheader_StoreId;
 	protected Listheader listheader_StoreName;
 	protected Listheader listheader_Active;
-	
+
 	// checkRights
 	protected Button button_MerchantDetailsList_NewMerchantDetails;
 	protected Button button_MerchantDetailsList_MerchantDetailsListSearch;
@@ -50,7 +50,7 @@ public class MerchantDetailsListCtrl  extends GFCBaseListCtrl<MerchantDetails> {
 	protected Intbox storeId;
 	protected Textbox storeName;
 	protected Textbox active;
-	
+
 	protected Listbox sortOperator_MerchantName;
 	protected Listbox sortOperator_StoreId;
 	protected Listbox sortOperator_StoreName;
@@ -82,14 +82,16 @@ public class MerchantDetailsListCtrl  extends GFCBaseListCtrl<MerchantDetails> {
 	 */
 	public void onCreate$window_merchantDetails(Event event) {
 		logger.debug(Literal.ENTERING);
-		setPageComponents(window_merchantDetails, borderLayout_MerchantDetails, listBoxMerchantDetailsList, pagingMerchantDetailsList);
+		setPageComponents(window_merchantDetails, borderLayout_MerchantDetails, listBoxMerchantDetailsList,
+				pagingMerchantDetailsList);
 		setItemRender(new MerchantDetailsListModelItemRenderer());
 		registerButton(button_MerchantDetailsList_MerchantDetailsListSearch);
-		registerButton(button_MerchantDetailsList_NewMerchantDetails, "button_MerchantDetailsList_NewMerchantDetails", true);
+		registerButton(button_MerchantDetailsList_NewMerchantDetails, "button_MerchantDetailsList_NewMerchantDetails",
+				true);
 		registerField("MerchantId");
-		registerField("MerchantName", listheader_MerchantName, SortOrder.NONE, merchantName, sortOperator_MerchantName, Operators.STRING);
-		registerField("StoreId", listheader_StoreId, SortOrder.ASC, storeId,
-				sortOperator_StoreId, Operators.STRING);
+		registerField("MerchantName", listheader_MerchantName, SortOrder.NONE, merchantName, sortOperator_MerchantName,
+				Operators.STRING);
+		registerField("StoreId", listheader_StoreId, SortOrder.ASC, storeId, sortOperator_StoreId, Operators.STRING);
 		registerField("StoreName", listheader_StoreName, SortOrder.ASC, storeName, sortOperator_StoreName,
 				Operators.STRING);
 		registerField("Active", listheader_Active, SortOrder.ASC, active, sortOperator_Active, Operators.STRING);
@@ -168,8 +170,8 @@ public class MerchantDetailsListCtrl  extends GFCBaseListCtrl<MerchantDetails> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param Consumer Product
-	 *            The entity that need to be passed to the dialog.
+	 * @param Consumer
+	 *            Product The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(MerchantDetails merchantDetails) {
 		logger.debug(Literal.ENTERING);

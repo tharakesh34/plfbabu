@@ -65,7 +65,7 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 	private String productCtg;
 	private String vasProviderDesc;
 	private String paymentMode;
-	
+
 	// Manual Reconciliation
 	private String manualReconRemarks;
 	private String manualReconResCategory;
@@ -86,11 +86,11 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 	private String medicalStatusF;
 	private String companyName;
 	private BigDecimal payableAmount = BigDecimal.ZERO;
-	
+
 	//Accounting
 	private BigDecimal adjAmount = BigDecimal.ZERO;
 	private String entityCode;
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("custCIF");
@@ -123,7 +123,6 @@ public class InsuranceDetails extends AbstractWorkflowEntity implements Entity {
 		detailsMap.put("id_adjAmount", getAdjAmount());
 		return detailsMap;
 	}
-
 
 	public boolean isNewRecord() {
 		return newRecord;

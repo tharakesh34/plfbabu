@@ -33,7 +33,7 @@ public class DealerGroupListListModelItemRenderer implements ListitemRenderer<De
 		cbDealerIsActive.setDisabled(true);
 		cbDealerIsActive.setChecked(dealerGroup.isActive());
 		lc.appendChild(cbDealerIsActive);
-		
+
 		lc.setParent(item);
 		lc = new Listcell(dealerGroup.getRecordStatus());
 		lc.setParent(item);

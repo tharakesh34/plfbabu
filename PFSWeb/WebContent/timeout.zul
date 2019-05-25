@@ -6,7 +6,8 @@
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 	<window border="3d">
-		<style>body { padding: 0 0; background-color: #EBEBEB; /* 0 padding on top and bottom and 0 padding on right and left */ }</style>
+		<style>body { padding: 0 0; background-color: #EBEBEB; /* 0 padding on top and bottom and 0 padding on right and left
+			*/ }</style>
 
 		<div align="center">
 			<panel>
@@ -25,7 +26,9 @@
 
 						<div align="center">
 							<!-- zk 5.x -->
-							<a href="/loginDialog.zul">${c:l('btnBackToStart')}</a>
+							<a href="/loginDialog.zul">
+								${c:l('btnBackToStart')}
+							</a>
 						</div>
 					</vbox>
 				</panelchildren>

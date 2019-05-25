@@ -65,8 +65,7 @@ public class FailPostingsListModelItemRenderer implements ListitemRenderer<DDAFT
 		Listcell lc;
 		lc = new Listcell(ddaFTransactionLog.getFinRefence());
 		lc.setParent(item);
-		lc = new Listcell(
-				DateUtility.format(ddaFTransactionLog.getValueDate(), PennantConstants.dateAndTimeFormat));
+		lc = new Listcell(DateUtility.format(ddaFTransactionLog.getValueDate(), PennantConstants.dateAndTimeFormat));
 		lc.setParent(item);
 		lc = new Listcell(ddaFTransactionLog.getErrorCode());
 		lc.setParent(item);

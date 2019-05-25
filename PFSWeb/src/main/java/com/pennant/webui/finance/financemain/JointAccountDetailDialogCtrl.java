@@ -1066,6 +1066,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void setFinVasRecordingDialogCtrl(FinVasRecordingDialogCtrl finVasRecordingDialogCtrl) {
 		this.finVasRecordingDialogCtrl = finVasRecordingDialogCtrl;
 	}
+
 	public void setPDVerificationDialogCtrl(PDVerificationDialogCtrl pdVerificationDialogCtrl) {
 		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
 	}

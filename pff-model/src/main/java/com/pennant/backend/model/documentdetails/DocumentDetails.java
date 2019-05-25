@@ -17,8 +17,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 @XmlType(propOrder = { "referenceId", "docCategory", "custDocTitle", "custDocIssuedCountry", "custDocSysName",
-		"custDocIssuedOn",
-		"custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
+		"custDocIssuedOn", "custDocExpDate", "docPurpose", "docName", "doctype", "docImage", "docUri" })
 @XmlRootElement(name = "DocumentDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
@@ -79,7 +78,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	// Verification Fields
 	private int doumentType;
-	private long  instructionUID =  Long.MIN_VALUE;
+	private long instructionUID = Long.MIN_VALUE;
 
 	public DocumentDetails() {
 		super();
@@ -428,7 +427,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	public void setDocOriginal(boolean docOriginal) {
 		this.docOriginal = docOriginal;
 	}
-	
+
 	public long getInstructionUID() {
 		return instructionUID;
 	}

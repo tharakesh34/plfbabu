@@ -197,8 +197,8 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_MandateType.value"),
 						PennantStaticListUtil.getMandateTypeList(), true));
 		this.presentmentType
-		.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
-				PennantStaticListUtil.getPresetmentTypeList(), true));
+				.setConstraint(new PTListValidator(Labels.getLabel("label_PresentmentDetailList_PresentmentType.value"),
+						PennantStaticListUtil.getPresetmentTypeList(), true));
 		this.fromdate.setConstraint(
 				new PTDateValidator(Labels.getLabel("label_PresentmentDetailList_Fromdate.value"), true));
 		this.toDate
@@ -273,13 +273,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			detailHeader.setPresentmentType(this.presentmentType.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
 
 		doRemoveValidation();
 
@@ -308,7 +307,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.toDate.setErrorMessage("");
 		this.mandateType.setConstraint("");
 		this.presentmentType.setConstraint("");
-
 
 		logger.debug(Literal.LEAVING);
 	}

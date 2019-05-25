@@ -11,7 +11,7 @@ public interface CommodityTypeDAO extends BasicCrudDao<CommodityType> {
 	CommodityType getCommodityType(long id, String type);
 
 	boolean isDuplicateKey(CommodityType commodityType, TableType tableType);
-	
+
 	Map<String, Long> getCommodityTypeData();
 
 }

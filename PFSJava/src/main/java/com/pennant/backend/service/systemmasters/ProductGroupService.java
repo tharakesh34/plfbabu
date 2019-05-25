@@ -4,7 +4,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.ProductGroup;
 
 public interface ProductGroupService {
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
 	ProductGroup getProductGroup(long id);

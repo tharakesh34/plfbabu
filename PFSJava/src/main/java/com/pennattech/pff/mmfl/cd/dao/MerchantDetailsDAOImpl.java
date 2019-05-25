@@ -18,7 +18,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.mmfl.cd.model.MerchantDetails;
 
-public class MerchantDetailsDAOImpl  extends SequenceDao<MerchantDetails> implements MerchantDetailsDAO {
+public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> implements MerchantDetailsDAO {
 	private static Logger logger = Logger.getLogger(MerchantDetailsDAOImpl.class);
 
 	public MerchantDetailsDAOImpl() {
@@ -71,8 +71,10 @@ public class MerchantDetailsDAOImpl  extends SequenceDao<MerchantDetails> implem
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append("(:merchantId, :merchantName, :storeId, :storeName, :storeAddressLine1, :storeAddressLine2");
-		sql.append(", :storeAddressLine3, :storeCity, :storeState, :storeCountry, :cityName, :stateName, :countryName, :POSId");
-		sql.append(", :avgTranPerMnth, :avgTranAmtPerMnth, :tranAmtPerTran, :tranAmtPerDay, :allowRefund, :peakTransPerDay");
+		sql.append(
+				", :storeAddressLine3, :storeCity, :storeState, :storeCountry, :cityName, :stateName, :countryName, :POSId");
+		sql.append(
+				", :avgTranPerMnth, :avgTranAmtPerMnth, :tranAmtPerTran, :tranAmtPerDay, :allowRefund, :peakTransPerDay");
 		sql.append(", :channel, :active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -106,7 +108,8 @@ public class MerchantDetailsDAOImpl  extends SequenceDao<MerchantDetails> implem
 		sql.append(", cityName = :cityName, StateName = :stateName, CountryName = :countryName, POSId = :POSId");
 		sql.append(", AvgTranPerMnth = :avgTranPerMnth, AvgTranAmtPerMnth = :avgTranAmtPerMnth");
 		sql.append(", TranAmtPerTran = :tranAmtPerTran, TranAmtPerDay = :tranAmtPerDay, AllowRefund = :allowRefund");
-		sql.append(", PeakTransPerDay = :peakTransPerDay, Channel = :channel, Active = :active, LastMntOn = :LastMntOn");
+		sql.append(
+				", PeakTransPerDay = :peakTransPerDay, Channel = :channel, Active = :active, LastMntOn = :LastMntOn");
 		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordStatus = :RecordStatus, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MerchantId = :merchantId ");

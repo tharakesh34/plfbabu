@@ -157,8 +157,8 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(finOption.getAlertToRoles().split(","));
 			List<String> emails = new ArrayList<>();
 			for (SecurityUser securityUser : secUsers) {
-				if(StringUtils.isNotEmpty(securityUser.getUsrEmail())){
-					emails.add(securityUser.getUsrEmail());					
+				if (StringUtils.isNotEmpty(securityUser.getUsrEmail())) {
+					emails.add(securityUser.getUsrEmail());
 				}
 			}
 

@@ -406,10 +406,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				.setValue(this.financeMain.getLovDescCustCIF() + "-" + this.financeMain.getLovDescCustShrtName());
 		this.lbl_Currency
 				.setValue(this.financeMain.getFinCcy() + "- " + CurrencyUtil.getCcyDesc(this.financeMain.getFinCcy()));
-		this.lbl_startDate.setValue(
-				DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
-		this.lbl_MaturityDate.setValue(
-				DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_startDate
+				.setValue(DateUtility.format(this.financeMain.getFinStartDate(), DateFormat.LONG_DATE.getPattern()));
+		this.lbl_MaturityDate
+				.setValue(DateUtility.format(this.financeMain.getMaturityDate(), DateFormat.LONG_DATE.getPattern()));
 
 		// Disbursement Instructions tab.
 		appendDisbursementInstructionTab(aPaymentHeader);
@@ -1129,11 +1129,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
 		}
-		
+
 		// GST parameters
 		String highPriorityState = null;
 		String highPriorityCountry = null;
-		
+
 		// Fetch High priority Address
 		CustomerAddres addres = getCustomerAddresService().getHighPriorityCustAddr(financeMain.getCustID());
 		if (addres != null) {
@@ -1142,9 +1142,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 
 		// Set Tax Details if Already exists
-		FinanceTaxDetail taxDetail = getFinanceTaxDetailService().getApprovedFinanceTaxDetail(financeMain.getFinReference());
-		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
-				financeMain.getFinBranch(), highPriorityState, highPriorityCountry, taxDetail, financeMain.getFinBranch());
+		FinanceTaxDetail taxDetail = getFinanceTaxDetailService()
+				.getApprovedFinanceTaxDetail(financeMain.getFinReference());
+		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
+				financeMain.getFinBranch(), financeMain.getFinBranch(), highPriorityState, highPriorityCountry,
+				taxDetail, financeMain.getFinBranch());
 
 		aeEvent.setCcy(financeMain.getFinCcy());
 		aeEvent.setFinReference(financeMain.getFinReference());
@@ -1205,7 +1207,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		eventMapping.put("pi_emiInAdvance", emiInAdavance);
 		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 		aeEvent.setDataMap(eventMapping);
-		
+
 		if (gstExecutionMap != null) {
 			for (String mapkey : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(mapkey)) {
@@ -1213,7 +1215,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 			}
 		}
-		
+
 		aeEvent.getAcSetIDList().add(accountsetId);
 		List<ReturnDataSet> returnSetEntries = postingsPreparationUtil.getAccounting(aeEvent).getReturnDataSet();
 		accountingSetEntries.addAll(returnSetEntries);

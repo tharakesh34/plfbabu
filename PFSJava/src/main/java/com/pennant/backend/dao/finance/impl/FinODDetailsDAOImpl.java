@@ -971,7 +971,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 
 	}
-	 
+
 	/**
 	 * Fetching the all loans dues against the customer
 	 */

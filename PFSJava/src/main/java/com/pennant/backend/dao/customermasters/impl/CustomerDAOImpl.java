@@ -2218,7 +2218,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Leaving");
 		return customer;
 	}
-	
+
 	@Override
 	public List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type) {
 		logger.debug("Entering");

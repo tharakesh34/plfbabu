@@ -195,8 +195,7 @@ public class ProjectedAmortization implements Serializable, Entity {
 	}
 
 	public void setMonthEndDate(Date monthEndDate) {
-		this.monthEndDate = DateUtility.getDate(DateUtility.format(monthEndDate,
-				PennantConstants.dateFormat));
+		this.monthEndDate = DateUtility.getDate(DateUtility.format(monthEndDate, PennantConstants.dateFormat));
 
 	}
 
@@ -250,8 +249,7 @@ public class ProjectedAmortization implements Serializable, Entity {
 	}
 
 	public void setCalculatedOn(Date calculatedOn) {
-		this.calculatedOn = DateUtility.getDate(DateUtility.format(calculatedOn,
-				PennantConstants.dateFormat));
+		this.calculatedOn = DateUtility.getDate(DateUtility.format(calculatedOn, PennantConstants.dateFormat));
 	}
 
 	public boolean isSaveProjAMZ() {

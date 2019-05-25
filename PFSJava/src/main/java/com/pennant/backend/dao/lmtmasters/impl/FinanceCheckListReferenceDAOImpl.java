@@ -309,7 +309,8 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		updateSql.append(" Set Remarks=:Remarks, Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		updateSql.append(
 				", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
-		updateSql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, InstructionUID = :InstructionUID");
+		updateSql.append(
+				", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, InstructionUID = :InstructionUID");
 		updateSql.append(" Where FinReference =:FinReference AND QuestionId = :QuestionId AND Answer =:Answer");
 
 		if (!type.endsWith("_Temp")) {

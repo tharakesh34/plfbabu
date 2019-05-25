@@ -229,8 +229,7 @@ public class DeviationTrackerListCtrl extends GFCBaseListCtrl<FinanceDeviations>
 
 		if (this.deviationDate.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_deviationDate.getSelectedItem(),
-					DateUtility.format(this.deviationDate.getValue(), PennantConstants.DBDateFormat),
-					"DeviationDate");
+					DateUtility.format(this.deviationDate.getValue(), PennantConstants.DBDateFormat), "DeviationDate");
 		}
 		if (StringUtils.isNotBlank(this.finreference.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finreference.getSelectedItem(),

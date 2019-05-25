@@ -68,10 +68,10 @@ public interface VehicleDealerService {
 	int getVASManufactureCode(String dealerName);
 
 	List<VehicleDealer> getVehicleDealerById(List<Long> ids);
-	
+
 	VehicleDealer getApprovedVehicleDealerById(String code, String delarType, String type);
 
 	VehicleDealer getDealerShortCodes(String shortCode);
-	
+
 	VehicleDealer getDealerShortCode(long providerId);
 }

@@ -724,11 +724,12 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		boolean swappedMandate = checkSwappedMandate(respMandate.getMandateID());
 		if (swappedMandate) {
-			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(), respMandate.getMandateType());
+			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(),
+					respMandate.getMandateType());
 
 		}
 	}
-	
+
 	private boolean checkSecondaryMandate(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -746,7 +747,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 		return false;
 	}
-	
+
 	private boolean checkSwappedMandate(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -760,7 +761,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			throw e;
 		}
 	}
-	
+
 	private void loanMandateSwapping(String finReference, long mandateId, String repayMethod) {
 		logger.debug(Literal.ENTERING);
 
@@ -784,7 +785,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		logger.debug("updateSql: " + source.toString());
 
 	}
-	
+
 	private void makeSecondaryMandateInActive(long mandateID) {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 

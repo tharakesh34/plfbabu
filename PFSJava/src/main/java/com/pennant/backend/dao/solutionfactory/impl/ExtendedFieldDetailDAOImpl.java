@@ -989,7 +989,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, ");
 		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, ");
 		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, Filters, ");
-		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, visible, ValFromScript, ");
+		selectSql.append(
+				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, visible, ValFromScript, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, Scriptlet");
 
@@ -999,8 +1000,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where ModuleId =:ModuleId and ExtendedType =:ExtendedType order by FieldSeqOrder ASC");
+		selectSql.append(" Where ModuleId =:ModuleId and ExtendedType =:ExtendedType order by FieldSeqOrder ASC");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldDetail);

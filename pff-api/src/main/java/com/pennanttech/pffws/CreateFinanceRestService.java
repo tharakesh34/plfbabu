@@ -36,8 +36,7 @@ public interface CreateFinanceRestService {
 
 	@GET
 	@Path("/finance/getFinanceWithCollateral/{collateralRef}")
-	FinanceInquiry getFinanceWithCollateral(@PathParam("collateralRef") String collateralRef)
-			throws ServiceException;
+	FinanceInquiry getFinanceWithCollateral(@PathParam("collateralRef") String collateralRef) throws ServiceException;
 
 	@POST
 	@Path("/finance/updateLoan")
@@ -50,12 +49,11 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/rejectLoan")
 	WSReturnStatus rejectFinance(FinanceDetail financeDetail) throws ServiceException;
-	
-	
+
 	@GET
 	@Path("/finance/getPendingFinanceWithCustomer/{cif}")
 	FinanceInquiry getPendingFinanceWithCustomer(@PathParam("cif") String custCif) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/cancelLoan")
 	WSReturnStatus cancelFinance(FinanceDetail financeDetail) throws ServiceException;

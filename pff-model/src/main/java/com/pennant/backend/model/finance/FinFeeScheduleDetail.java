@@ -54,9 +54,9 @@ import java.util.Set;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-public class FinFeeScheduleDetail implements Serializable{
+public class FinFeeScheduleDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String finReference;
 	private long feeID = Long.MIN_VALUE;
 	private Date schDate;

@@ -459,7 +459,7 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 		}
 	}
-	
+
 	public void updateCustomerDate(long custId, Date date, String newCustStatus) {
 		logger.debug(" Entering ");
 		Date nextDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
@@ -487,7 +487,7 @@ public class LoadFinanceData extends ServiceHelper {
 	// customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 	// getCustomerQueuingDAO().updateFailed(customerQueuing);
 	// }
-	
+
 	/*
 	 * Saving the LMS service log notifications , we will change this method once Service instructions saved in EOD.
 	 */

@@ -314,7 +314,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		insertSql.append(
 				" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
 		insertSql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
-		insertSql.append(" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode, :PartnerBankId)");
+		insertSql.append(
+				" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode, :PartnerBankId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -730,7 +731,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public Mandate getMandateStatusById(String finReference, long mandateID) {
 		logger.debug("Entering");

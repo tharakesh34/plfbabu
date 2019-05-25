@@ -176,10 +176,10 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		this.entity.setDescColumn("EntityDesc");
 		this.entity.addForward(ExtendedCombobox.ON_FUL_FILL, self, "onChangeEntity", null);
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
-		
+
 		this.code.setMaxlength(8);
 		this.name.setMaxlength(50);
-		
+
 		this.clusterType.setMandatoryStyle(true);
 		this.parent.setMandatoryStyle(true);
 
@@ -321,23 +321,22 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	public void doWriteBeanToComponents(Cluster aCluster) {
 		logger.debug(Literal.ENTERING);
 		this.entity.setValue(aCluster.getEntity());
-		
+
 		if (StringUtils.isNotEmpty(aCluster.getEntity())) {
 			Entity entity = new Entity();
 			entity.setEntityCode(aCluster.getEntity());
 			entity.setEntityDesc(aCluster.getEntityDesc());
 			this.entity.setObject(entity);
 			onChangeEntity();
-		}	
-			
-		
+		}
+
 		this.clusterType.setValue(aCluster.getClusterType());
 
 		if (aCluster.getClusterType() != null) {
 			ClusterHierarchy acClusterHierarchey = new ClusterHierarchy();
 			acClusterHierarchey.setClusterType(aCluster.getClusterType());
 			this.clusterType.setObject(acClusterHierarchey);
-			onChangeClusterType();			
+			onChangeClusterType();
 		}
 
 		this.code.setValue(aCluster.getCode());
@@ -353,9 +352,8 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 			aParent.setId(null);
 			this.parent.setValue(aCluster.getEntity());
 		}
-        this.parentType.setValue(aCluster.getParentType());		 
+		this.parentType.setValue(aCluster.getParentType());
 		this.recordStatus.setValue(aCluster.getRecordStatus());
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -363,7 +361,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	public void onChangeEntity(ForwardEvent event) {
 		onChangeEntity();
 	}
-	
+
 	private void onChangeEntity() {
 		Object selectedEntiy = entity.getObject();
 
@@ -374,9 +372,8 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		}
 	}
 
-	
 	private void doSetClusterTypeFilter(Entity entity) {
-		
+
 		this.clusterType.setModuleName("ClusterHierarchy");
 		this.clusterType.setValueColumn("ClusterType");
 		this.clusterType.setDescColumn("ClusterType");
@@ -398,7 +395,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	public void onChangeClusterType(ForwardEvent event) {
 		onChangeClusterType();
 	}
-	
+
 	private void onChangeClusterType() {
 		Object selectedclusterType = clusterType.getObject();
 
@@ -410,7 +407,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 	}
 
 	private void doSetParentFilter(ClusterHierarchy aclusterHierarchey) {
-	
+
 		this.parent.setModuleName("Cluster");
 		this.parent.setValueColumn("Code");
 		this.parent.setDescColumn("Name");
@@ -587,24 +584,24 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.entity.isReadonly()) {
-			this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_Entity.value"),
-					null, true, true));
+			this.entity.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ClusterDialog_Entity.value"), null, true, true));
 		}
 		if (!this.code.isReadonly()) {
 			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_Code.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, true));
 		}
 		if (!this.clusterType.isReadonly()) {
-			this.clusterType
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_ClusterType.value"),null, true, true));
+			this.clusterType.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ClusterDialog_ClusterType.value"), null, true, true));
 		}
 		if (!this.name.isReadonly()) {
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_Name.value"),
 					PennantRegularExpressions.REGEX_CUST_NAME, true));
 		}
 		if (!this.parent.isReadonly()) {
-			this.parent.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_Parent.value"),
-					null, true, true));
+			this.parent.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ClusterDialog_Parent.value"), null, true, true));
 		}
 		logger.debug(Literal.LEAVING);
 	}

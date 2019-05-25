@@ -70,10 +70,10 @@ public class AMZBatchMonitor {
 	private static final Logger logger = Logger.getLogger(AMZBatchMonitor.class);
 	private static AMZBatchMonitor instance = null;
 
-	private static ClassPathXmlApplicationContext jobMonitorContext;	
+	private static ClassPathXmlApplicationContext jobMonitorContext;
 	private static SimpleJobExplorer jobMonitorExplorer;
 
-	private static  DataSource  	dataSource;	
+	private static DataSource dataSource;
 	private static List<StepExecution> stepExecutions = new ArrayList<StepExecution>();
 
 	public static long avgTime = 0;
@@ -82,14 +82,13 @@ public class AMZBatchMonitor {
 	private static Date jobEndTime = null;
 	private static String processingTime = "00:00:00";
 
-
 	private static Calendar calendar = Calendar.getInstance();
 
 	private AMZBatchMonitor() {
 
-		jobMonitorContext 	= new ClassPathXmlApplicationContext("launch-context.xml");
+		jobMonitorContext = new ClassPathXmlApplicationContext("launch-context.xml");
 		jobMonitorExplorer = (SimpleJobExplorer) jobMonitorContext.getBean("jobExplorer");
-		dataSource 			= (DataSource)jobMonitorContext.getBean("dataSource");
+		dataSource = (DataSource) jobMonitorContext.getBean("dataSource");
 	}
 
 	public static AMZBatchMonitor getInstance() {
@@ -106,8 +105,8 @@ public class AMZBatchMonitor {
 
 	/**
 	 * 
-	 * This Method will return all the StepExecutions of latest jobInstance and
-	 * prepare the Time taken for (completed/failed/running) Job
+	 * This Method will return all the StepExecutions of latest jobInstance and prepare the Time taken for
+	 * (completed/failed/running) Job
 	 * 
 	 * @param JobInstance
 	 *            (jobInstance)
@@ -120,14 +119,14 @@ public class AMZBatchMonitor {
 
 		if (jobExecutions != null) {
 			stepExecutions.clear();
-			long timeTaken1 = 0, h = 0, m = 0, s =0, timeTaken2 = 0;
+			long timeTaken1 = 0, h = 0, m = 0, s = 0, timeTaken2 = 0;
 			Collections.reverse(jobExecutions);
 			for (JobExecution jobExecution : jobExecutions) {
 
 				jobStartTime = jobExecution.getStartTime();
 				jobEndTime = jobExecution.getEndTime();
 
-				if(jobExecution.isRunning()) {
+				if (jobExecution.isRunning()) {
 					jobEndTime = new Date(System.currentTimeMillis());
 				}
 
@@ -138,7 +137,7 @@ public class AMZBatchMonitor {
 
 				h = h + timeTaken1 / (60 * 60 * 1000) % 24;
 				m = m + timeTaken1 / (60 * 1000) % 60;
-				s = s + timeTaken1 / 1000 % 60;			
+				s = s + timeTaken1 / 1000 % 60;
 				stepExecutions.addAll(jobExecution.getStepExecutions());
 			}
 			builder = new StringBuilder();
@@ -148,7 +147,7 @@ public class AMZBatchMonitor {
 
 			processingTime = builder.toString();
 
-			if(timeTaken2 > 0) {
+			if (timeTaken2 > 0) {
 				calendar.setTimeInMillis(timeTaken2);
 			}
 		}
@@ -157,9 +156,8 @@ public class AMZBatchMonitor {
 	}
 
 	/**
-	 * This method returns latest JobExecutionId, If the jobExecutionId is
-	 * 0.</br> While START/RESTRT The Job make sure that JobExecutionId reset
-	 * to 0</br>
+	 * This method returns latest JobExecutionId, If the jobExecutionId is 0.</br>
+	 * While START/RESTRT The Job make sure that JobExecutionId reset to 0</br>
 	 * 
 	 * @return long(jobExecutionId)
 	 */
@@ -204,8 +202,7 @@ public class AMZBatchMonitor {
 	}
 
 	/**
-	 * This method returns average time of last 30 success full jobs, the job
-	 * which is not restarted.
+	 * This method returns average time of last 30 success full jobs, the job which is not restarted.
 	 * 
 	 * @return
 	 */
@@ -215,7 +212,7 @@ public class AMZBatchMonitor {
 		ResultSet resultSet = null;
 		PreparedStatement sqlStatement = null;
 
-		if(avgTime == 0) {
+		if (avgTime == 0) {
 
 			try {
 
@@ -269,7 +266,7 @@ public class AMZBatchMonitor {
 	public static String getEstimateTime() {
 		if (getAvgTime() > 0) {
 			return DateUtility.timeBetween(new Date(avgTime), calendar.getTime());
-		} 
+		}
 		return "00:00:00";
 	}
 }

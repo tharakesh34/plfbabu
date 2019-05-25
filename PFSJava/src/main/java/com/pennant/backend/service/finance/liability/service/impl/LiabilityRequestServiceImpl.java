@@ -198,17 +198,17 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		long serviceUID = Long.MIN_VALUE;		
+		long serviceUID = Long.MIN_VALUE;
 		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst= new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());		
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());
 			finServInst.setFinEvent(financeDetail.getModuleDefiner());
 
 			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
-			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
 				if (serviceUID == Long.MIN_VALUE) {
 					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
@@ -252,7 +252,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain,liabilityRequest.getFinEvent(),serviceUID);
+			details = processingDocumentDetailsList(details, tableType, financeMain, liabilityRequest.getFinEvent(),
+					serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -410,7 +411,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		// Save Document Details
 		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", financeMain,liabilityRequest.getFinEvent(),serviceUID);
+			details = processingDocumentDetailsList(details, "", financeMain, liabilityRequest.getFinEvent(),
+					serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(financeDetail, "_Temp");
 		}
@@ -519,7 +521,8 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 				}
 			}
 			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details,  "_Temp", financeMain,liabilityRequest.getFinEvent(),serviceUID);
+			details = processingDocumentDetailsList(details, "_Temp", financeMain, liabilityRequest.getFinEvent(),
+					serviceUID);
 			auditHeader.setAuditDetails(details);
 		}
 

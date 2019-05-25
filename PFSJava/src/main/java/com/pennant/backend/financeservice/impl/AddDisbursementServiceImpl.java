@@ -159,7 +159,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		Date fromDate = finServiceInstruction.getFromDate();
 		BigDecimal actualDisbAmount = finServiceInstruction.getAmount();
 		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		
+
 		if (!finScheduleData.getFinanceType().isFinIsAlwMD()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = financeMain.getFinReference();
@@ -213,17 +213,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				availableLimit = financeMain.getFinAssetValue();
 			}
 
-
 			// Schedule Outstanding amount calculation
 			List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
 			BigDecimal closingbal = BigDecimal.ZERO;
-			BigDecimal remainingBal= BigDecimal.ZERO;
+			BigDecimal remainingBal = BigDecimal.ZERO;
 			for (int i = 0; i < schList.size(); i++) {
 				if (DateUtility.compare(schList.get(i).getSchDate(), fromDate) > 0) {
 					break;
 				}
 				closingbal = schList.get(i).getClosingBalance();
-				
+
 			}
 
 			// Actual Available Limit
@@ -232,25 +231,26 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			// Validating against Available Limit amount
 			if (actualDisbAmount.compareTo(availableLimit) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = PennantApplicationUtil.amountFormate(actualDisbAmount,ccyFormat);
-				valueParm[1] = PennantApplicationUtil.amountFormate(availableLimit,ccyFormat);
+				valueParm[0] = PennantApplicationUtil.amountFormate(actualDisbAmount, ccyFormat);
+				valueParm[1] = PennantApplicationUtil.amountFormate(availableLimit, ccyFormat);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91119", valueParm)));
 			} else {
 				// Checking Total Disbursed amount validate against New disbursement
 				BigDecimal totDisbAmount = BigDecimal.ZERO;
-				/*for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
-					totDisbAmount = totDisbAmount.add(finDisbursment.getDisbAmount());
-				}*/
+				/*
+				 * for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) { totDisbAmount =
+				 * totDisbAmount.add(finDisbursment.getDisbAmount()); }
+				 */
 				for (int i = 0; i < schList.size(); i++) {
 					FinanceScheduleDetail curSchd = schList.get(i);
 					totDisbAmount = totDisbAmount.add(curSchd.getDisbAmount().subtract(curSchd.getSchdPriPaid()));
 				}
-				
+
 				totDisbAmount = actualDisbAmount.add(totDisbAmount);
 				if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmount,ccyFormat);
-					valueParm[1] = PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(),ccyFormat);
+					valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmount, ccyFormat);
+					valueParm[1] = PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(), ccyFormat);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91120", valueParm)));
 				}
 			}
@@ -258,7 +258,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		// validate RecalType
 		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			if ( !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
 					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
@@ -276,7 +276,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			valueParm[1] = "Over Draft Loan";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 		}
-		
+
 		// validate reCalFromDate
 		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
 				|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
@@ -483,8 +483,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				auditDetail.setErrorDetail(errorDetails);
 			}
 		}
-
-
 
 		logger.debug("Leaving");
 		return auditDetail;

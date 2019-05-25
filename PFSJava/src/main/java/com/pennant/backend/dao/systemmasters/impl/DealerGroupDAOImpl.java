@@ -26,6 +26,7 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 	public DealerGroupDAOImpl() {
 		super();
 	}
+
 	@Override
 	public String save(DealerGroup dealerGroup, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -67,7 +68,8 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update CD_DealerGroup");
 		sql.append(tableType.getSuffix());
-		sql.append("  set dealerCode = :dealerCode, channel = :channel, active = :active, dealerCategoryId=:dealerCategoryId, ");
+		sql.append(
+				"  set dealerCode = :dealerCode, channel = :channel, active = :active, dealerCategoryId=:dealerCategoryId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -119,8 +121,6 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 
 	}
 
-	
-
 	@Override
 	public boolean isDuplicateKey(long id, String dealercode, TableType tableType) {
 		logger.debug(Literal.ENTERING);
@@ -166,9 +166,9 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" dealerGroupId, dealercode, channel, dealercategoryid, active,");
-		/*if (type.contains("View")) {
-			sql.append("channelName,");
-		}*/
+		/*
+		 * if (type.contains("View")) { sql.append("channelName,"); }
+		 */
 
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -200,6 +200,7 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		logger.debug(Literal.LEAVING);
 		return dealerGroup;
 	}
+
 	@Override
 	public boolean isIdExists(long id) {
 		logger.debug("Entering");

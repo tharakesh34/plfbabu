@@ -120,8 +120,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.staticlist.AppStaticList;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/LMTMasters/FinCovenantTypeDetail/finCovenantTypesDetailDialog.zul
+ * This is the controller class for the /WEB-INF/pages/LMTMasters/FinCovenantTypeDetail/finCovenantTypesDetailDialog.zul
  * file.
  */
 public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
@@ -129,9 +128,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	private static final Logger logger = Logger.getLogger(CovenantsDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * compoonent with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding compoonent with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window covenantDialogWindow;
 	protected Combobox category;
@@ -214,9 +212,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected FinCovenantTypeDetail
-	 * object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected FinCovenantTypeDetail object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -363,8 +360,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinCovenantTypeDetail
 	 * @throws InterruptedException
@@ -540,8 +536,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug(Literal.ENTERING);

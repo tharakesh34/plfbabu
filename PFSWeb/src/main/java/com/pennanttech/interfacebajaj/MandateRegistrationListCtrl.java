@@ -180,7 +180,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	private transient boolean validationOn;
 	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
-	
+
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
 
@@ -830,7 +830,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 				getMandateProcess().sendReqest(mandateIdList, this.fromDate, this.toDate,
 						getUserWorkspace().getLoggedInUser().getUserId(),
 						getUserWorkspace().getLoggedInUser().getUserName(), this.branchDetails, this.entity);
-			
+
 			} catch (Exception e) {
 				logger.error("Exception", e);
 			}
@@ -883,11 +883,11 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
 	}
-	
+
 	@Autowired(required = false)
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;

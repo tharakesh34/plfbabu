@@ -1743,10 +1743,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("FinReceiptHeader",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
 						realizationWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
-		
+
 		ModuleUtil.register("FinReceiptDetail",
-				new ModuleMapping("FinReceiptDetail", FinReceiptDetail.class, new String[] { "FinReceiptDetail","RECEIPTDETAILS_TVIEW" },
-						ReceiptProcessWF, new String[] { "ReceiptID", "ReceiptSeqID", "ReceiptPurpose" }, null, 300));
+				new ModuleMapping("FinReceiptDetail", FinReceiptDetail.class,
+						new String[] { "FinReceiptDetail", "RECEIPTDETAILS_TVIEW" }, ReceiptProcessWF,
+						new String[] { "ReceiptID", "ReceiptSeqID", "ReceiptPurpose" }, null, 300));
 
 		ModuleUtil.register("ReceiptRealization",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
@@ -1763,7 +1764,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("ReceiptCancellation",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
 						receiptCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
-		
+
 		ModuleUtil.register("ReceiptKnockOffCancel",
 				new ModuleMapping("FinReceiptHeader", FinReceiptHeader.class, new String[] { "FinReceiptHeader" },
 						receiptKnockOffCancelWF, new String[] { "ReceiptID", "ReceiptPurpose" }, null, 300));
@@ -3150,16 +3151,14 @@ public class PennantJavaUtil {
 						new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AmountType", "0", "A" } }, 750));
-		
+
 		ModuleUtil.register("CASHCLT",
-				new ModuleMapping("CASHCLT", FinExcessAmount.class,
-						new String[] { "FinExcessAmount_LovView" }, null,
+				new ModuleMapping("CASHCLT", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_CASHCLT } }, 750));
-		
+
 		ModuleUtil.register("DSF",
-				new ModuleMapping("DSF", FinExcessAmount.class,
-						new String[] { "FinExcessAmount_LovView" }, null,
+				new ModuleMapping("DSF", FinExcessAmount.class, new String[] { "FinExcessAmount_LovView" }, null,
 						new String[] { "ExcessID", "Amount", "UtilisedAmt", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AmountType", "0", RepayConstants.RECEIPTMODE_DSF } }, 750));
 
@@ -3167,7 +3166,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
 						new String[] { "AdviseID", "FeeTypeID", "AdviseAmount", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AdviseType", "0", "2" } }, 750));
-		
+
 		ModuleUtil.register("ReceiptFinanceMain",
 				new ModuleMapping("ReceiptFinanceMain", FinanceMain.class,
 						new String[] { "FINANCEMAIN_DATAVIEW", "FINANCEMAIN_DATAVIEW" }, null,
@@ -3181,7 +3180,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("Commodity",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
 						masterWF, new String[] { "Id", "CommodityTypeCode", "Code" }, null, 600));
-		
+
 		ModuleUtil.register("DealerGroup",
 				new ModuleMapping("DealerGroup", DealerGroup.class,
 						new String[] { "CD_DealerGroup", "CD_DealerGroup_AVIEW" }, masterWF,
@@ -3196,11 +3195,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("DealerMapping", DealerMapping.class,
 						new String[] { "CD_DealerMapping", "CD_DealerMapping_AVIEW" }, masterWF,
 						new String[] { "DealerMapId", "MerchantId", "StoreId" }, null, 600));
-		
+
 		ModuleUtil.register("PersonalDiscussion", new ModuleMapping("PersonalDiscussion", PersonalDiscussion.class,
 				new String[] { "verification_pd", "verification_pd_AView" }, WF_VERIFICATION_FI, null, null, 600));
 
-		
 		ModuleUtil.register("Manufacturer",
 				new ModuleMapping("Manufacturer", Manufacturer.class,
 						new String[] { "CD_MANUFACTURERS", "CD_MANUFACTURERS_AView" }, masterWF,
@@ -3235,7 +3233,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("Category", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "Dealer_Category" } }, 400));
-		
+
 		ModuleUtil.register("ProductCategory",
 				new ModuleMapping("ProductCategory", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
@@ -3253,7 +3251,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("SchemeProductGroup", SchemeProductGroup.class,
 						new String[] { "CD_SCHEME_PRODUCTGROUP", "CD_SCHEME_PRODUCTGROUP_AView" }, masterWF,
 						new String[] { "PromotionId", "SchemeId", "DealerGroupCode" }, null, 600));
-		
+
 		ModuleUtil.register("POSId",
 				new ModuleMapping("MerchantDetails", MerchantDetails.class,
 						new String[] { "CD_MERCHANTS", "CD_MERCHANTS_AView" }, masterWF,

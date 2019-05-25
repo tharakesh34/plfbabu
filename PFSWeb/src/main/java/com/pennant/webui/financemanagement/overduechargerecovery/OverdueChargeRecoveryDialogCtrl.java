@@ -179,7 +179,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	Date dateValueDate = DateUtility.getAppValueDate();
 	private boolean isInquiry = false;
 	private transient BigDecimal paidAmount = new BigDecimal(0);
-	
+
 	@Autowired
 	private FinanceMainDAO financeMainDAO;
 

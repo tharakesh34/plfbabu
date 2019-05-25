@@ -715,20 +715,22 @@ public class AuthorizationLimitDialogCtrl extends GFCBaseCtrl<AuthorizationLimit
 					Labels.getLabel("label_AuthorizationLimitDialog_LimitAmount.value"), 0, true, false, 0));
 		}
 
-		if (!this.expiryDate.isReadonly()){
-			
-			Date date= DateUtil.getDatePart(DateUtility.getAppDate());
-			if(startDate.getValue()==null || startDate.getValue().before(date)){
-				date=DateUtil.getDatePart(DateUtility.getAppDate());
-			}else{
-				date=startDate.getValue();
+		if (!this.expiryDate.isReadonly()) {
+
+			Date date = DateUtil.getDatePart(DateUtility.getAppDate());
+			if (startDate.getValue() == null || startDate.getValue().before(date)) {
+				date = DateUtil.getDatePart(DateUtility.getAppDate());
+			} else {
+				date = startDate.getValue();
 			}
 			this.expiryDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_AuthorizationLimitDialog_ExpiryDate.value"), true, date, null, false));
 		}
 
-		if (!this.startDate.isReadonly()){
-			this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"),true,DateUtil.getDatePart(DateUtility.getAppDate()),null,true));
+		if (!this.startDate.isReadonly()) {
+			this.startDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_AuthorizationLimitDialog_StartDate.value"), true,
+							DateUtil.getDatePart(DateUtility.getAppDate()), null, true));
 		}
 
 		if (holdRow.isVisible()) {

@@ -67,8 +67,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 			// Schedule Recalculation Locking Period Applicability
 			if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0
-						&& (i != sdSize - 1) && i != 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);

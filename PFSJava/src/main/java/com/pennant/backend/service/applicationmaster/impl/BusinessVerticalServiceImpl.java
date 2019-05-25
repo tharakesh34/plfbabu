@@ -59,85 +59,84 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-
 /**
  * Service implementation for methods that depends on <b>BusinessVertical</b>.<br>
  */
 public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical> implements BusinessVerticalService {
-	private static final  Logger logger = Logger.getLogger(BusinessVerticalServiceImpl.class);
-	
+	private static final Logger logger = Logger.getLogger(BusinessVerticalServiceImpl.class);
+
 	private AuditHeaderDAO auditHeaderDAO;
 	private BusinessVerticalDAO businessVerticalDAO;
-
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
-	
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
-	
+
 	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
+
 	/**
 	 * @return the businessVerticalDAO
 	 */
 	public BusinessVerticalDAO getBusinessVerticalDAO() {
 		return businessVerticalDAO;
 	}
+
 	/**
-	 * @param businessVerticalDAO the businessVerticalDAO to set
+	 * @param businessVerticalDAO
+	 *            the businessVerticalDAO to set
 	 */
 	public void setBusinessVerticalDAO(BusinessVerticalDAO businessVerticalDAO) {
 		this.businessVerticalDAO = businessVerticalDAO;
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * business_vertical/business_vertical_Temp by using business_verticalDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using business_verticalDAO's update method 3) Audit the record
-	 * in to AuditHeader and Adtbusiness_vertical by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * business_vertical/business_vertical_Temp by using business_verticalDAO's save method b) Update the Record in the
+	 * table. based on the module workFlow Configuration. by using business_verticalDAO's update method 3) Audit the
+	 * record in to AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);	
-		
-		auditHeader = businessValidation(auditHeader,"saveOrUpdate");
-		
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		BusinessVertical businessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (businessVertical.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
 		if (businessVertical.isNew()) {
-			businessVertical.setId(Long.parseLong(getBusinessVerticalDAO().save(businessVertical,tableType)));
+			businessVertical.setId(Long.parseLong(getBusinessVerticalDAO().save(businessVertical, tableType)));
 			auditHeader.getAuditDetail().setModelData(businessVertical);
 			auditHeader.setAuditReference(String.valueOf(businessVertical.getId()));
-		}else{
-			getBusinessVerticalDAO().update(businessVertical,tableType);
+		} else {
+			getBusinessVerticalDAO().update(businessVertical, tableType);
 		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -147,12 +146,10 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table business_vertical by using business_verticalDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and Adtbusiness_vertical by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * business_vertical by using business_verticalDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -161,25 +158,24 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		auditHeader = businessValidation(auditHeader,"delete");
+
+		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		
+
 		BusinessVertical businessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
-		getBusinessVerticalDAO().delete(businessVertical,TableType.MAIN_TAB);
-		
+		getBusinessVerticalDAO().delete(businessVertical, TableType.MAIN_TAB);
+
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
-	 * getbusiness_vertical fetch the details by using business_verticalDAO's getbusiness_verticalById
-	 * method.
+	 * getbusiness_vertical fetch the details by using business_verticalDAO's getbusiness_verticalById method.
 	 * 
 	 * @param id
 	 *            id of the BusinessVertical.
@@ -187,37 +183,31 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	 */
 	@Override
 	public BusinessVertical getBusinessVertical(long id) {
-		return getBusinessVerticalDAO().getBusinessVertical(id,"_View");
+		return getBusinessVerticalDAO().getBusinessVertical(id, "_View");
 	}
 
 	/**
-	 * getApprovedbusiness_verticalById fetch the details by using business_verticalDAO's
-	 * getbusiness_verticalById method . with parameter id and type as blank. it fetches
-	 * the approved records from the business_vertical.
+	 * getApprovedbusiness_verticalById fetch the details by using business_verticalDAO's getbusiness_verticalById
+	 * method . with parameter id and type as blank. it fetches the approved records from the business_vertical.
 	 * 
 	 * @param id
-	 *            id of the BusinessVertical.
-	 *            (String)
+	 *            id of the BusinessVertical. (String)
 	 * @return business_vertical
 	 */
 	public BusinessVertical getApprovedBusinessVertical(long id) {
-		return getBusinessVerticalDAO().getBusinessVertical(id,"_AView");
-	}	
-		
+		return getBusinessVerticalDAO().getBusinessVertical(id, "_AView");
+	}
+
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getBusinessVerticalDAO().delete with parameters businessVertical,"" b) NEW Add new
-	 * record in to main table by using getBusinessVerticalDAO().save with parameters
-	 * businessVertical,"" c) EDIT Update record in the main table by using
-	 * getBusinessVerticalDAO().update with parameters businessVertical,"" 3) Delete the record
-	 * from the workFlow table by using getBusinessVerticalDAO().delete with parameters
-	 * businessVertical,"_Temp" 4) Audit the record in to AuditHeader and
-	 * Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and Adtbusiness_vertical by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getBusinessVerticalDAO().delete with
+	 * parameters businessVertical,"" b) NEW Add new record in to main table by using getBusinessVerticalDAO().save with
+	 * parameters businessVertical,"" c) EDIT Update record in the main table by using getBusinessVerticalDAO().update
+	 * with parameters businessVertical,"" 3) Delete the record from the workFlow table by using
+	 * getBusinessVerticalDAO().delete with parameters businessVertical,"_Temp" 4) Audit the record in to AuditHeader
+	 * and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -226,10 +216,10 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
-		
-		String tranType="";
-		auditHeader = businessValidation(auditHeader,"doApprove");
-		
+
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
+
 		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
@@ -240,9 +230,9 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 
 		getBusinessVerticalDAO().delete(businessVertical, TableType.TEMP_TAB);
 
-		
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(businessVertical.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(businessVerticalDAO.getBusinessVertical(businessVertical.getId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(businessVerticalDAO.getBusinessVertical(businessVertical.getId(), ""));
 		}
 
 		if (businessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -255,8 +245,7 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 			businessVertical.setNextTaskId("");
 			businessVertical.setWorkflowId(0);
 
-			if (businessVertical.getRecordType().equals(
-					PennantConstants.RECORD_TYPE_NEW)) {
+			if (businessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				businessVertical.setRecordType("");
 				getBusinessVerticalDAO().save(businessVertical, TableType.MAIN_TAB);
@@ -274,99 +263,93 @@ public class BusinessVerticalServiceImpl extends GenericService<BusinessVertical
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(businessVertical);
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
+
 		logger.info(Literal.LEAVING);
 		return auditHeader;
-		
-		}
 
-		/**
-		 * doReject method do the following steps. 1) Do the Business validation by
-		 * using businessValidation(auditHeader) method if there is any error or
-		 * warning message then return the auditHeader. 2) Delete the record from
-		 * the workFlow table by using getBusinessVerticalDAO().delete with parameters
-		 * businessVertical,"_Temp" 3) Audit the record in to AuditHeader and
-		 * Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work
-		 * flow
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		@Override
-		public AuditHeader  doReject(AuditHeader auditHeader) {
-			logger.info(Literal.ENTERING);
-			
-			auditHeader = businessValidation(auditHeader,"doApprove");
-			if (!auditHeader.isNextProcess()) {
-				logger.info(Literal.LEAVING);
-				return auditHeader;
-			}
+	}
 
-			BusinessVertical businessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
-			
-			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-			getBusinessVerticalDAO().delete(businessVertical,TableType.TEMP_TAB);
-			
-			getAuditHeaderDAO().addAudit(auditHeader);
-			
+	/**
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getBusinessVerticalDAO().delete with parameters businessVertical,"_Temp" 3) Audit the
+	 * record in to AuditHeader and Adtbusiness_vertical by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	@Override
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.info(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		/**
-		 * businessValidation method do the following steps. 1) get the details from
-		 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-		 * Record based on the record details. 4) Validate for any business
-		 * validation.
-		 * 
-		 * @param AuditHeader
-		 *            (auditHeader)
-		 * @return auditHeader
-		 */
-		private AuditHeader businessValidation(AuditHeader auditHeader, String method){
-			logger.debug(Literal.ENTERING);
-			
-			AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
-			auditHeader.setAuditDetail(auditDetail);
-			auditHeader.setErrorList(auditDetail.getErrorDetails());
-			auditHeader=nextProcess(auditHeader);
+		BusinessVertical businessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
 
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getBusinessVerticalDAO().delete(businessVertical, TableType.TEMP_TAB);
+
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.info(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getBusinessVerticalDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @return
+	 */
+
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
+		BusinessVertical businessVertical = (BusinessVertical) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (businessVertical.isNew() && businessVerticalDAO.isDuplicateKey(businessVertical.getId(),
+				businessVertical.getCode(), businessVertical.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[2];
+
+			parameters[0] = PennantJavaUtil.getLabel("label_code") + ": " + businessVertical.getCode();
+
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
-		/**
-		 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-		 * from getBusinessVerticalDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-		 * the to auditDeail Object
-		 * 
-		 * @param auditDetail
-		 * @param usrLanguage
-		 * @return
-		 */
-		
-		private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
-			logger.debug(Literal.ENTERING);
-			
-			// Get the model object.
-			BusinessVertical businessVertical = (BusinessVertical) auditDetail.getModelData();
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-			// Check the unique keys.
-			if (businessVertical.isNew() && businessVerticalDAO.isDuplicateKey(businessVertical.getId(),businessVertical.getCode(),
-					businessVertical.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[2];
-				
-				
-				parameters[0] = PennantJavaUtil.getLabel("label_code") + ": " + businessVertical.getCode();
-
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
-			}
-
-			auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-			
-			logger.debug(Literal.LEAVING);
-			return auditDetail;
-		}
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
 
 }

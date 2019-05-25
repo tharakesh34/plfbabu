@@ -429,7 +429,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 			findUser = true;
 		} catch (InterfaceException e) {
-			if(externalUserSearch!=null){
+			if (externalUserSearch != null) {
 				usrEmail.setValue("");
 				usrMobile.setValue("");
 				usrFName.setValue("");
@@ -1219,7 +1219,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	 */
 	private void doEdit() {
 		logger.debug(Literal.ENTERING);
-
 
 		if (getSecurityUser().isNewRecord()) {
 			this.rowSecurityUserDialogUsrConfirmPwd.setVisible(true);
@@ -2627,10 +2626,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		List<ClusterHierarchy> hierarchyList = clusterService.getClusterHierarcheyList(entity);
 		String lowermostchild = null;
 
-		if (hierarchyList.size() == 1 ) {
+		if (hierarchyList.size() == 1) {
 			lowermostchild = hierarchyList.get(0).getClusterType();
-		}
-		else if(hierarchyList.size() > 1){
+		} else if (hierarchyList.size() > 1) {
 			lowermostchild = hierarchyList.get(0).getClusterType();
 		}
 
@@ -2949,8 +2947,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		entities.setDescColumn("EntityDesc");
 		entities.setValidateColumns(new String[] { "EntityCode" });
 		//entities.setWhereClause(" entitycode in (select entity from rmtBranches)");
-		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s"
-				+ " where divisioncode ="
+		entities.setWhereClause(" entitycode in (select s.entitycode from smtdivisiondetail s" + " where divisioncode ="
 				+ "'" + division.getUserDivision() + "'" + ") ");
 		logger.debug(Literal.LEAVING);
 	}

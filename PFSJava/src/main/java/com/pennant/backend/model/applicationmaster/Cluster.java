@@ -62,7 +62,7 @@ public class Cluster extends AbstractWorkflowEntity {
 	private String code;
 	private String clusterType;
 	private String name;
-	private Long parent=Long.MIN_VALUE;
+	private Long parent = Long.MIN_VALUE;
 	private String parentCode;
 	private String parentName;
 	private String parentType;
@@ -91,7 +91,6 @@ public class Cluster extends AbstractWorkflowEntity {
 	public boolean isNew() {
 		return isNewRecord();
 	}
-
 
 	public Long getId() {
 		return id;

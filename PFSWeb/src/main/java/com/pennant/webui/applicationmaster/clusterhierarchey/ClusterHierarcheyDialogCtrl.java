@@ -180,7 +180,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.entity.setMandatoryStyle(true);
 		this.entity.setModuleName("Entity");
 		this.entity.setValueColumn("EntityCode");
@@ -215,7 +215,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		ClusterHierarchy aclusterHierarchey = new ClusterHierarchy();
 		aclusterHierarchey.setVersion(1);
 		aclusterHierarchey.setNewRecord(true);
-		
+
 		appendClusterHierarchy(aclusterHierarchey);
 
 		logger.debug(Literal.LEAVING);
@@ -228,7 +228,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		Listcell listcell;
 		Uppercasebox textBox = new Uppercasebox();
 		textBox.setValue(clusterHierarchy.getClusterType());
-		
+
 		if (clusterHierarchy.isNewRecord()) {
 			textBox.setReadonly(false);
 		} else {
@@ -245,7 +245,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		listcell.setParent(item);
 
 		item.setAttribute("data", clusterHierarchy);
-		
+
 		if (clusterHierarchy.isNewRecord()) {
 			textBox.setReadonly(false);
 			seqOrder.setReadonly(false);
@@ -253,7 +253,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 			textBox.setReadonly(true);
 			seqOrder.setReadonly(true);
 		}
-		
+
 		listBoxClusterType.appendChild(item);
 
 		if (clusterHierarchy.getNextRoleCode().equals("CLUSTER_HIERARCHY_APPROVER")
@@ -423,18 +423,18 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		logger.debug(Literal.ENTERING);
 
 		doSetValidation();
-		
+
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
 			aClusterHierarchey.setEntity(this.entity.getValue());
-			
-			if(StringUtils.isEmpty(this.entity.getValue())) {
+
+			if (StringUtils.isEmpty(this.entity.getValue())) {
 				throw new WrongValueException(this.entity, "Entity is Mandatory.");
 			}
-			
+
 			doPrepareList(aClusterHierarchey);
-	
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -524,15 +524,15 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.entity.isReadonly()) {
-			this.entity.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterHierarcheyDialog_Entity.value"), null, true, true));
+			this.entity.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ClusterHierarcheyDialog_Entity.value"), null, true, true));
 		}
-		
-		
+
 		for (Component component : listBoxClusterType.getChildren()) {
 			if (component instanceof Listhead) {
 				continue;
 			}
-			
+
 			Listitem listitem = (Listitem) component;
 			Uppercasebox textBox = (Uppercasebox) listitem.getFirstChild().getFirstChild();
 			textBox.setConstraint(new PTStringValidator(
@@ -548,17 +548,17 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
 		this.entity.setConstraint("");
-		
+
 		for (Component component : listBoxClusterType.getChildren()) {
 			if (component instanceof Listhead) {
 				continue;
 			}
-			
+
 			Listitem listitem = (Listitem) component;
 			Uppercasebox textBox = (Uppercasebox) listitem.getFirstChild().getFirstChild();
 			textBox.setConstraint("");
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -672,7 +672,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		logger.debug(Literal.LEAVING);
 
 		readOnlyComponent(true, this.entity);
-		
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -703,9 +703,9 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		ClusterHierarchy aClusterHierarchey = new ClusterHierarchy();
 		BeanUtils.copyProperties(clusters, aClusterHierarchey);
 		boolean isNew = false;
-		
+
 		doWriteComponentsToBean(aClusterHierarchey);
-		
+
 		if (aClusterHierarchey.getClusterTypes().isEmpty()) {
 			MessageUtil.showError("Should have atleast one cluster type.");
 			return;
@@ -945,7 +945,5 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 	public void setClusterHierarchyService(ClusterHierarchyService clusterHierarchyService) {
 		this.clusterHierarchyService = clusterHierarchyService;
 	}
-
-
 
 }

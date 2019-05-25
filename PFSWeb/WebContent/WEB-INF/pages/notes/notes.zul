@@ -17,12 +17,15 @@
 		padding:5px;
 		margin:1em 0 3em;
 		color:#000000;
-		background:#FFDB4D; /* default background for browsers without gradient support */
+		background:#FFDB4D; /*
+		default background for browsers without gradient support */
 
 		/* css3 */
-		background:-webkit-gradient(linear, 0 0, 0 100%, from(#f9d835), to(#FFDB4D));
+		background:-webkit-gradient(linear, 0 0, 0 100%,
+		from(#f9d835), to(#FFDB4D));
 		background:-moz-linear-gradient(#f9d835, #FFDB4D);
-		background:-o-linear-gradient(#f9d835, #FFDB4D);
+		background:-o-linear-gradient(#f9d835,
+		#FFDB4D);
 		background:linear-gradient(#f9d835, #FFDB4D);
 		-webkit-border-radius:5px;
 		-moz-border-radius:5px;
@@ -49,9 +52,11 @@
 		.triangle-right:after {
 		content:"";
 		position:absolute;
-		bottom:20px; /* value = - border-top-width - border-bottom-width */
+		bottom:20px; /* value = - border-top-width - border-bottom-width
+		*/
 		left:20px; /* controls horizontal position */
-		border-width:2px 0 0 2px; /* vary these values to change the angle of the vertex */
+		border-width:2px 0 0 2px; /* vary these values to change the angle of
+		the vertex */
 		border-style:solid;
 		border-color:#FFDB4D transparent;
 		/* reduce the damage in FF3.0 */
@@ -70,10 +75,12 @@
 
 		.triangle-right.right:after {
 		top:5px;
-		right:-13px; /* value = - border-left-width - border-right-width */
+		right:-13px; /* value = - border-left-width -
+		border-right-width */
 		bottom:auto;
 		left:auto;
-		border-width:7px 0 0 15px; /* vary these values to change the angle of the vertex */
+		border-width:7px 0 0 15px; /* vary these values to change the angle of the
+		vertex */
 		border-color:transparent #FFDB4D ;
 		}
 

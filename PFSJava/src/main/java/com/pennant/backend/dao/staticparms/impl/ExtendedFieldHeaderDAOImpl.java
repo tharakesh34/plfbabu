@@ -126,7 +126,6 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			String type) {
 		logger.debug(Literal.ENTERING);
 
-
 		StringBuilder sql = new StringBuilder("Select ModuleId, ModuleName,");
 		sql.append(" SubModuleName,Event, TabHeading, NumberOfColumns, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
@@ -135,17 +134,16 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		sql.append(" From ExtendedFieldHeader");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where ModuleName = :ModuleName AND SubModuleName = :SubModuleName ");
-		
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ModuleName", moduleName.toUpperCase());
 		source.addValue("SubModuleName", subModuleName.toUpperCase());
-		
+
 		if (StringUtils.trimToNull(event) != null) {
 			source.addValue("Event", event);
 			sql.append("AND Event = :Event ");
 		}
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ExtendedFieldHeader.class);

@@ -87,18 +87,18 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 
 	protected Textbox docTypeCode;
 	protected Textbox docTypeDesc;
-	/*protected Checkbox docIsMandatory;*/
+	/* protected Checkbox docIsMandatory; */
 	protected Checkbox docTypeIsActive;
 
 	protected Listbox sortOperator_docTypeDesc;
 	protected Listbox sortOperator_docTypeCode;
-	/*protected Listbox sortOperator_docIsMandatory;*/
+	/* protected Listbox sortOperator_docIsMandatory; */
 	protected Listbox sortOperator_docTypeIsActive;
 
 	// List headers
 	protected Listheader listheader_DocTypeCode;
 	protected Listheader listheader_DocTypeDesc;
-	/*protected Listheader listheader_DocIsMandatory;*/
+	/* protected Listheader listheader_DocIsMandatory; */
 	protected Listheader listheader_DocTypeIsActive;
 
 	// checkRights
@@ -106,10 +106,10 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 	protected Button button_DocumentTypeList_DocumentTypeSearchDialog;
 
 	private transient DocumentTypeService documentTypeService;
-	
+
 	protected Listbox sortOperator_documentCategory;
-    protected Listheader listheader_DocumentCategory;
-	
+	protected Listheader listheader_DocumentCategory;
+
 	protected Uppercasebox docTypeCategory;
 	protected Button btndocTypeCategory;
 
@@ -148,12 +148,14 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 				Operators.STRING);
 		registerField("docTypeDesc", listheader_DocTypeDesc, SortOrder.NONE, docTypeDesc, sortOperator_docTypeDesc,
 				Operators.STRING);
-		registerField("categoryCode", listheader_DocumentCategory, SortOrder.NONE, docTypeCategory, sortOperator_documentCategory,
-				Operators.STRING);
+		registerField("categoryCode", listheader_DocumentCategory, SortOrder.NONE, docTypeCategory,
+				sortOperator_documentCategory, Operators.STRING);
 		registerField("docTypeIsActive", listheader_DocTypeIsActive, SortOrder.NONE, docTypeIsActive,
 				sortOperator_docTypeIsActive, Operators.BOOLEAN);
-		/*registerField("docIsMandatory", listheader_DocIsMandatory, SortOrder.NONE, docIsMandatory,
-				sortOperator_docIsMandatory, Operators.BOOLEAN);*/
+		/*
+		 * registerField("docIsMandatory", listheader_DocIsMandatory, SortOrder.NONE, docIsMandatory,
+		 * sortOperator_docIsMandatory, Operators.BOOLEAN);
+		 */
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -180,6 +182,7 @@ public class DocumentTypeListCtrl extends GFCBaseListCtrl<DocumentType> {
 		doReset();
 		search();
 	}
+
 	/**
 	 * when clicks on button "SearchFinType"
 	 * 

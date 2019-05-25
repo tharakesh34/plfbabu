@@ -99,9 +99,8 @@ public class SummaryDetailService {
 			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
 			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
 			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
-			
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-					financeMain.getProductCategory())) {
+
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 				summary.setSanctionAmt(financeMain.getFinAssetValue());
 				summary.setUtilizedAmt(finPftDetail.getTotalPriBal());
 				summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));

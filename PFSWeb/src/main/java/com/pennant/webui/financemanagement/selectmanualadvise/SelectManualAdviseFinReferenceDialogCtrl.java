@@ -91,6 +91,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	private HoldDisbursementListCtrl holdDisbursementListCtrl;
 	private String moduleDefiner = "";
 	private HoldDisbursementService holdDisbursementService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -168,9 +169,9 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (moduleDefiner.equals("holdDisbursement")) {
 			Filter[] filtersFin = new Filter[2];
 			filtersFin[0] = new Filter("finisactive", true, Filter.OP_EQUAL);
-			if(App.DATABASE == Database.POSTGRES){
+			if (App.DATABASE == Database.POSTGRES) {
 				filtersFin[1] = new Filter("CLOSINGSTATUS", "", Filter.OP_NULL);
-			}else{
+			} else {
 				filtersFin[1] = new Filter("CLOSINGSTATUS", null, Filter.OP_EQUAL);
 
 			}
@@ -202,8 +203,8 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				//holdDisbursement.setDisbursedAmount(financeMain.getFinCurrAssetValue());
 				//holdDisbursement.setTotalLoanAmt(financeMain.getFinAssetValue());
 				holdDisbursement.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
-				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul",
-						null, arg);
+				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul", null,
+						arg);
 				this.window_SelectFinanceReferenceDialog.onClose();
 			} catch (Exception e) {
 				logger.error("Exception:", e);
@@ -323,6 +324,5 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 	public void setHoldDisbursementService(HoldDisbursementService holdDisbursementService) {
 		this.holdDisbursementService = holdDisbursementService;
 	}
-
 
 }

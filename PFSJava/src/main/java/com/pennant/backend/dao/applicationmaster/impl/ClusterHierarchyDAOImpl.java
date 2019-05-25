@@ -97,8 +97,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		clusterHierarchey.setEntity(entity);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(clusterHierarchey);
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			clusterHierarchey = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -126,8 +125,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("entity", entity);
 
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
@@ -161,8 +159,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 		ClusterHierarchy cHierarchey = new ClusterHierarchy();
 		cHierarchey.setEntity(entity);
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(cHierarchey);
-		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(ClusterHierarchy.class);
+		RowMapper<ClusterHierarchy> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ClusterHierarchy.class);
 
 		try {
 			return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
@@ -292,7 +289,7 @@ public class ClusterHierarchyDAOImpl extends BasicDao<ClusterHierarchy> implemen
 
 		return exists;
 	}
-	
+
 	@Override
 	public boolean isDuplicateKey(String entity, int seqOrder, TableType tableType) {
 		logger.debug(Literal.ENTERING);

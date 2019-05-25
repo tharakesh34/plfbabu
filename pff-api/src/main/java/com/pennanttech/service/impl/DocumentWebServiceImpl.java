@@ -26,7 +26,7 @@ public class DocumentWebServiceImpl implements DocumentRestService, DocumentSoap
 
 	@Override
 	public WSReturnStatus addDocument(DocumentDetails documentDetails) {
-		AuditDetail auditDetail=null;
+		AuditDetail auditDetail = null;
 		AuditHeader auditHeader = null;
 
 		//basic field Validation

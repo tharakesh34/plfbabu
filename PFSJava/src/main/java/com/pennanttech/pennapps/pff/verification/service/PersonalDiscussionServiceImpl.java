@@ -641,8 +641,8 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 
 		// Extended Field Details
 		if (personalDiscussion.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
-					.setExtendedFieldsAuditData(personalDiscussion.getExtendedFieldRender(), auditTranType, method, null));
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(
+					personalDiscussion.getExtendedFieldRender(), auditTranType, method, null));
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
@@ -929,6 +929,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 		}
 		return false;
 	}
+
 	@Override
 	public List<PersonalDiscussion> getList(String keyReference) {
 		return personalDiscussionDAO.getList(keyReference);
@@ -946,7 +947,7 @@ public class PersonalDiscussionServiceImpl extends GenericService<PersonalDiscus
 	public PersonalDiscussion getVerificationFromRecording(long verificationId) {
 		return personalDiscussionDAO.getPersonalDiscussion(verificationId, "_view");
 	}
-	
+
 	public class PhonePriority implements Comparator<CustomerPhoneNumber> {
 		@Override
 		public int compare(CustomerPhoneNumber o1, CustomerPhoneNumber o2) {

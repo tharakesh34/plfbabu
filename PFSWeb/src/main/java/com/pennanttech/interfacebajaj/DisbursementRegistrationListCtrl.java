@@ -116,8 +116,7 @@ import com.pennanttech.pff.external.DisbursementRequest;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
  * ************************************************************<br>
  * 
  */
@@ -237,8 +236,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -372,8 +370,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Filling the MandateIdMap details and based on checked and unchecked
-	 * events of listCellCheckBox.
+	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -394,8 +391,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
@@ -481,8 +477,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * Getting the Disbursement List using JdbcSearchObject with search
-	 * criteria..
+	 * Getting the Disbursement List using JdbcSearchObject with search criteria..
 	 */
 	private Map<Long, FinAdvancePayments> getDisbursementDetails() {
 
@@ -605,8 +600,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -707,8 +701,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

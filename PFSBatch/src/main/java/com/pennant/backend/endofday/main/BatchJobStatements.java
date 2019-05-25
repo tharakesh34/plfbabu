@@ -81,7 +81,8 @@ public class BatchJobStatements {
 			break;
 
 		case POSTGRES:
-			query.append(" SELECT AVG(DATE_PART ('millisecond', START_TIME::timestamp - END_TIME::timestamp))  avg FROM");
+			query.append(
+					" SELECT AVG(DATE_PART ('millisecond', START_TIME::timestamp - END_TIME::timestamp))  avg FROM");
 			query.append(" (SELECT * FROM BATCH_JOB_EXECUTION T1 ");
 			query.append(" INNER JOIN BATCH_JOB_INSTANCE T2 on T1.JOB_INSTANCE_ID = T2.JOB_INSTANCE_ID");
 			query.append(" WHERE T2.JOB_NAME = ? AND T1.JOB_INSTANCE_ID NOT IN (SELECT JOB_INSTANCE_ID");
@@ -99,7 +100,8 @@ public class BatchJobStatements {
 			break;
 
 		default:
-			query.append(" SELECT AVG(DATEDIFF ('millisecond', START_TIME::timestamp - END_TIME::timestamp))  avg FROM");
+			query.append(
+					" SELECT AVG(DATEDIFF ('millisecond', START_TIME::timestamp - END_TIME::timestamp))  avg FROM");
 			query.append(" (SELECT * FROM BATCH_JOB_EXECUTION T1 ");
 			query.append(" INNER JOIN BATCH_JOB_INSTANCE T2 on T1.JOB_INSTANCE_ID = T2.JOB_INSTANCE_ID");
 			query.append(" WHERE T2.JOB_NAME = ? AND T1.JOB_INSTANCE_ID NOT IN (SELECT JOB_INSTANCE_ID");

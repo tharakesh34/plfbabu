@@ -43,7 +43,6 @@ package com.pennant.webui.systemmasters.transactionmapping;
  ********************************************************************************************
  */
 
-
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -135,11 +134,9 @@ public class TransactionMappingListCtrl extends GFCBaseListCtrl<TransactionMappi
 		registerButton(button_TransactionMappingList_TransactionMappingSearchDialog);
 
 		registerField("posId", listheader_POSId, SortOrder.NONE, sortOperator_posId, Operators.NUMERIC);
-		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode,
-				Operators.NUMERIC);
+		registerField("dealerCode", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode, Operators.NUMERIC);
 		registerField("dealerName", listheader_DealerName, SortOrder.NONE, sortOperator_dealerName, Operators.STRING);
-		registerField("mid", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode,
-				Operators.NUMERIC);
+		registerField("mid", listheader_DealerCode, SortOrder.NONE, sortOperator_dealerCode, Operators.NUMERIC);
 		registerField("tid");
 		registerField("active");
 		registerField("id");

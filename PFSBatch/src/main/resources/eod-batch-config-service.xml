@@ -133,8 +133,8 @@
 
 	<bean id="advancePaymentService" class="com.pennanttech.pff.advancepayment.service.AdvancePaymentService" parent="serviceHelper" />
 
-	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper"/>
-	
+	<bean id="loadFinanceData" class="com.pennant.app.core.LoadFinanceData" parent="serviceHelper" />
+
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">
 		<property name="repaymentProcessUtil" ref="repayProcessUtil" />
 	</bean>

@@ -42,7 +42,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 		updateCollateralValues(items);
 		updateCollateralSetup(items);
 		updateCollateralLTVBreaches(items);
-		
+
 		for (CollateralRevaluation collateralRevaluation : items) {
 			try {
 

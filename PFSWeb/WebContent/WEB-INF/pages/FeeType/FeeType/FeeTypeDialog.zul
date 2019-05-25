@@ -75,11 +75,9 @@
 									</hbox>
 								</row>
 								<row>
-									<label
-										id="label_FeeTypeDialog_RefundableFee"
-										value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
+									<label id="label_FeeTypeDialog_RefundableFee" value="${c:l('label_FeeTypeDialog_RefundableFee.value')}" />
 									<hbox>
-									<space spacing="2px"></space>
+										<space spacing="2px"></space>
 										<checkbox id="refundableFee" />
 									</hbox>
 								</row>

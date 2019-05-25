@@ -130,7 +130,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 				"button_ClusterHierarcheyList_NewClusterHierarchey", true);
 
 		registerField("entity", listheader_Entity, SortOrder.ASC, entity, sortOperator_Entity, Operators.STRING);
-	//	registerField("clusterType");
+		//	registerField("clusterType");
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -193,11 +193,11 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 		Listitem selectedItem = this.listBoxClusterHierarchey.getSelectedItem();
 		final String entity = (String) selectedItem.getAttribute("entity");
 		ClusterHierarchy hierarchey = new ClusterHierarchy();
-		
+
 		hierarchey.setEntity(entity);
 
-		
-		List<ClusterHierarchy> hierarcheyList = clusterHierarchyService.getClusterHierarcheyList(hierarchey.getEntity());
+		List<ClusterHierarchy> hierarcheyList = clusterHierarchyService
+				.getClusterHierarcheyList(hierarchey.getEntity());
 		hierarchey.setClusterTypes(hierarcheyList);
 		if (!hierarcheyList.isEmpty()) {
 			hierarchey.setVersion(hierarcheyList.get(0).getVersion());
@@ -211,13 +211,13 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 			hierarchey.setRecordType(hierarcheyList.get(0).getRecordType());
 			hierarchey.setWorkflowId(hierarcheyList.get(0).getWorkflowId());
 		}
-		
+
 		if (CollectionUtils.isEmpty(hierarcheyList)) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 		// Check whether the user has authority to change/view the record.
-		String whereCond = " AND  Entity = '" + hierarchey.getEntity()+" ";
+		String whereCond = " AND  Entity = '" + hierarchey.getEntity() + " ";
 
 		if (doCheckAuthority(hierarchey, whereCond)) {
 			// Set the latest work-flow id for the new maintenance request.
@@ -226,7 +226,7 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 			}
 			doShowDialogPage(hierarchey);
 		} else {
-			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));	
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -297,7 +297,5 @@ public class ClusterHierarcheyListCtrl extends GFCBaseListCtrl<ClusterHierarchy>
 	public void setClusterHierarchyService(ClusterHierarchyService clusterHierarchyService) {
 		this.clusterHierarchyService = clusterHierarchyService;
 	}
-
-	
 
 }

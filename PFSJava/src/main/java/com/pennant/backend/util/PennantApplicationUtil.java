@@ -371,12 +371,10 @@ public class PennantApplicationUtil {
 
 	public static String formatAccountNumber(String accountNumber) {
 		/*
-		 * if (!StringUtils.trimToEmpty(accountNumber).equals("") &&
-		 * accountNumber.length() == 13) { StringBuilder builder = new
-		 * StringBuilder(); builder.append(accountNumber.substring(0, 4));
-		 * builder.append("-"); builder.append(accountNumber.substring(4, 10));
-		 * builder.append("-"); builder.append(accountNumber.substring(10, 13));
-		 * return builder.toString(); }
+		 * if (!StringUtils.trimToEmpty(accountNumber).equals("") && accountNumber.length() == 13) { StringBuilder
+		 * builder = new StringBuilder(); builder.append(accountNumber.substring(0, 4)); builder.append("-");
+		 * builder.append(accountNumber.substring(4, 10)); builder.append("-");
+		 * builder.append(accountNumber.substring(10, 13)); return builder.toString(); }
 		 */
 		return accountNumber;
 	}
@@ -579,8 +577,8 @@ public class PennantApplicationUtil {
 	 * @param number
 	 * @param charSequence
 	 * @param delimiter
-	 * @return Example : input number = "123456789",charSequence = new int[]
-	 *         {2,4,3}) , delimiter = "-" then output = "12-3456-789"
+	 * @return Example : input number = "123456789",charSequence = new int[] {2,4,3}) , delimiter = "-" then output =
+	 *         "12-3456-789"
 	 */
 	public static String formatSequence(String number, int[] charSequence, String delimiter) {
 		if (!StringUtils.isBlank(number)) {
@@ -620,13 +618,11 @@ public class PennantApplicationUtil {
 	}
 
 	/**
-	 * Purpose: To fetch description for master data when customer details are
-	 * retrieved from interface.
+	 * Purpose: To fetch description for master data when customer details are retrieved from interface.
 	 * 
-	 * To fetch the description from master table when the code , module and
-	 * description field specified. Since method is used for only fetching the
-	 * description,it will return the null if not found. Table name is not
-	 * mandatory and null handled. All the exception are suppressed.
+	 * To fetch the description from master table when the code , module and description field specified. Since method
+	 * is used for only fetching the description,it will return the null if not found. Table name is not mandatory and
+	 * null handled. All the exception are suppressed.
 	 * 
 	 * @param moduleName
 	 * @param filedName
@@ -774,8 +770,7 @@ public class PennantApplicationUtil {
 	}
 
 	/**
-	 * Method to get the RightName of ExtendedField Based on Module, SubModule
-	 * and InputType.
+	 * Method to get the RightName of ExtendedField Based on Module, SubModule and InputType.
 	 * 
 	 * @param detail
 	 * @return
@@ -927,6 +922,7 @@ public class PennantApplicationUtil {
 		}
 		return false;
 	}
+
 	public static String getSavingStatus(String roleCode, String nextRoleCode, String reference, String moduleCode,
 			String recordStatus, boolean isCancel) {
 		String roleCodeDesc = "";

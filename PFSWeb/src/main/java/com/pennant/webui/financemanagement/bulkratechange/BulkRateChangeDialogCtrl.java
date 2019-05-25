@@ -390,16 +390,16 @@ public class BulkRateChangeDialogCtrl extends GFCBaseCtrl<BulkRateChangeDetails>
 
 		//Schedule Date From
 		if (aBulkRateChangeHeader.getFromDate() != null) {
-			this.schFromDate.setValue(DateUtility.getDBDate(
-					DateUtility.format(aBulkRateChangeHeader.getFromDate(), PennantConstants.DBDateFormat)));
+			this.schFromDate.setValue(DateUtility
+					.getDBDate(DateUtility.format(aBulkRateChangeHeader.getFromDate(), PennantConstants.DBDateFormat)));
 		} else {
 			this.schFromDate.setText("");
 		}
 
 		//To Date
 		if (aBulkRateChangeHeader.getToDate() != null) {
-			this.toDate.setValue(DateUtility.getDBDate(
-					DateUtility.format(aBulkRateChangeHeader.getToDate(), PennantConstants.DBDateFormat)));
+			this.toDate.setValue(DateUtility
+					.getDBDate(DateUtility.format(aBulkRateChangeHeader.getToDate(), PennantConstants.DBDateFormat)));
 		} else {
 			this.toDate.setText("");
 		}

@@ -374,10 +374,10 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			if (customerDocument.getCustDocIssuedOn() != null && customerDocument.getCustDocExpDate() != null) {
 				if (customerDocument.getCustDocIssuedOn().compareTo(customerDocument.getCustDocExpDate()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "custDocExpDate: " + DateUtility.format(customerDocument.getCustDocExpDate(),
-							PennantConstants.XMLDateFormat);
-					valueParm[1] = "custDocIssuedOn: " + DateUtility.format(customerDocument.getCustDocIssuedOn(),
-							PennantConstants.XMLDateFormat);
+					valueParm[0] = "custDocExpDate: "
+							+ DateUtility.format(customerDocument.getCustDocExpDate(), PennantConstants.XMLDateFormat);
+					valueParm[1] = "custDocIssuedOn: "
+							+ DateUtility.format(customerDocument.getCustDocIssuedOn(), PennantConstants.XMLDateFormat);
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("65030", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;

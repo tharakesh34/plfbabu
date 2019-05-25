@@ -107,17 +107,15 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Mail/MailTemplate/mailTemplateDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Mail/MailTemplate/mailTemplateDialog.zul file.
  */
 public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	private static final long serialVersionUID = 4140622258920094017L;
 	private static final Logger logger = Logger.getLogger(MailTemplateDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_MailTemplateDialog; // autowired
 
@@ -194,9 +192,8 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected MailTemplate object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected MailTemplate object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -463,7 +460,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 			fillComboBox(this.templateFor, StringUtils.trimToEmpty(aMailTemplate.getTemplateFor()), listTemplateFor,
 					"");
 		}
-		
+
 		if (aMailTemplate.isEmailTemplate()) {
 			this.emailDetailsTab.setDisabled(false);
 			if (NotificationConstants.TEMPLATE_FOR_AE.equals(getMailTemplate().getTemplateFor())) {
@@ -1236,6 +1233,7 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		logger.debug("Leaving");
 		return processCompleted;
 	}
+
 	public void onChange$templateModule(Event event) {
 		logger.debug("Entering " + event);
 		this.row_TemplateEvent.setVisible(false);
@@ -1454,7 +1452,6 @@ public class MailTemplateDialogCtrl extends GFCBaseCtrl<MailTemplate> {
 		this.plainText.setValue("");
 	}
 
-	
 	private void doFillTemplateFields(String module, Listbox templateData, String event) {
 		logger.debug("Entering");
 		templateData.getItems().clear();

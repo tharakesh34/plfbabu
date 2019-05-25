@@ -19,7 +19,7 @@ public class VASConsatnts {
 	public static final String STATUS_NORMAL = "N";
 	public static final String STATUS_SURRENDER = "S";
 	public static final String VASAGAINST_PARTNER = "SOPT";
-	
+
 	// Servicing events
 	public static final String VAS_EVENT_ORIGINATION = "Orgination";
 	public static final String VAS_EVENT_CANCELLATION = "Cancellation";
@@ -28,20 +28,18 @@ public class VASConsatnts {
 
 	//For Insurance VASI is the standard category.
 	public static final String VAS_CATEGORY_VASI = "VASI";
-	
+
 	//Mode Of Payments
 	public static final String VAS_PAYMENT_DEDUCTION = "D";
 	public static final String VAS_PAYMENT_COLLECTION = "C";
-	
+
 	//Mode Of Payments
 	public static final String VAS_ALLOWFEE_MANUAL = "M";
 	public static final String VAS_ALLOWFEE_AUTO = "A";
-	
+
 	//Medical Status List
 	public static final String VAS_MEDICALSTATUS_STANDARD = "S";
 	public static final String VAS_MEDICALSTATUS_LOADIND = "L";
 	public static final String VAS_MEDICALSTATUS_REJECT = "R";
-	
-	
-	
+
 }

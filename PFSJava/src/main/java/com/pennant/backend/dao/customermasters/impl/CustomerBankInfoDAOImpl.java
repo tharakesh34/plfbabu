@@ -135,10 +135,10 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
-		
+
 		selectSql.append(
 				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, ");
-		 if (type.contains("View")) {
+		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -544,8 +544,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
-		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BankInfoDetail.class);
+		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankInfoDetail.class);
 
 		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
@@ -553,13 +552,13 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("Leaving");
 		return bankInfoDetails;
 	}
-	
+
 	@Override
 	public List<BankInfoDetail> getBankInfoDetailById(long bankId, String type) {
 		logger.debug("Entering");
 		BankInfoDetail bankInfoDetail = new BankInfoDetail();
 		bankInfoDetail.setBankId(bankId);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId, MonthYear, Balance, DebitNo, DebitAmt, CreditNo,");
 		selectSql.append(" CreditAmt, BounceIn, BounceOut, ClosingBal, ODCCLimit,");
@@ -568,15 +567,14 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" FROM  BankInfoDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BankId = :BankId");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
-		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(BankInfoDetail.class);
-		
+		RowMapper<BankInfoDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BankInfoDetail.class);
+
 		List<BankInfoDetail> bankInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
-		
+
 		logger.debug("Leaving");
 		return bankInfoDetails;
 	}
@@ -602,8 +600,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("Leaving");
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-	
-		
+
 	}
 
 	@Override
@@ -677,14 +674,14 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		logger.debug("Leaving");
 		return bankInfoSubDetails;
 	}
-	
+
 	@Override
 	public List<BankInfoSubDetail> getBankInfoSubDetailById(long bankId, Date monthYear, String type) {
 		logger.debug("Entering");
 		BankInfoSubDetail bankInfoSubDetail = new BankInfoSubDetail();
 		bankInfoSubDetail.setBankId(bankId);
 		bankInfoSubDetail.setMonthYear(monthYear);
-		
+
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT BankId, MonthYear, Day, Balance,");
 		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
@@ -692,15 +689,15 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(" FROM  BankInfoSubDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
-		
+
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
 		RowMapper<BankInfoSubDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(BankInfoSubDetail.class);
-		
+
 		List<BankInfoSubDetail> bankInfoSubDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
-		
+
 		logger.debug("Leaving");
 		return bankInfoSubDetails;
 	}
@@ -724,8 +721,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(bankInfoSubDetail.toArray());
 		logger.debug("Leaving");
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), params);
-	
-		
+
 	}
 
 	@Override
@@ -758,7 +754,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 	}
 
 	@Override
-	public void delete(List<BankInfoSubDetail>  bankInfoSubDetail, String type) {
+	public void delete(List<BankInfoSubDetail> bankInfoSubDetail, String type) {
 		logger.debug("Entering");
 		StringBuilder deleteSql = new StringBuilder(" Delete From BankInfoSubDetail");
 		deleteSql.append(StringUtils.trimToEmpty(type));
@@ -766,7 +762,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 
 		logger.debug("deleteSql: " + deleteSql.toString());
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(bankInfoSubDetail.toArray());
-			this.jdbcTemplate.batchUpdate(deleteSql.toString(), params);
+		this.jdbcTemplate.batchUpdate(deleteSql.toString(), params);
 		logger.debug("Leaving");
 	}
 

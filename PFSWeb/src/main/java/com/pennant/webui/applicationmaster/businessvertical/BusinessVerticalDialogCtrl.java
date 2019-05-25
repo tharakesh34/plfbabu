@@ -72,29 +72,27 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/ApplicationMaster/BusinessVertical/businessVerticalDialog.zul file. <br>
+ * This is the controller class for the /WEB-INF/pages/ApplicationMaster/BusinessVertical/businessVerticalDialog.zul
+ * file. <br>
  */
-public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
+public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical> {
 
 	private static final long serialVersionUID = 1L;
-	private static final  Logger logger = Logger.getLogger(BusinessVerticalDialogCtrl.class);
-	
+	private static final Logger logger = Logger.getLogger(BusinessVerticalDialogCtrl.class);
+
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting  by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_BusinessVerticalDialog; 
-	protected Space			space_code;
-	protected Textbox 		code; 
-	protected Textbox 		description; 
+	protected Window window_BusinessVerticalDialog;
+	protected Space space_code;
+	protected Textbox code;
+	protected Textbox description;
 	protected Checkbox active;
 	private BusinessVertical businessVertical; // overhanded per param
 
 	private transient BusinessVerticalListCtrl businessVerticalListCtrl; // overhanded per param
 	private transient BusinessVerticalService businessVerticalService;
-	
 
 	/**
 	 * default constructor.<br>
@@ -107,14 +105,13 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	protected void doSetProperties() {
 		super.pageRightName = "BusinessVerticalDialog";
 	}
-	
+
 	@Override
 	protected String getReference() {
-		StringBuffer referenceBuffer= new StringBuffer(String.valueOf(this.businessVertical.getId()));
+		StringBuffer referenceBuffer = new StringBuffer(String.valueOf(this.businessVertical.getId()));
 		return referenceBuffer.toString();
 	}
 
-	
 	/**
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
@@ -125,11 +122,10 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	 */
 	public void onCreate$window_BusinessVerticalDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Set the page level components.
 		setPageComponents(window_BusinessVerticalDialog);
 
-		
 		try {
 			// Get the required arguments.
 			this.businessVertical = (BusinessVertical) arguments.get("businessVertical");
@@ -143,18 +139,18 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 			BusinessVertical businessVertical = new BusinessVertical();
 			BeanUtils.copyProperties(this.businessVertical, businessVertical);
 			this.businessVertical.setBefImage(businessVertical);
-			
+
 			// Render the page and display the data.
 			doLoadWorkFlow(this.businessVertical.isWorkflow(), this.businessVertical.getWorkflowId(),
 					this.businessVertical.getNextTaskId());
 
 			if (isWorkFlowEnabled()) {
-				if(!enqiryModule){
+				if (!enqiryModule) {
 					this.userAction = setListRecordStatus(this.userAction);
 				}
-				getUserWorkspace().allocateAuthorities(this.pageRightName,getRole());
-			}else{
-				getUserWorkspace().allocateAuthorities(this.pageRightName,null);
+				getUserWorkspace().allocateAuthorities(this.pageRightName, getRole());
+			} else {
+				getUserWorkspace().allocateAuthorities(this.pageRightName, null);
 			}
 
 			doSetFieldProperties();
@@ -164,26 +160,24 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		
-			this.code.setMaxlength(8);
-			this.description.setMaxlength(50);
-			
-		
+
+		this.code.setMaxlength(8);
+		this.description.setMaxlength(50);
+
 		setStatusDetails();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Set Visible for components by checking if there's a right for it.
 	 */
@@ -209,7 +203,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 		logger.debug(Literal.ENTERING);
 		doSave();
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	/**
@@ -242,7 +236,7 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
-	public void onClick$btnDelete(Event event)  throws InterruptedException {
+	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		doDelete();
 		logger.debug(Literal.LEAVING);
@@ -306,11 +300,6 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 
 		logger.debug(Literal.LEAVING);
 	}
-	
-
-
-
-
 
 	/**
 	 * Writes the bean data to the components.<br>
@@ -320,21 +309,22 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	 */
 	public void doWriteBeanToComponents(BusinessVertical aBusinessVertical) {
 		logger.debug(Literal.ENTERING);
-	
-			this.code.setValue(aBusinessVertical.getCode());
-			this.description.setValue(aBusinessVertical.getDescription());
-		    this.active.setChecked(aBusinessVertical.isActive());
-		   this.recordStatus.setValue(aBusinessVertical.getRecordStatus());
-		   
-		   if (aBusinessVertical.isNew() || (aBusinessVertical.getRecordType() != null ? aBusinessVertical.getRecordType() : "")
-					.equals(PennantConstants.RECORD_TYPE_NEW)) {
-				this.active.setChecked(true);
-				this.active.setDisabled(true);
-			}
-		
+
+		this.code.setValue(aBusinessVertical.getCode());
+		this.description.setValue(aBusinessVertical.getDescription());
+		this.active.setChecked(aBusinessVertical.isActive());
+		this.recordStatus.setValue(aBusinessVertical.getRecordStatus());
+
+		if (aBusinessVertical.isNew()
+				|| (aBusinessVertical.getRecordType() != null ? aBusinessVertical.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -342,42 +332,42 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	 */
 	public void doWriteComponentsToBean(BusinessVertical aBusinessVertical) {
 		logger.debug(Literal.LEAVING);
-		
+
 		doSetValidation();
 		doSetLOVValidation();
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		
+
 		//Code
 		try {
-		    aBusinessVertical.setCode(this.code.getValue());
-		}catch (WrongValueException we ) {
+			aBusinessVertical.setCode(this.code.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//Description
 		try {
-		    aBusinessVertical.setDescription(this.description.getValue());
-		}catch (WrongValueException we ) {
+			aBusinessVertical.setDescription(this.description.getValue());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		//active
 		try {
-		    aBusinessVertical.setActive(active.isChecked());
-		}catch (WrongValueException we ) {
+			aBusinessVertical.setActive(active.isChecked());
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
-		
+
 		if (!wve.isEmpty()) {
-			WrongValueException [] wvea = new WrongValueException[wve.size()];
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = (WrongValueException) wve.get(i);
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -394,8 +384,8 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
-		  this.code.focus();
-			
+			this.code.focus();
+
 		} else {
 
 			if (isWorkFlowEnabled()) {
@@ -429,29 +419,31 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.code.isReadonly()){
-			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_BusinessVerticalDialog_code.value"),PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM,true));
+		if (!this.code.isReadonly()) {
+			this.code.setConstraint(new PTStringValidator(Labels.getLabel("label_BusinessVerticalDialog_code.value"),
+					PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
-		if (!this.description.isReadonly()){
-			this.description.setConstraint(new PTStringValidator(Labels.getLabel("label_BusinessVerticalDialog_description.value"),PennantRegularExpressions.REGEX_DESCRIPTION,true));
+		if (!this.description.isReadonly()) {
+			this.description.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BusinessVerticalDialog_description.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.LEAVING);
-		
+
 		this.code.setConstraint("");
 		this.description.setConstraint("");
 		this.active.setChecked(false);
-	
-	logger.debug(Literal.LEAVING);
-	}
 
+		logger.debug(Literal.LEAVING);
+	}
 
 	/**
 	 * Set Validations for LOV Fields
@@ -459,31 +451,28 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Remove the Validation by setting empty constraints.
 	 */
 
 	private void doRemoveLOVValidation() {
 		logger.debug(Literal.LEAVING);
-		
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
 		logger.debug(Literal.LEAVING);
-		
-	
-	logger.debug(Literal.LEAVING);
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -493,146 +482,27 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 	 */
 	private void doDelete() throws InterruptedException {
 		logger.debug(Literal.LEAVING);
-		
+
 		final BusinessVertical aBusinessVertical = new BusinessVertical();
 		BeanUtils.copyProperties(this.businessVertical, aBusinessVertical);
-		String tranType=PennantConstants.TRAN_WF;
-		
+		String tranType = PennantConstants.TRAN_WF;
+
 		// Show a confirm box
-		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> " + aBusinessVertical.getId();
+		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
+				+ aBusinessVertical.getId();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			if (StringUtils.trimToEmpty(aBusinessVertical.getRecordType()).equals("")){
-				aBusinessVertical.setVersion(aBusinessVertical.getVersion()+1);
+			if (StringUtils.trimToEmpty(aBusinessVertical.getRecordType()).equals("")) {
+				aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
 				aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				
-				if (isWorkFlowEnabled()){
+
+				if (isWorkFlowEnabled()) {
 					aBusinessVertical.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 					aBusinessVertical.setNewRecord(true);
-					tranType=PennantConstants.TRAN_WF;
-					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBusinessVertical.getNextTaskId(), aBusinessVertical);
-				}else{
-					tranType=PennantConstants.TRAN_DEL;
-				}
-			}
-
-			try {
-				if(doProcess(aBusinessVertical,tranType)){
-					refreshList();
-					closeDialog(); 
-				}
-
-			}catch (DataAccessException e){
-				MessageUtil.showError(e);
-			}
-		}
-		
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Set the components for edit mode. <br>
-	 */
-	private void doEdit() {
-		logger.debug(Literal.LEAVING);
-		
-		if (this.businessVertical.isNewRecord()) {
-			this.btnCancel.setVisible(false);
-		
-			readOnlyComponent(false, this.code);
-			
-		} else {
-			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.code);
-			this.active.setDisabled(true);
-		}
-	
-			readOnlyComponent(isReadOnly("BusinessVerticalDialog_Description"), this.description);
-			
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (this.businessVertical.isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
+					tranType = PennantConstants.TRAN_WF;
+					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aBusinessVertical.getNextTaskId(),
+							aBusinessVertical);
 				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-			} else {
-				this.btnCtrl.setBtnStatus_Edit();
-			}
-
-			
-		logger.debug(Literal.LEAVING);
-	}	
-			
-		/**
-		 * Set the components to ReadOnly. <br>
-		 */
-		public void doReadOnly() {
-			logger.debug(Literal.LEAVING);
-			
-	
-			readOnlyComponent(true, this.code);
-			readOnlyComponent(true, this.description);
-            this.active.setDisabled(true);
-            
-			if (isWorkFlowEnabled()) {
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(true);
-				}
-				this.recordStatus.setValue("");
-				this.userAction.setSelectedIndex(0);
-	
-			}
-
-			logger.debug(Literal.LEAVING);
-		}
-
-		
-		/**
-		 * Clears the components values. <br>
-		 */
-		public void doClear() {
-			logger.debug("Entering");
-				this.code.setValue("");
-				this.description.setValue("");
-                this.active.setChecked(false);
-			logger.debug("Leaving");
-		}
-
-		/**
-		 * Saves the components to table. <br>
-		 */
-		public void doSave() {
-			logger.debug("Entering");
-			final BusinessVertical aBusinessVertical = new BusinessVertical();
-			BeanUtils.copyProperties(this.businessVertical, aBusinessVertical);
-			boolean isNew = false;
-
-			doSetValidation();
-			doWriteComponentsToBean(aBusinessVertical);
-
-			isNew = aBusinessVertical.isNew();
-			String tranType = "";
-
-			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
-				if (StringUtils.isBlank(aBusinessVertical.getRecordType())) {
-					aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
-					if (isNew) {
-						aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else {
-						aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						aBusinessVertical.setNewRecord(true);
-					}
-				}
-			} else {
-				aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
-				} else {
-					tranType = PennantConstants.TRAN_UPD;
+					tranType = PennantConstants.TRAN_DEL;
 				}
 			}
 
@@ -642,197 +512,315 @@ public class BusinessVerticalDialogCtrl extends GFCBaseCtrl<BusinessVertical>{
 					closeDialog();
 				}
 
-			} catch (final DataAccessException e) {
-				logger.error(e);
+			} catch (DataAccessException e) {
 				MessageUtil.showError(e);
 			}
-			logger.debug("Leaving");
 		}
 
-		/**
-		 * Set the workFlow Details List to Object
-		 * 
-		 * @param aAuthorizedSignatoryRepository
-		 *            (AuthorizedSignatoryRepository)
-		 * 
-		 * @param tranType
-		 *            (String)
-		 * 
-		 * @return boolean
-		 * 
-		 */
-		private boolean doProcess(BusinessVertical aBusinessVertical, String tranType) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			AuditHeader auditHeader = null;
-			String nextRoleCode = "";
+		logger.debug(Literal.LEAVING);
+	}
 
-			aBusinessVertical.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
-			aBusinessVertical.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aBusinessVertical.setUserDetails(getUserWorkspace().getLoggedInUser());
+	/**
+	 * Set the components for edit mode. <br>
+	 */
+	private void doEdit() {
+		logger.debug(Literal.LEAVING);
 
-			if (isWorkFlowEnabled()) {
-				String taskId = getTaskId(getRole());
-				String nextTaskId = "";
-				aBusinessVertical.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+		if (this.businessVertical.isNewRecord()) {
+			this.btnCancel.setVisible(false);
 
-				if ("Save".equals(userAction.getSelectedItem().getLabel())) {
-					nextTaskId = taskId + ";";
-				} else {
-					nextTaskId = StringUtils.trimToEmpty(aBusinessVertical.getNextTaskId());
+			readOnlyComponent(false, this.code);
 
-					nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
-					if ("".equals(nextTaskId)) {
-						nextTaskId = getNextTaskIds(taskId, aBusinessVertical);
-					}
+		} else {
+			this.btnCancel.setVisible(true);
+			readOnlyComponent(true, this.code);
+			this.active.setDisabled(true);
+		}
 
-					if (isNotesMandatory(taskId, aBusinessVertical)) {
-						if (!notesEntered) {
-							MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
-							return false;
-						}
+		readOnlyComponent(isReadOnly("BusinessVerticalDialog_Description"), this.description);
 
-					}
-				}
-				if (!StringUtils.isBlank(nextTaskId)) {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks != null && nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode = getTaskOwner(nextTasks[i]);
-						}
-					} else {
-						nextRoleCode = getTaskOwner(nextTaskId);
-					}
-				}
-
-				aBusinessVertical.setTaskId(taskId);
-				aBusinessVertical.setNextTaskId(nextTaskId);
-				aBusinessVertical.setRoleCode(getRole());
-				aBusinessVertical.setNextRoleCode(nextRoleCode);
-
-				auditHeader = getAuditHeader(aBusinessVertical, tranType);
-				String operationRefs = getServiceOperations(taskId, aBusinessVertical);
-
-				if ("".equals(operationRefs)) {
-					processCompleted = doSaveProcess(auditHeader, null);
-				} else {
-					String[] list = operationRefs.split(";");
-
-					for (int i = 0; i < list.length; i++) {
-						auditHeader = getAuditHeader(aBusinessVertical, PennantConstants.TRAN_WF);
-						processCompleted = doSaveProcess(auditHeader, list[i]);
-						if (!processCompleted) {
-							break;
-						}
-					}
-				}
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (this.businessVertical.isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
 			} else {
-				auditHeader = getAuditHeader(aBusinessVertical, tranType);
-				processCompleted = doSaveProcess(auditHeader, null);
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 			}
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} else {
+			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		/**
-		 * Get the result after processing DataBase Operations
-		 * 
-		 * @param AuditHeader
-		 *            auditHeader
-		 * @param method
-		 *            (String)
-		 * @return boolean
-		 * 
-		 */
+		logger.debug(Literal.LEAVING);
+	}
 
-		private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-			logger.debug("Entering");
-			boolean processCompleted = false;
-			int retValue = PennantConstants.porcessOVERIDE;
-			BusinessVertical aBusinessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
-			boolean deleteNotes = false;
+	/**
+	 * Set the components to ReadOnly. <br>
+	 */
+	public void doReadOnly() {
+		logger.debug(Literal.LEAVING);
 
-			try {
+		readOnlyComponent(true, this.code);
+		readOnlyComponent(true, this.description);
+		this.active.setDisabled(true);
 
-				while (retValue == PennantConstants.porcessOVERIDE) {
+		if (isWorkFlowEnabled()) {
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(true);
+			}
+			this.recordStatus.setValue("");
+			this.userAction.setSelectedIndex(0);
 
-					if (StringUtils.isBlank(method)) {
-						if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-							auditHeader = businessVerticalService.delete(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Clears the components values. <br>
+	 */
+	public void doClear() {
+		logger.debug("Entering");
+		this.code.setValue("");
+		this.description.setValue("");
+		this.active.setChecked(false);
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Saves the components to table. <br>
+	 */
+	public void doSave() {
+		logger.debug("Entering");
+		final BusinessVertical aBusinessVertical = new BusinessVertical();
+		BeanUtils.copyProperties(this.businessVertical, aBusinessVertical);
+		boolean isNew = false;
+
+		doSetValidation();
+		doWriteComponentsToBean(aBusinessVertical);
+
+		isNew = aBusinessVertical.isNew();
+		String tranType = "";
+
+		if (isWorkFlowEnabled()) {
+			tranType = PennantConstants.TRAN_WF;
+			if (StringUtils.isBlank(aBusinessVertical.getRecordType())) {
+				aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
+				if (isNew) {
+					aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else {
+					aBusinessVertical.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aBusinessVertical.setNewRecord(true);
+				}
+			}
+		} else {
+			aBusinessVertical.setVersion(aBusinessVertical.getVersion() + 1);
+			if (isNew) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+		}
+
+		try {
+			if (doProcess(aBusinessVertical, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (final DataAccessException e) {
+			logger.error(e);
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * Set the workFlow Details List to Object
+	 * 
+	 * @param aAuthorizedSignatoryRepository
+	 *            (AuthorizedSignatoryRepository)
+	 * 
+	 * @param tranType
+	 *            (String)
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean doProcess(BusinessVertical aBusinessVertical, String tranType) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		AuditHeader auditHeader = null;
+		String nextRoleCode = "";
+
+		aBusinessVertical.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
+		aBusinessVertical.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aBusinessVertical.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+		if (isWorkFlowEnabled()) {
+			String taskId = getTaskId(getRole());
+			String nextTaskId = "";
+			aBusinessVertical.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+
+			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
+				nextTaskId = taskId + ";";
+			} else {
+				nextTaskId = StringUtils.trimToEmpty(aBusinessVertical.getNextTaskId());
+
+				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
+				if ("".equals(nextTaskId)) {
+					nextTaskId = getNextTaskIds(taskId, aBusinessVertical);
+				}
+
+				if (isNotesMandatory(taskId, aBusinessVertical)) {
+					if (!notesEntered) {
+						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
+						return false;
+					}
+
+				}
+			}
+			if (!StringUtils.isBlank(nextTaskId)) {
+				String[] nextTasks = nextTaskId.split(";");
+
+				if (nextTasks != null && nextTasks.length > 0) {
+					for (int i = 0; i < nextTasks.length; i++) {
+
+						if (nextRoleCode.length() > 1) {
+							nextRoleCode = nextRoleCode.concat(",");
+						}
+						nextRoleCode = getTaskOwner(nextTasks[i]);
+					}
+				} else {
+					nextRoleCode = getTaskOwner(nextTaskId);
+				}
+			}
+
+			aBusinessVertical.setTaskId(taskId);
+			aBusinessVertical.setNextTaskId(nextTaskId);
+			aBusinessVertical.setRoleCode(getRole());
+			aBusinessVertical.setNextRoleCode(nextRoleCode);
+
+			auditHeader = getAuditHeader(aBusinessVertical, tranType);
+			String operationRefs = getServiceOperations(taskId, aBusinessVertical);
+
+			if ("".equals(operationRefs)) {
+				processCompleted = doSaveProcess(auditHeader, null);
+			} else {
+				String[] list = operationRefs.split(";");
+
+				for (int i = 0; i < list.length; i++) {
+					auditHeader = getAuditHeader(aBusinessVertical, PennantConstants.TRAN_WF);
+					processCompleted = doSaveProcess(auditHeader, list[i]);
+					if (!processCompleted) {
+						break;
+					}
+				}
+			}
+		} else {
+			auditHeader = getAuditHeader(aBusinessVertical, tranType);
+			processCompleted = doSaveProcess(auditHeader, null);
+		}
+
+		logger.debug("Leaving");
+		return processCompleted;
+	}
+
+	/**
+	 * Get the result after processing DataBase Operations
+	 * 
+	 * @param AuditHeader
+	 *            auditHeader
+	 * @param method
+	 *            (String)
+	 * @return boolean
+	 * 
+	 */
+
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+		boolean processCompleted = false;
+		int retValue = PennantConstants.porcessOVERIDE;
+		BusinessVertical aBusinessVertical = (BusinessVertical) auditHeader.getAuditDetail().getModelData();
+		boolean deleteNotes = false;
+
+		try {
+
+			while (retValue == PennantConstants.porcessOVERIDE) {
+
+				if (StringUtils.isBlank(method)) {
+					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+						auditHeader = businessVerticalService.delete(auditHeader);
+						deleteNotes = true;
+					} else {
+						auditHeader = businessVerticalService.saveOrUpdate(auditHeader);
+					}
+
+				} else {
+					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+						auditHeader = businessVerticalService.doApprove(auditHeader);
+
+						if (aBusinessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
-						} else {
-							auditHeader = businessVerticalService.saveOrUpdate(auditHeader);
+						}
+
+					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						auditHeader = businessVerticalService.doReject(auditHeader);
+						if (aBusinessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+							deleteNotes = true;
 						}
 
 					} else {
-						if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-							auditHeader = businessVerticalService.doApprove(auditHeader);
-
-							if (aBusinessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-								deleteNotes = true;
-							}
-
-						} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-							auditHeader = businessVerticalService.doReject(auditHeader);
-							if (aBusinessVertical.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-								deleteNotes = true;
-							}
-
-						} else {
-							auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-									.getLabel("InvalidWorkFlowMethod"), null));
-							retValue = ErrorControl.showErrorControl(this.window_BusinessVerticalDialog, auditHeader);
-							return processCompleted;
-						}
-					}
-
-					auditHeader = ErrorControl.showErrorDetails(this.window_BusinessVerticalDialog, auditHeader);
-					retValue = auditHeader.getProcessStatus();
-
-					if (retValue == PennantConstants.porcessCONTINUE) {
-						processCompleted = true;
-
-						if (deleteNotes) {
-							deleteNotes(getNotes(this.businessVertical), true);
-						}
-					}
-
-					if (retValue == PennantConstants.porcessOVERIDE) {
-						auditHeader.setOveride(true);
-						auditHeader.setErrorMessage(null);
-						auditHeader.setInfoMessage(null);
-						auditHeader.setOverideMessage(null);
+						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+								Labels.getLabel("InvalidWorkFlowMethod"), null));
+						retValue = ErrorControl.showErrorControl(this.window_BusinessVerticalDialog, auditHeader);
+						return processCompleted;
 					}
 				}
-			} catch (InterruptedException e) {
-				logger.error("Exception: ", e);
+
+				auditHeader = ErrorControl.showErrorDetails(this.window_BusinessVerticalDialog, auditHeader);
+				retValue = auditHeader.getProcessStatus();
+
+				if (retValue == PennantConstants.porcessCONTINUE) {
+					processCompleted = true;
+
+					if (deleteNotes) {
+						deleteNotes(getNotes(this.businessVertical), true);
+					}
+				}
+
+				if (retValue == PennantConstants.porcessOVERIDE) {
+					auditHeader.setOveride(true);
+					auditHeader.setErrorMessage(null);
+					auditHeader.setInfoMessage(null);
+					auditHeader.setOverideMessage(null);
+				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-			logger.debug("Leaving");
-			return processCompleted;
+		} catch (InterruptedException e) {
+			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
-		/**
-		 * @param aAuthorizedSignatoryRepository
-		 * @param tranType
-		 * @return
-		 */
+		logger.debug("Leaving");
+		return processCompleted;
+	}
 
-		private AuditHeader getAuditHeader(BusinessVertical aBusinessVertical, String tranType) {
-			AuditDetail auditDetail = new AuditDetail(tranType, 1, aBusinessVertical.getBefImage(), aBusinessVertical);
-			return new AuditHeader(getReference(), null, null, null, auditDetail, aBusinessVertical.getUserDetails(),
-					getOverideMap());
-		}
+	/**
+	 * @param aAuthorizedSignatoryRepository
+	 * @param tranType
+	 * @return
+	 */
 
-		public void setBusinessVerticalService(BusinessVerticalService businessVerticalService) {
-			this.businessVerticalService = businessVerticalService;
-		}
-			
+	private AuditHeader getAuditHeader(BusinessVertical aBusinessVertical, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aBusinessVertical.getBefImage(), aBusinessVertical);
+		return new AuditHeader(getReference(), null, null, null, auditDetail, aBusinessVertical.getUserDetails(),
+				getOverideMap());
+	}
+
+	public void setBusinessVerticalService(BusinessVerticalService businessVerticalService) {
+		this.businessVerticalService = businessVerticalService;
+	}
+
 }

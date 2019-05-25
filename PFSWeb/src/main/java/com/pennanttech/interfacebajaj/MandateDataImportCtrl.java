@@ -78,8 +78,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -246,7 +245,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		media = event.getMedia();
 
 		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLSX"))) {// FIXME
-																				// this
+																					// this
 																				// should
 																				// not
 																				// be

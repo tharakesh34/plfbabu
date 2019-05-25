@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_ReceiptList" apply="${receiptListCtrl}" border="none" width="100%">
@@ -69,43 +68,36 @@
 							</columns>
 							<rows>
 								<row id="row_1">
-									<label id="label_ReceiptList_ReceiptId"
-										value="${c:l('label_ReceiptList_ReceiptId.value')}" />
+									<label id="label_ReceiptList_ReceiptId" value="${c:l('label_ReceiptList_ReceiptId.value')}" />
 									<listbox id="sortOperator_receiptId" width="43px" mold="select" rows="1" />
 									<longbox id="receiptId" width="163px" maxlength="19" />
 
-									<label id="label_ReceiptList_ReceiptDate"
-										value="${c:l('label_ReceiptList_ReceiptDate.value')}" />
+									<label id="label_ReceiptList_ReceiptDate" value="${c:l('label_ReceiptList_ReceiptDate.value')}" />
 									<listbox id="sortOperator_receiptDate" width="43px" mold="select" rows="1" />
 									<datebox id="receiptDate" width="183px" />
 								</row>
 								<row id="row_2" visible="true">
-									<label id="label_ReceiptList_FinType"
-										value="${c:l('label_ReceiptList_FinType.value')}" />
+									<label id="label_ReceiptList_FinType" value="${c:l('label_ReceiptList_FinType.value')}" />
 									<listbox id="sortOperator_finType" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="finType" />
 
-									<label id="label_ReceiptList_ReceiptAmount"
-										value="${c:l('label_ReceiptList_ReceiptAmount.value')}" />
+									<label id="label_ReceiptList_ReceiptAmount" value="${c:l('label_ReceiptList_ReceiptAmount.value')}" />
 									<listbox id="sortOperator_receiptAmount" width="43px" mold="select" rows="1" />
 									<decimalbox id="receiptAmount" width="163px" maxlength="19" />
 								</row>
 
 								<row id="row_3" visible="true">
-									<label id="label_ReceiptList_Customer"
-										value="${c:l('label_ReceiptList_Customer.value')}" />
+									<label id="label_ReceiptList_Customer" value="${c:l('label_ReceiptList_Customer.value')}" />
 									<listbox id="sortOperator_customer" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="customer" />
 
-									<label id="label_ReceiptList_FinReference"
-										value="${c:l('label_ReceiptList_FinReference.value')}" />
+									<label id="label_ReceiptList_FinReference" value="${c:l('label_ReceiptList_FinReference.value')}" />
 									<listbox id="sortOperator_loanReference" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="finReference" />
 								</row>
 
 								<row id="row_4" visible="true">
-									<label id="label_receiptPurpose"
-										value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
+									<label id="label_receiptPurpose" value="${c:l('label_ReceiptList_ReceiptPurpose.value')}" visible="true" />
 									<listbox id="sortOperator_receiptPurpose" width="43px" mold="select" visible="true" />
 									<hbox id="hbox_receiptPurpose" visible="true">
 										<space spacing="2px" />
@@ -122,12 +114,10 @@
 								</row>
 
 								<row id="row_5" visible="true">
-									<label id="label_ReceiptList_transactionRef"
-										value="${c:l('label_ReceiptList_transactionRef.value')}" />
+									<label id="label_ReceiptList_transactionRef" value="${c:l('label_ReceiptList_transactionRef.value')}" />
 									<listbox id="sortOperator_transactionRef" width="43px" mold="select" rows="1" />
 									<textbox id="transactionRef" width="163px" maxlength="19" />
-									<label id="label_ReceiptList_PartnerBank"
-										value="${c:l('label_ReceiptList_PartnerBank.value')}" />
+									<label id="label_ReceiptList_PartnerBank" value="${c:l('label_ReceiptList_PartnerBank.value')}" />
 									<listbox id="sortOperator_partnerBank" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="partnerBank" />
 								</row>
@@ -135,46 +125,42 @@
 						</grid>
 
 						<listbox id="listBoxReceipts" fixedLayout="true" span="true" sizedByContent="true"
-							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-							height="100%" multiple="true">
+							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+							multiple="true">
 							<listhead sizable="true">
-								<listheader id="listHeader_CheckBox_Name" hflex="min" align="center"  visible="false"/>
-								<listheader id="listheader_ReceiptId" label="${c:l('listheader_ReceiptId.label')}"
+								<listheader id="listHeader_CheckBox_Name" hflex="min" align="center" visible="false" />
+								<listheader id="listheader_ReceiptId" label="${c:l('listheader_ReceiptId.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptDate" label="${c:l('listheader_ReceiptDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ReceiptMode" label="${c:l('listheader_ReceiptMode.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ReceiptPurpose" label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustomerCIF.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_FinType" label="${c:l('listheader_FinType.label')}" sort="auto" align="center"
+									hflex="min" />
+								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_ExcessType" visible="false" label="${c:l('listheader_ExcessType.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptDate" label="${c:l('listheader_ReceiptDate.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptMode" label="${c:l('listheader_ReceiptMode.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptPurpose"
-									label="${c:l('listheader_ReceiptPurpose.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustomerCIF.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_FinType" label="${c:l('listheader_FinType.label')}"
-									sort="auto" align="center" hflex="min" />
-								<listheader id="listheader_FinReference" label="${c:l('listheader_FinReference.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_ExcessType" visible="false"
-									label="${c:l('listheader_ExcessType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_PayTypeRef" label="${c:l('listheader_PayTypeRef.label')}"
-									sort="auto" align="center" hflex="min" />
+								<listheader id="listheader_PayTypeRef" label="${c:l('listheader_PayTypeRef.label')}" sort="auto"
+									align="center" hflex="min" />
 								<listheader id="listheader_ReceiptAmount" sort="auto" align="center"
 									label="${c:l('listheader_ReceiptAmount.label')}" hflex="min" />
-								<listheader id="listheader_DepositDate" label="${c:l('listheader_DepositDate.label')}"
-									sort="auto" hflex="min" visible="false" />
-								<listheader id="listheader_PartnerBank" label="${c:l('listheader_PartnerBank.label')}"
-									sort="auto" hflex="min" visible="true" />
-								<listheader id="listheader_RealizationDate"
-									label="${c:l('listheader_RealizationDate.label')}" sort="auto" hflex="min" visible="false" />
-								<!-- 								<listheader id="listheader_RequestStage"
-									label="${c:l('listheader_LovDescRequestStage.label')}"
-									sort="auto" hflex="min" visible="false" />
-								-->
-								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}"
-									sort="auto" align="center" hflex="min" />
-								<listheader id="listheader_ReceiptModeStatus"
-									label="${c:l('listheader_ReceiptModeStatus.label')}" sort="auto" align="center" hflex="min" visible="false" />
-								<listheader id="listheader_NextRoleCode" label="${c:l('listheader_NextRoleCode.label')}"
+								<listheader id="listheader_DepositDate" label="${c:l('listheader_DepositDate.label')}" sort="auto"
+									hflex="min" visible="false" />
+								<listheader id="listheader_PartnerBank" label="${c:l('listheader_PartnerBank.label')}" sort="auto"
+									hflex="min" visible="true" />
+								<listheader id="listheader_RealizationDate" label="${c:l('listheader_RealizationDate.label')}" sort="auto"
+									hflex="min" visible="false" />
+								<!-- <listheader id="listheader_RequestStage" label="${c:l('listheader_LovDescRequestStage.label')}" sort="auto" 
+									hflex="min" visible="false" /> -->
+								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
+									align="center" hflex="min" />
+								<listheader id="listheader_ReceiptModeStatus" label="${c:l('listheader_ReceiptModeStatus.label')}"
 									sort="auto" align="center" hflex="min" visible="false" />
+								<listheader id="listheader_NextRoleCode" label="${c:l('listheader_NextRoleCode.label')}" sort="auto"
+									align="center" hflex="min" visible="false" />
 							</listhead>
 
 						</listbox>

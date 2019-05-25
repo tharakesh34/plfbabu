@@ -733,7 +733,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxStrtPrdHdays;
 	private int strtPrdHdays;
 	private String strtprdCpzMethod;
-	@XmlElement(name="hostReference")
+	@XmlElement(name = "hostReference")
 	private String oldFinReference;
 	@XmlElement
 	private String coreBankId;
@@ -930,8 +930,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("strtPrdHdays");
 		excludeFields.add("strtprdCpzMethod");
 		excludeFields.add("coreBankId");
-		
-		
+
 		return excludeFields;
 	}
 	// ******************************************************//

@@ -89,7 +89,7 @@ public interface CustomerService {
 	AuditDetail doCustomerValidations(AuditHeader auditHeader);
 
 	public void prepareGCDCustomerData(CustomerDetails customerDetails);
-	
+
 	List<Customer> getCustomerDetailsByCRCPR(String custCRCPR, String custCtgCode, String type);
 
 }

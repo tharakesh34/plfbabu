@@ -115,8 +115,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 * @return Integer
 	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod,String type) {
-		return financeMainDAO.loanMandateSwapping(finReference, newMandateID, repayMethod,type);
+	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod, String type) {
+		return financeMainDAO.loanMandateSwapping(finReference, newMandateID, repayMethod, type);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	 */
 	@Override
 	public List<FinanceMain> getFinanceByCustId(long custId, String type) {
-		return financeMainDAO.getFinanceByCustId(custId,type);
+		return financeMainDAO.getFinanceByCustId(custId, type);
 	}
 
 	/**
@@ -174,8 +174,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public List<String> getFinanceMainbyCustId(long custID,String type) {
-		return financeMainDAO.getFinanceMainbyCustId(custID,type);
+	public List<String> getFinanceMainbyCustId(long custID, String type) {
+		return financeMainDAO.getFinanceMainbyCustId(custID, type);
 	}
 
 	@Override

@@ -794,7 +794,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 			}
 
 			ReceiptUploadDetail UploadDetail = new ReceiptUploadDetail();
-		//	logger.debug("API REQUEST :: " + receiptUploadDetail.getJsonObject());
+			//	logger.debug("API REQUEST :: " + receiptUploadDetail.getJsonObject());
 			String ReturnText = null;
 			String ReturnCode = null;
 			WebClient client = null;

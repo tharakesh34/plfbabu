@@ -67,6 +67,6 @@ public interface ReportingManagerDAO {
 	boolean isDuplicateKey(ReportingManager entity, TableType tableType);
 
 	void deleteByUserId(long usrID, TableType tableType);
-	
+
 	void deleteById(long ID, TableType tableType);
 }

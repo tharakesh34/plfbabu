@@ -100,7 +100,7 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	protected Button button_InsuranceRebookingList_NewInsuranceRebooking;
 	protected Button button_InsuranceRebookingList_InsuranceRebookingSearch;
 	protected Button btnRefresh;
-	
+
 	protected Label label_InsuranceRebookingList_RecordStatus;
 	protected Label label_InsuranceRebookingList_RecordType;
 
@@ -124,7 +124,7 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	private boolean rebooking;
 	private boolean maintainance;
 	private boolean cancellation;
-	
+
 	@Override
 	protected void doSetProperties() {
 		super.moduleCode = "VASRecording";
@@ -156,12 +156,13 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		} else if (VASConsatnts.STATUS_CANCEL.equals(this.module)) {
 			cancellation = true;
 			StringBuilder sql = new StringBuilder();
-			sql.append("(( VasStatus = 'C' OR VasStatus = 'S' OR VasStatus = 'N') AND (VASReference not in (Select VASReference from VASRecording_Temp Where VasStatus = 'N')) AND (VASReference not in (Select VASReference from VASRecording  Where VasStatus = 'S' OR  VasStatus = 'C')) AND ( ProductCtg = '");
+			sql.append(
+					"(( VasStatus = 'C' OR VasStatus = 'S' OR VasStatus = 'N') AND (VASReference not in (Select VASReference from VASRecording_Temp Where VasStatus = 'N')) AND (VASReference not in (Select VASReference from VASRecording  Where VasStatus = 'S' OR  VasStatus = 'C')) AND ( ProductCtg = '");
 			sql.append(VASConsatnts.VAS_CATEGORY_VASI).append("'))");
 			this.searchObject.addWhereClause(sql.toString());
 		}
 	}
-	
+
 	public void onCreate$window_InsuranceRebookingList(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -176,12 +177,16 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getRecAgainstTypes(), "");
 
 		// Register buttons and fields.
-		registerButton(button_InsuranceRebookingList_NewInsuranceRebooking, "button_InsuranceMaintananceRebookingDialog_btnSave", true);
+		registerButton(button_InsuranceRebookingList_NewInsuranceRebooking,
+				"button_InsuranceMaintananceRebookingDialog_btnSave", true);
 		registerButton(button_InsuranceRebookingList_InsuranceRebookingSearch);
 
-		registerField("productCode", listheader_ProductCode, SortOrder.ASC, productCode, sortOperator_ProductCode, Operators.STRING);
-		registerField("postingAgainst", listheader_PostingAgainst, SortOrder.NONE, postingAgainst, sortOperator_PostingAgainst, Operators.SIMPLE_NUMARIC);
-		registerField("vasReference", listheader_VasReference, SortOrder.NONE, vasReference, sortOperator_VasReference, Operators.STRING);
+		registerField("productCode", listheader_ProductCode, SortOrder.ASC, productCode, sortOperator_ProductCode,
+				Operators.STRING);
+		registerField("postingAgainst", listheader_PostingAgainst, SortOrder.NONE, postingAgainst,
+				sortOperator_PostingAgainst, Operators.SIMPLE_NUMARIC);
+		registerField("vasReference", listheader_VasReference, SortOrder.NONE, vasReference, sortOperator_VasReference,
+				Operators.STRING);
 		registerField("primaryLinkRef", listheader_PrimaryLinkRef, SortOrder.NONE, primaryLinkRef,
 				sortOperator_PrimaryLinkRef, Operators.STRING);
 		registerField("nextRoleCode");
@@ -250,7 +255,7 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 
 	public void onInsuranceRebookingItemDoubleClicked(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		String servicingEvent = "";
 		if (rebooking) {
 			servicingEvent = VASConsatnts.VAS_EVENT_REBOOKING;
@@ -259,7 +264,7 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		} else if (cancellation) {
 			servicingEvent = VASConsatnts.VAS_EVENT_CANCELLATION;
 		}
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxInsuranceRebookingList.getSelectedItem();
 
@@ -278,8 +283,8 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 		}
-		VASRecording aVASRecording = getVASRecordingService().getVASRecordingForInsurance(vasRecording.getVasReference(),
-				userRole, servicingEvent, enqiryModule);
+		VASRecording aVASRecording = getVASRecordingService()
+				.getVASRecordingForInsurance(vasRecording.getVasReference(), userRole, servicingEvent, enqiryModule);
 		if (aVASRecording == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
@@ -352,7 +357,7 @@ public class InsuranceRebookingListCtrl extends GFCBaseListCtrl<VASRecording> {
 			setWorkFlowId(workFlowDetails.getId());
 		}
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 

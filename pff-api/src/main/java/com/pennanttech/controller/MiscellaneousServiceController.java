@@ -56,17 +56,17 @@ import com.pennanttech.ws.model.eligibility.FieldData;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class MiscellaneousServiceController {
-	
+
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	private FinanceMainService financeMainService;
 	private TransactionCodeService transactionCodeService;
 	private AccountMappingService accountMappingService;
 	private JVPostingService jVPostingService;
-	
+
 	private DashboardConfigurationService dashboardConfigurationService;
 	private SecurityUserService securityUserService;
-	
+
 	private RuleService ruleService;
 	private RuleExecutionUtil ruleExecutionUtil;
 
@@ -94,12 +94,12 @@ public class MiscellaneousServiceController {
 				param[0] = "elgRuleCode ";
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
 				return errorsList;
-			}else{
+			} else {
 				eligibilityDetail.addRuleCode(ruleCodeData.getElgRuleCode());
 			}
 		}
-		
-		if(CollectionUtils.isEmpty(fieldsData))	{
+
+		if (CollectionUtils.isEmpty(fieldsData)) {
 			String[] param = new String[1];
 			param[0] = "fieldDatas ";
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", param)));
@@ -116,7 +116,7 @@ public class MiscellaneousServiceController {
 				return errorsList;
 			}
 
-			if (fieldData.getFieldValue()==null ||  StringUtils.isBlank(fieldData.getFieldValue().toString())) {
+			if (fieldData.getFieldValue() == null || StringUtils.isBlank(fieldData.getFieldValue().toString())) {
 				String[] param = new String[1];
 				param[0] = "fieldValue ";
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", param)));
@@ -135,11 +135,11 @@ public class MiscellaneousServiceController {
 
 		EligibilityDetailResponse response = null;
 		List<ErrorDetail> eligibilityErrors = doEligibilityValidations(eligibilityDetail);
-		
+
 		if (CollectionUtils.isEmpty(eligibilityErrors)) {
 			response = new EligibilityDetailResponse();
 			List<Rule> rules = ruleService.getEligibilityRules(eligibilityDetail.getRuleCodes());
-			
+
 			if (CollectionUtils.isEmpty(rules) || eligibilityDetail.getRuleCodes().size() != rules.size()) {
 				List<ErrorDetail> errorsList = new ArrayList<>();
 				String[] param = new String[1];
@@ -205,7 +205,7 @@ public class MiscellaneousServiceController {
 			String finCcy) {
 
 		RuleReturnType ruleReturnType = null;
-		
+
 		if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.BOOLEAN.value())) {
 			ruleReturnType = RuleReturnType.BOOLEAN;
 		} else if (StringUtils.equals(finElgDetail.getRuleResultType(), RuleReturnType.DECIMAL.value())) {
@@ -218,7 +218,7 @@ public class MiscellaneousServiceController {
 			ruleReturnType = RuleReturnType.OBJECT;
 		}
 
-		if((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value())))	{
+		if ((null == ruleReturnType) || (StringUtils.isBlank(ruleReturnType.value()))) {
 			logger.info("Improper 'ruleReturnType' value");
 		} else {
 			Object object = ruleExecutionUtil.executeRule(finElgDetail.getElgRuleValue(), map, finCcy, ruleReturnType);
@@ -231,13 +231,13 @@ public class MiscellaneousServiceController {
 					int formatter = CurrencyUtil.getFormat(finCcy);
 					object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
 				}
-				
-				if(object != null)	{
+
+				if (object != null) {
 					finElgDetail.setRuleResult(object.toString());
 				}
 				break;
 			case INTEGER:
-				if(object != null)	{
+				if (object != null) {
 					finElgDetail.setRuleResult(object.toString());
 				}
 				break;
@@ -268,11 +268,11 @@ public class MiscellaneousServiceController {
 				// do-nothing
 				break;
 			}
-		} 		
+		}
 
 		return finElgDetail;
 	}
-	
+
 	private List<ErrorDetail> doDashboardValidations(DashBoardRequest request, boolean usernameProvided) {
 
 		logger.debug(Literal.ENTERING);
@@ -331,13 +331,13 @@ public class MiscellaneousServiceController {
 	}
 
 	public DashBoardResponse prepareDashboardConfiguration(DashBoardRequest request) {
-		
+
 		logger.debug(Literal.ENTERING);
 
 		DashBoardResponse response = null;
 		DashboardConfiguration config = null;
-		
-		if(StringUtils.isBlank(request.getUserLogin()))	{
+
+		if (StringUtils.isBlank(request.getUserLogin())) {
 			response = new DashBoardResponse();
 			List<ErrorDetail> validationErrors = doDashboardValidations(request, false);
 			if (CollectionUtils.isEmpty(validationErrors)) {
@@ -361,7 +361,7 @@ public class MiscellaneousServiceController {
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters()));
 				}
 			}
-		} else	{
+		} else {
 			// user login available in request
 			response = new DashBoardResponse();
 			List<ErrorDetail> validationErrors = doDashboardValidations(request, true);
@@ -388,59 +388,59 @@ public class MiscellaneousServiceController {
 			}
 		}
 		logger.debug(Literal.LEAVING);
-		
+
 		return response;
 	}
-	
-	private void setJVPostingEntryMandatoryFieldsData(JVPostingEntry postingEntry)	{
-		
+
+	private void setJVPostingEntryMandatoryFieldsData(JVPostingEntry postingEntry) {
+
 		logger.debug(Literal.ENTERING);
-		
+
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		postingEntry.setUserDetails(userDetails);
 		postingEntry.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		postingEntry.setLastMntBy(userDetails.getUserId());
 		postingEntry.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		postingEntry.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-		
-	private void setJVPostingMandatoryFieldsData(JVPosting posting)	{
-		
+
+	private void setJVPostingMandatoryFieldsData(JVPosting posting) {
+
 		logger.debug(Literal.ENTERING);
-		
+
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		posting.setUserDetails(userDetails);
 		posting.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		posting.setLastMntBy(userDetails.getUserId());
 		posting.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		posting.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
-	public WSReturnStatus prepareJVPostData(JVPosting jvPosting)	{
-		
+
+	public WSReturnStatus prepareJVPostData(JVPosting jvPosting) {
+
 		logger.debug(Literal.ENTERING);
-		
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		JVPosting posting = new JVPosting();
 		JVPostingEntry postingEntry = null;
 		List<JVPostingEntry> creditEntryList = new ArrayList<>();
 		List<JVPostingEntry> debitEntryList = new ArrayList<>();
 		List<JVPostingEntry> postingEntryList = new ArrayList<>();
-		
+
 		FinanceMain financeMainData = financeMainService.getFinanceByFinReference(jvPosting.getReference(), "_AView");
-		if ( null != financeMainData )	{
+		if (null != financeMainData) {
 			posting.setNewRecord(true);
 			posting.setVersion(1);
 			posting.setBranch(financeMainData.getFinBranch());
 			posting.setBatch(jvPosting.getBatch());
 			posting.setBatchReference(0);
-			if(StringUtils.isNotBlank(jvPosting.getCurrency()))	{
+			if (StringUtils.isNotBlank(jvPosting.getCurrency())) {
 				posting.setCurrency(jvPosting.getCurrency());
-			} else	{
+			} else {
 				posting.setCurrency(financeMainData.getFinCcy());
 			}
 			posting.setPostingDate(DateUtility.getAppDate());
@@ -450,10 +450,10 @@ public class MiscellaneousServiceController {
 			posting.setReference(financeMainData.getFinReference());
 			posting.setPostingDivision(financeMainData.getLovDescFinDivision());
 
-			BigDecimal totalDebits=BigDecimal.ZERO;
-			BigDecimal totalCredits=BigDecimal.ZERO;
+			BigDecimal totalDebits = BigDecimal.ZERO;
+			BigDecimal totalCredits = BigDecimal.ZERO;
 			// JVPostingEntry Fields Data
-			for(JVPostingEntry entry : jvPosting.getJVPostingEntrysList())	{
+			for (JVPostingEntry entry : jvPosting.getJVPostingEntrysList()) {
 				postingEntry = new JVPostingEntry();
 				postingEntry.setNewRecord(true);
 				postingEntry.setVersion(1);
@@ -467,9 +467,10 @@ public class MiscellaneousServiceController {
 				postingEntry.setPostingDate(DateUtility.getAppDate());
 				postingEntry.setBatchReference(entry.getBatchReference());
 				postingEntry.setAccount(entry.getAccount());
-				
-				TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(entry.getTxnCode());
-				if ( null != transactionCode )	{
+
+				TransactionCode transactionCode = transactionCodeService
+						.getApprovedTransactionCodeById(entry.getTxnCode());
+				if (null != transactionCode) {
 					AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(entry.getAccount());
 
 					postingEntry.setRecordType(PennantConstants.RCD_ADD);
@@ -480,43 +481,43 @@ public class MiscellaneousServiceController {
 					postingEntry.setAccCCy(financeMainData.getFinCcy());
 					postingEntry.setTxnCCy(financeMainData.getFinCcy());
 
-					if (null != accountMapping)	{
-						if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
+					if (null != accountMapping) {
+						if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C")) {
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
 							postingEntry.setAccount(entry.getAccount());
-							posting.setCreditsCount(jvPosting.getCreditsCount()+1);
+							posting.setCreditsCount(jvPosting.getCreditsCount() + 1);
 							totalCredits = totalCredits.add(entry.getTxnAmount());
-							
+
 							setJVPostingEntryMandatoryFieldsData(postingEntry);
 							creditEntryList.add(postingEntry);
-						} else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
+						} else if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D")) {
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
 							postingEntry.setDebitTxnCode(entry.getTxnCode());
 							postingEntry.setDebitAccount(entry.getAccount());
-							posting.setDebitCount(jvPosting.getDebitCount()+1);
+							posting.setDebitCount(jvPosting.getDebitCount() + 1);
 							totalDebits = totalDebits.add(entry.getTxnAmount());
-							
+
 							setJVPostingEntryMandatoryFieldsData(postingEntry);
 							debitEntryList.add(postingEntry);
 						}
 					}
 				}
 			}
-			
+
 			// reorganize all JVPostingEntries in order [C,D]
 			for (int i = 0, j = i; i <= creditEntryList.size() && j <= debitEntryList.size(); i++, j++) {
-				if(i < creditEntryList.size() && creditEntryList.get(i) != null)	{
-					if (!postingEntryList.contains(creditEntryList.get(i)))	{
+				if (i < creditEntryList.size() && creditEntryList.get(i) != null) {
+					if (!postingEntryList.contains(creditEntryList.get(i))) {
 						postingEntryList.add(creditEntryList.get(i));
 					}
 				}
-				
-				if(j < debitEntryList.size() && debitEntryList.get(j) != null)	{
-					if(!postingEntryList.contains(debitEntryList.get(j)))	{
+
+				if (j < debitEntryList.size() && debitEntryList.get(j) != null) {
+					if (!postingEntryList.contains(debitEntryList.get(j))) {
 						postingEntryList.add(debitEntryList.get(j));
 					}
 				}
@@ -525,62 +526,65 @@ public class MiscellaneousServiceController {
 			posting.setTotCreditsByBatchCcy(totalCredits);
 			posting.setTotDebitsByBatchCcy(totalDebits);
 			setJVPostingMandatoryFieldsData(posting);
-			
+
 			returnStatus = saveJVPostingData(posting);
-		} else	{
+		} else {
 			// financemain data is not available
 			String[] valueParm = new String[1];
 			valueParm[0] = "reference: " + jvPosting.getReference();
-			
+
 			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return returnStatus;
 	}
-	
+
 	private AuditHeader prepareAuditHeader(JVPosting aJVPosting, String tranType) {
-		
+
 		logger.debug(Literal.ENTERING);
-		
+
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aJVPosting.getBefImage(), aJVPosting);
-		AuditHeader auditHeader = new AuditHeader(aJVPosting.getReference(), Long.toString(aJVPosting.getBatchReference()), null, null, auditDetail, aJVPosting.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
-		
-		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange().get(APIHeader.API_HEADER_KEY);
+		AuditHeader auditHeader = new AuditHeader(aJVPosting.getReference(),
+				Long.toString(aJVPosting.getBatchReference()), null, null, auditDetail, aJVPosting.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
+
+		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+				.get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return auditHeader;
 	}
-	
-	private WSReturnStatus saveJVPostingData(final JVPosting postReadyData)	{
-		
+
+	private WSReturnStatus saveJVPostingData(final JVPosting postReadyData) {
+
 		logger.debug(Literal.ENTERING);
-		
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		
+
 		AuditHeader auditHeader = prepareAuditHeader(postReadyData, PennantConstants.TRAN_WF);
 		AuditHeader savedJVPostData = jVPostingService.doApprove(auditHeader);
-		
-		if (savedJVPostData.getAuditError() != null)	{
+
+		if (savedJVPostData.getAuditError() != null) {
 			for (ErrorDetail errorDetail : savedJVPostData.getErrorMessage()) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 			}
-		} else	{
+		} else {
 			returnStatus = APIErrorHandlerService.getSuccessStatus();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return returnStatus;
 	}
-	
+
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
 	}
-	
+
 	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
 		this.transactionCodeService = transactionCodeService;
 	}
@@ -588,11 +592,11 @@ public class MiscellaneousServiceController {
 	public void setAccountMappingService(AccountMappingService accountMappingService) {
 		this.accountMappingService = accountMappingService;
 	}
-	
+
 	public void setjVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
-	
+
 	public void setDashboardConfigurationService(DashboardConfigurationService dashboardConfigurationService) {
 		this.dashboardConfigurationService = dashboardConfigurationService;
 	}

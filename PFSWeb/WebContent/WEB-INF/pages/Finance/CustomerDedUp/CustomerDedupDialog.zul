@@ -46,29 +46,19 @@
 								<column />
 							</columns>
 							<rows>
-								<row id ="row_nameMobile" visible="false">
-									<label
-										id="label_CustomerDedupDialog_MobileNo"
-										value="${c:l('label_CustomerDedupDialog_MobileNo.value')}" visible="false" />
-									<textbox id="mobileNo" width="180px"
-										maxlength="10" readonly="true" visible="false" />
-									<label
-										id="label_CustomerDedupDialog_CustomerName"
-										value="${c:l('label_CustomerDedupDialog_CustomerName.value')}" visible="false"/>
-									<textbox id="custName" width="180px" visible="false"
-										readonly="true" />
+								<row id="row_nameMobile" visible="false">
+									<label id="label_CustomerDedupDialog_MobileNo" value="${c:l('label_CustomerDedupDialog_MobileNo.value')}"
+										visible="false" />
+									<textbox id="mobileNo" width="180px" maxlength="10" readonly="true" visible="false" />
+									<label id="label_CustomerDedupDialog_CustomerName" value="${c:l('label_CustomerDedupDialog_CustomerName.value')}"
+										visible="false" />
+									<textbox id="custName" width="180px" visible="false" readonly="true" />
 								</row>
-								<row id = "row_aadharPAN">
-									<label
-										id="label_CustomerDedupDialog_PAN"
-										value="${c:l('label_CustomerDedupDialog_PAN.value')}" />
-									<textbox id="pANNo" width="180px"
-										readonly="true" />
-									<label
-										id="label_CustomerDedupDialog_AadharNo"
-										value="${c:l('label_CustomerDedupDialog_AadharNo.value')}" />
-									<textbox id="aadhaarNo"
-										width="180px" readonly="true" />
+								<row id="row_aadharPAN">
+									<label id="label_CustomerDedupDialog_PAN" value="${c:l('label_CustomerDedupDialog_PAN.value')}" />
+									<textbox id="pANNo" width="180px" readonly="true" />
+									<label id="label_CustomerDedupDialog_AadharNo" value="${c:l('label_CustomerDedupDialog_AadharNo.value')}" />
+									<textbox id="aadhaarNo" width="180px" readonly="true" />
 								</row>
 							</rows>
 						</grid>

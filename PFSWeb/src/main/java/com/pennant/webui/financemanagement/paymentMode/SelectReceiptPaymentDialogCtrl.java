@@ -193,7 +193,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.tranBranch.setReadonly(true);
 		}
 		this.tranBranch.setValue(getUserWorkspace().getLoggedInUser().getBranchCode());
-		this.tranBranch.setDescription(getUserWorkspace().getUserDetails().getSecurityUser().getLovDescUsrBranchCodeName());
+		this.tranBranch
+				.setDescription(getUserWorkspace().getUserDetails().getSecurityUser().getLovDescUsrBranchCodeName());
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -631,7 +632,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinanceMain finMain = fsd.getFinanceMain();
 		fsd.setFinServiceInstruction(new FinServiceInstruction());
 		FinServiceInstruction fsi = fsd.getFinServiceInstruction();
-		if (!finMain.isFinIsActive()){
+		if (!finMain.isFinIsActive()) {
 			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		}
 		fsi.setReceiptDetail(new FinReceiptDetail());

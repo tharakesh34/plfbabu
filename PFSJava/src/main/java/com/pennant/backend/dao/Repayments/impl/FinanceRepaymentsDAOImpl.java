@@ -370,8 +370,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		updateSql.append(
 				" TotalWaiver=:TotalWaiver , InsRefund=:InsRefund ,RepayAccountId=:RepayAccountId , EarlyPayEffMtd=:EarlyPayEffMtd , ");
 		updateSql.append(" EarlyPayDate=:EarlyPayDate, SchdRegenerated=:SchdRegenerated , LinkedTranId=:LinkedTranId,");
-		updateSql.append(
-				" TotalIns=:TotalIns , RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
+		updateSql.append(" TotalIns=:TotalIns , RealizeUnAmz=:RealizeUnAmz, CpzChg=:CpzChg,");
 		updateSql.append(
 				" TotalSuplRent=:TotalSuplRent , TotalIncrCost=:TotalIncrCost, TotalSchdFee=:TotalSchdFee , PayApportionment=:PayApportionment, AdviseAmount= :AdviseAmount,FeeAmount= :FeeAmount, ExcessAmount= :ExcessAmount");
 		updateSql.append(" Where FinReference =:FinReference");

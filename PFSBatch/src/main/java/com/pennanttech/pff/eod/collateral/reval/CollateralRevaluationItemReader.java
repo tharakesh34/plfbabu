@@ -33,11 +33,10 @@ public class CollateralRevaluationItemReader extends JdbcCursorItemReader<Collat
 
 	}
 
-	
 	@BeforeStep
 	public void getInterstepData(StepExecution stepExecution) {
-	    this.batchId = stepExecution.getJobExecution().getJobInstance().getInstanceId();
-	    super.setSql(getSql());
+		this.batchId = stepExecution.getJobExecution().getJobInstance().getInstanceId();
+		super.setSql(getSql());
 	}
 
 }

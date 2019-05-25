@@ -79,11 +79,10 @@ public class AMZProcess implements Tasklet {
 	private Logger logger = Logger.getLogger(AMZProcess.class);
 
 	private DataSource dataSource;
-	private PlatformTransactionManager	transactionManager;
+	private PlatformTransactionManager transactionManager;
 
-	private ProjectedAmortizationDAO 		projectedAmortizationDAO;
-	private ProjectedAmortizationService 	projectedAmortizationService;
-
+	private ProjectedAmortizationDAO projectedAmortizationDAO;
+	private ProjectedAmortizationService projectedAmortizationService;
 
 	private static final String financeSQL = "Select FinReference, CustID from AmortizationQueuing  Where ThreadID = :ThreadId and Progress = :Progress";
 
@@ -95,7 +94,6 @@ public class AMZProcess implements Tasklet {
 
 		final int threadId = (int) context.getStepContext().getStepExecutionContext().get(AmortizationConstants.THREAD);
 		logger.info("AMZ Process Statred by the Thread : " + threadId + " with date " + appDate.toString());
-
 
 		TransactionStatus txStatus = null;
 		List<ProjectedAccrual> finProjAccList = null;
@@ -121,8 +119,8 @@ public class AMZProcess implements Tasklet {
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 		txDef.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-
-		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext().get(AmortizationConstants.AMZ_MONTHEND);
+		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
+				.get(AmortizationConstants.AMZ_MONTHEND);
 		Date amzMonthStart = DateUtility.getMonthStart(amzMonth);
 
 		while ((amortizationQueuing = cursorItemReader.read()) != null) {
@@ -155,7 +153,8 @@ public class AMZProcess implements Tasklet {
 							|| finMain.getClosedDate().compareTo(amzMonth) > 0) {
 
 						// get future ACCRUALS
-						finProjAccList = this.projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), amzMonthStart);
+						finProjAccList = this.projectedAmortizationDAO
+								.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), amzMonthStart);
 						finEODEvent.setProjectedAccrualList(finProjAccList);
 					}
 

@@ -53,7 +53,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -66,39 +65,38 @@ public class VASProviderAccDetailListModelItemRenderer implements ListitemRender
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, VASProviderAccDetail vASProviderAccDetail, int count) throws Exception {
 
 		Listcell lc;
-	   lc = new Listcell(String.valueOf(vASProviderAccDetail.getProviderDesc()));
+		lc = new Listcell(String.valueOf(vASProviderAccDetail.getProviderDesc()));
 		lc.setParent(item);
 		lc = new Listcell(vASProviderAccDetail.getPaymentMode());
-	  	lc.setParent(item);
-	   /*lc = new Listcell(String.valueOf(vASProviderAccDetail.getBankBranchID()));
-		lc.setParent(item);*/
-	  	lc = new Listcell(vASProviderAccDetail.getAccountNumber());
 		lc.setParent(item);
-		/*lc = new Listcell();
-		final Checkbox cbReceivableAdjustment = new Checkbox();
-		cbReceivableAdjustment.setDisabled(true);
-		cbReceivableAdjustment.setChecked(vASProviderAccDetail.isReceivableAdjustment());
-		lc.appendChild(cbReceivableAdjustment);
+		/*
+		 * lc = new Listcell(String.valueOf(vASProviderAccDetail.getBankBranchID())); lc.setParent(item);
+		 */
+		lc = new Listcell(vASProviderAccDetail.getAccountNumber());
 		lc.setParent(item);
-	   lc = new Listcell(String.valueOf(vASProviderAccDetail.getReconciliationAmount()));
-		lc.setParent(item);*/
+		/*
+		 * lc = new Listcell(); final Checkbox cbReceivableAdjustment = new Checkbox();
+		 * cbReceivableAdjustment.setDisabled(true);
+		 * cbReceivableAdjustment.setChecked(vASProviderAccDetail.isReceivableAdjustment());
+		 * lc.appendChild(cbReceivableAdjustment); lc.setParent(item); lc = new
+		 * Listcell(String.valueOf(vASProviderAccDetail.getReconciliationAmount())); lc.setParent(item);
+		 */
 		lc = new Listcell();
 		final Checkbox cbActive = new Checkbox();
 		cbActive.setDisabled(true);
 		cbActive.setChecked(vASProviderAccDetail.isActive());
 		lc.appendChild(cbActive);
 		lc.setParent(item);
-	  	lc = new Listcell(vASProviderAccDetail.getRecordStatus());
+		lc = new Listcell(vASProviderAccDetail.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(vASProviderAccDetail.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", vASProviderAccDetail.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onVASProviderAccDetailItemDoubleClicked");
 	}
 }

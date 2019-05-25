@@ -205,10 +205,10 @@ public class ReportGenerationUtil implements Serializable {
 
 		logger.debug("Leaving");
 	}
-	
-	 
+
 	/**
 	 * Generate report
+	 * 
 	 * @param reportName
 	 * @param object
 	 * @param listData
@@ -220,9 +220,10 @@ public class ReportGenerationUtil implements Serializable {
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + reportName + ".jasper";
 		createReport(reportName, object, listData, reportSrc, userName, isExcel);
 	}
-	
+
 	/**
 	 * Creating the report
+	 * 
 	 * @param reportName
 	 * @param object
 	 * @param listData
@@ -236,7 +237,7 @@ public class ReportGenerationUtil implements Serializable {
 		try {
 			byte[] buf = ReportCreationUtil.reportGeneration(reportName, object, listData, reportSrc, userName,
 					isExcel);
-			if(isExcel){
+			if (isExcel) {
 				return;
 			}
 			HashMap<String, Object> auditMap = new HashMap<String, Object>();

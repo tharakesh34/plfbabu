@@ -157,7 +157,7 @@ public class SecurityUserAccessDAOImpl extends SequenceDao<SecurityUserAccess> i
 				}
 			} else {
 				sql.append(" select Id from clusters where parent in (");
-				}
+			}
 		}
 
 		logger.trace(Literal.SQL + sql.toString());

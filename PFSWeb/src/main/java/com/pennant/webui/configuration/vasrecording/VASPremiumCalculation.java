@@ -25,7 +25,6 @@ public class VASPremiumCalculation {
 	@Qualifier("customVASPremiumCalculation")
 	private CustomVASPremiumCalculation customVASPremiumCalculation;
 
-
 	public VASPremiumCalcDetails getPrimiumPercentage(VASPremiumCalcDetails preDetails) {
 		logger.debug(Literal.ENTERING);
 
@@ -34,7 +33,7 @@ public class VASPremiumCalculation {
 		if (CollectionUtils.isEmpty(calcDetails)) {
 			return null;
 		}
-		
+
 		// If Custom VAS Premium Calculation available then go to custom process.
 		if (customVASPremiumCalculation != null) {
 			return customVASPremiumCalculation.calcPrimiumPercentage(calcDetails, preDetails);
@@ -89,6 +88,7 @@ public class VASPremiumCalculation {
 	public VASRecordingService getVasRecordingService() {
 		return vasRecordingService;
 	}
+
 	public void setVasRecordingService(VASRecordingService vasRecordingService) {
 		this.vasRecordingService = vasRecordingService;
 	}

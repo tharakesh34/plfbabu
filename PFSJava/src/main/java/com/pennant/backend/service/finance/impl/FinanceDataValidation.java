@@ -210,8 +210,7 @@ public class FinanceDataValidation {
 	}
 
 	/**
-	 * Method for Validating Finance Schedule Prepared Data against application
-	 * masters.
+	 * Method for Validating Finance Schedule Prepared Data against application masters.
 	 * 
 	 * @param vldGroup
 	 * @param finScheduleData
@@ -243,8 +242,7 @@ public class FinanceDataValidation {
 		// ErrorDetail error = validateFinReference("NFLBR",
 		// finScheduleData,vldGroup);
 		/*
-		 * ErrorDetail error = validateFinReference(financeReference,
-		 * finScheduleData,vldGroup); if(error != null) {
+		 * ErrorDetail error = validateFinReference(financeReference, finScheduleData,vldGroup); if(error != null) {
 		 * errorDetails.add(error); }
 		 */
 
@@ -534,8 +532,7 @@ public class FinanceDataValidation {
 			boolean isVasProduct = false;
 			if (financeType.getFinTypeVASProductsList() != null) {
 				/*
-				 * for (FinTypeVASProducts vasProduct :
-				 * financeType.getFinTypeVASProductsList()) { if
+				 * for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) { if
 				 * (vasProduct.isMandatory()) { mandatoryVasCount++; } }
 				 */
 				for (FinTypeVASProducts vasProduct : financeType.getFinTypeVASProductsList()) {
@@ -998,9 +995,8 @@ public class FinanceDataValidation {
 	}
 
 	/*
-	 * =========================================================================
-	 * ======================================= VALIDATE Finance Details
-	 * =========================================================================
+	 * ========================================================================= =======================================
+	 * VALIDATE Finance Details =========================================================================
 	 * =======================================
 	 */
 	public FinScheduleData financeDetailValidation(String vldGroup, FinanceDetail financeDetail, boolean apiFlag) {
@@ -1025,12 +1021,9 @@ public class FinanceDataValidation {
 
 		if (!financeDetail.isStp()) {
 			/*
-			 * if(StringUtils.isBlank(financeDetail.getProcessStage())){
-			 * String[] valueParm = new String[1]; valueParm[0] =
-			 * "ProcessStage"; errorDetails.add(ErrorUtil.getErrorDetail(new
-			 * ErrorDetails("90502", valueParm)));
-			 * finScheduleData.setErrorDetails(errorDetails); return
-			 * finScheduleData; }
+			 * if(StringUtils.isBlank(financeDetail.getProcessStage())){ String[] valueParm = new String[1];
+			 * valueParm[0] = "ProcessStage"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502",
+			 * valueParm))); finScheduleData.setErrorDetails(errorDetails); return finScheduleData; }
 			 */
 			if (financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb()) {
 				String[] valueParm = new String[2];
@@ -1184,10 +1177,9 @@ public class FinanceDataValidation {
 		}
 		if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
 			/*
-			 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[]
-			 * valueParm = new String[1]; valueParm[0] = "finLimitRef";
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
-			 * ErrorDetails("90502", valueParm))); } else { //TODO }
+			 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[] valueParm = new String[1]; valueParm[0] =
+			 * "finLimitRef"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); } else {
+			 * //TODO }
 			 */
 		}
 		if (financeType.isFinCollateralReq() && financeDetail.isStp()) {
@@ -1222,13 +1214,10 @@ public class FinanceDataValidation {
 		}
 		if (StringUtils.isNotBlank(finMain.getDsaCode())) {
 			/*
-			 * RelationshipOfficer relationshipOfficer =
-			 * relationshipOfficerService
-			 * .getApprovedRelationshipOfficerById(finMain.getDsaCode()); if
-			 * (relationshipOfficer == null) { String[] valueParm = new
-			 * String[1]; valueParm[0] = finMain.getDsaCode();
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
-			 * ErrorDetail("90501", valueParm))); }
+			 * RelationshipOfficer relationshipOfficer = relationshipOfficerService
+			 * .getApprovedRelationshipOfficerById(finMain.getDsaCode()); if (relationshipOfficer == null) { String[]
+			 * valueParm = new String[1]; valueParm[0] = finMain.getDsaCode();
+			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm))); }
 			 */
 
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain.getDsaCode(), "DSA",
@@ -1243,12 +1232,9 @@ public class FinanceDataValidation {
 		}
 		if (finMain.getAccountsOfficer() != 0) {
 			/*
-			 * VehicleDealer vehicleDealer =
-			 * vehicleDealerService.getApprovedVehicleDealerById(finMain
-			 * .getAccountsOfficer()); if (vehicleDealer == null) { String[]
-			 * valueParm = new String[1]; valueParm[0] =
-			 * String.valueOf(finMain.getAccountsOfficer());
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
+			 * VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain
+			 * .getAccountsOfficer()); if (vehicleDealer == null) { String[] valueParm = new String[1]; valueParm[0] =
+			 * String.valueOf(finMain.getAccountsOfficer()); errorDetails.add(ErrorUtil.getErrorDetail(new
 			 * ErrorDetail("90501", valueParm))); }
 			 */
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(
@@ -1263,12 +1249,9 @@ public class FinanceDataValidation {
 		}
 		if (StringUtils.isNotBlank(finMain.getSalesDepartment())) {
 			/*
-			 * RelationshipOfficer relationshipOfficer =
-			 * relationshipOfficerService.getApprovedRelationshipOfficerById(
-			 * finMain .getSalesDepartment()); if (relationshipOfficer == null)
-			 * { String[] valueParm = new String[1]; valueParm[0] =
-			 * finMain.getSalesDepartment();
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
+			 * RelationshipOfficer relationshipOfficer = relationshipOfficerService.getApprovedRelationshipOfficerById(
+			 * finMain .getSalesDepartment()); if (relationshipOfficer == null) { String[] valueParm = new String[1];
+			 * valueParm[0] = finMain.getSalesDepartment(); errorDetails.add(ErrorUtil.getErrorDetail(new
 			 * ErrorDetail("90501", valueParm))); }
 			 */
 			GeneralDepartment generalDepartment = generalDepartmentService
@@ -1282,13 +1265,10 @@ public class FinanceDataValidation {
 		}
 		if (StringUtils.isNotBlank(finMain.getDmaCode())) {
 			/*
-			 * RelationshipOfficer relationshipOfficer =
-			 * relationshipOfficerService
-			 * .getApprovedRelationshipOfficerById(finMain.getDmaCode()); if
-			 * (relationshipOfficer == null) { String[] valueParm = new
-			 * String[1]; valueParm[0] = finMain.getDsaCode();
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
-			 * ErrorDetail("90501", valueParm))); }
+			 * RelationshipOfficer relationshipOfficer = relationshipOfficerService
+			 * .getApprovedRelationshipOfficerById(finMain.getDmaCode()); if (relationshipOfficer == null) { String[]
+			 * valueParm = new String[1]; valueParm[0] = finMain.getDsaCode();
+			 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm))); }
 			 */
 			VehicleDealer vehicleDealer = vehicleDealerService.getApprovedVehicleDealerById(finMain.getDmaCode(), "DMA",
 					"");
@@ -1686,10 +1666,8 @@ public class FinanceDataValidation {
 					}
 
 					/*
-					 * if (StringUtils.isEmpty(collateralAssignment.
-					 * getCollateralRef()) ) { String[] valueParm = new
-					 * String[1]; valueParm[0] = "collateralRef";
-					 * errorDetails.add(ErrorUtil.getErrorDetail(new
+					 * if (StringUtils.isEmpty(collateralAssignment. getCollateralRef()) ) { String[] valueParm = new
+					 * String[1]; valueParm[0] = "collateralRef"; errorDetails.add(ErrorUtil.getErrorDetail(new
 					 * ErrorDetail("90502", valueParm))); return errorDetails; }
 					 */
 					BigDecimal assignPerc = collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
@@ -1755,7 +1733,7 @@ public class FinanceDataValidation {
 
 						BigDecimal totAssignedPerc = collateralSetupService
 								.getAssignedPerc(collateralSetup.getCollateralRef(), "");// TODO:Add
-																							// reference
+																																	// reference
 						curAssignValue = curAssignValue.add(collateralSetup.getBankValuation()
 								.multiply(collateralAssignment.getAssignPerc() == null ? BigDecimal.ZERO
 										: collateralAssignment.getAssignPerc())
@@ -1765,32 +1743,21 @@ public class FinanceDataValidation {
 								.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN);
 						BigDecimal availAssignValue = collateralSetup.getBankValuation().subtract(totAssignedValue);
 						/*
-						 * if
-						 * (financeDetail.getFinScheduleData().getFinanceMain().
-						 * getFinAmount().compareTo(curAssignValue) > 0) {
-						 * String[] valueParm = new String[2]; valueParm[0] =
-						 * "Collateral available assign value(" +
-						 * String.valueOf(curAssignValue) + ")"; valueParm[1] =
-						 * "current assign value(" +
-						 * financeDetail.getFinScheduleData().getFinanceMain().
-						 * getFinAmount() + ")";
-						 * errorDetails.add(ErrorUtil.getErrorDetail(new
-						 * ErrorDetail("65012", valueParm))); return
-						 * errorDetails; }
+						 * if (financeDetail.getFinScheduleData().getFinanceMain().
+						 * getFinAmount().compareTo(curAssignValue) > 0) { String[] valueParm = new String[2];
+						 * valueParm[0] = "Collateral available assign value(" + String.valueOf(curAssignValue) + ")";
+						 * valueParm[1] = "current assign value(" + financeDetail.getFinScheduleData().getFinanceMain().
+						 * getFinAmount() + ")"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012",
+						 * valueParm))); return errorDetails; }
 						 */
 						totalAvailAssignValue = totalAvailAssignValue.add(availAssignValue);
 						/*
 						 * if (availAssignValue.compareTo(financeDetail.
-						 * getFinScheduleData().getFinanceMain().getFinAmount())
-						 * < 0) { String[] valueParm = new String[2];
-						 * valueParm[0] = "Available assign value(" +
-						 * String.valueOf(availAssignValue) + ")"; valueParm[1]
-						 * = "loan amount(" +
-						 * String.valueOf(financeDetail.getFinScheduleData().
-						 * getFinanceMain().getFinAmount()) + ")";
-						 * errorDetails.add(ErrorUtil.getErrorDetail(new
-						 * ErrorDetail("65012", valueParm))); return
-						 * errorDetails; }
+						 * getFinScheduleData().getFinanceMain().getFinAmount()) < 0) { String[] valueParm = new
+						 * String[2]; valueParm[0] = "Available assign value(" + String.valueOf(availAssignValue) + ")";
+						 * valueParm[1] = "loan amount(" + String.valueOf(financeDetail.getFinScheduleData().
+						 * getFinanceMain().getFinAmount()) + ")"; errorDetails.add(ErrorUtil.getErrorDetail(new
+						 * ErrorDetail("65012", valueParm))); return errorDetails; }
 						 */
 					} else {
 
@@ -1829,7 +1796,7 @@ public class FinanceDataValidation {
 					}
 				}
 			}
-	}
+		}
 
 		return errorDetails;
 	}
@@ -2032,16 +1999,11 @@ public class FinanceDataValidation {
 				}
 
 				/*
-				 * //validate PAN Customer customer =
-				 * financeDetail.getCustomerDetails().getCustomer(); if(customer
-				 * != null) { if(StringUtils.equals("03",
-				 * detail.getDocCategory())){
-				 * if(!StringUtils.equals(detail.getCustDocTitle(),
-				 * customer.getCustCRCPR())){ String[] valueParm = new
-				 * String[1]; valueParm[0] = customer.getCustCRCPR();
-				 * errorDetails.add(ErrorUtil.getErrorDetail(new
-				 * ErrorDetails("90296", valueParm))); return errorDetails; } }
-				 * }
+				 * //validate PAN Customer customer = financeDetail.getCustomerDetails().getCustomer(); if(customer !=
+				 * null) { if(StringUtils.equals("03", detail.getDocCategory())){
+				 * if(!StringUtils.equals(detail.getCustDocTitle(), customer.getCustCRCPR())){ String[] valueParm = new
+				 * String[1]; valueParm[0] = customer.getCustCRCPR(); errorDetails.add(ErrorUtil.getErrorDetail(new
+				 * ErrorDetails("90296", valueParm))); return errorDetails; } } }
 				 */
 
 				// validate Is Customer document?
@@ -2119,10 +2081,8 @@ public class FinanceDataValidation {
 		Mandate mandate = financeDetail.getMandate();
 		// if it is stp process mandate is mandatory
 		/*
-		 * if (financeDetail.isStp() && mandate == null) { String[] valueParm =
-		 * new String[1]; valueParm[0] = "Mandate";
-		 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502",
-		 * valueParm))); return errorDetails; }
+		 * if (financeDetail.isStp() && mandate == null) { String[] valueParm = new String[1]; valueParm[0] = "Mandate";
+		 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm))); return errorDetails; }
 		 */
 		// Validate mandate details
 		if (mandate != null) {
@@ -2762,16 +2722,11 @@ public class FinanceDataValidation {
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90217", valueParm)));
 					} /*
 						 * else { //validate AccNumber length int accNoLength =
-						 * bankDetailService.getAccNoLengthByCode(advPayment.
-						 * getBankCode()); if
-						 * (advPayment.getBeneficiaryAccNo().length() !=
-						 * accNoLength) { String[] valueParm = new String[2];
-						 * valueParm[0] = "AccountNumber(Disbursement)";
-						 * valueParm[1] = String.valueOf(accNoLength) +
-						 * " characters";
-						 * errorDetails.add(ErrorUtil.getErrorDetail(new
-						 * ErrorDetails("30570", valueParm))); return
-						 * errorDetails; } }
+						 * bankDetailService.getAccNoLengthByCode(advPayment. getBankCode()); if
+						 * (advPayment.getBeneficiaryAccNo().length() != accNoLength) { String[] valueParm = new
+						 * String[2]; valueParm[0] = "AccountNumber(Disbursement)"; valueParm[1] =
+						 * String.valueOf(accNoLength) + " characters"; errorDetails.add(ErrorUtil.getErrorDetail(new
+						 * ErrorDetails("30570", valueParm))); return errorDetails; } }
 						 */
 					// Account holder name
 					if (StringUtils.isBlank(advPayment.getBeneficiaryName())) {
@@ -2894,9 +2849,8 @@ public class FinanceDataValidation {
 	}
 
 	/*
-	 * =========================================================================
-	 * ======================================= VALIDATE BASIC FINANCE DATA
-	 * =========================================================================
+	 * ========================================================================= =======================================
+	 * VALIDATE BASIC FINANCE DATA =========================================================================
 	 * =======================================
 	 */
 
@@ -3063,9 +3017,8 @@ public class FinanceDataValidation {
 	}
 
 	/*
-	 * =========================================================================
-	 * ======================================= VALIDATE FINANCE GRACE DETAILS
-	 * =========================================================================
+	 * ========================================================================= =======================================
+	 * VALIDATE FINANCE GRACE DETAILS =========================================================================
 	 * =======================================
 	 */
 
@@ -3177,9 +3130,8 @@ public class FinanceDataValidation {
 	}
 
 	/*
-	 * =========================================================================
-	 * ======================================= VALIDATE FINANCE REPAY DETAILS
-	 * =========================================================================
+	 * ========================================================================= =======================================
+	 * VALIDATE FINANCE REPAY DETAILS =========================================================================
 	 * =======================================
 	 */
 
@@ -3492,9 +3444,7 @@ public class FinanceDataValidation {
 
 		// Planned EMI Holidays also requested?
 		/*
-		 * if (finMain.isPlanEMIHAlw()) {
-		 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90150",
-		 * null))); }
+		 * if (finMain.isPlanEMIHAlw()) { errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90150", null))); }
 		 */
 
 		// Manual Steps Requested?
@@ -3957,8 +3907,7 @@ public class FinanceDataValidation {
 			Date geDate = null;
 			if (scheduleDateList != null) {
 				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				geDate = DateUtility
-						.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+				geDate = DateUtility.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
 			}
 
 			finMain.setCalGrcEndDate(geDate);
@@ -4829,8 +4778,7 @@ public class FinanceDataValidation {
 							PennantConstants.dateFormat));
 			if (DateUtility.compare(bpiDate, frqDate) >= 0) {
 				/*
-				 * errorDetails.add(ErrorUtil.getErrorDetail(new
-				 * ErrorDetails("30571", null))); return errorDetails;
+				 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null))); return errorDetails;
 				 */
 				finMain.setBpiTreatment(FinanceConstants.BPI_NO);
 			}
@@ -6141,9 +6089,8 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 	/*
-	 * #########################################################################
-	 * ####################################### DEFAULT SETTER GETTER METHODS
-	 * #########################################################################
+	 * ######################################################################### #######################################
+	 * DEFAULT SETTER GETTER METHODS #########################################################################
 	 * #######################################
 	 */
 

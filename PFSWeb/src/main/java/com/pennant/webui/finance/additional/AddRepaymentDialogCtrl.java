@@ -362,7 +362,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
 		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
-		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, aFinSchData.getFinanceMain().getProductCategory())){
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				aFinSchData.getFinanceMain().getProductCategory())) {
 			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
 		}
 		if (getFinanceScheduleDetail() != null) {
@@ -373,7 +374,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.cbSchdMthd.setDisabled(false);
 				this.wIAmount.setDisabled(true);
 			} else {
-				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(), PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
+				fillComboBox(this.cbSchdMthd, getFinanceScheduleDetail().getSchdMethod(),
+						PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 				this.cbSchdMthd.setDisabled(true);
 				this.wIAmount.setDisabled(false);
 			}
@@ -1021,7 +1023,8 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
 		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
-		if(!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, getFinScheduleData().getFinanceMain().getProductCategory())){
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
+				getFinScheduleData().getFinanceMain().getProductCategory())) {
 			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
 		}
 		if (this.cbRepayFromDate.getSelectedIndex() > 0 && this.cbRepayToDate.getSelectedIndex() > 0) {
@@ -1033,13 +1036,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 							|| (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)))) {
 				this.cbSchdMthd.setDisabled(true);
 
-				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(), PennantStaticListUtil.getScheduleMethods(), excludeFields);
-			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || frSpecifier
-					.equals(CalculationConstants.SCH_SPECIFIER_MATURITY))
-					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY) || (toSpecifier
-							.equals(CalculationConstants.SCH_SPECIFIER_MATURITY)))) {
-				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(), PennantStaticListUtil.getScheduleMethods(),
-						nonGrcExclFields);
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getGrcSchdMthd(),
+						PennantStaticListUtil.getScheduleMethods(), excludeFields);
+			} else if ((frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY)
+					|| frSpecifier.equals(CalculationConstants.SCH_SPECIFIER_MATURITY))
+					&& (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_REPAY)
+							|| (toSpecifier.equals(CalculationConstants.SCH_SPECIFIER_MATURITY)))) {
+				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
+						PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 				this.cbSchdMthd.setDisabled(true);
 				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)) {
 					this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,

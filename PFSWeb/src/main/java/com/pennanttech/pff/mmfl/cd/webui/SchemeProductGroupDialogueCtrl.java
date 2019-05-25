@@ -36,7 +36,7 @@ import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 import com.pennanttech.pff.mmfl.cd.service.SchemeDealerGroupService;
 import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
 
-public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGroup> {
+public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGroup> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SchemeProductGroupDialogueCtrl.class);
 
@@ -67,7 +67,8 @@ public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGr
 
 	@Override
 	protected String getReference() {
-		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.schemeProductGroup.getSchemeProductGroupId()));
+		StringBuilder referenceBuffer = new StringBuilder(
+				String.valueOf(this.schemeProductGroup.getSchemeProductGroupId()));
 		return referenceBuffer.toString();
 	}
 
@@ -301,7 +302,7 @@ public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGr
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			schemeProductGroup.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -373,13 +374,14 @@ public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGr
 		}
 
 		if (!this.productGroupCode.isReadonly()) {
-			this.productGroupCode.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_SchemeProductGroupList_ProductGroupCode.value"), true, false));
+			this.productGroupCode.setConstraint(new PTNumberValidator(
+					Labels.getLabel("label_SchemeProductGroupList_ProductGroupCode.value"), true, false));
 		}
-		
+
 		if (this.posVendor.getText().equals("")) {
-			this.posVendor.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeProductGroupList_POSVendor.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+			this.posVendor.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_SchemeProductGroupList_POSVendor.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -763,6 +765,5 @@ public class SchemeProductGroupDialogueCtrl  extends GFCBaseCtrl<SchemeProductGr
 	public void setSchemeProductGroupListCtrl(SchemeProductGroupListCtrl schemeProductGroupListCtrl) {
 		this.schemeProductGroupListCtrl = schemeProductGroupListCtrl;
 	}
-
 
 }

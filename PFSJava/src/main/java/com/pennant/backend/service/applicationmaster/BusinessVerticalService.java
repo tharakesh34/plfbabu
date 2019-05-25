@@ -48,9 +48,14 @@ import com.pennant.backend.model.audit.AuditHeader;
 public interface BusinessVerticalService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	BusinessVertical getBusinessVertical(long id);
+
 	BusinessVertical getApprovedBusinessVertical(long id);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 }

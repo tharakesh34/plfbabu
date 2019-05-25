@@ -484,8 +484,8 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell.setParent(item);
 
 				//Date date = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getCollExpDate().toString()));
-				cell = new Listcell(DateUtility.format((Date) customerCollateral.getCollExpDate(),
-						PennantConstants.dateFormat));
+				cell = new Listcell(
+						DateUtility.format((Date) customerCollateral.getCollExpDate(), PennantConstants.dateFormat));
 				cell.setParent(item);
 				//Date date1 = DateUtility.convertDateFromAS400(new BigDecimal(customerCollateral.getColllastRvwDate().toString()));
 				cell = new Listcell(DateUtility.format((Date) customerCollateral.getColllastRvwDate(),

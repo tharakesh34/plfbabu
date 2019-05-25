@@ -497,8 +497,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			this.entity.setValue(aBranch.getEntity());
 			onChangeEntity();
 		}
-		
-		
+
 		this.cluster.setValue(aBranch.getClusterCode());
 		this.cluster.setDescription(aBranch.getClusterName());
 
@@ -722,7 +721,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
 			try {
 				aBranch.setEntity(this.entity.getValidatedValue());
@@ -731,15 +730,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			}
 			try {
 				this.cluster.getValidatedValue();
-				
+
 				Object aObject = (Object) this.cluster.getObject();
 				if (aObject != null && aObject instanceof Cluster) {
 					Cluster acluster = (Cluster) aObject;
 					aBranch.setClusterId(acluster.getId());
-				}else{
+				} else {
 					aBranch.setClusterId(null);
 				}
-				
+
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1839,7 +1838,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	public void onChangeEntity(ForwardEvent event) {
 		onChangeEntity();
 	}
-	
+
 	private void onChangeEntity() {
 		Object selectedEntiy = entity.getObject();
 
@@ -1849,6 +1848,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			doSetClusterFilter(null);
 		}
 	}
+
 	private void doSetClusterFilter(Entity entity) {
 		this.cluster.setMaxlength(8);
 		this.cluster.setMandatoryStyle(true);
@@ -1882,7 +1882,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 					new Filter("ClusterType", lowermostchild, Filter.OP_EQUAL) });
 		} else {
 			this.cluster.setFilters(new Filter[] { new Filter("Entity", null, Filter.OP_EQUAL),
-					new Filter("ClusterType", null, Filter.OP_EQUAL)	});
+					new Filter("ClusterType", null, Filter.OP_EQUAL) });
 
 		}
 	}

@@ -34,7 +34,7 @@ public class FinRepayQueueHeader {
 
 	private BigDecimal manAdvPaid = BigDecimal.ZERO;
 	private BigDecimal manAdvWaived = BigDecimal.ZERO;
-	
+
 	private BigDecimal paidPenaltyCGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
@@ -341,7 +341,7 @@ public class FinRepayQueueHeader {
 	public void setFutPftWaived(BigDecimal futPftWaived) {
 		this.futPftWaived = futPftWaived;
 	}
-	
+
 	public Map<String, Object> getGstExecutionMap() {
 		return gstExecutionMap;
 	}

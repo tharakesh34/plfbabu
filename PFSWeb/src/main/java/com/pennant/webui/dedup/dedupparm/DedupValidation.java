@@ -288,8 +288,8 @@ public class DedupValidation implements Serializable {
 		interfaceNorkamCheck.setCustomerAddress(customer.getCustAddlVar1());
 
 		InterfaceNorkamCheck norkomCheck = getNorkamCheckService().doNorkamCheck(interfaceNorkamCheck);
-		
-		if(norkomCheck == null) {
+
+		if (norkomCheck == null) {
 			return true;
 		}
 

@@ -671,13 +671,13 @@ public class ScheduleCalculator {
 
 			finScheduleData = maintainPOSStep(finScheduleData);
 			finScheduleData.getFinanceMain().setScheduleMaintained(true);
-			
+
 			// PV : Principal Holiday, Removed here and Included in EARLYPAY_RECRPY
 		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
 
-			/*if (!finMain.isAlwFlexi()) {
-				finScheduleData = principalHoliday(finScheduleData, earlyPayAmt);
-			}*/
+			/*
+			 * if (!finMain.isAlwFlexi()) { finScheduleData = principalHoliday(finScheduleData, earlyPayAmt); }
+			 */
 		}
 
 		// Recalculation of Details after Schedule calculation
@@ -2850,10 +2850,9 @@ public class ScheduleCalculator {
 		while (true) {
 			// Get Next Schedule Date
 
-			Date nextSchdDate = DateUtility.getDate(DateUtility.format(
-					FrequencyUtil.getNextDate(frequency, 1, curStartDate, HolidayHandlerTypes.MOVE_NONE, false)
-							.getNextFrequencyDate(),
-					PennantConstants.dateFormat));
+			Date nextSchdDate = DateUtility.getDate(DateUtility
+					.format(FrequencyUtil.getNextDate(frequency, 1, curStartDate, HolidayHandlerTypes.MOVE_NONE, false)
+							.getNextFrequencyDate(), PennantConstants.dateFormat));
 
 			int sdSize = finSchdDetails.size();
 			curSchd = finSchdDetails.get(sdSize - 1);
@@ -3003,7 +3002,7 @@ public class ScheduleCalculator {
 		ri.setRepayAmount(repayAmount);
 		ri.setRepaySchdMethod(schdMethod);
 		ri.setFinReference(finMain.getFinReference());
-		
+
 		finScheduleData.getRepayInstructions().add(ri);
 
 		// Add (reset) repay instruction after todate
@@ -4849,8 +4848,7 @@ public class ScheduleCalculator {
 		Date lastDateLimit = new Date();
 		lastDateLimit = DateUtility.addYears(finMain.getFinStartDate(), maxFinYears);
 
-		Date newSchdDate = DateUtility
-				.getDate(DateUtility.format(subSchStartDate, PennantConstants.dateFormat));
+		Date newSchdDate = DateUtility.getDate(DateUtility.format(subSchStartDate, PennantConstants.dateFormat));
 
 		for (int i = 0; i < noOfTerms; i++) {
 			finScheduleData = addSubScheduleTerm(finScheduleData, lastDateLimit, true, newSchdDate, frqNewSchd);
@@ -4859,10 +4857,9 @@ public class ScheduleCalculator {
 				return orgFinScheduleData;
 			}
 
-			newSchdDate = DateUtility.getDate(DateUtility.format(
-					FrequencyUtil.getNextDate(frqNewSchd, 1, newSchdDate, HolidayHandlerTypes.MOVE_NONE, false)
-							.getNextFrequencyDate(),
-					PennantConstants.dateFormat));
+			newSchdDate = DateUtility.getDate(DateUtility
+					.format(FrequencyUtil.getNextDate(frqNewSchd, 1, newSchdDate, HolidayHandlerTypes.MOVE_NONE, false)
+							.getNextFrequencyDate(), PennantConstants.dateFormat));
 		}
 
 		// Except first time creation of schedule covert flat rate to reducing
@@ -5392,8 +5389,8 @@ public class ScheduleCalculator {
 			List<Calendar> termSchList = FrequencyUtil
 					.getNextDate(frqBPI, terms - 1, finMain.getFinStartDate(), HolidayHandlerTypes.MOVE_NONE, false)
 					.getScheduleList();
-			bpiDate = DateUtility.getDate(DateUtility.format(termSchList.get(termSchList.size() - 1).getTime(),
-					PennantConstants.dateFormat));
+			bpiDate = DateUtility.getDate(
+					DateUtility.format(termSchList.get(termSchList.size() - 1).getTime(), PennantConstants.dateFormat));
 		} else {
 			bpiDate = DateUtility
 					.getDate(DateUtility.format(
@@ -6602,7 +6599,7 @@ public class ScheduleCalculator {
 				if (curSchd.getInsSchd() == null) {
 					curSchd.setInsSchd(BigDecimal.ZERO);
 				}
-				
+
 				curSchd.getInsSchd().add(curSchd.getInsSchd().add(insAmount));
 
 				// Schedule Frequency Insurance
@@ -7180,8 +7177,8 @@ public class ScheduleCalculator {
 		for (int i = 0; i < odSchdDateList.size(); i++) {
 
 			OverdraftScheduleDetail curODSchd = new OverdraftScheduleDetail();
-			curODSchd.setDroplineDate(DateUtility
-					.getDBDate(DateUtility.format(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
+			curODSchd.setDroplineDate(
+					DateUtility.getDBDate(DateUtility.format(odSchdDateList.get(i), PennantConstants.DBDateFormat)));
 			curODSchd.setActualRate(prvODSchd.getActualRate());
 			curODSchd.setBaseRate(prvODSchd.getBaseRate());
 			curODSchd.setSplRate(prvODSchd.getSplRate());

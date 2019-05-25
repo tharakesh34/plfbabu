@@ -103,7 +103,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				customerBankInfo.setRecordType("");
 				customerBankInfo.setBankId(getCustomerBankInfoDAO().save(customerBankInfo, ""));
 				//BankInfoDetails
-				if(customerBankInfo.getBankInfoDetails().size() > 0){
+				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 						customerBankInfoDAO.save(bankInfoDetail, "");
 					}
@@ -113,7 +113,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				customerBankInfo.setRecordType("");
 				getCustomerBankInfoDAO().update(customerBankInfo, "");
 				//BankInfoDetails
-				if(customerBankInfo.getBankInfoDetails().size() > 0){
+				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 						customerBankInfoDAO.update(bankInfoDetail, "");
 					}
@@ -123,7 +123,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		if (!StringUtils.equals(customerBankInfo.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
 			getCustomerBankInfoDAO().delete(customerBankInfo, "_Temp");
 			//BankInfoDetails
-			if(customerBankInfo.getBankInfoDetails().size() > 0){
+			if (customerBankInfo.getBankInfoDetails().size() > 0) {
 				for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 					customerBankInfoDAO.delete(bankInfoDetail, "_Temp");
 				}

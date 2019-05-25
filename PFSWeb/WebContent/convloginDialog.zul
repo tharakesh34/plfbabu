@@ -13,7 +13,8 @@
 			</west>
 			<east border="0" size="37%">
 				<vlayout>
-					<image src="/images/plf_product_logo.png" width="120px" height="50px" align="right" style="margin-right:6px; margin-top:4px" />
+					<image src="/images/plf_product_logo.png" width="120px" height="50px" align="right"
+						style="margin-right:6px; margin-top:4px" />
 					<div align="left" style="margin-top:300px;">
 						<h:form action="j_spring_security_check" method="post">
 							<grid style="border:none;background:white;">
@@ -31,16 +32,15 @@
 											
 											<![CDATA[Login Failed, Due to invalid credentials/User ID Locked/Expired.<br/> Please try again or contact
 											system administrator. ]]>
-											
-											
+
+
 										</html>
 									</row>
 									<row>
 										<textbox id="txtbox_Username1" width="180px" height="24px" style="display:none;" />
 									</row>
 									<row align="left">
-										<label id="label_LoginDialog_user" value="${c:l('label_LoginDialog_user.value')}"
-											style="margin-left:65px;font-weight:bold;" />
+										<label id="label_LoginDialog_user" value="${c:l('label_LoginDialog_user.value')}" style="margin-left:65px;font-weight:bold;" />
 										<textbox id="txtbox_Username" sclass="z-textbox-loginUser" name="j_username" width="180px" height="24px"
 											style="margin-right:60px" />
 									</row>
@@ -48,10 +48,9 @@
 										<textbox type="password" id="txtbox_Password1" width="180px" height="24px" style="display:none;" />
 									</row>
 									<row align="left">
-										<label id="label_LoginDialog_pwd" value=" ${c:l('label_LoginDialog_pwd.value')}"
-											style="margin-left:65px;font-weight:bold;" />
-										<textbox type="password" sclass="z-textbox-loginPassword" id="txtbox_Password" name="j_password" width="180px"
-											height="24px" style="margin-right:60px;" />
+										<label id="label_LoginDialog_pwd" value=" ${c:l('label_LoginDialog_pwd.value')}" style="margin-left:65px;font-weight:bold;" />
+										<textbox type="password" sclass="z-textbox-loginPassword" id="txtbox_Password" name="j_password"
+											width="180px" height="24px" style="margin-right:60px;" />
 									</row>
 									<row>
 										<cell colspan="2"></cell>
@@ -79,11 +78,14 @@
 			<center border="0">
 
 			</center>
-			<south height="5%" border="normal" style="background-color:#FCFCFC; border-top-color:#ff6600;border-top-width:4px; padding-top:2px;">
+			<south height="5%" border="normal"
+				style="background-color:#FCFCFC; border-top-color:#ff6600;border-top-width:4px; padding-top:2px;">
 
 				<vbox align="center" height="100%" width="100%" pack="center">
 					<div align="center">
-						<label style="color:black;">Lending Factory by Pennant Technologies</label>
+						<label style="color:black;">
+							Lending Factory by Pennant Technologies
+						</label>
 					</div>
 				</vbox>
 			</south>

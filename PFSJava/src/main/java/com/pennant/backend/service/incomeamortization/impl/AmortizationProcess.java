@@ -25,12 +25,12 @@ public class AmortizationProcess extends Thread {
 
 	private static final Logger logger = Logger.getLogger(AmortizationProcess.class);
 
-	private List<FinanceMain> 			financeList = null;
-	private ProjectedAmortization 		projectedAmortization = null;
-	private IncomeAmortizationService 	incomeAmortizationService;
+	private List<FinanceMain> financeList = null;
+	private ProjectedAmortization projectedAmortization = null;
+	private IncomeAmortizationService incomeAmortizationService;
 
-	public AtomicLong	finCount = null;
-	public int 			finListSize = 0;
+	public AtomicLong finCount = null;
+	public int finListSize = 0;
 
 	public AmortizationProcess() {
 		super();
@@ -53,16 +53,19 @@ public class AmortizationProcess extends Thread {
 		try {
 
 			// Start Amortization Process
-			this.incomeAmortizationService.processAmortization(this.financeList, this.projectedAmortization.getMonthEndDate());
+			this.incomeAmortizationService.processAmortization(this.financeList,
+					this.projectedAmortization.getMonthEndDate());
 
 			// Increment and Update Log status
 			this.finCount.addAndGet(this.financeList.size());
 			if (this.finListSize == this.finCount.get()) {
-				this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_SUCCESS, this.projectedAmortization.getId()); // 2
+				this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_SUCCESS,
+						this.projectedAmortization.getId()); // 2
 			}
 
 		} catch (Exception e) {
-			this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_FAILED, this.projectedAmortization.getId()); // 3
+			this.incomeAmortizationService.updateAmzStatus(EodConstants.PROGRESS_FAILED,
+					this.projectedAmortization.getId()); // 3
 			logger.error("Exception: ", e);
 		}
 
@@ -75,7 +78,6 @@ public class AmortizationProcess extends Thread {
 		this.incomeAmortizationService = incomeAmortizationService;
 	}
 
-
 	// unused methods
 
 	/**
@@ -83,7 +85,7 @@ public class AmortizationProcess extends Thread {
 	 * Method for preparing finance data for amortization
 	 * 
 	 * @param monthEndDate
-	 * @return 
+	 * @return
 	 */
 	@SuppressWarnings("unused")
 	private List<FinEODEvent> prepareFinDataForAMZ(Date monthEndDate, List<FinanceMain> financeList) {
@@ -91,8 +93,8 @@ public class AmortizationProcess extends Thread {
 		/**
 		 * Earlier Approach </br>
 		 * 
-		 * Date curMonthStart = DateUtility.getMonthStartDate(monthEndDate);
-		 * List<FinanceMain> financeList = projectedAmortizationService.getFinListForIncomeAMZ(curMonthStart);
+		 * Date curMonthStart = DateUtility.getMonthStartDate(monthEndDate); List<FinanceMain> financeList =
+		 * projectedAmortizationService.getFinListForIncomeAMZ(curMonthStart);
 		 * 
 		 * FinanceProfitDetail Retrieval </br>
 		 * 
@@ -107,7 +109,8 @@ public class AmortizationProcess extends Thread {
 
 			// Finance Type from Cache and FinPftDetails
 			FinanceType financeType = getFinanceType(finMain.getFinType());
-			FinanceProfitDetail finPftDetail = this.incomeAmortizationService.getFinProfitForAMZ(finMain.getFinReference());
+			FinanceProfitDetail finPftDetail = this.incomeAmortizationService
+					.getFinProfitForAMZ(finMain.getFinReference());
 
 			finEODEvent = new FinEODEvent();
 			finEODEvent.setEventFromDate(monthEndDate);
@@ -130,7 +133,7 @@ public class AmortizationProcess extends Thread {
 	 * 
 	 * @param startDate
 	 * @param monthEndDate
-	 * @return 
+	 * @return
 	 */
 	@SuppressWarnings("unused")
 	private List<FinEODEvent> prepareFinDataForAMZandAccruals(Date startDate, Date monthEndDate,
@@ -144,7 +147,8 @@ public class AmortizationProcess extends Thread {
 
 			// Finance Type from Cache and FinPftDetails
 			FinanceType financeType = getFinanceType(finMain.getFinType());
-			FinanceProfitDetail finPftDetail = this.incomeAmortizationService.getFinProfitForAMZ(finMain.getFinReference());
+			FinanceProfitDetail finPftDetail = this.incomeAmortizationService
+					.getFinProfitForAMZ(finMain.getFinReference());
 
 			Date finMaturityDate = finMain.getMaturityDate();
 			finScheduleDetails = getFinScheduleDetails(finMain.getFinReference(), monthEndDate);

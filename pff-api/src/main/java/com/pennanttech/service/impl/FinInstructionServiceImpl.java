@@ -1172,7 +1172,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 
 		financeDetail = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
 
-		if (financeDetail.getFinScheduleData().getErrorDetails() != null && !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()){
+		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			financeDetail = setReturnStatus(financeDetail);
 		}
 
@@ -1765,8 +1766,8 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		}
 
 		if (finServInst.getToDate() != null) {
-			finServInst.setToDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
+			finServInst.setToDate(
+					DateUtility.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getRecalFromDate() != null) {
 			finServInst.setRecalFromDate(DateUtility
@@ -1777,12 +1778,12 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getGrcPeriodEndDate() != null) {
-			finServInst.setGrcPeriodEndDate(DateUtility.getDBDate(
-					DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
+			finServInst.setGrcPeriodEndDate(DateUtility
+					.getDBDate(DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextGrcRepayDate() != null) {
-			finServInst.setNextGrcRepayDate(DateUtility.getDBDate(
-					DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
+			finServInst.setNextGrcRepayDate(DateUtility
+					.getDBDate(DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextRepayDate() != null) {
 			finServInst.setNextRepayDate(DateUtility

@@ -140,15 +140,13 @@ public class DesiredProfitCalculation {
 			return;
 		}
 
-		nextRepayPftDate = DateUtility.parse(
-				DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
+		nextRepayPftDate = DateUtility.parse(DateUtility.format(nextRepayPftDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		gpEndDate = DateUtility.parse(DateUtility.format(gpEndDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
-		nextRepayDate = DateUtility.parse(
-				DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
+		nextRepayDate = DateUtility.parse(DateUtility.format(nextRepayDate, PennantConstants.DBDateFormat),
 				PennantConstants.DBDateFormat);
 
 		//Calculation process based on Repay period rate type

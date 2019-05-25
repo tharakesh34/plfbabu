@@ -500,7 +500,6 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		memberDetails = (CibilMemberDetail) searchProcessor.getResults(search);
 
-		
 		this.CBIL_ENQUIRY_SCORE_TYPE = (String) getSMTParameter("CBIL_ENQUIRY_SCORE_TYPE", String.class);
 	}
 

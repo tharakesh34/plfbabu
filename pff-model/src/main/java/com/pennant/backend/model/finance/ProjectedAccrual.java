@@ -51,13 +51,13 @@ public class ProjectedAccrual implements Serializable {
 	private int noOfDays = 0;
 	private int cumulativeDays = 0;
 	private BigDecimal aMZPercentage = BigDecimal.ZERO;
-	
+
 	// Partial Settlements
 	private long partialPaymentID = Long.MIN_VALUE;
 	private BigDecimal partialPaidAmt = BigDecimal.ZERO;
 	private BigDecimal partialAMZPerc = BigDecimal.ZERO;
 	private boolean monthEnd;
-	
+
 	// Customer Profitability RFT
 	private BigDecimal avgPOS = BigDecimal.ZERO;
 

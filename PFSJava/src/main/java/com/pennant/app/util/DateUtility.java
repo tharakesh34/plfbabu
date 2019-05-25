@@ -163,8 +163,6 @@ public final class DateUtility extends DateUtil {
 		return getSqlDate(parse(date, PennantConstants.DBDateFormat));
 	}
 
-	
-
 	/**
 	 * This method compares two times by comparing hours ,minutes and seconds
 	 * 
@@ -343,8 +341,8 @@ public final class DateUtility extends DateUtil {
 
 		int years = convert(date1).get(Calendar.YEAR) - convert(date2).get(Calendar.YEAR);
 		int months = 0;
-		if (includeDate2 && getMonthEnd(date1).compareTo(
-				parse(format(date1, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
+		if (includeDate2 && getMonthEnd(date1)
+				.compareTo(parse(format(date1, PennantConstants.DBDateFormat), PennantConstants.DBDateFormat)) == 0) {
 
 			if (convert(addDays(date1, 1)).get(Calendar.YEAR) != convert(date1).get(Calendar.YEAR)) {
 				years++;

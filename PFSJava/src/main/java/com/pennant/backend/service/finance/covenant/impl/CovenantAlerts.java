@@ -37,7 +37,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 	private CustomerDetailsService customerDetailsService;
 	private NotificationService notificationService;
 	private CovenantsDAO covenantsDAO;
-	
+
 	List<Covenant> covenants = new ArrayList<>();
 	private Date appDate;
 
@@ -93,7 +93,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 
 			for (CustomerEMail customerEmail : customerDetails.getCustomerEMailList()) {
 				if (customerEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					if(StringUtils.isNotEmpty(customerEmail.getCustEMail())){						
+					if (StringUtils.isNotEmpty(customerEmail.getCustEMail())) {
 						emails.add(customerEmail.getCustEMail());
 					}
 				}
@@ -113,13 +113,13 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 
 			List<String> emails = new ArrayList<>();
 			for (SecurityUser securityUser : secUsers) {
-				if(StringUtils.isNotEmpty(securityUser.getUsrEmail())){
-					emails.add(securityUser.getUsrEmail());					
+				if (StringUtils.isNotEmpty(securityUser.getUsrEmail())) {
+					emails.add(securityUser.getUsrEmail());
 				}
 			}
 
 			notification.setEmails(emails);
-			
+
 			long notificationId = sendNotification(financeDetail, notification);
 			if (notificationId > 0) {
 				updateAlertStatus(notificationId, covenant);
@@ -163,7 +163,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 	private void loadAppDate() {
 		appDate = DateUtil.getDatePart(DateUtility.getAppDate());
 	}
-		
+
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
 		this.securityUserDAO = securityUserDAO;
 	}
@@ -179,7 +179,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
 	}
-	
+
 	public CovenantsDAO getCovenantsDAO() {
 		return covenantsDAO;
 	}

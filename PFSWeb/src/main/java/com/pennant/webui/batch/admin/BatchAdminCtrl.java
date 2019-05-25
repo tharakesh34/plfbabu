@@ -158,7 +158,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 		ledgerNotification,
 		ledgerDownLoad,
 		loadCollateralRevaluationData,
-		collateralRevaluation		
+		collateralRevaluation
 	}
 
 	public BatchAdminCtrl() {
@@ -537,7 +537,7 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			case loanCancel:
 				renderDetials(this.loanCancel, status);
 				break;
-				
+
 			case prepareCustomerQueue:
 				renderDetials(this.prepareCustomerQueue, status);
 				break;

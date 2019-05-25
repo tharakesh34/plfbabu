@@ -87,7 +87,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
-	
+
 	private FinanceMainService financeMainService;
 	private CurrencyService currencyService;
 	private TransactionCodeService transactionCodeService;
@@ -443,7 +443,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						entry.setLinkedTranId(linkedTranId);
 					}
 				}
-				if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
+				if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
 					// Update Child Records Status
 					getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
 					// Updating Header Status
@@ -495,7 +495,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			auditDetails.addAll(details);
 		}
 
-		if(!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
+		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
 			getjVPostingDAO().delete(jVPosting, "_Temp");
 		}
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -1011,174 +1011,175 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		getjVPostingEntryDAO().deleteIAEntries(batchReference);
 		logger.debug("Leaving");
 	}
-	
-	public List<ErrorDetail> doMiscellaneousValidations(final JVPosting posting)	{
+
+	public List<ErrorDetail> doMiscellaneousValidations(final JVPosting posting) {
 		List<ErrorDetail> errorsList = new ArrayList<>();
-		
-		if(StringUtils.isBlank(posting.getBranch()))	{
+
+		if (StringUtils.isBlank(posting.getBranch())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Branch";
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(StringUtils.isBlank(posting.getReference()))	{
+
+		if (StringUtils.isBlank(posting.getReference())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Reference";
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			
+
 			return errorsList;
 		}
-		
+
 		FinanceMain financeMain = financeMainService.getFinanceByFinReference(posting.getReference(), "_AView");
-		if(null == financeMain)	{
+		if (null == financeMain) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "branch " + posting.getBranch();
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(!(StringUtils.equals(posting.getBranch(), financeMain.getFinBranch())))	{
+
+		if (!(StringUtils.equals(posting.getBranch(), financeMain.getFinBranch()))) {
 			String[] valueParm = new String[1];
 			valueParm[0] = posting.getBranch();
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(StringUtils.isBlank(posting.getBatch()))	{
+
+		if (StringUtils.isBlank(posting.getBatch())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Batch";
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(StringUtils.length(posting.getBatch()) > 5)	{
+
+		if (StringUtils.length(posting.getBatch()) > 5) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "batch";
 			valueParm[1] = "5";
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", valueParm)));
-			
+
 			return errorsList;
 		}
-		
-		if(!(StringUtils.isBlank(posting.getCurrency())))	{
+
+		if (!(StringUtils.isBlank(posting.getCurrency()))) {
 			Currency currency = currencyService.getCurrencyForCode(posting.getCurrency());
-			if(null == currency)	{
+			if (null == currency) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "currency " + posting.getCurrency();
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90266", valueParm)));
-				
+
 				return errorsList;
 			}
-			
-			if(!(StringUtils.equals(posting.getCurrency(), currency.getCcyCode())))	{
+
+			if (!(StringUtils.equals(posting.getCurrency(), currency.getCcyCode()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "for currency " + posting.getCurrency();
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("API004", valueParm)));
-				
+
 				return errorsList;
 			}
 		}
-		
+
 		int count = financeMainService.getFinanceCountById(posting.getReference(), false);
 		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = posting.getReference();
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
-			
+
 			return errorsList;
 		}
-		
+
 		List<JVPostingEntry> postingEntries = posting.getJVPostingEntrysList();
-		if(CollectionUtils.isEmpty(postingEntries))	{
+		if (CollectionUtils.isEmpty(postingEntries)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "postingEntry";
-			
+
 			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-			
+
 			return errorsList;
 		}
-		
+
 		for (JVPostingEntry postingEntry : postingEntries) {
-			
-			if(null == postingEntry.getTxnAmount())	{
+
+			if (null == postingEntry.getTxnAmount()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("30556", valueParm)));
-				
+
 				return errorsList;
 			}
-			
-			if(postingEntry.getTxnAmount().compareTo(BigDecimal.ZERO) == 0)	{
+
+			if (postingEntry.getTxnAmount().compareTo(BigDecimal.ZERO) == 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
-				
+
 				return errorsList;
 			}
-			
-			if(StringUtils.isBlank(postingEntry.getTxnCode()))	{
+
+			if (StringUtils.isBlank(postingEntry.getTxnCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionCode";
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				
+
 				return errorsList;
 			}
-			
-			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-			if(null == transactionCode)	{
+
+			TransactionCode transactionCode = transactionCodeService
+					.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+			if (null == transactionCode) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "transactionCode";
 				valueParm[1] = postingEntry.getTxnCode();
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90295", valueParm)));
-				
+
 				return errorsList;
 			}
-			
-			if(StringUtils.isBlank(postingEntry.getAccount()))	{
+
+			if (StringUtils.isBlank(postingEntry.getAccount())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "account";
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				
+
 				return errorsList;
 			}
-			
+
 			AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(postingEntry.getAccount());
-			if(null == accountMapping)	{
+			if (null == accountMapping) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Account";
 				valueParm[1] = postingEntry.getAccount();
-				
+
 				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-				
+
 				return errorsList;
 			}
 		}
-		
+
 		BigDecimal totalDebits = BigDecimal.ZERO;
 		BigDecimal totalCredits = BigDecimal.ZERO;
 		Map<String, BigDecimal> amount = sumDebitCreditPostAmount(totalDebits, totalCredits, postingEntries);
 		totalDebits = amount.get("debitTotal");
 		totalCredits = amount.get("creditTotal");
-		
+
 		if (totalDebits.compareTo(totalCredits) != 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "TransactionAmount " + totalCredits.toString();
@@ -1187,23 +1188,25 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 			return errorsList;
 		}
-		
+
 		return errorsList;
 	}
-	
-	private Map<String, BigDecimal> sumDebitCreditPostAmount(BigDecimal totalDebits, BigDecimal totalCredits, final List<JVPostingEntry> postingEntries)	{
+
+	private Map<String, BigDecimal> sumDebitCreditPostAmount(BigDecimal totalDebits, BigDecimal totalCredits,
+			final List<JVPostingEntry> postingEntries) {
 		Map<String, BigDecimal> amount = new HashMap<>();
 		for (JVPostingEntry postingEntry : postingEntries) {
-			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-			if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D"))	{
+			TransactionCode transactionCode = transactionCodeService
+					.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+			if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D")) {
 				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-			} else if(StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C"))	{
+			} else if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C")) {
 				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
 			}
 		}
 		amount.put("debitTotal", totalDebits);
 		amount.put("creditTotal", totalCredits);
-		
+
 		return amount;
 	}
 
@@ -1374,7 +1377,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
 		this.accountProcessUtil = accountProcessUtil;
 	}
-	
+
 	@Autowired
 	public void setFinanceMainService(FinanceMainService financeMainService) {
 		this.financeMainService = financeMainService;
@@ -1384,7 +1387,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public void setCurrencyService(CurrencyService currencyService) {
 		this.currencyService = currencyService;
 	}
-	
+
 	@Autowired
 	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
 		this.transactionCodeService = transactionCodeService;

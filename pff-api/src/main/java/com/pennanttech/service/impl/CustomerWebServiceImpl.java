@@ -153,12 +153,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				valueParm[0] = "dedup";
 				doEmptyResponseObject(response);
 				response.setDedupReq(customerDetails.isDedupReq());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343",valueParm));
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343", valueParm));
 				response.setCustomerDedupList(dedupList);
 				return response;
 			}
 		}
-		
+
 		// call dedup service for balck list customer 
 		if (customerDetails.isBlackListReq()) {
 			List<BlackListCustomers> blackList = new ArrayList<BlackListCustomers>(1);
@@ -179,7 +179,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				valueParm[0] = "blackList";
 				doEmptyResponseObject(response);
 				response.setBlackListReq(customerDetails.isBlackListReq());
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343",valueParm));
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90343", valueParm));
 				response.setBalckListCustomers(blackList);
 				return response;
 			}
@@ -239,8 +239,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	/**
 	 * Method for verifying empty objects and set "null" value.
 	 * 
-	 * This method mainly written to handle API requests to resolve foreign key
-	 * issues.
+	 * This method mainly written to handle API requests to resolve foreign key issues.
 	 * 
 	 * @param customerDetails
 	 */
@@ -2546,8 +2545,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	}
 
 	/**
-	 * Nullify the un-necessary objects to prepare response in a structured
-	 * format specified in API.
+	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
 	 * @param response
 	 */

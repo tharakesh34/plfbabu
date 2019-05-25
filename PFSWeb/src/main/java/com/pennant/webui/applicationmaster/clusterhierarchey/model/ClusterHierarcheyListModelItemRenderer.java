@@ -54,7 +54,6 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.backend.model.applicationmaster.ClusterHierarchy;
 import com.pennant.backend.util.PennantJavaUtil;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -67,20 +66,19 @@ public class ClusterHierarcheyListModelItemRenderer implements ListitemRenderer<
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, ClusterHierarchy clusterHierarchey, int count) throws Exception {
-		
+
 		Listcell lc;
-	  	lc = new Listcell(clusterHierarchey.getEntity());
+		lc = new Listcell(clusterHierarchey.getEntity());
 		lc.setParent(item);
-	  	lc = new Listcell(clusterHierarchey.getRecordStatus());
+		lc = new Listcell(clusterHierarchey.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(clusterHierarchey.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("entity", clusterHierarchey.getEntity());
 		item.setAttribute("clusterType", clusterHierarchey.getClusterType());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onClusterHierarcheyItemDoubleClicked");
 	}
 }

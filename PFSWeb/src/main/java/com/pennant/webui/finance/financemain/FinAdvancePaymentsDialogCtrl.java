@@ -671,7 +671,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.disbursementAddedAmount.setScale(ccyFormatter);
 		this.disbursementAddedAmount.setTextBoxWidth(150);
 
-
 		this.netAmount.setReadonly(true);
 		this.netAmount.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 		this.netAmount.setScale(ccyFormatter);
@@ -841,27 +840,24 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		BigDecimal disbAmount = BigDecimal.ZERO;
 		BigDecimal advancePayAmount = BigDecimal.ZERO;
 		BigDecimal otherExp = BigDecimal.ZERO;
-		
+
 		// Total Disbursed Amount
 		for (FinanceDisbursement curDisb : financeDisbursement) {
 			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
 			}
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
-			
+
 			otherExp = otherExp.add(curDisb.getDeductFromDisb());
 		}
-		
+
 		disbAmount = disbAmount.subtract(otherExp);
-		
-		/*if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
-			for (FinanceDisbursement curDisb : approvedDisbursments) {
-				if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
-					continue;
-				}
-				disbAmount = disbAmount.add(curDisb.getDisbAmount());
-			}
-		}*/
+
+		/*
+		 * if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) { for (FinanceDisbursement curDisb :
+		 * approvedDisbursments) { if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL))
+		 * { continue; } disbAmount = disbAmount.add(curDisb.getDisbAmount()); } }
+		 */
 
 		// Total amount released except current Instruction
 		List<FinAdvancePayments> advPayList = null;
@@ -882,11 +878,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
 			otherExp = otherExp.add(financeMain.getBpiAmount());
 		}
-		
+
 		if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
 			disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
 		}
-		
+
 		if (advPayList != null && !advPayList.isEmpty()) {
 			for (FinAdvancePayments advPay : advPayList) {
 				if (StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_CANCEL)

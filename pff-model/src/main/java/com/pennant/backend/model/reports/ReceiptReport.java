@@ -75,7 +75,7 @@ public class ReceiptReport implements Serializable {
 	private String bounceCharges = "0";
 	private String feeCharges = "0";
 	private String others = "0";
-	
+
 	// User Branch Address Details
 	private String branchAddrLine1;
 	private String branchAddrLine2;
@@ -88,7 +88,7 @@ public class ReceiptReport implements Serializable {
 	private String branchAddrDistrict;
 	private String branchAddrPincode;
 	private String branchPhone;
-	
+
 	public ReceiptReport() {
 		super();
 	}
@@ -180,7 +180,7 @@ public class ReceiptReport implements Serializable {
 	public void setReceiptDate(String receiptDate) {
 		this.receiptDate = receiptDate;
 	}
-	
+
 	public String getPanNumber() {
 		return panNumber;
 	}
@@ -396,5 +396,5 @@ public class ReceiptReport implements Serializable {
 	public void setFeeCharges(String feeCharges) {
 		this.feeCharges = feeCharges;
 	}
-	
+
 }

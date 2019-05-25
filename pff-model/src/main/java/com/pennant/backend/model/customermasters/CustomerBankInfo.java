@@ -124,7 +124,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}

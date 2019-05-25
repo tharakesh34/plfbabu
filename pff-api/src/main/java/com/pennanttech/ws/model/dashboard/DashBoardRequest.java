@@ -4,7 +4,7 @@ public class DashBoardRequest {
 
 	private String userLogin;
 	private String code;
-	
+
 	public DashBoardRequest() {
 		super();
 	}

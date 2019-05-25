@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class LMSServiceLog {
 
-	private long id=Long.MIN_VALUE;
+	private long id = Long.MIN_VALUE;
 	private String event;
 	private String finReference;
 	private BigDecimal oldRate;
@@ -62,7 +62,7 @@ public class LMSServiceLog {
 	public void setNotificationFlag(String notificationFlag) {
 		this.notificationFlag = notificationFlag;
 	}
-	
+
 	public Map<String, Object> getDeclaredFieldValues() {
 		Map<String, Object> customerMap = new HashMap<>();
 

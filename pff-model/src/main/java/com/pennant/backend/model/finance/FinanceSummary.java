@@ -201,11 +201,11 @@ public class FinanceSummary implements Serializable {
 	private List<FinODDetails> finODDetail;
 	@XmlElement
 	private boolean fullyDisb;
-	@XmlElement(name="limitBalance")
+	@XmlElement(name = "limitBalance")
 	private BigDecimal sanctionAmt = BigDecimal.ZERO;
-	@XmlElement(name="billedAmount")
+	@XmlElement(name = "billedAmount")
 	private BigDecimal utilizedAmt = BigDecimal.ZERO;
-	@XmlElement(name="unbilledAmount")
+	@XmlElement(name = "unbilledAmount")
 	private BigDecimal availableAmt = BigDecimal.ZERO;
 
 	public FinanceSummary() {

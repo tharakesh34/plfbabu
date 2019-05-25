@@ -108,9 +108,9 @@ public interface UploadHeaderService {
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	void updateRecord(UploadHeader uploadHeader);
-	
+
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-	
+
 	UploadHeader getApprovedUploadHeaderById(long academicID);
 
 	AuditHeader delete(AuditHeader auditHeader);
@@ -120,9 +120,9 @@ public interface UploadHeaderService {
 	AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader);
 
 	UploadHeader getUploadHeaderById(long uploadId);
-	
+
 	void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode);
-	
+
 	void updateFileDownload(long uploadId, boolean fileDownload, String type);
 
 }

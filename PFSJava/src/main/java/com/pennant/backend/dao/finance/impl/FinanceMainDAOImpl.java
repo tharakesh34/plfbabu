@@ -320,7 +320,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory , ");
 		selectSql.append(" AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor ");
 		selectSql.append(", BusinessVertical");
-		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
+		selectSql.append(
+				", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", lovDescFinTypeName, lovDescFinBranchName, ");
@@ -679,7 +680,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes,OldFinReference ");
 		}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		sql.append(" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt)");
+		sql.append(
+				" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt)");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -727,8 +729,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes ");
 		}
-		sql.append(", :OldFinReference, :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
-		sql.append(" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt)");
+		sql.append(
+				", :OldFinReference, :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
+		sql.append(
+				" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt)");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -842,7 +846,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PromotionCode = :PromotionCode");
 		sql.append(
 				", TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
-		
+
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			if (financeMain.getClosedDate() == null) {
@@ -850,7 +854,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			}
 			sql.append(", ClosedDate = :ClosedDate ");
 		}
-		
+
 		sql.append(", Version = :Version,LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -1201,7 +1205,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			financeMain.setClosingStatus(null);
 			updateSql.append(" , FinIsActive = :FinIsActive, ClosingStatus =:ClosingStatus ");
 		}
-		
+
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			financeMain.setClosedDate(DateUtility.getAppDate());
@@ -2158,7 +2162,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		updateSql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, ");
 		updateSql.append("  FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus, ");
 		updateSql.append("  FinRepaymentAmount = :FinRepaymentAmount ");
-		
+
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			financeMain.setClosedDate(DateUtility.getAppDate());
@@ -2246,7 +2250,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			updateSql.append(", ClosedDate = :ClosedDate ");
 		}
 		updateSql.append(" Where FinReference = :FinReference ");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
 
@@ -4291,7 +4295,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", PastduePftCalMthd = :PastduePftCalMthd");
 		sql.append(", MMAId = :MMAId");
 		sql.append(", ReAgeBucket = :ReAgeBucket");
-		
+
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {
 			if (financeMain.getClosedDate() == null) {
@@ -4501,7 +4505,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return new HashMap<>();
 	}
-	
+
 	@Override
 	public boolean isFinActive(String finReference) {
 		logger.debug("Entering");
@@ -4532,6 +4536,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return false;
 	}
+
 	@Override
 	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
 		logger.debug("Entering");
@@ -4555,6 +4560,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 		return rcdMaintenStats;
 	}
+
 	@Override
 	public void deleteFinreference(FinanceMain financeMain, TableType tableType, boolean wifi, boolean finilize) {
 		logger.debug(Literal.ENTERING);
@@ -4668,7 +4674,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql
-		.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
+				.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
 
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where FinReference = :FinReference ");
@@ -4713,5 +4719,5 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	// IND AS - END
-	
+
 }

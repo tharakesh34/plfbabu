@@ -93,7 +93,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	private FinODPenaltyRateDAO finODPenaltyRateDAO;
 	private LatePayPenaltyService latePayPenaltyService;
 	private LatePayInterestService latePayInterestService;
-	
+
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FinFeeDetailService finFeeDetailService;
 	private RuleDAO ruleDAO;
@@ -241,7 +241,8 @@ public class LatePayMarkingService extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	private FinEODEvent findLatePay(FinEODEvent finEODEvent,CustEODEvent custEODEvent, Date valueDate) throws Exception {
+	private FinEODEvent findLatePay(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Date valueDate)
+			throws Exception {
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
@@ -307,16 +308,17 @@ public class LatePayMarkingService extends ServiceHelper {
 						true);
 			}
 		}
-		
+
 		// Due Basis LPP Accrual Postings
-		if(StringUtils.equals(ImplementationConstants.LPP_GST_DUE_ON, "D")){
-			
+		if (StringUtils.equals(ImplementationConstants.LPP_GST_DUE_ON, "D")) {
+
 			List<FinODDetails> odList = finEODEvent.getFinODDetails();
 			for (int i = 0; i < odList.size(); i++) {
 				FinODDetails odDetail = odList.get(i);
-				if(odDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0){
-					boolean isExists = finODAmzTaxDetailDAO.isDueCreatedForDate(finRef, odDetail.getFinODSchdDate(), "LPP");
-					if(!isExists){
+				if (odDetail.getTotPenaltyBal().compareTo(BigDecimal.ZERO) > 0) {
+					boolean isExists = finODAmzTaxDetailDAO.isDueCreatedForDate(finRef, odDetail.getFinODSchdDate(),
+							"LPP");
+					if (!isExists) {
 						postLppAccruals(finEODEvent, custEODEvent, odDetail);
 					}
 				}
@@ -528,13 +530,14 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		return finODDetail;
 	}
-	
+
 	/**
 	 * @param financeMain
 	 * @param resultSet
 	 * @throws Exception
 	 */
-	private void postLppAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent, FinODDetails fod) throws Exception {
+	private void postLppAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent, FinODDetails fod)
+			throws Exception {
 		logger.debug(" Entering ");
 
 		String eventCode = AccountEventConstants.ACCEVENT_LPPAMZ;
@@ -578,8 +581,8 @@ public class LatePayMarkingService extends ServiceHelper {
 				penaltyDue = BigDecimal.ZERO;
 			}
 		}
-		
-		if(penaltyDue.compareTo(BigDecimal.ZERO) == 0){
+
+		if (penaltyDue.compareTo(BigDecimal.ZERO) == 0) {
 			logger.debug("Leaving");
 			return;
 		}
@@ -621,15 +624,15 @@ public class LatePayMarkingService extends ServiceHelper {
 				}
 			}
 		}
-		
+
 		// IF GST Calculation Required for LPI or LPP 
 		if (gstCalReq) {
 
 			taxPercmap = getTaxPercentages(gstExecutionMap, main.getFinCcy());
 
 			// Calculate LPP GST Amount
-			penaltyDueGst = getTotalTaxAmount(taxPercmap, penaltyDue,
-					lppFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+			penaltyDueGst = getTotalTaxAmount(taxPercmap, penaltyDue, lppFeeType.getTaxComponent(), taxRoundMode,
+					taxRoundingTarget);
 		}
 
 		// LPI GST Amount for Postings
@@ -637,15 +640,14 @@ public class LatePayMarkingService extends ServiceHelper {
 		boolean addGSTInvoice = false;
 
 		// LPP GST Amount for Postings
-		if (penaltyDue.compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
-				&& lppFeeType.isTaxApplicable()) {
+		if (penaltyDue.compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null && lppFeeType.isTaxApplicable()) {
 
 			if (taxPercmap == null) {
 				taxPercmap = getTaxPercentages(gstExecutionMap, main.getFinCcy());
 			}
 
-			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, penaltyDueGst,
-					lppFeeType.getTaxComponent(), taxRoundMode, taxRoundingTarget);
+			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, penaltyDueGst, lppFeeType.getTaxComponent(),
+					taxRoundMode, taxRoundingTarget);
 			taxDetail.setFinReference(finPftDetail.getFinReference());
 			taxDetail.setTaxFor("LPP");
 			taxDetail.setAmount(penaltyDue);
@@ -659,9 +661,9 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			// Save Tax Details
 			finODAmzTaxDetailDAO.save(taxDetail);
-			
+
 			String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-			if(StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)){
+			if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 				addGSTInvoice = true;
 			}
 		} else {
@@ -686,12 +688,13 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (aeEvent.getLinkedTranId() > 0) {
 
 			// LPP Receivable Data Update for Future Accounting
-			if(penaltyDue.compareTo(BigDecimal.ZERO) > 0){
+			if (penaltyDue.compareTo(BigDecimal.ZERO) > 0) {
 
 				// Save Tax Receivable Details
-				FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finPftDetail.getFinReference(), "LPP");
+				FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finPftDetail.getFinReference(),
+						"LPP");
 				boolean isSave = false;
-				if(taxRcv == null){
+				if (taxRcv == null) {
 					taxRcv = new FinTaxReceivable();
 					taxRcv.setFinReference(finPftDetail.getFinReference());
 					taxRcv.setTaxFor("LPP");
@@ -704,18 +707,18 @@ public class LatePayMarkingService extends ServiceHelper {
 					taxRcv.setUGST(taxRcv.getUGST().add(calGstMap.get("LPP_UGST_R")));
 					taxRcv.setIGST(taxRcv.getIGST().add(calGstMap.get("LPP_IGST_R")));
 				}
-				
+
 				taxRcv.setReceivableAmount(taxRcv.getReceivableAmount().add(penaltyDue));
 
-				if(isSave){
+				if (isSave) {
 					finODAmzTaxDetailDAO.saveTaxReceivable(taxRcv);
-				}else{
+				} else {
 					finODAmzTaxDetailDAO.updateTaxReceivable(taxRcv);
 				}
 			}
-			
+
 			// GST Invoice Generation
-			if(addGSTInvoice){
+			if (addGSTInvoice) {
 				List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, taxPercmap, calGstMap, penaltyDue);
 				if (CollectionUtils.isNotEmpty(feesList)) {
 					this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList, null,
@@ -733,7 +736,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		logger.debug(" Leaving ");
 	}
-	
+
 	/**
 	 * Method for Prepare FianceDetail for GST Invoice Report Preparation
 	 * 
@@ -759,7 +762,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			financeDetail.setCustomerDetails(customerDetails);
 		}
 	}
-	
+
 	/**
 	 * Method for Preparing all GST fee amounts based on configurations
 	 * 
@@ -813,8 +816,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		BigDecimal result = BigDecimal.ZERO;
 		try {
-			Object exereslut = ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy,
-					RuleReturnType.DECIMAL);
+			Object exereslut = ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
 			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
 				result = BigDecimal.ZERO;
 			} else {
@@ -955,9 +957,9 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 		}
 	}
-	
-	private List<FinFeeDetail> prepareFeesList(FeeType lppFeeType, 
-			Map<String, BigDecimal> taxPercMap, Map<String, BigDecimal> calGstMap, BigDecimal penaltyDue) {
+
+	private List<FinFeeDetail> prepareFeesList(FeeType lppFeeType, Map<String, BigDecimal> taxPercMap,
+			Map<String, BigDecimal> calGstMap, BigDecimal penaltyDue) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
@@ -974,7 +976,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			finFeeDetail.setTaxApplicable(true);
 			finFeeDetail.setOriginationFee(false);
 			finFeeDetail.setNetAmountOriginal(penaltyDue);
-			
+
 			if (taxPercMap != null && calGstMap != null) {
 				finFeeDetail.setCgst(taxPercMap.get(RuleConstants.CODE_CGST));
 				finFeeDetail.setSgst(taxPercMap.get(RuleConstants.CODE_SGST));
@@ -985,9 +987,10 @@ public class LatePayMarkingService extends ServiceHelper {
 				finTaxDetails.setNetSGST(calGstMap.get("LPP_SGST_R"));
 				finTaxDetails.setNetIGST(calGstMap.get("LPP_IGST_R"));
 				finTaxDetails.setNetUGST(calGstMap.get("LPP_UGST_R"));
-				
+
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(lppFeeType.getTaxComponent())) {
-					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
+					BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetSGST())
+							.add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetUGST());
 					finFeeDetail.setNetAmountOriginal(penaltyDue.subtract(gstAmount));
 				}
 			}
@@ -1014,6 +1017,7 @@ public class LatePayMarkingService extends ServiceHelper {
 	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
 		this.latePayInterestService = latePayInterestService;
 	}
+
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}

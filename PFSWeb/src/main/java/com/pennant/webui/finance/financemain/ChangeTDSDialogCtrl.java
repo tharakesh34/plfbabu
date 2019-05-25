@@ -100,17 +100,15 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
  */
 public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ChangeTDSDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ChangeTDSDialog;
 	protected Textbox finReference;
@@ -156,7 +154,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected Label label_TdsPercentage;
 	protected CurrencyBox tdsLimit;
 	protected Row row_TDS3;
-	private FinanceDetail financeDetail = null; 
+	private FinanceDetail financeDetail = null;
 	boolean istdsAllowToModify = false;
 
 	/**
@@ -174,9 +172,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -218,7 +215,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			if (arguments.containsKey("isEnquiry")) {
 				isEnquiry = (Boolean) arguments.get("isEnquiry");
 			}
-		
+
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
 				getUserWorkspace().allocateAuthorities(pageRightName, getRole());
@@ -232,11 +229,11 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			if (this.finMaintainInstruction == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
-			
+
 			if (arguments.containsKey("financeDetail")) {
 				setFinanceDetail((FinanceDetail) arguments.get("financeDetail"));
 			}
-			
+
 			// Store the before image.
 			FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
 			BeanUtils.copyProperties(this.finMaintainInstruction, finMaintainInstruction);
@@ -245,7 +242,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			// Render the page and display the data.
 			doLoadWorkFlow(this.finMaintainInstruction.isWorkflow(), this.finMaintainInstruction.getWorkflowId(),
 					this.finMaintainInstruction.getNextTaskId());
-			
+
 			FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
 			this.istdsAllowToModify = financeType.isTdsAllowToModify();
 
@@ -255,7 +252,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 					this.userAction = setRejectRecordStatus(this.userAction);
 				} else {
 					this.userAction = setListRecordStatus(this.userAction);
-//					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
+					//					getUserWorkspace().allocateMenuRoleAuthorities(getRole(), this.pageRightName, menuItemRightName);
 				}
 			} else {
 				this.south.setHeight("0px");
@@ -282,22 +279,23 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.tdsStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tdsLimit.setProperties(false, getCcyFormat());
-		
-		if(isTDSChecked && istdsAllowToModify){
+
+		if (isTDSChecked && istdsAllowToModify) {
 			this.row_TDS2.setVisible(true);
 			this.label_TdsPercentage.setVisible(true);
 			this.tdsPercentage.setVisible(true);
 			this.row_TDS3.setVisible(true);
-			
-		}else{
+
+		} else {
 			this.row_TDS2.setVisible(false);
 			this.label_TdsPercentage.setVisible(false);
 			this.tdsPercentage.setVisible(false);
-			
+
 		}
-		if(isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null && finMaintainInstruction.getTdsEndDate() != null){
+		if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsStartDate() != null
+				&& finMaintainInstruction.getTdsEndDate() != null) {
 			this.row_TDS3.setVisible(true);
-		}else{
+		} else {
 			this.row_TDS3.setVisible(false);
 		}
 		logger.debug("Leaving");
@@ -310,7 +308,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		logger.debug("Entering");
 
 		//getUserWorkspace().allocateAuthorities(this.pageRightName, getRole(), menuItemRightName);
-		
+
 		getUserWorkspace().allocateAuthorities(pageRightName, getRole());
 
 		this.btnNew.setVisible(getUserWorkspace().isAllowed("button_FinChangeTDSDialog_btnNew"));
@@ -340,9 +338,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
 		Cloner cloner = new Cloner();
 		aFinMaintainInstruction = cloner.deepClone(getFinMaintainInstruction());
-		
+
 		doSetValidation();
-		
+
 		doWriteComponentsToBean(aFinMaintainInstruction);
 
 		boolean isNew;
@@ -397,7 +395,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 	public void doWriteComponentsToBean(FinMaintainInstruction finMaintainInstruction) {
 		logger.debug("Entering");
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		finMaintainInstruction.setFinReference(this.financeMain.getFinReference());
@@ -406,7 +404,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 		finMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
 		finMaintainInstruction.setFinCovenantTypeList(null);
-		if(this.tDSApplicable.isChecked() && istdsAllowToModify){
+		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
 			finMaintainInstruction.setTdsPercentage(this.tdsPercentage.getValue());
 			finMaintainInstruction.setTdsStartDate(this.tdsStartDate.getValue());
 			finMaintainInstruction.setTdsEndDate(this.tdsEndDate.getValue());
@@ -416,14 +414,12 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}else{
+		} else {
 			finMaintainInstruction.setTdsPercentage(null);
 			finMaintainInstruction.setTdsStartDate(null);
 			finMaintainInstruction.setTdsEndDate(null);
 			finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
 		}
-		
-		
 
 		logger.debug("Leaving");
 	}
@@ -646,25 +642,22 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				CurrencyUtil.getFormat(financeMain.getFinCcy())));
 		this.startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
 		this.tDSApplicable.setChecked(isTDSChecked);
-		
-		if(isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsPercentage() == null){
-			BigDecimal tdsPerc = new BigDecimal(
-					SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+
+		if (isTDSChecked && istdsAllowToModify && finMaintainInstruction.getTdsPercentage() == null) {
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			this.tdsPercentage.setValue(tdsPerc);
-		}else{
+		} else {
 			this.tdsPercentage.setValue(finMaintainInstruction.getTdsPercentage());
 		}
-		
+
 		this.tdsStartDate.setValue(finMaintainInstruction.getTdsStartDate());
 		this.tdsEndDate.setValue(finMaintainInstruction.getTdsEndDate());
 		this.tdsLimit
-		.setValue(PennantApplicationUtil.formateAmount(finMaintainInstruction.getTdsLimit(), getCcyFormat()));
+				.setValue(PennantApplicationUtil.formateAmount(finMaintainInstruction.getTdsLimit(), getCcyFormat()));
 
 		/*
-		 * this.installmentDate
-		 * .setValue(changeTDSService.getInstallmentDate(financeMain.
-		 * getFinReference(), DateUtility.getAppDate()));
-		 * this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
+		 * this.installmentDate .setValue(changeTDSService.getInstallmentDate(financeMain. getFinReference(),
+		 * DateUtility.getAppDate())); this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
 		 */
 		if (StringUtils.equals(finMaintainInstruction.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
 			this.eventHistory.setVisible(true);
@@ -730,8 +723,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				}
 
 				/*
-				 * String usrAlign = ""; if("right".equals(alignSide)){ usrAlign
-				 * = "left"; }else{ usrAlign = "right"; }
+				 * String usrAlign = ""; if("right".equals(alignSide)){ usrAlign = "left"; }else{ usrAlign = "right"; }
 				 */
 
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
@@ -757,8 +749,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception
@@ -844,9 +835,9 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		this.currency.setReadonly(true);
 		this.loanAmount.setReadonly(true);
 		this.startDate.setReadonly(true);
-		/*this.tdsPercentage.setReadonly(true);
-		this.tdsStartDate.setReadonly(true);
-		this.tdsEndDate.setReadonly(true);*/
+		/*
+		 * this.tdsPercentage.setReadonly(true); this.tdsStartDate.setReadonly(true); this.tdsEndDate.setReadonly(true);
+		 */
 		logger.debug("Leaving");
 	}
 
@@ -876,39 +867,38 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 	private void doSetValidation() {
 		logger.debug("Entering");
-		BigDecimal tdsPerc = new BigDecimal(
-				SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-        if(tdsPerc.compareTo(this.tdsPercentage.getValue())!= 0){
+		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+		if (tdsPerc.compareTo(this.tdsPercentage.getValue()) != 0) {
 			if (!this.tdsStartDate.isDisabled()) {
 				this.tdsStartDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), true));
 			}
-	
+
 			if (!this.tdsEndDate.isDisabled()) {
-				this.tdsEndDate.setConstraint(
-						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), true));
+				this.tdsEndDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), true));
 			}
-        }else{
-        	this.tdsStartDate.setErrorMessage("");
-        	this.tdsEndDate.setErrorMessage("");
-        	if (!this.tdsStartDate.isDisabled()) {
+		} else {
+			this.tdsStartDate.setErrorMessage("");
+			this.tdsEndDate.setErrorMessage("");
+			if (!this.tdsStartDate.isDisabled()) {
 				this.tdsStartDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsStartDate.value"), false));
 			}
-	
+
 			if (!this.tdsEndDate.isDisabled()) {
-				this.tdsEndDate.setConstraint(
-						new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), false));
+				this.tdsEndDate
+						.setConstraint(new PTDateValidator(Labels.getLabel("label_ChangeTDS_TdsEndDate.value"), false));
 			}
-        }
+		}
 		if (!this.tdsLimit.isReadonly()) {
-			this.tdsLimit.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ChangeTDS_TdsLimit.value"),
-							PennantConstants.defaultCCYDecPos, false, false));
+			this.tdsLimit.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ChangeTDS_TdsLimit.value"),
+					PennantConstants.defaultCCYDecPos, false, false));
 		}
 
 		logger.debug("Leaving");
 	}
+
 	/**
 	 * when the selectAll CheckBox is checked . <br>
 	 * 
@@ -918,65 +908,64 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	public void onCheck$tDSApplicable(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		if(this.tDSApplicable.isChecked() && istdsAllowToModify){
+		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
 			this.row_TDS2.setVisible(true);
 			this.label_TdsPercentage.setVisible(true);
 			this.tdsPercentage.setVisible(true);
-			BigDecimal tdsPerc = new BigDecimal(
-					SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 			this.tdsPercentage.setValue(tdsPerc);
 			this.row_TDS3.setVisible(true);
-		}else{
+		} else {
 			this.row_TDS2.setVisible(false);
 			this.label_TdsPercentage.setVisible(false);
 			this.tdsPercentage.setVisible(false);
 			this.row_TDS3.setVisible(false);
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
 	}
+
 	/**
 	 * 
 	 * @param event
 	 */
 	public void onChange$tdsStartDate(Event event) {
 		logger.debug("Entering" + event.toString());
-		
-		
-		
-		if(this.tdsStartDate.getValue() != null){
-			
-			int month=DateUtility.getMonth(this.tdsStartDate.getValue());
-			int year =DateUtility.getYear(this.tdsStartDate.getValue());
+
+		if (this.tdsStartDate.getValue() != null) {
+
+			int month = DateUtility.getMonth(this.tdsStartDate.getValue());
+			int year = DateUtility.getYear(this.tdsStartDate.getValue());
 			this.row_TDS3.setVisible(true);
-			
-			if(month > 3){
+
+			if (month > 3) {
 				Date tdsformateEndDate = null;
 				try {
-					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/"+(year+1));
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}  
+				}
 				this.tdsEndDate.setValue(tdsformateEndDate);
-			}else{
+			} else {
 				Date tdsformateEndDate = null;
 				try {
-					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/"+(year));
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}  
+				}
 				this.tdsEndDate.setValue(tdsformateEndDate);
 			}
-		}else{
+		} else {
 			this.tdsEndDate.setValue(null);
 			this.row_TDS3.setVisible(false);
 			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
 		logger.debug("Leaving" + event.toString());
-		
+
 	}
+
 	/**
 	 * 
 	 * @param event
@@ -984,47 +973,51 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	public void onChange$tdsEndDate(Event event) {
 		logger.debug("Entering" + event.toString());
 		finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
-		if(this.tdsStartDate.getValue() != null && this.tdsEndDate.getValue() != null){
-			
-			int startDatemonth=DateUtility.getMonth(this.tdsStartDate.getValue());
-			int startDateyear =DateUtility.getYear(this.tdsStartDate.getValue());
+		if (this.tdsStartDate.getValue() != null && this.tdsEndDate.getValue() != null) {
+
+			int startDatemonth = DateUtility.getMonth(this.tdsStartDate.getValue());
+			int startDateyear = DateUtility.getYear(this.tdsStartDate.getValue());
 			this.row_TDS3.setVisible(true);
 			Date tdsformateEndDate = null;
-			Date tdsEndDate        = null;
-			Date tdsStartDate      = null;
-			
-		    
-			if(startDatemonth > 3){
-				
+			Date tdsEndDate = null;
+			Date tdsStartDate = null;
+
+			if (startDatemonth > 3) {
+
 				try {
-					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/"+(startDateyear+1));
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear + 1));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}  
-			}else{
-				
+				}
+			} else {
+
 				try {
-					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/"+(startDateyear));
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}  
+				}
 			}
-			tdsEndDate   = this.tdsEndDate.getValue();
+			tdsEndDate = this.tdsEndDate.getValue();
 			tdsStartDate = this.tdsStartDate.getValue();
-			if(DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1 || DateUtility.compare(tdsStartDate, tdsEndDate) == 0 ||  DateUtility.compare(tdsEndDate, tdsStartDate) == -1){
-				throw new WrongValueException(this.tdsEndDate,"End Date must be after"+" "+ DateUtil.format(this.tdsStartDate.getValue(), "dd/MM/yyyy") +" "+"before"+" "+DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
+			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
+					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
+					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
+				throw new WrongValueException(this.tdsEndDate,
+						"End Date must be after" + " " + DateUtil.format(this.tdsStartDate.getValue(), "dd/MM/yyyy")
+								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
 			}
-		}else{
+		} else {
 			this.tdsEndDate.setValue(null);
 			this.row_TDS3.setVisible(false);
 			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
-		
+
 		logger.debug("Leaving" + event.toString());
-		
+
 	}
+
 	/**
 	 * Method for fetching Currency format of selected currency
 	 * 

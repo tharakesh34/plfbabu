@@ -47,11 +47,11 @@ import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennanttech.pff.core.TableType;
 
 public interface ReceiptUploadHeaderDAO {
-	
+
 	UploadHeader getUploadHeader(long uploadId);
-	
+
 	boolean isFileNameExist(String fileName);
-	
+
 	void delete(ReceiptUploadHeader receiptUploadHeader, TableType tempTab);
 
 	long save(ReceiptUploadHeader receiptUploadHeader, TableType mainTab);
@@ -59,7 +59,7 @@ public interface ReceiptUploadHeaderDAO {
 	void update(ReceiptUploadHeader receiptUploadHeader, TableType mainTab);
 
 	ReceiptUploadHeader getReceiptHeaderById(long uploadHeaderId, String string);
-	
+
 	void uploadHeaderStatusCnt(long uploadHeaderId, int sucessCount, int failedCount);
 
 	void updateUploadProgress(long id, int receiptDownloaded);

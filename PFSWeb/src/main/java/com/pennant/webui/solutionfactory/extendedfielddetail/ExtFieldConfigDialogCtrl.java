@@ -543,7 +543,7 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 				// check for new declared variables
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
-					if(isPostValidation){
+					if (isPostValidation) {
 						if (!"errors".equals(variable.get("name"))) {
 							if (!fieldNames.contains(variable.get("name"))) {
 								// if new variables found throw error message

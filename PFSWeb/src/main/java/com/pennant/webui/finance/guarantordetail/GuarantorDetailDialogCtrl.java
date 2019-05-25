@@ -248,8 +248,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private String addrCountryTemp;
 	private String addrProvinceTemp;
 	private BigDecimal totSharePerc;
-	protected JdbcSearchObject<Customer>	custCIFSearchObject;
-	
+	protected JdbcSearchObject<Customer> custCIFSearchObject;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -480,7 +480,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * do Fill customer data when select a cif
 	 */
 	private void setCustomerData() {
-		if(this.guarantorCIF.getValue() == null || this.guarantorCIF.getValue().isEmpty()){
+		if (this.guarantorCIF.getValue() == null || this.guarantorCIF.getValue().isEmpty()) {
 			this.guarantorCIFName.setValue("");
 			this.guarantorIDNumber.setValue("");
 			this.mobileNo.setValue("");
@@ -489,9 +489,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.gb_GurantorsPrimaryExposure.setVisible(false);
 			this.gb_GurantorsSecoundaryExposure.setVisible(false);
 			this.gb_GurantorsExposure.setVisible(false);
-		}else{
+		} else {
 			customer = getCustomer(this.guarantorCIF.getValue());
-			if(customer != null){
+			if (customer != null) {
 				this.guarantorCIF.setValue(customer.getCustCIF());
 				this.guarantorCIFName.setValue(customer.getCustShrtName());
 				this.guarantorIDNumber.setValue(customer.getCustCRCPR());
@@ -506,34 +506,34 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	/*
 	 * Method to get the Customer Address Details when CustID is Entered
 	 */
-	
-	public Customer getCustomer(String custCIF){
+
+	public Customer getCustomer(String custCIF) {
 		logger.debug("Entering");
 		Customer customer = null;
-		JdbcSearchObject<Customer> searchObject=new JdbcSearchObject<Customer>(Customer.class);
+		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
 		searchObject.addTabelName("Customers_AEView");
 		searchObject.addFilterEqual("CustCIF", custCIF);
 		List<Customer> customers = pagedListService.getBySearchObject(searchObject);
-		if(customers!=null && !customers.isEmpty()){
+		if (customers != null && !customers.isEmpty()) {
 			return customers.get(0);
 		}
 		setCustomerData();
 		logger.debug("Leaving");
-		
+
 		return customer;
 	}
-	
+
 	/**
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering");
-		
+
 		List<Filter> filterList = new ArrayList<>();
 		for (int i = 0; i < this.cif.length; i++) {
 			filterList.add(new Filter("CustCIF", this.cif[i], Filter.OP_NOT_EQUAL));
 		}
-		
+
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
@@ -542,7 +542,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving");
 	}
-	
+
 	/**
 	 * Method for setting Customer Details on Search Filters
 	 * 
@@ -550,7 +550,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * @param newSearchObject
 	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
+			throws InterruptedException {
 		logger.debug("Entering");
 		this.guarantorCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
@@ -569,7 +570,7 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	public HashMap<String, Object> getDefaultArguments() {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("roleCode", getRole());
@@ -577,11 +578,11 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		map.put("moduleCode", moduleCode);
 		return map;
 	}
-	
+
 	public void setCustomerDetails(Customer customer) {
 		if (customer != null) {
 			getGuarantorDetail().setGuarantorCIF(customer.getCustCIF());
-			getGuarantorDetail().setCustID(customer.getCustID());	
+			getGuarantorDetail().setCustID(customer.getCustID());
 			getGuarantorDetail().setStatus(customer.getLovDescCustStsName());
 			getGuarantorDetail().setWorstStatus(getGuarantorDetailService().getWorstStaus(customer.getCustID()));
 			this.primaryList = getGuarantorDetailService().getPrimaryExposureList(getGuarantorDetail());

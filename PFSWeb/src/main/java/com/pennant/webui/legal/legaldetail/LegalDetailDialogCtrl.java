@@ -272,7 +272,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	private List<LegalNote> legalNotesList = null;
 	private String method = null;
 	private boolean newApplicants = false;
-	
+
 	private boolean fromLoan = false;
 	private boolean newRecord = false;
 
@@ -1989,8 +1989,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc = new Listcell(String.valueOf(++i));
 				lc.setParent(item);
 
-				lc = new Listcell(
-						DateUtility.format(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
+				lc = new Listcell(DateUtility.format(legalDocument.getDocumentDate(), PennantConstants.dateFormat));
 				lc.setParent(item);
 
 				lc = new Listcell(legalDocument.getDocumentNo());
@@ -2257,19 +2256,19 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				lc.setParent(item);
 				lc = new Listcell(legalECDetail.getDocument());
 				lc.setParent(item);
-				
+
 				lc = new Listcell(legalECDetail.getEcNumber());
 				lc.setParent(item);
-				
+
 				lc = new Listcell(DateUtility.format(legalECDetail.getEcFrom(), PennantConstants.dateFormat));
 				lc.setParent(item);
-				
+
 				lc = new Listcell(DateUtility.format(legalECDetail.getEcTo(), PennantConstants.dateFormat));
 				lc.setParent(item);
-				
+
 				lc = new Listcell(PennantStaticListUtil.getlabelDesc(legalECDetail.getEcType(), ecTypesTypesList));
 				lc.setParent(item);
-				
+
 				lc = new Listcell(legalECDetail.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(legalECDetail.getRecordType()));
@@ -2420,7 +2419,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 	private String getLoanWorkFlowRoles() {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isEmpty(getLegalDetail().getFinType())) {
 			return "";
 		}

@@ -78,7 +78,7 @@
 									</hbox>
 									<label id="label_TaxNumber" value="${c:l('label_FinanceTaxDetailDialog_TaxNumber.value')}" />
 									<hbox>
-										<space spacing="2px" id="space_taxNumber"/>
+										<space spacing="2px" id="space_taxNumber" />
 										<uppercasebox id="taxNumber" width="180px" />
 									</hbox>
 								</row>
@@ -122,11 +122,11 @@
 									<label id="label_SEZCertificateNumber" value="${c:l('label_FinanceTaxDetailDialog_SEZCertificateNumber.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="sezCertificateNo" maxlength="20" width="180px"  />
+										<textbox id="sezCertificateNo" maxlength="20" width="180px" />
 									</hbox>
 									<label id="label_SEZValueDate" value="${c:l('label_FinanceTaxDetailDialog_sezValueDatee.value')}" />
 									<hbox>
-										<space spacing="2px" id="space_SEZValueDate"/>
+										<space spacing="2px" id="space_SEZValueDate" />
 										<datebox id="sezValueDate" width="180px" />
 									</hbox>
 								</row>

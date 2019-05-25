@@ -211,8 +211,7 @@ public class RateReviewService extends ServiceHelper {
 			for (int i = 0; i <= sdSize - 1; i++) {
 
 				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1)
-						&& i != 0) {
+				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
 					curSchd.setRecalLock(false);
@@ -296,7 +295,7 @@ public class RateReviewService extends ServiceHelper {
 	 */
 	public FinScheduleData getFinSchDataByFinRef(FinEODEvent finEodEvent) {
 		logger.debug("Entering");
-		
+
 		FinScheduleData finSchData = new FinScheduleData();
 		finSchData.setFinReference(finEodEvent.getFinanceMain().getFinReference());
 		finSchData.setFinanceMain(finEodEvent.getFinanceMain());
@@ -304,20 +303,20 @@ public class RateReviewService extends ServiceHelper {
 		FinanceType fintype = getFinanceType(finEodEvent.getFinanceMain().getFinType());
 		finSchData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
-		
+
 		List<RepayInstruction> repayInstructions = getRepayInstructionDAO()
 				.getRepayInstrEOD(finSchData.getFinReference());
-		
+
 		finSchData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
-		
+
 		// Finance Disbursement Details
 		List<FinanceDisbursement> finDisbDetails = getFinanceDisbursementDAO()
 				.getFinanceDisbursementDetails(finSchData.getFinReference(), "", false);
 
 		finSchData.setDisbursementDetails(finDisbDetails);
 		finEodEvent.setFinanceDisbursements(finDisbDetails);
-		
+
 		logger.debug("Leaving");
 		return finSchData;
 	}

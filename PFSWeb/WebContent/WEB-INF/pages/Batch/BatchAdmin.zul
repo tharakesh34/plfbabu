@@ -84,7 +84,8 @@
 
 													<exePannel id="beforeEOD" border="normal" title="${c:l('label_beforeEOD')}" imgSrc="/images/icons/send.gif"
 														visible="false" />
-														<exePannel id="loanCancel" border="normal" title="${c:l('label_LoanCancel')}" imgSrc="/images/icons/send.gif"  visible="false"/>
+													<exePannel id="loanCancel" border="normal" title="${c:l('label_LoanCancel')}" imgSrc="/images/icons/send.gif"
+														visible="false" />
 													<exePannel id="prepareCustomerQueue" border="normal" title="${c:l('label_prepareCustomerQueue')}"
 														imgSrc="/images/icons/send.gif" />
 													<hbox></hbox>

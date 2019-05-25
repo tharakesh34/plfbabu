@@ -32,13 +32,13 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
+public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final Logger logger = Logger.getLogger(ProductGroupDialogCtrl.class);
 
 	/*
@@ -48,17 +48,17 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 	protected Window window_ProductGroupDialog;
 	protected Button btnModelId;
 	protected Textbox modelId;
-//	protected ExtendedCombobox dealerCode; // autowired
+	//	protected ExtendedCombobox dealerCode; // autowired
 	protected ExtendedCombobox productCategoryId; // autowired
 	//protected ExtendedCombobox channel; // autowired
 	protected Button btnchannels;
 	protected Textbox txtchannel;
 	protected Checkbox active; // autowired
-	
+
 	private ProductGroup productGroup; // overhanded per param
 	private transient ProductGroupListCtrl productGroupListCtrl; // overhanded per param
 	private transient ProductGroupService productGroupService;
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -70,6 +70,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 	protected void doSetProperties() {
 		super.pageRightName = "ProductGroupDialog";
 	}
+
 	public void onCreate$window_ProductGroupDialog(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -111,6 +112,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -161,6 +163,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSave();
@@ -179,27 +182,24 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		doEdit();
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-	
-
-	
-		
 		this.productCategoryId.setModuleName("ProductCategory");
-		/*this.productCategoryId.setMandatoryStyle(true);
-		this.productCategoryId.setValueColumn("FieldCodeValue");
-		this.productCategoryId.setDescColumn("ValueDesc");
-		this.productCategoryId.setDisplayStyle(2);
-		this.productCategoryId.setValidateColumns(new String[] { "FieldCodeValue" });
-		Filter productCategoryFilter[] = new Filter[1];
-		productCategoryFilter[0] = new Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
-		this.productCategoryId.setFilters(productCategoryFilter);*/
+		/*
+		 * this.productCategoryId.setMandatoryStyle(true); this.productCategoryId.setValueColumn("FieldCodeValue");
+		 * this.productCategoryId.setDescColumn("ValueDesc"); this.productCategoryId.setDisplayStyle(2);
+		 * this.productCategoryId.setValidateColumns(new String[] { "FieldCodeValue" }); Filter productCategoryFilter[]
+		 * = new Filter[1]; productCategoryFilter[0] = new Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
+		 * this.productCategoryId.setFilters(productCategoryFilter);
+		 */
 
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onFulfill$productCategoryId(Event event) {
 		logger.debug("Entering" + event.toString());
 		Object dataObject = productCategoryId.getObject();
@@ -210,11 +210,13 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 			if (dataObject instanceof LovFieldDetail) {
 				LovFieldDetail lovFieldDetail = (LovFieldDetail) dataObject;
 				this.productCategoryId.setObject(lovFieldDetail);
-				this.productCategoryId.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()), lovFieldDetail.getValueDesc());
+				this.productCategoryId.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()),
+						lovFieldDetail.getValueDesc());
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+
 	public void onClick$btnchannels(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductGroupDialog, "ChannelTypes",
@@ -226,7 +228,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		logger.debug("Leaving  " + event.toString());
 
 	}
-	
+
 	public void onClick$btnModelId(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_ProductGroupDialog, "ConsumerProduct",
@@ -238,6 +240,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		logger.debug("Leaving  " + event.toString());
 
 	}
+
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
@@ -250,9 +253,6 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-	
-	
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -300,7 +300,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-//dealer category
+		//dealer category
 		try {
 			aProductGroup.setProductCategoryId(this.productCategoryId.getValue());
 		} catch (WrongValueException we) {
@@ -339,7 +339,6 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		logger.debug(Literal.LEAVING);
 	}
 
-
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
@@ -347,13 +346,15 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		logger.debug(Literal.LEAVING);
 
 		if (!this.modelId.isReadonly()) {
-			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_modelCode.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.modelId
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_modelCode.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.productCategoryId.isReadonly()) {
-			this.productCategoryId.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ProductGroupDialog_productCategory.value"), PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.productCategoryId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_productCategory.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -406,6 +407,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		MessageUtil.showHelpWindow(event, super.window);
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
@@ -441,7 +443,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 					aProductGroup.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
 					getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aProductGroup.getNextTaskId(),
-							aProductGroup); 
+							aProductGroup);
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
 				}
@@ -470,6 +472,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		productGroupListCtrl.search();
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */
@@ -533,7 +536,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		this.productCategoryId.setValue("");
 		this.txtchannel.setValue("");
 		//this.channel.setDescription("");
-		
+
 		this.active.setValue("");
 
 		logger.debug("Leaving");
@@ -767,6 +770,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 		doShowNotes(this.productGroup);
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * @param aAuthorizedSignatoryRepository
 	 * @param tranType
@@ -779,8 +783,6 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 				getOverideMap());
 	}
 
-	
-
 	public ProductGroupService getProductGroupService() {
 		return productGroupService;
 	}
@@ -788,6 +790,5 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup>{
 	public void setProductGroupService(ProductGroupService productGroupService) {
 		this.productGroupService = productGroupService;
 	}
-	
 
 }

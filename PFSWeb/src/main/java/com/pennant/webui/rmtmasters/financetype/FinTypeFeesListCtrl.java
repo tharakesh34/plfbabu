@@ -365,7 +365,6 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		Listitem item = (Listitem) event.getOrigin().getTarget();
 		FinTypeFees finTypeFees = (FinTypeFees) item.getAttribute("data");
-		
 
 		if (!StringUtils.trimToEmpty(finTypeFees.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			finTypeFees.setNewRecord(false);
@@ -384,8 +383,8 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 		map.put("finTypeFeesListCtrl", this);
 		map.put("role", roleCode);
 		map.put("ccyFormat", CurrencyUtil.getFormat(this.finCcy));
-		
-		String feeTypeCode=finTypeFees.getFeeTypeCode();
+
+		String feeTypeCode = finTypeFees.getFeeTypeCode();
 
 		if ((AdvanceRuleCode.ADVINT.name().equals(feeTypeCode) || AdvanceRuleCode.ADVEMI.name().equals(feeTypeCode)
 				|| AdvanceRuleCode.CASHCLT.name().equals(feeTypeCode)

@@ -3,7 +3,7 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 
 public class FinTaxReceivable {
-	
+
 	private String finReference;
 	private String taxFor;
 	private BigDecimal receivableAmount = BigDecimal.ZERO;
@@ -11,10 +11,11 @@ public class FinTaxReceivable {
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}
@@ -22,6 +23,7 @@ public class FinTaxReceivable {
 	public String getTaxFor() {
 		return taxFor;
 	}
+
 	public void setTaxFor(String taxFor) {
 		this.taxFor = taxFor;
 	}
@@ -29,6 +31,7 @@ public class FinTaxReceivable {
 	public BigDecimal getReceivableAmount() {
 		return receivableAmount;
 	}
+
 	public void setReceivableAmount(BigDecimal receivableAmount) {
 		this.receivableAmount = receivableAmount;
 	}
@@ -36,6 +39,7 @@ public class FinTaxReceivable {
 	public BigDecimal getCGST() {
 		return CGST;
 	}
+
 	public void setCGST(BigDecimal cGST) {
 		CGST = cGST;
 	}
@@ -43,6 +47,7 @@ public class FinTaxReceivable {
 	public BigDecimal getSGST() {
 		return SGST;
 	}
+
 	public void setSGST(BigDecimal sGST) {
 		SGST = sGST;
 	}
@@ -50,6 +55,7 @@ public class FinTaxReceivable {
 	public BigDecimal getUGST() {
 		return UGST;
 	}
+
 	public void setUGST(BigDecimal uGST) {
 		UGST = uGST;
 	}
@@ -57,8 +63,9 @@ public class FinTaxReceivable {
 	public BigDecimal getIGST() {
 		return IGST;
 	}
+
 	public void setIGST(BigDecimal iGST) {
 		IGST = iGST;
 	}
-	
+
 }

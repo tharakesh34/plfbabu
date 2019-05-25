@@ -278,7 +278,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		if (this.assetType.isReadonly()) {
 			return;
 		}
-		
+
 		Object dataObject = assetType.getObject();
 		if (dataObject instanceof String) {
 			this.assetType.setValue(dataObject.toString());

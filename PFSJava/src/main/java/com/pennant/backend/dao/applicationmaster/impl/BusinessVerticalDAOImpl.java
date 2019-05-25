@@ -64,25 +64,26 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>BusinessVertical</code> with set of CRUD operations.
  */
-public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> implements BusinessVerticalDAO {
+public class BusinessVerticalDAOImpl extends SequenceDao<BusinessVertical> implements BusinessVerticalDAO {
 	private static Logger logger = Logger.getLogger(BusinessVerticalDAOImpl.class);
 
 	public BusinessVerticalDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public BusinessVertical getBusinessVertical(long id,String type) {
+	public BusinessVertical getBusinessVertical(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, code, description,active, ");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From business_vertical");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -101,10 +102,10 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 
 		logger.debug(Literal.LEAVING);
 		return businessVertical;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String code, TableType tableType) {
+	public boolean isDuplicateKey(long id, String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -128,7 +129,7 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("code", code);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -139,23 +140,25 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(BusinessVertical businessVertical,TableType tableType) {
+	public String save(BusinessVertical businessVertical, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" insert into business_vertical");
+		StringBuilder sql = new StringBuilder(" insert into business_vertical");
 		sql.append(tableType.getSuffix());
 		sql.append(" (id, code, description, active,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, :active ,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (businessVertical.getId()==Long.MIN_VALUE){
+		if (businessVertical.getId() == Long.MIN_VALUE) {
 			businessVertical.setId(getNextValue("Seqbusiness_vertical"));
-			logger.debug("get NextID:"+businessVertical.getId());
+			logger.debug("get NextID:" + businessVertical.getId());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -170,14 +173,14 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(businessVertical.getId());
-	}	
+	}
 
 	@Override
-	public void update(BusinessVertical businessVertical,TableType tableType) {
+	public void update(BusinessVertical businessVertical, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update business_vertical" );
+		StringBuilder sql = new StringBuilder("update business_vertical");
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, active= :active ,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
@@ -185,10 +188,10 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(businessVertical);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -196,7 +199,7 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -229,4 +232,4 @@ public class BusinessVerticalDAOImpl extends SequenceDao <BusinessVertical> impl
 		logger.debug(Literal.LEAVING);
 	}
 
-}	
+}

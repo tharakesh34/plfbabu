@@ -68,10 +68,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
-		
+
 		if (!CollectionUtils.isEmpty(financeDetail.getCollaterals())) {
 			for (CollateralSetup setup : financeDetail.getCollaterals()) {
-					validationUtility.validate(setup, CreateFinanceWithCollateral.class);
+				validationUtility.validate(setup, CreateFinanceWithCollateral.class);
 			}
 		}
 		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF())
@@ -239,7 +239,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		}
 
-		if (!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod().equals(CalculationConstants.SCHMTHD_POS_INT)) {
+		if (!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod()
+				.equals(CalculationConstants.SCHMTHD_POS_INT)) {
 			doEmptyResponseObject(response);
 			response.setStp(financeDetail.isStp());
 			String[] valueParm = new String[2];
@@ -268,27 +269,26 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 
 		// Compare first drop line date greater than start date
-		/*if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){
-			String[] valueParm = new String[1];
-			valueParm[0] = "FirstDroplineDate";
-			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			response.setReturnStatus(status);
-			return response;
-		}*/
+		/*
+		 * if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){ String[] valueParm =
+		 * new String[1]; valueParm[0] = "FirstDroplineDate"; WSReturnStatus status =
+		 * APIErrorHandlerService.getFailedStatus("90502", valueParm); response.setReturnStatus(status); return
+		 * response; }
+		 */
 
-		if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()!=null) {
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()
-				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate())<=0) {
-			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
-			String[] valueParm = new String[2];
-			valueParm[0] = "First Drop line Date";
-			valueParm[1] = "Finance Start Date";
-			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("91121", valueParm);
-			status.setReturnText(status.getReturnText());
-			response.setReturnStatus(status);
-			return response;
-		}
+		if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate() != null) {
+			if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()
+					.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) <= 0) {
+				doEmptyResponseObject(response);
+				response.setStp(financeDetail.isStp());
+				String[] valueParm = new String[2];
+				valueParm[0] = "First Drop line Date";
+				valueParm[1] = "Finance Start Date";
+				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("91121", valueParm);
+				status.setReturnText(status.getReturnText());
+				response.setReturnStatus(status);
+				return response;
+			}
 
 		}
 		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(new BigDecimal("0")) != 0) {
@@ -305,8 +305,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		}
 		financeDetail.getFinScheduleData().getFinanceMain().setRecalType("");
-		if(StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getRepayBaseRate())){
-		financeDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(null);
+		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getRepayBaseRate())) {
+			financeDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(null);
 		}
 
 		return financeDetail;
@@ -563,7 +563,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = custCif;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 		} else {
-			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,false);
+			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,
+					false);
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -595,7 +596,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = collateralRef;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90906", valueParm));
 		} else {
-			response = createFinanceController.getFinanceDetailsById(collateralRef, "Collateral",false);
+			response = createFinanceController.getFinanceDetailsById(collateralRef, "Collateral", false);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -624,14 +625,15 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		if(financeDetail!=null){
-		FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(financeDetail.getFinReference(), "_Temp", false);
+		if (financeDetail != null) {
+			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(financeDetail.getFinReference(), "_Temp",
+					false);
 			if (finMain == null) {
 				String valueParam[] = new String[1];
 				valueParam[0] = financeDetail.getFinReference();
 				return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 			}
-		
+
 		}
 
 		// set default values
@@ -743,15 +745,17 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
-	
+
 	/**
-	 *  Method to reject loan based on data provided by customer
-	 *  @param financeDetail {@link FinanceDetail}
-	 *  @return {@link WSReturnStatus}
+	 * Method to reject loan based on data provided by customer
+	 * 
+	 * @param financeDetail
+	 *            {@link FinanceDetail}
+	 * @return {@link WSReturnStatus}
 	 */
 	@Override
 	public WSReturnStatus rejectFinance(FinanceDetail financeDetail) throws ServiceException {
-		
+
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = null;
@@ -764,29 +768,33 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					financeDetailErrors = financeDetail.getFinScheduleData().getErrorDetails();
 					for (ErrorDetail errorDetail : financeDetailErrors) {
 						doEmptyResponseObject(financeDetail);
-						returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+						returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+								errorDetail.getError());
 					}
 				} else {
 					returnStatus = createFinanceController.processRejectFinance(financeDetail, false);
 				}
 			} else {
 				for (ErrorDetail errorDetail : validationErrors) {
-					returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters());
+					returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+							errorDetail.getParameters());
 				}
 			}
 		} else {
 			returnStatus = createFinanceController.processRejectFinance(financeDetail, true);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return returnStatus;
 	}
 
 	/**
-	 *  Method to cancel loan based on data provided by customer
-	 *  @param financeDetail {@link FinanceDetail}
-	 *  @return {@link WSReturnStatus}
+	 * Method to cancel loan based on data provided by customer
+	 * 
+	 * @param financeDetail
+	 *            {@link FinanceDetail}
+	 * @return {@link WSReturnStatus}
 	 */
 	@Override
 	public WSReturnStatus cancelFinance(FinanceDetail financeDetail) throws ServiceException {
@@ -923,11 +931,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			valueParm[0] = custCif;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
 		} else {
-			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,true);
+			response = createFinanceController.getFinanceDetailsById(custCif, APIConstants.FINANCE_INQUIRY_CUSTOMER,
+					true);
 		}
 		logger.debug(Literal.LEAVING);
 
 		return response;
-	
+
 	}
 }

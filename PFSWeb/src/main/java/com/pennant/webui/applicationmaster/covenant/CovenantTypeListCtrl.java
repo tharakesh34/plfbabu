@@ -102,19 +102,19 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 	protected Button button_CovenantTypeList_CovenantTypeSearch;
 
 	// Search Fields
-    protected Uppercasebox code;
-    protected Textbox description;
-    protected Combobox category;
+	protected Uppercasebox code;
+	protected Textbox description;
+	protected Combobox category;
 	protected ExtendedCombobox docType;
-	
+
 	protected Listbox sortOperator_Code;
 	protected Listbox sortOperator_Description;
 	protected Listbox sortOperator_Category;
 	protected Listbox sortOperator_DocType;
-	
+
 	private transient CovenantTypeService covenantTypeService;
 	private transient List<Property> listCategory = PennantStaticListUtil.getCovenantCategories();
-	
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -148,15 +148,16 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		registerButton(button_CovenantTypeList_CovenantTypeSearch);
 		registerButton(button_CovenantTypeList_NewCovenantType, "button_CovenantTypeList_NewCovenantType", true);
 		registerField("Id");
-		registerField("Category", listheader_Category, SortOrder.NONE, category, sortOperator_Category, Operators.STRING);
+		registerField("Category", listheader_Category, SortOrder.NONE, category, sortOperator_Category,
+				Operators.STRING);
 		registerField("Code");
 		registerField("Description");
 		registerField("DocType", listheader_DocType, SortOrder.ASC, docType, sortOperator_DocType, Operators.DEFAULT);
 		registerField("DocTypeName");
 		//registerField("Los");		
 		//registerField("Otc");		
-		registerField("CovenantType");		
-		registerField("AllowPostPonement");		
+		registerField("CovenantType");
+		registerField("AllowPostPonement");
 		doSetFieldProperties();
 		fillList(this.category, listCategory, null);
 		// Render the page and display the data.
@@ -200,10 +201,9 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		covenanttype.setWorkflowId(getWorkFlowId());
 		// Display the dialog page.
 		doShowDialogPage(covenanttype);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
@@ -220,12 +220,13 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		this.docType.setValueColumn("DocTypeCode");
 		this.docType.setDescColumn("DocTypeDesc");
 		this.docType.setValidateColumns(new String[] { "DocTypeCode" });
-		
+
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onCovenantTypeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
-		
+
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxCovenantType.getSelectedItem();
 		final long id = (long) selectedItem.getAttribute("id");
@@ -235,13 +236,13 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		
-		StringBuffer whereCond= new StringBuffer();
+
+		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");
-		whereCond.append( covenanttype.getId());
+		whereCond.append(covenanttype.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(covenanttype.getVersion());
-	
+
 		if (doCheckAuthority(covenanttype, whereCond.toString())) {
 			// Set the latest work-flow id for the new maintenance request.
 			if (isWorkFlowEnabled() && covenanttype.getWorkflowId() == 0) {
@@ -251,10 +252,10 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
@@ -267,7 +268,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("covenantType", covenanttype);
 		arg.put("covenantTypeListCtrl", this);
-		
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Covenant/CovenantTypeDialog.zul", null, arg);
 		} catch (Exception e) {
@@ -297,7 +298,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 	public void onClick$help(Event event) {
 		doShowHelp(event);
 	}
-	
+
 	/**
 	 * When user clicks on "fromApproved"
 	 * 
@@ -319,10 +320,10 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 	public void setCovenantTypeService(CovenantTypeService covenantTypeService) {
 		this.covenantTypeService = covenantTypeService;
 	}
-	
+
 	public void onFulfill$docType(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Object dataObject = this.docType.getObject();
 
 		if (dataObject instanceof String) {
@@ -337,7 +338,7 @@ public class CovenantTypeListCtrl extends GFCBaseListCtrl<CovenantType> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void fillList(Combobox component, List<Property> properties, Object selectedKey) {
 		logger.trace(Literal.ENTERING);
 

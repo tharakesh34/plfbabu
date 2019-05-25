@@ -42,8 +42,6 @@ import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.service.PersonalDiscussionService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-
-
 /**
  * This is the controller class for the /WEB-INF/pages/Verification/PersonalDiscussion/PersonalDiscussionList.zul file.
  * 
@@ -86,8 +84,6 @@ public class PersonalDiscussionListCtrl extends GFCBaseListCtrl<PersonalDiscussi
 	private String module = "";
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
-
-	
 
 	/**
 	 * default constructor.<br>

@@ -77,8 +77,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new VASRecording
+	 * This method set the Work Flow id based on the module name and return the new VASRecording
 	 * 
 	 * @return VASRecording
 	 */
@@ -92,8 +91,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method get the module from method getVASRecording() and set the new
-	 * record flag as true and return VASRecording()
+	 * This method get the module from method getVASRecording() and set the new record flag as true and return
+	 * VASRecording()
 	 * 
 	 * @return VASRecording
 	 */
@@ -129,7 +128,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
 				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt, Status ,");
-		sql.append("  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId ");
+		sql.append(
+				"  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
 			sql.append(
@@ -156,6 +156,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		logger.debug("Leaving");
 		return null;
 	}
+
 	/**
 	 * Fetch the Record VASRecording details by key field
 	 * 
@@ -168,10 +169,10 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	@Override
 	public VASRecording getVASRecording(String vasReference, String vasStatus, String type) {
 		logger.debug("Entering");
-		
+
 		MapSqlParameterSource source = null;
 		StringBuilder sql = null;
-		
+
 		sql = new StringBuilder(
 				"Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee, FeePaymentMode,EntityCode,");
 		sql.append(" TermInsuranceLien, ProviderName, PolicyNumber, MedicalApplicable, MedicalStatus,");
@@ -179,20 +180,21 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 				" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId, Version, LastMntBy, LastMntOn,");
 		sql.append(
 				" RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,VasStatus,FinanceProcess, PaidAmt, WaivedAmt, Status ,");
-		sql.append("  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId  ");
+		sql.append(
+				"  Remarks  , Reason, CancelAmt , ServiceReqNumber, CancelAfterFLP, OldVasReference, ManualAdviseId, PaymentInsId, ReceivableAdviseId  ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", ProductDesc, DsaIdDesc, DmaIDDesc, FulfilOfficerIdDesc, ReferralIdDesc ");
 			sql.append(
 					", ProductType, ProductTypeDesc, ProductCtg, ProductCtgDesc, ManufacturerDesc  , finType ,flpDays");
 		}
-		
+
 		sql.append(" From VASRecording");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where VasReference =:VasReference AND VasStatus = :VasStatus");
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
-		
+
 		source = new MapSqlParameterSource();
 		source.addValue("VasReference", vasReference);
 		source.addValue("VasStatus", vasStatus);
@@ -251,9 +253,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method Deletes the Record from the VASRecording or
-	 * VASRecording_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete VASRecording by key ProductCode
+	 * This method Deletes the Record from the VASRecording or VASRecording_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete VASRecording by key ProductCode
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -287,9 +288,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method Deletes the Record from the VASRecording or
-	 * VASRecording_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete VASRecording by key ProductCode
+	 * This method Deletes the Record from the VASRecording or VASRecording_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete VASRecording by key ProductCode
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -360,9 +360,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 	}
 
 	/**
-	 * This method updates the Record VASRecording or VASRecording_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update VASRecording by key ProductCode and Version
+	 * This method updates the Record VASRecording or VASRecording_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update VASRecording by key ProductCode and Version
 	 * 
 	 * @param VASRecording
 	 *            (vASRecording)
@@ -525,7 +524,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		this.jdbcTemplate.update(sql.toString(), source);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void updateVasStatus(String reference, long paymentInsId) {
 		logger.debug(Literal.ENTERING);

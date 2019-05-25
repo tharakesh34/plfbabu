@@ -1742,11 +1742,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				extDataMap.put("EX_ReceiptAmount", receiptDetail.getAmount());
 			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)) {
 				extDataMap.put("EA_ReceiptAmount", receiptDetail.getAmount());
-			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
+			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVINT)) {
 				extDataMap.put("EAI_ReceiptAmount", receiptDetail.getAmount());
-			}  else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
+			} else if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_ADVEMI)) {
 				extDataMap.put("EAE_ReceiptAmount", receiptDetail.getAmount());
-			}  else {
+			} else {
 				extDataMap.put("PB_ReceiptAmount", receiptDetail.getAmount());
 			}
 
@@ -3371,62 +3371,77 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-				List<ReceiptAllocationDetail> receiptAllocationDetails = getReceiptData().getReceiptHeader().getAllocationsSummary();
+				List<ReceiptAllocationDetail> receiptAllocationDetails = getReceiptData().getReceiptHeader()
+						.getAllocationsSummary();
 				BigDecimal receivableAmt = BigDecimal.ZERO;
 				BigDecimal bncCharge = BigDecimal.ZERO;
 				BigDecimal profitAmt = BigDecimal.ZERO;
 				BigDecimal principleAmt = BigDecimal.ZERO;
 				BigDecimal tdsAmt = BigDecimal.ZERO;
 				BigDecimal futTdsAmt = BigDecimal.ZERO;
-				
+
 				for (ReceiptAllocationDetail receiptAllocationDetail : receiptAllocationDetails) {
 
 					// Outstanding Principle
-                 	if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_FUT_PRI)) {
-						closureReport.setOutstandingPri( PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_FUT_PRI)) {
+						closureReport.setOutstandingPri(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
 					}
-                 	
-					// Late Payment Charges
-                 	if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
-                 		closureReport.setLatePayCharges( PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
-                 	}
 
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_BOUNCE)) {
+					// Late Payment Charges
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_ODC)) {
+						closureReport.setLatePayCharges(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+					}
+
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_BOUNCE)) {
 						bncCharge = receiptAllocationDetail.getBalance();
 					}
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),RepayConstants.ALLOCATION_MANADV)) {
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_MANADV)) {
 						receivableAmt = receiptAllocationDetail.getBalance();
 					}
 
 					// Interest for the month
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),RepayConstants.ALLOCATION_FUT_PFT)) {
-						closureReport.setInstForTheMonth(PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_FUT_PFT)) {
+						closureReport.setInstForTheMonth(
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
 					}
 
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_PFT)) {
 						profitAmt = receiptAllocationDetail.getBalance();
 					}
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_PRI)) {
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_PRI)) {
 						principleAmt = receiptAllocationDetail.getBalance();
 					}
-					
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_TDS)) {
+
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_TDS)) {
 						tdsAmt = receiptAllocationDetail.getBalance();
 					}
-					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_FUT_TDS)) {
+					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+							RepayConstants.ALLOCATION_FUT_TDS)) {
 						futTdsAmt = receiptAllocationDetail.getBalance();
 					}
-	
+
 				}
 
 				// Cheque Bounce Charges and all the receivable fees
-				closureReport.setCheqBncCharges( PennantApplicationUtil.formateAmount(bncCharge.add(receivableAmt), formatter));
-				
+				closureReport.setCheqBncCharges(
+						PennantApplicationUtil.formateAmount(bncCharge.add(receivableAmt), formatter));
+
 				// Pending Installments
-				closureReport.setPendingInsts( PennantApplicationUtil.formateAmount(profitAmt.add(principleAmt), formatter));
-				
+				closureReport
+						.setPendingInsts(PennantApplicationUtil.formateAmount(profitAmt.add(principleAmt), formatter));
+
 				//   TDS
-				closureReport.setTds( PennantApplicationUtil.formateAmount(tdsAmt.add(futTdsAmt), formatter));
+				closureReport.setTds(PennantApplicationUtil.formateAmount(tdsAmt.add(futTdsAmt), formatter));
 
 				List<FinExcessAmount> excessList = receiptData.getReceiptHeader().getExcessAmounts();
 
@@ -3440,19 +3455,17 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// Advance EMI
 				for (FinExcessAmount finExcessAmount : excessList) {
 					if (StringUtils.equals(finExcessAmount.getAmountType(), RepayConstants.EXAMOUNTTYPE_EMIINADV)) {
-						closureReport.setAdvInsts(  PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
+						closureReport.setAdvInsts(
+								PennantApplicationUtil.formateAmount(finExcessAmount.getBalanceAmt(), formatter));
 					}
 				}
 
 				// Total Dues(Late Pay Charges + Pending Installment + cheque bounce charges + Outstanding Principle + Interest For the Month + Foreclosure Charges
 				// -TDS - Total Waiver)
 				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
-              .add(closureReport.getCheqBncCharges())
-              .add(closureReport.getOutstandingPri())
-              .add(closureReport.getInstForTheMonth())
-              .add(closureReport.getForeClosFees())
-              .subtract(closureReport.getTds())
-              .subtract(closureReport.getTotWaiver()));
+						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
+						.add(closureReport.getInstForTheMonth()).add(closureReport.getForeClosFees())
+						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
@@ -3467,29 +3480,35 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setTotalRefunds(closureReport.getRefund().add(closureReport.getOtherRefunds()));
 
 				// Net Receivable 
-				closureReport.setNetReceivable(closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()).abs());
+				closureReport
+						.setNetReceivable(closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()).abs());
 
-				if ((closureReport.getTotalDues().subtract(closureReport.getTotalRefunds())).compareTo(BigDecimal.ZERO) < 0) {
+				if ((closureReport.getTotalDues().subtract(closureReport.getTotalRefunds()))
+						.compareTo(BigDecimal.ZERO) < 0) {
 					closureReport.setTotal("Net Payable");
 				} else {
 					closureReport.setTotal("Net Receivable");
 				}
 
 				Cloner clone = new Cloner();
-				Map<Date,BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
-				
+				Map<Date, BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
+
 				// calculate net recievable amount for next 7 days
 				for (int i = 1; i <= 7; i++) {
 					FinReceiptData localReceiptData = clone.deepClone(getOrgReceiptData());
 					Date valueDate = DateUtils.addDays(chrgTillDate, i);
 					BigDecimal amount = BigDecimal.ZERO;
 					List<Date> presentmentDates = receiptCalculator.getPresentmentDates(localReceiptData, valueDate); // get presentment dates
-					localReceiptData = receiptCalculator.fetchODPenalties(localReceiptData, valueDate,presentmentDates); // calculate late pay penalties
-					List<ReceiptAllocationDetail> allocationsList = localReceiptData.getReceiptHeader().getAllocations();
+					localReceiptData = receiptCalculator.fetchODPenalties(localReceiptData, valueDate,
+							presentmentDates); // calculate late pay penalties
+					List<ReceiptAllocationDetail> allocationsList = localReceiptData.getReceiptHeader()
+							.getAllocations();
 					for (ReceiptAllocationDetail receiptAllocationDetail : allocationsList) {
 						// Late Payment Charges
-	                 	if (StringUtils.equals(receiptAllocationDetail.getAllocationType(), RepayConstants.ALLOCATION_ODC)) {
-						amount =	PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter);
+						if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
+								RepayConstants.ALLOCATION_ODC)) {
+							amount = PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(),
+									formatter);
 						}
 
 					}
@@ -3505,8 +3524,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setValueDate5(DateFormatUtils.format(dates[4], "dd-MMM-yyyy"));
 				closureReport.setValueDate6(DateFormatUtils.format(dates[5], "dd-MMM-yyyy"));
 				closureReport.setValueDate7(DateFormatUtils.format(dates[6], "dd-MMM-yyyy"));
-				 
-				BigDecimal newNetReceivable = closureReport.getNetReceivable().subtract(closureReport.getLatePayCharges()).abs();
+
+				BigDecimal newNetReceivable = closureReport.getNetReceivable()
+						.subtract(closureReport.getLatePayCharges()).abs();
 				// setting next 7 Days net receivable amount
 				closureReport.setAmount1(newNetReceivable.add(next7DayMap.get(dates[0])));
 				closureReport.setAmount2(newNetReceivable.add(next7DayMap.get(dates[1])));
@@ -3516,7 +3536,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setAmount6(newNetReceivable.add(next7DayMap.get(dates[5])));
 				closureReport.setAmount7(newNetReceivable.add(next7DayMap.get(dates[6])));
 
-				List<FinanceMain> financeMainList = financeDetailService.getFinanceMainForLinkedLoans(financeMain.getFinReference());
+				List<FinanceMain> financeMainList = financeDetailService
+						.getFinanceMainForLinkedLoans(financeMain.getFinReference());
 				StringBuilder linkedFinRef = new StringBuilder(" ");
 				if (financeMainList != null) {
 					for (FinanceMain finance : financeMainList) {
@@ -3534,8 +3555,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setEntityDesc(financeMain.getEntityDesc());
 			}
 		}
-
-
 
 		// Word Format
 		String reportName = "Foreclosure Letter.docx";

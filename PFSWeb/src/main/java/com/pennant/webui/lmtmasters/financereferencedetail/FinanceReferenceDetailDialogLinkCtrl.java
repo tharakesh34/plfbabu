@@ -475,7 +475,7 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				checkMandInputInStageMap.put(roles[i], roles[i]);
 			}
 			if (Arrays.asList(roles).contains("REC_ON_APPROVAL")) {
-			isChecked_ROA = true;
+				isChecked_ROA = true;
 			}
 		}
 

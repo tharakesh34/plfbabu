@@ -237,14 +237,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Textbox eligibilityMethod;
 	protected Button btnAlwElgMthdDetails;
 	protected Checkbox taxNoMand;
-	
+
 	protected Checkbox tDSAllowToModify;// autoWired
 	protected Label label_FinanceTypeDialog_tDSAllowToModify;// autoWired
 	protected Textbox tdsApplicableTo;// autoWired
 	protected Button btnSearchtdsApplicableTo;// autoWired
 	protected Label label_FinanceTypeDialog_tdsApplicableTo;// autoWired
 	protected Space space_ApplicableTo;// autoWired
-
 
 	protected Row row_AutoRejectionDays;
 	protected Intbox autoRejectionDays;
@@ -573,7 +572,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_LTVCheck;
 	protected Checkbox finCollateralCheck;
 
-	
 	protected Checkbox putCallRequired;
 
 	// tasks # >>Start Advance EMI and DSF
@@ -1170,7 +1168,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.alwEarlyPayMethods.setValue(StringUtils.trimToEmpty(aFinanceType.getAlwEarlyPayMethods()));
 		this.alwEarlyPayMethods.setTooltiptext(getEarlypayMthdDescription(aFinanceType.getAlwEarlyPayMethods()));
 		this.finIsDwPayRequired.setChecked(aFinanceType.isFinIsDwPayRequired());
-		this.downPayRule.setAttribute("RuleId",aFinanceType.getDownPayRule());
+		this.downPayRule.setAttribute("RuleId", aFinanceType.getDownPayRule());
 		this.downPayRule.setValue(aFinanceType.getDownPayRuleCode());
 		this.downPayRule.setDescription(aFinanceType.getDownPayRuleDesc());
 		this.finIsGenRef.setChecked(aFinanceType.isFinIsGenRef());
@@ -1649,7 +1647,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (!isOverdraft) {
 			this.putCallRequired.setChecked(aFinanceType.isPutCallRequired());
-	
+
 			// tasks # >>Start Advance EMI and DSF
 			this.grcAdvIntersetReq.setChecked(aFinanceType.isGrcAdvIntersetReq());
 			fillList(this.grcAdvType, AdvanceType.getGrcList(), aFinanceType.getGrcAdvType());
@@ -1657,7 +1655,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.grcAdvMinTerms.setValue(aFinanceType.getGrcAdvMinTerms());
 			this.grcAdvDefaultTerms.setValue(aFinanceType.getGrcAdvDefaultTerms());
 			doCheckGrcAdvIntersetReq();
-	
+
 			this.advIntersetReq.setChecked(aFinanceType.isAdvIntersetReq());
 			fillList(this.advType, AdvanceType.getRepayList(), aFinanceType.getAdvType());
 			this.advMinTerms.setValue(aFinanceType.getAdvMinTerms());
@@ -1665,7 +1663,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.advDefaultTerms.setValue(aFinanceType.getAdvDefaultTerms());
 			fillList(this.advStage, AdvanceStage.getList(), aFinanceType.getAdvStage());
 			doCheckAdvIntersetReq();
-	
+
 			this.dsfReq.setChecked(aFinanceType.isDsfReq());
 			this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
 		}
@@ -3238,105 +3236,105 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		if (!isOverdraft) {	
-		// tasks # >>Start Advance EMI and DSF
-		try {
-			aFinanceType.setAdvIntersetReq(this.advIntersetReq.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceType.setAdvType(getComboboxValue(this.advType));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		if (AdvanceType.UT.name().equals(aFinanceType.getAdvType())) {
-			String advMinLabel = "Minimum Advance Terms";
-			String advMaxLabel = "Maximum Advance Terms";
-			String advDftLabel = "Default Advance Terms";
-
-			int advMinTerms = this.advMinTerms.intValue();
-			int advMaxTerms = this.advMaxTerms.intValue();
-			int advDefaultTerms = this.advDefaultTerms.intValue();
-			boolean validationRequired = true;
-
+		if (!isOverdraft) {
+			// tasks # >>Start Advance EMI and DSF
 			try {
-
-				if (this.advIntersetReq.isChecked() && advMinTerms < 0) {
-					throw new WrongValueException(this.advMinTerms,
-							Labels.getLabel("FIELD_IS_GREATER", new String[] { advMinLabel, "0" }));
-				}
-
-				aFinanceType.setAdvMinTerms(advMinTerms);
+				aFinanceType.setAdvIntersetReq(this.advIntersetReq.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
+				aFinanceType.setAdvType(getComboboxValue(this.advType));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
-				if (advMaxTerms == 0) {
-					validationRequired = false;
-				} else if (this.advIntersetReq.isChecked() && advMaxTerms < 0) {
-					throw new WrongValueException(this.advMaxTerms,
-							Labels.getLabel("FIELD_IS_GREATER", new String[] { advMaxLabel, "0" }));
+			if (AdvanceType.UT.name().equals(aFinanceType.getAdvType())) {
+				String advMinLabel = "Minimum Advance Terms";
+				String advMaxLabel = "Maximum Advance Terms";
+				String advDftLabel = "Default Advance Terms";
+
+				int advMinTerms = this.advMinTerms.intValue();
+				int advMaxTerms = this.advMaxTerms.intValue();
+				int advDefaultTerms = this.advDefaultTerms.intValue();
+				boolean validationRequired = true;
+
+				try {
+
+					if (this.advIntersetReq.isChecked() && advMinTerms < 0) {
+						throw new WrongValueException(this.advMinTerms,
+								Labels.getLabel("FIELD_IS_GREATER", new String[] { advMinLabel, "0" }));
+					}
+
+					aFinanceType.setAdvMinTerms(advMinTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
 
-				if (validationRequired) {
-					if (advMaxTerms < advMinTerms || advMaxTerms > advMaxTerms) {
+				try {
+
+					if (advMaxTerms == 0) {
+						validationRequired = false;
+					} else if (this.advIntersetReq.isChecked() && advMaxTerms < 0) {
 						throw new WrongValueException(this.advMaxTerms,
-								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advMaxLabel,
-										String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+								Labels.getLabel("FIELD_IS_GREATER", new String[] { advMaxLabel, "0" }));
 					}
+
+					if (validationRequired) {
+						if (advMaxTerms < advMinTerms || advMaxTerms > advMaxTerms) {
+							throw new WrongValueException(this.advMaxTerms,
+									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advMaxLabel,
+											String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+						}
+					}
+					aFinanceType.setAdvMaxTerms(advMaxTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
-				aFinanceType.setAdvMaxTerms(advMaxTerms);
+
+				try {
+					validationRequired = true;
+
+					if (advMinTerms == 0 && advMaxTerms == 0 && advDefaultTerms >= 0) {
+						validationRequired = false;
+					}
+
+					if (validationRequired) {
+						if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
+							throw new WrongValueException(this.advDefaultTerms,
+									Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advDftLabel,
+											String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
+						}
+					}
+
+					aFinanceType.setAdvDefaultTerms(advDefaultTerms);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+			} else {
+				aFinanceType.setAdvMinTerms(0);
+				aFinanceType.setAdvMaxTerms(0);
+				aFinanceType.setAdvDefaultTerms(0);
+			}
+
+			try {
+				aFinanceType.setAdvStage(getComboboxValue(advStage));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				validationRequired = true;
-
-				if (advMinTerms == 0 && advMaxTerms == 0 && advDefaultTerms >= 0) {
-					validationRequired = false;
-				}
-
-				if (validationRequired) {
-					if (advDefaultTerms < advMinTerms || advDefaultTerms > advMaxTerms) {
-						throw new WrongValueException(this.advDefaultTerms,
-								Labels.getLabel("NUMBER_RANGE_EQ", new String[] { advDftLabel,
-										String.valueOf(advMinTerms), String.valueOf(advMaxTerms) }));
-					}
-				}
-
-				aFinanceType.setAdvDefaultTerms(advDefaultTerms);
+				aFinanceType.setDsfReq(this.dsfReq.isChecked());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		} else {
-			aFinanceType.setAdvMinTerms(0);
-			aFinanceType.setAdvMaxTerms(0);
-			aFinanceType.setAdvDefaultTerms(0);
-		}
 
-		try {
-			aFinanceType.setAdvStage(getComboboxValue(advStage));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceType.setDsfReq(this.dsfReq.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceType.setCashCollateralReq(cashCollateralReq.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
+			try {
+				aFinanceType.setCashCollateralReq(cashCollateralReq.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
 		// tasks # >>End Advance EMI and DSF
 
@@ -3669,7 +3667,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (getFinTypeExpenseListCtrl() != null) {
 			aFinanceType.setFinTypeExpenseList(getFinTypeExpenseListCtrl().doSave());
 		}
-		if(!isOverdraft){
+		if (!isOverdraft) {
 
 			try {
 				aFinanceType.setPutCallRequired(this.putCallRequired.isChecked());
@@ -3845,10 +3843,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"), null, true, true));
 		}
-		
+
 		if (this.tDSApplicable.isChecked() && !this.tdsApplicableTo.isDisabled()) {
-			this.tdsApplicableTo.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_FinanceTypeDialog_tdsApplicableTo.value"), null, true));
+			this.tdsApplicableTo.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceTypeDialog_tdsApplicableTo.value"), null, true));
 		}
 		/*
 		 * To Check Whether it is save or submit if save no validation else it should validate
@@ -4031,14 +4029,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					Labels.getLabel("label_FinanceTypeDialog_AutoRejectionDays.value"), false, false));
 		}
 		if (!isOverdraft) {
-		// tasks # >>Start Advance EMI and DSF
+			// tasks # >>Start Advance EMI and DSF
 			if (this.advIntersetReq.isChecked()) {
 				if (!this.advType.isDisabled()) {
 					this.advType.setConstraint(new StaticListValidator(AdvanceType.getRepayList(),
 							Labels.getLabel("label_FinanceTypeDialog_advType.value")));
 				}
 			}
-	
+
 			if (this.grcAdvIntersetReq.isChecked()) {
 				if (!this.grcAdvType.isDisabled()) {
 					this.grcAdvType.setConstraint(new StaticListValidator(AdvanceType.getGrcList(),
@@ -4549,21 +4547,21 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
 		if (!isOverdraft) {
-	        	this.putCallRequired.setDisabled(isTrue);
-	        		// tasks # >>Start Advance EMI and DSF
-	        	this.advIntersetReq.setDisabled(isTrue);
-	        	this.advType.setDisabled(isTrue);
-	        	this.advMinTerms.setReadonly(isTrue);
-	        	this.advMaxTerms.setReadonly(isTrue);
-	        	this.advDefaultTerms.setReadonly(isTrue);
-	        	this.grcAdvIntersetReq.setDisabled(isTrue);
-	        	this.grcAdvType.setDisabled(isTrue);
-	        	this.grcAdvMinTerms.setReadonly(isTrue);
-				this.grcAdvMaxTerms.setReadonly(isTrue);
-				this.advStage.setDisabled(isTrue);
-				this.grcAdvDefaultTerms.setReadonly(isTrue);
-				this.dsfReq.setDisabled(isTrue);
-				this.cashCollateralReq.setDisabled(isTrue);
+			this.putCallRequired.setDisabled(isTrue);
+			// tasks # >>Start Advance EMI and DSF
+			this.advIntersetReq.setDisabled(isTrue);
+			this.advType.setDisabled(isTrue);
+			this.advMinTerms.setReadonly(isTrue);
+			this.advMaxTerms.setReadonly(isTrue);
+			this.advDefaultTerms.setReadonly(isTrue);
+			this.grcAdvIntersetReq.setDisabled(isTrue);
+			this.grcAdvType.setDisabled(isTrue);
+			this.grcAdvMinTerms.setReadonly(isTrue);
+			this.grcAdvMaxTerms.setReadonly(isTrue);
+			this.advStage.setDisabled(isTrue);
+			this.grcAdvDefaultTerms.setReadonly(isTrue);
+			this.dsfReq.setDisabled(isTrue);
+			this.cashCollateralReq.setDisabled(isTrue);
 		}
 		// tasks # >>End Advance EMI and DSF
 
@@ -5197,10 +5195,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} else {
 			Rule details = (Rule) dataObject;
 			if (details != null) {
-				this.downPayRule.setAttribute("RuleId",details.getRuleId());
+				this.downPayRule.setAttribute("RuleId", details.getRuleId());
 				this.downPayRule.setValue(details.getRuleCode());
 				this.downPayRule.setDescription(details.getRuleCodeDesc());
-			}else{
+			} else {
 				this.downPayRule.setValue("");
 				this.downPayRule.setAttribute("RuleId", Long.MIN_VALUE);
 				this.downPayRule.setDescription("");
@@ -5208,7 +5206,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * To get the currency LOV List From RMTCurrencies Table And Amount is formatted based on the currency
 	 */
@@ -5512,7 +5510,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	public void onCheck$tDSApplicable(Event event) {
 		checkTDSApplicableChecked();
 	}
-	
+
 	private void checkTDSApplicableChecked() {
 		String valueAsString = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
 		if (StringUtils.isNotEmpty(valueAsString) && StringUtils.equals(valueAsString, PennantConstants.YES)) {
@@ -5533,6 +5531,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 		}
 	}
+
 	public void onCheck$allowRIAInvestment(Event event) {
 		logger.debug("Entering" + event.toString());
 
@@ -6032,7 +6031,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving");
 	}
-
 
 	public void onCheck$finGrcIsIntCpz(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -6950,7 +6948,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.roundingMode.setErrorMessage("");
 		this.roundingTarget.setErrorMessage("");
 
-
 		// OverDue Details
 		this.oDChargeCalOn.setErrorMessage("");
 		this.oDChargeType.setErrorMessage("");
@@ -7256,6 +7253,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onClick$btnSearchCollateralType(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
 		this.collateralType.setErrorMessage("");

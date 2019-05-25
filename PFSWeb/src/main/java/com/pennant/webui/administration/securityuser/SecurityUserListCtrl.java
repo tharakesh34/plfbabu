@@ -320,13 +320,13 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 						"/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordDialog.zul", null, arg);
 			} else {
 				if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
-					Executions.createComponents("/WEB-INF/pages/Administration/SecurityUser/SecurityUserDialogCluster.zul", null,
-							arg);
+					Executions.createComponents(
+							"/WEB-INF/pages/Administration/SecurityUser/SecurityUserDialogCluster.zul", null, arg);
 				} else {
 					Executions.createComponents("/WEB-INF/pages/Administration/SecurityUser/SecurityUserDialog.zul",
 							null, arg);
 				}
-				
+
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);

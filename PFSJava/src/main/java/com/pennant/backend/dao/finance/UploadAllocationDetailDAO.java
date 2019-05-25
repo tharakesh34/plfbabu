@@ -51,7 +51,7 @@ public interface UploadAllocationDetailDAO {
 	void delete(long id);
 
 	void save(List<UploadAlloctionDetail> listAllocationDetails, long detailId, String rootId);
-	
+
 	List<UploadAlloctionDetail> getUploadedAllocatations(long ulDetailID);
-	
+
 }

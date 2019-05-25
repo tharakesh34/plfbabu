@@ -75,14 +75,14 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 
 	private static Logger logger = Logger.getLogger(IncomeAmortizationServiceImpl.class);
 
-	private FinLogEntryDetailDAO 			finLogEntryDetailDAO;
-	private FinanceScheduleDetailDAO 		financeScheduleDetailDAO;
-	private FinanceProfitDetailDAO			profitDetailsDAO;
-	private FinanceMainDAO					financeMainDAO;
-	private ProjectedAmortizationDAO 		projectedAmortizationDAO;
-	private CustomerQueuingDAO 				customerQueuingDAO;
+	private FinLogEntryDetailDAO finLogEntryDetailDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private FinanceProfitDetailDAO profitDetailsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private ProjectedAmortizationDAO projectedAmortizationDAO;
+	private CustomerQueuingDAO customerQueuingDAO;
 
-	private ProjectedAmortizationService 	projectedAmortizationService;
+	private ProjectedAmortizationService projectedAmortizationService;
 
 	/**
 	 * 
@@ -95,7 +95,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	 * @param reCalAccruals
 	 * 
 	 * @return
-	 */ 
+	 */
 	public void processAmortization(List<FinanceMain> financeList, Date monthEndDate) throws Exception {
 		logger.debug(" Entering ");
 
@@ -127,7 +127,8 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 
 					// get future ACCRUALS
-					finProjAccList = this.projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), curMonthStart);
+					finProjAccList = this.projectedAmortizationDAO
+							.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), curMonthStart);
 					finEODEvent.setProjectedAccrualList(finProjAccList);
 				}
 
@@ -232,7 +233,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	}
 
 	// Calculate Average POS
-	
+
 	@Override
 	public List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate) {
 		return financeMainDAO.getFinancesByFinApprovedDate(finApprovalStartDate, finApprovalEndDate);
@@ -252,7 +253,6 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	public void updateCalAvgPOSStatus(long status, long amzId) {
 		this.projectedAmortizationDAO.updateCalAvgPOSStatus(status, amzId);
 	}
-
 
 	/**
 	 * Update Average POS

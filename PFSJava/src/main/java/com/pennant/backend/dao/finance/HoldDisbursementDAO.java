@@ -47,7 +47,7 @@ import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennanttech.pff.core.TableType;
 
 public interface HoldDisbursementDAO extends BasicCrudDao<HoldDisbursement> {
-	
+
 	/**
 	 * Fetch the Record HoldDisbursement by key field
 	 * 
@@ -62,7 +62,7 @@ public interface HoldDisbursementDAO extends BasicCrudDao<HoldDisbursement> {
 	HoldDisbursement getHoldDisbursement(String finReference, String type);
 
 	boolean isDuplicateKey(String finReference, TableType tableType);
-	
+
 	public boolean isholdDisbursementProcess(String finReference, String type);
 
 }

@@ -1096,8 +1096,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									} else if (datebox.getValue() != null) {
 										ReportSearchTemplate aReportSearchTemplate = getSearchTemplate(filter,
 												aReportFieldsDetails);
-										aReportSearchTemplate.setFieldValue(DateUtility
-												.format(datebox.getValue(), PennantConstants.DBDateFormat));
+										aReportSearchTemplate.setFieldValue(
+												DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat));
 										reportSearchTemplateList.add(aReportSearchTemplate);
 									}
 
@@ -2262,10 +2262,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					false);
 			if (filters != null && filters.size() >= 2) {
 				String[] fromDateArray = ((ReportSearchTemplate) filters.get(1)).getFieldValue().split("&");
-				fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]),
-						PennantConstants.DBDateFormat);
-				toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]),
-						PennantConstants.DBDateFormat);
+				fromDate = DateUtility.format(DateUtility.getDate(fromDateArray[0]), PennantConstants.DBDateFormat);
+				toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]), PennantConstants.DBDateFormat);
 			}
 
 			StringBuilder whereCond1 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
@@ -2341,7 +2339,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT;
 							} else if ("Debit".equals(template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
-							} else if("Exempted".equals(template.getFieldValue())){
+							} else if ("Exempted".equals(template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED;
 							}
 						}

@@ -418,8 +418,8 @@ public class AccountEngineExecution implements Serializable {
 		if (!transactionEntries.isEmpty()) {
 			returnDataSets = prepareAccountingSetResults(aeEvent);
 		}
-		
-		if(returnDataSets == null) {
+
+		if (returnDataSets == null) {
 			returnDataSets = new ArrayList<>();
 		}
 
@@ -849,8 +849,7 @@ public class AccountEngineExecution implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private void doFilldataMap(Map<String, Object> dataMap)
-			throws IllegalAccessException, InvocationTargetException {
+	private void doFilldataMap(Map<String, Object> dataMap) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		//boolean isNewFinance = (boolean)dataMap.get("NEWRECORD");

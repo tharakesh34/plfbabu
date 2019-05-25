@@ -55,7 +55,7 @@ public class CustomizeFinanceDataValidation {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<ErrorDetail> errorDetails = new ArrayList<>();
 		int ccyFormat = CurrencyUtil.getFormat(finMain.getFinCcy());
-		
+
 		if (StringUtils.isNotBlank(finMain.getLovDescCustCIF())) {
 			Customer customer = customerDAO.getCustomerByCIF(finMain.getLovDescCustCIF(), "");
 			if (customer == null) {
@@ -80,7 +80,7 @@ public class CustomizeFinanceDataValidation {
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
 			String[] valueParm = new String[1];
-			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(),ccyFormat);
+			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
 			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -89,7 +89,7 @@ public class CustomizeFinanceDataValidation {
 		if (financeType.getFinMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
 			if (netLoanAmount.compareTo(financeType.getFinMaxAmount()) > 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(),ccyFormat);
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), ccyFormat);
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return finScheduleData;

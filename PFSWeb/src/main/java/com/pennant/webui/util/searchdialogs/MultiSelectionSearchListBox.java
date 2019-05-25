@@ -135,9 +135,10 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	public static Object show(Component parent, String listCode, String selectedValues, Filter[] filters) {
 		return new MultiSelectionSearchListBox(parent, listCode, selectedValues, filters, null).getObject();
 	}
-	
+
 	/**
 	 * Method for selecting values from Static List
+	 * 
 	 * @param parent
 	 * @param listCode
 	 * @param selectedValues
@@ -177,8 +178,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	 * 
 	 * @param parent
 	 */
-	private MultiSelectionSearchListBox(Component parent, List<ValueLabel> staticList, String selectedValues, Filter[] filters,
-			String whereClause) {
+	private MultiSelectionSearchListBox(Component parent, List<ValueLabel> staticList, String selectedValues,
+			Filter[] filters, String whereClause) {
 		super();
 		this.filters = filters;
 		this.selectedValues = selectedValues;
@@ -335,7 +336,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		 */
 
 		logger.debug("Before fetch jdbc Search");
-		if(searchRequired){
+		if (searchRequired) {
 			setJdbcSearchObject(0);
 
 			final SearchResult searchResult = getPagedListService().getSRBySearchObject(getJdbcSearchObject());

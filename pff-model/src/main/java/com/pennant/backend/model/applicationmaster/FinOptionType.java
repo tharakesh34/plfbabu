@@ -53,7 +53,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>OptionType table</b>.<br>
  *
  */
-public class FinOptionType extends AbstractWorkflowEntity  {
+public class FinOptionType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;

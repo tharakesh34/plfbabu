@@ -107,7 +107,8 @@
 						<tabbox id="tabBoxIndexCenter" width="100%" height="100%">
 							<tabs id="tabsIndexCenter">
 								<tab id="basicDetailTab" label="${c:l('label_InsuranceSurrenderDialog_BasicDetailTab.value')}" />
-								<tab id="tabPostingDetails" label="${c:l('label_InsuranceSurrenderDialog_PostingDetailsTab.value')}" visible="false"/>
+								<tab id="tabPostingDetails" label="${c:l('label_InsuranceSurrenderDialog_PostingDetailsTab.value')}"
+									visible="false" />
 							</tabs>
 
 							<tabpanels id="tabpanelsBoxIndexCenter">
@@ -122,60 +123,42 @@
 											</columns>
 											<rows>
 												<row>
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_Activity.value')}" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_Activity.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
 														<combobox id="activity" />
 													</hbox>
-													<label id="label_CancellationAfterFLP"
-														value="${c:l('label_InsuranceSurrenderDialog_CancellationAfterFLP.value')}" />
-													<checkbox
-														id="cancellationAfterFLP" />
+													<label id="label_CancellationAfterFLP" value="${c:l('label_InsuranceSurrenderDialog_CancellationAfterFLP.value')}" />
+													<checkbox id="cancellationAfterFLP" />
 												</row>
 												<row>
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_ServiceRequestNumber.value')}" />
-													<textbox
-														id="serviceReqNumber" width="180px"/>
-													<label  
-														value="${c:l('label_InsuranceSurrenderDialog_FLPCalculatedOn.value')}" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_ServiceRequestNumber.value')}" />
+													<textbox id="serviceReqNumber" width="180px" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_FLPCalculatedOn.value')}" />
 													<hbox>
-														<space spacing="2px"  />
-													<datebox
-														id="flpCalculatedOn" width="180px" disabled="true"/>
+														<space spacing="2px" />
+														<datebox id="flpCalculatedOn" width="180px" disabled="true" />
 													</hbox>
 												</row>
 												<row>
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_Amount.value')}" />
-													<currencyBox
-														id="cancelAmount" />
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_PremiumAmount.value')}" />
-													<currencyBox
-														id="premiumAmount" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_Amount.value')}" />
+													<currencyBox id="cancelAmount" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_PremiumAmount.value')}" />
+													<currencyBox id="premiumAmount" />
 												</row>
 												<row>
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_DayPassedFLPdays.value')}" />
-													<intbox
-														id="dayPassedFLPdays"  width="180px" readonly="true" style="text-align:right" />
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_Reason.value')}" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_DayPassedFLPdays.value')}" />
+													<intbox id="dayPassedFLPdays" width="180px" readonly="true" style="text-align:right" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_Reason.value')}" />
 													<hbox>
-														<space spacing="2px"  />
-													<textbox
-														id="reason" width="180px"/>
-												   </hbox>
+														<space spacing="2px" />
+														<textbox id="reason" width="180px" />
+													</hbox>
 												</row>
 												<row spans="1,2">
-													<label
-														value="${c:l('label_InsuranceSurrenderDialog_Remarks.value')}" />
+													<label value="${c:l('label_InsuranceSurrenderDialog_Remarks.value')}" />
 													<hbox>
-														<textbox
-															id="remarks" maxlength="500" multiline="true" rows="3"
-															width="400px" />
+														<textbox id="remarks" maxlength="500" multiline="true" rows="3" width="400px" />
 													</hbox>
 												</row>
 												<row>
@@ -188,18 +171,17 @@
 										</grid>
 									</groupbox>
 								</tabpanel>
-								
+
 								<!-- Postings -->
-								<tabpanel id="tabPanelPostingDetails" style="overflow:auto" visible="false"/>
-								
+								<tabpanel id="tabPanelPostingDetails" style="overflow:auto" visible="false" />
+
 							</tabpanels>
 						</tabbox>
 					</groupbox>
 				</div>
 			</center>
 			<south id="south" sclass="south-dialog">
-				<groupbox id="groupboxWf" width="99%"
-					closable="false">
+				<groupbox id="groupboxWf" width="99%" closable="false">
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />

@@ -511,7 +511,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (receiptDetailList == null) {
 			receiptDetailList = new ArrayList<>();
 		}
-		
+
 		for (FinReceiptDetail receiptDetail : receiptDetailList) {
 			for (FinRepayHeader finRepayHeader : rpyHeaderList) {
 				if (finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()) {
@@ -593,7 +593,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		finMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
 		auditHeader = executeStageAccounting(auditHeader);
 		finMain.setRcdMaintainSts("");
-		
+
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
@@ -652,7 +652,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// =======================================
 		long receiptID = receiptHeader.getReceiptID();
 		receiptHeader.setRcdMaintainSts("R");
-		receiptHeader.setActFinReceipt(rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+		receiptHeader
+				.setActFinReceipt(rceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			receiptHeader.setBounceDate(DateUtility.getAppDate());
 		}
@@ -1353,7 +1354,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 		receiptData.getReceiptHeader().setDepositProcess(orgReceiptData.getReceiptHeader().isDepositProcess());
-		
+
 		FinScheduleData scheduleData = receiptData.getFinanceDetail().getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 		String finReference = financeMain.getFinReference();
@@ -4228,8 +4229,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (finServInst.getToDate() != null) {
-			finServInst.setToDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
+			finServInst.setToDate(
+					DateUtility.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getRecalFromDate() != null) {
 			finServInst.setRecalFromDate(DateUtility
@@ -4240,12 +4241,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getGrcPeriodEndDate() != null) {
-			finServInst.setGrcPeriodEndDate(DateUtility.getDBDate(
-					DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
+			finServInst.setGrcPeriodEndDate(DateUtility
+					.getDBDate(DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextGrcRepayDate() != null) {
-			finServInst.setNextGrcRepayDate(DateUtility.getDBDate(
-					DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
+			finServInst.setNextGrcRepayDate(DateUtility
+					.getDBDate(DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getNextRepayDate() != null) {
 			finServInst.setNextRepayDate(DateUtility
@@ -4264,8 +4265,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					.getDBDate(DateUtility.format(finServInst.getDepositDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getRealizationDate() != null) {
-			finServInst.setRealizationDate(DateUtility.getDBDate(
-					DateUtility.format(finServInst.getRealizationDate(), PennantConstants.DBDateFormat)));
+			finServInst.setRealizationDate(DateUtility
+					.getDBDate(DateUtility.format(finServInst.getRealizationDate(), PennantConstants.DBDateFormat)));
 		}
 		if (finServInst.getInstrumentDate() != null) {
 			finServInst.setInstrumentDate(DateUtility
@@ -5460,34 +5461,35 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		return financeDetail;
 	}
-	
+
 	/**
-	 * Method for Validating Partial Settlement amount collected form Customer with in Year(Find Based on System Parameters)
+	 * Method for Validating Partial Settlement amount collected form Customer with in Year(Find Based on System
+	 * Parameters)
 	 * 
 	 * Year(Find Based on System Parameters)
 	 */
 	private ErrorDetail validatePPPercAmount(FinReceiptData receiptData) {
-		
+
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 		if (!StringUtils.equals(receiptHeader.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			return null;
 		}
-		
+
 		if (StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
 				|| StringUtils.equals(receiptHeader.getReceiptModeStatus(), RepayConstants.PAYSTATUS_CANCEL)) {
 			return null;
 		}
-		
+
 		//validation for partial payment based on percentage
 		List<FinanceScheduleDetail> scheduleList = receiptData.getFinanceDetail().getFinScheduleData()
 				.getFinanceScheduleDetails();
 		int finFormatter = CurrencyUtil
 				.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		
+
 		// Value Date Finding
 		Date valueDate = DateUtility.getAppDate();
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-			if(StringUtils.equals(receiptHeader.getReceiptMode(), receiptDetail.getPaymentType())){
+			if (StringUtils.equals(receiptHeader.getReceiptMode(), receiptDetail.getPaymentType())) {
 				valueDate = receiptDetail.getReceivedDate();
 				break;
 			}
@@ -5508,7 +5510,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		date = DateUtility.addMonths(date, 11);
 		date = DateUtility.getMonthEnd(date);
 		endDate = date;
-		
+
 		// Finding Closing Balance at FY Start Date
 		BigDecimal closingBal = BigDecimal.ZERO;
 		if (CollectionUtils.isNotEmpty(scheduleList)) {
@@ -5520,9 +5522,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		BigDecimal utilizedPartPayAmt = PennantApplicationUtil
-				.formateAmount(finReceiptDetailDAO.getUtilizedPartPayAmtByDate(receiptHeader, startDate, endDate),
-						finFormatter);
+		BigDecimal utilizedPartPayAmt = PennantApplicationUtil.formateAmount(
+				finReceiptDetailDAO.getUtilizedPartPayAmtByDate(receiptHeader, startDate, endDate), finFormatter);
 		BigDecimal alwdPPPerc = new BigDecimal(
 				SysParamUtil.getValueAsInt(SMTParameterConstants.ALWD_EARLYPAY_PERC_BYYEAR));
 
@@ -5557,10 +5558,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * Method for Fetching Tax Receivable for Accounting Purpose
 	 */
 	@Override
-	public FinTaxReceivable getTaxReceivable(String finReference, String taxFor){
+	public FinTaxReceivable getTaxReceivable(String finReference, String taxFor) {
 		return finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, taxFor);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -5783,6 +5784,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		return canProcessReceipt;
 	}
+
 	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
 		return finODAmzTaxDetailDAO;
 	}

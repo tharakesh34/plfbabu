@@ -47,7 +47,7 @@ import com.pennant.backend.model.applicationmaster.BusinessVertical;
 import com.pennanttech.pff.core.TableType;
 
 public interface BusinessVerticalDAO extends BasicCrudDao<BusinessVertical> {
-	
+
 	/**
 	 * Fetch the Record BusinessVertical by key field
 	 * 
@@ -57,7 +57,8 @@ public interface BusinessVerticalDAO extends BasicCrudDao<BusinessVertical> {
 	 *            The type of the table.
 	 * @return BusinessVertical
 	 */
-	BusinessVertical getBusinessVertical(long id,String type);
+	BusinessVertical getBusinessVertical(long id, String type);
+
 	/**
 	 * Checks whether another record exists with the key attributes in the specified table type.
 	 * 
@@ -71,6 +72,6 @@ public interface BusinessVerticalDAO extends BasicCrudDao<BusinessVertical> {
 	 *            The type of the table.
 	 * @return true if the record exists.
 	 */
-	boolean isDuplicateKey(long id, String code, TableType tableType);	
-	
+	boolean isDuplicateKey(long id, String code, TableType tableType);
+
 }

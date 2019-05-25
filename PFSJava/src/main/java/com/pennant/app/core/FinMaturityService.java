@@ -110,10 +110,10 @@ public class FinMaturityService extends ServiceHelper {
 			sqlStatement.setDate(1, DateUtility.getSqlDate(curMonthStart));
 			sqlStatement.setDate(2, DateUtility.getSqlDate(curMonthEnd));
 			resultSet = sqlStatement.executeQuery();
-			
+
 			//Get the Rules 
-			String amzMethodRule = this.ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE,
-					AmortizationConstants.AMZ_METHOD_RULE);
+			String amzMethodRule = this.ruleDAO.getAmountRule(AmortizationConstants.AMZ_METHOD_RULE,
+					AmortizationConstants.AMZ_METHOD_RULE, AmortizationConstants.AMZ_METHOD_RULE);
 
 			while (resultSet.next()) {
 
@@ -122,16 +122,19 @@ public class FinMaturityService extends ServiceHelper {
 				String finType = resultSet.getString("FinType");
 
 				// NO Schedule Details Available (OD Loans)
-				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference, TableType.MAIN_TAB.getSuffix(), false);
+				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+						TableType.MAIN_TAB.getSuffix(), false);
 				if (schdDetails == null || schdDetails.isEmpty()) {
 					continue;
 				}
 
 				// Previous ProjectedAccrual
-				prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finReference, prvMonthEndDate, "_WORK");
+				prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finReference, prvMonthEndDate,
+						"_WORK");
 
 				// Maturity Month ProjectedAccrual
-				projAccrual = this.projectedAmortizationService.prepareMaturityMonthProjAcc(prvProjAccrual, schdDetails, finReference, curMonthEnd);
+				projAccrual = this.projectedAmortizationService.prepareMaturityMonthProjAcc(prvProjAccrual, schdDetails,
+						finReference, curMonthEnd);
 				projAccrualList.add(projAccrual);
 
 				// PSD Ticket : 133306; AMZ Method Update for Loans created and EarlySettled in same month
@@ -170,7 +173,8 @@ public class FinMaturityService extends ServiceHelper {
 	private String prepareSelectQuery() {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select T1.FinReference, T1.CustID, T1.FinType, T1.MaturityDate, T1.ClosedDate, T2.AMZMethod From FinanceMain T1 ");
+		sql.append(
+				" Select T1.FinReference, T1.CustID, T1.FinType, T1.MaturityDate, T1.ClosedDate, T2.AMZMethod From FinanceMain T1 ");
 		sql.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference ");
 		sql.append(" WHERE T1.FinIsActive = 0 AND T1.ClosedDate >= ? AND T1.ClosedDate <= ? ");
 

@@ -119,8 +119,7 @@ public class AuditReportCtrl extends GFCBaseCtrl<AbstractWorkflowEntity> {
 			if (toDate.getValue() == null) {
 				throw new WrongValueException(toDate, Labels.getLabel("label_AuditReport_ToDate.value"));
 			}
-			map.put("toDate",
-					DateUtility.getDate(DateUtility.format(toDate.getValue(), PennantConstants.dateFormat)));
+			map.put("toDate", DateUtility.getDate(DateUtility.format(toDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

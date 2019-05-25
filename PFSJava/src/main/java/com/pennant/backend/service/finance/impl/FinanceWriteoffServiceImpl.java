@@ -258,16 +258,17 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		long serviceUID = Long.MIN_VALUE;		
+		long serviceUID = Long.MIN_VALUE;
 		if (header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst= new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());		
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());
 			finServInst.setFinEvent(header.getFinanceDetail().getModuleDefiner());
 			header.getFinanceDetail().getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
-		for (FinServiceInstruction finSerList : header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
-			if(finSerList.getInstructionUID() == Long.MIN_VALUE){
+		for (FinServiceInstruction finSerList : header.getFinanceDetail().getFinScheduleData()
+				.getFinServiceInstructions()) {
+			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
 				if (serviceUID == Long.MIN_VALUE) {
 					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
 				}
@@ -391,8 +392,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(), header.getFinanceDetail()
-					.getFinScheduleData().getFinanceMain(), header.getFinanceDetail().getModuleDefiner(),serviceUID);
+			details = processingDocumentDetailsList(details, tableType.getSuffix(),
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -400,9 +402,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//=======================================
 		if (header.getFinanceDetail().getFinanceCheckList() != null
 				&& !header.getFinanceDetail().getFinanceCheckList().isEmpty()) {
-			auditDetails
-					.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(), tableType.getSuffix(),
-							serviceUID));
+			auditDetails.addAll(getCheckListDetailService().saveOrUpdate(header.getFinanceDetail(),
+					tableType.getSuffix(), serviceUID));
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -461,7 +462,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+		for (FinServiceInstruction finServInst : header.getFinanceDetail().getFinScheduleData()
+				.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 		// Cancel All Transactions done by Finance Reference
@@ -478,8 +480,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp", header.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain(), header.getFinanceDetail().getModuleDefiner(),serviceUID);
+			details = processingDocumentDetailsList(details, "_Temp",
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner(), serviceUID);
 			auditHeader.setAuditDetails(details);
 		}
 
@@ -550,9 +553,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		//=======================================
 		FinanceMain financeMain = header.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		String finReference = financeMain.getFinReference();
-		
+
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : header.getFinanceDetail().getFinScheduleData().getFinServiceInstructions()) {
+		for (FinServiceInstruction finServInst : header.getFinanceDetail().getFinScheduleData()
+				.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 
@@ -656,8 +660,9 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (header.getFinanceDetail().getDocumentDetailsList() != null
 				&& header.getFinanceDetail().getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", header.getFinanceDetail().getFinScheduleData()
-					.getFinanceMain(), header.getFinanceDetail().getModuleDefiner(),serviceUID);
+			details = processingDocumentDetailsList(details, "",
+					header.getFinanceDetail().getFinScheduleData().getFinanceMain(),
+					header.getFinanceDetail().getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(header.getFinanceDetail(), "_Temp");
 		}

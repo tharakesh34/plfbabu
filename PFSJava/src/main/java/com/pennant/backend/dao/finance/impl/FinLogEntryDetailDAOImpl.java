@@ -105,8 +105,9 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 	/**
 	 * get postdate for particular finreference where schdRecal is happend
+	 * 
 	 * @param finReference
-	 * Ticket id:124998
+	 *            Ticket id:124998
 	 */
 	@Override
 	public Date getMaxPostDate(String finReference) {
@@ -124,8 +125,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 
 		Date maxPostDate = null;
 		try {
-			maxPostDate = this.jdbcTemplate.queryForObject(selectSql.toString(),
-					mapSqlParameterSource, Date.class);
+			maxPostDate = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Date.class);
 		} catch (DataAccessException e) {
 			logger.warn("Exception: ", e);
 			maxPostDate = null;

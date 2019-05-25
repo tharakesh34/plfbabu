@@ -32,7 +32,7 @@ public class MandateDetial {
 
 	@XmlElement
 	private String finReference;
-	
+
 	private String mandateType;
 
 	public List<Mandate> getMandatesList() {

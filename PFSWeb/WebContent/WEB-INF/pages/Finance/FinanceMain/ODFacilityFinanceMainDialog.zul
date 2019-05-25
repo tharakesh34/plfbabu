@@ -88,8 +88,7 @@
 													</hbox>
 												</row>
 												<row>
-													<label id="label_FinanceMainDialog_BusinessVertical"
-														value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+													<label id="label_FinanceMainDialog_BusinessVertical" value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 													<hbox>
 														<textbox id="businessVertical" width="250px" readonly="true" />
 													</hbox>
@@ -164,20 +163,14 @@
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
 													<hbox>
-														<label
-															id="label_FinanceMainDialog_InterestServicingODLimit"
-															value="${c:l('label_FinanceMainDialog_InterestServicingODLimit.value')}" visible="false" />
-														<label
-															id="label_FinanceMainDialog_ODPurpose"
-															value="${c:l('label_FinanceMainDialog_ODPurpose.value')}" />
+														<label id="label_FinanceMainDialog_InterestServicingODLimit" value="${c:l('label_FinanceMainDialog_InterestServicingODLimit.value')}"
+															visible="false" />
+														<label id="label_FinanceMainDialog_ODPurpose" value="${c:l('label_FinanceMainDialog_ODPurpose.value')}" />
 													</hbox>
 													<hbox>
-														<space
-															spacing="2px" visible="false" />
-														<checkbox
-															id="pftServicingODLimit" checked="false" visible="false" />
-														<extendedcombobox
-															id="finPurpose" />
+														<space spacing="2px" visible="false" />
+														<checkbox id="pftServicingODLimit" checked="false" visible="false" />
+														<extendedcombobox id="finPurpose" />
 													</hbox>
 												</row>
 												<row id="row_FinAssetValue" visible="false">
@@ -928,19 +921,14 @@
 														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
 													</hbox>
 													<hbox>
-														<label
-															id="label_FinanceMainDialog_ODChargeAmtOrPerc"
-															value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
-														<label
-															id="label_FinanceMainDialog_LPPRULE"
-															value="${c:l('label_FinanceMainDialog_LPPRULE.value')}"
+														<label id="label_FinanceMainDialog_ODChargeAmtOrPerc" value="${c:l('label_FinanceMainDialog_ODChargeAmtOrPerc.value')}" />
+														<label id="label_FinanceMainDialog_LPPRULE" value="${c:l('label_FinanceMainDialog_LPPRULE.value')}"
 															visible="false" />
 													</hbox>
 													<hbox>
 														<space spacing="2px" id="space_oDChargeAmtOrPerc" sclass="mandatory" />
 														<decimalbox id="oDChargeAmtOrPerc" width="120px" maxlength="15" />
-														<extendedcombobox
-															id="lPPRule" />
+														<extendedcombobox id="lPPRule" />
 													</hbox>
 												</row>
 												<row visible="true">
@@ -955,11 +943,11 @@
 														<decimalbox id="oDMaxWaiverPerc" width="120px" maxlength="6" />
 													</hbox>
 												</row>
-												<row id="row_ODMinCapAmount" visible="false" >
+												<row id="row_ODMinCapAmount" visible="false">
 													<label id="label_FinanceMainDialog_ODMinCapAmount" value="${c:l('label_FinanceMainDialog_ODMinCapAmount.value')}" />
 													<hbox>
 														<space id="space_ODMinCapAmount" spacing="2px" />
-													<decimalbox id="oDMinCapAmount" width="120px" />
+														<decimalbox id="oDMinCapAmount" width="120px" />
 													</hbox>
 												</row>
 											</rows>

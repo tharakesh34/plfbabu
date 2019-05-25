@@ -217,6 +217,6 @@ public class ImplementationConstants {
 	//GST Invoice Due basis/Receipt Basis
 	// If Due Basis creation , means LPP created as fixed amount and same should be accrued on creation date then PARAMTER = "D"
 	// If Accrual Basis Creation, means LPP is calculated on daily basis then Accrual postings happen on Month End --  PARAMTER = "A"
-	public static final String LPP_GST_DUE_ON = "A"; 
+	public static final String LPP_GST_DUE_ON = "A";
 
 }

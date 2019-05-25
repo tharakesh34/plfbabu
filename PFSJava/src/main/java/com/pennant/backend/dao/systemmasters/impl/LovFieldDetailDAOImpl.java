@@ -329,6 +329,5 @@ public class LovFieldDetailDAOImpl extends SequenceDao<LovFieldDetail> implement
 		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
-	
 
 }

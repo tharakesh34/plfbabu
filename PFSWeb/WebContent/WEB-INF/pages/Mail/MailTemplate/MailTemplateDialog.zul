@@ -146,9 +146,9 @@
 												</hbox>
 											</row>
 											<row id="row_TemplateEvent" visible="false">
-												<label id="label_MailTemplateDialog_templateEvent" value="${c:l('label_MailTemplateDialog_templateEvent.value')}"  />
+												<label id="label_MailTemplateDialog_templateEvent" value="${c:l('label_MailTemplateDialog_templateEvent.value')}" />
 												<hbox>
-													<space spacing="2px" sclass="mandatory"/>
+													<space spacing="2px" sclass="mandatory" />
 													<combobox id="templateEvent" />
 												</hbox>
 											</row>

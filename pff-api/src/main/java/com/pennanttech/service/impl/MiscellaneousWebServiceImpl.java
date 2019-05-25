@@ -26,7 +26,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	private final Logger logger = Logger.getLogger(getClass());
 	private MiscellaneousServiceController miscellaneousController;
 	private JVPostingService jVPostingService;
-	
+
 	public MiscellaneousWebServiceImpl() {
 		super();
 	}
@@ -34,37 +34,38 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	// jvposting
 	@Override
 	public WSReturnStatus createPosting(JVPosting posting) throws ServiceException {
-		
+
 		logger.debug(Literal.ENTERING);
-		
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> validationErrors = jVPostingService.doMiscellaneousValidations(posting);
-		if(CollectionUtils.isEmpty(validationErrors))	{
-			returnStatus = miscellaneousController.prepareJVPostData(posting);			
-		} else	{
+		if (CollectionUtils.isEmpty(validationErrors)) {
+			returnStatus = miscellaneousController.prepareJVPostData(posting);
+		} else {
 			for (ErrorDetail errorDetail : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getParameters());
+				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
+						errorDetail.getParameters());
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return returnStatus;
 	}
-	
+
 	// dashboard
 	@Override
 	public DashBoardResponse createDashboard(DashBoardRequest request) throws ServiceException {
-		
+
 		logger.debug(Literal.ENTERING);
-		
+
 		DashBoardResponse dashboardResponse = miscellaneousController.prepareDashboardConfiguration(request);
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return dashboardResponse;
 	}
-	
+
 	@Override
 	public EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail)
 			throws ServiceException {
@@ -82,10 +83,10 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;
 	}
-	
+
 	@Autowired
 	public void setjVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
-	
+
 }

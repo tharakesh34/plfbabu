@@ -59,29 +59,39 @@ public interface IncomeAmortizationService {
 
 	// FinanceProfitDetail
 	FinanceProfitDetail getFinProfitForAMZ(String finReference);
+
 	List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart);
 
 	// FinanceMain
 	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
 
 	long getPrevSchedLogKey(String finReference, Date date);
+
 	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey);
 
 	// Calculate Average POS
 	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
+
 	ProjectedAmortization getCalAvgPOSLog();
+
 	public long saveCalAvgPOSLog(ProjectedAmortization proAmortization);
+
 	public long getCustQueuingCount();
+
 	public void updateCalAvgPOSStatus(long status, long amzId);
+
 	public void calAndUpdateAvgPOS(List<FinEODEvent> finEODEventList) throws Exception;
 
 	// AmortizationLog
 	Date getPrvAMZMonthLog();
+
 	long saveAmortizationLog(ProjectedAmortization proAmortization);
-	void updateAmzStatus (long status, long amzId);
+
+	void updateAmzStatus(long status, long amzId);
 
 	// checking completed or not
 	boolean isAmortizationLogExist();
+
 	ProjectedAmortization getAmortizationLog();
 
 	// Actual Amortization
@@ -89,5 +99,6 @@ public interface IncomeAmortizationService {
 
 	// Performance
 	void prepareAMZQueuing(Date monthEndDate);
+
 	void deleteAllProjIncomeAMZByMonth(Date curMonthEnd);
 }

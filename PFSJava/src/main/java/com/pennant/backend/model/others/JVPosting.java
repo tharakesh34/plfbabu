@@ -47,10 +47,10 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * 
  */
 @XmlRootElement(name = "posting")
-@XmlType(propOrder = {"branch", "batch", "currency", "reference", "JVPostingEntrysList"})
+@XmlType(propOrder = { "branch", "batch", "currency", "reference", "JVPostingEntrysList" })
 public class JVPosting extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-	
+
 	@XmlElement
 	private String batch;
 	private String filename;

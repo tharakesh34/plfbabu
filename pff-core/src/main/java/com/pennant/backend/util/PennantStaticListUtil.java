@@ -304,7 +304,6 @@ public class PennantStaticListUtil {
 	private static List<String> noWaiverList;
 	private static ArrayList<ValueLabel> presetmentTypeList;
 
-
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -375,7 +374,7 @@ public class PennantStaticListUtil {
 		}
 		return fieldSelection;
 	}
-	
+
 	public static ArrayList<String> getExcludeDues() {
 
 		if (dueList == null) {
@@ -388,7 +387,7 @@ public class PennantStaticListUtil {
 			dueList.add(RepayConstants.ALLOCATION_FUT_TDS);
 			dueList.add(RepayConstants.ALLOCATION_FUT_PFT);
 			dueList.add(RepayConstants.ALLOCATION_PFT);
-			
+
 		}
 		return dueList;
 	}
@@ -2299,7 +2298,6 @@ public class PennantStaticListUtil {
 			events.add(new FinServicingEvent(FinanceConstants.FINSER_EVENT_CHANGETDS,
 					Labels.getLabel("label_FinSerEvent_ChangeTDS"), "CTDS"));
 
-
 		}
 		return events;
 	}
@@ -2869,7 +2867,7 @@ public class PennantStaticListUtil {
 		}
 		return statusTypeList;
 	}
-	
+
 	public static ArrayList<ValueLabel> getStatusTypeList() {
 		statusTypeList = new ArrayList<ValueLabel>(7);
 		statusTypeList.add(new ValueLabel(MandateConstants.STATUS_NEW, Labels.getLabel("label_Mandate_NEW")));
@@ -4733,8 +4731,8 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYU, Labels.getLabel("label_SubReceiptMode_PAYU")));
 			subReceiptPaymentModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_SubReceiptMode_ESCROW")));
-			subReceiptPaymentModes
-			.add(new ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK, Labels.getLabel("label_SubReceiptMode_BillDesk")));
+			subReceiptPaymentModes.add(new ValueLabel(RepayConstants.RECEIPTMODE_BILLDESK,
+					Labels.getLabel("label_SubReceiptMode_BillDesk")));
 		}
 		return subReceiptPaymentModes;
 	}
@@ -4771,7 +4769,8 @@ public class PennantStaticListUtil {
 			knockOffFrom = new ArrayList<>(3);
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EXCESS, Labels.getLabel("label_Excess")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_EMIINADV, Labels.getLabel("label_EMI_Advance")));
-			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
+			knockOffFrom
+					.add(new ValueLabel(RepayConstants.RECEIPTMODE_PAYABLE, Labels.getLabel("label_Payable_Advice")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_CASHCLT, Labels.getLabel("label_CASHCLT")));
 			knockOffFrom.add(new ValueLabel(RepayConstants.RECEIPTMODE_DSF, Labels.getLabel("label_DSF")));
 
@@ -4878,7 +4877,7 @@ public class PennantStaticListUtil {
 		}
 		return noWaiverList;
 	}
-	
+
 	public static ArrayList<ValueLabel> getPresetmentTypeList() {
 		if (presetmentTypeList == null) {
 			presetmentTypeList = new ArrayList<ValueLabel>(2);
@@ -4900,18 +4899,18 @@ public class PennantStaticListUtil {
 	public static List<ValueLabel> getMonthEndList(Date startDate, Date endDate, String sortOrder) {
 
 		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
-		
-		/*startDate = DateUtility.getMonthEndDate(startDate);
 
-		// Prepare Month End list between two dates, by Default Ascending
-		while (DateUtility.getMonthEndDate(endDate).compareTo(startDate) > 0) {
-
-			monthEndList.add(new ValueLabel(DateUtility.format(startDate, PennantConstants.DBDateFormat),
-					DateUtility.format(startDate, DateFormat.LONG_MONTH.getPattern())));
-
-			startDate = DateUtility.addDays(startDate, 1);
-			startDate = DateUtility.getMonthEndDate(startDate);
-		}*/
+		/*
+		 * startDate = DateUtility.getMonthEndDate(startDate);
+		 * 
+		 * // Prepare Month End list between two dates, by Default Ascending while
+		 * (DateUtility.getMonthEndDate(endDate).compareTo(startDate) > 0) {
+		 * 
+		 * monthEndList.add(new ValueLabel(DateUtility.format(startDate, PennantConstants.DBDateFormat),
+		 * DateUtility.format(startDate, DateFormat.LONG_MONTH.getPattern())));
+		 * 
+		 * startDate = DateUtility.addDays(startDate, 1); startDate = DateUtility.getMonthEndDate(startDate); }
+		 */
 
 		// Month End List in Descending order
 		if (StringUtils.equals(sortOrder, PennantConstants.SortOrder_DESC)) {

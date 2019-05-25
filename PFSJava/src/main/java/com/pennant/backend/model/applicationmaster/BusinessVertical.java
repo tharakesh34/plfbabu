@@ -59,25 +59,25 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BusinessVertical table</b>.<br>
  *
  */
-@XmlType(propOrder = {"id","code","description"})
+@XmlType(propOrder = { "id", "code", "description" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessVertical extends AbstractWorkflowEntity  implements Entity {
-private static final long serialVersionUID = 1L;
+public class BusinessVertical extends AbstractWorkflowEntity implements Entity {
+	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
-    private String code;
-    private String description;
-    private boolean active;
-	
+	private String code;
+	private String description;
+	private boolean active;
+
 	@XmlTransient
-	private boolean newRecord=false;
+	private boolean newRecord = false;
 	@XmlTransient
 	private String lovValue;
 	@XmlTransient
 	private BusinessVertical befImage;
 	@XmlTransient
-	private  LoggedInUser userDetails;
-	
+	private LoggedInUser userDetails;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -90,34 +90,36 @@ private static final long serialVersionUID = 1L;
 		super();
 		this.setId(id);
 	}
-	
-	public Set<String> getExcludeFields(){
-		Set<String> excludeFields=new HashSet<String>();
-	return excludeFields;
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		return excludeFields;
 	}
 
 	public long getId() {
 		return id;
 	}
-	
-	public void setId (long id) {
+
+	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
+
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -125,7 +127,7 @@ private static final long serialVersionUID = 1L;
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}
@@ -134,19 +136,19 @@ private static final long serialVersionUID = 1L;
 		this.lovValue = lovValue;
 	}
 
-	public BusinessVertical getBefImage(){
+	public BusinessVertical getBefImage() {
 		return this.befImage;
 	}
-	
-	public void setBefImage(BusinessVertical beforeImage){
-		this.befImage=beforeImage;
+
+	public void setBefImage(BusinessVertical beforeImage) {
+		this.befImage = beforeImage;
 	}
 
-	public  LoggedInUser getUserDetails() {
+	public LoggedInUser getUserDetails() {
 		return userDetails;
 	}
 
-	public void setUserDetails( LoggedInUser userDetails) {
+	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
 
@@ -161,5 +163,5 @@ private static final long serialVersionUID = 1L;
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 }

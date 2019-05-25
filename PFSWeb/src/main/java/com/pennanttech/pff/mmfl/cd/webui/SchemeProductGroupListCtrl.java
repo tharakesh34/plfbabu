@@ -24,7 +24,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.mmfl.cd.model.SchemeProductGroup;
 import com.pennanttech.pff.mmfl.cd.service.SchemeProductGroupService;
 
-public class SchemeProductGroupListCtrl  extends GFCBaseListCtrl<SchemeProductGroup> {
+public class SchemeProductGroupListCtrl extends GFCBaseListCtrl<SchemeProductGroup> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SchemeProductGroupListCtrl.class);
 
@@ -91,8 +91,8 @@ public class SchemeProductGroupListCtrl  extends GFCBaseListCtrl<SchemeProductGr
 				Operators.STRING);
 		registerField("ProductGroupCode", listheader_ProductGroupCode, SortOrder.ASC, productGroupCode,
 				sortOperator_ProductGroupCode, Operators.NUMERIC);
-		registerField("POSVendor", listheader_POSVendor, SortOrder.ASC, posVendor,
-				sortOperator_POSVendor, Operators.STRING);
+		registerField("POSVendor", listheader_POSVendor, SortOrder.ASC, posVendor, sortOperator_POSVendor,
+				Operators.STRING);
 		registerField("Active", listheader_Active, SortOrder.ASC, active, sortOperator_Active, Operators.STRING);
 		doRenderPage();
 		search();

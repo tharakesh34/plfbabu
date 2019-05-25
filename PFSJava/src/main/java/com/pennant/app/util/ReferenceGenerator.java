@@ -192,9 +192,10 @@ public class ReferenceGenerator implements Serializable {
 		logger.debug("Leaving");
 		return rcptNo;
 	}
-	
+
 	/**
 	 * Method for Generating Sequence Service Unique ID based Sequence Object
+	 * 
 	 * @param isWIF
 	 * @param finDivision
 	 * @return

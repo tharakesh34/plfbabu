@@ -313,16 +313,16 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.ruleEvent.setSelectedIndex(0);
 		if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_FIN)) {
-			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(),
-					listTemplateTypes, ",PN,");
+			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(), listTemplateTypes,
+					",PN,");
 
 			this.row_ruleEvent.setVisible(true);
 			fillComboBox(this.ruleEvent, "", listRuleEvent, "");
 
 		} else if (StringUtils.equals(this.ruleModule.getSelectedItem().getValue().toString(),
 				NotificationConstants.MAIL_MODULE_PROVIDER)) {
-			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(),
-					listTemplateTypes, ",SP,DN,AE,CN,");
+			fillComboBox(this.templateType, this.ruleModule.getSelectedItem().getValue().toString(), listTemplateTypes,
+					",SP,DN,AE,CN,");
 		}
 		doSetTemplateList(this.ruleModule.getSelectedItem().getValue().toString(),
 				this.ruleEvent.getSelectedItem().getValue().toString(),
@@ -478,7 +478,7 @@ public class NotificationsDialogCtrl extends GFCBaseCtrl<Notifications> {
 		this.listRuleModule = PennantStaticListUtil.getMailModulesList();
 		this.listRuleEvent = PennantStaticListUtil.getTemplateEvents();
 		this.listTemplateTypes = PennantStaticListUtil.getTemplateForList();
-		
+
 		fillComboBox(this.ruleModule, aNotifications.getRuleModule(), listRuleModule, "");
 		fillComboBox(this.ruleEvent, aNotifications.getRuleEvent(), listRuleEvent, "");
 		fillComboBox(this.templateType, aNotifications.getTemplateType(), listTemplateTypes, "");

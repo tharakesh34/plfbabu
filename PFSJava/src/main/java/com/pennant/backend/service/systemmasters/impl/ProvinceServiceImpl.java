@@ -285,15 +285,15 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 
 		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-		
+
 		if (seqGstInvoiceTemp == null) {
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
-		
+
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
 			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
 			seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
-			
+
 			if (seqGstInvoiceTemp == null) {
 				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 			}

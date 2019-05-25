@@ -2,8 +2,10 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
-	<window id="window_SelectInsuranceRebooking" title="${c:l('window_SelectInsuranceRebookingList.title')}" style="align:start;" border="normal" apply="${selectInsuranceRebookingDialogCtrl}" width="500px" height="180px" sizable="false" closable="true">
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+	<window id="window_SelectInsuranceRebooking" title="${c:l('window_SelectInsuranceRebookingList.title')}" style="align:start;"
+		border="normal" apply="${selectInsuranceRebookingDialogCtrl}" width="500px" height="180px" sizable="false" closable="true">
 		<borderlayout>
 			<center border="none" autoscroll="false">
 				<groupbox sclass="gb-dialog">
@@ -26,7 +28,8 @@
 								<extendedcombobox id="vasRefernce" />
 							</row>
 							<row spans="3,3">
-								<button id="btnProceed" style="float:right;" label="${c:l('label_SelectInsuranceRebooking_btnProceed.value')}" tooltiptext="${c:l('label_SelectInsuranceRebooking_btnProceed.tooltiptext')}" />
+								<button id="btnProceed" style="float:right;" label="${c:l('label_SelectInsuranceRebooking_btnProceed.value')}"
+									tooltiptext="${c:l('label_SelectInsuranceRebooking_btnProceed.tooltiptext')}" />
 							</row>
 							<row height="10px" />
 						</rows>

@@ -129,8 +129,9 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
-/**
 
+/**
+ * 
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul file.
  */
 public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
@@ -221,8 +222,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private List<String> usrfinRolesList = new ArrayList<String>();
 	private transient ChangeTDSService changeTDSService;//Clix Requirement added new change TDS Service
-
-	
 
 	/**
 	 * Default constructor
@@ -805,9 +804,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		getSearchObj(false);
 
-		/*if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
-			return;
-		}*/
+		/*
+		 * if (usrfinRolesList == null || usrfinRolesList.isEmpty()) { return; }
+		 */
 
 		if (StringUtils.isNotEmpty(this.custCIF.getValue())) {
 
@@ -828,8 +827,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				} else if (searchOpId == Filter.OP_NOT_IN) {
 					this.searchObject.addFilter(
 							new Filter("lovDescCustCIF", this.custCIF.getValue().trim().split(","), Filter.OP_NOT_IN));
-				}
-				else {
+				} else {
 					searchObject.addFilter(new Filter("lovDescCustCIF", this.custCIF.getValue(), searchOpId));
 				}
 			}
@@ -1163,10 +1161,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE + "' and AdviseAmount-PaidAmount-WaivedAmount >0)");
 			whereClause.append(
 					" OR FinReference IN (Select FinReference from finoddetails Where  totpenaltybal > 0 or lpiBal > 0)");
-		}else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHANGETDS)) {
 			whereClause.append(" AND  MaturityDate > '" + appDate + "' AND  FinStartDate <= '" + appDate + "'");
 		}
-		
 
 		//Written Off Finance Reference Details Condition
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_WRITEOFFPAY)) {
@@ -1247,15 +1244,18 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					logger.debug("Leaving");
 					return;
 				}
-				
+
 				//Add Disbursement, the Application will provide a warning message if there are some unadjusted dues in customer against all loans.
-				String addDisbDuesWarningMsgReq = SysParamUtil.getValueAsString(SMTParameterConstants.ADD_DISB_DUES_WARNG);
-				
+				String addDisbDuesWarningMsgReq = SysParamUtil
+						.getValueAsString(SMTParameterConstants.ADD_DISB_DUES_WARNG);
+
 				if (StringUtils.equals(addDisbDuesWarningMsgReq, PennantConstants.YES)) {
-					String finReferences = getFinanceDetailService().getCustomerDueFinReferces(aFinanceMain.getCustID());
-					
+					String finReferences = getFinanceDetailService()
+							.getCustomerDueFinReferces(aFinanceMain.getCustID());
+
 					if (finReferences.length() > 0) {
-						MessageUtil.showMessage(Labels.getLabel("info.param_add_disb_warning", new Object[]{finReferences}));
+						MessageUtil.showMessage(
+								Labels.getLabel("info.param_add_disb_warning", new Object[] { finReferences }));
 					}
 				}
 			}
@@ -3129,7 +3129,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
 					eventCodeRef = AccountEventConstants.ACCEVENT_SCDCHG;
 					workflowCode = FinanceConstants.FINSER_EVENT_CHGSCHDMETHOD;
-				}else if ("tab_ChangeTDS".equals(tab.getId())) {
+				} else if ("tab_ChangeTDS".equals(tab.getId())) {
 					eventCodeRef = "";
 					moduleDefiner = FinanceConstants.FINSER_EVENT_CHANGETDS;
 					workflowCode = FinanceConstants.FINSER_EVENT_CHANGETDS;
@@ -3193,8 +3193,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)) {
 			this.searchObject.addTabelName("CovenantsMaintenance_View");
-		}
-		else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
+		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FINOPTION)) {
 			this.searchObject.addTabelName("FinoptionsMaintenance_View");
 		}
 
@@ -3285,7 +3284,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		return arrayRoleCode;
 	}
-	
+
 	private void openFinChangeTDSMaintanceDialog(Listitem item) throws Exception {
 		logger.debug("Entering ");
 		// get the selected FinanceMain object
@@ -3379,7 +3378,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	private void showFinChangeTDSMaintanceView(FinMaintainInstruction finMaintainInstruction) {
 
 		logger.debug("Entering");
@@ -3388,8 +3387,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 		String finReference = finMaintainInstruction.getFinReference();
-		FinanceMain financeMain = getChangeTDSService()
-				.getFinanceBasicDetailByRef(finReference);
+		FinanceMain financeMain = getChangeTDSService().getFinanceBasicDetailByRef(finReference);
 		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(finReference, "_AView", false);
 		boolean isTDSCheck = false;
 		Date date = DateUtility.getAppDate();
@@ -3398,7 +3396,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else {
 			isTDSCheck = finMaintainInstruction.istDSApplicable();
 		}
-		
+
 		map.put("finMaintainInstruction", finMaintainInstruction);
 		map.put("financeSelectCtrl", this);
 		map.put("financeMain", financeMain);
@@ -3552,6 +3550,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void setFinOptionMaintanceService(FinOptionMaintanceService finOptionMaintanceService) {
 		this.finOptionMaintanceService = finOptionMaintanceService;
 	}
+
 	public ChangeTDSService getChangeTDSService() {
 		return changeTDSService;
 	}

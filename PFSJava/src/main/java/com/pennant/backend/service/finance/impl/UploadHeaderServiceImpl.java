@@ -349,12 +349,12 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	@Override
 	public void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

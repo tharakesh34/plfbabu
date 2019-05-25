@@ -56,7 +56,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		this.entityDescription = entityDetails[1];
 		this.startDate = startDate;
 		this.endDate = endDate;
-		
+
 		try {
 			generate();
 			exportSummaryReport();
@@ -239,17 +239,17 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" insert into TRANSACTION_DETAIL_REPORT_TEMP(ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ,");
 		sql.append(" WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT)");
 		sql.append(" VALUES(:Id, :Entity, :Link,");
-		
-		if(App.DATABASE== Database.POSTGRES){
+
+		if (App.DATABASE == Database.POSTGRES) {
 			sql.append(":TransactionAmountType::integer,");
 		} else {
-			sql.append(":TransactionAmountType,");	
+			sql.append(":TransactionAmountType,");
 		}
 		sql.append(" :LedgerAccount, :Umskz,");
-		if(App.DATABASE== Database.POSTGRES){
+		if (App.DATABASE == Database.POSTGRES) {
 			sql.append(":TransactionAmount::integer,");
 		} else {
-			sql.append(":TransactionAmount,");	
+			sql.append(":TransactionAmount,");
 		}
 		sql.append(" :BusinessUnit, :BusinessArea, :CostCenter, :ProfitCenter,");
 		sql.append(" :Narration1, :Narration1)");
@@ -518,7 +518,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" BUPLA, KOSTL, PRCTR, ZUONR, SGTXT) SELECT");
 		sql.append(" :ENTITY,");
 		sql.append(" :LINK,");
-		if(App.DATABASE == Database.POSTGRES){
+		if (App.DATABASE == Database.POSTGRES) {
 			sql.append(" :BSCHL::integer,");
 		} else {
 			sql.append(" :BSCHL,");
@@ -637,8 +637,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT");
 
 		paramMap = new MapSqlParameterSource();
-		
-		
+
 		if (App.DATABASE == Database.POSTGRES) {
 			paramMap.addValue("BLDAT", new SimpleDateFormat("yyyy-MM-dd").format(endDate));
 			paramMap.addValue("BUDAT", new SimpleDateFormat("yyyy-MM-dd").format(endDate));
@@ -648,7 +647,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		}
 		paramMap.addValue("BLART", parameters.get("BLART"));
 		paramMap.addValue("BUKRS", parameters.get("BUKRS"));
-		
+
 		paramMap.addValue("MONAT", getFinancialMonth());
 		paramMap.addValue("APP_DFT_CURR", parameters.get("APP_DFT_CURR"));
 		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF"));

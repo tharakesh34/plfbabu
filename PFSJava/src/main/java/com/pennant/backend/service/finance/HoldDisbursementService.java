@@ -48,10 +48,15 @@ import com.pennant.backend.model.finance.HoldDisbursement;
 public interface HoldDisbursementService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
+
 	HoldDisbursement getHoldDisbursement(String finReference);
+
 	HoldDisbursement getApprovedHoldDisbursement(String finReference);
+
 	AuditHeader delete(AuditHeader auditHeader);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	boolean getFinanceDisbursementById(final String id);

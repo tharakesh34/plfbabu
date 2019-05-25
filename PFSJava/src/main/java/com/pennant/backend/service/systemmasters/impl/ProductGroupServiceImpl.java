@@ -19,12 +19,13 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
-public class ProductGroupServiceImpl  extends GenericService<ProductGroup> implements ProductGroupService {
+public class ProductGroupServiceImpl extends GenericService<ProductGroup> implements ProductGroupService {
 
 	private static final Logger logger = Logger.getLogger(ProductGroupServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private ProductGroupDAO productGroupDAO;
+
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -106,9 +107,12 @@ public class ProductGroupServiceImpl  extends GenericService<ProductGroup> imple
 		getProductGroupDAO().delete(productGroup, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(productGroup.getRecordType())) {
-			/*auditHeader.getAuditDetail().setBefImage(((DealerGroupDAO) dealerGroup).getDealerGroup(dealerGroup.getId(), ""));*/
+			/*
+			 * auditHeader.getAuditDetail().setBefImage(((DealerGroupDAO)
+			 * dealerGroup).getDealerGroup(dealerGroup.getId(), ""));
+			 */
 			auditHeader.getAuditDetail()
-			.setBefImage(getProductGroupDAO().getProductGroup(productGroup.getProductGroupId(), ""));
+					.setBefImage(getProductGroupDAO().getProductGroup(productGroup.getProductGroupId(), ""));
 		}
 
 		if (productGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -180,6 +184,7 @@ public class ProductGroupServiceImpl  extends GenericService<ProductGroup> imple
 	public void setProductGroupDAO(ProductGroupDAO productGroupDAO) {
 		this.productGroupDAO = productGroupDAO;
 	}
+
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -191,6 +196,7 @@ public class ProductGroupServiceImpl  extends GenericService<ProductGroup> imple
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
+
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -207,13 +213,12 @@ public class ProductGroupServiceImpl  extends GenericService<ProductGroup> imple
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		/*// If Builder Group is already utilized in Builder Company 
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, productGroup.getRecordType())) {
-			boolean workflowExists = getProductGroupDAO().isIdExists(productGroup.getId());
-			if (workflowExists) {
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null));
-			}
-		}*/
+		/*
+		 * // If Builder Group is already utilized in Builder Company if
+		 * (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, productGroup.getRecordType())) { boolean workflowExists
+		 * = getProductGroupDAO().isIdExists(productGroup.getId()); if (workflowExists) { auditDetail.setErrorDetail(new
+		 * ErrorDetail(PennantConstants.KEY_FIELD, "41006", parameters, null)); } }
+		 */
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

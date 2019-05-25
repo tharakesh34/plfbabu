@@ -62,7 +62,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualAdvise table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finReference","adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
+@XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;

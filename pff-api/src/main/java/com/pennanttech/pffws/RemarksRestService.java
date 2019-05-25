@@ -12,9 +12,9 @@ import com.pennant.ws.exception.ServiceException;
 
 @Produces("application/json")
 public interface RemarksRestService {
-	
+
 	@POST
 	@Path("/remarksService/createRemarks")
 	WSReturnStatus addRemarks(List<Notes> remarks) throws ServiceException;
-	
+
 }

@@ -48,7 +48,8 @@
 							<rows>
 								<row>
 									<label id="label_DealerGroupList_dealerCode" value="${c:l('label_DealerGroupList_dealerCode.value')}" />
-									<listbox id="sortOperator_dealerCode" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<listbox id="sortOperator_dealerCode" width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="dealerCode" />
 									<label id="label_DealerGroupList_dealerCategory" value="${c:l('label_DealerGroupList_dealerCategory.value')}" />
 									<listbox id="sortOperator_dealerCategoryId" width="43px" mold="select" rows="1"
@@ -56,9 +57,8 @@
 									<textbox id="dealerCategoryId" />
 								</row>
 								<row>
-								<label id="label_DealerGroupList_channel" value="${c:l('label_DealerGroupList_channel.value')}" />
-									<listbox id="sortOperator_channel" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<label id="label_DealerGroupList_channel" value="${c:l('label_DealerGroupList_channel.value')}" />
+									<listbox id="sortOperator_channel" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="channel" />
 									<label id="label_DealerGroupList_active" value="${c:l('label_DealerGroupList_active.value')}" />
 									<listbox id="sortOperator_active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
@@ -79,11 +79,11 @@
 						<listbox id="listBoxDealerGroup" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_dealerCode" label="${c:l('listheader_dealerCode.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_dealerCode" label="${c:l('listheader_dealerCode.label')}" sort="auto"
+									hflex="min" />
 								<listheader id="listheader_dealerCategoryId" label="${c:l('listheader_dealerCategory.label')}" sort="auto"
 									hflex="min" />
-										<listheader id="listheader_channel" label="${c:l('listheader_channel.label')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_channel" label="${c:l('listheader_channel.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_active" label="${c:l('listheader_active.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />

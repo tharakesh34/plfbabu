@@ -75,7 +75,7 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 	private String type;
 	@XmlElement
 	private BigDecimal rate = BigDecimal.ZERO;
-	
+
 	private BigDecimal periodRate = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal discountRate = BigDecimal.ZERO;

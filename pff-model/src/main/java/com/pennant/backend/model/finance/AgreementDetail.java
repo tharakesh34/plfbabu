@@ -7255,12 +7255,12 @@ public class AgreementDetail {
 		private String sourceChannel = "";
 		private String salesPerson = "";
 		private String dsaName = "";
-		private String dsaCode="";
+		private String dsaCode = "";
 		private String dsaNameDesc = "";
 		private String salesManager = "";
 		private String salesManagerDesc = "";
 		private String dmaCodeDesc = "";
-		private String dmaName="";
+		private String dmaName = "";
 
 		public SourcingDetail() {
 		}

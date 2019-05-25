@@ -22,8 +22,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
- * This is the controller class for the
- * /WEB-INF/pages/ReloadResources/ReloadResource.zul<br>
+ * This is the controller class for the /WEB-INF/pages/ReloadResources/ReloadResource.zul<br>
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++<br>
  * 
  */

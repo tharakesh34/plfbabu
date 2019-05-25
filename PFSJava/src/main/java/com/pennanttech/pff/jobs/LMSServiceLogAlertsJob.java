@@ -27,7 +27,7 @@ public class LMSServiceLogAlertsJob implements Job {
 		if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
 			return;
 		}
-		
+
 		LMSServiceLogAlerts alerts = SpringBeanUtil.getBean(LMSServiceLogAlerts.class);
 		alerts.sendAlerts();
 	}

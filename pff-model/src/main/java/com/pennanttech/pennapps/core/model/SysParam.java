@@ -27,7 +27,7 @@ public class SysParam extends AbstractWorkflowEntity {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public String getCategory() {
 		return category;
 	}

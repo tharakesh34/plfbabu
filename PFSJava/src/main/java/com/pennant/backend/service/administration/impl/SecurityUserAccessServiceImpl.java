@@ -145,7 +145,7 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 					}
 				}
 			} else if (PennantConstants.ACCESSTYPE_CLUSTER.equals(access.getAccessType())) {
-				String key = access.getEntity() + access.getClusterType()+String.valueOf(access.getClusterId());
+				String key = access.getEntity() + access.getClusterType() + String.valueOf(access.getClusterId());
 
 				List<Cluster> clusters = clusterMap.get(key);
 

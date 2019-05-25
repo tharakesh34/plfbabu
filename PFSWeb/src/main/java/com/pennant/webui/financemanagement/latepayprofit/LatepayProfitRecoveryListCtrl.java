@@ -574,8 +574,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
-						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat),
-						Filter.OP_EQUAL));
+						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
 			// Overdue Principle 
 			if (this.finODPrinciple.getValue() != null) {

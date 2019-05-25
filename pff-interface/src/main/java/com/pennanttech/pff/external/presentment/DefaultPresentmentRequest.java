@@ -47,7 +47,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		boolean isBatchFail = false;
 		StringBuilder sql = null;
 
-		
 		if (idList != null && !idList.isEmpty()) {
 
 			if (isPDC) {
@@ -105,7 +104,6 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Method for creating PRESENTMENT_REQUEST file.
@@ -281,7 +279,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" (TXN_REF, Entity_Code, CYCLE_TYPE, INSTRUMENT_MODE,PRESENTATIONDATE,BANK_CODE,PRODUCT_CODE,");
 		sql.append(" CustomerId, AGREEMENTNO, CHEQUEAMOUNT, EMI_NO, TXN_TYPE_CODE, SOURCE_CODE, BR_CODE,");
 		sql.append(" UMRN_NO , BANK_NAME, MICR_CODE, AccountNo, DEST_ACC_HOLDER, ACC_TYPE, BANK_ADDRESS, RESUB_FLAG,");
-		sql.append(" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
+		sql.append(
+				" ORGIN_SYSTEM, DATA_GEN_DATE ,USERID, BATCHID,job_Id ,PICKUP_BATCHID, CycleDate,PARTNER_BANK,IFSC,");
 		sql.append(" ChequeSerialNo, ChequeDate) ");
 		sql.append(" values( :TxnReference,");
 
@@ -466,6 +465,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void updatePresentmentHeader(long presentmentId, int manualEcclude, long dBStatusId, long totalRecords) {
 		logger.debug(Literal.ENTERING);
 

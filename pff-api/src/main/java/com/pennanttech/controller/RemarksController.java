@@ -16,48 +16,48 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class RemarksController {
-	
+
 	private final Logger logger = Logger.getLogger(getClass());
-	
+
 	private NotesService notesService;
-	
+
 	public RemarksController() {
 		super();
 	}
 
 	public WSReturnStatus doAddRemarks(List<Notes> remarks) {
-		
+
 		logger.debug(Literal.ENTERING);
-		
+
 		for (Notes notes : remarks) {
-			if (notes.getUsrLogin().trim().isEmpty())	{
+			if (notes.getUsrLogin().trim().isEmpty()) {
 				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 				notes.setInputBy(userDetails.getUserId());
 			}
-			
-			if(notes.getInDate()!= null)	{
+
+			if (notes.getInDate() != null) {
 				notes.setInputDate(new Timestamp(notes.getInDate().getTime()));
-			} else	{
+			} else {
 				notes.setInputDate(new Timestamp(DateUtility.getAppDate().getTime()));
 			}
-			
-			if (notes.getAlignType().isEmpty())	{
+
+			if (notes.getAlignType().isEmpty()) {
 				notes.setAlignType("R");
 			}
-			
-			if (notes.getRemarkType().isEmpty())	{
+
+			if (notes.getRemarkType().isEmpty()) {
 				notes.setRemarkType("N");
 			}
-			
-			if (notes.getModuleName().trim().isEmpty())	{
+
+			if (notes.getModuleName().trim().isEmpty()) {
 				notes.setModuleName("FinanceMain");
 			}
-			
+
 			notesService.saveOrUpdate(notes);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
@@ -65,6 +65,5 @@ public class RemarksController {
 	public void setNotesService(NotesService notesService) {
 		this.notesService = notesService;
 	}
-	
-	
+
 }

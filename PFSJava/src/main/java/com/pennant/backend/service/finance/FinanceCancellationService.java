@@ -11,6 +11,6 @@ public interface FinanceCancellationService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader aAuditHeader,boolean isValReq);
+	AuditHeader doApprove(AuditHeader aAuditHeader, boolean isValReq);
 
 }

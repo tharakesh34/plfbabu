@@ -257,8 +257,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql
-				.append(" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt FROM FinODDetails");
+		selectSql.append(
+				" Select TotPenaltyAmt,TotWaived,TotPenaltyPaid,FinODSchdDate,FinODTillDate,LPIAmt FROM FinODDetails");
 		selectSql.append(" Where TOtPenaltyAmt > 0 and FinReference = :FinReference");
 
 		logger.trace(Literal.SQL + selectSql.toString());
@@ -290,9 +290,10 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder selectSql = new StringBuilder();
 
-		selectSql.append(" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
+		selectSql.append(
+				" Select T1.FinReference, T1.PostDate, T1.AdviseAmount, T1.AdviseType, T1.ReceiptId, T1.BounceId, T1.Adviseid, T1.FeeTypeId, T1.BalanceAmt,");
 		selectSql.append(" T1.WaivedAmount, T1.PaidAmount, T2.FeeTypeDesc, T1.ValueDate,T2.TaxComponent,");
-		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST"); 
+		selectSql.append(" T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST");
 		selectSql.append(" FROM ManualAdvise T1");
 		selectSql.append(" Left Join FEETYPES T2 ON T2.FeeTypeId = T1.FeeTypeId");
 		selectSql.append(" Where FinReference = :FinReference");
@@ -1128,8 +1129,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 				.newInstance(FinanceDisbursement.class);
 
 		try {
-			financeDisbursements = this.jdbcTemplate.query(selectSql.toString(), source,
-					typeRowMapper);
+			financeDisbursements = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Exception: ", e);
 			financeDisbursements = null;

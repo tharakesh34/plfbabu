@@ -310,7 +310,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			insertSql.append(
 					" :DisbStatus, :DisbType, :DisbClaim, :DisbExpType, :ContractorId, :DisbRetPerc, :DisbRetAmount, ");
 			insertSql.append(" :AutoDisb, :NetAdvDue, :NetRetDue, :DisbRetPaid, :RetPaidDate, ");
-			insertSql.append(" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate,:LinkedTranId, :instructionUID, ");
+			insertSql.append(
+					" :ConsultFeeFrq, :ConsultFeeStartDate, :ConsultFeeEndDate,:LinkedTranId, :instructionUID, ");
 			if (type.contains("Log")) {
 				insertSql.append(" :LogKey , ");
 			}
@@ -454,7 +455,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 			sql.append(", AutoDisb, NetAdvDue, NetRetDue, DisbRetPaid, RetPaidDate");
 			sql.append(", ConsultFeeFrq, ConsultFeeStartDate, ConsultFeeEndDate, instructionUID");
 		}
-		
+
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
 		sql.append(", NextTaskId, RecordType, WorkflowId");
 
@@ -633,7 +634,8 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finreference);
-		source.addValue("FinEvent", Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
+		source.addValue("FinEvent",
+				Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
 
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);

@@ -16,4 +16,3 @@ public interface TransactionMappingService {
 	TransactionMapping getTransactionMappingById(long id);
 
 }
-

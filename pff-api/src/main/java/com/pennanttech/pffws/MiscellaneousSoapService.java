@@ -14,11 +14,12 @@ import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
 
 @WebService
 public interface MiscellaneousSoapService {
-	
+
 	WSReturnStatus createPosting(@WebParam(name = "posting") JVPosting posting) throws ServiceException;
-	
+
 	@WebResult(name = "DashBoardResponse")
-	DashBoardResponse createDashboard(@WebParam(name = "dashboardRequest") DashBoardRequest dashboardRequest) throws ServiceException;
+	DashBoardResponse createDashboard(@WebParam(name = "dashboardRequest") DashBoardRequest dashboardRequest)
+			throws ServiceException;
 
 	@WebResult(name = "EligibilityDetailResponse")
 	EligibilityDetailResponse createEligibilityDetail(

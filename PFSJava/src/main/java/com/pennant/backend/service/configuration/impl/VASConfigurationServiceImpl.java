@@ -324,7 +324,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
-			vasConfiguration.setPremiumCalcDetList(getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), "_View"));
+			vasConfiguration.setPremiumCalcDetList(
+					getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), "_View"));
 		}
 		logger.debug("Leaving");
 		return vasConfiguration;
@@ -352,7 +353,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_AView"));
 			}
 			vasConfiguration.setExtendedFieldHeader(extFldHeader);
-			vasConfiguration.setPremiumCalcDetList(getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), ""));
+			vasConfiguration.setPremiumCalcDetList(
+					getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), ""));
 		}
 		logger.debug("Leaving");
 		return vasConfiguration;
@@ -747,6 +749,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 	/**
 	 * Processing the Premium calculation file details
+	 * 
 	 * @param vASConfiguration
 	 * @param tableType
 	 */
@@ -758,7 +761,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		}
 		logger.debug("Leaving");
 	}
-	
+
 	/*
 	 * Checking the vas type is used in vas recording or not
 	 */

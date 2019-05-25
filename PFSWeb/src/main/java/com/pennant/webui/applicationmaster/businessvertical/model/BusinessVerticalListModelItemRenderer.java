@@ -56,7 +56,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.app.util.DateUtility;
 
-
 /**
  * Item renderer for listitems in the listbox.
  * 
@@ -69,28 +68,27 @@ public class BusinessVerticalListModelItemRenderer implements ListitemRenderer<B
 		super();
 	}
 
-	
 	@Override
 	public void render(Listitem item, BusinessVertical businessVertical, int count) throws Exception {
 
 		Listcell lc;
-	  	lc = new Listcell(businessVertical.getCode());
+		lc = new Listcell(businessVertical.getCode());
 		lc.setParent(item);
-	  	lc = new Listcell(businessVertical.getDescription());
+		lc = new Listcell(businessVertical.getDescription());
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		final Checkbox act = new Checkbox();
-		
+
 		act.setChecked(businessVertical.isActive());
 		lc.appendChild(act);
 		lc.setParent(item);
-	  	lc = new Listcell(businessVertical.getRecordStatus());
+		lc = new Listcell(businessVertical.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(businessVertical.getRecordType()));
 		lc.setParent(item);
 		item.setAttribute("id", businessVertical.getId());
-		
+
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onBusinessVerticalItemDoubleClicked");
 	}
 }

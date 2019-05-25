@@ -116,7 +116,7 @@ public class FinODAmzTaxDetail implements Serializable {
 	public void setTaxType(String taxType) {
 		this.taxType = taxType;
 	}
-	
+
 	public Date getPostDate() {
 		return postDate;
 	}

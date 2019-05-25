@@ -71,7 +71,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Textbox mobileNo;
 	protected Textbox aadhaarNo;
 	protected Textbox pANNo;
-	
+
 	protected Row row_nameMobile;
 	protected Label label_CustomerDedupDialog_MobileNo;
 	protected Row row_aadharPAN;
@@ -154,7 +154,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (arguments.containsKey("isFromLoan")) {
 			isFromLoan = true;
 		}
-		
+
 		if (arguments.containsKey("isInternalDedupLoan")) {
 			isInternalDedupLoan = true;
 		}
@@ -246,10 +246,10 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private void doWriteBeanToComponents(CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.custName.setValue(customerDetails.getCustomer().getCustShrtName());
 		for (CustomerPhoneNumber custPhoneNo : customerDetails.getCustomerPhoneNumList()) {
-			if(StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, custPhoneNo.getPhoneTypeCode())){
+			if (StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, custPhoneNo.getPhoneTypeCode())) {
 				this.mobileNo.setValue(custPhoneNo.getPhoneNumber());
 			}
 		}
@@ -260,7 +260,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.aadhaarNo
 					.setValue(PennantApplicationUtil.formatEIDNumber(customerDetails.getCustomer().getCustCRCPR()));
 		}
-		if(isInternalDedupLoan){
+		if (isInternalDedupLoan) {
 			this.row_nameMobile.setVisible(true);
 			this.label_CustomerDedupDialog_MobileNo.setVisible(true);
 			this.mobileNo.setVisible(true);
@@ -287,20 +287,22 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void onClick$btnNewCustomer(Event event) throws Exception {
 		if (isFromLoan) {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(false);
-			if(isInternalDedupLoan){
+			if (isInternalDedupLoan) {
 				String custCIF = null;
 				String panNumber = "";
 				panNumber = this.pANNo.getValue();
 				if (StringUtils.isNotBlank(panNumber)) {
 					custCIF = getCustomerDetailsService().getEIDNumberById(panNumber, "_View");
 
-					if(StringUtils.isNotEmpty(custCIF)){
-						MessageUtil.showMessage(Labels.getLabel("label_FinanceTypeDialog_PANExist", new String[]{custCIF}));
+					if (StringUtils.isNotEmpty(custCIF)) {
+						MessageUtil.showMessage(
+								Labels.getLabel("label_FinanceTypeDialog_PANExist", new String[] { custCIF }));
 						this.window_CustomerDedupDialog.onClose();
 						return;
 					}
-				}}
-			selectFinanceTypeDialogCtrl.processCustomer(false,false);
+				}
+			}
+			selectFinanceTypeDialogCtrl.processCustomer(false, false);
 		} else if (isFromCustomer) {
 			if (StringUtils.isEmpty(custCtgCode)) {
 				custCtgCode = customerDetails.getCustomer().getCustCtgCode();
@@ -328,7 +330,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if ("RETAIL".equals(custCtgCode)) {
 				isRetail = true;
 			}
-			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail,false);
+			boolean flag = selectFinanceTypeDialogCtrl.processCustomer(isRetail, false);
 			if (flag) {
 				closeDialog();
 			}
@@ -439,11 +441,12 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc.setParent(item);
 
 			lc = new Listcell(customerDedup.getMobileNumber());
-			if ( getCustomerDetails() != null && getCustomerDetails().getCustomerPhoneNumList() != null
-					&& !getCustomerDetails().getCustomerPhoneNumList().isEmpty()){
+			if (getCustomerDetails() != null && getCustomerDetails().getCustomerPhoneNumList() != null
+					&& !getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
 				for (CustomerPhoneNumber customerPhoneNumber : getCustomerDetails().getCustomerPhoneNumList()) {
-					if(StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, customerPhoneNumber.getPhoneTypeCode())
-							&& StringUtils.equals(customerPhoneNumber.getPhoneNumber(),customerDedup.getMobileNumber()))
+					if (StringUtils.equals(PennantConstants.PHONETYPE_MOBILE, customerPhoneNumber.getPhoneTypeCode())
+							&& StringUtils.equals(customerPhoneNumber.getPhoneNumber(),
+									customerDedup.getMobileNumber()))
 						lc.setStyle("color:red");
 				}
 			}
@@ -453,8 +456,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc.setParent(item);
 
 			lc = new Listcell(customerDedup.getCustCRCPR());
-			if (getCustomerDetails() != null
-					&& getCustomerDetails().getCustomer() != null
+			if (getCustomerDetails() != null && getCustomerDetails().getCustomer() != null
 					&& getCustomerDetails().getCustomer().getCustCRCPR() != null
 					&& getCustomerDetails().getCustomer().getCustCRCPR().equals(customerDedup.getCustCRCPR())) {
 				lc.setStyle("color:red");

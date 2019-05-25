@@ -196,10 +196,11 @@ public class LegalPropertyDetailDAOImpl extends SequenceDao<LegalPropertyDetail>
 		sql.append(" eastBy = :eastBy, westBy = :westBy, measurement = :measurement, ");
 		sql.append(
 				" registrationOffice = :registrationOffice, registrationDistrict = :registrationDistrict, propertyOwner = :propertyOwner, ");
-		
+
 		sql.append(" urbanLandCeiling = :urbanLandCeiling, minorshareInvolved = :minorshareInvolved, ");
 		sql.append(" propertyIsGramanatham = :propertyIsGramanatham, propertyReleased = :propertyReleased, ");
-		sql.append(" propOriginalsAvailable = :propOriginalsAvailable, propertyIsAgricultural = :propertyIsAgricultural, ");
+		sql.append(
+				" propOriginalsAvailable = :propOriginalsAvailable, propertyIsAgricultural = :propertyIsAgricultural, ");
 		sql.append(" nocObtainedFromLPA = :nocObtainedFromLPA, anyMortgagePending = :anyMortgagePending, ");
 		sql.append(" northSideEastByWest = :northSideEastByWest, southSideWestByEast = :southSideWestByEast, ");
 		sql.append(" eastSideNorthBySouth = :eastSideNorthBySouth, westSideSouthByNorth = :westSideSouthByNorth, ");

@@ -82,7 +82,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
-	
+
 	@Autowired
 	private CovenantsService covenantsService;
 
@@ -169,8 +169,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
-					auditHeader.getAuditTranType(), false));
+			auditDetails.addAll(
+					covenantsService.doProcess(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType(), false));
 		}
 
 		// Add Audit
@@ -302,8 +302,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<Covenant> covenants = finMaintainInstruction.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB,
-					auditHeader.getAuditTranType(), true));
+			auditDetails.addAll(
+					covenantsService.doProcess(covenants, TableType.MAIN_TAB, auditHeader.getAuditTranType(), true));
 		}
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
@@ -617,16 +617,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return auditDetails;
 	}
 
-	
-	
-	
-	
-	private List<AuditDetail> setCovenantAuditData(FinMaintainInstruction finMaintainInstruction,
-			String auditTranType, String method) {
+	private List<AuditDetail> setCovenantAuditData(FinMaintainInstruction finMaintainInstruction, String auditTranType,
+			String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-	        Covenant covenant = new Covenant();
+		Covenant covenant = new Covenant();
 
 		String[] fields = PennantJavaUtil.getFieldDetails(covenant, covenant.getExcludeFields());
 
@@ -674,16 +670,14 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			covenants.setLastMntOn(finMaintainInstruction.getLastMntOn());
 			covenants.setLastMntBy(finMaintainInstruction.getLastMntBy());
 
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], covenants.getBefImage(),
-					covenants));
+			auditDetails.add(
+					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], covenants.getBefImage(), covenants));
 		}
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
-	
-	
-	
+
 	/**
 	 * 
 	 * @param auditHeader
@@ -712,9 +706,8 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			auditDetailMap.put("FinCovenants", setFinCovenantAuditData(finMaintainInstruction, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinCovenants"));
 		}
-		
-		if (finMaintainInstruction.getCovenants()!= null
-				&& finMaintainInstruction.getCovenants().size() > 0) {
+
+		if (finMaintainInstruction.getCovenants() != null && finMaintainInstruction.getCovenants().size() > 0) {
 			auditDetailMap.put("Covenants", setCovenantAuditData(finMaintainInstruction, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("Covenants"));
 		}

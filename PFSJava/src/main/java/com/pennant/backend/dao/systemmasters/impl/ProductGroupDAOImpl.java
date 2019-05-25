@@ -19,8 +19,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements ProductGroupDAO{
-	
+public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements ProductGroupDAO {
+
 	private static Logger logger = Logger.getLogger(ProductGroupDAOImpl.class);
 
 	public ProductGroupDAOImpl() {
@@ -68,7 +68,8 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update ProductGroup");
 		sql.append(tableType.getSuffix());
-		sql.append("  set modelId = :modelId, channel = :channel, active = :active, productCategoryId=:productCategoryId, ");
+		sql.append(
+				"  set modelId = :modelId, channel = :channel, active = :active, productCategoryId=:productCategoryId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -87,7 +88,7 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 	}
 
 	@Override
@@ -118,7 +119,6 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 
 		logger.debug(Literal.LEAVING);
 
-		
 	}
 
 	@Override
@@ -128,7 +128,6 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" productGroupId, modelId, channel, productcategoryid, active,");
-		
 
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -145,7 +144,6 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 
 		ProductGroup productGroup = new ProductGroup();
 		productGroup.setId(id);
-		
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(productGroup);
 		RowMapper<ProductGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ProductGroup.class);

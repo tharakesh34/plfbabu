@@ -541,7 +541,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 		}
 		logger.debug("Leaving");
 		return partnerBank;
-	
+
 	}
 
 }

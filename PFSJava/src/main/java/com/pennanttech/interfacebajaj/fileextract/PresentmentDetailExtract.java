@@ -854,10 +854,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 			LoggedInUser userDetails = new LoggedInUser();
 			userDetails.setLoginUsrID(CON_USER_ID);
-			
+
 			PresentmentDetail prsntDetails = isPresentmentResponseIsExist(presement_Response.getBatchId());
 			presentmentDetailService.processReceipts(prsntDetails);
-			
+
 			updateSuccessResponse(presement_Response);
 
 		}

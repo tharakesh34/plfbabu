@@ -80,7 +80,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlType(propOrder = { "depositorCif", "collateralRef", "collateralType", "collateralCcy", "maxCollateralValue",
 		"specialLTV", "collateralLoc", "valuator", "expiryDate", "reviewFrequency", "nextReviewDate",
 		"multiLoanAssignment", "thirdPartyAssignment", "remarks", "collateralThirdPartyList", "extendedDetails",
-		"coOwnerDetailList", "documents","assignmentReference","returnStatus" })
+		"coOwnerDetailList", "documents", "assignmentReference", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "CollateralSetup")
 public class CollateralSetup extends AbstractWorkflowEntity {
@@ -175,7 +175,7 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	private String sourceId;
-	
+
 	@XmlElement
 	private String assignmentReference;
 

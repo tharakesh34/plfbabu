@@ -23,7 +23,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 
-public class FinMaintainInstruction extends AbstractWorkflowEntity  {
+public class FinMaintainInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long finMaintainId = Long.MIN_VALUE;
@@ -38,16 +38,14 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	private Date tdsStartDate;
 	private Date tdsEndDate;
 	private BigDecimal tdsLimit = BigDecimal.ZERO;
-	
 
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private List<FinCovenantType> finCovenantTypeList = new ArrayList<>(1);
 	private List<Covenant> covenants = new ArrayList<>();
 	private List<FinOption> finOptions = new ArrayList<>();
-	
+
 	//Is TDS Applicable
 	private boolean tDSApplicable = false;//Clix added new TDS Applicable Flag
-
 
 	public boolean istDSApplicable() {
 		return tDSApplicable;
@@ -65,7 +63,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 		super();
 		this.setId(id);
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("covenants");
@@ -76,8 +74,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
-	
+
 	public long getId() {
 		return finMaintainId;
 	}
@@ -209,8 +206,5 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity  {
 	public void setTdsLimit(BigDecimal tdsLimit) {
 		this.tdsLimit = tdsLimit;
 	}
-
-	
-	
 
 }

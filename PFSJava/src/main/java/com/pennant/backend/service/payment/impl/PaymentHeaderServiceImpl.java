@@ -662,22 +662,24 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
 				aeEvent.setValueDate(paymentInstruction.getPostDate());
 			}
-			
+
 			// GST parameters
 			String highPriorityState = null;
 			String highPriorityCountry = null;
-			
+
 			// Fetch High priority Address
-			CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeMain.getCustID(),"");
+			CustomerAddres addres = getCustomerAddresDAO().getHighPriorityCustAddr(financeMain.getCustID(), "");
 			if (addres != null) {
 				highPriorityState = addres.getCustAddrProvince();
 				highPriorityCountry = addres.getCustAddrCountry();
 			}
 
 			// Set Tax Details if Already exists
-			FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),"");
-			Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(financeMain.getFinBranch(),
-					financeMain.getFinBranch(), highPriorityState, highPriorityCountry, taxDetail, financeMain.getFinBranch());
+			FinanceTaxDetail taxDetail = getFinanceTaxDetailDAO().getFinanceTaxDetail(financeMain.getFinReference(),
+					"");
+			Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
+					financeMain.getFinBranch(), financeMain.getFinBranch(), highPriorityState, highPriorityCountry,
+					taxDetail, financeMain.getFinBranch());
 
 			aeEvent.setCcy(financeMain.getFinCcy());
 			aeEvent.setFinReference(financeMain.getFinReference());
@@ -738,7 +740,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
 			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 			aeEvent.setDataMap(eventMapping);
-			
+
 			if (gstExecutionMap != null) {
 				for (String mapkey : gstExecutionMap.keySet()) {
 					if (StringUtils.isNotBlank(mapkey)) {
