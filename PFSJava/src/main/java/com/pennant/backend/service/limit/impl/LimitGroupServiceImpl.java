@@ -839,7 +839,7 @@ public class LimitGroupServiceImpl extends GenericService<LimitGroup> implements
 		for (LimitGroupLines groupLine : groupLines) {
 			String lines = groupLine.getLimitLines();
 			if (delete) {
-				lines.replace("|" + ngl.getLimitLines(), "");
+				lines = lines.replace("|" + ngl.getLimitLines(), "");
 				groupLine.setLimitLines(lines);
 			} else {
 				StringBuilder builder = new StringBuilder();

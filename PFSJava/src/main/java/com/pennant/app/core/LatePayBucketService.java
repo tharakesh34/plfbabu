@@ -249,14 +249,13 @@ public class LatePayBucketService extends ServiceHelper {
 	 * @return
 	 */
 	private BigDecimal getDeductedAmt(String finReference) {
-
 		BigDecimal balanceAmt = BigDecimal.ZERO;
 		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finReference);
 		if (finExcessAmounts.size() > 0) {
 			for (FinExcessAmount finExcessAmount : finExcessAmounts) {
 
 				// DPD calculation considering both balance amount and reserved amount
-				balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
+				balanceAmt = balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
 			}
 		}
 		return balanceAmt;

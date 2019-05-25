@@ -280,7 +280,7 @@ public class TaxDownlaodExtract extends DatabaseDataEngine implements TaxDownloa
 
 				TaxDownload taxDwl = isExists(list, taxDownload);
 				if (taxDwl != null) {
-					taxDwl.getAmount().add(taxDownload.getAmount());
+					taxDwl.getAmount().add(taxDwl.getAmount().add(taxDownload.getAmount()));
 				} else {
 					list.add(taxDownload);
 				}

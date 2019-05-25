@@ -142,7 +142,7 @@ public class CreditReviewSummaryData {
 						.getFinCreditRevSubCategoryByCategoryIdAndCalcSeq(categoryId);
 
 				if (detailedMap.get(String.valueOf(dataYear)) != null) {
-					List<FinCreditReviewSummary> listOfCreditReviewSummary = this.detailsMap.get(dataYear);
+					List<FinCreditReviewSummary> listOfCreditReviewSummary = this.detailsMap.get(String.valueOf(dataYear));
 					if(listOfCreditReviewSummary ==  null) {
 						listOfCreditReviewSummary = new ArrayList<>();
 					}

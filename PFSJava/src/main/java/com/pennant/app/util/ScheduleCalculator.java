@@ -6602,7 +6602,8 @@ public class ScheduleCalculator {
 				if (curSchd.getInsSchd() == null) {
 					curSchd.setInsSchd(BigDecimal.ZERO);
 				}
-				curSchd.getInsSchd().add(insAmount);
+				
+				curSchd.getInsSchd().add(curSchd.getInsSchd().add(insAmount));
 
 				// Schedule Frequency Insurance
 				frqInsurance.setClosingBalance(curSchd.getClosingBalance());

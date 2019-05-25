@@ -1,5 +1,7 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
+
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -52,8 +54,9 @@ import java.util.Set;
  * Model class for the <b>Collateral table</b>.<br>
  *
  */
-public class FinFeeScheduleDetail {
-
+public class FinFeeScheduleDetail implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private String finReference;
 	private long feeID = Long.MIN_VALUE;
 	private Date schDate;
@@ -78,7 +81,6 @@ public class FinFeeScheduleDetail {
 	}
 
 	public Set<String> getExcludeFields() {
-
 		Set<String> excludeFields = new HashSet<String>();
 
 		excludeFields.add("finReference");
