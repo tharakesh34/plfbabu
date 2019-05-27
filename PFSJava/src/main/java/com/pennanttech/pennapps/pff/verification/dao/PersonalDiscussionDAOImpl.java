@@ -214,7 +214,7 @@ public class PersonalDiscussionDAOImpl extends SequenceDao<PersonalDiscussion> i
 		sql.append(" provinceDesc, cityDesc, zipcode, contactnumber1, contactnumber2, verifiedDate, ");
 		sql.append(" agentcode, agentname, status, reason, summaryremarks,");
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("cif, custid, keyreference, createdon, lovrelationdesc, reasoncode, reasondesc,");
+			sql.append("cif, custid, keyreference, createdon, reasoncode, reasondesc,");
 		}
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");

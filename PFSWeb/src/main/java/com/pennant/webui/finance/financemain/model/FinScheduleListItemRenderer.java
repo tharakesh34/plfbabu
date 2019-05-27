@@ -140,7 +140,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
 			boolean isRepayEnquiry, List<FinFeeDetail> finFeeDetailList, boolean showRate, boolean displayStepInfo) {
-		logger.debug("Entering");
+		/*logger.debug("Entering");*/
 		lastRec = lastRecord;
 
 		// READ OVERHANDED parameters !
@@ -1407,7 +1407,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 			}
 		}
 
-		logger.debug("Leaving");
+		/*logger.debug("Leaving");*/
 	}
 
 	/**
