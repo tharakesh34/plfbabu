@@ -172,5 +172,71 @@
 	<changeSet id="26" author="Saikiran.v">
 		<addNotNullConstraint tableName="AdtGST_RATES" columnName="Active" />
 	</changeSet>
+	
+	<changeSet id="27" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					ALTER TABLE ADTVERIFICATION_PD DROP CONSTRAINT  PK_ADTVERIFICATIONS_PD;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="28" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					Alter table ADTVERIFICATION_PD drop column OwnershipStatus;
+					Alter table ADTVERIFICATION_PD drop column YearsAtPresentAddress;
+					Alter table ADTVERIFICATION_PD drop column PersonMet;
+					Alter table ADTVERIFICATION_PD drop column Relationship;
+					Alter table ADTVERIFICATION_PD drop column ContactNumber;
+					Alter table ADTVERIFICATION_PD drop column NeighbourhoodFeedBack;
+					Alter table ADTVERIFICATION_PD drop column LivingStandard;
+					Alter table ADTVERIFICATION_PD drop column NegativeCheck;
+					Alter table ADTVERIFICATION_PD drop column NoofAttempts;
+					Alter table ADTVERIFICATION_PD drop column ObservationRemarks;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="29" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[	
+					ALTER TABLE ADTVERIFICATION_PD ADD CONSTRAINT  PK_ADTVERIFICATIONS_PD PRIMARY KEY (AuditId, AuditDate,AuditSeq,AuditImage);
+			]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="30" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+					ALTER TABLE ADTVERIFICATION_PD DROP CONSTRAINT  PK_ADTVERIFICATIONS_PD;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[		 
+					Alter table ADTVERIFICATION_PD drop column OwnershipStatus;
+					Alter table ADTVERIFICATION_PD drop column YearsAtPresentAddress;
+					Alter table ADTVERIFICATION_PD drop column PersonMet;
+					Alter table ADTVERIFICATION_PD drop column Relationship;
+					Alter table ADTVERIFICATION_PD drop column ContactNumber;
+					Alter table ADTVERIFICATION_PD drop column NeighbourhoodFeedBack;
+					Alter table ADTVERIFICATION_PD drop column LivingStandard;
+					Alter table ADTVERIFICATION_PD drop column NegativeCheck;
+					Alter table ADTVERIFICATION_PD drop column NoofAttempts;
+					Alter table ADTVERIFICATION_PD drop column ObservationRemarks;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="32" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[	
+					ALTER TABLE ADTVERIFICATION_PD ADD CONSTRAINT  PK_ADTVERIFICATIONS_PD PRIMARY KEY (AuditId, AuditDate,AuditSeq,AuditImage);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
