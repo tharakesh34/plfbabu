@@ -2718,4 +2718,322 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="58" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD DROP CONSTRAINT  PK_VERIFICATION_PD_VERF_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="59" author="Varaprasad.K">
+		<createView viewName="verification_pd_aview" replaceIfExists="true">
+            SELECT pd.verificationid,
+                pd.agentcode,
+                pd.agentname,
+                pd.type,
+                pd.verifieddate,
+                pd.status,
+                pd.reason,
+                r1.code reasoncode,
+                r1.description reasondesc,
+                pd.summaryremarks,
+                pd.version,
+                pd.lastmntby,
+                pd.lastmnton,
+                pd.recordstatus,
+                pd.rolecode,
+                pd.nextrolecode,
+                pd.taskid,
+                pd.nexttaskid,
+                pd.recordtype,
+                pd.workflowid,
+                pd.addresstype,
+                pd.name,
+                pd.housenumber,
+                pd.flatnumber,
+                pd.street,
+                pd.addressline1,
+                pd.addressline2,
+                pd.addressline3,
+                pd.addressline4,
+                pd.addressline5,
+                pd.country,
+                pd.province,
+                pd.city,
+                pd.contactnumber1,
+                pd.contactnumber2,
+                pd.pobox,
+                pd.zipcode,
+                c.custcif cif,
+                v.custid,
+                v.keyreference,
+                v.createdon,
+                v.agency,
+                v.verificationdate,
+                a.dealername agencyname,
+                v.reinitid,
+                a.dealertype,
+                r1.reasontypecode,
+                country.countrydesc,
+                p.cpprovincename provincedesc,
+                city.pccityname  citydesc
+               FROM verification_pd pd
+                 JOIN verifications v ON v.id = pd.verificationid
+                 LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+                 JOIN bmtcountries country ON country.countrycode = pd.country
+                 JOIN rmtcountryvsprovince p ON p.cpprovince = pd.province
+                 JOIN rmtprovincevscity city ON city.pccity = pd.city
+                 LEFT JOIN customers c ON c.custid = v.custid
+                 LEFT JOIN reasons_aview r1 ON r1.id = pd.reason
+        </createView>
+	</changeSet>
+	
+	<changeSet id="60" author="Varaprasad.K">
+		<createView viewName="verification_pd_view" replaceIfExists="true">
+            SELECT pd.verificationid,
+                pd.agentcode,
+                pd.agentname,
+                pd.type,
+                pd.verifieddate,
+                pd.status,
+                pd.reason,
+                r1.code reasoncode,
+                r1.description reasondesc,
+                pd.summaryremarks,
+                pd.version,
+                pd.lastmntby,
+                pd.lastmnton,
+                pd.recordstatus,
+                pd.rolecode,
+                pd.nextrolecode,
+                pd.taskid,
+                pd.nexttaskid,
+                pd.recordtype,
+                pd.workflowid,
+                pd.addresstype,
+                pd.name,
+                pd.housenumber,
+                pd.flatnumber,
+                pd.street,
+                pd.addressline1,
+                pd.addressline2,
+                pd.addressline3,
+                pd.addressline4,
+                pd.addressline5,
+                pd.country,
+                pd.province,
+                pd.city,
+                pd.contactnumber1,
+                pd.contactnumber2,
+                pd.pobox,
+                pd.zipcode,
+                c.custcif cif,
+                v.custid,
+                v.keyreference,
+                v.createdon,
+                v.agency,
+                v.verificationdate,
+                a.dealername agencyname,
+                v.reinitid,
+                a.dealertype,
+                r1.reasontypecode,
+                country.countrydesc,
+                p.cpprovincename provincedesc,
+                city.pccityname  citydesc
+               FROM verification_pd_temp pd
+                 JOIN verifications v ON v.id = pd.verificationid
+                 LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+                 JOIN bmtcountries country ON country.countrycode = pd.country
+                 JOIN rmtcountryvsprovince p ON p.cpprovince = pd.province
+                 JOIN rmtprovincevscity city ON city.pccity = pd.city
+                 LEFT JOIN customers c ON c.custid = v.custid
+                 LEFT JOIN reasons_aview r1 ON r1.id = pd.reason
+            UNION ALL
+             SELECT pd.verificationid,
+                pd.agentcode,
+                pd.agentname,
+                pd.type,
+                pd.verifieddate,
+                pd.status,
+                pd.reason,
+                r1.code reasoncode,
+                r1.description reasondesc,
+                pd.summaryremarks,
+                pd.version,
+                pd.lastmntby,
+                pd.lastmnton,
+                pd.recordstatus,
+                pd.rolecode,
+                pd.nextrolecode,
+                pd.taskid,
+                pd.nexttaskid,
+                pd.recordtype,
+                pd.workflowid,
+                pd.addresstype,
+                pd.name,
+                pd.housenumber,
+                pd.flatnumber,
+                pd.street,
+                pd.addressline1,
+                pd.addressline2,
+                pd.addressline3,
+                pd.addressline4,
+                pd.addressline5,
+                pd.country,
+                pd.province,
+                pd.city,
+                pd.contactnumber1,
+                pd.contactnumber2,
+                pd.pobox,
+                pd.zipcode,
+                c.custcif cif,
+                v.custid,
+                v.keyreference,
+                v.createdon,
+                v.agency,
+                v.verificationdate,
+                a.dealername agencyname,
+                v.reinitid,
+                a.dealertype,
+                r1.reasontypecode,
+                country.countrydesc,
+                p.cpprovincename provincedesc,
+                city.pccityname  citydesc
+               FROM verification_pd pd
+                 JOIN verifications v ON v.id = pd.verificationid
+                 LEFT JOIN amtvehicledealer a ON a.dealerid = v.agency
+                 JOIN bmtcountries country ON country.countrycode = pd.country
+                 JOIN rmtcountryvsprovince p ON p.cpprovince = pd.province
+                 JOIN rmtprovincevscity city ON city.pccity = pd.city
+                 LEFT JOIN customers c ON c.custid = v.custid
+                 LEFT JOIN reasons_aview r1 ON r1.id = pd.reason
+      </createView>
+	</changeSet>
+	
+	<changeSet id="61" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					Alter table verification_pd drop column OwnershipStatus;
+					Alter table verification_pd drop column YearsAtPresentAddress;
+					Alter table verification_pd drop column PersonMet;
+					Alter table verification_pd drop column Relationship;
+					Alter table verification_pd drop column ContactNumber;
+					Alter table verification_pd drop column NeighbourhoodFeedBack;
+					Alter table verification_pd drop column LivingStandard;
+					Alter table verification_pd drop column NegativeCheck;
+					Alter table verification_pd drop column NoofAttempts;
+					Alter table verification_pd drop column ObservationRemarks;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="62" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD ADD CONSTRAINT  PK_VERIFICATION_PD_VERF_ID PRIMARY KEY (VERIFICATIONID, VERSION);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="63" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD DROP CONSTRAINT  PK_VERIFICATION_PD_VERF_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="64" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[		 
+					Alter table verification_pd drop column OwnershipStatus;
+					Alter table verification_pd drop column YearsAtPresentAddress;
+					Alter table verification_pd drop column PersonMet;
+					Alter table verification_pd drop column Relationship;
+					Alter table verification_pd drop column ContactNumber;
+					Alter table verification_pd drop column NeighbourhoodFeedBack;
+					Alter table verification_pd drop column LivingStandard;
+					Alter table verification_pd drop column NegativeCheck;
+					Alter table verification_pd drop column NoofAttempts;
+					Alter table verification_pd drop column ObservationRemarks;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="65" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[	
+					ALTER TABLE verification_pd ADD CONSTRAINT  PK_VERIFICATION_PD_VERF_ID PRIMARY KEY(VERIFICATIONID, VERSION);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="66" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD_TEMP DROP CONSTRAINT  PK_VERIFICATION_PD_TMP_VERF_ID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="67" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					Alter table verification_pd_temp drop column OwnershipStatus;
+					Alter table verification_pd_temp drop column YearsAtPresentAddress;
+					Alter table verification_pd_temp drop column PersonMet;
+					Alter table verification_pd_temp drop column Relationship;
+					Alter table verification_pd_temp drop column ContactNumber;
+					Alter table verification_pd_temp drop column NeighbourhoodFeedBack;
+					Alter table verification_pd_temp drop column LivingStandard;
+					Alter table verification_pd_temp drop column NegativeCheck;
+					Alter table verification_pd_temp drop column NoofAttempts;
+					Alter table verification_pd_temp drop column ObservationRemarks;
+			
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="68" author="Varaprasad.K" dbms="postgresql,oracle">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD_TEMP ADD CONSTRAINT  PK_VERIFICATION_PD_TMP_VERF_ID PRIMARY KEY (VERIFICATIONID, VERSION);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="69" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+					ALTER TABLE VERIFICATION_PD DROP CONSTRAINT  PK_VERIFICATION_PD_VERF_ID;
+					]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="70" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[	 
+					Alter table verification_pd_temp drop column OwnershipStatus;
+					Alter table verification_pd_temp drop column YearsAtPresentAddress;
+					Alter table verification_pd_temp drop column PersonMet;
+					Alter table verification_pd_temp drop column Relationship;
+					Alter table verification_pd_temp drop column ContactNumber;
+					Alter table verification_pd_temp drop column NeighbourhoodFeedBack;
+					Alter table verification_pd_temp drop column LivingStandard;
+					Alter table verification_pd_temp drop column NegativeCheck;
+					Alter table verification_pd_temp drop column NoofAttempts;
+					Alter table verification_pd_temp drop column ObservationRemarks;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="71" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[		
+					ALTER TABLE VERIFICATION_PD_TEMP ADD CONSTRAINT  PK_VERIFICATION_PD_TMP_VERF_ID PRIMARY KEY (VERIFICATIONID, VERSION);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
