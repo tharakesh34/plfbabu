@@ -2990,7 +2990,6 @@
 					Alter table verification_pd_temp drop column NegativeCheck;
 					Alter table verification_pd_temp drop column NoofAttempts;
 					Alter table verification_pd_temp drop column ObservationRemarks;
-			
 				]]>
 		</sql>
 	</changeSet>
