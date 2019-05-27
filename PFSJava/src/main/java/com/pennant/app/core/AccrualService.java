@@ -1013,4 +1013,8 @@ public class AccrualService extends ServiceHelper {
 		tdsSchdIdx = -2;
 	}
 
+	public void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
+		this.suspHeadDAO = suspHeadDAO;
+	}
+
 }
