@@ -1245,7 +1245,7 @@ public class CustomerController {
 
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails prospectCustomerDetails) {
 		ProspectCustomerDetails response = new ProspectCustomerDetails();
-		List<CustomerDedup> customerDedups = new ArrayList<>();
+		List<CustomerDedup> customerDedups = new ArrayList<CustomerDedup>();
 		List<Customer> customerlist = null;
 
 		customerlist = customerService.getCustomerDetailsByCRCPR(prospectCustomerDetails.getReference(),
