@@ -1154,8 +1154,8 @@ public class FinanceDataValidation {
 		}
 
 		if ((isCreateLoan && StringUtils.isNotBlank(finMain.getOldFinReference()))) {
-			FinanceMain financeMain = financeMainDAO.getFinanceMainByOldFinReference(finMain.getOldFinReference());
-			if (financeMain != null) {
+			int count = financeMainDAO.getCountByOldFinReference(finMain.getOldFinReference());
+			if (count > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "HostReference";
 				valueParm[1] = finMain.getOldFinReference();

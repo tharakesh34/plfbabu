@@ -1856,7 +1856,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
 					FinanceConstants.FINSER_EVENT_ORG, "");
-
+			
 			if (financeDetail != null) {
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
@@ -3004,6 +3004,98 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
+	
+	public FinanceDetail doReInitiateFinance(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			FinanceDetail finDetail = getFinanceDetails(financeDetail.getFinReference());
+
+			String finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(
+					finDetail.getFinScheduleData().getFinanceMain(), finDetail.getFinScheduleData().getFinanceType())));
+			finDetail.getFinScheduleData().getFinanceMain().setFinReference(finReference);
+			finDetail.getFinScheduleData().getFinanceMain()
+					.setOldFinReference(financeDetail.getFinScheduleData().getExternalReference());
+			finDetail.getFinScheduleData().getFinanceMain().setFinIsActive(true);
+			finDetail.getFinScheduleData().getFinanceMain().setClosingStatus("");
+			finDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
+			finDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			finDetail.getFinScheduleData().setFinReference(finReference);
+			for (FinanceScheduleDetail schdDetail : finDetail.getFinScheduleData().getFinanceScheduleDetails()) {
+				schdDetail.setFinReference(finReference);
+			}
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
+			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,
+					finDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
+					new HashMap<String, ArrayList<ErrorDetail>>());
+
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			auditHeader.setApiHeader(reqHeaderDetails);
+
+			auditHeader = financeDetailService.doApprove(auditHeader, false);
+
+			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+				for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
+					finDetail = new FinanceDetail();
+					finDetail.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return finDetail;
+				}
+			}
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					finDetail = new FinanceDetail();
+					finDetail.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return finDetail;
+				}
+			}
+
+			if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
+					finDetail = new FinanceDetail();
+					finDetail.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return finDetail;
+
+				}
+			}
+
+			if (StringUtils.isNotBlank(finReference)) {
+				// prepare response object
+				finDetail = getFinanceDetailResponse(auditHeader);
+				finDetail.setStp(false);
+				finDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+				logger.debug("Leaving");
+				return finDetail;
+			}
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return response;
+		} catch (AppException ex) {
+			logger.error("AppException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		logger.debug(Literal.LEAVING);
+
+		return null;
+	}
 
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
@@ -3190,5 +3282,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
 		this.postValidationHook = postValidationHook;
 	}
+
 
 }

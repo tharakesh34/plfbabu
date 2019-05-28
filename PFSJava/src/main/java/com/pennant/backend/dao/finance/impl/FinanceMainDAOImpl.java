@@ -4596,7 +4596,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference) {
+	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference,boolean active) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -4610,7 +4610,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source.addValue("OldFinReference", oldFinReference);
-		source.addValue("FinIsActive", 1);
+		source.addValue("FinIsActive", active);
 
 		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
@@ -4716,6 +4716,57 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
+
+	@Override
+	public int getCountByFinReference(String finReference, boolean active) {
+
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		financeMain.setFinIsActive(active);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(" Where FinReference =:FinReference AND FinIsActive = :FinIsActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+
+	}
+
+	@Override
+	public int getCountByOldFinReference(String oldFinReference) {
+
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setOldFinReference(oldFinReference);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(" Where OldFinReference =:OldFinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+
 	}
 
 	// IND AS - END

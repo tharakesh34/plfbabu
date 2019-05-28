@@ -813,12 +813,14 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		// service level validations
 		if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
-			returnStatus = validateFinReference(financeDetail.getFinReference());
-			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-				return returnStatus;
+			int count = financeMainDAO.getCountByFinReference(financeDetail.getFinReference(), true);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = financeDetail.getFinReference();
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		} else {
-			returnStatus = validateOldFinReference(financeDetail);
+			returnStatus = validateOldFinReference(financeDetail,true);
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				return returnStatus;
 			}
@@ -827,13 +829,78 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
+	@Override
+	public FinanceDetail reInitiateFinance(FinanceDetail financeDetail) throws ServiceException {
 
-	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		// for logging purpose
+		APIErrorHandlerService.logReference(financeDetail.getFinReference());
+		FinanceDetail findetail = null;
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		try {
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())
+					&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getOldFinReference())) {
+				findetail = new FinanceDetail();
+				String[] valueParm = new String[2];
+				valueParm[0] = "finReference";
+				valueParm[1] = "hostRefeence";
+				returnStatus = APIErrorHandlerService.getFailedStatus("30511", valueParm);
+				findetail.setReturnStatus(returnStatus);
+				return findetail;
+
+			}
+			// service level validations
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
+				int count = financeMainDAO.getCountByFinReference(financeDetail.getFinReference(), false);
+				if (count <= 0) {
+					findetail = new FinanceDetail();
+					String[] valueParm = new String[1];
+					valueParm[0] = financeDetail.getFinReference();
+					returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+					findetail.setReturnStatus(returnStatus);
+					return findetail;
+
+				}
+			} else {
+				returnStatus = validateOldFinReference(financeDetail, false);
+				if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+					findetail = new FinanceDetail();
+					findetail.setReturnStatus(returnStatus);
+					return findetail;
+				}
+			}
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
+				int count = financeMainDAO
+						.getCountByOldFinReference(financeDetail.getFinScheduleData().getExternalReference());
+				if (count > 0) {
+					findetail = new FinanceDetail();
+					String[] valueParm = new String[2];
+					valueParm[0] = "Exrernal Reference";
+					valueParm[1] = financeDetail.getFinScheduleData().getExternalReference();
+					returnStatus = APIErrorHandlerService.getFailedStatus("30506", valueParm);
+					findetail.setReturnStatus(returnStatus);
+					return findetail;
+				}
+			}
+			findetail =createFinanceController.doReInitiateFinance(financeDetail);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+		return findetail;
+
+		
+	}
+	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail,boolean active) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		// check records in origination
 		FinanceMain finMain = financeMainDAO
-				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getOldFinReference());
+				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getOldFinReference(),active);
 		if (finMain == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeDetail.getFinScheduleData().getOldFinReference();
@@ -939,4 +1006,5 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return response;
 
 	}
+
 }

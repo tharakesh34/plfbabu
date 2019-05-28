@@ -43,4 +43,7 @@ public interface CreateFinanceSoapService {
 	@WebResult(name = "finance")
 	WSReturnStatus cancelFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
+	@WebResult(name = "finance")
+	FinanceDetail reInitiateFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+
 }
