@@ -1,7 +1,9 @@
 package com.pennanttech.pff.external.disbursment;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +19,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -332,6 +336,12 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
+					
+					String disbAmount = amountFormate((BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT"),
+							PennantConstants.defaultCCYDecPos);
+					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
+
+
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {
 						try {
@@ -389,6 +399,64 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					"UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = :STATUS where ID IN (select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where ID IN(:ID))",
 					paramMap);
 			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
+		}
+	}
+	
+	public static String amountFormate(BigDecimal amount, int dec) {
+		BigDecimal bigDecimal = BigDecimal.ZERO;
+		if (amount != null) {
+			bigDecimal = amount.divide(BigDecimal.valueOf(Math.pow(10, dec)));
+		}
+
+		return formatAmount(bigDecimal, dec, false);
+	}
+	
+	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
+
+		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {
+			DecimalFormat df = new DecimalFormat();
+
+			String format = "";
+
+			if (ImplementationConstants.INDIAN_IMPLEMENTATION) {
+				format = "###,###,###,###";// Can be modified for Local Currency
+											// format indication
+			} else {
+				format = "###,###,###,###";
+			}
+
+			StringBuffer sb = new StringBuffer(format);
+			boolean negSign = false;
+
+			if (decPos > 0) {
+				sb.append('.');
+				for (int i = 0; i < decPos; i++) {
+					sb.append('0');
+				}
+
+				if (value.compareTo(BigDecimal.ZERO) == -1) {
+					negSign = true;
+					value = value.multiply(new BigDecimal("-1"));
+				}
+
+				if (negSign) {
+					value = value.multiply(new BigDecimal("-1"));
+				}
+			}
+
+			if (debitCreditSymbol) {
+				String s = sb.toString();
+				sb.append(" 'Cr';").append(s).append(" 'Dr'");
+			}
+
+			df.applyPattern(sb.toString());
+			return df.format(value);
+		} else {
+			String string = "0.";
+			for (int i = 0; i < decPos; i++) {
+				string = string.concat("0");
+			}
+			return string;
 		}
 	}
 }

@@ -35,7 +35,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		super();
 	}
 
-	@Override
+	/*@Override
 	public void receiveResponse(Object... params) throws Exception {
 		logger.debug(Literal.ENTERING);
 		long userId = (Long) params[0];
@@ -71,13 +71,13 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
-				processResponse(status.getId());
+				receiveResponse(status.getId());
 				break;
 			}
 		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
 
 		logger.info(name + " file processing completed");
-	}
+	}*/
 
 	@Override
 	public void processResponseFile(Object... params) throws Exception {
@@ -123,7 +123,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		logger.info(name + " file processing completed");
 	}
 
-	private void processResponse(long batchId) throws Exception {
+	private void receiveResponse(long batchId) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = null;
@@ -236,6 +236,12 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	@Autowired
 	public void setPaymentProcess(PaymentProcess paymentProcess) {
 		this.paymentProcess = paymentProcess;
+	}
+
+	@Override
+	public void receiveResponse(Object... params) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

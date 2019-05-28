@@ -241,8 +241,9 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
-
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".TXT"))) {
+		
+		//FIXME format should come from data engine config
+		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".CSV"))) {
 			MessageUtil.showError("Invalid file format.");
 			media = null;
 			return;
