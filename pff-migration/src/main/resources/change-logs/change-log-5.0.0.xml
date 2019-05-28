@@ -2036,14 +2036,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="45" author="Varaprasad">
+	<changeSet id="45.1" author="Varaprasad">
 		<sql>
 			<![CDATA[
 				delete from  LimitCodeDetail where LimitCode = 'PDINIT';
 				delete from  LimitCodeDetail where LimitCode = 'PDAPPR';
 		
-				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'PDINIT','Personal Discussion Initiation',1);
-				INSERT INTO limitcodedetail VALUES ((select max(limitid)+1 from limitcodedetail),'PDAPPR','Personal Discussion Approval',1);
+				INSERT INTO limitcodedetail VALUES ((select coalesce(max(limitid), 0) +1 from limitcodedetail),'PDINIT','Personal Discussion Initiation',1);
+				INSERT INTO limitcodedetail VALUES ((select coalesce(max(limitid), 0) +1 from limitcodedetail),'PDAPPR','Personal Discussion Approval',1);
 			]]>
 		</sql>
 	</changeSet>
