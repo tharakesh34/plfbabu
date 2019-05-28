@@ -42,7 +42,7 @@
 				DELETE FROM DATA_ENGINE_CONFIG where Name = 'COLLETARAL_VALUE_UPDATE';
 
 				INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'COLLETARAL_VALUE_UPDATE', 'Colletaral value update', 12, 'Colletaral', NULL, NULL, NULL , 0, 0, NULL, 'HSNCode,  CurrentValue, CommodityType, Code, Description', '', 'A', 'D:/Colletaral/Values', 'COLLETARAL_', '.xls', 0, NULL, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1); 
-				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE'), 'COLLETARAL_VALUES',  0, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE'), 'COLLETARAL_VALUES',  0, 'HSNCode', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
 
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'COLLETARAL_VALUES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE')), 'HSNCode', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'M');
   				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'COLLETARAL_VALUES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE')), 'CurrentValue', 0, 'N', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'M');
@@ -73,7 +73,7 @@
 		<addUniqueConstraint tableName="Commodities_Temp" columnNames="CommodityType, Code, HSNCode" />
 	</changeSet>
 
-	<changeSet id="1.1" author="vijaya.q">
+	<changeSet id="1.1" author="vijaya.a">
 		<dropDefaultValue columnName="Active" tableName="Commodities" />
 		<dropDefaultValue columnName="Active" tableName="Commodities_temp" />
 		<dropView viewName="COMMODITIES_VIEW" />
@@ -506,7 +506,7 @@
 				DELETE FROM DATA_ENGINE_CONFIG where Name = 'COLLETARAL_VALUE_UPDATE';
 
 				INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'COLLETARAL_VALUE_UPDATE', 'Colletaral value update', 12, 'Colletaral', NULL, NULL, NULL , 0, 0, NULL, 'CommodityTypeCode,  Code, Description, CurrentValue, HSNCode, Active',  '', 'C', '/opt/SPFinance/PFF/Colletaral', 'COLLETARAL_', '.xls', 0, NULL, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1); 
-				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE'), 'COLLETARAL_VALUES',  0, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE'), 'COLLETARAL_VALUES',  0, 'HSNCode', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
 
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'COLLETARAL_VALUES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE')),	'CommodityTypeCode', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'O');	
 				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN),(Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'COLLETARAL_VALUES' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'COLLETARAL_VALUE_UPDATE')),	'Code', 0, 'N', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'O');
@@ -1570,13 +1570,13 @@ UNION ALL
 	</changeSet>
 
 	<!-- FIME MURTHY -->
-	<!-- <changeSet id="34" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries" 
+	<changeSet id="34" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries" 
 		referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" /> <addForeignKeyConstraint 
 		constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
 		cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_city" 
 		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" 
 		/> <addForeignKeyConstraint constraintName="fk_verification_pd_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
-		baseTableName="Verification_pd" baseColumnNames="Relationship" /> </changeSet> -->
+		baseTableName="Verification_pd" baseColumnNames="Relationship" /> </changeSet>
 
 	<changeSet id="35" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd" defaultValue="0" />
@@ -1643,7 +1643,7 @@ UNION ALL
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
-			<!-- Observations -->
+			Observations
 			<column name="OwnershipStatus" type="int">
 				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_Owner" />
 			</column>
@@ -1675,13 +1675,13 @@ UNION ALL
 		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
 	</changeSet>
 
-	<!-- <changeSet id="39" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries" 
+	<changeSet id="39" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries" 
 		referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" /> <addForeignKeyConstraint 
 		constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
 		cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" 
 		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" 
 		/> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
-		baseTableName="Verification_pd_temp" baseColumnNames="Relationship" /> </changeSet> -->
+		baseTableName="Verification_pd_temp" baseColumnNames="Relationship" /> </changeSet>
 
 	<changeSet id="40" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd_temp" defaultValue="0" />
