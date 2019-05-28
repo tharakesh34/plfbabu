@@ -2788,7 +2788,7 @@
                  LEFT JOIN reasons_aview r1 ON r1.id = pd.reason
         </createView>
 	</changeSet>
-	
+
 	<changeSet id="60" author="Varaprasad.K">
 		<createView viewName="verification_pd_view" replaceIfExists="true">
             SELECT pd.verificationid,
@@ -2910,7 +2910,7 @@
                  LEFT JOIN reasons_aview r1 ON r1.id = pd.reason
       </createView>
 	</changeSet>
-	
+
 	<changeSet id="61" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
 			<![CDATA[
@@ -3035,4 +3035,95 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="72" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_Amount'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="73" author="Saikiran.v">
+		<createView viewName="GST_RATES_AView" replaceIfExists="true">
+	       	SELECT T1.Id, 
+				T1.FromState,
+				T2.CPProvinceName FromStateName, 
+				T1.ToState,
+				T3.CPProvinceName ToStateName, 
+				T1.TaxType, 
+				T1.CalcType, 
+				T1.Amount, 
+				T1.Percentage, 
+				T1.CalcOn, 
+				T1.Active, 
+				T1.Version , 
+				T1.LastMntBy, 
+				T1.LastMntOn,
+				T1.RecordStatus, 
+				T1.RoleCode, 
+				T1.NextRoleCode, 
+				T1.TaskId, 
+				T1.NextTaskId, 
+				T1.RecordType, 
+				T1.WorkflowId 
+	       	FROM   GST_RATES T1 
+	       		left JOIN RMTCOUNTRYVSPROVINCE T2 ON T2.CPPROVINCE =  T1.fromstate
+				left JOIN RMTCOUNTRYVSPROVINCE T3 ON T3.CPPROVINCE =  T1.tostate
+	    </createView>
+	</changeSet>
+
+	<changeSet id="74" author="Saikiran.v">
+		<createView viewName="GST_RATES_View" replaceIfExists="true">
+			SELECT T1.Id, 
+				T1.FromState,
+				T2.CPProvinceName FromStateName, 
+				T1.ToState,
+				T3.CPProvinceName ToStateName, 
+				T1.TaxType, 
+				T1.CalcType, 
+				T1.Amount, 
+				T1.Percentage, 
+				T1.CalcOn, 
+				T1.Active, 
+				T1.Version, 
+				T1.LastMntBy, 
+				T1.LastMntOn,
+				T1.RecordStatus, 
+				T1.RoleCode, 
+				T1.NextRoleCode, 
+				T1.TaskId, 
+				T1.NextTaskId, 
+				T1.RecordType, 
+				T1.WorkflowId 
+			FROM GST_RATES_Temp T1
+				left JOIN RMTCOUNTRYVSPROVINCE T2 ON T2.CPPROVINCE =  T1.fromstate
+				left JOIN RMTCOUNTRYVSPROVINCE T3 ON T3.CPPROVINCE =  T1.tostate 
+				UNION ALL
+			SELECT	T1.Id, 
+				T1.FromState,
+				T2.CPProvinceName FromStateName,  
+				T1.ToState,
+				T3.CPProvinceName ToStateName, 
+				T1.TaxType, 
+				T1.CalcType, 
+				T1.Amount, 
+				T1.Percentage, 
+				T1.CalcOn, 
+				T1.Active, 
+				T1.Version , 
+				T1.LastMntBy, 
+				T1.LastMntOn,
+				T1.RecordStatus, 
+				T1.RoleCode, 
+				T1.NextRoleCode, 
+				T1.TaskId, 
+				T1.NextTaskId, 
+				T1.RecordType, 
+				T1.WorkflowId 
+			FROM GST_RATES T1
+				left JOIN RMTCOUNTRYVSPROVINCE T2 ON T2.CPPROVINCE =  T1.fromstate
+				left JOIN RMTCOUNTRYVSPROVINCE T3 ON T3.CPPROVINCE =  T1.tostate 
+				WHERE  NOT EXISTS (SELECT 1 FROM GST_RATES_TEMP WHERE Id = T1.Id)
+       </createView>
+	</changeSet>
 </databaseChangeLog>
