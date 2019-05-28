@@ -110,10 +110,10 @@ import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
@@ -154,7 +154,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox transactionRef;
 	protected ExtendedCombobox bankCode;
 	protected Textbox payableLoc;
-	protected Textbox printingLoc;
+	protected ExtendedCombobox printingLoc;
 	protected Space printLoc;
 	protected Datebox valueDate;
 	protected ExtendedCombobox bankBranchID;
@@ -598,7 +598,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.bankCode.setReadonly(true);
 		this.bankBranchID.setReadonly(true);
 		this.payableLoc.setDisabled(true);
-		this.printingLoc.setDisabled(true);
+		this.printingLoc.setReadonly(true);
 		this.valueDate.setDisabled(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
@@ -702,15 +702,18 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llReferenceNo.setWidth("150px");
 		this.description.setWidth("150px");
 		this.remarks.setWidth("150px");
-		this.printingLoc.setWidth("150px");
 
-		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
 		this.bankCode.setValueColumn("BankCode");
 		this.bankCode.setDescColumn("BankName");
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode" });
+
+		this.printingLoc.setModuleName("BankBranch");
+		this.printingLoc.setValueColumn("BranchCode");
+		this.printingLoc.setDescColumn("BranchDesc");
+		this.printingLoc.setValidateColumns(new String[] { "BranchCode" });
 
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setMandatoryStyle(true);
@@ -912,6 +915,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llReferenceNo.setValue(aFinAdvnancePayments.getLlReferenceNo());
 		this.payableLoc.setValue(aFinAdvnancePayments.getPayableLoc());
 		this.printingLoc.setValue(aFinAdvnancePayments.getPrintingLoc());
+		this.printingLoc.setDescription(aFinAdvnancePayments.getPrintingLocDesc());
 		this.valueDate.setValue(aFinAdvnancePayments.getValueDate());
 		//unused
 		this.custContribution.setValue(formate(aFinAdvnancePayments.getCustContribution()));
@@ -1205,9 +1209,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (!this.printingLoc.isReadonly()) {
 				this.printingLoc.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
-								PennantRegularExpressions.REGEX_ADDRESS, mandatory));
+								null, mandatory));
 			}
 			aFinAdvancePayments.setPrintingLoc(this.printingLoc.getValue());
+			aFinAdvancePayments.setPrintingLocDesc(this.printingLoc.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1809,9 +1814,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void onFulfill$bankCode(Event event) {
 		logger.debug("Entering" + event.toString());
-
+		this.printingLoc.setValue("");
 		Object dataObject = bankCode.getObject();
-
+		String paymentType = getComboboxValue(this.paymentType);
 		if (dataObject instanceof String) {
 			this.bankCode.setValue(dataObject.toString());
 		} else {
@@ -1819,6 +1824,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (details != null) {
 				this.bankCode.setAttribute("bankCode", details.getBankCode());
 				this.finAdvancePayments.setBankName(details.getBankName());
+				Filter[] filters = new Filter[2];
+				filters[0] = new Filter("BankCode", ((BankDetail) dataObject).getBankCode(), Filter.OP_EQUAL);
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+					filters[1] = new Filter("Cheque", true, Filter.OP_EQUAL);
+				}
+				if (DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
+					filters[1] = new Filter("DD", true, Filter.OP_EQUAL);
+				}
+				this.printingLoc.setFilters(filters);
 			}
 		}
 	}
@@ -1836,6 +1850,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setFilters(filters);
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
+
+		Object attribute = bankCode.getAttribute("bankCode");
+		Filter[] filtersPrintLoc = new Filter[1];
+		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dType)) {
+			filtersPrintLoc[0] = new Filter("Cheque", true, Filter.OP_EQUAL);
+			this.printingLoc.setValue("");
+			this.bankCode.setValue("");
+			this.printingLoc.setFilters(filtersPrintLoc);
+		}
+		if (DisbursementConstants.PAYMENT_TYPE_DD.equals(dType)) {
+			filtersPrintLoc[0] = new Filter("DD", true, Filter.OP_EQUAL);
+			this.printingLoc.setValue("");
+			this.bankCode.setValue("");
+			this.printingLoc.setFilters(filtersPrintLoc);
+		}
 
 		checkPaymentType(dType);
 	}
@@ -1864,13 +1893,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.phoneNumber.setValue("");
 			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
-				this.printLoc.setSclass("mandatory");
+				this.printingLoc.setMandatoryStyle(true);
 
 			} else {
 				/*
 				 * this.printingLoc.setValue(""); readOnlyComponent(true, this.printingLoc);
 				 */
-				this.printLoc.setSclass("");
+				this.printingLoc.setSclass("");
 			}
 
 			this.btnGetCustBeneficiary.setVisible(false);
@@ -1895,7 +1924,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.beneficiaryName.setValue("");
 			this.bankBranchID.setMandatoryStyle(false);
 			this.phoneNumber.setValue("");
-			this.printLoc.setSclass("");
+			this.printingLoc.setSclass("");
 			this.btnGetCustBeneficiary.setVisible(false);
 		} else {
 			doaddFilter(str);

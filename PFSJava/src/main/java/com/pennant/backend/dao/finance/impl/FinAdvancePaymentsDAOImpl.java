@@ -136,7 +136,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		selectSql.append(" RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType, PartnerBankAc");
+					" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType, PartnerBankAc, PrintingLocDesc");
 		}
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -175,7 +175,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		selectSql.append(" NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType,PartnerBankAc");
+					",BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType,PartnerBankAc, PrintingLocDesc");
 		}
 		selectSql.append(" From FinAdvancePayments");
 		selectSql.append(StringUtils.trimToEmpty(type));

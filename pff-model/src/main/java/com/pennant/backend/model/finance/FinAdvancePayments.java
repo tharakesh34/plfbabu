@@ -131,6 +131,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	@XmlElement
 	private String printingLoc;
 
+	private String printingLocDesc;
+
 	@XmlElement
 	private Date valueDate;
 	private long bankBranchID;
@@ -211,6 +213,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("entityCode");
 		excludeFields.add("serviceReqNo");
 		excludeFields.add("providerId");
+		excludeFields.add("printingLocDesc");
 		return excludeFields;
 	}
 
@@ -692,6 +695,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setProviderId(long providerId) {
 		this.providerId = providerId;
+	}
+
+	public String getPrintingLocDesc() {
+		return printingLocDesc;
+	}
+
+	public void setPrintingLocDesc(String printingLocDesc) {
+		this.printingLocDesc = printingLocDesc;
 	}
 
 }
