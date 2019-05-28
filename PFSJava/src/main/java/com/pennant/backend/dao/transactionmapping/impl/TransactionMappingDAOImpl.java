@@ -11,13 +11,13 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.transactionmapping.TransactionMappingDAO;
-import com.pennant.backend.model.transactionmapping.TransactionMapping;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
+import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> implements TransactionMappingDAO {
 

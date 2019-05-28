@@ -1,8 +1,8 @@
 package com.pennant.backend.dao.transactionmapping;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.transactionmapping.TransactionMapping;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public interface TransactionMappingDAO extends BasicCrudDao<TransactionMapping> {
 

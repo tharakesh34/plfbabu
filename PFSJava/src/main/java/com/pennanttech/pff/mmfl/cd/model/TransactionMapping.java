@@ -1,4 +1,4 @@
-package com.pennant.backend.model.transactionmapping;
+package com.pennanttech.pff.mmfl.cd.model;
 
 import java.util.HashSet;
 import java.util.Set;

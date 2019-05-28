@@ -20,7 +20,6 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.transactionmapping.TransactionMapping;
 import com.pennant.backend.service.transactionmapping.TransactionMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -31,6 +30,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping> {
 	private static final long serialVersionUID = 1L;

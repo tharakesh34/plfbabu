@@ -8,7 +8,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.transactionmapping.TransactionMappingDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.transactionmapping.TransactionMapping;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.transactionmapping.TransactionMappingService;
 import com.pennant.backend.util.PennantConstants;
@@ -16,6 +15,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 
 public class TransactionMappingServiceImpl extends GenericService<TransactionMapping>
 		implements TransactionMappingService {
