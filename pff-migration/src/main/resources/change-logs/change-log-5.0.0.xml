@@ -947,7 +947,7 @@ UNION ALL
 		     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
 		     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
 		     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
-		     INNER JOIN customers t6 ON t1.taxcustid = t6.custid;
+		     INNER JOIN customers t6 ON t1.taxcustid = t6.custid
 	 </createView>
 	</changeSet>
 	<changeSet id="20" author="saikiran.v">
@@ -988,7 +988,7 @@ UNION ALL
 			     LEFT JOIN rmtcountryvsprovince t3 ON t1.province = t3.cpprovince AND t1.country = t3.cpcountry
 			     LEFT JOIN rmtprovincevscity t4 ON t1.city = t4.pccity AND t1.province = t4.pcprovince AND t1.country = t4.pccountry
 			     LEFT JOIN pincodes t5 ON t1.pincode = t5.pincode AND t1.city = t5.city
-			     JOIN customers t6 ON t1.taxcustid = t6.custid;
+			     JOIN customers t6 ON t1.taxcustid = t6.custid
 		</createView>
 	</changeSet>
 	<changeSet id="21" author="saikiran.v">
@@ -1070,7 +1070,7 @@ UNION ALL
 				     INNER JOIN customers t6 ON t1.taxcustid = t6.custid
 				  WHERE NOT (EXISTS ( SELECT 1
 				           FROM fintaxdetail_temp
-				          WHERE fintaxdetail_temp.finreference = t1.finreference));
+				          WHERE fintaxdetail_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
 	<changeSet id="22" author="saikiran.v">
@@ -1167,12 +1167,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="28" author="DurgaPrasad.G">
 		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)" />
 		<modifyDataType tableName="EXTENDEDFIELDDETAIL_TEMP" columnName="FIELDDEFAULTVALUE" newDataType="varchar(200)" />
 	</changeSet>
-	
+
 	<changeSet id="28_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1491,7 +1491,7 @@ UNION ALL
 				  LEFT JOIN LIMITPARAMS T8 ON T1.RULECODE = T8.QUERYCODE
       	</createView>
 	</changeSet>
-	
+
 	<changeSet id="33" author="Varaprasad.K">
 		<createTable tableName="verification_pd">
 			<column name="VerificationId" type="bigint">
@@ -1563,20 +1563,37 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="33_postgresql" author="Varaprasad.K" dbms="postgresql">
+	<changeSet id="33_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'Verification_pd');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="33.1" author="Varaprasad.K" dbms="postgresql">
 		<modifyDataType tableName="Verification_pd" columnName="Country" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd" columnName="City" newDataType="citext" />
 	</changeSet>
 
+	<changeSet id="33_postgresql_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'Verification_pd');
+			]]>
+		</sql>
+	</changeSet>
+
 	<!-- FIME MURTHY -->
-	<changeSet id="34" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries" 
-		referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" /> <addForeignKeyConstraint 
-		constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
-		cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_city" 
-		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" 
-		/> <addForeignKeyConstraint constraintName="fk_verification_pd_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
-		baseTableName="Verification_pd" baseColumnNames="Relationship" /> </changeSet>
+	<changeSet id="34" author="Varaprasad">
+		<addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries"
+			referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" />
+		<addForeignKeyConstraint constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince"
+			referencedColumnNames="cpcountry,cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" />
+		<addForeignKeyConstraint constraintName="fk_verification_pd_city" referencedTableName="rmtprovincevscity"
+			referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" />
+	</changeSet>
 
 	<changeSet id="35" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd" defaultValue="0" />
@@ -1643,7 +1660,6 @@ UNION ALL
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
-			Observations
 			<column name="OwnershipStatus" type="int">
 				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_tmp_Owner" />
 			</column>
@@ -1669,19 +1685,37 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
+	<changeSet id="38_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'Verification_pd_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="38" author="Varaprasad.K" dbms="postgresql">
 		<modifyDataType tableName="Verification_pd_temp" columnName="Country" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd_temp" columnName="Province" newDataType="citext" />
 		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
 	</changeSet>
 
-	<changeSet id="39" author="Varaprasad"> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries" 
-		referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" /> <addForeignKeyConstraint 
-		constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince" referencedColumnNames="cpcountry, 
-		cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" /> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" 
-		referencedTableName="rmtprovincevscity" referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" 
-		/> <addForeignKeyConstraint constraintName="fk_verification_pd_tmp_relship" referencedTableName="bmtprelationcodes" referencedColumnNames="prelationcode" 
-		baseTableName="Verification_pd_temp" baseColumnNames="Relationship" /> </changeSet>
+	<changeSet id="38_postgresql_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'Verification_pd_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="39" author="Varaprasad">
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries"
+			referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" />
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince"
+			referencedColumnNames="cpcountry, 
+		cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" />
+		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" referencedTableName="rmtprovincevscity"
+			referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" />
+	</changeSet>
 
 	<changeSet id="40" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd_temp" defaultValue="0" />
@@ -2036,7 +2070,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="45.1" author="Varaprasad">
+	<changeSet id="45" author="Varaprasad">
 		<sql>
 			<![CDATA[
 				delete from  LimitCodeDetail where LimitCode = 'PDINIT';
@@ -2101,65 +2135,85 @@ UNION ALL
 			<column name="NotificationFlag" type="varchar(1)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="50" author="Durgaprasad G">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT
+			MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);		
-		
-			
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_CustomerTemplates_ScheduleRateReport','ScheduleRateReport',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'SCHEDULE_RATE_REPORT', 'Schedule Rate Report Role', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='SCHEDULE_RATE_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_CustomerTemplates_ScheduleRateReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'SCHEDULE_RATE_REPORT', 'Schedule Rate Report Role', null,  0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='SCHEDULE_RATE_REPORT'), (Select  RoleID  From SecRoles Where RoleCd='SCHEDULE_RATE_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);	
+			UPDATE SEQSECROLEGROUPS
+			SET SEQNO= (SELECT MAX(Rolegrpid) FROM SECROLEGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid)
+			FROM SECGROUPRIGHTS);
+
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0,
+			'menuItem_CustomerTemplates_ScheduleRateReport','ScheduleRateReport',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
+			',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS),
+			'SCHEDULE_RATE_REPORT', 'Schedule Rate Report Role',
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM
+			SEQSECGROUPS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT
+			GRPID FROM SECGROUPS WHERE
+			GRPCODE='SCHEDULE_RATE_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_CustomerTemplates_ScheduleRateReport'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'SCHEDULE_RATE_REPORT', 'Schedule Rate Report
+			Role', null, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+			INSERT INTO SecRoleGroups
+			values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='SCHEDULE_RATE_REPORT'), (Select RoleID From SecRoles Where
+			RoleCd='SCHEDULE_RATE_REPORT'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO=
+			(SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE
+			SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SECROLES);
+			UPDATE SEQSECROLEGROUPS SET SEQNO=
+			(SELECT MAX(Rolegrpid)
+			FROM SECROLEGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO= (SELECT MAX(Grprightid) FROM SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	
-	
-     <changeSet id="53" author="DurgaPrasad.G">
+
+
+	<changeSet id="53" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 			UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
 			]]>
 		</sql>
-    </changeSet>
-	
+	</changeSet>
+
 	<changeSet id="52" author="Manoj">
 		<comment>Added column for diff presentment and representment</comment>
-			<addColumn tableName="PRESENTMENTHEADER">
-				<column name="PRESENTMENTTYPE" type="Char(1)"/>
-			</addColumn>
+		<addColumn tableName="PRESENTMENTHEADER">
+			<column name="PRESENTMENTTYPE" type="Char(1)" />
+		</addColumn>
 	</changeSet>
 
 	<changeSet id="53" author="Manoj">
 		<comment>Added column for diff presentment and representment</comment>
-			<addColumn tableName="PRESENTMENTHEADER_TEMP">
-				<column name="PRESENTMENTTYPE" type="Char(1)"/>
+		<addColumn tableName="PRESENTMENTHEADER_TEMP">
+			<column name="PRESENTMENTTYPE" type="Char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="54" author="Manoj">
-	<sql>
+		<sql>
 			<![CDATA[
 			  UPDATE PRESENTMENTHEADER_TEMP SET PRESENTMENTTYPE = 'P' WHERE  PRESENTMENTTYPE IS NULL;
 			  UPDATE PRESENTMENTHEADER  SET PRESENTMENTTYPE = 'P' WHERE  PRESENTMENTTYPE IS NULL;
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
 	<changeSet id="55" author="Manoj">
 		<createView viewName="PRESENTMENTHEADER_AVIEW" replaceIfExists="true">
@@ -2174,8 +2228,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="56" author="Manoj">
-		<createView viewName="PRESENTMENTHEADER_VIEW"
-			replaceIfExists="true">
+		<createView viewName="PRESENTMENTHEADER_VIEW" replaceIfExists="true">
 						SELECT T1.ID, T1.REFERENCE, T1.PRESENTMENTDATE, T1.PARTNERBANKID, T1.FROMDATE, T1.TODATE, T1.STATUS, T1.MANDATETYPE, T1.LOANTYPE, T1.FINBRANCH, T1.SCHDATE	,T1.BANKCODE,
                         T1.VERSION , T1.LASTMNTBY, T1.LASTMNTON,T1.RECORDSTATUS, T1.ROLECODE, T1.NEXTROLECODE, T1.TASKID, T1.NEXTTASKID, T1.RECORDTYPE, T1.WORKFLOWID, 
                         T1.DBSTATUSID, T2.PARTNERBANKNAME, T2.PARTNERBANKCODE, T2.ACCOUNTNO PARTNERACCTNUMBER,T2.ACTYPE PARTNERACCTTYPE,
