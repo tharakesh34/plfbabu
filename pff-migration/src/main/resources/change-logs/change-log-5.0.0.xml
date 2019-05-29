@@ -2254,6 +2254,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="39" author="Varaprasad.k">
 		<createView viewName="finexcessamount_lovview" replaceIfExists="true">
         SELECT finexcessamount.excessid,
@@ -2265,5 +2266,6 @@ UNION ALL
                round(finexcessamount.balanceamt / 100,2) AS balanceamt
         FROM finexcessamount           
     </createView>
+    </changeSet>
 	<!-- 5.0.0 is Under QC please use 5.0.5 -->
 </databaseChangeLog>
