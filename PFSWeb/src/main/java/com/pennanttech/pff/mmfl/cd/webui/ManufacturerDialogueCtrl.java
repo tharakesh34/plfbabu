@@ -374,6 +374,15 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_Description.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
+		
+		if(!this.txtchannel.getText().equals(""))
+		{
+			if(this.txtchannel.getText().length() > 20)
+			{
+				throw new WrongValueException(this.txtchannel,
+						Labels.getLabel("label_ConsumerProductDialogue_channelLength.value"));
+			}
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

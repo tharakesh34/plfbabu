@@ -548,7 +548,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		if (!this.merchantName.isReadonly()) {
 			this.merchantName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_MerchantName.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		if (!this.storeId.isReadonly()) {
@@ -558,7 +558,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 		if (!this.storeName.isReadonly()) {
 			this.storeName.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_StoreName.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		if (!this.addressLine1.isReadonly()) {
@@ -568,15 +568,19 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		if (!this.addressLine2.isReadonly()) {
-			this.addressLine1
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine2.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			if (!this.addressLine2.getText().equals("")) {
+				this.addressLine2.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine2.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			}
 		}
 
 		if (!this.addressLine3.isReadonly()) {
-			this.addressLine3
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine3.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			if (!this.addressLine3.getText().equals("")) {
+				this.addressLine3.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine3.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			}
 		}
 
 		if (!this.avgNumOfTransperMnth.isReadonly()) {

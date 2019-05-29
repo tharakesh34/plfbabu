@@ -1,5 +1,6 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -419,10 +420,24 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		logger.debug(Literal.ENTERING);
 
 		if (!this.modelId.isReadonly()) {
+			if (this.modelId.getText().length() > 8) {
+				throw new WrongValueException(this.modelId,
+						Labels.getLabel("label_ConsumerProductDialogue_ModelIdLength.value"));
+			}
+		}
+		
+		if (!this.modelId.isReadonly()) {
 			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
+		if (!this.modelDescription.isReadonly()) {
+			if (this.modelDescription.getText().length() > 20) {
+				throw new WrongValueException(this.modelDescription,
+						Labels.getLabel("label_ConsumerProductDialogue_modelDescriptionLength.value"));
+			}
+		}
+		
 		if (!this.modelDescription.isReadonly()) {
 			this.modelDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelDescription.value"),
@@ -436,6 +451,13 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		}
 
 		if (!this.assetDescription.isReadonly()) {
+			if (this.assetDescription.getText().length() > 20) {
+				throw new WrongValueException(this.assetDescription,
+						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
+			}
+		}
+		
+		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
@@ -443,26 +465,33 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 
 		if (!this.minAmount.isReadonly()) {
 			this.minAmount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ProductList_MinimumAmount.value"), 2, false, false));
+					new PTDecimalValidator(Labels.getLabel("label_ProductList_MinimumAmount.value"), 2, true, false));
 		}
 
 		if (!this.maxAmount.isReadonly()) {
 			this.maxAmount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ProductList_MaximumAmount.value"), 2, false, false));
+					new PTDecimalValidator(Labels.getLabel("label_ProductList_MaximumAmount.value"), 2, true, false));
 		}
 
+		if (!this.modelStatus.isReadonly()) {
+			if (this.modelStatus.getText().length() > 20) {
+				throw new WrongValueException(this.modelStatus,
+						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
+			}
+		}
+		
 		if (!this.modelStatus.isReadonly()) {
 			this.modelStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelStatus.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
-			if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
-				throw new WrongValueException(this.minAmount,
-						Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
+				if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
+					throw new WrongValueException(this.minAmount,
+							Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
+				}
 			}
-		}
-
+		
 		logger.debug(Literal.LEAVING);
 	}
 

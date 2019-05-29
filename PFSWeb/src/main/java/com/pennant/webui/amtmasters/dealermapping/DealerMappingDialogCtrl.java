@@ -123,10 +123,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.merchantName.setMandatoryStyle(true);
 		this.merchantName.setModuleName("MerchantDetails");
 		this.merchantName.setValueColumn("MerchantName");
 		this.merchantName.setDescColumn("MerchantId");
 		this.merchantName.setValidateColumns(new String[] { "MerchantName" });
+		
+		this.storeName.setMandatoryStyle(true);
 
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
@@ -291,7 +294,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	}
 
 	private void onfulfillMerchantName() {
-
+		this.storeName.setMandatoryStyle(true);
 		this.storeName.setModuleName("Stores");
 		this.storeName.setValueColumn("StoreId");
 		this.storeName.setDescColumn("StoreName");
@@ -375,7 +378,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getDescription()));
+			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -460,13 +463,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		if (!this.merchantName.isReadonly()) {
 			this.merchantName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_MerchantName.value"),
-							PennantRegularExpressions.REGEX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		if (!this.storeName.isReadonly()) {
 			this.storeName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_StoreName.value"),
-							PennantRegularExpressions.REGEX_ALPHA, true));
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		logger.debug(Literal.LEAVING);

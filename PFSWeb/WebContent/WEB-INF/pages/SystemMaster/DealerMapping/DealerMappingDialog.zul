@@ -55,14 +55,12 @@
 								<row>
 									<label value="${c:l('label_DealerMappingDialog_MerchantName.value')}" />
 									<hbox>
-										<space spacing="1px" sclass="mandatory" />
 										<extendedcombobox id="merchantName" />
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_DealerMappingDialog_StoreName.value')}" />
 									<hbox>
-										<space spacing="1px" sclass="mandatory" />
 										<extendedcombobox id="storeName" />
 									</hbox>
 								</row>

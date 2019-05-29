@@ -186,6 +186,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		logger.debug(Literal.ENTERING);
 
 		this.dealerCategory.setModuleName("Category");
+		this.dealerCategory.setMandatoryStyle(true);
 
 		/*
 		 * this.dealerCategory.setModuleName("LovFieldDetail"); this.dealerCategory.setMandatoryStyle(true);
@@ -536,7 +537,6 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		this.dealerCode.setValue("");
 		this.dealerCategory.setValue("");
 		this.txtchannel.setValue("");
-		//this.channel.setDescription("");
 
 		this.active.setValue("");
 
