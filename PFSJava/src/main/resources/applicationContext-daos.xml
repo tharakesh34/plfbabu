@@ -4608,6 +4608,7 @@
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<!-- Subvention -->
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
 
@@ -7835,7 +7836,7 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
