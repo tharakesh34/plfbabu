@@ -240,9 +240,9 @@
 												<label id="label_FinanceTypeDialog_tdsApplicableTo" value="${c:l('label_FinanceTypeDialog_tdsApplicableTo.value')}"
 													visible="false" />
 												<hbox>
-													<space id="space_ApplicableTo" spacing="2px" sclass="mandatory" />
-													<textbox id="tdsApplicableTo" width="175px" readonly="true" />
-													<button id="btnSearchtdsApplicableTo" image="/images/icons/LOVSearch.png" />
+													<space id="space_ApplicableTo" spacing="2px" sclass="mandatory" visible="false" />
+													<textbox id="tdsApplicableTo" width="175px" readonly="true" visible="false"/>
+													<button id="btnSearchtdsApplicableTo" image="/images/icons/LOVSearch.png" visible="false"/>
 												</hbox>
 											</row>
 											<row visible="false">
