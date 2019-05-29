@@ -338,7 +338,6 @@ public class RepaymentProcessUtil {
 		//Last Receipt record for banking details
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
 		FinRepayHeader rph = rcd.getRepayHeader();
-		boolean gstInvoiceExist = false;
 
 		FinanceProfitDetail pftDetailTemp = new FinanceProfitDetail();
 		BeanUtils.copyProperties(profitDetail, pftDetailTemp);
@@ -522,22 +521,16 @@ public class RepaymentProcessUtil {
 			rph.setValueDate(postDate);
 			scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(2);
 
-			//FIXME: Cross check
-			if (!gstInvoiceExist) {
+			if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
 				List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
-				if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-					for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-						if (!finFeeDetail.isOriginationFee()) {
-							finFeeDetails.add(finFeeDetail);
-						}
+				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+					if (!finFeeDetail.isOriginationFee()) {
+						finFeeDetails.add(finFeeDetail);
 					}
 				}
-				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-					if (financeDetail != null) {
-						this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails,
-								null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
-						gstInvoiceExist = true;
-					}
+				if (CollectionUtils.isNotEmpty(finFeeDetails) && financeDetail != null) {
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails,
+							null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
 				}
 			}
 
@@ -563,6 +556,53 @@ public class RepaymentProcessUtil {
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			rcdList.get(rcdList.size() - 1).setLogKey(logKey);
+			
+			// preparing GST Invoice Report for Manual Advises and Bounce
+			if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
+				List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
+				FeeType bounceFee = null;
+
+				// GST Invoice data resetting based on Accounting Process
+				String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
+
+				for (ManualAdviseMovements movement : movements) {
+
+					BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
+					if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
+
+						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+						boolean prepareInvoice = false;
+						
+						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+							if (bounceFee == null) {
+								bounceFee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+							}
+							movement.setFeeTypeCode(bounceFee.getFeeTypeCode());
+							movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
+							movement.setTaxApplicable(bounceFee.isTaxApplicable());
+							movement.setTaxComponent(bounceFee.getTaxComponent());
+							if (StringUtils.equals(isGSTInvOnDue, PennantConstants.NO)) {
+								prepareInvoice = true;
+							}
+						} else {
+							movement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
+							movement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
+							movement.setTaxApplicable(manualAdvise.isTaxApplicable());
+							movement.setTaxComponent(manualAdvise.getTaxComponent());
+							prepareInvoice = true;
+						}
+
+						if (prepareInvoice) {
+							movementList.add(movement);
+						}
+					}
+				}
+
+				if (CollectionUtils.isNotEmpty(movementList)) {
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null,
+							movementList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), false);
+				}
+			}
 
 		} else {
 			dataMap.putAll(extDataMap);

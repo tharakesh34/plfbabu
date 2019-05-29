@@ -101,7 +101,7 @@ public class GSTCalculator {
 		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
 		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
-		taxSplit.setNetAmount(taxSplit.getAmount().add(taxSplit.gettGST()));
+		taxSplit.setNetAmount(taxableAmount.add(taxSplit.gettGST()));
 		return taxSplit;
 	}
 
@@ -197,22 +197,11 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 
-		String strEmpty = "";
 
-		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference);
-		String finBranch = (Object) dataMap.get("FinBranch") == null ? strEmpty
-				: ((Object) dataMap.get("FinBranch")).toString();
-		String custBranch = (Object) dataMap.get("CustBranch") == null ? strEmpty
-				: String.valueOf((Object) dataMap.get("CustBranch"));
-		String custProvince = (Object) dataMap.get("CustProvince") == null ? strEmpty
-				: String.valueOf((Object) dataMap.get("CustProvince"));
-		String custCountry = (Object) dataMap.get("CustCountry") == null ? strEmpty
-				: String.valueOf((Object) dataMap.get("CustCountry"));
-		String finCCY = (Object) dataMap.get("FinCCY") == null ? strEmpty
+		Map<String, Object> dataMap = getGSTDataMap(finReference);
+		
+		String finCCY = (Object) dataMap.get("FinCCY") == null ? ""
 				: String.valueOf((Object) dataMap.get("FinCCY"));
-
-		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
-		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 
 		String ruleCode;
@@ -230,6 +219,23 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, totalGST);
 
 		return gstPercentages;
+	}
+
+	public static Map<String, Object> getGSTDataMap(String finReference) {
+		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference);
+		String finBranch = (Object) dataMap.get("FinBranch") == null ? ""
+				: ((Object) dataMap.get("FinBranch")).toString();
+		String custBranch = (Object) dataMap.get("CustBranch") == null ? ""
+				: String.valueOf((Object) dataMap.get("CustBranch"));
+		String custProvince = (Object) dataMap.get("CustProvince") == null ? ""
+				: String.valueOf((Object) dataMap.get("CustProvince"));
+		String custCountry = (Object) dataMap.get("CustCountry") == null ? ""
+				: String.valueOf((Object) dataMap.get("CustCountry"));
+
+		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
+
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custCountry, financeTaxDetail);
+		return dataMap;
 	}
 
 	private static Map<String, Object> getGSTDataMap(String finBranch, String custBranch, String custState,
@@ -308,7 +314,7 @@ public class GSTCalculator {
 		return result;
 	}
 
-	private static BigDecimal getExclusiveTax(BigDecimal amount, BigDecimal taxPerc) {
+	public static BigDecimal getExclusiveTax(BigDecimal amount, BigDecimal taxPerc) {
 		BigDecimal taxAmount = BigDecimal.ZERO;
 
 		if (taxPerc.compareTo(BigDecimal.ZERO) != 0) {
@@ -319,7 +325,7 @@ public class GSTCalculator {
 		return taxAmount;
 	}
 
-	private static BigDecimal getInclusiveAmount(BigDecimal amount, BigDecimal taxPerc) {
+	public static BigDecimal getInclusiveAmount(BigDecimal amount, BigDecimal taxPerc) {
 		BigDecimal percentage = (taxPerc.add(HUNDRED)).divide(HUNDRED, 9, RoundingMode.HALF_DOWN);
 		BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
 		actualAmt = CalculationUtil.roundAmount(actualAmt, getTaxRoundingMode(), getTaxRoundingTarget());

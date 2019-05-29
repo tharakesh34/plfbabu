@@ -223,7 +223,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			actReturnList = doSchedulePostings(rpyQueueHeader, valuedate, postDate, financeMain, scheduleDetails,
 					finFeeDetailList, financeProfitDetail, eventCode, aeEvent);
 			if ((boolean) actReturnList.get(0)) {
-				transOrder = (int) actReturnList.get(9);
+				transOrder = (int) actReturnList.get(7);
 			}
 		} else if (rpyQueueHeader.getLatePftWaived().compareTo(BigDecimal.ZERO) > 0) {
 
