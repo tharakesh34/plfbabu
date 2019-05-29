@@ -1537,7 +1537,6 @@ UNION ALL
 			<column name="ContactNumber2" type="varchar(20)" />
 			<column name="PoBox" type="varchar(20)" />
 			<column name="ZipCode" type="varchar(20)" />
-			<!-- Observations -->
 			<column name="OwnershipStatus" type="int">
 				<constraints primaryKey="true" primaryKeyName="df_verfctions_pd_Owner" />
 			</column>
@@ -1563,29 +1562,6 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="33_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_save_and_drop_dependencies ('plf', 'Verification_pd');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="33.1" author="Varaprasad.K" dbms="postgresql">
-		<modifyDataType tableName="Verification_pd" columnName="Country" newDataType="citext" />
-		<modifyDataType tableName="Verification_pd" columnName="Province" newDataType="citext" />
-		<modifyDataType tableName="Verification_pd" columnName="City" newDataType="citext" />
-	</changeSet>
-
-	<changeSet id="33_postgresql_post" author="Varaprasad.K" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'Verification_pd');
-			]]>
-		</sql>
-	</changeSet>
-
-	<!-- FIME MURTHY -->
 	<changeSet id="34" author="Varaprasad">
 		<addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries"
 			referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" />
@@ -1603,6 +1579,7 @@ UNION ALL
 		<addDefaultValue columnName="NegativeCheck" tableName="verification_pd" defaultValue="0" />
 		<addDefaultValue columnName="NoofAttempts" tableName="verification_pd" defaultValue="0" />
 	</changeSet>
+
 	<changeSet id="36" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -1615,6 +1592,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="37" author="Varaprasad.K">
 		<createTable tableName="verification_pd_temp">
 			<column name="VerificationId" type="bigint">
@@ -1685,28 +1663,6 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="38_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_save_and_drop_dependencies ('plf', 'Verification_pd_temp');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="38" author="Varaprasad.K" dbms="postgresql">
-		<modifyDataType tableName="Verification_pd_temp" columnName="Country" newDataType="citext" />
-		<modifyDataType tableName="Verification_pd_temp" columnName="Province" newDataType="citext" />
-		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
-	</changeSet>
-
-	<changeSet id="38_postgresql_post" author="Varaprasad.K" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'Verification_pd_temp');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="39" author="Varaprasad">
 		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries"
 			referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" />
@@ -1738,6 +1694,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="42" author="Varaprasad.K">
 		<createView viewName="verification_pd_aview" replaceIfExists="true">
 			SELECT pd.verificationid,
@@ -1812,6 +1769,7 @@ UNION ALL
 				 LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = pd.relationship
 		</createView>
 	</changeSet>
+
 	<changeSet id="43" author="Varaprasad.K">
 		<createView viewName="verification_pd_view" replaceIfExists="true">
 			SELECT pd.verificationid,
@@ -1957,6 +1915,7 @@ UNION ALL
 				 LEFT JOIN bmtprelationcodes r2 ON r2.prelationcode = pd.relationship
 		</createView>
 	</changeSet>
+
 	<changeSet id="44" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -2081,6 +2040,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="46" author="Varaprasad.K">
 		<sql>
 			<![CDATA[	
@@ -2091,6 +2051,7 @@ UNION ALL
 	        ]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="47" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -2101,6 +2062,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="48" author="Varaprasad.K">
 		<sql>
 		<![CDATA[
@@ -2247,6 +2209,50 @@ UNION ALL
      		LEFT JOIN   BMTBANKDETAIL T3 ON T3.BANKCODE = T1.BANKCODE
 			WHERE     NOT EXISTS (SELECT 1 FROM PRESENTMENTHEADER_TEMP WHERE ID = T1.ID)			
 			</createView>
+	</changeSet>
+
+	<changeSet id="33_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'verification_pd');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="33.1" author="Varaprasad.K" dbms="postgresql">
+		<modifyDataType tableName="Verification_pd" columnName="Country" newDataType="citext" />
+		<modifyDataType tableName="Verification_pd" columnName="Province" newDataType="citext" />
+		<modifyDataType tableName="Verification_pd" columnName="City" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="33_postgresql_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'verification_pd');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="38_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'Verification_pd_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="38" author="Varaprasad.K" dbms="postgresql">
+		<modifyDataType tableName="Verification_pd_temp" columnName="Country" newDataType="citext" />
+		<modifyDataType tableName="Verification_pd_temp" columnName="Province" newDataType="citext" />
+		<modifyDataType tableName="Verification_pd_temp" columnName="City" newDataType="citext" />
+	</changeSet>
+
+	<changeSet id="38_postgresql_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'Verification_pd_temp');
+			]]>
+		</sql>
 	</changeSet>
 	<!-- 5.0.0 is Under QC please use 5.0.5 -->
 </databaseChangeLog>

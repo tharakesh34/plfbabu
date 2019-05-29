@@ -3126,9 +3126,9 @@
 				WHERE  NOT EXISTS (SELECT 1 FROM GST_RATES_TEMP WHERE Id = T1.Id)
        </createView>
 	</changeSet>
-		
-		<changeSet id="75" author="Saikiran.v">
-			<createView viewName="finadvancepayments_aview" replaceIfExists="true">
+
+	<changeSet id="75" author="Saikiran.v">
+		<createView viewName="finadvancepayments_aview" replaceIfExists="true">
 				SELECT t1.finreference,
 				t1.paymentid,
 				t1.paymentseq,
@@ -3193,7 +3193,7 @@
 				 LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
 				 LEFT JOIN BankBranches t6 ON t6.BranchCode = t1.printingloc
 			 </createView>
-			</changeSet>
+	</changeSet>
 
 	<changeSet id="76" author="Saikiran.v">
 		<createView viewName="finadvancepayments_Tview" replaceIfExists="true">
@@ -3262,7 +3262,7 @@
 				 LEFT JOIN BankBranches t6 ON t6.BranchCode = t1.printingloc
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="77" author="Saikiran.v">
 		<createView viewName="finadvancepayments_view" replaceIfExists="true">
 		SELECT t1.finreference,
@@ -3397,4 +3397,18 @@
 			          WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 			 </createView>
 	</changeSet>
+
+	<changeSet id="78" author="Varaprasad.k">
+		<createView viewName="finexcessamount_lovview" replaceIfExists="true">
+        SELECT finexcessamount.excessid,
+               finexcessamount.finreference,
+               finexcessamount.amounttype,
+               round(finexcessamount.amount / 100,2) AS amount,
+               round(finexcessamount.utilisedamt / 100,2) AS utilisedamt,
+               round(finexcessamount.reservedamt / 100,2) AS reservedamt,
+               round(finexcessamount.balanceamt / 100,2) AS balanceamt
+        FROM finexcessamount           
+    </createView>
+	</changeSet>
+	
 </databaseChangeLog>
