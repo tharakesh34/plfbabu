@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.masters.impl;
 
+import java.util.Map;
+
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.service.masters.MasterDefService;
 
@@ -94,5 +96,10 @@ public class MasterDefServiceImpl implements MasterDefService {
 	@Override
 	public String getMasterKeyTypeByCode(String masterType, String keyCode) {
 		return masterDefDAO.getMasterKeyTypeByCode(masterType, keyCode);
+	}
+
+	@Override
+	public Map<String, String> getMasterDef(String masterType) {
+		return masterDefDAO.getMasterDef(masterType);
 	}
 }

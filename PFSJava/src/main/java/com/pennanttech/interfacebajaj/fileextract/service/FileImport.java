@@ -147,6 +147,10 @@ public class FileImport {
 		setFile(file);
 	}
 
+	public void setMediaOnly(Media media) throws Exception {
+		this.media = media;
+	}
+
 	public void setExcelMedia(Media media) throws Exception {
 
 		File file = validateFile(media.getName());

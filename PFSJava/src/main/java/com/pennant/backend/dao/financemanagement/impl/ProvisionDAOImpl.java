@@ -378,4 +378,29 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public Provision getDMProvisionById(final String id, String type) {
+		Provision provision = new Provision();
+
+		provision.setId(id);
+
+		StringBuilder selectSql = new StringBuilder("Select FinReference, FinBranch, FinType, ");
+		selectSql.append(" CustID, ProvisionCalDate, ProvisionedAmt, ProvisionAmtCal, ProvisionDue, ");
+		selectSql.append(" NonFormulaProv, UseNFProv, AutoReleaseNFP, PrincipalDue, ProfitDue, ");
+		selectSql.append(" DueFromDate, LastFullyPaidDate ");
+		selectSql.append(" From FinProvisions");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
+		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
+
+		try {
+			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			provision = null;
+		}
+		return provision;
+	}
+
 }

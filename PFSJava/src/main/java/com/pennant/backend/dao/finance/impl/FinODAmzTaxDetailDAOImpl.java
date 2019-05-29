@@ -146,12 +146,10 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		try {
 			taxReceivable = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
 			taxReceivable = null;
 		}
 
 		logger.debug(Literal.LEAVING);
-
 		return taxReceivable;
 	}
 

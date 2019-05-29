@@ -207,4 +207,10 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public long getLoanWorkFlowIdByFinRef(String loanReference, String type) {
+		return financeMainDAO.getLoanWorkFlowIdByFinRef(loanReference, type);
+	}
+
 }

@@ -158,4 +158,28 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		logger.debug("Leaving");
 	}
 
+	@Override
+	public FinODPenaltyRate getDMFinODPenaltyRateByRef(final String finReference, String type) {
+		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
+		finODPenaltyRate.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT FinReference , FinEffectDate, ApplyODPenalty, ");
+		selectSql.append(" ODIncGrcDays, ODChargeType, ODGraceDays, ODChargeCalOn , ODChargeAmtOrPerc, ");
+		selectSql.append(" ODAllowWaiver , ODMaxWaiverPerc , oDRuleCode, ODMinCapAmount ");
+		selectSql.append(" From FinODPenaltyRates");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference order by FinEffectDate");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
+		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinODPenaltyRate.class);
+
+		try {
+			finODPenaltyRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			finODPenaltyRate = null;
+		}
+		return finODPenaltyRate;
+	}
+
 }

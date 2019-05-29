@@ -260,8 +260,12 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		if (list != null && list.size() > 0) {
 			for (QueryDetail queryDetail : list) {
 				if (!StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT1", errParm, valueParm), "EN"));
+					auditDetail.setErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
+					auditHeader.setAuditDetail(auditDetail);
+					auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+					break;
 				}
 			}
 		}
@@ -515,6 +519,11 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	@Override
+	public List<QueryDetail> getQueryListByReference(String reference) {
+		return queryDetailDAO.getQueryListByReference(reference);
 	}
 
 }

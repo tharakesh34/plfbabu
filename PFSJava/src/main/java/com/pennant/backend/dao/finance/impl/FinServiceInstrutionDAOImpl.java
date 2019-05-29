@@ -166,6 +166,26 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		return new ArrayList<>();
 	}
 
+	@Override
+	public List<FinServiceInstruction> getDMFinServiceInstructions(final String finReference, String type) {
+		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
+		finServiceInstruction.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder("Select ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, ");
+		selectSql.append("PftDaysBasis, SchdMethod, ActualRate, ");
+		selectSql
+				.append("RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate, RecalToDate, Terms ,ServiceReqNo ");
+		selectSql.append(" From FinServiceInstruction");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference order by ServiceSeqId");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
+		RowMapper<FinServiceInstruction> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinServiceInstruction.class);
+
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
 	/**
 	 * Fetch FinServiceInstruction Detail by finReference,fromDate,finEvent
 	 * 

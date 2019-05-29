@@ -489,7 +489,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				}
 			} catch (DataAccessException e) {
 				fieldDetail.setLovDescErroDesc(e.getMessage());
-				throw e;
+				throw new AppException(e.getMessage(), e);
 			}
 
 			if (recordCount < 0) {
@@ -1034,6 +1034,37 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+	}
+
+	@Override
+	public ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName, String type) {
+		logger.debug(Literal.ENTERING);
+		ExtendedFieldDetail extendedFieldDetail = null;
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("ModuleId", id);
+		paramSource.addValue("FieldName", fieldName);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, FieldName, FieldType, ");
+		selectSql.append(" FieldLength, FieldPrec, FieldLabel, FieldMandatory, FieldConstraint, Filters,");
+		selectSql.append(" FieldSeqOrder, FieldList, FieldDefaultValue, FieldMinValue, Editable, ");
+		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, visible, ValFromScript, Scriptlet,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		selectSql.append(" From ExtendedFieldDetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ModuleId =:ModuleId and FieldName=:FieldName");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		RowMapper<ExtendedFieldDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldDetail.class);
+		try {
+			extendedFieldDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), paramSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(e);
+		}
+		return extendedFieldDetail;
 	}
 
 	public void setAuditDataSource(DataSource dataSource) {

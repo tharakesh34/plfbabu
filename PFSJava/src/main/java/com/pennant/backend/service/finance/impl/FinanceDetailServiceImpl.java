@@ -224,6 +224,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.UpdateAttributeServiceTask;
+import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -356,6 +357,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
+	private VehicleDealerService vehicleDealerService;
 	private PSLDetailService pSLDetailService;
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
@@ -761,7 +763,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			dealerIds.add(financeMain.getConnector());
 		}
 		if (dealerIds.size() > 0) {
-			List<VehicleDealer> vehicleDealerList = getVehicleDealerService().getVehicleDealerById(dealerIds);
+			List<VehicleDealer> vehicleDealerList = vehicleDealerService.getVehicleDealerById(dealerIds);
 			if (vehicleDealerList != null && !vehicleDealerList.isEmpty()) {
 				for (VehicleDealer dealer : vehicleDealerList) {
 					if (dealer.getDealerId() == dmaCode) {
@@ -3532,6 +3534,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinAssetTypeDAO().deleteByReference(financeMain.getFinReference(), "");
 				auditDetails.addAll(details);
 			}
+
+			getLegalDetailService().deleteList(financeMain.getFinReference(), TableType.TEMP_TAB);
 
 			// Cheque details
 			if (financeDetail.getChequeHeader() != null) {
@@ -6966,21 +6970,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		// validate QueryModule
-		if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
-			String finReference = financeMain.getFinReference();
-			String currentRole = financeMain.getRoleCode();
-			List<QueryDetail> qrysList = getQueryDetailService().getUnClosedQurysForGivenRole(finReference,
-					currentRole);
-			if (CollectionUtils.isNotEmpty(qrysList)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = financeMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
-				List<ErrorDetail> errorDetailsList = new ArrayList<ErrorDetail>(1);
-				ErrorDetail errorDetail = ErrorUtil.getErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "QRYMGMT2", errParm, valueParm), "EN"));
-				errorDetailsList.add(errorDetail);
-				auditHeader.setErrorList(errorDetailsList);
+		if (!ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+			if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
+				String finReference = financeMain.getFinReference();
+				String currentRole = financeMain.getRoleCode();
+				List<QueryDetail> qrysList = getQueryDetailService().getUnClosedQurysForGivenRole(finReference,
+						currentRole);
+				if (CollectionUtils.isNotEmpty(qrysList)) {
+					String[] errParm = new String[1];
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getFinReference();
+					errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
+					List<ErrorDetail> errorDetailsList = new ArrayList<ErrorDetail>(1);
+					ErrorDetail errorDetail = ErrorUtil.getErrorDetail(ErrorUtil
+							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "Q003", null, null), "EN"));
+					errorDetailsList.add(errorDetail);
+					auditHeader.setErrorList(errorDetailsList);
+				}
 			}
 		}
 
@@ -11013,6 +11019,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setFinIRRDetailsDAO(FinIRRDetailsDAO finIRRDetailsDAO) {
 		this.finIRRDetailsDAO = finIRRDetailsDAO;
+	}
+
+	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
+		this.vehicleDealerService = vehicleDealerService;
 	}
 
 	public CollateralSetupService getCollateralSetupService() {

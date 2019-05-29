@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.others.impl;
 
+
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -222,7 +224,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	public long save(JVPosting jVPosting, String type) {
 		logger.debug("Entering");
 		if (jVPosting.isNewRecord() && jVPosting.getBatchReference() == 0) {
-			jVPosting.setBatchReference(getNextId("SeqJVpostings"));
+			jVPosting.setBatchReference(createBatchReference());
 		}
 		logger.debug("get NextID:" + jVPosting.getId());
 
@@ -243,6 +245,11 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 		logger.debug("Leaving");
 		return jVPosting.getBatchReference();
+	}
+
+	@Override
+	public long createBatchReference() {
+		return getNextId("SeqJVpostings");
 	}
 
 	/**

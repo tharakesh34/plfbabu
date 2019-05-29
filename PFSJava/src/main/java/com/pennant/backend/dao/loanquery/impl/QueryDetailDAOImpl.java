@@ -338,4 +338,33 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return queryDetails;
 	}
 
+	@Override
+	public List<QueryDetail> getQueryListByReference(String Reference) {
+
+		logger.debug(Literal.ENTERING);
+
+		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ID, FINREFERENCE, CATEGORYID, QRYNOTES, ASSIGNEDROLE, ");
+		sql.append(" NOTIFYTO, STATUS, RAISEDBY, RAISEDON, VERSION, LASTMNTBY,WORKFLOWID, MODULE, REFERENCE ");
+		sql.append(" From QUERYDETAIL");
+		sql.append(" Where Reference = :Reference ");
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("Reference", Reference);
+
+		RowMapper<QueryDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(QueryDetail.class);
+
+		try {
+			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return queryDetails;
+	}
+
 }

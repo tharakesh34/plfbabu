@@ -1386,38 +1386,24 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public List<FinanceScheduleDetail> getDMFinScheduleDetails(String id, String type) {
-
-		logger.debug("Entering");
 		FinanceScheduleDetail detail = new FinanceScheduleDetail();
 		detail.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(" Select FinReference, SchDate, SchSeq, ");
-		selectSql.append(" DisbOnSchDate, BaseRate, SplRate, MrgRate, ActRate, CalculatedRate, ");
+		selectSql.append(" PftOnSchDate, RepayOnSchDate, DisbOnSchDate, ActRate, CalculatedRate, ");
 		selectSql.append(" ProfitSchd, PrincipalSchd, RepayAmount, ");
-		selectSql.append(" DisbAmount, DownPaymentAmount, CpzAmount, ");
-
-		//IF Schedule Fees available
-		/*
-		 * selectSql.append(" FeeChargeAmt, InsuranceAmt, ");
-		 * selectSql.append(" FeeSchd , SchdFeePaid , SchdFeeOS,  InsSchd, SchdInsPaid, ");
-		 */
-
-		selectSql.append(" TDSAmount, TDSPaid, PftDaysBasis, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid, ");
-		selectSql.append(" InstNumber, BpiOrHoliday, PresentmentId");
-
+		selectSql.append(" DisbAmount, TDSAmount, TDSPaid, PftDaysBasis,");
+		selectSql.append(" SchdPriPaid, SchdPftPaid, InstNumber, BpiOrHoliday, PresentmentId ");
 		selectSql.append(" From FinScheduleDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference  order by SchDate asc");
 
-		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		RowMapper<FinanceScheduleDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceScheduleDetail.class);
 
 		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
 				typeRowMapper);
-		logger.debug("Leaving");
 		return finSchdDetails;
 
 	}

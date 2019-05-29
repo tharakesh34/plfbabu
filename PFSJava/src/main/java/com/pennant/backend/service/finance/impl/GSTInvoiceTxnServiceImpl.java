@@ -107,18 +107,18 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			}
 
 			if (entity == null) {
-				return; // write this case as a error message
+				return; // FIXME write this case as a error message
 			}
 			gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
 			gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
 			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
 			gstInvoiceTxn.setLoanAccountNo(finReference);
 
-			// Checking Finance Branch exist or not 
+			// Checking Finance Branch exist or not
 			if (StringUtils.isBlank(financeMain.getFinBranch())) {
 				FinanceMain financeMainTemp = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 				if (financeMainTemp == null || StringUtils.isBlank(financeMainTemp.getFinBranch())) {
-					return; // write this case as a error message
+					return; // FIXME write this case as a error message
 				} else {
 					financeMain.setFinBranch(financeMainTemp.getFinBranch());
 				}
@@ -126,18 +126,21 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			Branch fromBranch = getBranchDAO().getBranchById(financeMain.getFinBranch(), "_AView");
 
 			if (fromBranch == null) {
-				return; // write this case as a error message
+				return; // FIXME write this case as a error message
 			}
 
 			// Check whether State level Tax Details exists or not
 			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(),
 					fromBranch.getBranchProvince());
+			// Province companyProvince =
+			// this.provinceService.getApprovedProvinceById(entity.getCountry(),
+			// entity.getStateCode());
 
 			if (companyProvince != null) {
 
 				if (StringUtils.isBlank(companyProvince.getCPProvince())
 						|| StringUtils.isBlank(companyProvince.getCPProvinceName())) {
-					return; // write this case as a error message
+					return; // FIXME write this case as a error message
 				}
 
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
@@ -189,7 +192,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					gstInvoiceTxn.setHsnNumber(taxDetail.getHsnNumber());
 					gstInvoiceTxn.setNatureService(taxDetail.getNatureService());
 				} else {
-					return; // write this case as a error message
+					return; // FIXME write this case as a error message
 				}
 			}
 
@@ -229,7 +232,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						}
 
 						if (cust == null) {
-							return; // write this case as a error message
+							return; // FIXME write this case as a error message
 						}
 						gstInvoiceTxn.setCustomerID(cust.getCustCIF());
 						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
@@ -297,14 +300,15 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			customerProvince = this.provinceService.getApprovedProvinceById(country, province);
 
 			if (customerProvince == null) {
-				return; // write this case as a error message
+				return; // FIXME write this case as a error message
 			}
 
 			gstInvoiceTxn.setCustomerStateCode(customerProvince.getTaxStateCode());
 			gstInvoiceTxn.setCustomerStateName(customerProvince.getCPProvinceName());
 
-			// Invoice Transaction details preparation for Fee Details if any exists
-			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) { //Fees
+			// Invoice Transaction details preparation for Fee Details if any
+			// exists
+			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) { // Fees
 				for (FinFeeDetail feeDetail : finFeeDetailsList) {
 
 					if (origination) {

@@ -45,6 +45,10 @@ package com.pennant.backend.dao.masters.impl;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.pennant.backend.dao.masters.MasterDefDAO;
 import com.pennant.backend.model.MasterDef;
@@ -124,4 +128,26 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 		return null;
 	}
 
+	@Override
+	public Map<String, String> getMasterDef(String masterType) {
+		logger.debug(Literal.ENTERING);
+		Map<String, String> map = new HashMap<String, String>();
+
+		StringBuilder selectSql = new StringBuilder(" SELECT Key_type, Key_Code From Master_Def ");
+		selectSql.append(" where Master_Type =:MasterType ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("MasterType", masterType);
+		try {
+			SqlRowSet rowSet = this.jdbcTemplate.queryForRowSet(selectSql.toString(), parameterSource);
+			while (rowSet.next()) {
+				map.put(rowSet.getString(1), rowSet.getString(2));
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+		}
+		logger.debug(Literal.LEAVING);
+		return map;
+	}
 }

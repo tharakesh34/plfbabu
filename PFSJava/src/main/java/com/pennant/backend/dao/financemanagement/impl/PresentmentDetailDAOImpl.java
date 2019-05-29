@@ -1484,4 +1484,39 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 		return list;
 	}
+
+	// MIGRATION PURPOSE
+	@Override
+	public List<PresentmentHeader> getDMPresentmentHeadersByRef(String reference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+
+		sql = new StringBuilder();
+
+		sql.append(" SELECT  id, reference, presentmentDate, partnerBankId, fromDate, toDate, ");
+		sql.append(" status, mandateType, loanType, finBranch, schdate, dBStatusId,EntityCode, ");
+		sql.append(" importStatusId, totalRecords, processedRecords, successRecords, failedRecords, ");
+		sql.append(" From PresentmentHeader");
+		sql.append(type);
+		sql.append(" Where reference = :Reference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		try {
+			RowMapper<PresentmentHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+					.newInstance(PresentmentHeader.class);
+			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			return null;
+		} finally {
+			source = null;
+			sql = null;
+			logger.debug(Literal.LEAVING);
+		}
+	}
 }

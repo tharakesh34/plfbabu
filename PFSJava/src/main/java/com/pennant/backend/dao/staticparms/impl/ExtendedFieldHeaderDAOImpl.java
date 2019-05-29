@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.staticparms.impl;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -577,5 +579,36 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		 * 
 		 * }
 		 */}
+
+	@Override
+	public List<ExtendedFieldHeader> getExtFieldHeaderListByModuleName(String moduleName, String event, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("ModuleName", moduleName);
+		parameterSource.addValue("Event", event);
+
+		StringBuilder selectSql = new StringBuilder("Select ModuleId, ModuleName,");
+		selectSql.append(" SubModuleName, Event, TabHeading, NumberOfColumns,");
+		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode,");
+		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,");
+		selectSql.append(" PreValidationReq, PostValidationReq, PreValidation, PostValidation");
+		selectSql.append(" From ExtendedFieldHeader");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where ModuleName = :ModuleName AND Event = :Event");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ExtendedFieldHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtendedFieldHeader.class);
+
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception :", e);
+		}
+		logger.debug("Leaving");
+		return null;
+
+	}
 
 }
