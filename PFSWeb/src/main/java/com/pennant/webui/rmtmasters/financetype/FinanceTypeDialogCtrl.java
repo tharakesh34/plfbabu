@@ -5524,8 +5524,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} else {
 				this.label_FinanceTypeDialog_tDSAllowToModify.setVisible(false);
 				this.tDSAllowToModify.setVisible(false);
+				this.tDSAllowToModify.setChecked(false);
 				this.label_FinanceTypeDialog_tdsApplicableTo.setVisible(false);
 				this.tdsApplicableTo.setVisible(false);
+				this.tdsApplicableTo.setConstraint("");
+				this.tdsApplicableTo.setValue("");
 				this.space_ApplicableTo.setSclass("");
 				this.btnSearchtdsApplicableTo.setVisible(false);
 			}
