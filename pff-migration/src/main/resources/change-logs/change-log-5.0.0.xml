@@ -2254,5 +2254,16 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="39" author="Varaprasad.k">
+		<createView viewName="finexcessamount_lovview" replaceIfExists="true">
+        SELECT finexcessamount.excessid,
+               finexcessamount.finreference,
+               finexcessamount.amounttype,
+               round(finexcessamount.amount / 100,2) AS amount,
+               round(finexcessamount.utilisedamt / 100,2) AS utilisedamt,
+               round(finexcessamount.reservedamt / 100,2) AS reservedamt,
+               round(finexcessamount.balanceamt / 100,2) AS balanceamt
+        FROM finexcessamount           
+    </createView>
 	<!-- 5.0.0 is Under QC please use 5.0.5 -->
 </databaseChangeLog>
