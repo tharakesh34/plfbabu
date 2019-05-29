@@ -195,6 +195,9 @@
 								</rows>
 							</grid>
 						</groupbox>
+						<div>
+							<button id="btnGetCustBeneficiary" label="Beneficiary"></button>
+						</div>
 						<groupbox id="gb_ChequeDetails" visible="false">
 							<caption id="caption_FinAdvancePaymentsDialog_ChequeDetails" />
 							<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
@@ -250,9 +253,6 @@
 									<column />
 								</columns>
 								<rows>
-									<row id="rowGetCust">
-										<button id="btnGetCustBeneficiary" label="Beneficiary"></button>
-									</row>
 									<row>
 										<label id="label_BankBranchID" value="${c:l('label_FinAdvancePaymentsDialog_BankBranchID.value')}" />
 										<extendedcombobox id="bankBranchID" />

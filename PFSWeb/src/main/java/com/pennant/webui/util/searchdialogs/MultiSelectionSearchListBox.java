@@ -48,9 +48,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Li;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
@@ -84,14 +86,18 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b>
+ * an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by
+ * DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table
+ * field for the sql where clause.<br>
  */
 public class MultiSelectionSearchListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -119,6 +125,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	private boolean searchRequired = true;
 	private Filter[] filters;
 	private String whereClause = null;
+	private Class<?> moduleClass = null;
 
 	public MultiSelectionSearchListBox() {
 		super();
@@ -155,7 +162,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * Private Constructor. So it can only be created with the static show()
+	 * method.<br>
 	 * 
 	 * @param parent
 	 */
@@ -174,7 +182,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show() method.<br>
+	 * Private Constructor. So it can only be created with the static show()
+	 * method.<br>
 	 * 
 	 * @param parent
 	 */
@@ -332,7 +341,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and
+		 * the totalRecord count as int value.
 		 */
 
 		logger.debug("Before fetch jdbc Search");
@@ -408,7 +418,8 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and
+	 * pageSize. <br>
 	 */
 	public final class OnPagingEventListener implements EventListener<Event> {
 
@@ -454,12 +465,14 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		setJdbcSearchObject(start);
 
 		if (StringUtils.isNotBlank(searchText)) {
-			Filter filter1 = new Filter(fieldString[0], "%" + searchText + "%", Filter.OP_LIKE);
-			if (fieldString.length == 1) {
-				this.jdbcSearchObject.addFilter(filter1);
+			if (fieldString.length > 1) {
+				Filter[] filters = new Filter[fieldString.length];
+				for (int i = 0; i < fieldString.length; i++) {
+					filters[i] = getFilter(fieldString[i], searchText);
+				}
+				this.jdbcSearchObject.addFilterOr(filters);
 			} else {
-				Filter filter2 = new Filter(fieldString[1], "%" + searchText + "%", Filter.OP_LIKE);
-				this.jdbcSearchObject.addFilterOr(filter1, filter2);
+				this.jdbcSearchObject.addFilter(getFilter(fieldString[0], searchText));
 			}
 		}
 
@@ -607,7 +620,7 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		String[] lovFields = getModuleMapping().getLovFields();
 		if (lovFields != null && lovFields.length > 0) {
 			this.jdbcSearchObject.addSort(lovFields[0].trim(), false);
-			//this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
+			// this.jdbcSearchObject.addSort(lovFields[1].trim(), false);
 		}
 
 		if (this.filters != null) {
@@ -641,8 +654,48 @@ public class MultiSelectionSearchListBox extends Window implements Serializable 
 		this.moduleMapping = moduleMapping;
 		if (moduleMapping != null) {
 			this.fieldString = moduleMapping.getLovFields();
+			this.moduleClass = moduleMapping.getModuleClass();
 			this.setTitle(Labels.getLabel(moduleMapping.getModuleName()));
 		}
 
+	}
+
+	private Filter getFilter(String searchField, String searchText) {
+		Filter filter = null;
+		Object value = null;
+		String fieldMethod = "get" + searchField;
+		try {
+			if (moduleClass.getMethod(fieldMethod).getReturnType().equals(String.class)) {
+				filter = new Filter(searchField, "%" + searchText + "%", Filter.OP_LIKE);
+			} else {
+				if (moduleClass.getMethod(fieldMethod).getReturnType().isPrimitive()) {
+					value = getObject(moduleClass.getMethod(fieldMethod).getReturnType().toString(), searchText);
+				}
+				filter = new Filter(searchField, value, Filter.OP_EQUAL);
+			}
+		} catch (NoSuchMethodException | SecurityException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return filter;
+	}
+
+	private Object getObject(String returnType, String type) {
+		switch (returnType.toLowerCase()) {
+		case "boolean":
+			return Boolean.valueOf(type);
+		case "byte":
+			return Byte.valueOf(type);
+		case "short":
+			return NumberUtils.toShort(type);
+		case "int":
+			return NumberUtils.toInt(type);
+		case "long":
+			return NumberUtils.toLong(type);
+		case "float":
+			return NumberUtils.toFloat(type);
+		case "double":
+			return NumberUtils.toDouble(type);
+		}
+		return new Object();
 	}
 }

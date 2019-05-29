@@ -20,26 +20,29 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 	private static final Logger logger = Logger.getLogger(ExceptionLogCtrl.class);
 	private static final long serialVersionUID = 1L;
 
-	protected Window window_ExceptionLog;
-	protected Listbox listBox_ExceptionLog;
+	protected Window window;
+	protected Listbox listbox;
 	protected Button btnClose;
 	protected boolean preview;
 
 	protected List<DataEngineLog> list;
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ExceptionLog(Event event) throws Exception {
-		setPageComponents(window_ExceptionLog);
+	public void onCreate$window(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		setPageComponents(window);
 
 		list = (List<DataEngineLog>) arguments.get("List");
 		preview = (boolean) arguments.get("preview");
 
 		if (list != null) {
-			this.listBox_ExceptionLog.setItemRenderer(new ExceptionLogListModelItemRenderer());
+			this.listbox.setItemRenderer(new ExceptionLogListModelItemRenderer());
 			ListModel<DataEngineLog> listModel = new ListModelList<DataEngineLog>(list);
-			listBox_ExceptionLog.setModel(listModel);
+			listbox.setModel(listModel);
 		}
 		setDialog(DialogType.MODAL);
+		logger.debug("Leaving" + event.toString());
+
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class ExceptionLogCtrl extends GFCBaseCtrl<DataEngineLog> {
 	public void onClick$btnClose(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		if (preview) {
-			this.window_ExceptionLog.onClose();
+			this.window.onClose();
 		} else {
 			closeDialog();
 		}

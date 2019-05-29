@@ -53,6 +53,7 @@ public class FinRepayQueueHeader {
 	private Map<String, BigDecimal> extDataMap = null;
 	private Map<String, Object> gstExecutionMap = null;
 	private List<FinRepayQueue> queueList = null;
+	private long repayID;
 
 	public FinRepayQueueHeader() {
 
@@ -380,6 +381,14 @@ public class FinRepayQueueHeader {
 
 	public void setPaidPenaltyIGST(BigDecimal paidPenaltyIGST) {
 		this.paidPenaltyIGST = paidPenaltyIGST;
+	}
+
+	public long getRepayID() {
+		return repayID;
+	}
+
+	public void setRepayID(long repayID) {
+		this.repayID = repayID;
 	}
 
 }

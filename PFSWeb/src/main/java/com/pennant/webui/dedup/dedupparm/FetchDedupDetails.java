@@ -2,7 +2,9 @@ package com.pennant.webui.dedup.dedupparm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zul.Window;
@@ -10,12 +12,16 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.masters.MasterDefService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.MasterDefinition.DocumentTypes;
+import com.pennant.backend.util.MasterDefinition.MasterTypes;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
@@ -35,6 +41,7 @@ public class FetchDedupDetails {
 	private CustomerDetails customerDetails;
 	private FinanceDetail financeDetail;
 	private List<FinanceDedup> financeDedupList;
+	public static MasterDefService masterDefService;
 
 	public FetchDedupDetails() {
 		super();
@@ -125,6 +132,8 @@ public class FetchDedupDetails {
 		financeDedup.setCustDOB(customer.getCustDOB());
 		financeDedup.setMobileNumber(getCustMobileNum(aFinanceDetail));
 		financeDedup.setTradeLicenceNo(customer.getCustTradeLicenceNum());
+		financeDedup.setMotherName(customer.getCustShrtNameLclLng());
+		financeDedup.setFatherName(customer.getCustMotherMaiden());
 
 		//Check Customer is Existing or New Customer Object
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -135,6 +144,32 @@ public class FetchDedupDetails {
 		financeDedup.setFinanceType(aFinanceMain.getFinType());
 		financeDedup.setStartDate(aFinanceMain.getFinStartDate());
 		financeDedup.setFinLimitRef(aFinanceMain.getFinLimitRef());
+		String masterType = MasterTypes.DOC_TYPE.toString();
+		Map<String, String> map = getMasterDefService().getMasterDef(masterType);
+		if (aFinanceDetail.getCustomerDetails() != null) {
+			for (CustomerDocument document : aFinanceDetail.getCustomerDetails().getCustomerDocumentsList()) {
+				if (StringUtils.equals(map.get(DocumentTypes.AADHAAR.toString()), document.getCustDocCategory())) {
+					financeDedup.setAadharNumber(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.PAN.toString()), document.getCustDocCategory())) {
+					financeDedup.setPanNumber(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.VOTER_ID.toString()),
+						document.getCustDocCategory())) {
+					financeDedup.setVoterID(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.RATION_CARD.toString()),
+						document.getCustDocCategory())) {
+					financeDedup.setRationCard(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.LPG_NUMBER.toString()),
+						document.getCustDocCategory())) {
+					financeDedup.setLpgNumber(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.PASSPORT.toString()),
+						document.getCustDocCategory())) {
+					financeDedup.setCustPassportNo(document.getCustDocTitle());
+				} else if (StringUtils.equals(map.get(DocumentTypes.DRIVING_LICENCE.toString()),
+						document.getCustDocCategory())) {
+					financeDedup.setDrivingLicenceNo(document.getCustDocTitle());
+				}
+			}
+		}
 
 		financeDedup.setFinReference(aFinanceMain.getFinReference());
 		financeDedup
@@ -243,6 +278,14 @@ public class FetchDedupDetails {
 
 	public void setFinanceDedupList(List<FinanceDedup> financeDedupList) {
 		this.financeDedupList = financeDedupList;
+	}
+
+	public static MasterDefService getMasterDefService() {
+		return masterDefService;
+	}
+
+	public static void setMasterDefService(MasterDefService masterDefService) {
+		FetchDedupDetails.masterDefService = masterDefService;
 	}
 
 }

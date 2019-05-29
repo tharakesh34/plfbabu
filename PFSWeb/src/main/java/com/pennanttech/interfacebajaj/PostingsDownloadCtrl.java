@@ -74,7 +74,7 @@ public class PostingsDownloadCtrl extends GFCBaseListCtrl<Mandate> implements Se
 	protected Datebox postingDate;
 	protected Button btnFileUpload;
 
-	@Autowired(required = true)
+	@Autowired(required = false)
 	private PostingDownloadService postingDownloadService;
 
 	/**

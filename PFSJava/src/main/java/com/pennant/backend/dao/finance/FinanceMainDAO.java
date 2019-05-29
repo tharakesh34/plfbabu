@@ -369,13 +369,15 @@ public interface FinanceMainDAO {
 	List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart);
 
 	List<FinanceMain> getFinListForAMZ(Date monthEndDate);
-	FinanceMain getFinanceMainByOldFinReference(String oldFinReference,boolean active);
 
+	FinanceMain getFinanceMainByOldFinReference(String oldFinReference, boolean active);
 
 	// Calculate Average POS
 	List<FinanceMain> getFinancesByFinApprovedDate(Date finApprovalStartDate, Date finApprovalEndDate);
 
-	int getCountByFinReference(String finReference,boolean active);
+	int getCountByFinReference(String finReference, boolean active);
 
 	int getCountByOldFinReference(String oldFinReference);
+
+	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
 }

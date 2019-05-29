@@ -42,168 +42,168 @@
 					</div>
 				</north>
 				<center border="none" autoscroll="false">
-					<div>
-						<groupbox id="gb_basicDetails" sclass="gb-dialog">
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-								<columns>
-									<column width="15%" />
-									<column width="35%" />
-									<column width="15%" />
-									<column width="35%" />
-								</columns>
-								<rows>
-									<row id="row0">
-										<label id="label_ScheduleType" value="${c:l('label_LegalPropertyDetailDialog_ScheduleType.value')}" />
-										<combobox id="scheduleType" width="150px" />
-										<label id="label_PropertyType" value="${c:l('label_LegalPropertyDetailDialog_PropertyType.value')}" />
-										<combobox id="propertyType" width="150px" />
-									</row>
-									<row spans="1,3">
-										<label id="label_PropertySchedule" value="${c:l('label_LegalPropertyDetailDialog_PropertySchedule.value')}" />
-										<hbox>
-											<textbox id="propertySchedule" maxlength="3000" multiline="true" rows="2" width="750px" />
-										</hbox>
-									</row>
+				<div>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row id="row0">
+									<label id="label_ScheduleType" value="${c:l('label_LegalPropertyDetailDialog_ScheduleType.value')}" />
+									<combobox id="scheduleType" width="150px" />
+									<label id="label_PropertyType" value="${c:l('label_LegalPropertyDetailDialog_PropertyType.value')}" />
+									<combobox id="propertyType" width="150px" />
+								</row>
+								<row spans="1,3">
+									<label id="label_PropertySchedule" value="${c:l('label_LegalPropertyDetailDialog_PropertySchedule.value')}" />
+									<hbox>
+										<textbox id="propertySchedule" maxlength="3000" multiline="true" rows="2" width="750px" />
+									</hbox>
+								</row>
 
-									<row id="row2">
-										<label id="label_NorthBy" value="${c:l('label_LegalPropertyDetailDialog_NorthBy.value')}" />
+								<row id="row2">
+									<label id="label_NorthBy" value="${c:l('label_LegalPropertyDetailDialog_NorthBy.value')}" />
 
-										<textbox id="northBy" maxlength="100" width="200px" />
-										<label id="label_SouthBy" value="${c:l('label_LegalPropertyDetailDialog_SouthBy.value')}" />
+									<textbox id="northBy" maxlength="100" width="200px" />
+									<label id="label_SouthBy" value="${c:l('label_LegalPropertyDetailDialog_SouthBy.value')}" />
 
-										<textbox id="southBy" maxlength="100" width="200px" />
-									</row>
-									<row id="row3">
-										<label id="label_EastBy" value="${c:l('label_LegalPropertyDetailDialog_EastBy.value')}" />
+									<textbox id="southBy" maxlength="100" width="200px" />
+								</row>
+								<row id="row3">
+									<label id="label_EastBy" value="${c:l('label_LegalPropertyDetailDialog_EastBy.value')}" />
 
-										<textbox id="eastBy" maxlength="100" width="200px" />
-										<label id="label_WestBy" value="${c:l('label_LegalPropertyDetailDialog_WestBy.value')}" />
+									<textbox id="eastBy" maxlength="100" width="200px" />
+									<label id="label_WestBy" value="${c:l('label_LegalPropertyDetailDialog_WestBy.value')}" />
 
-										<textbox id="westBy" maxlength="100" width="200px" />
-									</row>
-									<row id="row4">
-										<label id="label_Measurement" value="${c:l('label_LegalPropertyDetailDialog_Measurement.value')}" />
-										<decimalbox id="measurement" width="200px" />
-										<label id="label_RegistrationOffice" value="${c:l('label_LegalPropertyDetailDialog_RegistrationOffice.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="registrationOffice" maxlength="200" width="200px" />
-										</hbox>
-									</row>
-									<row id="row5">
-										<label id="label_RegistrationDistrict" value="${c:l('label_LegalPropertyDetailDialog_RegistrationDistrict.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="registrationDistrict" maxlength="100" width="200px" />
-										</hbox>
-										<label id="label_PropertyOwner" value="${c:l('label_LegalPropertyDetailDialog_PropertyOwner.value')}" />
-										<combobox id="propertyOwner" maxlength="1000" width="200px" />
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-						<groupbox id="gb_PropertyMeasurementDetails" sclass="gb-dialog">
-							<caption label="${c:l('caption_LegalPropertyDetailDialog_Measurements.value')}" />
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-								<columns>
-									<column width="15%" />
-									<column width="35%" />
-									<column width="15%" />
-									<column width="35%" />
-								</columns>
-								<rows>
-									<row>
-										<label id="label_NorthSideEastByWest" value="${c:l('label_LegalPropertyDetailDialog_NorthSideEastByWest.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="northSideEastByWest" maxlength="75" width="200px" />
-										</hbox>
-										<label id="label_SouthSideWestByEast" value="${c:l('label_LegalPropertyDetailDialog_SouthSideWestByEast.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="southSideWestByEast" maxlength="75" width="200px" />
-										</hbox>
-									</row>
-									<row>
-										<label id="label_EastSideNorthBySouth" value="${c:l('label_LegalPropertyDetailDialog_EastSideNorthBySouth.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="eastSideNorthBySouth" maxlength="75" width="200px" />
-										</hbox>
-										<label id="label_WestSideSouthByNorth" value="${c:l('label_LegalPropertyDetailDialog_WestSideSouthByNorth.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<textbox id="westSideSouthByNorth" maxlength="75" width="200px" />
-										</hbox>
-									</row>
-								</rows>
-							</grid>
-						</groupbox>
-						<groupbox id="gb_MiscellaneousPropertyDetails" sclass="gb-dialog">
-							<caption label="${c:l('caption_LegalPropertyDetailDialog_MiscellaneousPropertyDetails.value')}" />
-							<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-								<columns>
-									<column width="15%" />
-									<column width="35%" />
-									<column width="15%" />
-									<column width="35%" />
-								</columns>
-								<rows>
-									<row>
-										<label id="label_IsUrbanLandCeiling" value="${c:l('label_LegalPropertyDetailDialog_IsUrbanLandCeiling.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isUrbanLandCeiling" width="200px" />
-										</hbox>
-										<label id="label_IsMinorshareInvolved" value="${c:l('label_LegalPropertyDetailDialog_IsMinorshareInvolved.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isMinorshareInvolved" width="200px" />
-										</hbox>
-									</row>
-									<row></row>
-									<row>
-										<label id="label_IsPropertyIsGramanatham" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyIsGramanatham.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isPropertyIsGramanatham" width="200px" />
-										</hbox>
-										<label id="label_IsPropertyReleased" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyReleased.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isPropertyReleased" width="200px" />
-										</hbox>
-									</row>
-									<row></row>
-									<row>
-										<label id="label_IsPropertyOriginalsAvailable" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyOriginalsAvailable.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isPropOriginalsAvailable" width="200px" />
-										</hbox>
-										<label id="label_IsPropertyIsAgricultural" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyIsAgricultural.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isPropertyIsAgricultural" width="200px" />
-										</hbox>
-									</row>
-									<row></row>
-									<row>
-										<label id="label_IsNOCobtainedfromLPA" value="${c:l('label_LegalPropertyDetailDialog_IsNOCobtainedfromLPA.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isNOCObtainedFromLPA" width="200px" />
-										</hbox>
-										<label id="label_IsAnyMortgagePending" value="${c:l('label_LegalPropertyDetailDialog_IsAnyMortgagePending.value')}" />
-										<hbox>
-											<space spacing="2px" sclass="mandatory" />
-											<combobox id="isAnyMortgagePending" width="200px" />
-										</hbox>
-									</row>
-									<row></row>
-								</rows>
-							</grid>
-						</groupbox>
+									<textbox id="westBy" maxlength="100" width="200px" />
+								</row>
+								<row id="row4">
+									<label id="label_Measurement" value="${c:l('label_LegalPropertyDetailDialog_Measurement.value')}" />
+									<decimalbox id="measurement" width="200px" />
+									<label id="label_RegistrationOffice" value="${c:l('label_LegalPropertyDetailDialog_RegistrationOffice.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="registrationOffice" maxlength="200" width="200px" />
+									</hbox>
+								</row>
+								<row id="row5">
+									<label id="label_RegistrationDistrict" value="${c:l('label_LegalPropertyDetailDialog_RegistrationDistrict.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="registrationDistrict" maxlength="100" width="200px" />
+									</hbox>
+									<label id="label_PropertyOwner" value="${c:l('label_LegalPropertyDetailDialog_PropertyOwner.value')}" />
+									<combobox id="propertyOwner" maxlength="1000" width="200px" />
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+					<groupbox id="gb_PropertyMeasurementDetails" sclass="gb-dialog">
+						<caption label="${c:l('caption_LegalPropertyDetailDialog_Measurements.value')}" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_NorthSideEastByWest" value="${c:l('label_LegalPropertyDetailDialog_NorthSideEastByWest.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="northSideEastByWest" maxlength="75" width="200px" />
+									</hbox>
+									<label id="label_SouthSideWestByEast" value="${c:l('label_LegalPropertyDetailDialog_SouthSideWestByEast.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="southSideWestByEast" maxlength="75" width="200px" />
+									</hbox>	
+								</row>
+								<row>
+									<label id="label_EastSideNorthBySouth" value="${c:l('label_LegalPropertyDetailDialog_EastSideNorthBySouth.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="eastSideNorthBySouth" maxlength="75" width="200px" />
+									</hbox>
+									<label id="label_WestSideSouthByNorth" value="${c:l('label_LegalPropertyDetailDialog_WestSideSouthByNorth.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="westSideSouthByNorth" maxlength="75" width="200px" />
+									</hbox>	
+								</row>
+							</rows>
+						</grid>
+					</groupbox>			
+					<groupbox id="gb_MiscellaneousPropertyDetails" sclass="gb-dialog">
+						<caption label="${c:l('caption_LegalPropertyDetailDialog_MiscellaneousPropertyDetails.value')}"/>
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row>
+									<label id="label_IsUrbanLandCeiling" value="${c:l('label_LegalPropertyDetailDialog_IsUrbanLandCeiling.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isUrbanLandCeiling" width="200px" />
+									</hbox>	
+									<label id="label_IsMinorshareInvolved" value="${c:l('label_LegalPropertyDetailDialog_IsMinorshareInvolved.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isMinorshareInvolved" width="200px"/>
+									</hbox>	
+								</row>
+								<row></row>
+								<row>
+									<label id="label_IsPropertyIsGramanatham" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyIsGramanatham.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isPropertyIsGramanatham" width="200px"/>
+									</hbox>	
+									<label id="label_IsPropertyReleased" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyReleased.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isPropertyReleased" width="200px"/>
+									</hbox>	
+								</row>
+								<row></row>
+								<row>
+									<label id="label_IsPropertyOriginalsAvailable" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyOriginalsAvailable.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isPropOriginalsAvailable" width="200px"/>
+									</hbox>	
+									<label id="label_IsPropertyIsAgricultural" value="${c:l('label_LegalPropertyDetailDialog_IsPropertyIsAgricultural.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isPropertyIsAgricultural" width="200px"/>
+									</hbox>	
+								</row>
+								<row></row>
+								<row>
+									<label id="label_IsNOCobtainedfromLPA" value="${c:l('label_LegalPropertyDetailDialog_IsNOCobtainedfromLPA.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isNOCObtainedFromLPA"  width="200px"/>
+									</hbox>	
+									<label id="label_IsAnyMortgagePending" value="${c:l('label_LegalPropertyDetailDialog_IsAnyMortgagePending.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<combobox id="isAnyMortgagePending" width="200px"/>
+									</hbox>	
+								</row>
+								<row></row>
+							</rows>
+						</grid>
+					</groupbox>
 					</div>
 				</center>
 				<south sclass="south-dialog" visible="false">

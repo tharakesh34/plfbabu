@@ -222,9 +222,9 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 
 		this.bankBranchID.setMandatoryStyle(true);
 		this.bankBranchID.setModuleName("BankBranch");
-		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setValueColumn("BankBranchID");
 		this.bankBranchID.setDescColumn("BranchDesc");
-		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
 
 		setStatusDetails();
 

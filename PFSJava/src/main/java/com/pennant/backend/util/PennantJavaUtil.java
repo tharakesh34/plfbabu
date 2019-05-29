@@ -257,6 +257,7 @@ import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSuspHead;
+import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.HoldDisbursement;
@@ -1824,6 +1825,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
 						finMaintainWF, new String[] { "FinReference", "NumberOfTerms" }, null, 300));
 
+		ModuleUtil.register("LiabilityRequest",
+				new ModuleMapping("LiabilityRequest", LiabilityRequest.class,
+						new String[] { "FinLiabilityReq", "FinLiabilityReq_View" }, masterWF,
+						new String[] { "FinReference", "CustCIF", "FinType" }, null, 300));
+
 		ModuleUtil.register("FinanceFlag",
 				new ModuleMapping("FinanceFlag", FinanceFlag.class,
 						new String[] { "FinFlagsHeader", "FinFlagsHeader_View" }, finMaintainWF,
@@ -3166,6 +3172,9 @@ public class PennantJavaUtil {
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
 						new String[] { "AdviseID", "FeeTypeID", "AdviseAmount", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AdviseType", "0", "2" } }, 750));
+		
+		ModuleUtil.register("LoanClosureEnquiry",
+				new ModuleMapping("LoanClosureEnquiry", ForeClosure.class, null, masterWF, null, null, 400));
 
 		ModuleUtil.register("ReceiptFinanceMain",
 				new ModuleMapping("ReceiptFinanceMain", FinanceMain.class,

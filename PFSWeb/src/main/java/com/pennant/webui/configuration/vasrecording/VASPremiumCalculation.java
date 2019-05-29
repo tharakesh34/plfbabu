@@ -53,6 +53,13 @@ public class VASPremiumCalculation {
 		return null;
 	}
 
+	public BigDecimal getGSTPercentage(BigDecimal vasFee) {
+		if (customVASPremiumCalculation != null) {
+			return customVASPremiumCalculation.getGSTPercentage(vasFee);
+		}
+		return BigDecimal.ZERO;
+	}
+
 	/**
 	 * Calculating the medical status.
 	 * 
@@ -93,4 +100,10 @@ public class VASPremiumCalculation {
 		this.vasRecordingService = vasRecordingService;
 	}
 
+	public BigDecimal getVasFee(BigDecimal vasFee) {
+		if (customVASPremiumCalculation != null) {
+			return customVASPremiumCalculation.getvasFee(vasFee);
+		}
+		return vasFee;
+	}
 }

@@ -256,7 +256,7 @@ public class PennantRegularExpressions {
 			put(REGEX_PANNUMBER, "[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 			put(REGEX_GSTIN, "[A-Za-z0-9]{2}[A-Za-z]{5}\\d{4}[A-Za-z]{1}[A-z0-9]{3}");
 			put(REGEX_ACC_HOLDER_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\s]*");
-			put(REGEX_FAVOURING_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\/\\'\\s]*");
+			put(REGEX_FAVOURING_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\/\\'\\s,:]*");
 			put(REGEX_LOOK_UP_VALUE, "^[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_BARCODE_NUMBER, "[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,

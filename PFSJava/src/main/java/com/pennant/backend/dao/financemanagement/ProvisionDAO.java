@@ -71,4 +71,6 @@ public interface ProvisionDAO {
 	Provision getCurNPABucket(String id);
 
 	void updateProvisonAmounts(Provision provision);
+
+	Provision getDMProvisionById(String id, String type);
 }

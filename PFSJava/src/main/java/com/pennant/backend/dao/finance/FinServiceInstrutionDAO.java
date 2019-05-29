@@ -34,4 +34,6 @@ public interface FinServiceInstrutionDAO {
 
 	void updateNotificationFlag(String notificationFlag, long id);
 
+	List<FinServiceInstruction> getDMFinServiceInstructions(String finReference, String type);
+
 }

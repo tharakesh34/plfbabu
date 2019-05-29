@@ -154,43 +154,45 @@
 												</hbox>
 											</row>
 											<row>
-												<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
+											 	<label value="${c:l('label_VASConfigurationDialog_AllowFeeType.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="allowFeeType" width="180px" />
 												</hbox>
-												<label value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_ModeOfPayment.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<combobox id="modeOfPayment" width="180px" />
+													<combobox id="modeOfPayment" width="180px"/>
 												</hbox>
 											</row>
 											<row>
-												<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
+											 	<label value="${c:l('label_VASConfigurationDialog_TermInsuranceLien.value')}" />
 												<hbox>
-													<space spacing="2px" />
-													<checkbox id="termInsuranceLien" />
+													<space spacing="2px"/>
+													<checkbox id="termInsuranceLien"/>
 												</hbox>
 												<label value="${c:l('label_VASConfigurationDialog_MedicalApplicable.value')}" />
 												<hbox>
-													<space spacing="2px" />
-													<checkbox id="medicalApplicable" />
+													<space spacing="2px"/>
+													<checkbox id="medicalApplicable"/>
 												</hbox>
 											</row>
 											<row id="row_TermInsuranceLien">
-												<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
+											 	<label value="${c:l('label_VASConfigurationDialog_ProviderName.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<textbox id="providerName" width="180px" />
 												</hbox>
-												<label value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
+												<label
+													value="${c:l('label_VASConfigurationDialog_PolicyNumber.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
-													<textbox id="policyNumber" width="180px" />
+													<textbox id="policyNumber" width="180px"/>
 												</hbox>
 											</row>
 											<row id="row_MedicalStatus">
-												<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
+											 	<label value="${c:l('label_VASConfigurationDialog_MedicalStatus.value')}" />
 												<hbox>
 													<space spacing="2px" sclass="mandatory" />
 													<combobox id="medicalStatus" width="180px" />

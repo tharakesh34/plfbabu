@@ -84,7 +84,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Legal/LegalPropertyDetail/legalPropertyDetailDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Legal/LegalPropertyDetail/legalPropertyDetailDialog.zul file.
  * <br>
  */
 public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDetail> {
@@ -127,7 +128,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	protected Combobox isPropertyIsAgricultural;
 	protected Combobox isNOCObtainedFromLPA;
 	protected Combobox isAnyMortgagePending;
-
+	
 	protected Groupbox gb_PropertyMeasurementDetails;
 	protected Textbox northSideEastByWest;
 	protected Textbox southSideWestByEast;
@@ -157,7 +158,8 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -292,7 +294,8 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -304,7 +307,8 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -379,8 +383,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 
 		fillComboBox(this.isUrbanLandCeiling, aLegalPropertyDetail.getUrbanLandCeiling(), yesNoList, NOT_REQUIRED);
 		fillComboBox(this.isMinorshareInvolved, aLegalPropertyDetail.getMinorshareInvolved(), yesNoList, NOT_REQUIRED);
-		fillComboBox(this.isPropertyIsGramanatham, aLegalPropertyDetail.getPropertyIsGramanatham(), yesNoList,
-				NOT_REQUIRED);
+		fillComboBox(this.isPropertyIsGramanatham, aLegalPropertyDetail.getPropertyIsGramanatham(), yesNoList, NOT_REQUIRED);
 		fillComboBox(this.isPropertyReleased, aLegalPropertyDetail.getPropertyReleased(), yesNoList, NOT_REQUIRED);
 		fillComboBox(this.isPropOriginalsAvailable, aLegalPropertyDetail.getPropOriginalsAvailable(), yesNoList,
 				NOT_REQUIRED);
@@ -388,7 +391,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 				NOT_REQUIRED);
 		fillComboBox(this.isNOCObtainedFromLPA, aLegalPropertyDetail.getNocObtainedFromLPA(), yesNoList, NOT_REQUIRED);
 		fillComboBox(this.isAnyMortgagePending, aLegalPropertyDetail.getAnyMortgagePending(), yesNoList, NOT_REQUIRED);
-
+		
 		this.northSideEastByWest.setValue(aLegalPropertyDetail.getNorthSideEastByWest());
 		this.southSideWestByEast.setValue(aLegalPropertyDetail.getSouthSideWestByEast());
 		this.eastSideNorthBySouth.setValue(aLegalPropertyDetail.getEastSideNorthBySouth());
@@ -538,7 +541,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			}
 			if (strUrbanLandCeiling != null && !PennantConstants.List_Select.equals(strUrbanLandCeiling)) {
 				aLegalPropertyDetail.setUrbanLandCeiling(strUrbanLandCeiling);
-			}
+			} 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -797,13 +800,11 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		}
 		if (!this.isPropOriginalsAvailable.isDisabled()) {
 			this.isPropOriginalsAvailable.setConstraint(new PTListValidator(
-					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyOriginalsAvailable.value"), yesNoList,
-					true));
+					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyOriginalsAvailable.value"), yesNoList, true));
 		}
 		if (!this.isPropertyIsAgricultural.isDisabled()) {
 			this.isPropertyIsAgricultural.setConstraint(new PTListValidator(
-					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyIsAgricultural.value"), yesNoList,
-					true));
+					Labels.getLabel("label_LegalPropertyDetailDialog_IsPropertyIsAgricultural.value"), yesNoList, true));
 		}
 		if (!this.isNOCObtainedFromLPA.isDisabled()) {
 			this.isNOCObtainedFromLPA.setConstraint(new PTListValidator(
@@ -813,26 +814,22 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			this.isAnyMortgagePending.setConstraint(new PTListValidator(
 					Labels.getLabel("label_LegalPropertyDetailDialog_IsAnyMortgagePending.value"), yesNoList, true));
 		}
-
+		
 		if (!this.northSideEastByWest.isReadonly()) {
-			this.northSideEastByWest.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_NorthSideEastByWest.value"),
+			this.northSideEastByWest.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_NorthSideEastByWest.value"),
 							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
 		if (!this.westSideSouthByNorth.isReadonly()) {
-			this.westSideSouthByNorth.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_WestSideSouthByNorth.value"),
+			this.westSideSouthByNorth.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_WestSideSouthByNorth.value"),
 							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
 		if (!this.eastSideNorthBySouth.isReadonly()) {
-			this.eastSideNorthBySouth.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_EastSideNorthBySouth.value"),
-							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
+			this.eastSideNorthBySouth.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_EastSideNorthBySouth.value"),
+					PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
 		if (!this.southSideWestByEast.isReadonly()) {
-			this.southSideWestByEast.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_SouthSideWestByEast.value"),
-							PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
+			this.southSideWestByEast.setConstraint(new PTStringValidator(Labels.getLabel("label_LegalPropertyDetailDialog_SouthSideWestByEast.value"),
+					PennantRegularExpressions.REGEX_ALPHA_NUMERIC_DOT_SPACE, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -864,7 +861,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.isPropertyIsGramanatham.setConstraint("");
 		this.isPropOriginalsAvailable.setConstraint("");
 		this.isPropertyReleased.setConstraint("");
-
+		
 		this.northSideEastByWest.setConstraint("");
 		this.southSideWestByEast.setConstraint("");
 		this.eastSideNorthBySouth.setConstraint("");
@@ -893,7 +890,8 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1060,25 +1058,22 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationOffice"), this.registrationOffice);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_RegistrationDistrict"), this.registrationDistrict);
 		readOnlyPropertyOwnerComponent(isReadOnly("LegalPropertyDetailDialog_PropertyOwner"), this.propertyOwner);
-
+		
 		// Property Misc details
 		this.gb_MiscellaneousPropertyDetails
-				.setVisible(getUserWorkspace().isAllowed("LegalPropertyDetailDialog_gb_miscellaneousPropertyDetails"));
+		.setVisible(getUserWorkspace().isAllowed("LegalPropertyDetailDialog_gb_miscellaneousPropertyDetails"));
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsUrbanLandCeiling"), this.isUrbanLandCeiling);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsMinorshareInvolved"), this.isMinorshareInvolved);
-		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyIsGramanatham"),
-				this.isPropertyIsGramanatham);
+		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyIsGramanatham"), this.isPropertyIsGramanatham);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyReleased"), this.isPropertyReleased);
-		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyOriginalsAvailable"),
-				this.isPropOriginalsAvailable);
-		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyIsAgricultural"),
-				this.isPropertyIsAgricultural);
+		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyOriginalsAvailable"), this.isPropOriginalsAvailable);
+		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsPropertyIsAgricultural"), this.isPropertyIsAgricultural);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsNOCobtainedfromLPA"), this.isNOCObtainedFromLPA);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_IsAnyMortgagePending"), this.isAnyMortgagePending);
-
+		
 		//Property Measurements
 		this.gb_PropertyMeasurementDetails
-				.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_PropertyMeasurementDetails"));
+		.setVisible(getUserWorkspace().isAllowed("LegalDocumentDialog_gb_PropertyMeasurementDetails"));
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_NorthSideEastByWest"), this.northSideEastByWest);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_SouthSideWestByEast"), this.southSideWestByEast);
 		readOnlyComponent(isReadOnly("LegalPropertyDetailDialog_EastSideNorthBySouth"), this.eastSideNorthBySouth);
@@ -1134,7 +1129,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(true, this.registrationOffice);
 		readOnlyComponent(true, this.registrationDistrict);
 		readOnlyComponent(true, this.propertyOwner);
-
+		
 		readOnlyComponent(true, this.isUrbanLandCeiling);
 		readOnlyComponent(true, this.isMinorshareInvolved);
 		readOnlyComponent(true, this.isPropertyIsGramanatham);
@@ -1143,12 +1138,13 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		readOnlyComponent(true, this.isPropertyIsAgricultural);
 		readOnlyComponent(true, this.isNOCObtainedFromLPA);
 		readOnlyComponent(true, this.isAnyMortgagePending);
-
+		
 		readOnlyComponent(true, this.northSideEastByWest);
 		readOnlyComponent(true, this.southSideWestByEast);
 		readOnlyComponent(true, this.eastSideNorthBySouth);
 		readOnlyComponent(true, this.westSideSouthByNorth);
-
+		
+		 
 		if (PennantConstants.YES.equals(SysParamUtil.getValueAsString("LEGAL_DETAIL_ADDITIONAL_FIELDS_ENQUIRY"))) {
 			this.gb_MiscellaneousPropertyDetails.setVisible(true);
 			this.gb_PropertyMeasurementDetails.setVisible(true);
@@ -1156,7 +1152,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 			this.gb_MiscellaneousPropertyDetails.setVisible(false);
 			this.gb_PropertyMeasurementDetails.setVisible(false);
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1176,7 +1172,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.registrationOffice.setValue("");
 		this.registrationDistrict.setValue("");
 		this.propertyOwner.setSelectedIndex(0);
-
+		
 		this.isUrbanLandCeiling.setValue("");
 		this.isMinorshareInvolved.setValue("");
 		this.isPropertyIsGramanatham.setValue("");
@@ -1185,7 +1181,7 @@ public class LegalPropertyDetailDialogCtrl extends GFCBaseCtrl<LegalPropertyDeta
 		this.isPropertyIsAgricultural.setValue("");
 		this.isNOCObtainedFromLPA.setValue("");
 		this.isAnyMortgagePending.setValue("");
-
+		
 		this.northSideEastByWest.setValue("");
 		this.southSideWestByEast.setValue("");
 		this.eastSideNorthBySouth.setValue("");

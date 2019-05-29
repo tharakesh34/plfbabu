@@ -44,15 +44,20 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.DataEngineLog;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.service.FileImport;
 import com.pennanttech.model.presentment.Presentment;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
@@ -71,6 +76,11 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	private PresentmentDetailService presentmentDetailService;
 	private NotificationService notificationService;
+	private String instrumentType = null;
+	private boolean allowInstrumentType;
+	private LoggedInUser userDetails;
+	private DataEngineStatus status;
+	private DataSource dataSource;
 
 	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
 			NotificationService notificationService) {
@@ -81,7 +91,54 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	@Override
 	public void run() {
-		importData();
+
+		allowInstrumentType = "Y"
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
+						? true : false;
+		if (allowInstrumentType) {
+			try {
+				importDataByInstrumentType();
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);// Handling
+			}
+		} else {
+			importData();
+		}
+	}
+
+	private void importDataByInstrumentType() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		DataEngineStatus status = getStatus();
+		String configName = status.getName();
+		status.reset();
+		status.setFileName(getMedia().getName());
+		status.setRemarks("Initiated file reading...");
+
+		try {
+
+			clearTables();
+
+			DataEngineImport dataEngine;
+			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
+					DateUtility.getAppDate(), status);
+			dataEngine.setMedia(getMedia());
+			dataEngine.importData(configName);
+
+			do {
+				if (ExecutionStatus.S.name().equals(status.getStatus())
+						|| ExecutionStatus.F.name().equals(status.getStatus())) {
+					processingPrsentments(status.getFileName(), status);
+					break;
+				}
+			} while (ExecutionStatus.S.name().equals(status.getStatus())
+					|| ExecutionStatus.F.name().equals(status.getStatus()));
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.info(configName + " file processing completed");
+		logger.debug(Literal.LEAVING);
 	}
 
 	// Importing the data from file
@@ -212,8 +269,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				// If error, Clear the staging tables.
 				clearTables();
 			} else {
-				// After completion of file import, processing the data from staging tables.
-				processingPrsentments();
+				// After completion of file import, processing the data from
+				// staging tables.
+				processingPrsentments(getFile().getName(), status);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -228,7 +286,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			throw new Exception("Client Code  length should be less than 15.");
 		}
 
-		//bflreferenceno
+		// bflreferenceno
 		Object bflreferenceno = map.getValue("BFLReferenceNo");
 		if (bflreferenceno != null && bflreferenceno.toString().length() > 3) {
 			throw new Exception("Dealer Code  length should be less than 4.");
@@ -269,7 +327,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	long batchId = 0;
 
 	// After file import, processing the data from staging table
-	private void processingPrsentments() {
+	private void processingPrsentments(String fileName, DataEngineStatus dataEngineStatus) {
 		logger.debug(Literal.ENTERING);
 
 		recordCount = 0;
@@ -277,6 +335,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		failedCount = 0;
 		batchId = 0;
 		remarks = null;
+		String oldRemarks = status.getRemarks();
+		status.setRemarks("File Reading completed, Processing the response file...");
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED, ");
@@ -285,7 +345,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new ResultSetExtractor<Integer>() {
 			@Override
 			public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
-				batchId = saveFileHeader(getFile().getName());
+				batchId = saveFileHeader(fileName);
 
 				while (rs.next()) {
 					recordCount++;
@@ -332,6 +392,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 											detail.getStatus());
 									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
 											detail.getErrorDesc());
+									updateLog(dataEngineStatus.getId(), presentmentRef, "F", detail.getErrorDesc());
 								}
 							} catch (Exception e) {
 								logger.error(Literal.EXCEPTION, e);
@@ -341,6 +402,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 								updatePresentmentHeader(presentmentRef, RepayConstants.PEXC_FAILURE,
 										detail.getStatus());
 								saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef, e.getMessage());
+								updateLog(dataEngineStatus.getId(), presentmentRef, "F", e.getMessage());
 							}
 						}
 					} catch (Exception e) {
@@ -354,24 +416,27 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 				// Update the Status of the file as Reading Successful
 				remarks = new StringBuilder();
-				if (failedCount > 0) {
-					remarks.append(" Completed with exceptions, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					remarks.append(", Failure: ");
-					remarks.append(failedCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.F.name());
-				} else {
-					remarks.append(" Completed successfully, total Records: ");
-					remarks.append(recordCount);
-					remarks.append(", Sucess: ");
-					remarks.append(successCount + ".");
-					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
+				if (recordCount > 0) {
+					if (failedCount > 0) {
+						remarks.append("Completed with exceptions, total Records: ");
+						remarks.append(status.getTotalRecords());
+						remarks.append(", Success: ");
+						remarks.append(status.getSuccessRecords() - failedCount);
+						remarks.append(", Failure: ");
+						remarks.append(status.getFailedRecords() + failedCount);
+						status.setSuccessRecords(status.getSuccessRecords() - failedCount);
+						status.setFailedRecords(status.getFailedRecords() + failedCount);
+						status.setRemarks(remarks.toString());
+						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setRemarks(remarks.toString());
+					} else {
+						status.setRemarks(oldRemarks);
+					}
+					setExceptionLog(status);
+					updateStatus(status);
 					PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.S.name());
+				} else {
+					status.setRemarks(oldRemarks);
 				}
-				updateFileHeader(batchId, recordCount, successCount, failedCount, remarks.toString());
 				return 0;
 			}
 		});
@@ -627,6 +692,77 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 		logger.debug(Literal.LEAVING);
 
 		return batchId;
+	}
+
+	// Data Engine log
+	private void updateLog(long id, String keyId, String status, String reason) {
+
+		StringBuilder query = null;
+		MapSqlParameterSource source = null;
+
+		if (reason != null) {
+			reason = reason.length() > 2000 ? reason.substring(0, 1995) : reason;
+		}
+
+		query = new StringBuilder("Update DATA_ENGINE_LOG");
+		query.append(" Set Status = :Status, Reason =:Reason Where Id = :Id and KeyId = :KeyId");
+
+		source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+		source.addValue("KeyId", keyId);
+		source.addValue("Status", status);
+		source.addValue("Reason", reason);
+
+		int count = this.jdbcTemplate.update(query.toString(), source);
+
+		if (count == 0) {
+			query = new StringBuilder();
+			query.append(" INSERT INTO DATA_ENGINE_LOG");
+			query.append(" (Id, KeyId, Status, Reason)");
+			query.append(" VALUES(:Id, :KeyId, :Status, :Reason)");
+			this.jdbcTemplate.update(query.toString(), source);
+		}
+		query = null;
+		source = null;
+	}
+
+	// Setting the exception log data engine status.
+	private void setExceptionLog(DataEngineStatus status) {
+		List<DataEngineLog> engineLogs = getExceptions(status.getId());
+		if (CollectionUtils.isNotEmpty(engineLogs)) {
+			status.setDataEngineLogList(engineLogs);
+		}
+	}
+
+	// Getting the exception log
+	public List<DataEngineLog> getExceptions(long batchId) {
+		RowMapper<DataEngineLog> rowMapper = null;
+		MapSqlParameterSource parameterMap = null;
+		StringBuilder sql = null;
+
+		try {
+			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where ID = :ID");
+			parameterMap = new MapSqlParameterSource();
+			parameterMap.addValue("ID", batchId);
+			rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(DataEngineLog.class);
+			return jdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
+		} catch (Exception e) {
+		} finally {
+			rowMapper = null;
+			sql = null;
+		}
+		return null;
+	}
+
+	// Data Engine status
+	private void updateStatus(DataEngineStatus status) {
+		StringBuffer query = new StringBuffer();
+		query.append(" UPDATE DATA_ENGINE_STATUS SET Status = :Status, ");
+		query.append(" SuccessRecords = :SuccessRecords, FailedRecords = :FailedRecords,  Remarks = :Remarks ");
+		query.append(" WHERE Id = :Id");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(status);
+		this.jdbcTemplate.update(query.toString(), beanParameters);
 	}
 
 	private void saveBatchLog(long batchId, String status, String reference, String errDesc) {
@@ -1321,6 +1457,38 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setNotificationService(NotificationService notificationService) {
 		this.notificationService = notificationService;
+	}
+
+	public String getInstrumentType() {
+		return instrumentType;
+	}
+
+	public void setInstrumentType(String instrumentType) {
+		this.instrumentType = instrumentType;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public DataEngineStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(DataEngineStatus status) {
+		this.status = status;
+	}
+
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 }

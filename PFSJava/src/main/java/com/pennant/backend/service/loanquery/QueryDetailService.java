@@ -72,4 +72,6 @@ public interface QueryDetailService {
 
 	AuditHeader queryModuleUpdate(AuditHeader auditHeader);
 
+	List<QueryDetail> getQueryListByReference(String reference);
+
 }

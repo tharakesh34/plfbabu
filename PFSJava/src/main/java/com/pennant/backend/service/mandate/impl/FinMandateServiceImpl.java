@@ -52,6 +52,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.CurrencyUtil;
@@ -686,6 +687,7 @@ public class FinMandateServiceImpl implements FinMandateService {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;
 	}

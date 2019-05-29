@@ -69,6 +69,8 @@ public class RepayConstants {
 	public static final String EXAMOUNTTYPE_PAYABLE = "P";
 	public static final String EXAMOUNTTYPE_ADVINT = "ADVINT";
 	public static final String EXAMOUNTTYPE_ADVEMI = "ADVEMI";
+	public static final String EXAMOUNTTYPE_CASHCLT = "CASHCLT";
+	public static final String EXAMOUNTTYPE_DSF = "DSF";
 
 	// Excess Adjustment to in Receipts
 	public static final String EXCESSADJUSTTO_EXCESS = "E";
@@ -98,6 +100,7 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_REPLEDGE = "REPLEDGE";
 	public static final String RECEIPTMODE_ONLINE = "ONLINE";
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
+	public static final String RECEIPTMODE_MOBILE = "MOBILE";
 	// 2. Back-end Process Receipt Modes
 	public static final String RECEIPTMODE_EMIINADV = "EMIINADV";
 	public static final String RECEIPTMODE_ADVINT = "ADVINT";

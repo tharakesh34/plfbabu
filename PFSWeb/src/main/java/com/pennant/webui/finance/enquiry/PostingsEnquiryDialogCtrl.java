@@ -225,7 +225,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering");
 		fillComboBox(this.postingGroup, PennantConstants.EVENTBASE, PennantStaticListUtil.getPostingGroupList(), "");
 		StringBuilder events = new StringBuilder(
-				"'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING','JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS'");
+				"'ADDDBSF','ADDDBSN','ADDDBSP','COMPOUND','DEFFRQ','DEFRPY','DPRCIATE','EARLYPAY','EARLYSTL','LATEPAY','PIS_NORM','NORM_PIS','RATCHG','REPAY','SCDCHG','WRITEOFF','CMTDISB', 'STAGE', 'ISTBILL', 'GRACEEND','DISBINS','FEEPAY','VASFEE','MANFEE','INSTDATE','PAYMTINS', 'REAGING','JVPOST', 'D2C', 'CHQ2B', 'ASSIGN','INSADJ','INSPAY','CANINS','LPPAMZ'");
 		if (this.showAccrual.isChecked()) {
 			events.append(",'AMZ','AMZSUSP'");
 		}

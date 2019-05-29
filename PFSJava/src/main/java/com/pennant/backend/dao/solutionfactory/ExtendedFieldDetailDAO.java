@@ -102,4 +102,6 @@ public interface ExtendedFieldDetailDAO {
 	List<ExtendedFieldDetail> getExtendedFieldDetailById(long moduleId, int extendedType, String type);
 
 	List<ExtendedFieldDetail> getExtendedFieldDetailForRule();
+
+	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName, String type);
 }

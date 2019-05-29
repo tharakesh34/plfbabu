@@ -4747,6 +4747,7 @@
 		<property name="mailTemplateService" ref="mailTemplateService" />
 		<property name="freemarkerMailConfiguration" ref="freemarkerMailConfiguration" />
 		<property name="securityUserOperationsService" ref="securityUserOperationsService" />
+		<property name="financeMainService" ref="financeMainService" />
 	</bean>
 	<bean id="queryDocumentViewCtrl" class="com.pennant.webui.loanquery.querydetail.QueryDocumentViewCtrl" parent="basisCtrl"
 		scope="prototype" />
@@ -5111,6 +5112,24 @@
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="notificationService" ref="notificationService" />
 	</bean>
+	
+	<!-- Loan Closure Enquiry -->
+	<bean id="selectLoanClosureEnquiryListCtrl"
+	class="com.pennant.webui.financemanagement.receipts.SelectLoanClosureEnquiryListCtrl"
+	parent="basisCtrl" scope="prototype">
+    </bean>
+	<bean id="loanClosureEnquiryDialogCtrl"
+		class="com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeDetailService" ref="financeDetailService"/>
+		<property name="receiptCalculator" ref="receiptCalculator"/>
+		<property name="customerDetailsService" ref="customerDetailsService"/>
+		<property name="receiptService" ref="receiptService"/>
+		<property name="engineExecution" ref="engineExecution"/>
+		<property name="commitmentService" ref="commitmentService"/>
+		<property name="accrualService" ref="accrualService"/>
+		<property name="financeMainService" ref="financeMainService"/>
+	</bean>
 
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -5271,4 +5290,29 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="receiptCalculator" ref="receiptCalculator" />
 	</bean>
+	
+	<!-- PresentmentImports -->
+	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="presentmentExtractService" ref="presentmentExtractService" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
+	
+	<!-- Presentment File Download -->
+	<bean id="presentmentDetailFileDownloadListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailFileDownloadListCtrl"
+		parent="basisListCtrl" scope="prototype" />
+		
+			<!-- Lender Upload -->
+	<bean id="lenderDataImportList" class="com.pennanttech.lenderupload.LenderDataImportCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="lenderDataUploadService" ref="lenderDataUploadService" />
+		<property name="lenderDataService" ref="lenderDataService"/>
+		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO"/>
+		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO"/>
+	
+	<!-- Receipt Notification -->
+	<bean id="receiptNotificationCtrl" class="com.pennanttech.receiptnotification.ReceiptNotificationCtrl" 
+		parent="basisCtrl" scope="prototype"/>
 </beans>

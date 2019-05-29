@@ -4206,7 +4206,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	}
 
 	public Long getAssignmentId() {
-		return assignmentId;
+		return assignmentId == null ? 0 : assignmentId;
 	}
 
 	public void setAssignmentId(Long assignmentId) {

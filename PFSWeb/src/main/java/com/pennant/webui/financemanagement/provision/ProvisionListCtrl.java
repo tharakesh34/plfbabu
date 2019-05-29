@@ -926,39 +926,41 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 			this.searchObj.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(),
 					getUserWorkspace().isAllowed("button_ProvisionList_NewProvision"));
 			this.searchObj.addTabelName("FinProvisions_View");
-		}
-		String rolecodeList = "";
-		buildedWhereCondition = "";
-		if (getUserWorkspace().getUserRoles() != null && !getUserWorkspace().getUserRoles().isEmpty()) {
-			for (String role : getUserWorkspace().getUserRoles()) {
-				rolecodeList = rolecodeList.concat(role).concat("','");
+
+			String rolecodeList = "";
+			buildedWhereCondition = "";
+			if (getUserWorkspace().getUserRoles() != null && !getUserWorkspace().getUserRoles().isEmpty()) {
+				for (String role : getUserWorkspace().getUserRoles()) {
+					rolecodeList = rolecodeList.concat(role).concat("','");
+				}
+
+				if (StringUtils.isNotEmpty(rolecodeList)) {
+					rolecodeList = rolecodeList.substring(0, rolecodeList.length() - 2);
+					rolecodeList = "'".concat(rolecodeList);
+				}
 			}
 
-			if (StringUtils.isNotEmpty(rolecodeList)) {
-				rolecodeList = rolecodeList.substring(0, rolecodeList.length() - 2);
-				rolecodeList = "'".concat(rolecodeList);
+			if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
+				buildedWhereCondition = " (NextRoleCode IS NULL ";
+			} else {
+				buildedWhereCondition = " (NextRoleCode = '' ";
 			}
-		}
 
-		if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
-			buildedWhereCondition = " (NextRoleCode IS NULL ";
-		} else {
-			buildedWhereCondition = " (NextRoleCode = '' ";
-		}
-		buildedWhereCondition = buildedWhereCondition
-				.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
-		buildedWhereCondition = buildedWhereCondition
-				.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
-		buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-		buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
-		buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
-		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
-		buildedWhereCondition = buildedWhereCondition.concat("))) OR NextRoleCode IN(");
-		buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
-		buildedWhereCondition = buildedWhereCondition.concat(") ");
+			buildedWhereCondition = buildedWhereCondition
+					.concat(" AND FinType IN(SELECT FinType FROM LMTFInanceworkflowdef WD JOIN WorkFlowDetails WF ");
+			buildedWhereCondition = buildedWhereCondition
+					.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
+			buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
+			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
+			buildedWhereCondition = buildedWhereCondition.concat("' AND WF.FirstTaskOwner IN(");
+			buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
+			buildedWhereCondition = buildedWhereCondition.concat("))) OR NextRoleCode IN(");
+			buildedWhereCondition = buildedWhereCondition.concat(rolecodeList);
+			buildedWhereCondition = buildedWhereCondition.concat(") ");
 
-		if (StringUtils.isNotEmpty(buildedWhereCondition)) {
-			this.searchObj.addWhereClause(buildedWhereCondition);
+			if (StringUtils.isNotEmpty(buildedWhereCondition)) {
+				this.searchObj.addWhereClause(buildedWhereCondition);
+			}
 		}
 		//Finance Reference 
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {

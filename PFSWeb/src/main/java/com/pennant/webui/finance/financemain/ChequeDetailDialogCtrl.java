@@ -1217,7 +1217,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		if (aChequeHeader.getChequeDetailList() == null || aChequeHeader.getChequeDetailList().isEmpty()) {
 			aChequeHeader = null;
 		} else {
-
 			for (ChequeDetail chequeDetail : aChequeHeader.getChequeDetailList()) {
 				chequeDetail.setVersion(aChequeHeader.getVersion() + 1);
 				chequeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
@@ -1284,12 +1283,23 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			}
 
 			// validate existing data
-			validateChequeDetails(chequeDetails, false);
+			ArrayList<WrongValueException> wve = validateChequeDetails(chequeDetails, false);
 
-			this.totNoOfCheques.setValue(prvsNoOfCheques + numberofCheques);
-			this.totAmount.setValue(totalChequeAmt);
+			doRemoveValidation();
 
-			doFillChequeDetails(this.listBoxChequeDetail, chequeDetails);
+			if (wve.isEmpty()) {
+				this.totNoOfCheques.setValue(prvsNoOfCheques + numberofCheques);
+				this.totAmount.setValue(totalChequeAmt);
+
+				doFillChequeDetails(this.listBoxChequeDetail, chequeDetails);
+			} else {
+				if (parenttab != null) {
+					parenttab.setSelected(true);
+				}
+
+				MessageUtil.showError(Labels.getLabel("ChequeDetailDialog_ChkSerial_Exists"));
+			}
+
 			logger.debug(Literal.LEAVING);
 		}
 	}
@@ -1319,7 +1329,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				listcell.setParent(listitem);
 
 				// ChequeSerialNo
-				listcell = new Listcell(String.format("%06d", detail.getChequeSerialNo()));
+				listcell = new Listcell(String.valueOf(detail.getChequeSerialNo()));
 				listcell.setParent(listitem);
 
 				// AccountType
@@ -1467,19 +1477,26 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
+		List<Listcell> list;
+		Listcell chequeType;
+		Listcell checkSerialNum;
+		Listcell ifsc;
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
+			list = listitem.getChildren();
+			chequeType = list.get(0);
 
-			List<Listcell> list = listitem.getChildren();
-			Listcell chequeType = list.get(0);
 			if (!validate) {
 				for (ChequeDetail chequeDetail : chequeDetails) {
+					checkSerialNum = list.get(1);
+					ifsc = list.get(5);
 
-					Listcell checkSerialNum = list.get(1);
-					// validate cheque serial number
+					// Validate duplicate cheque details. IFSC Code + Serial Number
 					if (!StringUtils.equals(chequeDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
-						if (StringUtils.equals(checkSerialNum.getLabel().toString(),
-								String.format("%06d", chequeDetail.getChequeSerialNo()))) {
+						if (StringUtils.equals(checkSerialNum.getLabel(),
+								String.valueOf(chequeDetail.getChequeSerialNo()))
+								&& StringUtils.equals(((ExtendedCombobox) ifsc.getChildren().get(0)).getValue(),
+										chequeDetail.getIfsc())) {
 							if (fromLoan) {
 								parenttab.setSelected(true);
 							}
@@ -1674,14 +1691,20 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		ChequeDetail chequeDetail = null;
 		boolean newRecord = false;
 		List<ChequeDetail> oldList = chequeHeader.getChequeDetailList();
-		for (Listitem listitem : listbox.getItems()) {
+		List<Listcell> list;
+		Listcell chequeType;
+		Listcell chequeSerialNo;
+		Listcell ifsc;
 
-			List<Listcell> list = listitem.getChildren();
-			Listcell chequeType = list.get(0);
-			Listcell chequeSerialNo = list.get(1);
+		for (Listitem listitem : listbox.getItems()) {
+			list = listitem.getChildren();
+			chequeType = list.get(0);
+			chequeSerialNo = list.get(1);
+			ifsc = list.get(5);
 
 			//Cheque number
-			chequeDetail = getObject(Integer.valueOf(chequeSerialNo.getLabel()), oldList);
+			chequeDetail = getObject(((ExtendedCombobox) ifsc.getChildren().get(0)).getValue(),
+					Integer.valueOf(chequeSerialNo.getLabel()), oldList);
 			if (chequeDetail == null) {
 				newRecord = true;
 				chequeDetail = new ChequeDetail();
@@ -1752,6 +1775,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				BankBranch branch = (BankBranch) bankBranch;
 				chequeDetail.setBankBranchID(branch.getBankBranchID());
 				chequeDetail.setBranchCode(branch.getBranchCode());
+				chequeDetail.setIfsc(bankbrach.getValue());
 			}
 
 			//Cheque Amount
@@ -1784,10 +1808,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		return wve;
 	}
 
-	private ChequeDetail getObject(int serialNo, List<ChequeDetail> chequeDetailList) {
+	private ChequeDetail getObject(String ifsc, int serialNo, List<ChequeDetail> chequeDetailList) {
 		if (chequeDetailList != null && chequeDetailList.size() > 0) {
 			for (ChequeDetail chequeDetail : chequeDetailList) {
-				if (chequeDetail.getChequeSerialNo() == serialNo) {
+				if (chequeDetail.getChequeSerialNo() == serialNo && StringUtils.equals(chequeDetail.getIfsc(), ifsc)) {
 					return chequeDetail;
 				}
 			}

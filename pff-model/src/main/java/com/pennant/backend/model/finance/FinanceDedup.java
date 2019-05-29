@@ -44,6 +44,15 @@ public class FinanceDedup implements Serializable {
 	private String custCRCPR;
 	private String overrideUser;
 	private String rules;
+	private String fatherName;
+	private String motherName;
+	private String aadharNumber;
+	private String panNumber;
+	private String voterID;
+	private String rationCard;
+	private String lpgNumber;
+	private String drivingLicenceNo;
+
 	//Audit Purpose Fields
 	private long lastMntBy;
 	private String roleCode;
@@ -87,6 +96,14 @@ public class FinanceDedup implements Serializable {
 		excludeFields.add("newRecord");
 		excludeFields.add("override");
 		excludeFields.add("overridenMap");
+		excludeFields.add("fatherName");
+		excludeFields.add("motherName");
+		excludeFields.add("aadharNumber");
+		excludeFields.add("panNumber");
+		excludeFields.add("voterID");
+		excludeFields.add("rationCard");
+		excludeFields.add("lpgNumber");
+		excludeFields.add("drivingLicenceNo");
 		return excludeFields;
 	}
 
@@ -451,6 +468,70 @@ public class FinanceDedup implements Serializable {
 
 	public void setFinLimitRef(String finLimitRef) {
 		this.finLimitRef = finLimitRef;
+	}
+
+	public String getAadharNumber() {
+		return aadharNumber;
+	}
+
+	public void setAadharNumber(String aadharNumber) {
+		this.aadharNumber = aadharNumber;
+	}
+
+	public String getPanNumber() {
+		return panNumber;
+	}
+
+	public void setPanNumber(String panNumber) {
+		this.panNumber = panNumber;
+	}
+
+	public String getVoterID() {
+		return voterID;
+	}
+
+	public void setVoterID(String voterID) {
+		this.voterID = voterID;
+	}
+
+	public String getRationCard() {
+		return rationCard;
+	}
+
+	public void setRationCard(String rationCard) {
+		this.rationCard = rationCard;
+	}
+
+	public String getLpgNumber() {
+		return lpgNumber;
+	}
+
+	public void setLpgNumber(String lpgNumber) {
+		this.lpgNumber = lpgNumber;
+	}
+
+	public String getDrivingLicenceNo() {
+		return drivingLicenceNo;
+	}
+
+	public void setDrivingLicenceNo(String drivingLicenceNo) {
+		this.drivingLicenceNo = drivingLicenceNo;
+	}
+
+	public String getMotherName() {
+		return motherName;
+	}
+
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
+	}
+
+	public String getFatherName() {
+		return fatherName;
+	}
+
+	public void setFatherName(String fatherName) {
+		this.fatherName = fatherName;
 	}
 
 }

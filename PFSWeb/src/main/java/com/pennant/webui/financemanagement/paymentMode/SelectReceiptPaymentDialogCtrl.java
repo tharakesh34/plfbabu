@@ -493,7 +493,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData = receiptService.calcuateDues(receiptData);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
-				.add(rch.getTotalRcvAdvises().getTotalDue()).subtract(receiptData.getExcessAvailable());
+				.add(rch.getTotalRcvAdvises().getTotalDue()).add( rch.getTotalFees().getTotalDue()).subtract(receiptData.getExcessAvailable());
 
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
 		this.receiptDues.setDisabled(true);

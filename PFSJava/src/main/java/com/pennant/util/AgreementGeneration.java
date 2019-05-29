@@ -165,6 +165,13 @@ import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
+import com.pennant.backend.model.legal.LegalApplicantDetail;
+import com.pennant.backend.model.legal.LegalDetail;
+import com.pennant.backend.model.legal.LegalDocument;
+import com.pennant.backend.model.legal.LegalECDetail;
+import com.pennant.backend.model.legal.LegalNote;
+import com.pennant.backend.model.legal.LegalPropertyDetail;
+import com.pennant.backend.model.legal.LegalPropertyTitle;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
@@ -638,7 +645,208 @@ public class AgreementGeneration implements Serializable {
 				}
 			}
 
-			//Contact Details
+			// -------------------- Legal Details
+			if (aggModuleDetails.contains(PennantConstants.AGG_VERIFIC)) {
+				if (CollectionUtils.isNotEmpty(detail.getLegalDetailsList())) {
+					List<LegalDetail> legalDetails = detail.getLegalDetailsList();
+					for (LegalDetail legalDetail : legalDetails) {
+						if (CollectionUtils.isEmpty(agreement.getLegalDetails())) {
+							agreement.setLegalDetails(new ArrayList<>());
+						}
+						// General Data
+						if ((legalDetail) != null) {
+							com.pennant.backend.model.finance.AgreementDetail.LegalDetail legalGeneralData = agreement.new LegalDetail();
+							legalGeneralData.setLegalDate(DateUtility.formatToLongDate(legalDetail.getLegalDate()));
+							agreement.getLegalDetails().add(legalGeneralData);
+						}
+						// Legal Applicant Detail
+						if (CollectionUtils.isEmpty(agreement.getApplicantDetails())) {
+							agreement.setApplicantDetails(new ArrayList<>());
+						}
+						List<LegalApplicantDetail> applicantDetails = legalDetail.getApplicantDetailList();
+						if (applicantDetails != null) {
+							for (LegalApplicantDetail legalApplicantDetail : applicantDetails) {
+								if (null != legalApplicantDetail) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalApplicantDetail applicantDetail = agreement.new LegalApplicantDetail();
+									applicantDetail.setTitle(legalApplicantDetail.getTitle());
+									applicantDetail.setPropertyOwnersName(legalApplicantDetail.getPropertyOwnersName());
+									applicantDetail.setAge(String.valueOf(legalApplicantDetail.getAge()));
+									applicantDetail.setRelationshipType(legalApplicantDetail.getRelationshipType());
+									applicantDetail.setIdType(legalApplicantDetail.getIDType());
+									applicantDetail.setIdNo(legalApplicantDetail.getIDNo());
+
+									agreement.getApplicantDetails().add(applicantDetail);
+								}
+							}
+						}
+						// Legal Property Detail
+						if (CollectionUtils.isEmpty(agreement.getLegalPropertyDetails())) {
+							agreement.setLegalPropertyDetails(new ArrayList<>());
+						}
+						List<LegalPropertyDetail> legalPropertyDetails = legalDetail.getPropertyDetailList();
+						if (legalPropertyDetails != null) {
+							for (LegalPropertyDetail legalPropertyDetail : legalPropertyDetails) {
+								if (null != legalPropertyDetail) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalPropertyDetail propertyDetail = agreement.new LegalPropertyDetail();
+									propertyDetail.setScheduleType(legalPropertyDetail.getScheduleType());
+									propertyDetail.setPropertyType(
+											PennantStaticListUtil.getlabelDesc(legalPropertyDetail.getPropertyType(),
+													PennantStaticListUtil.getLegalPropertyTypes()));
+									propertyDetail.setPropertySchedule(legalPropertyDetail.getPropertySchedule());
+									propertyDetail.setNorthBy(legalPropertyDetail.getNorthBy());
+									propertyDetail.setSouthBy(legalPropertyDetail.getSouthBy());
+									propertyDetail.setEastBy(legalPropertyDetail.getEastBy());
+									propertyDetail.setWestBy(legalPropertyDetail.getWestBy());
+									propertyDetail.setMeasurement(PennantApplicationUtil
+											.amountFormate(legalPropertyDetail.getMeasurement(), formatter));
+									propertyDetail.setRegistrationOffice(legalPropertyDetail.getRegistrationOffice());
+									propertyDetail
+											.setRegistrationDistrict(legalPropertyDetail.getRegistrationDistrict());
+									propertyDetail.setPropertyOwner(legalPropertyDetail.getPropertyOwner());
+									propertyDetail.setNorthSideEastByWest(legalPropertyDetail.getNorthSideEastByWest());
+									propertyDetail.setSouthSideWestByEast(legalPropertyDetail.getSouthSideWestByEast());
+									propertyDetail
+											.setEastSideNorthBySouth(legalPropertyDetail.getEastSideNorthBySouth());
+									propertyDetail
+											.setWestSideSouthByNorth(legalPropertyDetail.getWestSideSouthByNorth());
+									propertyDetail.setUrbanLandCeiling(legalPropertyDetail.getUrbanLandCeiling());
+									propertyDetail.setMinorshareInvolved(legalPropertyDetail.getMinorshareInvolved());
+									propertyDetail
+											.setPropertyIsGramanatham(legalPropertyDetail.getPropertyIsGramanatham());
+									propertyDetail.setPropertyReleased(legalPropertyDetail.getPropertyReleased());
+									propertyDetail
+											.setPropOriginalsAvailable(legalPropertyDetail.getPropOriginalsAvailable());
+									propertyDetail
+											.setPropertyIsAgricultural(legalPropertyDetail.getPropertyIsAgricultural());
+									propertyDetail.setNocObtainedFromLPA(legalPropertyDetail.getNocObtainedFromLPA());
+									propertyDetail.setAnyMortgagePending(legalPropertyDetail.getAnyMortgagePending());
+									propertyDetail.setSchedulelevelArea(legalDetail.getSchedulelevelArea());
+
+									agreement.getLegalPropertyDetails().add(propertyDetail);
+								}
+							}
+						}
+						// Legal Document Details
+						if (CollectionUtils.isEmpty(agreement.getLegalDocuments())) {
+							agreement.setLegalDocuments(new ArrayList<>());
+						}
+						List<LegalDocument> legalDocuments = legalDetail.getDocumentList();
+						if (legalDocuments != null) {
+							for (LegalDocument document : legalDocuments) {
+								if (null != document) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalDocument legalDocument = agreement.new LegalDocument();
+									legalDocument
+											.setDocumentDate(DateUtility.formatToLongDate(document.getDocumentDate()));
+									legalDocument.setDocumentNo(document.getDocumentNo());
+									legalDocument.setDocumentDetail(document.getDocumentDetail());
+									legalDocument.setDocumentName(document.getDocumentName());
+									legalDocument.setSurveyNo(document.getSurveyNo());
+									legalDocument.setDocumentType(PennantStaticListUtil.getlabelDesc(
+											document.getDocumentType(), PennantStaticListUtil.getDocumentTypes()));
+									if (PennantConstants.List_Select.equals(document.getDocumentCategory())) {
+										legalDocument.setDocumentCategory("");
+									} else {
+										legalDocument.setDocumentCategory(document.getDocumentCategory());
+									}
+									legalDocument.setScheduleType(document.getScheduleType());
+									legalDocument.setDocumentTypeVerify(
+											PennantStaticListUtil.getlabelDesc(document.getDocumentTypeVerify(),
+													PennantStaticListUtil.getDocumentTypes()));
+									legalDocument.setUploadDocumentType(document.getUploadDocumentType());
+									legalDocument.setDocumentRemarks(document.getDocumentRemarks());
+									legalDocument.setDocumentTypeApprove(
+											PennantStaticListUtil.getlabelDesc(document.getDocumentTypeApprove(),
+													PennantStaticListUtil.getDocumentTypes()));
+									legalDocument.setDocumentAccepted(
+											PennantStaticListUtil.getlabelDesc(document.getDocumentAccepted(),
+													PennantStaticListUtil.getDocumentAcceptedList()));
+									if (applicantDetails != null) {
+										for (LegalApplicantDetail legalApplicantDetail : applicantDetails) {
+											legalDocument.setDocumentHolderPropertyName(
+													legalApplicantDetail.getPropertyOwnersName());
+										}
+									}
+									legalDocument.setDocumentPropertyAddress(document.getDocumentPropertyAddress());
+									legalDocument.setDocumentBriefTracking(document.getDocumentBriefTracking());
+									if (document.isDocumentMortgage() == true) {
+										legalDocument.setDocumentMortgage("Yes");
+									} else {
+										legalDocument.setDocumentMortgage("No");
+									}
+									agreement.getLegalDocuments().add(legalDocument);
+								}
+							}
+						}
+						// Legal Title Details
+						if (CollectionUtils.isEmpty(agreement.getLegalPropertyTitles())) {
+							agreement.setLegalPropertyTitles(new ArrayList<>());
+						}
+						List<LegalPropertyTitle> legalPropertyTitles = legalDetail.getPropertyTitleList();
+						if (legalPropertyTitles != null) {
+							for (LegalPropertyTitle title : legalPropertyTitles) {
+								if (null != title) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalPropertyTitle propertyTitle = agreement.new LegalPropertyTitle();
+									propertyTitle.setTitle(title.getTitle());
+									propertyTitle.setPropertyDetailModt(legalDetail.getPropertyDetailModt());
+
+									agreement.getLegalPropertyTitles().add(propertyTitle);
+								}
+							}
+						}
+						// Legal Encumbrance Certificate Details
+						if (CollectionUtils.isEmpty(agreement.getLegalECDetails())) {
+							agreement.setLegalECDetails(new ArrayList<>());
+						}
+						List<LegalECDetail> ecDetails = legalDetail.getEcdDetailsList();
+						if (ecDetails != null) {
+							for (LegalECDetail ecDetail : ecDetails) {
+								if (null != ecDetail) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalECDetail legalECDetail = agreement.new LegalECDetail();
+									legalECDetail.setEcDate(DateUtility.formatToLongDate(ecDetail.getEcDate()));
+									legalECDetail.setDocument(ecDetail.getDocument());
+									legalECDetail.setEcNumber(ecDetail.getEcNumber());
+									legalECDetail.setEcFrom(DateUtility.formatToLongDate(ecDetail.getEcFrom()));
+									legalECDetail.setEcTo(DateUtility.formatToLongDate(ecDetail.getEcTo()));
+									legalECDetail.setEcType(PennantStaticListUtil.getlabelDesc(ecDetail.getEcType(),
+											PennantStaticListUtil.getDocumentTypes()));
+									legalECDetail.setPropertyDetailECDate(
+											DateUtility.formatToLongDate(legalDetail.getPropertyDetailECDate()));
+									legalECDetail.setEcPropertyOwnerName(legalDetail.getEcPropertyOwnerName());
+
+									agreement.getLegalECDetails().add(legalECDetail);
+								}
+							}
+						}
+						// Legal Note Details
+						if (CollectionUtils.isEmpty(agreement.getLegalNotes())) {
+							agreement.setLegalNotes(new ArrayList<>());
+						}
+						List<LegalNote> legalNotes = legalDetail.getLegalNotesList();
+						if (legalNotes != null) {
+							for (LegalNote note : legalNotes) {
+								if (null != note) {
+									com.pennant.backend.model.finance.AgreementDetail.LegalNote legalNote = agreement.new LegalNote();
+									legalNote.setCode(note.getCode());
+									legalNote.setDescription(note.getDescription());
+
+									agreement.getLegalNotes().add(legalNote);
+								}
+							}
+						}
+						// Legal Decision Details
+						if (null != legalDetail) {
+							com.pennant.backend.model.finance.AgreementDetail.LegalDetail legalDecision = agreement.new LegalDetail();
+							legalDecision.setLegalDecision(PennantStaticListUtil.getlabelDesc(
+									legalDetail.getLegalDecision(), PennantStaticListUtil.getDecisionList()));
+							legalDecision.setLegalRemarks(legalDetail.getLegalRemarks());
+
+							agreement.getLegalDetails().add(legalDecision);
+						}
+					}
+				}
+			}
+
+			// Contact Details
 			if (CollectionUtils.isEmpty(agreement.getContactDetails())) {
 				agreement.setContactDetails(new ArrayList<>());
 			}

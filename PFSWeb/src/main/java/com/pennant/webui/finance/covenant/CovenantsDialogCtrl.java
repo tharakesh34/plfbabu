@@ -1033,6 +1033,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
+		loanStartDt = financedetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		Date appDate = DateUtility.getAppDate();
 		Date receivableDate = this.receivableDate.getValue();
 		String frequency = this.covenantFrequency.getSelectedItem().getValue();

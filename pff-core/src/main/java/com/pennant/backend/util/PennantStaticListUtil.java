@@ -27,9 +27,9 @@ import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.pennanttech.pff.staticlist.ExtFieldStaticList;
 
@@ -3400,6 +3400,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ReceiptMode_ExcessAmountOnly")));
 			receiptModes.add(
 					new ValueLabel(RepayConstants.RECEIPTMODE_ESCROW, Labels.getLabel("label_ReceiptMode_ESCROW")));
+			receiptModes.add(
+					new ValueLabel(RepayConstants.RECEIPTMODE_MOBILE, Labels.getLabel("label_ReceiptMode_MOBILE")));
 			/*
 			 * receiptModes.add( new ValueLabel(RepayConstants.RECEIPTMODE_NACH,
 			 * Labels.getLabel("label_ReceiptMode_NACH")));
@@ -3684,11 +3686,21 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getAccountMapping() {
 
 		if (accountMapping == null) {
-			accountMapping = new ArrayList<ValueLabel>(2);
+			accountMapping = new ArrayList<ValueLabel>(3);
+			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
 			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
 			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
 		return accountMapping;
+	}
+
+	public static List<ValueLabel> getMandateStatusTypeList() {
+		if (statusTypeList == null) {
+			statusTypeList = new ArrayList<ValueLabel>(7);
+			statusTypeList
+					.add(new ValueLabel(MandateConstants.STATUS_AWAITCON, Labels.getLabel("label_Mandate_AWAITCON")));
+		}
+		return statusTypeList;
 	}
 
 	public static ArrayList<ValueLabel> getUploadLevelsList() {
@@ -3702,6 +3714,26 @@ public class PennantStaticListUtil {
 		}
 
 		return uploadLevels;
+	}
+
+	public static ArrayList<ValueLabel> getMonthList() {
+
+		if (monthMapping == null) {
+			monthMapping = new ArrayList<ValueLabel>(12);
+			monthMapping.add(new ValueLabel("1", Labels.getLabel("label_DataExtraction_Jan")));
+			monthMapping.add(new ValueLabel("2", Labels.getLabel("label_DataExtraction_Feb")));
+			monthMapping.add(new ValueLabel("3", Labels.getLabel("label_DataExtraction_Mar")));
+			monthMapping.add(new ValueLabel("4", Labels.getLabel("label_DataExtraction_Apr")));
+			monthMapping.add(new ValueLabel("5", Labels.getLabel("label_DataExtraction_May")));
+			monthMapping.add(new ValueLabel("6", Labels.getLabel("label_DataExtraction_Jun")));
+			monthMapping.add(new ValueLabel("7", Labels.getLabel("label_DataExtraction_Jly")));
+			monthMapping.add(new ValueLabel("8", Labels.getLabel("label_DataExtraction_Aug")));
+			monthMapping.add(new ValueLabel("9", Labels.getLabel("label_DataExtraction_Sep")));
+			monthMapping.add(new ValueLabel("10", Labels.getLabel("label_DataExtraction_Oct")));
+			monthMapping.add(new ValueLabel("11", Labels.getLabel("label_DataExtraction_Nov")));
+			monthMapping.add(new ValueLabel("12", Labels.getLabel("label_DataExtraction_Dec")));
+		}
+		return monthMapping;
 	}
 
 	public static ArrayList<ValueLabel> getMandateMapping() {

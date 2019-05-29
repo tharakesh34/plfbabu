@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -405,6 +404,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			Collections.sort(dbList, new EntryComparator());
 			long linkedTranId = Long.MIN_VALUE;
 			try {
+
+				if (jVPosting.getBatchReference() <= 0) {
+					jVPosting.setBatchReference(jVPostingDAO.createBatchReference());
+				}
+
 				List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
 
 				getAccountProcessUtil().procAccountUpdate(list);
@@ -452,12 +456,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				// Regular Approving Process moving total Batch into main table
 				// and remove from Temp Table.
 				approveRecords(auditHeader, jVPosting);
-				//### 29-06-2018 Start - PSD Ticket ID 127014
+				// ### 29-06-2018 Start - PSD Ticket ID 127014
 			} else {
 				auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 						"Invalid accounting configuration, please contact administrator", null));
 			}
-			//### 29-06-2018 END - PSD Ticket ID 127014
+			// ### 29-06-2018 END - PSD Ticket ID 127014
 		}
 		// Logic for posting threads creation
 		return auditHeader;
@@ -717,7 +721,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
 		JVPosting jvPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
@@ -730,6 +736,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		if (jvPosting.getJVPostingEntrysList() != null && jvPosting.getJVPostingEntrysList().size() > 0) {
 			auditDetailMap.put("JVPostingEntry", setJVPostingEntryAuditData(jvPosting, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("JVPostingEntry"));
 		}
 
 		jvPosting.setAuditDetailMap(auditDetailMap);
@@ -1112,9 +1119,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			return errorsList;
 		}
 
+		BigDecimal txnAmount = null;
+		String txnCode = null;
+		String account = null;
 		for (JVPostingEntry postingEntry : postingEntries) {
+			txnAmount = postingEntry.getTxnAmount();
+			txnCode = postingEntry.getTxnCode();
+			account = postingEntry.getAccount();
 
-			if (null == postingEntry.getTxnAmount()) {
+			if (null == txnAmount) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
 
@@ -1123,7 +1136,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 
-			if (postingEntry.getTxnAmount().compareTo(BigDecimal.ZERO) == 0) {
+			if (txnAmount.compareTo(BigDecimal.ZERO) == 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionAmount";
 
@@ -1132,7 +1145,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 
-			if (StringUtils.isBlank(postingEntry.getTxnCode())) {
+			if (StringUtils.isBlank(txnCode)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "transactionCode";
 
@@ -1153,7 +1166,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 
-			if (StringUtils.isBlank(postingEntry.getAccount())) {
+			if (StringUtils.isBlank(account)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "account";
 
@@ -1174,40 +1187,40 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		}
 
-		BigDecimal totalDebits = BigDecimal.ZERO;
-		BigDecimal totalCredits = BigDecimal.ZERO;
-		Map<String, BigDecimal> amount = sumDebitCreditPostAmount(totalDebits, totalCredits, postingEntries);
-		totalDebits = amount.get("debitTotal");
-		totalCredits = amount.get("creditTotal");
+		if (postingEntries.size() % 2 == 0) {
+			BigDecimal totalDebits = BigDecimal.ZERO;
+			BigDecimal totalCredits = BigDecimal.ZERO;
+			for (JVPostingEntry postingEntry : postingEntries) {
+				TransactionCode transactionCode = transactionCodeService
+						.getApprovedTransactionCodeById(postingEntry.getTxnCode());
+				switch (transactionCode.getTranType()) {
+				case "D":
+					totalDebits = totalDebits.add(postingEntry.getTxnAmount());
+					break;
+				case "C":
+					totalCredits = totalCredits.add(postingEntry.getTxnAmount());
+					break;
+				}
+			}
 
-		if (totalDebits.compareTo(totalCredits) != 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "TransactionAmount " + totalCredits.toString();
-			valueParm[1] = totalDebits.toString();
-			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+			if (!(totalDebits.compareTo(totalCredits) == 0)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "TransactionAmount " + totalCredits.toString();
+				valueParm[1] = totalDebits.toString();
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+
+				return errorsList;
+			}
+		} else {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Credit and Debit PostingEntry";
+
+			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 
 			return errorsList;
 		}
 
 		return errorsList;
-	}
-
-	private Map<String, BigDecimal> sumDebitCreditPostAmount(BigDecimal totalDebits, BigDecimal totalCredits,
-			final List<JVPostingEntry> postingEntries) {
-		Map<String, BigDecimal> amount = new HashMap<>();
-		for (JVPostingEntry postingEntry : postingEntries) {
-			TransactionCode transactionCode = transactionCodeService
-					.getApprovedTransactionCodeById(postingEntry.getTxnCode());
-			if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D")) {
-				totalDebits = totalDebits.add(postingEntry.getTxnAmount());
-			} else if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C")) {
-				totalCredits = totalCredits.add(postingEntry.getTxnAmount());
-			}
-		}
-		amount.put("debitTotal", totalDebits);
-		amount.put("creditTotal", totalCredits);
-
-		return amount;
 	}
 
 	/**

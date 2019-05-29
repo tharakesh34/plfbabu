@@ -411,7 +411,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				adviseAmount = advPayment.subtract(previousAdvInt);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
-				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+				//createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			}
 		} else if (previousAdvEmi.compareTo(BigDecimal.ZERO) > 0) {
 			feeTypeId = map.get(AdvanceRuleCode.ADVEMI.name());
@@ -426,7 +426,7 @@ public class AdvancePaymentService extends ServiceHelper {
 				adviseAmount = previousAdvInt.subtract(advPayment);
 				advancePayment.setRequestedAmt(adviseAmount);
 				excessAmountMovement(advancePayment, null, AccountConstants.TRANTYPE_CREDIT);
-				createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
+				//createReceivableAdvise(finReference, valueDate, feeTypeId, adviseAmount, lastMntBy);
 			}
 		}
 	}

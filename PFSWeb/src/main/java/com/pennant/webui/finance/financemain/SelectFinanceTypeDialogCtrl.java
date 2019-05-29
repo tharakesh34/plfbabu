@@ -107,7 +107,6 @@ import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
-import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceEligibility;
@@ -168,7 +167,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Row wIfReferenceRow;
 	protected Row row_selectCustomer;
 	protected Row row_EIDNumber;
-	protected Row row_MobileNumber;
+	protected Row								row_MobileNumber;
 	protected Row finTypeRow;
 	protected Row row_custCtgType;
 	protected Row preApprovedFinRefrow;
@@ -176,7 +175,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Uppercasebox eidNumber;
 	protected Space space_EIDNumber;
 	protected Label label_SelectFinanceTypeDialog_EIDNumber;
-	protected Label label_SelectFinanceTypeDialog_MobileNo;
+	protected Label								label_SelectFinanceTypeDialog_MobileNo;
 
 	protected FinanceMainListCtrl financeMainListCtrl; //over handed parameter
 	protected transient FinanceWorkFlow financeWorkFlow;
@@ -201,26 +200,25 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private CustomerDedupCheckService customerDedupService;
 	@Autowired(required = false)
 	private CustomerInterfaceService customerExternalInterfaceService;
-	private CustomerDedupService custDedupService;
-	@Autowired
-	private VASConfigurationService vASConfigurationService;
+	
+	private CustomerDedupService				custDedupService;
+	
 	private String menuItemRightName = null;
 	private FinanceEligibility financeEligibility = null;
 	private boolean isPromotionPick = false;
 	private boolean isRetailCustomer = false;
-	private boolean isNewCustomer = true;
+	private boolean								isNewCustomer		= true;
 	public String wIfFinaceRef_Temp = "";
 	private String isPANMandatory = "";
-
-	protected Space space_mobileNo;
-	protected Textbox mobileNo;
+	
+	protected Space 							space_mobileNo;
+	protected Textbox 							mobileNo;
 
 	// Properties related to primary identity.
 	private String primaryIdLabel;
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
 	boolean proceedFurther = false;
-	protected Label label_custName;
 
 	/**
 	 * default constructor.<br>
@@ -368,7 +366,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		} else {
 			this.eidNumber.setMaxlength(LengthConstants.LEN_PAN);
 		}
-
+		
 		this.mobileNo.setMaxlength(LengthConstants.LEN_MOBILE);
 
 		logger.debug("Leaving");
@@ -830,13 +828,12 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		processCustomer(false, isNewCustomer);
+		processCustomer(false,isNewCustomer);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer)
-			throws InterruptedException, FactoryConfigurationError {
+	protected boolean processCustomer(boolean isRetail,boolean isNewCustomer) throws InterruptedException, FactoryConfigurationError {
 		FinanceDetail financeDetail = null;
 
 		//Customer Data Fetching
@@ -856,7 +853,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				List<CustomerPhoneNumber> customerPhoneNumList = new ArrayList<>();
 				customerPhoneNumList.add(customerPhoneNumber);
 				customerDetails.setCustomerPhoneNumList(customerPhoneNumList);
-
+				
 			}
 		}
 
@@ -1033,8 +1030,6 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecording.setAccrualTillDate(DateUtility.getAppDate());
 					vasRecording.setFee(finTypeVASProducts.getVasFee());
 					vasRecording.setRecordType(PennantConstants.RCD_ADD);
-					vasRecording.setVasConfiguration(getvASConfigurationService()
-							.getApprovedVASConfigurationByCode(finTypeVASProducts.getVasProduct(), true));
 					vasRecordingList.add(vasRecording);
 				}
 			}
@@ -1076,23 +1071,22 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 		}
-
-		if (this.newCust.isChecked() && isNewCustomer) {
+		
+		if (this.newCust.isChecked() && isNewCustomer){
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
-			List<CustomerDedup> customerDedupList = FetchCustomerDedupDetails.fetchCustomerDedupDetails(getRole(),
-					customerDedup, curLoginUser);
+			List<CustomerDedup> customerDedupList = FetchCustomerDedupDetails.fetchCustomerDedupDetails(getRole(),customerDedup, curLoginUser);
 			customerDetails.setCustomerDedupList(customerDedupList);
 			financeDetail.setCustomerDedupList(customerDedupList);
 		}
-
+		
 		//  tasks #1152 Business Vertical Tagged with Loan
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
 		financeMain.setBusinessVertical(user.getBusinessVertical());
 		financeMain.setBusinessVerticalCode(user.getBusinessVerticalCode());
 		financeMain.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
-
+		
 		showDetailView(financeDetail);
 		return true;
 	}
@@ -1166,9 +1160,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			map.put("financeDetail", financeDetail);
 			map.put("financeMainListCtrl", this.financeMainListCtrl);
 			map.put("menuItemRightName", menuItemRightName);
-
+			
 			//Customer dedup 
-			if (financeDetail.getCustomerDedupList() != null && !financeDetail.getCustomerDedupList().isEmpty()) {
+			if(financeDetail.getCustomerDedupList() != null && !financeDetail.getCustomerDedupList().isEmpty()){
 				map.put("isFromLoan", true);
 				map.put("isInternalDedupLoan", true);
 				map.put("customerDetails", financeDetail.getCustomerDetails());
@@ -1183,13 +1177,11 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			} else {
 				String productType = StringUtils.trimToEmpty(this.productCategory);
 				if (StringUtils.equals(productType, FinanceConstants.PRODUCT_CONVENTIONAL)) {
-					if (financeDetail.getCustomerDedupList() == null
-							|| financeDetail.getCustomerDedupList().isEmpty()) {
+					if(financeDetail.getCustomerDedupList() == null || financeDetail.getCustomerDedupList().isEmpty()){
 						fileLocation.append("ConvFinanceMainDialog.zul");
 					}
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_ODFACILITY)) {
-					if (financeDetail.getCustomerDedupList() == null
-							|| financeDetail.getCustomerDedupList().isEmpty()) {
+					if(financeDetail.getCustomerDedupList() == null || financeDetail.getCustomerDedupList().isEmpty()){
 						fileLocation.append("ODFacilityFinanceMainDialog.zul");
 					}
 				} else if (StringUtils.equals(productType, FinanceConstants.PRODUCT_DISCOUNT)) {
@@ -1229,9 +1221,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				}
 			}
 
+
 			// call the ZUL-file with the parameters packed in a map
 			try {
-				if (financeDetail.getCustomerDedupList() == null || financeDetail.getCustomerDedupList().isEmpty()) {
+				if(financeDetail.getCustomerDedupList()==null || financeDetail.getCustomerDedupList().isEmpty()){
 					Executions.createComponents(fileLocation.toString(), null, map);
 					this.window_SelectFinanceTypeDialog.onClose();
 				}
@@ -1346,7 +1339,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 				this.mobileNo.setConstraint(new PTMobileNumberValidator(
 						Labels.getLabel("label_SelectFinanceTypeDialog_MobileNo.value"), true));
-
+				
 			}
 			try {
 				this.eidNumber.getValue();
@@ -1355,14 +1348,14 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 
 			this.eidNumber.setConstraint("");
-
+			
 			// Mobile Number Validation
 			try {
 				this.mobileNo.getValue();
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
-
+			
 			this.mobileNo.setConstraint("");
 
 		} else {
@@ -1393,20 +1386,24 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			String primaryId = eidNumber.getValue();
 
 			// Check whether the primary identity exists in PLF.
-			/*
-			 * String cif = customerDetailsService.getEIDNumberById(primaryId, "");
-			 * 
-			 * if (cif != null) { String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist", new
-			 * String[] { isRetailCustomer ? Labels.getLabel(primaryIdLabel) : Labels.getLabel(primaryIdLabel), cif +
-			 * ". \n" });
-			 * 
-			 * // The user doesn't want to proceed with duplicate found. if (MessageUtil.confirm(msg) !=
-			 * MessageUtil.YES) { return true; }
-			 * 
-			 * existingCust.setSelected(true); custCIF.setValue(cif);
-			 * 
-			 * return false; }
-			 */
+			/*String cif = customerDetailsService.getEIDNumberById(primaryId, "");
+
+			if (cif != null) {
+				String msg = Labels.getLabel("label_SelectFinanceTypeDialog_ProspectExist",
+						new String[] {
+								isRetailCustomer ? Labels.getLabel(primaryIdLabel) : Labels.getLabel(primaryIdLabel),
+								cif + ". \n" });
+
+				// The user doesn't want to proceed with duplicate found.
+				if (MessageUtil.confirm(msg) != MessageUtil.YES) {
+					return true;
+				}
+
+				existingCust.setSelected(true);
+				custCIF.setValue(cif);
+
+				return false;
+			}*/
 
 			// Check the de-duplication in external CRM.
 			try {
@@ -1731,20 +1728,26 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			customer.setLovDescCustLngName(parameter.getSysParmDescription());
 		}
 
-		Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
+		Filter[] countrysystemDefault = new Filter[1];
+		countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
+		Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
 
-		if (customerDetails.getCustomer().getCustCOB() == null) {
-			customer.setCustCOB(defaultCountry.getCountryCode());
-			customer.setCustParentCountry(defaultCountry.getCountryCode());
-			customer.setCustResdCountry(defaultCountry.getCountryCode());
-			customer.setCustRiskCountry(defaultCountry.getCountryCode());
-			customer.setCustNationality(defaultCountry.getCountryCode());
+		if (countryObj != null) {
+			Country country = (Country) countryObj;
 
-			customer.setLovDescCustCOBName(defaultCountry.getCountryDesc());
-			customer.setLovDescCustParentCountryName(defaultCountry.getCountryDesc());
-			customer.setLovDescCustResdCountryName(defaultCountry.getCountryDesc());
-			customer.setLovDescCustRiskCountryName(defaultCountry.getCountryDesc());
-			customer.setLovDescCustNationalityName(defaultCountry.getCountryDesc());
+			if (customerDetails.getCustomer().getCustCOB() == null) {
+				customer.setCustCOB(country.getCountryCode());
+				customer.setCustParentCountry(country.getCountryCode());
+				customer.setCustResdCountry(country.getCountryCode());
+				customer.setCustRiskCountry(country.getCountryCode());
+				customer.setCustNationality(country.getCountryCode());
+
+				customer.setLovDescCustCOBName(country.getCountryDesc());
+				customer.setLovDescCustParentCountryName(country.getCountryDesc());
+				customer.setLovDescCustResdCountryName(country.getCountryDesc());
+				customer.setLovDescCustRiskCountryName(country.getCountryDesc());
+				customer.setLovDescCustNationalityName(country.getCountryDesc());
+			}
 		}
 
 		//Setting Primary Relation Ship Officer
@@ -1822,10 +1825,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Customer customer = (Customer) nCustomer;
 		if (customer != null) {
 			this.custCIF.setValue(customer.getCustCIF());
-			this.label_custName.setValue(customer.getCustShrtName());
 		} else {
 			this.custCIF.setValue("");
-			this.label_custName.setValue("");
 		}
 		logger.debug("Leaving ");
 	}
@@ -1889,7 +1890,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		eidNumber.setSclass(PennantConstants.mandateSclass);
 		eidNumber.setValue("");
 		eidNumber.setMaxlength(maxLength);
-
+		
 		space_mobileNo.setSclass(primaryIdMandatory ? PennantConstants.mandateSclass : "");
 		mobileNo.setSclass(PennantConstants.mandateSclass);
 		mobileNo.setValue("");
@@ -1909,7 +1910,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
 		logger.debug("Leaving " + event.toString());
 	}
-
+	
 	public CustomerDedup doSetCustomerDedup(CustomerDetails customerDetails) {
 
 		String mobileNumber = "";
@@ -2023,13 +2024,5 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setCustDedupService(CustomerDedupService custDedupService) {
 		this.custDedupService = custDedupService;
-	}
-
-	public VASConfigurationService getvASConfigurationService() {
-		return vASConfigurationService;
-	}
-
-	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
-		this.vASConfigurationService = vASConfigurationService;
 	}
 }

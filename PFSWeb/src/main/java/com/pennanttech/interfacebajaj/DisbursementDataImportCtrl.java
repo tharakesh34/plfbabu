@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
@@ -19,8 +20,10 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -58,7 +61,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	private long userId;
 	private DataEngineStatus DISB_OTHER_IMPORT_STATUS = new DataEngineStatus("DISB_OTHER_IMPORT");
 	private DataEngineStatus DISB_STP_IMPORT_STATUS = new DataEngineStatus("DISB_CITI_IMPORT");
-
+	private DataEngineStatus DISBURSEMENT_FILE_IMPORT_STATUS = null;
+	private boolean allowPaymentType;
 	private DisbursementResponse defaultDisbursementResponse;
 	private DisbursementResponse disbursementResponse;
 
@@ -88,6 +92,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		// Set the page level components.
 		setPageComponents(window);
 
+		allowPaymentType = "Y"
+				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE))
+						? true : false;
+
 		ValueLabel valueLabel = null;
 		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
 		userId = getUserWorkspace().getUserDetails().getLoginId();
@@ -97,17 +105,24 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			String configName = config.getName();
-			if ("DISB_HDFC_IMPORT".equals(configName) || "DISB_OTHER_IMPORT".equals(configName)) {
+			if (configName.startsWith("DISB_") && configName.endsWith("_IMPORT")) {
 				if ("DISB_HDFC_IMPORT".equals(configName)) {
 					DISB_STP_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_HDFC_IMPORT");
 					valueLabel = new ValueLabel(configName, "Bank Disbursement Response");
 					doFillPanel(config, DISB_STP_IMPORT_STATUS);
 					menuList.add(valueLabel);
-				} else {
+				} else if ("DISB_OTHER_IMPORT".equals(configName)) {
 					DISB_OTHER_IMPORT_STATUS = dataEngineConfig.getLatestExecution("DISB_OTHER_IMPORT");
 					valueLabel = new ValueLabel(configName, "Other Bank Disbursement Response");
 					doFillPanel(config, DISB_OTHER_IMPORT_STATUS);
 					menuList.add(valueLabel);
+				} else {
+					if (allowPaymentType) {
+						DISBURSEMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
+						valueLabel = new ValueLabel(configName, configName);
+						doFillPanel(config, DISBURSEMENT_FILE_IMPORT_STATUS);
+						menuList.add(valueLabel);
+					}
 				}
 			}
 		}
@@ -142,6 +157,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				fileConfigurationSetup();
 			} catch (Exception e) {
 				exceptionTrace(e);
+			}
+			if (allowPaymentType) {
+				DISBURSEMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(fileConfig);
+				doFillPanel(config, DISBURSEMENT_FILE_IMPORT_STATUS);
 			}
 		} catch (Exception e) {
 			exceptionTrace(e);
@@ -200,7 +219,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onClick$btnImport(Event event) throws InterruptedException {
-		this.btnImport.setDisabled(true);
+		this.btnImport.setDisabled(false);
 
 		if (media == null) {
 			MessageUtil.showError("Please upload any file.");
@@ -212,6 +231,12 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				Thread thread = null;
 				if (fileConfiguration.getSelectedItem().getValue().equals("DISB_HDFC_IMPORT")) {
 					thread = new Thread(new ProcessData(userId, DISB_STP_IMPORT_STATUS));
+				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_NEFT_RTGS_IMPORT")) {
+					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
+				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_OTHER_CHEQUE_DD_IMPORT")) {
+					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
+				} else if (fileConfiguration.getSelectedItem().getValue().equals("DISB_IMPS_IMPORT")) {
+					thread = new Thread(new ProcessData(userId, DISBURSEMENT_FILE_IMPORT_STATUS));
 				} else {
 					thread = new Thread(new ProcessData(userId, DISB_OTHER_IMPORT_STATUS));
 				}
@@ -285,6 +310,10 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
+		// Clear the existing rows.
+		panelRows.getChildren().clear();
+
+		// Add the rows.
 		ProcessExecution pannel = new ProcessExecution();
 		pannel.setId(config.getName());
 		pannel.setBorder("normal");
@@ -293,32 +322,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		pannel.setProcess(ds);
 		pannel.render();
 
-		Row rows = (Row) panelRows.getLastChild();
-
-		if (rows == null) {
-			Row row = new Row();
-			row.setStyle("overflow: visible !important");
-			Hbox hbox = new Hbox();
-			hbox.setAlign("center");
-			hbox.appendChild(pannel);
-			row.appendChild(hbox);
-			panelRows.appendChild(row);
-		} else {
-			Hbox hbox = null;
-			List<Hbox> item = rows.getChildren();
-			hbox = (Hbox) item.get(0);
-			if (hbox.getChildren().size() == 2) {
-				rows = new Row();
-				rows.setStyle("overflow: visible !important");
-				hbox = new Hbox();
-				hbox.setAlign("center");
-				hbox.appendChild(pannel);
-				rows.appendChild(hbox);
-				panelRows.appendChild(rows);
-			} else {
-				hbox.appendChild(pannel);
-			}
-		}
+		Row row = new Row();
+		row.setStyle("overflow: visible !important");
+		Hbox hbox = new Hbox();
+		hbox.setAlign("center");
+		hbox.appendChild(pannel);
+		row.appendChild(hbox);
+		panelRows.appendChild(row);
 	}
 
 	public class ProcessData implements Runnable {
@@ -349,6 +359,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	@Autowired
+	@Qualifier(value = "disbursementResponse")
 	public void setDefaultDisbursementResponse(DisbursementResponse defaultDisbursementResponse) {
 		this.defaultDisbursementResponse = defaultDisbursementResponse;
 	}

@@ -44,6 +44,7 @@ package com.pennant.webui.configuration.vasrecording;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -163,9 +164,9 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -3217,12 +3218,19 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 
 			BigDecimal vasFee = loanAmt.multiply(newPremiumCalcDetails.getPremiumPercentage());
-			vasFee = vasFee.divide(new BigDecimal(100));
+
+			vasFee = this.vasPremiumCalculation.getVasFee(vasFee);
+
 			if (BigDecimal.ZERO.compareTo(vasFee) >= 0) {
 				MessageUtil.showError("Premium amount from the Premium calculation is less than zero.");
 				this.fee.setReadonly(false);
 				return;
 			} else {
+				vasFee = vasFee.divide(new BigDecimal(100));
+				//Adds gst value to vasfee 
+				vasFee = vasFee.add(this.vasPremiumCalculation.getGSTPercentage(vasFee));
+				vasFee = vasFee.setScale(0, RoundingMode.HALF_UP);
+				vasFee = vasFee.setScale(2, RoundingMode.HALF_UP);
 				this.fee.setValue(vasFee);
 			}
 

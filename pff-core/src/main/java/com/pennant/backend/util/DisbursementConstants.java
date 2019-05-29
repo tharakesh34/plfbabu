@@ -60,6 +60,7 @@ public class DisbursementConstants {
 	public static final String PAYMENT_TYPE_MOB = "MOB";
 	public static final String PAYMENT_TYPE_OTC = "OTC";
 	public static final String PAYMENT_TYPE_BTTP = "BTTP";
+	public static final String PAYMENT_TYPE_MOBILE = "MOBILE";
 	public static final String RECEIPT_CHANNEL_POR = "POR";
 
 	// Disbursement Status

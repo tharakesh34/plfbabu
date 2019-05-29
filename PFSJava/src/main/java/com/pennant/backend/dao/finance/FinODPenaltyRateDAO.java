@@ -13,4 +13,6 @@ public interface FinODPenaltyRateDAO {
 	String save(FinODPenaltyRate penaltyRate, String type);
 
 	void saveLog(FinODPenaltyRate finODPenaltyRate, String type);
+
+	FinODPenaltyRate getDMFinODPenaltyRateByRef(String finReference, String type);
 }

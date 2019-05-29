@@ -43,6 +43,7 @@
 package com.pennant.webui.loanquery.querydetail;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.Property;
@@ -97,6 +99,7 @@ import com.pennant.backend.model.legal.LegalDetail;
 import com.pennant.backend.model.loanquery.QueryCategory;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.service.administration.SecurityUserOperationsService;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
 import com.pennant.backend.service.mail.MailTemplateService;
 import com.pennant.backend.util.FinanceConstants;
@@ -195,6 +198,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	// per
 	// param
 	private transient QueryDetailService queryDetailService;
+	private FinanceMainService financeMainService;
 	private MailTemplateService mailTemplateService;
 	private DocumentManagerDAO documentManagerDAO;
 	private NotificationService notificationService;
@@ -771,6 +775,33 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				roles.add(valueLabel);
 			}
 		}
+		// Get the QueryloanORLegalWorkflow details.
+		if (ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+			String loanORLegalWorkflowType = null;
+			if (financeMain == null && legalDetail != null) {
+				long loanWorkFLowID = getFinanceMainService().getLoanWorkFlowIdByFinRef(legalDetail.getLoanReference(),
+						"_View");
+				if (loanWorkFLowID == 0) {
+					return;
+				}
+				loanORLegalWorkflowType = PennantApplicationUtil.getWorkFlowType(loanWorkFLowID);
+			} else if (financeMain != null && legalDetail == null) {
+				loanORLegalWorkflowType = "LEGAL_DETAILS";
+			}
+
+			WorkFlowDetails loanORLegalWorkflow = WorkFlowUtil.getDetailsByType(loanORLegalWorkflowType);
+			ValueLabel loanValueLabel;
+			String loanKey;
+			for (Property role : PennantApplicationUtil.getRoles(loanORLegalWorkflow.getRoles())) {
+				loanKey = (String) role.getKey();
+
+				loanValueLabel = new ValueLabel();
+				loanValueLabel.setValue(loanKey);
+				loanValueLabel.setLabel(loanKey.concat(" - ").concat(role.getValue()));
+
+				roles.add(loanValueLabel);
+			}
+		}
 	}
 
 	/**
@@ -861,7 +892,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		String usrnameDate = "--" + getUserWorkspace().getUserDetails().getUsername() + "," + DateUtility.getAppDate();
+		Timestamp curntDateTime = new Timestamp(System.currentTimeMillis());
+		SimpleDateFormat formatter = new SimpleDateFormat(PennantConstants.dateTimeFormat);
+		String usrnameDate = "--" + getUserWorkspace().getUserDetails().getUsername() + ","
+				+ formatter.format(curntDateTime);
 
 		try {
 			aQueryDetail.setModule(this.module.getValue());
@@ -942,7 +976,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		}
 		// Raised On
 		try {
-			aQueryDetail.setRaisedOn(new Timestamp(System.currentTimeMillis()));
+			aQueryDetail.setRaisedOn(curntDateTime);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -977,7 +1011,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Response On
 		try {
 			if (this.responseOn.getValue() != null) {
-				aQueryDetail.setResponseOn(new Timestamp(System.currentTimeMillis()));
+				aQueryDetail.setResponseOn(curntDateTime);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -997,7 +1031,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Closer On
 		try {
 			if (this.closerOn.getValue() != null) {
-				aQueryDetail.setCloserOn(new Timestamp(System.currentTimeMillis()));
+				aQueryDetail.setCloserOn(curntDateTime);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1716,6 +1750,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 	public void setEnquiry(boolean enquiry) {
 		this.enquiry = enquiry;
+	}
+
+	public FinanceMainService getFinanceMainService() {
+		return financeMainService;
+	}
+
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
 	}
 
 }

@@ -882,6 +882,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
+		loanStartDt = this.financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		for (Component component : finOptionRows.getChildren()) {
 			Row row = (Row) component;
 			Combobox optionCombo = (Combobox) getComponent(row, 1);

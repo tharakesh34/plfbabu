@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.staticparms;
 
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import java.util.List;
 
 public interface ExtendedFieldHeaderDAO {
 
@@ -63,5 +64,7 @@ public interface ExtendedFieldHeaderDAO {
 	void createTable(String module, String subModule, String event);
 
 	void dropTable(String module, String subModule);
+
+	List<ExtendedFieldHeader> getExtFieldHeaderListByModuleName(String moduleName, String event, String type);
 
 }

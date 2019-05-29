@@ -977,6 +977,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					 * 0){ documentDetails.setDocId(0); }
 					 */
 					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
+					if(!StringUtils.equals(rcdType, PennantConstants.RECORD_TYPE_UPD) && documentDetails.getDocId() > 0){
+						documentDetails.setDocId(0);
+					}
 					getDocumentDetailsDAO().save(documentDetails, type);
 				}
 
@@ -1950,7 +1953,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-
+		
+		
+		// FIXME MURTHY
 		// GST parameters
 		String fromBranchCode = financeDetail.getFinScheduleData().getFinanceMain().getFinBranch();
 

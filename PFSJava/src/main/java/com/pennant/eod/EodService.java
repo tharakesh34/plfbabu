@@ -12,6 +12,7 @@ import com.pennant.app.core.CustEODEvent;
 import com.pennant.app.core.DateRollOverService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.core.LatePayBucketService;
+import com.pennant.app.core.LatePayDueCreationService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.core.LoadFinanceData;
 import com.pennant.app.core.NPAService;
@@ -39,6 +40,7 @@ public class EodService {
 	private AdvancePaymentService advancePaymentService;
 	private LimitRebuild limitRebuild;
 	private ProjectedAmortizationService projectedAmortizationService;
+	private LatePayDueCreationService latePayDueCreationService;
 
 	public EodService() {
 		super();
@@ -136,6 +138,9 @@ public class EodService {
 		//Accrual posted on EOD only
 		custEODEvent = accrualService.processAccrual(custEODEvent);
 
+		// Penalty Accrual posted on EOD only
+		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
+
 		// ACCRUALS calculation for Amortization
 		String accrualCalForAMZ = SysParamUtil.getValueAsString(AmortizationConstants.MONTHENDACC_CALREQ);
 		if (StringUtils.endsWithIgnoreCase(accrualCalForAMZ, "Y")) {
@@ -232,4 +237,8 @@ public class EodService {
 		this.limitRebuild = limitRebuild;
 	}
 
+	@Autowired
+	public void setLatePayDueCreationService(LatePayDueCreationService latePayDueCreationService) {
+		this.latePayDueCreationService = latePayDueCreationService;
+	}
 }

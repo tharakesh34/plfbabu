@@ -76,6 +76,8 @@ public class SMTParameterConstants {
 	public static final String EARLYPAY_FY_STARTMONTH = "EARLYPAY_FY_STARTMONTH";
 	public static final String ALWD_EARLYPAY_PERC_BYYEAR = "ALWD_EARLYPAY_PERC_BYYEAR";
 	public static final String LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS = "LEGAL_DETAILS_DISPLAY_INACTIVE_RECORDS";
+	public static final String PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE = "PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE";
+	public static final String DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE = "DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE";
 
 	/**
 	 * NO_ADJ = No Adjustment, leave the Profit Fraction ADJ_LAST_INST = All Profit Fractions adjust to last schedule

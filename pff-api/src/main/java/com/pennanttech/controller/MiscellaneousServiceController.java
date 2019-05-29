@@ -482,27 +482,24 @@ public class MiscellaneousServiceController {
 					postingEntry.setTxnCCy(financeMainData.getFinCcy());
 
 					if (null != accountMapping) {
-						if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "C")) {
+						switch (transactionCode.getTranType()) {
+						case "C":
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
 							postingEntry.setAccount(entry.getAccount());
 							posting.setCreditsCount(jvPosting.getCreditsCount() + 1);
 							totalCredits = totalCredits.add(entry.getTxnAmount());
+							break;
 
-							setJVPostingEntryMandatoryFieldsData(postingEntry);
-							creditEntryList.add(postingEntry);
-						} else if (StringUtils.equalsIgnoreCase(transactionCode.getTranType(), "D")) {
+						case "D":
 							postingEntry.setTxnAmount(entry.getTxnAmount());
 							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
 							postingEntry.setTxnCode(entry.getTxnCode());
-							postingEntry.setDebitTxnCode(entry.getTxnCode());
 							postingEntry.setDebitAccount(entry.getAccount());
 							posting.setDebitCount(jvPosting.getDebitCount() + 1);
 							totalDebits = totalDebits.add(entry.getTxnAmount());
-
-							setJVPostingEntryMandatoryFieldsData(postingEntry);
-							debitEntryList.add(postingEntry);
+							break;
 						}
 					}
 				}

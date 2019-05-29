@@ -427,6 +427,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "pdf", "application/pdf", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)
 					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_JPG)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
@@ -1206,11 +1207,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 	}
 
-	/*
-	 * public void onCheck$docOriginal(Event event) throws Exception { if (this.docOriginal.isChecked()) {
-	 * this.docBarcode.setReadonly(false); this.space_docBarcode.setSclass(PennantConstants.mandateSclass); } else {
-	 * this.docBarcode.setValue(""); this.docBarcode.setReadonly(true); this.space_docBarcode.setSclass(""); } }
-	 */
 	/**
 	 * Get the Reference value
 	 */

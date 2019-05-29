@@ -110,4 +110,6 @@ public interface PresentmentDetailDAO extends BasicCrudDao<PresentmentHeader> {
 
 	List<Object> getRePresentmentDetails(PresentmentHeader detailHeader) throws Exception;
 
+	List<PresentmentHeader> getDMPresentmentHeadersByRef(String reference, String type);
+
 }

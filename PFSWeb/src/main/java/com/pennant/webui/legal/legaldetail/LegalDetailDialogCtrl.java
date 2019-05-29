@@ -778,6 +778,9 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 
 		// Covents tab
 		this.coventsTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_coventsTab"));
+		if (!ImplementationConstants.COVENANT_REQUIRED) {
+			coventsTab.setVisible(false);
+		}
 
 		// Decision details
 		this.legalDecisionTab.setVisible(getUserWorkspace().isAllowed("tab_LegalDetailDialog_legalDecisionTab"));

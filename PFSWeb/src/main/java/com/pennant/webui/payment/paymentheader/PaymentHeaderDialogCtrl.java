@@ -88,22 +88,17 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
-import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennant.backend.service.customermasters.CustomerAddresService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -164,9 +159,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	private transient PaymentHeaderListCtrl paymentHeaderListCtrl;
 	private transient PaymentHeaderService paymentHeaderService;
-	private transient CustomerAddresService customerAddresService;
-	private transient FinanceTaxDetailService financeTaxDetailService;
-	private transient FinFeeDetailService finFeeDetailService;
 	private transient ReceiptCalculator receiptCalculator;
 	private transient PostingsPreparationUtil postingsPreparationUtil;
 	private EventManager eventManager;
@@ -1130,24 +1122,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
 		}
 
-		// GST parameters
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-
-		// Fetch High priority Address
-		CustomerAddres addres = getCustomerAddresService().getHighPriorityCustAddr(financeMain.getCustID());
-		if (addres != null) {
-			highPriorityState = addres.getCustAddrProvince();
-			highPriorityCountry = addres.getCustAddrCountry();
-		}
-
-		// Set Tax Details if Already exists
-		FinanceTaxDetail taxDetail = getFinanceTaxDetailService()
-				.getApprovedFinanceTaxDetail(financeMain.getFinReference());
-		Map<String, Object> gstExecutionMap = getFinFeeDetailService().prepareGstMappingDetails(
-				financeMain.getFinBranch(), financeMain.getFinBranch(), highPriorityState, highPriorityCountry,
-				taxDetail, financeMain.getFinBranch());
-
 		aeEvent.setCcy(financeMain.getFinCcy());
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -1207,15 +1181,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		eventMapping.put("pi_emiInAdvance", emiInAdavance);
 		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 		aeEvent.setDataMap(eventMapping);
-
-		if (gstExecutionMap != null) {
-			for (String mapkey : gstExecutionMap.keySet()) {
-				if (StringUtils.isNotBlank(mapkey)) {
-					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
-				}
-			}
-		}
-
 		aeEvent.getAcSetIDList().add(accountsetId);
 		List<ReturnDataSet> returnSetEntries = postingsPreparationUtil.getAccounting(aeEvent).getReturnDataSet();
 		accountingSetEntries.addAll(returnSetEntries);
@@ -1645,7 +1610,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					}
 
 				}
-				if ("E".equals(paymentDetail.getAmountType()) || "A".equals(paymentDetail.getAmountType())) {
+				if (RepayConstants.EXAMOUNTTYPE_EXCESS.equals(paymentDetail.getAmountType())
+						|| RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())
+						|| RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(paymentDetail.getAmountType())
+						|| RepayConstants.EXAMOUNTTYPE_ADVINT.equals(paymentDetail.getAmountType())
+						|| RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(paymentDetail.getAmountType())
+						|| RepayConstants.EXAMOUNTTYPE_DSF.equals(paymentDetail.getAmountType())
+
+				) {
 					item = new Listitem();
 					Listcell lc;
 					lc = new Listcell();
@@ -1654,6 +1626,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 						amountType = Labels.getLabel("label_PaymentHeaderDialog_ExcessAmount.value");
 					} else if (RepayConstants.EXAMOUNTTYPE_EMIINADV.equals(paymentDetail.getAmountType())) {
 						amountType = Labels.getLabel("label_PaymentHeaderDialog_EMIinAdvanceAmount.value");
+					} else if (RepayConstants.EXAMOUNTTYPE_ADVEMI.equals(paymentDetail.getAmountType())) {
+						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_ADVEMI");
+					} else if (RepayConstants.EXAMOUNTTYPE_ADVINT.equals(paymentDetail.getAmountType())) {
+						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_ADVINT");
+					} else if (RepayConstants.EXAMOUNTTYPE_CASHCLT.equals(paymentDetail.getAmountType())) {
+						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_CASHCLT");
+					} else if (RepayConstants.EXAMOUNTTYPE_DSF.equals(paymentDetail.getAmountType())) {
+						amountType = Labels.getLabel("label_RecceiptDialog_ExcessType_DSF");
 					}
 					lc = new Listcell(amountType);
 					lc.setParent(item);
@@ -2092,30 +2072,6 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	public void setTaxPercMap(Map<String, BigDecimal> taxPercMap) {
 		this.taxPercMap = taxPercMap;
-	}
-
-	public CustomerAddresService getCustomerAddresService() {
-		return customerAddresService;
-	}
-
-	public void setCustomerAddresService(CustomerAddresService customerAddresService) {
-		this.customerAddresService = customerAddresService;
-	}
-
-	public FinanceTaxDetailService getFinanceTaxDetailService() {
-		return financeTaxDetailService;
-	}
-
-	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
-		this.financeTaxDetailService = financeTaxDetailService;
-	}
-
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
 	}
 
 }

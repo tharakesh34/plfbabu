@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.service.masters;
 
+import java.util.Map;
+
 /**
  * Service Declaration for methods that depends on <b>MasterDef</b>.<br>
  * 
@@ -51,5 +53,7 @@ public interface MasterDefService {
 	String getMasterCode(String masterType, String keytype);
 
 	String getMasterKeyTypeByCode(String masterType, String keyCode);
+
+	Map<String, String> getMasterDef(String masterType);
 
 }

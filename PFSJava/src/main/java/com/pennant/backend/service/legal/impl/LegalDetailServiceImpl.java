@@ -113,6 +113,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.rits.cloning.Cloner;
+import org.zkoss.util.resource.Labels;
+import com.pennant.app.constants.ImplementationConstants;
 
 /**
  * Service implementation for methods that depends on <b>LegalDetail</b>.<br>
@@ -932,7 +934,25 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 
 		// Query module, Validating the all quarry's raised by users resolved or not.
 		if ("doApprove".equals(method)) {
-			auditDetail = getQueryDetailService().validate(auditDetail);
+			// Queries that were assigned to Legal Roles to be closed 
+			if (ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+				WorkFlowDetails legalWorkflow = WorkFlowUtil.getDetailsByType("LEGAL_DETAILS");
+				List<QueryDetail> queryList = getQueryDetailService()
+						.getQueryListByReference(legalDetail.getLegalReference());
+				for (QueryDetail queryDetail : queryList) {
+					for (String legalRole : legalWorkflow.getRoles()) {
+						if (!StringUtils.equals(queryDetail.getStatus(),
+								Labels.getLabel("label_QueryDetailDialog_Closed"))
+								&& StringUtils.equals(queryDetail.getAssignedRole(), legalRole)) {
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "Q002", null, null), "EN"));
+							break;
+						} else {
+							auditDetail = getQueryDetailService().validate(auditDetail);
+						}
+					}
+				}
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

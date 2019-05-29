@@ -8233,29 +8233,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	//On Change Event for Finance Start Date
 	public void onChange$finStartDate(Event event) throws ParseException {
-		logger.debug("Entering" + event.toString());
 
 		if (this.finStartDate.getValue() != null) {
-			//####_0.2
-			//changeFrequencies();
+			// ####_0.2
+			// changeFrequencies();
 			onChangefinStartDate();
 
-			// To set the Maturitydate when fincategory is Overdraft 
+			// To set the Maturitydate when fincategory is Overdraft
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 					getFinanceDetail().getFinScheduleData().getFinanceMain().getProductCategory())) {
 				calMaturityDate();
 			}
-			// if finStart date is changed to reset the date and recalculate the manual schedule
+			// if finStart date is changed to reset the date and recalculate the
+			// manual schedule
 			if (this.manualSchedule.isChecked() && getManualScheduleDetailDialogCtrl() != null) {
 				getManualScheduleDetailDialogCtrl().curDateChange(this.finStartDate.getValue(), false);
 			}
 
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setFinStartDate(this.finStartDate.getValue());
 		} else {
 			this.finStartDate.setValue(appDate);
 		}
 
 		autoBuildSchedule();
-		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onChangefinStartDate() {
@@ -17327,17 +17327,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
 			this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 		} else {
-			this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
-			fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
-					"");
-			fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(), PennantStaticListUtil.getODCCalculatedOn(),
-					"");
-			this.oDGraceDays.setValue(penaltyRate.getODGraceDays());
-			this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
-			this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
-			this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
-			this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
-			this.lPPRule.setValue(penaltyRate.getODRuleCode());
+			if(penaltyRate != null) {
+				this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
+				fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
+						"");
+				fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(), PennantStaticListUtil.getODCCalculatedOn(),
+						"");
+				this.oDGraceDays.setValue(penaltyRate.getODGraceDays());
+				this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
+				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
+				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
+				this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
+				this.lPPRule.setValue(penaltyRate.getODRuleCode());
+			}
 		}
 
 		if (!this.applyODPenalty.isChecked()) {

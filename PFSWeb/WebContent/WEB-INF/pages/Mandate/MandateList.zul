@@ -146,7 +146,7 @@
 					</div>
 				</center>
 				<south border="none">
-					<paging id="pagingMandateList" />
+					<paging id="pagingMandateList" height="35px" />
 				</south>
 			</borderlayout>
 		</window>

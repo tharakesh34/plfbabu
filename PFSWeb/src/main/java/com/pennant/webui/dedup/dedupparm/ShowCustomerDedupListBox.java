@@ -204,11 +204,11 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 		btnCancel.setParent(startToolbar);
 
 		// Button for Help
-		final Button btnHelp = new Button();
-		btnHelp.setSclass("z-toolbarbutton");
-		btnHelp.setLabel("Close");
-		btnHelp.addEventListener("onClick", new OnCloseListener());
-		btnHelp.setParent(endToolbar);
+		final Button btnClose = new Button();
+		btnClose.setSclass("z-toolbarbutton");
+		btnClose.setLabel("Close");
+		btnClose.addEventListener("onClick", new OnCloseListener());
+		btnClose.setParent(endToolbar);
 
 		//Label For Title
 		Label titleLabel = new Label();
@@ -339,7 +339,7 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 	}
 
 	/**
-	 * Inner Cancel class.<br>
+	 * Inner Close class.<br>
 	 */
 	final class OnCloseListener implements EventListener<Event> {
 
@@ -459,6 +459,11 @@ public class ShowCustomerDedupListBox extends Window implements Serializable {
 			List<CustomerDedup> customerDedupList = new ArrayList<CustomerDedup>();
 			for (int i = 0; i < listbox.getItems().size(); i++) {
 				Listitem listitem = listbox.getItems().get(i);
+				// The rows that were not loaded will be skipped.
+				if (listitem.getLastChild().getPreviousSibling() == null) {
+					continue;
+				}
+
 				List<Component> componentList = ((Listcell) listitem.getLastChild().getPreviousSibling()).getChildren();
 				if (componentList != null && componentList.size() > 0) {
 					Component component = componentList.get(0);

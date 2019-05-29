@@ -55,6 +55,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -855,6 +856,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;
 	}

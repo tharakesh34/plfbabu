@@ -1771,6 +1771,41 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			wve.add(we);
 		}
 
+		// Term Insurance Lien
+		try {
+			aVASRecording.setTermInsuranceLien(this.termInsuranceLien.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Provider Name
+		try {
+			aVASRecording.setProviderName(this.providerName.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Policy Number
+		try {
+			aVASRecording.setPolicyNumber(this.policyNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Medical Status
+		try {
+			aVASRecording.setMedicalStatus(this.medicalStatus.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		// Medical Applicable
+		try {
+			aVASRecording.setMedicalApplicable(this.medicalApplicable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// Vas Status
 		aVASRecording.setVasStatus(rebookingProcess ? VASConsatnts.STATUS_REBOOKING : VASConsatnts.STATUS_MAINTAINCE);
 
@@ -2044,6 +2079,9 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 		this.claimAmount.setProperties(false, getCcyFormat());
 		this.surrenderAmount.setDisabled(true);
 		this.claimAmount.setDisabled(true);
+
+		this.providerName.setMaxlength(100);
+		this.policyNumber.setMaxlength(50);
 
 		this.providerName.setMaxlength(100);
 		this.policyNumber.setMaxlength(50);

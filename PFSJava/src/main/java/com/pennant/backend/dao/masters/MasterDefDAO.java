@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.masters;
 
+import java.util.Map;
+
 /**
  * DAO methods declaration for the <b>MasterDef model</b> class.<br>
  * 
@@ -51,4 +53,6 @@ public interface MasterDefDAO {
 	String getMasterCode(String masterType, String keytype);
 
 	String getMasterKeyTypeByCode(String masterType, String keyCode);
+
+	Map<String, String> getMasterDef(String masterType);
 }

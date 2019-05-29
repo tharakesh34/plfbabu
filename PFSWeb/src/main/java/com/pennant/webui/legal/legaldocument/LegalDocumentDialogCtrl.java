@@ -807,7 +807,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 		Date appDate = DateUtility.getAppDate();
-
 		if (!this.documentDate.isReadonly()) {
 			this.documentDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_LegalDocumentDialog_DocumentDate.value"), true, null, appDate, true));

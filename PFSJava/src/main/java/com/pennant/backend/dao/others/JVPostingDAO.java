@@ -71,4 +71,6 @@ public interface JVPostingDAO {
 
 	long getBatchRerbyExpRef(String expReference);
 
+	long createBatchReference();
+
 }

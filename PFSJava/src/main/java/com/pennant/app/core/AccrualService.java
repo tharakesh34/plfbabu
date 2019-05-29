@@ -664,21 +664,14 @@ public class AccrualService extends ServiceHelper {
 		tenor = DateUtility.getMonthsBetween(pftDetail.getFinStartDate(), pftDetail.getMaturityDate(), true);
 		pftDetail.setTotalTenor(tenor);
 
-		//Special Rates
-		pftDetail.setSplRate(BigDecimal.ZERO);
-		try {
-			if (!StringUtils.isBlank(pftDetail.getSplRateCode())) {
-				pftDetail.setSplRate(new BigDecimal(pftDetail.getSplRateCode()));
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
-		//Base Rate
-		if (!StringUtils.isBlank(pftDetail.getBaseRateCode())) {
-			pftDetail.setBaseRate(
-					pftDetail.getCurReducingRate().subtract(pftDetail.getSplRate()).subtract(pftDetail.getMrgRate()));
-		}
+		/*
+		 * //Special Rates pftDetail.setSplRate(BigDecimal.ZERO); try { if
+		 * (!StringUtils.isBlank(pftDetail.getSplRateCode())) { pftDetail.setSplRate(new
+		 * BigDecimal(pftDetail.getSplRateCode())); } } catch (Exception e) { // TODO: handle exception }
+		 * 
+		 * //Base Rate if (!StringUtils.isBlank(pftDetail.getBaseRateCode())) { pftDetail.setBaseRate(
+		 * pftDetail.getCurReducingRate().subtract(pftDetail.getSplRate()).subtract(pftDetail.getMrgRate())); }
+		 */
 
 		// TDS Calculation
 		if (tdsSchdIdx >= 0) {

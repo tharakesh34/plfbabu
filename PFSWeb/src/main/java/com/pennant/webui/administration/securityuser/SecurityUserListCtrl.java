@@ -59,7 +59,7 @@ import org.zkoss.zul.Panel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.SysParamUtil;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.webui.administration.securityuser.model.SecurityUserListModelItemRenderer;
@@ -319,7 +319,7 @@ public class SecurityUserListCtrl extends GFCBaseListCtrl<SecurityUser> {
 				Executions.createComponents(
 						"/WEB-INF/pages/PasswordReset/SecurityUser/SecurityUserChangePasswordDialog.zul", null, arg);
 			} else {
-				if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+				if (ImplementationConstants.ALLOW_DIVISION_BASED_CLUSTER) {
 					Executions.createComponents(
 							"/WEB-INF/pages/Administration/SecurityUser/SecurityUserDialogCluster.zul", null, arg);
 				} else {

@@ -6050,6 +6050,674 @@ public class AgreementDetail {
 		}
 	}
 
+	// ------- Legal Details -------------//
+
+	// -------- Legal Applicant Details----//
+
+	List<LegalApplicantDetail> applicantDetails;
+
+	public List<LegalApplicantDetail> getApplicantDetails() {
+		return applicantDetails;
+	}
+
+	public void setApplicantDetails(List<LegalApplicantDetail> applicantDetails) {
+		this.applicantDetails = applicantDetails;
+	}
+
+	public class LegalApplicantDetail {
+		private String title = "";
+		private String propertyOwnersName = "";
+		private String age = "";
+		private String relationshipType = "";
+		private String idType = "";
+		private String idNo = "";
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+		public String getPropertyOwnersName() {
+			return propertyOwnersName;
+		}
+
+		public void setPropertyOwnersName(String propertyOwnersName) {
+			this.propertyOwnersName = propertyOwnersName;
+		}
+
+		public String getAge() {
+			return age;
+		}
+
+		public void setAge(String age) {
+			this.age = age;
+		}
+
+		public String getRelationshipType() {
+			return relationshipType;
+		}
+
+		public void setRelationshipType(String relationshipType) {
+			this.relationshipType = relationshipType;
+		}
+
+		public String getIdType() {
+			return idType;
+		}
+
+		public void setIdType(String idType) {
+			this.idType = idType;
+		}
+
+		public String getIdNo() {
+			return idNo;
+		}
+
+		public void setIdNo(String idNo) {
+			this.idNo = idNo;
+		}
+
+	}
+
+	// -------- Legal Property Details----//
+
+	List<LegalPropertyDetail> legalPropertyDetails;
+
+	public List<LegalPropertyDetail> getLegalPropertyDetails() {
+		return legalPropertyDetails;
+	}
+
+	public void setLegalPropertyDetails(List<LegalPropertyDetail> legalPropertyDetails) {
+		this.legalPropertyDetails = legalPropertyDetails;
+	}
+
+	public class LegalPropertyDetail {
+
+		private String scheduleType = "";
+		private String propertySchedule = "";
+		private String propertyType = "";
+		private String northBy = "";
+		private String southBy = "";
+		private String eastBy = "";
+		private String westBy = "";
+		private String measurement = "";
+		private String registrationOffice = "";
+		private String registrationDistrict = "";
+		private String propertyOwner = "";
+		private String urbanLandCeiling = "";
+		private String minorshareInvolved = "";
+		private String propertyIsGramanatham = "";
+		private String propertyReleased = "";
+		private String propOriginalsAvailable = "";
+		private String propertyIsAgricultural = "";
+		private String nocObtainedFromLPA = "";
+		private String anyMortgagePending = "";
+		private String northSideEastByWest = "";
+		private String southSideWestByEast = "";
+		private String eastSideNorthBySouth = "";
+		private String westSideSouthByNorth = "";
+		private String schedulelevelArea = "";
+
+		public String getSchedulelevelArea() {
+			return schedulelevelArea;
+		}
+
+		public void setSchedulelevelArea(String schedulelevelArea) {
+			this.schedulelevelArea = schedulelevelArea;
+		}
+
+		public String getScheduleType() {
+			return scheduleType;
+		}
+
+		public void setScheduleType(String scheduleType) {
+			this.scheduleType = scheduleType;
+		}
+
+		public String getPropertySchedule() {
+			return propertySchedule;
+		}
+
+		public void setPropertySchedule(String propertySchedule) {
+			this.propertySchedule = propertySchedule;
+		}
+
+		public String getPropertyType() {
+			return propertyType;
+		}
+
+		public void setPropertyType(String propertyType) {
+			this.propertyType = propertyType;
+		}
+
+		public String getNorthBy() {
+			return northBy;
+		}
+
+		public void setNorthBy(String northBy) {
+			this.northBy = northBy;
+		}
+
+		public String getSouthBy() {
+			return southBy;
+		}
+
+		public void setSouthBy(String southBy) {
+			this.southBy = southBy;
+		}
+
+		public String getEastBy() {
+			return eastBy;
+		}
+
+		public void setEastBy(String eastBy) {
+			this.eastBy = eastBy;
+		}
+
+		public String getWestBy() {
+			return westBy;
+		}
+
+		public void setWestBy(String westBy) {
+			this.westBy = westBy;
+		}
+
+		public String getMeasurement() {
+			return measurement;
+		}
+
+		public void setMeasurement(String measurement) {
+			this.measurement = measurement;
+		}
+
+		public String getRegistrationOffice() {
+			return registrationOffice;
+		}
+
+		public void setRegistrationOffice(String registrationOffice) {
+			this.registrationOffice = registrationOffice;
+		}
+
+		public String getRegistrationDistrict() {
+			return registrationDistrict;
+		}
+
+		public void setRegistrationDistrict(String registrationDistrict) {
+			this.registrationDistrict = registrationDistrict;
+		}
+
+		public String getPropertyOwner() {
+			return propertyOwner;
+		}
+
+		public void setPropertyOwner(String propertyOwner) {
+			this.propertyOwner = propertyOwner;
+		}
+
+		public String getUrbanLandCeiling() {
+			return urbanLandCeiling;
+		}
+
+		public void setUrbanLandCeiling(String urbanLandCeiling) {
+			this.urbanLandCeiling = urbanLandCeiling;
+		}
+
+		public String getMinorshareInvolved() {
+			return minorshareInvolved;
+		}
+
+		public void setMinorshareInvolved(String minorshareInvolved) {
+			this.minorshareInvolved = minorshareInvolved;
+		}
+
+		public String getPropertyIsGramanatham() {
+			return propertyIsGramanatham;
+		}
+
+		public void setPropertyIsGramanatham(String propertyIsGramanatham) {
+			this.propertyIsGramanatham = propertyIsGramanatham;
+		}
+
+		public String getPropertyReleased() {
+			return propertyReleased;
+		}
+
+		public void setPropertyReleased(String propertyReleased) {
+			this.propertyReleased = propertyReleased;
+		}
+
+		public String getPropOriginalsAvailable() {
+			return propOriginalsAvailable;
+		}
+
+		public void setPropOriginalsAvailable(String propOriginalsAvailable) {
+			this.propOriginalsAvailable = propOriginalsAvailable;
+		}
+
+		public String getPropertyIsAgricultural() {
+			return propertyIsAgricultural;
+		}
+
+		public void setPropertyIsAgricultural(String propertyIsAgricultural) {
+			this.propertyIsAgricultural = propertyIsAgricultural;
+		}
+
+		public String getNocObtainedFromLPA() {
+			return nocObtainedFromLPA;
+		}
+
+		public void setNocObtainedFromLPA(String nocObtainedFromLPA) {
+			this.nocObtainedFromLPA = nocObtainedFromLPA;
+		}
+
+		public String getAnyMortgagePending() {
+			return anyMortgagePending;
+		}
+
+		public void setAnyMortgagePending(String anyMortgagePending) {
+			this.anyMortgagePending = anyMortgagePending;
+		}
+
+		public String getNorthSideEastByWest() {
+			return northSideEastByWest;
+		}
+
+		public void setNorthSideEastByWest(String northSideEastByWest) {
+			this.northSideEastByWest = northSideEastByWest;
+		}
+
+		public String getSouthSideWestByEast() {
+			return southSideWestByEast;
+		}
+
+		public void setSouthSideWestByEast(String southSideWestByEast) {
+			this.southSideWestByEast = southSideWestByEast;
+		}
+
+		public String getEastSideNorthBySouth() {
+			return eastSideNorthBySouth;
+		}
+
+		public void setEastSideNorthBySouth(String eastSideNorthBySouth) {
+			this.eastSideNorthBySouth = eastSideNorthBySouth;
+		}
+
+		public String getWestSideSouthByNorth() {
+			return westSideSouthByNorth;
+		}
+
+		public void setWestSideSouthByNorth(String westSideSouthByNorth) {
+			this.westSideSouthByNorth = westSideSouthByNorth;
+		}
+
+	}
+
+	//--------- Legal Document Details ---------//
+
+	List<LegalDocument> legalDocuments;
+
+	public List<LegalDocument> getLegalDocuments() {
+		return legalDocuments;
+	}
+
+	public void setLegalDocuments(List<LegalDocument> legalDocuments) {
+		this.legalDocuments = legalDocuments;
+	}
+
+	public class LegalDocument {
+		private String documentDate = "";
+		private String documentName = "";
+		private String documentNo = "";
+		private String documentDetail = "";
+		private String uploadDocumentType = "";
+		private String surveyNo = "";
+		private String documentType = "";
+		private String documentCategory = "";
+		private String scheduleType = "";
+		private String documentTypeVerify = "";
+		private String documentRemarks = "";
+		private String documentTypeApprove = "";
+		private String documentAccepted = "";
+		private String documentHolderPropertyName = "";
+		private String documentPropertyAddress = "";
+		private String documentBriefTracking = "";
+		private String documentMortgage = "";
+
+		public String getDocumentDate() {
+			return documentDate;
+		}
+
+		public void setDocumentDate(String documentDate) {
+			this.documentDate = documentDate;
+		}
+
+		public String getDocumentName() {
+			return documentName;
+		}
+
+		public String getDocumentDetail() {
+			return documentDetail;
+		}
+
+		public void setDocumentDetail(String documentDetail) {
+			this.documentDetail = documentDetail;
+		}
+
+		public void setDocumentName(String documentName) {
+			this.documentName = documentName;
+		}
+
+		public String getDocumentNo() {
+			return documentNo;
+		}
+
+		public void setDocumentNo(String documentNo) {
+			this.documentNo = documentNo;
+		}
+
+		public String getUploadDocumentType() {
+			return uploadDocumentType;
+		}
+
+		public void setUploadDocumentType(String uploadDocumentType) {
+			this.uploadDocumentType = uploadDocumentType;
+		}
+
+		public String getSurveyNo() {
+			return surveyNo;
+		}
+
+		public void setSurveyNo(String surveyNo) {
+			this.surveyNo = surveyNo;
+		}
+
+		public String getDocumentType() {
+			return documentType;
+		}
+
+		public void setDocumentType(String documentType) {
+			this.documentType = documentType;
+		}
+
+		public String getDocumentCategory() {
+			return documentCategory;
+		}
+
+		public void setDocumentCategory(String documentCategory) {
+			this.documentCategory = documentCategory;
+		}
+
+		public String getScheduleType() {
+			return scheduleType;
+		}
+
+		public void setScheduleType(String scheduleType) {
+			this.scheduleType = scheduleType;
+		}
+
+		public String getDocumentTypeVerify() {
+			return documentTypeVerify;
+		}
+
+		public void setDocumentTypeVerify(String documentTypeVerify) {
+			this.documentTypeVerify = documentTypeVerify;
+		}
+
+		public String getDocumentRemarks() {
+			return documentRemarks;
+		}
+
+		public void setDocumentRemarks(String documentRemarks) {
+			this.documentRemarks = documentRemarks;
+		}
+
+		public String getDocumentTypeApprove() {
+			return documentTypeApprove;
+		}
+
+		public void setDocumentTypeApprove(String documentTypeApprove) {
+			this.documentTypeApprove = documentTypeApprove;
+		}
+
+		public String getDocumentAccepted() {
+			return documentAccepted;
+		}
+
+		public void setDocumentAccepted(String documentAccepted) {
+			this.documentAccepted = documentAccepted;
+		}
+
+		public String getDocumentPropertyAddress() {
+			return documentPropertyAddress;
+		}
+
+		public void setDocumentPropertyAddress(String documentPropertyAddress) {
+			this.documentPropertyAddress = documentPropertyAddress;
+		}
+
+		public String getDocumentBriefTracking() {
+			return documentBriefTracking;
+		}
+
+		public void setDocumentBriefTracking(String documentBriefTracking) {
+			this.documentBriefTracking = documentBriefTracking;
+		}
+
+		public String getDocumentMortgage() {
+			return documentMortgage;
+		}
+
+		public void setDocumentMortgage(String documentMortgage) {
+			this.documentMortgage = documentMortgage;
+		}
+
+		public String getDocumentHolderPropertyName() {
+			return documentHolderPropertyName;
+		}
+
+		public void setDocumentHolderPropertyName(String documentHolderPropertyName) {
+			this.documentHolderPropertyName = documentHolderPropertyName;
+		}
+
+	}
+
+	// --------- Legal ECDetail ---------- //
+	List<LegalECDetail> legalECDetails;
+
+	public List<LegalECDetail> getLegalECDetails() {
+		return legalECDetails;
+	}
+
+	public void setLegalECDetails(List<LegalECDetail> legalECDetails) {
+		this.legalECDetails = legalECDetails;
+	}
+
+	public class LegalECDetail {
+		private String ecDate = "";
+		private String document = "";
+		private String ecNumber = "";
+		private String ecFrom = "";
+		private String ecTo = "";
+		private String ecType = "";
+		private String ecPropertyOwnerName = "";
+		private String propertyDetailECDate = "";
+
+		public String getPropertyDetailECDate() {
+			return propertyDetailECDate;
+		}
+
+		public void setPropertyDetailECDate(String propertyDetailECDate) {
+			this.propertyDetailECDate = propertyDetailECDate;
+		}
+
+		public String getEcPropertyOwnerName() {
+			return ecPropertyOwnerName;
+		}
+
+		public void setEcPropertyOwnerName(String ecPropertyOwnerName) {
+			this.ecPropertyOwnerName = ecPropertyOwnerName;
+		}
+
+		public String getEcDate() {
+			return ecDate;
+		}
+
+		public void setEcDate(String ecDate) {
+			this.ecDate = ecDate;
+		}
+
+		public String getDocument() {
+			return document;
+		}
+
+		public void setDocument(String document) {
+			this.document = document;
+		}
+
+		public String getEcNumber() {
+			return ecNumber;
+		}
+
+		public void setEcNumber(String ecNumber) {
+			this.ecNumber = ecNumber;
+		}
+
+		public String getEcFrom() {
+			return ecFrom;
+		}
+
+		public void setEcFrom(String ecFrom) {
+			this.ecFrom = ecFrom;
+		}
+
+		public String getEcTo() {
+			return ecTo;
+		}
+
+		public void setEcTo(String ecTo) {
+			this.ecTo = ecTo;
+		}
+
+		public String getEcType() {
+			return ecType;
+		}
+
+		public void setEcType(String ecType) {
+			this.ecType = ecType;
+		}
+	}
+
+	// --------- Legal Note Details -------- //
+
+	List<LegalNote> legalNotes;
+
+	public List<LegalNote> getLegalNotes() {
+		return legalNotes;
+	}
+
+	public void setLegalNotes(List<LegalNote> legalNotes) {
+		this.legalNotes = legalNotes;
+	}
+
+	public class LegalNote {
+		private String code = "";
+		private String description = "";
+
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+	}
+
+	// ----- LegalPropertyTitle Details ------ //
+	List<LegalPropertyTitle> legalPropertyTitles;
+
+	public List<LegalPropertyTitle> getLegalPropertyTitles() {
+		return legalPropertyTitles;
+	}
+
+	public void setLegalPropertyTitles(List<LegalPropertyTitle> legalPropertyTitles) {
+		this.legalPropertyTitles = legalPropertyTitles;
+	}
+
+	public class LegalPropertyTitle {
+		private String title = "";
+		private String propertyDetailModt = "";
+
+		public String getPropertyDetailModt() {
+			return propertyDetailModt;
+		}
+
+		public void setPropertyDetailModt(String propertyDetailModt) {
+			this.propertyDetailModt = propertyDetailModt;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+	}
+
+	// -------- Legal Decision Detail ------ //
+
+	List<LegalDetail> legalDetails;
+
+	public List<LegalDetail> getLegalDetails() {
+		return legalDetails;
+	}
+
+	public void setLegalDetails(List<LegalDetail> legalDetails) {
+		this.legalDetails = legalDetails;
+	}
+
+	public class LegalDetail {
+		private String legalDecision = "";
+		private String legalRemarks = "";
+		private String legalDate = "";
+
+		public String getLegalDate() {
+			return legalDate;
+		}
+
+		public void setLegalDate(String legalDate) {
+			this.legalDate = legalDate;
+		}
+
+		public String getLegalDecision() {
+			return legalDecision;
+		}
+
+		public void setLegalDecision(String legalDecision) {
+			this.legalDecision = legalDecision;
+		}
+
+		public String getLegalRemarks() {
+			return legalRemarks;
+		}
+
+		public void setLegalRemarks(String legalRemarks) {
+			this.legalRemarks = legalRemarks;
+		}
+	}
+
 	//---------- Convenant details ---------//
 	private List<Covenant> covenants;
 

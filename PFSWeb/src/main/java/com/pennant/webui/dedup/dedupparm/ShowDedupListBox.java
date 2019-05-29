@@ -166,10 +166,11 @@ public class ShowDedupListBox extends Window implements Serializable {
 		endToolbar.setSclass("toolbar-end");
 
 		// Button for Help
-		final Button btnHelp = new Button();
-		btnHelp.setSclass("z-toolbarbutton");
-		btnHelp.setLabel("Help");
-		btnHelp.setParent(endToolbar);
+		final Button btnClose = new Button();
+		btnClose.setSclass("z-toolbarbutton");
+		btnClose.setLabel("Close");
+		btnClose.addEventListener("onClick", new OnCloseListener());
+		btnClose.setParent(endToolbar);
 
 		hbox.appendChild(startToolbar);
 		hbox.appendChild(centerToolbar);
@@ -293,6 +294,23 @@ public class ShowDedupListBox extends Window implements Serializable {
 		setListModelList(new ListModelList());
 		this.listbox.setModel(getListModelList());
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Inner Close class.<br>
+	 */
+	final class OnCloseListener implements EventListener<Event> {
+
+		public OnCloseListener() {
+
+		}
+
+		@Override
+		public void onEvent(Event event) throws Exception {
+			setUserAction(0);
+			onClose();
+
+		}
 	}
 
 	/**

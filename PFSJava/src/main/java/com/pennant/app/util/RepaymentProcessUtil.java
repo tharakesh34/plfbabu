@@ -529,8 +529,8 @@ public class RepaymentProcessUtil {
 					}
 				}
 				if (CollectionUtils.isNotEmpty(finFeeDetails) && financeDetail != null) {
-					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails,
-							null, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, finFeeDetails, null,
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, finReference, false);
 				}
 			}
 
@@ -567,15 +567,17 @@ public class RepaymentProcessUtil {
 
 				for (ManualAdviseMovements movement : movements) {
 
-					BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
+					BigDecimal paidGST = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST())
+							.add(movement.getPaidUGST());
 					if (paidGST.compareTo(BigDecimal.ZERO) > 0) {
 
-						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(), "_AView");
+						ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(movement.getAdviseID(),
+								"_AView");
 						boolean prepareInvoice = false;
-						
+
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 							if (bounceFee == null) {
-								bounceFee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+								bounceFee = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 							}
 							movement.setFeeTypeCode(bounceFee.getFeeTypeCode());
 							movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
@@ -599,8 +601,8 @@ public class RepaymentProcessUtil {
 				}
 
 				if (CollectionUtils.isNotEmpty(movementList)) {
-					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null,
-							movementList, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), false);
+					this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, movementList,
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), false);
 				}
 			}
 
@@ -735,7 +737,7 @@ public class RepaymentProcessUtil {
 					boolean prepareInvoice = false;
 					if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
 						if (bounceFee == null) {
-							bounceFee = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
+							bounceFee = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 						}
 						movement.setFeeTypeCode(bounceFee.getFeeTypeCode());
 						movement.setFeeTypeDesc(bounceFee.getFeeTypeDesc());
@@ -2055,10 +2057,7 @@ public class RepaymentProcessUtil {
 		this.receiptCalculator = receiptCalculator;
 	}
 
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
-	}
-
+	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}

@@ -24,7 +24,6 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
-import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -37,7 +36,6 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
-import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -59,7 +57,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox listBoxFeeReceipt;
 	protected Paging pagingFeeReceiptList;
 
-	protected Listheader listheader_FeeReceiptId;
 	protected Listheader listheader_FeeReceiptReference;
 	protected Listheader listheader_FeeReceiptPurpose;
 	protected Listheader listheader_FeeReceiptMode;
@@ -73,7 +70,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Button btnNew;
 	protected Button btnSearch;
 
-	protected Longbox feeReceiptId;
 	protected Textbox receiptReference;
 	protected Textbox customer;
 	protected Combobox purpose;
@@ -82,7 +78,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Textbox finType;
 	protected Textbox finBranch;
 
-	protected Listbox sortOperator_FeeReceiptId;
 	protected Listbox sortOperator_FeeReceiptReference;
 	protected Listbox sortOperator_FeeReceiptCustomer;
 	protected Listbox sortOperator_FeeReceiptPurpose;
@@ -98,9 +93,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	private FeeReceiptService feeReceiptService;
 
 	//Added Promotion details 
-	protected Uppercasebox transactionRef;
 	protected Listbox sortOperator_FeeReceiptSearchTranRef;
-	protected Listheader listheader_FeeReceipt_PromotionCode;
 	protected Listheader listheader_FeeReceipt_ReceiptRef;
 	protected Listheader listheader_FeeReceipt_ReceiptDate;
 
@@ -115,9 +108,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected void doSetProperties() {
 		super.moduleCode = "FeeReceipt";
 		super.pageRightName = "FeeReceiptList";
-		super.tableName = "FinReceiptHeader_FDView";
-		super.queueTableName = "FinReceiptHeader_FDView";
-		super.enquiryTableName = "FinReceiptHeader_FDView";
+		super.tableName = "FinReceiptHeader_FView";
+		super.queueTableName = "FinReceiptHeader_FView";
+		super.enquiryTableName = "FinReceiptHeader_FView";
 	}
 
 	/**
@@ -133,10 +126,8 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		registerButton(btnNew, "button_FeeReceiptList_NewFeeReceipt", true);
 		registerButton(btnSearch);
 
+		registerField("receiptID");
 		registerField("finCcy");
-		registerField("RecAgainst");
-		registerField("receiptId", listheader_FeeReceiptId, SortOrder.ASC, feeReceiptId, sortOperator_FeeReceiptId,
-				Operators.DEFAULT);
 		registerField("reference", listheader_FeeReceiptReference, SortOrder.ASC, receiptReference,
 				sortOperator_FeeReceiptReference, Operators.STRING);
 		registerField("custCIF", listheader_FeeReceiptCusomer, SortOrder.NONE, customer,
@@ -147,7 +138,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				",SchdlRepayment,EarlyPayment,EarlySettlement,");
 		registerField("receiptPurpose", listheader_FeeReceiptPurpose, SortOrder.NONE, purpose,
 				sortOperator_FeeReceiptPurpose, Operators.STRING);
-		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), "");
+		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptModes(), ",MOBILE,EXCESS,");
 		registerField("receiptMode", listheader_FeeReceiptMode, SortOrder.NONE, receiptMode,
 				sortOperator_FeeReceiptReceiptMode, Operators.STRING);
 		registerField("receiptAmount", listheader_FeeReceiptAmount);
@@ -158,10 +149,6 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				Operators.STRING);
 		registerField("finBranch", listheader_FeeReceiptFinBranch, SortOrder.NONE, finBranch,
 				sortOperator_FeeReceiptFinBranch, Operators.STRING);
-		registerField("transactionRef", listheader_FeeReceipt_ReceiptRef, SortOrder.NONE, transactionRef,
-				sortOperator_FeeReceiptSearchTranRef, Operators.STRING);
-		registerField("promotionCode", listheader_FeeReceipt_PromotionCode, SortOrder.NONE);
-		registerField("receiptDate", listheader_FeeReceipt_ReceiptDate, SortOrder.NONE);
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -170,11 +157,10 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		StringBuilder whereClause = new StringBuilder(
-				" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
-		//		whereClause.append("AND ( ");
-		//		whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
-		//		whereClause.append(")");
+		StringBuilder whereClause = new StringBuilder(" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
+		whereClause.append("AND ( ");
+		whereClause.append(getUsrFinAuthenticationQry(false));
+		whereClause.append(")");
 		this.searchObject.addWhereClause(whereClause.toString());
 	}
 
@@ -223,17 +209,8 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		receiptHeader.setNewRecord(true);
 		receiptHeader.setWorkflowId(getWorkFlowId());
 
-		Map<String, Object> map = getDefaultArguments();
-		map.put("receiptHeader", receiptHeader);
-		map.put("feeReceiptListCtrl", this);
-
-		// call the ZUL-file with the parameters packed in a map
-		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/SelectFeeReceiptList.zul", null,
-					map);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
+		// Display the dialog page.
+		doShowDialogPage(receiptHeader);
 
 		logger.debug("Leaving");
 	}
@@ -367,18 +344,21 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 */
 	public void onClick$btnSearchBranch(Event event) {
 		logger.debug("Entering  " + event.toString());
+		
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
 
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FeeReceiptList, "Branch",
-					this.finBranch.getValue(), new Filter[] {});
+					this.finBranch.getValue(), filters);
 			if (selectedValues != null) {
 				this.finBranch.setValue(selectedValues);
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Branch");
+			Object dataObject = ExtendedSearchListBox.show(this.window_FeeReceiptList, "Branch", this.finBranch.getValue(), filters);
 			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
 			} else {

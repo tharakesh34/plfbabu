@@ -190,7 +190,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Groupbox gb_NeftDetails;
 	private boolean enqModule = false;
 	protected Button btnGetCustBeneficiary;
-	protected Row rowGetCust;
 	protected Caption caption_FinAdvancePaymentsDialog_NeftDetails;
 	protected Caption caption_FinAdvancePaymentsDialog_ChequeDetails;
 
@@ -512,8 +511,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
-			this.window_FinAdvancePaymentsDialog.setHeight("70%");
-			this.window_FinAdvancePaymentsDialog.setWidth("85%");
+			this.window_FinAdvancePaymentsDialog.setHeight("85%");
+			this.window_FinAdvancePaymentsDialog.setWidth("100%");
 			this.docName.setHeight((borderLayoutHeight - 275) + "px");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
@@ -649,7 +648,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		logger.debug("Entering");
 		//Empty sent any required attributes
 		this.paymentSequence.setReadonly(true);
-		this.liabilityHoldName.setMaxlength(100);
+		this.liabilityHoldName.setMaxlength(200);
 		this.beneficiaryName.setMaxlength(100);
 		this.description.setMaxlength(500);
 		this.llReferenceNo.setMaxlength(6);
@@ -1873,9 +1872,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (StringUtils.isEmpty(str) || StringUtils.equals(str, PennantConstants.List_Select)) {
 			gb_ChequeDetails.setVisible(false);
 			gb_NeftDetails.setVisible(false);
+			this.btnGetCustBeneficiary.setVisible(false);
 			this.partnerBankID.setReadonly(true);
 			this.partnerBankID.setValue("");
 			this.partnerBankID.setDescription("");
+
 			return;
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
@@ -1902,7 +1903,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.printingLoc.setSclass("");
 			}
 
-			this.btnGetCustBeneficiary.setVisible(false);
+			this.btnGetCustBeneficiary.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnGetCustBeneficiary"));
 		} else if (str.equals(DisbursementConstants.PAYMENT_TYPE_IST)) {
 			doaddFilter(str);
 			gb_NeftDetails.setVisible(false);
@@ -1943,7 +1944,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			} else {
 				this.contactNumber.setSclass("");
 			}
-			this.btnGetCustBeneficiary.setVisible(!isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
+			this.btnGetCustBeneficiary.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnGetCustBeneficiary"));
 		}
 		//FIXME Fields moved to branches
 		//		Filter filter[] = new Filter[1];
@@ -1982,28 +1983,39 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (dataObject instanceof Beneficiary) {
 			Beneficiary details = (Beneficiary) dataObject;
 			if (details != null) {
-				this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
-				this.bankBranchID.setValue(details.getiFSC());
-				this.finAdvancePayments.setCity(details.getCity());
-				this.finAdvancePayments.setBranchBankName(details.getBankName());
-				this.finAdvancePayments.setBranchBankCode(details.getBankCode());
-				this.finAdvancePayments.setBranchDesc(details.getBranchDesc());
-				this.finAdvancePayments.setiFSC(details.getiFSC());
-				this.bank.setValue(details.getBankName());
-				this.branch.setValue(details.getBranchDesc());
-				this.beneficiaryAccNo.setValue(details.getAccNumber());
-				this.beneficiaryName.setValue(details.getAccHolderName());
-				this.city.setValue(details.getCity());
-				this.phoneNumber.setValue(details.getPhoneNumber());
-				if (StringUtils.isNotBlank(details.getBankCode())) {
-					accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
-				}
-				if (accNoLength != 0) {
-					this.beneficiaryAccNo.setMaxlength(accNoLength);
-				} else {
-					this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
+				String disbursementType = paymentType.getSelectedItem().getValue().toString();
 
+				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursementType)
+						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursementType)) {
+					bankCode.setAttribute("bankCode", details.getBankCode());
+					bankCode.setValue(StringUtils.trimToEmpty(details.getBankCode()),
+							StringUtils.trimToEmpty(details.getBankName()));
+					this.liabilityHoldName.setValue(StringUtils.trimToEmpty(details.getAccHolderName()).concat(", ")
+							.concat(details.getBankName()).concat(" A/C No: ").concat(details.getAccNumber()));
+					this.payableLoc.setValue(details.getBranchDesc());
+				} else {
+					this.bankBranchID.setAttribute("bankBranchID", details.getBankBranchID());
+					this.bankBranchID.setValue(details.getiFSC());
+					this.finAdvancePayments.setCity(details.getCity());
+					this.finAdvancePayments.setBranchBankName(details.getBankName());
+					this.finAdvancePayments.setBranchBankCode(details.getBankCode());
+					this.finAdvancePayments.setBranchDesc(details.getBranchDesc());
+					this.finAdvancePayments.setiFSC(details.getiFSC());
+					this.bank.setValue(details.getBankName());
+					this.branch.setValue(details.getBranchDesc());
+					this.beneficiaryAccNo.setValue(details.getAccNumber());
+					this.beneficiaryName.setValue(details.getAccHolderName());
+					this.city.setValue(details.getCity());
+					this.phoneNumber.setValue(details.getPhoneNumber());
+					if (StringUtils.isNotBlank(details.getBankCode())) {
+						accNoLength = bankDetailService.getAccNoLengthByCode(details.getBankCode());
+					}
+					if (accNoLength != 0) {
+						this.beneficiaryAccNo.setMaxlength(accNoLength);
+					} else {
+						this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
+					}
+				}
 			}
 		}
 	}

@@ -73,7 +73,7 @@ public class CollectionDataDownloadProcess {
 		selectSql.append(
 				"totoutstandingamt,overduedate,noodinst,curoddays,actualoddays,odprincipal,odprofit,duebucket,penaltypaid	,penaltydue	,");
 		selectSql.append(
-				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus,RepayMethod) ");
+				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus,RepayMethod, AppDate) ");
 		selectSql.append("Select * from (SELECT ");
 		selectSql.append(" T1.FinReference LoanReference,T2.CustCIF CustCIF,");
 		selectSql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
@@ -90,8 +90,8 @@ public class CollectionDataDownloadProcess {
 				" T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
 		selectSql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
 		selectSql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
-		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod ");
-
+		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
+		selectSql.append(" (select SYSParmValue from SMTparameters where sysParmcODE='APP_DATE')  AppDate ");
 		selectSql.append("  FROM FinPftDetails T1 ");
 		selectSql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
 		selectSql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");

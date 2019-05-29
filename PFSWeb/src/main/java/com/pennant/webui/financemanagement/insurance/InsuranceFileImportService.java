@@ -60,41 +60,36 @@ public class InsuranceFileImportService {
 	private DataSource dataSource;
 	private InsuranceDetailService insuranceDetailService;
 	private NamedParameterJdbcTemplate jdbcTemplate;
-
+	
 	//Constants
-	private static final String DELIVERED = "DELIVERED";
-	private static final String RTO = "RTO";
+	private static final String DELIVERED	= "DELIVERED";
+	private static final String RTO	= "RTO";
 	//private static final String OUTFORDELIVERY	= "OUTFORDELIVERY";
 
-	/****************** Processing the Insurance details file Start ********************************/
+	/******************Processing the Insurance details file Start********************************/
 	/**
 	 * Processing the uploaded file
-	 * 
-	 * @throws Exception
+	 * @throws Exception 
 	 */
-	public void processFile(LoggedInUser userDetails, DataEngineStatus status, Media media, long providerId)
-			throws Exception {
+	public void processFile(LoggedInUser userDetails, DataEngineStatus status, Media media, long providerId) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		
 		String configName = status.getName();
 		status.reset();
 		status.setFileName(media.getName());
 		status.setRemarks("Initiated file reading...");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(getDataSource(), userDetails.getUserId(), App.DATABASE.name(), true,
-				DateUtility.getAppDate(), status);
+		dataEngine = new DataEngineImport(getDataSource(), userDetails.getUserId(), App.DATABASE.name(), true, DateUtility.getAppDate(), status);
 		dataEngine.setMedia(media);
 		dataEngine.importData(configName);
 
 		do {
-			if (ExecutionStatus.S.name().equals(status.getStatus())
-					|| ExecutionStatus.F.name().equals(status.getStatus())) {
+			if (ExecutionStatus.S.name().equals(status.getStatus()) || ExecutionStatus.F.name().equals(status.getStatus())) {
 				processData(userDetails, providerId, status);
 				break;
 			}
-		} while (ExecutionStatus.S.name().equals(status.getStatus())
-				|| ExecutionStatus.F.name().equals(status.getStatus()));
+		} while (ExecutionStatus.S.name().equals(status.getStatus()) || ExecutionStatus.F.name().equals(status.getStatus()));
 
 		logger.info(configName + " file processing completed");
 		logger.debug(Literal.LEAVING);
@@ -112,32 +107,31 @@ public class InsuranceFileImportService {
 			return;
 		}
 
-		int ccyForamt = getCcyFormat();
+		int ccyForamt =  getCcyFormat();
 		VASProviderAccDetail providerAccDetail = getVASProviderAccDetByPRoviderId(providerId);
-
+		
 		String oldRemarks = status.getRemarks();
 		status.setStatus(ExecutionStatus.I.name());
 		status.setRemarks("File Reading completed, Initiated the data processing...");
 		int totalRecords = insuranceDetails.size();
 		int failureRecords = 0;
-
+				
 		//Processing the data
 		for (InsuranceDetails detailFromFile : insuranceDetails) {
 			try {
 				status.setStatus(ExecutionStatus.E.name());
-
+				
 				boolean isExists = false;
 				boolean updateVas = false;
 				InsuranceDetails insuranceDetail = new InsuranceDetails();
 
 				String vasReference = detailFromFile.getReference();
-
+				
 				if (StringUtils.trimToNull(vasReference) == null) {
 					throw new Exception("Reference is mandatory.:" + vasReference);
 				}
-
-				VASRecording vasRecording = getInsuranceDetailService().getVASRecording(vasReference,
-						VASConsatnts.STATUS_NORMAL);
+				
+				VASRecording vasRecording = getInsuranceDetailService().getVASRecording(vasReference, VASConsatnts.STATUS_NORMAL);
 				if (vasRecording == null) {
 					throw new Exception("Insurace details are not available for the Reference :" + vasReference);
 				}
@@ -156,52 +150,46 @@ public class InsuranceFileImportService {
 							+ detailFromFile.getReference());
 				}
 
-				InsuranceDetails existingTempDetails = getInsuranceDetailService()
-						.getInsurenceDetailsByRef(vasReference, TableType.TEMP_TAB.getSuffix());
-
+				InsuranceDetails existingTempDetails = getInsuranceDetailService().getInsurenceDetailsByRef(vasReference, TableType.TEMP_TAB.getSuffix());
+				
 				if (existingTempDetails != null) {
 					throw new Exception("Record is in maintaince for the Reference :" + vasReference);
 				}
-
-				InsuranceDetails existingDetails = getInsuranceDetailService().getInsurenceDetailsByRef(vasReference,
-						TableType.MAIN_TAB.getSuffix());
+				
+				InsuranceDetails existingDetails = getInsuranceDetailService().getInsurenceDetailsByRef(vasReference, TableType.MAIN_TAB.getSuffix());
 				if (existingDetails != null) {
 					isExists = true;
 					BeanUtils.copyProperties(existingDetails, insuranceDetail);
 				} else if (providerAccDetail == null) {
 					throw new Exception("Provider Account details are not available. At the Refence :" + vasReference);
 				}
-
+				
 				//LoggedInUser details
 				insuranceDetail.setUserDetails(userDetails);
-
+				
 				//Entity code
 				insuranceDetail.setEntityCode(providerAccDetail.getEntityCode());
 
 				//Reference
 				insuranceDetail.setReference(vasReference);
-
+				
 				//Finreference
 				insuranceDetail.setFinReference(detailFromFile.getFinReference());
-
+				
 				// Issuance date less than AppDate
 				Date issuanceDate = detailFromFile.getIssuanceDate();
 				if (insuranceDetail.getIssuanceDate() == null) {
 					if (DateUtility.compare(issuanceDate, DateUtility.getAppDate()) > 0) {
-						throw new Exception(
-								"Issuance date Should not be greater than the application date. At the Refence :"
-										+ vasReference);
+						throw new Exception("Issuance date Should not be greater than the application date. At the Refence :" + vasReference);
 					}
 					insuranceDetail.setIssuanceDate(issuanceDate);
-				}
+				}  
 
 				// InsuranceStartDate greater than issuance date
 				if (insuranceDetail.getStartDate() == null) {
 					Date startDate = detailFromFile.getStartDate();
 					if (startDate != null && (DateUtility.compare(insuranceDetail.getIssuanceDate(), startDate) > 0)) {
-						throw new Exception(
-								"Insurance Start date should not be less than issuance date. At the Refence :"
-										+ vasReference);
+						throw new Exception("Insurance Start date should not be less than issuance date. At the Refence :" + vasReference);
 					}
 					insuranceDetail.setStartDate(startDate);
 				}
@@ -209,15 +197,12 @@ public class InsuranceFileImportService {
 				// InsuranceEndDate
 				if (insuranceDetail.getEndDate() == null) {
 					Date endDate = detailFromFile.getEndDate();
-					if (endDate != null
-							&& (DateUtility.compare(insuranceDetail.getIssuanceDate(), DateUtility.getAppDate()) > 0)) {
-						throw new Exception(
-								"Insurance End date should be greater than the application date. At the Refence :"
-										+ vasReference);
+					if (endDate != null && (DateUtility.compare(insuranceDetail.getIssuanceDate(), DateUtility.getAppDate()) > 0)) {
+						throw new Exception("Insurance End date should be greater than the application date. At the Refence :" + vasReference);
 					}
 					insuranceDetail.setEndDate(endDate);
 				}
-
+				
 				//If medical status is standard/Reject. System should not allow the user to update the loading premium amount. hence, premium and final premium amount will be same
 				String medicalStatus = vasRecording.getMedicalStatus();
 				if (VASConsatnts.VAS_MEDICALSTATUS_REJECT.equals(medicalStatus)
@@ -248,7 +233,7 @@ public class InsuranceFileImportService {
 						}
 						insuranceDetail.setTolaranceAmount(providerAccDetail.getReconciliationAmount());
 					}
-
+					
 					//Save/Updating the insurance data
 					insuranceDetail.setvASProviderId(providerId);
 					if (isExists) {
@@ -271,8 +256,7 @@ public class InsuranceFileImportService {
 				}
 				//Updating the vas status
 				if (updateVas) {
-					getInsuranceDetailService().updateVasStatus(vasRecording.getStatus(),
-							vasRecording.getVasReference());
+					getInsuranceDetailService().updateVasStatus(vasRecording.getStatus(), vasRecording.getVasReference());
 				}
 			} catch (Throwable e) {
 				logger.debug(Literal.EXCEPTION, e);
@@ -280,7 +264,7 @@ public class InsuranceFileImportService {
 				failureRecords++;
 			}
 		}
-
+		
 		//Status logging
 		StringBuilder remarks = new StringBuilder();
 		if (totalRecords > 0) {
@@ -300,21 +284,16 @@ public class InsuranceFileImportService {
 			setExceptionLog(status);
 			updateStatus(status);
 			status.setStatus(ExecutionStatus.S.name());
-		}
+		} 
 		logger.debug(Literal.LEAVING);
 	}
-
-	/****************** Processing the Insurance details file End ********************************/
-
-	/******************
-	 * Processing the Insurance Payment Uploads Start
-	 * 
-	 * @param insPaymentUploadDialogCtrl
-	 ***************************/
-	public void processPaymentUploadsFile(long userId, DataEngineStatus status, Media media, long providerId,
-			String entityCode, InsPaymentUploadDialogCtrl dialogCtrl) throws Exception {
+	/******************Processing the Insurance details file End********************************/
+	
+	/******************Processing the Insurance Payment Uploads Start 
+	 * @param insPaymentUploadDialogCtrl ***************************/
+	public void processPaymentUploadsFile(long userId, DataEngineStatus status, Media media, long providerId, String entityCode, InsPaymentUploadDialogCtrl dialogCtrl) throws Exception {
 		logger.debug(Literal.ENTERING);
-
+		
 		dialogCtrl.setPaymentInstructionsFromFile(null);
 		String configName = status.getName();
 		status.reset();
@@ -329,7 +308,7 @@ public class InsuranceFileImportService {
 
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
-				processPaymentUploadsData(providerId, entityCode, status, dialogCtrl);
+				processPaymentUploadsData(providerId, entityCode ,status, dialogCtrl);
 				break;
 			}
 		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
@@ -340,13 +319,11 @@ public class InsuranceFileImportService {
 
 	/**
 	 * Processing the payment upload
-	 * 
 	 * @param providerId
 	 * @param status
 	 * @param dialogCtrl
 	 */
-	private void processPaymentUploadsData(long providerId, String entityCode, DataEngineStatus status,
-			InsPaymentUploadDialogCtrl dialogCtrl) {
+	private void processPaymentUploadsData(long providerId,String entityCode ,DataEngineStatus status, InsPaymentUploadDialogCtrl dialogCtrl) {
 		logger.debug(Literal.ENTERING);
 
 		List<InsuranceDetails> insuranceDetails = getInsPaymentsFileImportData(status.getId());
@@ -356,39 +333,38 @@ public class InsuranceFileImportService {
 		}
 
 		VASProviderAccDetail providerAccDetail = getVASProviderAccDetByPRoviderId(providerId, entityCode);
-
+		
 		if (providerAccDetail == null) {
 			logger.debug("Provider account Details are empty.");
 			return;
 		}
-
+		
 		String oldRemarks = status.getRemarks();
 		status.setStatus(ExecutionStatus.I.name());
 		status.setRemarks("File Reading completed, Initiated the data processing...");
 		int totalRecords = insuranceDetails.size();
 		int failureRecords = 0;
-		int sucessRecords = 0;
-
+		int sucessRecords = 0;	
+		
 		BigDecimal totPaybleAmt = BigDecimal.ZERO;
 		LinkedHashMap<Long, String> adviseRefMap = new LinkedHashMap<>();
 		List<VASRecording> vasRecordingsList = new ArrayList<>();
-
+		
 		//Processing the data
 		for (InsuranceDetails detailFromFile : insuranceDetails) {
 			try {
 				status.setStatus(ExecutionStatus.E.name());
-				VASRecording vasRecording = getInsuranceDetailService().getVASRecording(detailFromFile.getReference(),
-						VASConsatnts.STATUS_NORMAL);
-
+				VASRecording vasRecording = getInsuranceDetailService().getVASRecording(detailFromFile.getReference(), VASConsatnts.STATUS_NORMAL);
+				
 				if (vasRecording == null) {
-					throw new Exception(
-							"Insurace details are not available for the Reference :" + detailFromFile.getReference());
+					throw new Exception("Insurace details are not available for the Reference :" + detailFromFile.getReference());
 				}
-
+				
 				//Term insurance lien
 				if (vasRecording.isTermInsuranceLien()) {
-					throw new Exception("Term Insurance Lien available for the reference.(Plolicy number :"
-							+ vasRecording.getPolicyNumber() + ")." + detailFromFile.getReference());
+					throw new Exception(
+							"Term Insurance Lien available for the reference.(Plolicy number :"
+									+ vasRecording.getPolicyNumber() + ")." + detailFromFile.getReference());
 				}
 
 				//Medical Status
@@ -400,50 +376,40 @@ public class InsuranceFileImportService {
 				if (vasRecording.getPaymentInsId() == 0) {
 					vasRecording.setPaymentInsId(Long.MIN_VALUE);
 				}
-
+				
 				if (vasRecording.getPaymentInsId() != Long.MIN_VALUE) {
-					throw new Exception(
-							"Payment already uploaded for this reference :" + detailFromFile.getReference());
+					throw new Exception("Payment already uploaded for this reference :" + detailFromFile.getReference());
 				}
-
-				if (!StringUtils.equals(entityCode, vasRecording.getEntityCode())) {
-					throw new Exception(
-							"Payment already uploaded for this reference :" + detailFromFile.getReference());
+				
+				if(!StringUtils.equals(entityCode, vasRecording.getEntityCode())){
+					throw new Exception("Payment already uploaded for this reference :" + detailFromFile.getReference());
 				}
-
+				
 				if (!InsuranceConstants.ACTIVE.equals(vasRecording.getStatus())) {
-					throw new Exception(
-							"Insurace is in inactive status at the Reference :" + detailFromFile.getReference());
+					throw new Exception("Insurace is in inactive status at the Reference :" + detailFromFile.getReference());
 				}
-
-				InsuranceDetails insuranceDetail = getInsuranceDetailService()
-						.getInsurenceDetailsByRef(vasRecording.getVasReference(), "");
-
+				
+				InsuranceDetails insuranceDetail = getInsuranceDetailService().getInsurenceDetailsByRef(vasRecording.getVasReference(), "");
+				
 				if (insuranceDetail == null) {
-					InsuranceDetails tempDetail = getInsuranceDetailService()
-							.getInsurenceDetailsByRef(vasRecording.getVasReference(), "_Temp");
+					InsuranceDetails tempDetail = getInsuranceDetailService().getInsurenceDetailsByRef(vasRecording.getVasReference(), "_Temp");
 					if (tempDetail != null) {
-						throw new Exception(
-								"The uploaded insurance is not reconciled :" + detailFromFile.getReference());
+						throw new Exception("The uploaded insurance is not reconciled :" + detailFromFile.getReference());
 					} else {
-						throw new Exception("Insurace details are not uploaded for the Reference :"
-								+ detailFromFile.getReference());
+						throw new Exception("Insurace details are not uploaded for the Reference :"+ detailFromFile.getReference());
 					}
 				}
-
+				
 				if (!InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) {
-					throw new Exception(
-							"Insurace is not Auto Reconciled for the Reference :" + detailFromFile.getReference());
+					throw new Exception("Insurace is not Auto Reconciled for the Reference :" + detailFromFile.getReference());
 				}
-
+				
 				if (providerId != insuranceDetail.getvASProviderId()) {
-					throw new Exception("Insurace is not related to selected Company Code for the Reference :"
-							+ detailFromFile.getReference());
+					throw new Exception("Insurace is not related to selected Company Code for the Reference :" + detailFromFile.getReference());
 				}
-
+				
 				if (providerAccDetail.isReceivableAdjustment()) {
-					VASConfiguration configuration = getInsuranceDetailService()
-							.getVASConfigurationByCode(vasRecording.getProductCode());
+					VASConfiguration configuration = getInsuranceDetailService().getVASConfigurationByCode(vasRecording.getProductCode());
 					adviseRefMap.put(configuration.getFeeType(), detailFromFile.getReference());
 				}
 				totPaybleAmt = totPaybleAmt.add(insuranceDetail.getPartnerPremium());
@@ -456,7 +422,7 @@ public class InsuranceFileImportService {
 				failureRecords++;
 			}
 		}
-
+		
 		if (sucessRecords > 0) {
 			InsurancePaymentInstructions detail = new InsurancePaymentInstructions();
 			detail.setVasRecordindList(vasRecordingsList);
@@ -469,7 +435,7 @@ public class InsuranceFileImportService {
 			detail.setDataEngineStatusId(status.getId());
 			dialogCtrl.setPaymentInstructionsFromFile(detail);
 		}
-
+		
 		//Status logging
 		StringBuilder remarks = new StringBuilder();
 		if (totalRecords > 0) {
@@ -489,20 +455,20 @@ public class InsuranceFileImportService {
 			setExceptionLog(status);
 			updateStatus(status);
 			status.setStatus(ExecutionStatus.S.name());
-		}
+		} 
 		logger.debug(Literal.LEAVING);
 	}
-
+	
 	public void saveInsurancePayments(InsurancePaymentInstructions paymentInstructions) {
 		getInsuranceDetailService().saveInsurancePayments(paymentInstructions);
 	}
-
-	/****************** Processing the Insurance Payment Uploads End *****************************/
-
-	/***************** Process Manual Advise Start **********************************************/
+	
+	/******************Processing the Insurance Payment Uploads End*****************************/
+	
+	/*****************Process Manual Advise Start**********************************************/
 	public InsurancePaymentInstructions getManualAdvises(InsurancePaymentInstructions instructions) {
 		logger.debug(Literal.ENTERING);
-
+		
 		BigDecimal receivableAmt = BigDecimal.ZERO;
 		BigDecimal paybleAmt = instructions.getPayableAmount();
 		int noOfReceivables = 0;
@@ -528,13 +494,13 @@ public class InsuranceFileImportService {
 			instructions.setReceivableAmount(receivableAmt);
 		}
 		instructions.setNoOfReceivables(noOfReceivables);
-
+		
 		logger.debug(Literal.LEAVING);
 		return instructions;
 	}
-
-	/***************** Process Manual Advise End **********************************************/
-
+	
+	/*****************Process Manual Advise End**********************************************/
+	
 	/*****************
 	 * Process VASPremium CalcUploadFile Start
 	 * 
@@ -562,7 +528,7 @@ public class InsuranceFileImportService {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
 				processPaymentUploadsData(status, manufacturerName, dialogCtrl);
 				break;
-			}
+				}
 		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
 
 		logger.info(configName + " file processing completed");
@@ -599,10 +565,6 @@ public class InsuranceFileImportService {
 				}
 
 				status.setStatus(ExecutionStatus.E.name());
-				if (isError) {
-					continue;
-				}
-
 				if (!StringUtils.equalsIgnoreCase(manufacturerName, detailFromFile.getManufacturerName())) {
 					throw new Exception("Manufacturer name not matched with the selected manufacturer.");
 				}
@@ -693,7 +655,6 @@ public class InsuranceFileImportService {
 
 				sucessRecords++;
 			} catch (Throwable e) {
-				isError = true;
 				logger.debug(Literal.EXCEPTION, e);
 				updateLog(status.getId(), detailFromFile.getCustomerAgeF(), "F", e.getMessage());
 				failureRecords++;
@@ -731,25 +692,23 @@ public class InsuranceFileImportService {
 
 	/***************** Process VASPremium CalcUploadFile End **********************************************/
 
-	/****************** Common Methods ********************************/
+	/******************Common Methods********************************/
 
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode) {
-		return getInsuranceDetailService().getVASProviderAccDetByPRoviderId(providerId, entityCode,
-				TableType.MAIN_TAB.getSuffix());
+		return getInsuranceDetailService().getVASProviderAccDetByPRoviderId(providerId, entityCode, TableType.MAIN_TAB.getSuffix());
 	}
-
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId) {
 		return getInsuranceDetailService().getVASProviderAccDetByPRoviderId(providerId, TableType.MAIN_TAB.getSuffix());
 	}
-
+	
 	public BankBranch getBankBranchById(long bankBranchID) {
-		return getInsuranceDetailService().getBankBranchById(bankBranchID, "_AView");
+		return getInsuranceDetailService().getBankBranchById(bankBranchID,"_AView");
 	}
-
+	
 	public VehicleDealer getProviderDetails(long providerId) {
-		return getInsuranceDetailService().getProviderDetails(providerId, "_AView");
+		return getInsuranceDetailService().getProviderDetails(providerId,"_AView");
 	}
-
+	
 	//Setting the workFlow details
 	private void setWorkFlowDetails(InsuranceDetails insuranceDetail) {
 		if (InsuranceConstants.RECON_STATUS_AUTO.equals(insuranceDetail.getReconStatus())) {
@@ -782,7 +741,7 @@ public class InsuranceFileImportService {
 			status.setDataEngineLogList(engineLogs);
 		}
 	}
-
+	
 	// Getting the exception log
 	public List<DataEngineLog> getExceptions(long batchId) {
 		RowMapper<DataEngineLog> rowMapper = null;
@@ -802,7 +761,7 @@ public class InsuranceFileImportService {
 		}
 		return null;
 	}
-
+	
 	// Data Engine log
 	private void updateLog(long id, String keyId, String status, String reason) {
 
@@ -842,10 +801,10 @@ public class InsuranceFileImportService {
 		this.jdbcTemplate.update(query.toString(), beanParameters);
 	}
 
+	
 	/**
 	 * Getting the Insurance details File import data for processing
-	 * 
-	 * @param l
+	 * @param l 
 	 * @return
 	 */
 	private List<InsuranceDetails> getInsFileImportData(long batchId) {
@@ -862,10 +821,10 @@ public class InsuranceFileImportService {
 		logger.debug("selectSql: " + sql.toString());
 		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InsuranceDetails.class);
-
+		
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BatchId", batchId);
-
+		
 		try {
 			return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -874,20 +833,19 @@ public class InsuranceFileImportService {
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
-
+	
 	/**
 	 * Getting the Insurance Payments File import data for processing
-	 * 
 	 * @return
 	 */
 	private List<InsuranceDetails> getInsPaymentsFileImportData(long batchId) {
 		logger.debug(Literal.ENTERING);
-
+		
 		StringBuilder sql = new StringBuilder();
-
+		
 		sql.append("Select  FinReference ,Reference ,PolicyNumber ");
 		sql.append(" From InsurancePayments_Dataengine Where BatchId = :BatchId");
-
+		
 		logger.debug("selectSql: " + sql.toString());
 		RowMapper<InsuranceDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(InsuranceDetails.class);
@@ -930,7 +888,7 @@ public class InsuranceFileImportService {
 	private int getCcyFormat() {
 		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
-
+	
 	//Getters and setters
 	public DataSource getDataSource() {
 		return dataSource;
@@ -948,5 +906,5 @@ public class InsuranceFileImportService {
 	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
 		this.insuranceDetailService = insuranceDetailService;
 	}
-
+	
 }

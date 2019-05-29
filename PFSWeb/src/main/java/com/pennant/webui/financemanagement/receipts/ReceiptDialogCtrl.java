@@ -51,6 +51,7 @@
  */
 package com.pennant.webui.financemanagement.receipts;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -461,8 +462,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private Space panSpace;
 
 	private static final String RECEIPT_PREFIX = "Receipt";
-	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.REPORTS_FINANCE);
 	private static final String RECEIPT_TEMPLATE = RECEIPT_PREFIX + PennantConstants.DOC_TYPE_WORD_EXT;
+	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.FINANCE_AGREEMENTS, "Receipts");
 
 	/**
 	 * default constructor.<br>
@@ -2414,6 +2415,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		// save it to database
 		try {
+
+			File file = new File(TEMPLATE_PATH + File.separator + RECEIPT_TEMPLATE);
+			if (!file.exists()) {
+				throw new AppException(
+						String.format("%s Template not available in %s loaction", RECEIPT_TEMPLATE, TEMPLATE_PATH));
+			}
 
 			if (doProcess(aReceiptData, tranType)) {
 
@@ -5948,14 +5955,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		AgreementEngine engine = null;
 
-		try {
-			engine = new AgreementEngine(TEMPLATE_PATH, TEMPLATE_PATH);
-			engine.setTemplate(RECEIPT_TEMPLATE);
-			engine.loadTemplate();
-		} catch (Exception e) {
-			throw new AppException(
-					String.format("%s Template not available in %s loaction", RECEIPT_TEMPLATE, TEMPLATE_PATH));
-		}
+		engine = new AgreementEngine(TEMPLATE_PATH, TEMPLATE_PATH);
+		engine.setTemplate(RECEIPT_TEMPLATE);
+		engine.loadTemplate();
 
 		String reportName = RECEIPT_PREFIX.concat("_");
 		reportName = reportName.concat(this.finReference.getValue());

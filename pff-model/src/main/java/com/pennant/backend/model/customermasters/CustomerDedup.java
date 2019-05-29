@@ -88,6 +88,12 @@ public class CustomerDedup implements Serializable {
 	private String address;
 	private String panNumber;
 	private String aadharNumber;
+	private String fatherName;
+	private String motherName;
+	private String voterID;
+	private String rationCard;
+	private String lpgNumber;
+	private String drivingLicenceNo;
 
 	public CustomerDedup() {
 		super();
@@ -130,6 +136,14 @@ public class CustomerDedup implements Serializable {
 		excludeFields.add("sourceSystem");
 		excludeFields.add("panNumber");
 		excludeFields.add("aadharNumber");
+		excludeFields.add("address");
+		excludeFields.add("fatherName");
+		excludeFields.add("motherName");
+		excludeFields.add("voterID");
+		excludeFields.add("rationCard");
+		excludeFields.add("lpgNumber");
+		excludeFields.add("custPassportNo");
+		excludeFields.add("drivingLicenceNo");
 		excludeFields.add("address");
 		return excludeFields;
 	}
@@ -594,5 +608,53 @@ public class CustomerDedup implements Serializable {
 
 	public void setAadharNumber(String aadharNumber) {
 		this.aadharNumber = aadharNumber;
+	}
+
+	public String getVoterID() {
+		return voterID;
+	}
+
+	public void setVoterID(String voterID) {
+		this.voterID = voterID;
+	}
+
+	public String getDrivingLicenceNo() {
+		return drivingLicenceNo;
+	}
+
+	public void setDrivingLicenceNo(String drivingLicenceNo) {
+		this.drivingLicenceNo = drivingLicenceNo;
+	}
+
+	public String getRationCard() {
+		return rationCard;
+	}
+
+	public void setRationCard(String rationCard) {
+		this.rationCard = rationCard;
+	}
+
+	public String getLpgNumber() {
+		return lpgNumber;
+	}
+
+	public void setLpgNumber(String lpgNumber) {
+		this.lpgNumber = lpgNumber;
+	}
+
+	public String getFatherName() {
+		return fatherName;
+	}
+
+	public void setFatherName(String fatherName) {
+		this.fatherName = fatherName;
+	}
+
+	public String getMotherName() {
+		return motherName;
+	}
+
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
 	}
 }

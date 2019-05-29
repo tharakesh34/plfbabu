@@ -705,7 +705,6 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			if (multySelection && ExtendedSearchListBox.this.listbox.getSelectedItems() != null) {
-				selectedValues.clear();
 				for (Listitem item : ExtendedSearchListBox.this.listbox.getSelectedItems()) {
 					final Object object = item.getAttribute("data");
 					String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase()

@@ -114,24 +114,27 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
+import com.pennant.webui.financemanagement.receipts.LoanClosureEnquiryDialogCtrl;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
 public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ScheduleDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ScheduleDetailDialog; // autoWired
 	protected Listbox listBoxSchedule; // autoWired
@@ -226,7 +229,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Listheader listheader_ScheduleDetailDialog_ScheduleEvent;
 	protected Listheader listheader_ScheduleDetailDialog_CalProfit;
 	protected Listheader listheader_ScheduleDetailDialog_SchFee;
-	protected Listheader listheader_ScheduleDetailDialog_SchTax; //GST
+	protected Listheader listheader_ScheduleDetailDialog_SchTax; // GST
 	protected Listheader listheader_ScheduleDetailDialog_SupplementRent;
 	protected Listheader listheader_ScheduleDetailDialog_IncreasedCost;
 	protected Listheader listheader_ScheduleDetailDialog_SchAdvProfit;
@@ -298,8 +301,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -337,7 +341,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.financeMainDialogCtrl = (Object) arguments.get("financeMainDialogCtrl");
 		}
 
-		if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)) {
+		if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
+				&& !(this.financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl)) {
 			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
 					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
 		}
@@ -346,11 +351,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
 		}
 
-		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl) {
+		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl || financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
 			//
 		} else {
 			logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
-			// FIXME MUR>> Replace me as above otherwise you don't know where i came.  
+			// FIXME MUR>> Replace me as above otherwise you don't know where i
+			// came.
 			this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
 					.getMethod("getFinFeeDetailListCtrl").invoke(financeMainDialogCtrl));
 		}
@@ -371,7 +377,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 	/**
 	 * 
-	 * Set the Labels for the ListHeader and Basic Details based oon the Finance Types right is only a string. <br>
+	 * Set the Labels for the ListHeader and Basic Details based oon the Finance
+	 * Types right is only a string. <br>
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
@@ -572,7 +579,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A
+	 * right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -593,7 +601,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnCancelDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
 		this.btnUnPlanEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-		//this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+		// this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" +
+		// dialogName + "_btnAddTerms"));
 		this.btnRmvTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
 		this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 		this.btnSubSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
@@ -614,7 +623,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
 		this.btnUnPlanEMIH.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
-		//this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+		// this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_"
+		// + dialogName + "_btnAddTerms"));
 		this.btnRmvTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRmvTerms"));
 		this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 		this.btnSubSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnBuildSubSchd"));
@@ -656,7 +666,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -687,7 +698,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				doOpenChildWindow();
 			}
 
-			if (getFinanceMainDialogCtrl() != null && !(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)) {
+			if (getFinanceMainDialogCtrl() != null && !(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
+					&& !(this.financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl)) {
 				try {
 					Class[] paramType = { this.getClass() };
 					Object[] stringParameter = { this };
@@ -730,7 +742,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 
-		//aFinSchData = FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
+		// aFinSchData =
+		// FeeScheduleCalculator.getFeeScheduleDetails(aFinSchData);
 
 		doSetPropVisiblity(aFinSchData);
 
@@ -1062,7 +1075,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				finRender.render(map, prvSchDetail, false, allowRvwRate, true, aFinSchData.getFinFeeDetailList(),
 						showRate, StringUtils.isEmpty(moduleDefiner));
 
-				// Resetting Maturity Terms & Summary details rendering incase of Reduce maturity cases
+				// Resetting Maturity Terms & Summary details rendering incase
+				// of Reduce maturity cases
 				if (!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
 					lastRecord = true;
 				}
@@ -1089,8 +1103,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 						aFinSchData.getFinanceMain().setNumberOfTerms(totRepayTerms);
 					}
 
-					if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl) && financeMainDialogCtrl.getClass()
-							.getMethod("resetScheduleTerms", FinScheduleData.class) != null) {
+					if (!(this.financeMainDialogCtrl instanceof ReceiptDialogCtrl)
+							&& !(this.financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl)
+							&& financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms",
+									FinScheduleData.class) != null) {
 						financeMainDialogCtrl.getClass().getMethod("resetScheduleTerms", FinScheduleData.class)
 								.invoke(financeMainDialogCtrl, aFinSchData);
 					}
@@ -1131,42 +1147,44 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		Tabpanel panel;
 		Groupbox gbBox;
 
-		//If No schedules to Display - then remove insurance tabs added previously(if any)
+		// If No schedules to Display - then remove insurance tabs added
+		// previously(if any)
 		if (finInsurances == null || finInsurances.isEmpty()) {
 			removePrevoiusInsTabs();
 			return;
 		}
 
-		// Removing previously embedded tabs if any to Re-render them dynamically 
+		// Removing previously embedded tabs if any to Re-render them
+		// dynamically
 		removePrevoiusInsTabs();
 
-		//Rendering/Re-rendering  List of separated Insurance Details in to
-		//Separate ListBox's and appended to Insurance Tabs
+		// Rendering/Re-rendering List of separated Insurance Details in to
+		// Separate ListBox's and appended to Insurance Tabs
 		for (int i = 0; i < finInsurances.size(); i++) {
 
 			if (!StringUtils.equals(finInsurances.get(i).getPaymentMethod(), InsuranceConstants.PAYTYPE_SCH_FRQ)) {
 				continue;
 			}
 
-			//dynamically create list box
+			// dynamically create list box
 			Listbox listbox = getinsListBox(finInsurances.get(i).getCalType());
 
-			//Render Schedule details 
+			// Render Schedule details
 			listbox.setId(finInsurances.get(i).getInsuranceType() + i);
 			renderSchFreqDetails(formatter, finInsurances.get(i), listbox);
 
-			//Append list box to the group box
+			// Append list box to the group box
 			gbBox = new Groupbox();
 			gbBox.setId("gbBox_Insurance" + i);
 			gbBox.appendChild(listbox);
 
-			//Append tab to  tabs
+			// Append tab to tabs
 			tab = new Tab();
 			tab.setId("Tab_FinInsuranceSchdDetails" + i);
 			tab.setLabel(finInsurances.get(i).getInsuranceType() + "_" + finInsurances.get(i).getInsReference());
 			tab.setParent(this.tabsIndexCenter);
 
-			//Append panel to the tabPanel
+			// Append panel to the tabPanel
 			panel = new Tabpanel();
 			panel.setId("TabPanel_Insurance" + i);
 			panel.appendChild(gbBox);
@@ -1219,14 +1237,15 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Removing previously embedded tabs if any to Re-render them dynamically
+	 * Method for Removing previously embedded tabs if any to Re-render them
+	 * dynamically
 	 */
 	private void removePrevoiusInsTabs() {
 		logger.debug("Entering");
 		List<Tabpanel> tabpanels = tabpanelsBoxIndexCenter.getChildren();
 		String[] tabpanelIds = new String[tabpanels.size()];
 
-		//To remove tab panels rendered prevoiusly if any
+		// To remove tab panels rendered prevoiusly if any
 		for (int i = 0; i < tabpanels.size(); i++) {
 			String tabPanelId = tabpanels.get(i).getId();
 			if (tabPanelId.startsWith("TabPanel_Insurance")) {
@@ -1242,7 +1261,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		List<Tab> tabs = tabsIndexCenter.getChildren();
 		String[] tabNames = new String[tabs.size()];
-		//To remove tabs  rendered prevoiusly if any
+		// To remove tabs rendered prevoiusly if any
 		for (int i = 0; i < tabs.size(); i++) {
 			String tabId = tabs.get(i).getId();
 			if (tabId.startsWith("Tab_FinInsuranceSchdDetails")) {
@@ -1281,19 +1300,19 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			listitem = new Listitem();
 			Listcell lc = null;
 
-			//schedule Date
+			// schedule Date
 			lc = new Listcell(DateUtility.formatToLongDate(finSchFrqInsurance.getInsSchDate()));
 			lc.setStyle("font-weight:bold;cursor:default;");
 			listitem.appendChild(lc);
 
 			if (StringUtils.equals(insurance.getCalType(), InsuranceConstants.CALTYPE_PERCENTAGE)) {
-				//Insurance Percentage
+				// Insurance Percentage
 				lc = new Listcell(PennantApplicationUtil.formatRate(insurance.getCalPerc().doubleValue(),
 						PennantConstants.rateFormate) + "%");
 				lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 				listitem.appendChild(lc);
 			} else {
-				//Insurance Policy Rate
+				// Insurance Policy Rate
 				lc = new Listcell(PennantApplicationUtil.formatRate(finSchFrqInsurance.getInsuranceRate().doubleValue(),
 						PennantConstants.rateFormate) + "%");
 				lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
@@ -1305,7 +1324,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 			listitem.appendChild(lc);
 
-			//Outstanding Balance
+			// Outstanding Balance
 			lc = new Listcell(PennantAppUtil.amountFormate(finSchFrqInsurance.getClosingBalance(), formatter));
 			lc.setStyle("font-weight:bold;text-align:right;cursor:default;");
 			listitem.appendChild(lc);
@@ -1392,7 +1411,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				this.listHeader_vSProfit.setLabel(Labels.getLabel("listheader_VsProfit"));
 				this.listHeader_orgPrincipalDue.setLabel(Labels.getLabel("listheader_OrgPrincipalDue"));
 
-				// Temporarily Make it UnVisible after decision, If required can be visible.
+				// Temporarily Make it UnVisible after decision, If required can
+				// be visible.
 				this.listHeader_cashFlowEffect.setVisible(false);
 				this.listHeader_vSProfit.setVisible(false);
 				this.listHeader_orgPrincipalDue.setVisible(false);
@@ -1428,7 +1448,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.hbox_LinkedDownPayRef.setVisible(false);
 		}
 
-		//Schedule Fee Column Visibility Check
+		// Schedule Fee Column Visibility Check
 		boolean isSchdFee = false;
 		List<FinanceScheduleDetail> schdList = aFinSchData.getFinanceScheduleDetails();
 		for (int i = 0; i < schdList.size(); i++) {
@@ -1697,9 +1717,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnReAgeHolidays"));
 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDTERM)) {
-			//this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+			// this.btnAddTerms.setVisible(getUserWorkspace().isAllowed("button_"
+			// + dialogName + "_btnAddTerms"));
 			this.btnReCalcualte.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
-			//this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddTerms"));
+			// this.btnAddTerms.setDisabled(!getUserWorkspace().isAllowed("button_"
+			// + dialogName + "_btnAddTerms"));
 			this.btnReCalcualte.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalculate"));
 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RMVTERM)) {
@@ -2486,7 +2508,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Setting Planned EMI Holiday Months when Planned EMI Holidays Allowed
+	 * Method for Setting Planned EMI Holiday Months when Planned EMI Holidays
+	 * Allowed
 	 */
 	public void visiblePlanEMIHolidays(boolean alwPlanEMIHMonths, boolean alwPlanEMIHDates) {
 		logger.debug("Entering");
@@ -2529,7 +2552,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
+	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays
+	 * Allowed
 	 */
 	public List<Integer> getPlanEMIHMonths() {
 		logger.debug("Entering");
@@ -2551,7 +2575,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
+	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays
+	 * Allowed
 	 */
 	public List<Integer> setPlanEMIHMonths(List<Integer> planEMIHMonths) {
 		logger.debug("Entering");
@@ -2585,7 +2610,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		logger.debug("Entering");
 
-		// Finance Basic Details comparison for Schedule Regeneration Required or not
+		// Finance Basic Details comparison for Schedule Regeneration Required
+		// or not
 		boolean isValid = true;
 		if (getFinanceMainDialogCtrl() != null) {
 			if (financeMainDialogCtrl.getClass().getMethod("isSchdlRegenerate") != null) {
@@ -2646,7 +2672,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 							break;
 						}
 
-						//Reset marked holidays per year
+						// Reset marked holidays per year
 						if (planEMIHDate.compareTo(dateAfterYear) >= 0) {
 							markedEMIHMaxPerYear = 0;
 							dateAfterYear = DateUtility.addMonths(planEMIHDate, 12);
@@ -2672,7 +2698,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Capturing Planned EMI Holiday Dates when user did Action on it.
+	 * Method for Capturing Planned EMI Holiday Dates when user did Action on
+	 * it.
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCheckPlanEMIHDate(ForwardEvent event) {
@@ -2705,7 +2732,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Checking Validation with Current Business date is required or not
+	 * Method for Checking Validation with Current Business date is required or
+	 * not
 	 */
 	private boolean isAppDateValidationReq() {
 

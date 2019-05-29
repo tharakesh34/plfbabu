@@ -2365,6 +2365,18 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					return;
 				}
 			}
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_BillingReport")) {
+			String userDate = null;
+
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			if (filters != null && filters.size() == 2) {
+				userDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			}
+
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
+					userDate, null);
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
