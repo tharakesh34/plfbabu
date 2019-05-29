@@ -4596,7 +4596,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference,boolean active) {
+	public FinanceMain getFinanceMainByOldFinReference(String oldFinReference, boolean active) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();

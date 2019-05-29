@@ -101,8 +101,6 @@ public interface FinFeeDetailService {
 	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages, boolean apiRequest);
 
-	BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy, Map<String, Object> gstExecutionMap);
-
 	BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy);
 
 	void calculateFees(FinFeeDetail fee, FinanceMain financeMain, Map<String, BigDecimal> taxPercentages);

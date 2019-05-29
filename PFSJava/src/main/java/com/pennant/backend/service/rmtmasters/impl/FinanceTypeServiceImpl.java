@@ -645,8 +645,8 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVINT.name());
 
-		if ((financeType.isGrcAdvIntersetReq() || financeType.isAdvIntersetReq())
-				&& AdvanceType.getType(financeType.getAdvType()) != AdvanceType.AE) {
+		if (financeType.isGrcAdvIntersetReq()
+				|| financeType.isAdvIntersetReq() && !financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVINT.name(), orgFinEvent, true);
@@ -683,7 +683,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(AdvanceRuleCode.ADVEMI.name());
 
 		//FOR SP FINANCE ADVANCE EMI FEES NOT REQUIRED.
-		if (financeType.isAdvIntersetReq() && AdvanceType.getType(financeType.getAdvType()) == AdvanceType.AE) {
+		if (financeType.isAdvIntersetReq() && financeType.getAdvType().equals(AdvanceType.AE)) {
 			exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
 			if (!exist) {
 				finTypeFee = getFinTypeFee(feeTypeId, AdvanceRuleCode.ADVEMI.name(), orgFinEvent, true);

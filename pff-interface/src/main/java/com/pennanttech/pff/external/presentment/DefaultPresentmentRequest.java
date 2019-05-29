@@ -161,8 +161,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		sql.append(" INNER JOIN RMTFINANCETYPES T9 ON T9.FINTYPE = T2.FINTYPE");
 		sql.append(" INNER JOIN RMTCURRENCIES T10 ON T10.CCYCODE = T2.FINCCY");
 		sql.append(" INNER JOIN SMTDIVISIONDETAIL T11 ON T11.DIVISIONCODE=T9.FINDIVISION");
-		sql.append(
-				" WHERE T1.PRESENTMENTID = :PRESENTMENTID AND T1.EXCLUDEREASON = :EXCLUDEREASON AND T1.STATUS <> :STATUS ");
+		sql.append(" WHERE T1.PRESENTMENTID = :PRESENTMENTID");
+		sql.append(" AND T1.EXCLUDEREASON = :EXCLUDEREASON AND T1.STATUS <> :STATUS ");
 		return sql;
 	}
 
@@ -444,7 +444,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 		//Fix related Bulk-Processing in case of list having huge records IN operator is not working.
 		//So instead on IN Operator using BatchUpdate.
-		List<MapSqlParameterSource> sources = new ArrayList<MapSqlParameterSource>();
+		List<MapSqlParameterSource> sources = new ArrayList<>();
 		for (Long id : idList) {
 			MapSqlParameterSource batchValues = new MapSqlParameterSource();
 			batchValues.addValue("STATUS", status);
@@ -458,7 +458,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				sources.clear();
 			}
 		}
-		if (sources.size() > 0) {
+		if (!sources.isEmpty()) {
 			SqlParameterSource[] batchArgs = sources.toArray(new SqlParameterSource[sources.size()]);
 			this.namedJdbcTemplate.batchUpdate(sql.toString(), batchArgs);
 			sources.clear();

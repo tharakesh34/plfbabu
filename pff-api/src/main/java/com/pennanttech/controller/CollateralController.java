@@ -513,6 +513,27 @@ public class CollateralController {
 						exdFieldRender.setNewRecord(true);
 						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					}
+					int noOfUnits = 0;
+					BigDecimal curValue = BigDecimal.ZERO;
+
+					try {
+						// Setting Number of units
+						if (mapValues.containsKey("NOOFUNITS")) {
+							noOfUnits = Integer.parseInt(mapValues.get("NOOFUNITS").toString());
+							totalUnits = totalUnits + noOfUnits;
+						}
+
+						// Setting Total Value
+						if (mapValues.containsKey("UNITPRICE")) {
+							curValue = new BigDecimal(mapValues.get("UNITPRICE").toString());
+							totalValue = totalValue.add(curValue.multiply(new BigDecimal(noOfUnits)));
+						}
+					} catch (NumberFormatException nfe) {
+						APIErrorHandlerService.logUnhandledException(nfe);
+						logger.error("Exception", nfe);
+						throw nfe;
+					}
+
 					exdFieldRender.setMapValues(mapValues);
 					extendedFieldRenderList.add(exdFieldRender);
 				} else {

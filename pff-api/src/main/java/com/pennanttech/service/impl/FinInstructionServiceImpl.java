@@ -241,9 +241,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("ChangeRepaymentAmount");
-		}
+		//FIXME Open when the flexi is comes in core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeRepaymentAmount"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = addRepaymentService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -310,9 +311,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("Deferments");
-		}
+		//FIXME Used only when flexi changes comes to core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Deferments"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = postponementService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -383,9 +385,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("AddTerms");
-		}
+		//FIXME Used only when flexi changes comes to core
+
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("AddTerms"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = addTermsService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -469,9 +473,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("RemoveTerms");
-		}
+		//FIXME Used only when flexi changes comes to core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("RemoveTerms"); }
+		 */
 		// validate RecalType
 		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
 			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
@@ -608,9 +613,11 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("Recalculate");
-		}
+		//FIXME Used only when flexi changes comes to core
+
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Recalculate"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = recalService.doValidations(finServiceInstruction);
 
@@ -681,9 +688,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("ChangeInterest");
-		}
+		//FIXME Used only when flexi changes comes to core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeInterest"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = changeProfitService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -918,9 +926,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("ReScheduling");
-		}
+		//FIXME Used only when flexi changes comes to core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ReScheduling"); }
+		 */
 		// validate service instruction data
 		AuditDetail auditDetail = reScheduleService.doValidations(finServiceInstruction);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1234,9 +1243,10 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return financeDetail;
 		}
 		//restrict FLEXI Finances
-		if (restrictFlexiFinances(finServiceInstruction)) {
-			return flexiNotAllowed("Schedule Change Method");
-		}
+		//FIXME Used only when flexi changes comes to core
+		/*
+		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Schedule Change Method"); }
+		 */
 		//Step Loan not accepted FIXME
 		FinanceMain finMain = financeMainDAO.getFinanceMainById(finServiceInstruction.getFinReference(), "",
 				finServiceInstruction.isWif());

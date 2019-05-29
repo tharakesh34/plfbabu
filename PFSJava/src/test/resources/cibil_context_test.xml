@@ -14,24 +14,24 @@
 		<property name="password" value="Pennant_123" />
 		<property name="maxTotal" value="100" />
 	</bean>
-	
+
 	<bean id="basicDao" class="com.pennanttech.pennapps.core.jdbc.BasicDao" abstract="true">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
 	<bean id="corporateCibilReport" class="com.pennanttech.pff.external.cibil.CorporateCibilReport" parent="basicDao">
-		<property name="cibilService" ref="cibilService"/>
+		<property name="cibilService" ref="cibilService" />
 	</bean>
 	<bean id="cibilService" class="com.pennant.backend.service.cibil.CIBILServiceImpl">
-		<property name="cibildao" ref="cibildao"/>
+		<property name="cibildao" ref="cibildao" />
 	</bean>
-	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl" parent="basicDao"/>
-	
-	
+	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl" parent="basicDao" />
+
+
 	<bean id="SysParamUtil " class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
-	
+
 	<!-- PFS SMT Parameters -->
 	<bean id="pFSParameterDAO" class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl" parent="basicDao" />
 
@@ -42,6 +42,6 @@
 	<bean id="configurationService" class="com.pennanttech.pff.backend.service.ConfigurationServiceImpl" init-method="init">
 		<property name="masterDefDAO" ref="masterDefTempDAO" />
 	</bean>
-	
-	
+
+
 </beans>
