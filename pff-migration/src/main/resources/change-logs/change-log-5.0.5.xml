@@ -3397,18 +3397,4 @@
 			          WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 			 </createView>
 	</changeSet>
-
-	<changeSet id="78" author="Varaprasad.k">
-		<createView viewName="finexcessamount_lovview" replaceIfExists="true">
-        SELECT finexcessamount.excessid,
-               finexcessamount.finreference,
-               finexcessamount.amounttype,
-               round(finexcessamount.amount / 100,2) AS amount,
-               round(finexcessamount.utilisedamt / 100,2) AS utilisedamt,
-               round(finexcessamount.reservedamt / 100,2) AS reservedamt,
-               round(finexcessamount.balanceamt / 100,2) AS balanceamt
-        FROM finexcessamount           
-    </createView>
-	</changeSet>
-	
 </databaseChangeLog>
