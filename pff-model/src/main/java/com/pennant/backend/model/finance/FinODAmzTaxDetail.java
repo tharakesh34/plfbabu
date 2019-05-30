@@ -15,7 +15,6 @@ public class FinODAmzTaxDetail implements Serializable {
 	private String taxFor;
 	private BigDecimal amount = BigDecimal.ZERO;
 	private String taxType;
-	private Date postDate;
 	private BigDecimal CGST = BigDecimal.ZERO;
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
