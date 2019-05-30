@@ -3475,5 +3475,6 @@
 			]]>
 		</sql>
 	</changeSet>
+	<!-- 5.0.5 is Under QC please use 5.0.6 -->
 
 </databaseChangeLog>

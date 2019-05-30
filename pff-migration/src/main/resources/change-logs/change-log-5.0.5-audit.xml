@@ -244,5 +244,5 @@
 		<modifyDataType tableName="AdtFinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
-
+	<!-- 5.0.5 is Under QC please use 5.0.6 -->
 </databaseChangeLog>
