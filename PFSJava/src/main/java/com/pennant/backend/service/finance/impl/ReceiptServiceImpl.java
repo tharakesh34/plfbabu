@@ -334,6 +334,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
+		
+		scheduleData.setFeeEvent(eventCode);
 
 		// Overdraft Details from main table
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
@@ -4515,6 +4517,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
+		
+		scheduleData.setFeeEvent(eventCode);
+		
 		// Finance Schedule Details from Main table
 		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
 
@@ -4734,6 +4739,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		receiptCalculator.initiateReceipt(recData, false);
 		recData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(finSchdDtls);
+		recData.getFinanceDetail().getFinScheduleData().setFeeEvent(eventCode);
 
 		return recData;
 	}
