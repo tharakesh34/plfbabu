@@ -4132,12 +4132,6 @@
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
 	</bean>
 
-	<!-- PresentmentImports -->
-	<bean id="importPresentmentDetailCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.ImportPresentmentDetailCtrl"
-		parent="basisListCtrl" scope="prototype">
-		<property name="presentmentExtractService" ref="presentmentExtractService" />
-	</bean>
-
 	<!-- FinType Partner Bank -->
 	<bean id="finTypePartnerBankListCtrl" class="com.pennant.webui.rmtmasters.financetype.FinTypePartnerBankListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -5261,10 +5255,6 @@
 		<property name="transactionMappingService" ref="transactionMappingService" />
 	</bean>
 
-	<bean id="eventFeeDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.EventFeeDetailsDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="receiptCalculator" ref="receiptCalculator" />
-	</bean>
 	<bean id="changeTDSDialogCtrl" class="com.pennant.webui.finance.financemain.ChangeTDSDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="changeTDSService" ref="changeTDSService" />
@@ -5311,6 +5301,7 @@
 		<property name="lenderDataService" ref="lenderDataService"/>
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO"/>
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO"/>
+	</bean>
 	
 	<!-- Receipt Notification -->
 	<bean id="receiptNotificationCtrl" class="com.pennanttech.receiptnotification.ReceiptNotificationCtrl" 
