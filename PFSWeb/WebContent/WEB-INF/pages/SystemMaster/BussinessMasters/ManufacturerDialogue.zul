@@ -56,14 +56,14 @@
 									<label value="${c:l('label_ManufacturerList_ManufacturerName.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="name" width="100px" />
+										<textbox id="name" width="100px" maxlength="100"/>
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_ManufacturerList_Description.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="description" width="300px" />
+										<textbox id="description" width="300px" maxlength="100"/>
 									</hbox>
 								</row>
 								<row>
