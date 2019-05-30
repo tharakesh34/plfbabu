@@ -2905,6 +2905,7 @@ public class ReceiptCalculator implements Serializable {
 		rch.setTotalRcvAdvises(totalAdvises);
 		rch.setTotalFees(totalFees);
 		rch.setTotFeeAmount(totalFees.getTotalDue());
+		rch.setTotalBounces(totalBounces);
 		rch.setAllocationsSummary(allocSummary);
 		return receiptData;
 	}

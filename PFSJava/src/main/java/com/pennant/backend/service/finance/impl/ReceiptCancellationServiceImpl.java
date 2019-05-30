@@ -68,7 +68,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
@@ -170,7 +169,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private FinanceRepaymentsDAO financeRepaymentsDAO;
 	private FinLogEntryDetailDAO finLogEntryDetailDAO;
-	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
@@ -2454,11 +2452,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
-	}
-
-	@Autowired
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 	@Autowired
