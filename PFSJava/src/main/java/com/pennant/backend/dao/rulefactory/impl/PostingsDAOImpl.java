@@ -59,10 +59,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 
 /**
@@ -522,7 +523,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		if (!reqReversals) {
 			selectSql.append(" and OldLinkedTranID = 0 ");
 		}
-		if (imdFeeReversalReq && !ImplementationConstants.UPFRONT_FEE_REVERSAL_REQ) {
+		if (imdFeeReversalReq && !SysParamUtil.isAllowed(SMTParameterConstants.UPFRONT_FEE_REVERSAL_REQ)) {
 			selectSql.append(" and T1.FinEvent != 'FEEPAY' ");
 		}
 		selectSql.append(" Order By T1.LinkedTranId, T1.TranOrderId ");

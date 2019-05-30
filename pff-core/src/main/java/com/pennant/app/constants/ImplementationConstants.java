@@ -6,7 +6,6 @@ public class ImplementationConstants {
 	}
 
 	// IMPLEMENTATION TYPES
-	public static final boolean UDC_ALLOW_ZERO_AMT = false;
 	public static final boolean IMPLEMENTATION_CONVENTIONAL = true;
 	public static final boolean IMPLEMENTATION_ISLAMIC = false;
 
@@ -114,7 +113,6 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_IRRCODES = true; // IRR Codes For Loan Type.
 	public static final boolean ALLOW_FEES_RECALCULATE = true; // Fees Recalculate always
 	public static final boolean ALLOW_PAID_FEE_SCHEDULE_METHOD = false; // Fee Schedule Methods for Paid by customer and Waved by Bank.
-	public static final boolean GROUP_BATCH_BY_BANK = true;
 	public static final boolean ALLOW_BARCODE = false;
 	public static final boolean CIBIL_BUTTON_REQ = false;
 	public static final boolean PPPERCENT_VALIDATION_REQ = false; // validation based on partial payment percent
@@ -123,9 +121,6 @@ public class ImplementationConstants {
 	public static final boolean DEPOSIT_PROC_REQ = false;
 
 	public static final boolean ENTITY_REQ_TRAIL_BAL = false;
-
-	// BPI on Deduct from disbursement is Incomized or Receivable
-	public static final boolean BPI_INCOMIZED_ON_ORG = true;
 
 	// Allow Schedule Recalculation lock period Changes.
 	public static final boolean ALW_SCH_RECAL_LOCK = false;
@@ -151,24 +146,12 @@ public class ImplementationConstants {
 	// Need to rest amount with CAP amount only
 	public static final boolean ALW_LPP_MIN_CAP_AMT = false;
 
-	// Allow Partner Bank in Mandate based on this flag variable
-	public static final boolean MANDATE_ALW_PARTNER_BANK = false;
-
-	//Added  ReEnter Account Number in Disbursement at Loan Approval stage
-	public static final boolean DISB_ACCNO_MASKING = false;
-
 	// Allow send notification based on this variable when request is coming
 	// through API.
 	public static final boolean SEND_NOTIFICATION_ON_CREATE_LOAN_API = false;
 
-	public static final boolean ALLOW_LEGAL_REQ_CHANGE = true;
-
-	// Auto Build Schedule after Loan Start Date has changed 
-	public static final boolean ALW_AUTO_SCHD_BUILD = false;
 	//Allow approved mandate in Loan Pending State trough approve mandate API
 	public static final boolean ALW_APPROVED_MANDATE_IN_ORG = false;
-
-	public static final boolean NEW_COVENANT_MODULE = true;
 
 	//Allow profit schedule invoice
 	public static final boolean ALW_PROFIT_SCHD_INVOICE = false;
@@ -179,15 +162,6 @@ public class ImplementationConstants {
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean COAPP_CUST_CRET = false;
 
-	//If True, Document Modification can be done by only document owner
-	public static final boolean DOC_OWNER_VALIDATION = false;
-
-	//If True, Makes Frequency Dates to empty on loan startdate change
-	public static final boolean CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE = false;
-
-	//If True, Makes Frequency Dates to empty for change gestation period
-	public static final boolean CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = false;
-
 	//The below variable is set to show the Reporting manager list,Branch Details tab if set false 
 	//else User Hierarchy tab if set true.
 	public static final boolean ALLOW_ACCESS_CONTROL_TYPE = true;
@@ -196,12 +170,6 @@ public class ImplementationConstants {
 
 	public static final boolean ALW_FLEXI = false;
 	public static final boolean ALW_SUBVENSION = false;
-
-	//GST Invoice Due basis/Receipt Basis
-	public static final boolean INVOICE_ADDRESS_ENTITY_BASIS = false; //Service Provider address should be on Entity basis
-
-	//Upfront Fee reversal required on loan cancellation
-	public static final boolean UPFRONT_FEE_REVERSAL_REQ = true;
 
 	//For Advance EMI interest frequency
 	public static final boolean ALLOW_ADVEMI_FREQUENCY = false;
@@ -213,9 +181,6 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_ADVSTAGE_REAREND = true;
 	//For Advance Interest/EMI Deposit
 	public static final boolean ALLOW_ADVSTAGE_DEPOSIT = false;
-
-	//The below variable is set for Branch screen in Entity Masters for Masters menu.
-	public static final boolean ALLOW_ORGANISATIONAL_STRUCTURE = true;
 
 	//The below variable is set for Branch Details tab of Users Screen in Administration menu.
 	public static final boolean ALLOW_DIVISION_BASED_CLUSTER = true;

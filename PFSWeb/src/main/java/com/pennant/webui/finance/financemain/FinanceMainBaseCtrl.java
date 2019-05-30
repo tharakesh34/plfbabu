@@ -2523,7 +2523,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				String url = "/WEB-INF/pages/Finance/FinanceMain/FinCovenantTypeList.zul";
 
-				if (ImplementationConstants.NEW_COVENANT_MODULE) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 					url = "/WEB-INF/pages/Finance/Covenant/CovenantsList.zul";
 				}
 
@@ -2965,7 +2965,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			chequeDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_COVENANTTYPE:
-			if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 				covenantsListCtrl.doSetLabels(getFinBasicDetails());
 			} else {
 				finCovenantTypeListCtrl.doSetLabels(getFinBasicDetails());
@@ -4265,7 +4265,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// tasks # >>End Advance EMI and DSF
 		// Makes Frequency Dates to empty 
 		if (StringUtils.equals(menuItemRightName, "menuItem_FinanceManagement_ChangeGestation")
-				&& ImplementationConstants.CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES) {
+				&& SysParamUtil.isAllowed(SMTParameterConstants.CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES)) {
 			this.nextRepayDate.setValue(null);
 			this.nextRepayRvwDate.setValue(null);
 			this.nextRepayPftDate.setValue(null);
@@ -6641,7 +6641,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			//validation for account number in disbursment tab based on rightname
-			if (ImplementationConstants.DISB_ACCNO_MASKING && !isReadOnly("FinanceMainDialog_ValidateBeneficiaryAccNo")
+			if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
+					&& !isReadOnly("FinanceMainDialog_ValidateBeneficiaryAccNo")
 					&& !StringUtils.equals(financeDetail.getUserAction(), "Revert")
 					&& !StringUtils.equals(financeDetail.getUserAction(), "Save")) {
 				for (FinAdvancePayments finPayDetail : aFinanceDetail.getAdvancePaymentsList()) {
@@ -8290,12 +8291,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unused")
 	private void autoBuildSchedule() throws ParseException {
 		logger.debug(Literal.ENTERING);
-
-		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD || isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
+	
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
+				|| isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			return;
 		}
 		// Makes Frequency Dates to empty 
-		if (ImplementationConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE)) {
 			this.nextRepayDate.setValue(null);
 			this.nextRepayRvwDate.setValue(null);
 			this.nextRepayPftDate.setValue(null);
@@ -8351,7 +8353,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	//Allow Loan Start Date set to update based on AppDate 
 	private void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
 		logger.debug(Literal.ENTERING);
-		if (!ImplementationConstants.ALW_AUTO_SCHD_BUILD) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)) {
 			return;
 		}
 		if (isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
@@ -11916,7 +11918,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 											Labels.getLabel("label_FinanceMainDialog_RepayFrq.value") }));
 				}
 			}
-			if (ImplementationConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE)) {
 				if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 						&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null) {
 					aFinanceMain.setNextRepayDate(DateUtility.getDate(
@@ -14645,12 +14647,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		 */
 		if (financeDetail.isLegalInitiator()) {
 			legalRequiredRow.setVisible(true);
-			legalRequired.setDisabled(!ImplementationConstants.ALLOW_LEGAL_REQ_CHANGE);
+			legalRequired.setDisabled(!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LEGAL_REQ_CHANGE));
 		} else {
 			legalRequiredRow.setVisible(false);
 		}
 		// Auto Build Schedule after Loan Start Date has changed 
-		if (ImplementationConstants.ALW_AUTO_SCHD_BUILD && !isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
+				&& !isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_AutoScheduleBuild"), this.finStartDate);
 		}
 

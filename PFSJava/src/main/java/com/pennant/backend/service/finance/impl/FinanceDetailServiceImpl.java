@@ -633,7 +633,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (ImplementationConstants.ALLOW_COVENANT_TYPES) {
 			financeDetail.setCovenantTypeList(
 					getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
-			if (ImplementationConstants.NEW_COVENANT_MODULE) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 				financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 			}
 		}
@@ -1075,7 +1075,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setCovenantTypeList(
 				getFinCovenantTypeService().getFinCovenantTypeById(financeMain.getFinReference(), "_View", false));
 
-		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 		}
 
@@ -1397,7 +1397,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 							getFinCovenantTypeService().getFinCovenantTypeById(finReference, "_View", false));
 				}
 
-				if (ImplementationConstants.NEW_COVENANT_MODULE) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 					financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.VIEW));
 				}
 
@@ -5619,7 +5619,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
-				if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenants)) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
+						&& CollectionUtils.isNotEmpty(covenants)) {
 					covenantsService.doApprove(covenants, TableType.PRE_APPR_TAB, tranType);
 				}
 
@@ -5705,7 +5706,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				List<Covenant> covenants = financeDetail.getCovenants();
-				if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenants)) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
+						&& CollectionUtils.isNotEmpty(covenants)) {
 					// auditDetails.addAll(covenantsService.delete(covenants,
 					// TableType.TEMP_TAB, auditTranType));
 					covenantsService.delete(covenants, TableType.TEMP_TAB, auditTranType);
@@ -6415,7 +6417,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setCovenantTypeList(
 				getFinCovenantTypeService().getFinCovenantDocTypeByFinRef(finReference, type, false));
 
-		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 			financeDetail.setCovenants(covenantsService.getCovenants(finReference, "Loan", TableType.TEMP_TAB));
 		}
 
@@ -6740,7 +6742,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			List<Covenant> covenats = financeDetail.getCovenants();
-			if (ImplementationConstants.NEW_COVENANT_MODULE && CollectionUtils.isNotEmpty(covenats)) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)
+					&& CollectionUtils.isNotEmpty(covenats)) {
 				auditDetails.addAll(covenantsService.validate(covenats, financeMain.getWorkflowId(), method,
 						auditTranType, usrLanguage));
 				validateDisbursements(financeDetail, auditDetails);
@@ -6753,7 +6756,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
 					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
 
-				if (ImplementationConstants.NEW_COVENANT_MODULE) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 					covenantsService.validateOTC(financeDetail);
 				} else {
 					validateOtcPayment(auditDetails, financeDetail);
@@ -10077,7 +10080,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		scheduleData.setFinReference(financeMain.getFinReference());
 		scheduleData.setFinanceMain(financeMain);
 
-		if (ImplementationConstants.NEW_COVENANT_MODULE) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.NEW_COVENANT_MODULE)) {
 			financeDetail
 					.setCovenants(covenantsService.getCovenants(financeMain.getFinReference(), "Loan", TableType.VIEW));
 		} else {

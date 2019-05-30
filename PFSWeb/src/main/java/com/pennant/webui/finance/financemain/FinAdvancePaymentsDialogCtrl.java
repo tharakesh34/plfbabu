@@ -75,10 +75,10 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -98,6 +98,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -558,7 +559,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
 
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
-		if (ImplementationConstants.DISB_ACCNO_MASKING
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 				&& (!isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo") || StringUtils
 						.equals(this.finAdvancePayments.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED))) {
 			this.beneficiaryAccNo.setType("password");
@@ -743,7 +744,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.beneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 		}
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
-		if (ImplementationConstants.DISB_ACCNO_MASKING
+		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 				&& !isReadOnly("FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo")) {
 			this.btnSave.setVisible(true);
 			this.row_ReEnterBenfAccNo.setVisible(true);
@@ -751,7 +752,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.reEnterBeneficiaryAccNo.setMaxlength(LengthConstants.LEN_ACCOUNT);
 			reEntrBenfAccNo = true;
 
-			if (ImplementationConstants.DISB_ACCNO_MASKING) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)) {
 				this.beneficiaryAccNo.setType("password");
 			}
 		}

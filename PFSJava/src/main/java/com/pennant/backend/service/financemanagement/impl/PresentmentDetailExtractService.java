@@ -13,8 +13,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.financemanagement.PresentmentDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -26,6 +26,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
@@ -73,7 +74,8 @@ public class PresentmentDetailExtractService {
 				String entity = rs.getString("ENTITYCODE");
 				if (defSchDate != null) {
 					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
+							|| (!map.containsKey(bankCode)
+									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK))
 							|| !map.containsKey(entity)) {
 						presentmentHeader.setSchdate(defSchDate);
 						presentmentHeader.setBankCode(bankCode);
@@ -199,7 +201,8 @@ public class PresentmentDetailExtractService {
 				String entity = rs.getString("ENTITYCODE");
 				if (defSchDate != null) {
 					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(bankCode) && ImplementationConstants.GROUP_BATCH_BY_BANK)
+							|| (!map.containsKey(bankCode)
+									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK))
 							|| !map.containsKey(entity)) {
 						ph.setSchdate(defSchDate);
 						ph.setBankCode(bankCode);

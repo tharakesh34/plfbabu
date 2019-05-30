@@ -65,9 +65,9 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listgroupfoot;
 import org.zkoss.zul.Listitem;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -81,6 +81,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -284,7 +285,8 @@ public class DisbursementInstCtrl {
 					lc.setParent(item);
 					lc = new Listcell(custName);
 					lc.setParent(item);
-					if (ImplementationConstants.DISB_ACCNO_MASKING && !isMaskingAccNo) {
+
+					if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING) && !isMaskingAccNo) {
 						lc = new Listcell("**********");
 					} else {
 						lc = new Listcell(accoountNum);

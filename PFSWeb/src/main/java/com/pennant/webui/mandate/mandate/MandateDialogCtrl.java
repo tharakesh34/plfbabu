@@ -108,6 +108,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -122,10 +123,10 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.interfacebajaj.MandateRegistrationListCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
@@ -464,7 +465,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		filter[0] = new Filter("Active", 1, Filter.OP_EQUAL);
 		this.entityCode.setFilters(filter);
 
-		if (ImplementationConstants.MANDATE_ALW_PARTNER_BANK) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_ALW_PARTNER_BANK)) {
 			this.rowPartnerBank.setVisible(true);
 			this.partnerBank.setMaxlength(8);
 			this.partnerBank.setDisplayStyle(2);

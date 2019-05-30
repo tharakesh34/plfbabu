@@ -93,4 +93,42 @@ public class SMTParameterConstants {
 	public static final String ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO = "ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO";
 	public static final String LMS_SERVICE_LOG_REQ = "LMS_SERVICE_LOG_REQ";//LMS service log required or not
 	public static final String ALLOW_LOWER_TAX_DED_REQ = "ALLOW_LOWER_TAX_DED_REQ";//LMS service log required or not
+
+	public static final String UDC_ALLOW_ZERO_AMT = "UDC_ALLOW_ZERO_AMT";
+	public static final String GROUP_BATCH_BY_BANK = "GROUP_BATCH_BY_BANK";
+	// BPI on Deduct from disbursement is Incomized or Receivable
+	public static final String BPI_INCOMIZED_ON_ORG = "BPI_INCOMIZED_ON_ORG";
+	
+	// Allow Partner Bank in Mandate based on this flag variable
+	public static final String MANDATE_ALW_PARTNER_BANK = "MANDATE_ALW_PARTNER_BANK";
+
+	// Auto Build Schedule after Loan Start Date has changed 
+	public static final String ALW_AUTO_SCHD_BUILD = "ALW_AUTO_SCHD_BUILD";
+
+	public static final String ALLOW_LEGAL_REQ_CHANGE = "ALLOW_LEGAL_REQ_CHANGE";
+
+	//If True, Document Modification can be done by only document owner
+	public static final String DOC_OWNER_VALIDATION = "DOC_OWNER_VALIDATION";
+
+	//If True, Makes Frequency Dates to empty on loan startdate change
+	public static final String CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE = "CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE";
+
+	//If True, Makes Frequency Dates to empty for change gestation period
+	public static final String CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES = "CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES";
+
+	public static final String NEW_COVENANT_MODULE = "NEW_COVENANT_MODULE";
+
+	//Upfront Fee reversal required on loan cancellation
+	public static final String UPFRONT_FEE_REVERSAL_REQ = "UPFRONT_FEE_REVERSAL_REQ";
+
+	//GST Invoice Due basis/Receipt Basis
+	public static final String INVOICE_ADDRESS_ENTITY_BASIS = "INVOICE_ADDRESS_ENTITY_BASIS"; //Service Provider address should be on Entity basis
+
+	//Added  ReEnter Account Number in Disbursement at Loan Approval stage
+	public static final String DISB_ACCNO_MASKING = "DISB_ACCNO_MASKING";
+
+	//The below variable is set for Branch screen in Entity Masters for Masters menu.
+	public static final String ALLOW_ORGANISATIONAL_STRUCTURE = "ALLOW_ORGANISATIONAL_STRUCTURE";
+
+
 }

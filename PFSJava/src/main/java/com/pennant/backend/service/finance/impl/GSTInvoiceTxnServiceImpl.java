@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -44,6 +43,7 @@ import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
@@ -146,7 +146,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				if (CollectionUtils.isNotEmpty(companyProvince.getTaxDetailList())) {
 					TaxDetail taxDetail = companyProvince.getTaxDetailList().get(0);
 
-					if (ImplementationConstants.INVOICE_ADDRESS_ENTITY_BASIS) {
+					if (SysParamUtil.isAllowed(SMTParameterConstants.INVOICE_ADDRESS_ENTITY_BASIS)) {
 
 						if (StringUtils.isBlank(taxDetail.getHsnNumber())
 								|| StringUtils.isBlank(taxDetail.getNatureService())

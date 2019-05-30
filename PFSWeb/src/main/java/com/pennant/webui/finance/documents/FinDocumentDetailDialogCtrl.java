@@ -695,7 +695,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			doCheckEnquiry();
 			/*
-			 * if (ImplementationConstants.DOC_OWNER_VALIDATION) { doCheckDocumentOwner(); }
+			 * if (SysParamUtil.isAllowed(SMTParameterConstants.DOC_OWNER_VALIDATION)) { doCheckDocumentOwner(); }
 			 */
 			if (isNewDocument()) {
 				this.window_FinDocumentDetailDialog.setHeight("85%");

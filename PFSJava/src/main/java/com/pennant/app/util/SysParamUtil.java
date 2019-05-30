@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -127,6 +128,19 @@ public class SysParamUtil {
 		}
 
 		return value.toString();
+	}
+
+	public static boolean isAllowed(String code) {
+		String valueAsString = getValueAsString(code);
+		if (valueAsString == null) {
+			return false;
+		}
+
+		if (PennantConstants.YES.equalsIgnoreCase(code)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**

@@ -78,7 +78,6 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -1034,7 +1033,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		// Amount Cheque Detail
 		if (!this.amount.isReadonly()) {
 			this.amount.setConstraint(new PTDecimalValidator(Labels.getLabel("label_ChequeDetailDialog_AmountCD.value"),
-					ccyEditField, (isPDC || (!isPDC && !ImplementationConstants.UDC_ALLOW_ZERO_AMT)), false));
+					ccyEditField,
+					(isPDC || (!isPDC && !SysParamUtil.isAllowed(SMTParameterConstants.UDC_ALLOW_ZERO_AMT))), false));
 		}
 		// Account Number
 		if (!this.accNumber.isReadonly()) {
