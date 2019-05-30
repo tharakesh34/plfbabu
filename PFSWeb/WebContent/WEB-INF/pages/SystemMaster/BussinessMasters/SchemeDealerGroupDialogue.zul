@@ -64,7 +64,7 @@
 									<label value="${c:l('label_SchemeDealerGroupList_DealerGroupCode.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<intbox id="dealerGroupCode" width="100px" />
+										<intbox id="dealerGroupCode" width="100px" maxlength="8"/>
 									</hbox>
 								</row>
 								<row>

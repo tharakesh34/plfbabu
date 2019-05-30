@@ -67,14 +67,13 @@
 
 								<label id="label_productCategory" value="${c:l('label_ProductGroupDialog_productCategory.value')}" />
 								<hbox>
-									<space spacing="2px" sclass="mandatory" />
 									<extendedcombobox id="productCategoryId" />
 								</hbox>
 							</row>
 							<row id="row2">
 								<label id="label_channel" value="${c:l('label_ProductGroupDialog_channel.value')}" />
 								<hbox id="hbox_Channel">
-
+									<space spacing="2px" />
 									<textbox id="txtchannel" width="170px" readonly="true" />
 									<button id="btnchannels" image="/images/icons/LOVSearch.png" />
 								</hbox>

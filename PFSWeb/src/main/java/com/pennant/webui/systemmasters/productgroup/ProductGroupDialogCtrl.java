@@ -48,15 +48,13 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	protected Window window_ProductGroupDialog;
 	protected Button btnModelId;
 	protected Textbox modelId;
-	//	protected ExtendedCombobox dealerCode; // autowired
-	protected ExtendedCombobox productCategoryId; // autowired
-	//protected ExtendedCombobox channel; // autowired
+	protected ExtendedCombobox productCategoryId;
 	protected Button btnchannels;
 	protected Textbox txtchannel;
-	protected Checkbox active; // autowired
+	protected Checkbox active;
 
-	private ProductGroup productGroup; // overhanded per param
-	private transient ProductGroupListCtrl productGroupListCtrl; // overhanded per param
+	private ProductGroup productGroup;
+	private transient ProductGroupListCtrl productGroupListCtrl;
 	private transient ProductGroupService productGroupService;
 
 	/**
@@ -186,14 +184,8 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.productCategoryId.setMandatoryStyle(true);
 		this.productCategoryId.setModuleName("ProductCategory");
-		/*
-		 * this.productCategoryId.setMandatoryStyle(true); this.productCategoryId.setValueColumn("FieldCodeValue");
-		 * this.productCategoryId.setDescColumn("ValueDesc"); this.productCategoryId.setDisplayStyle(2);
-		 * this.productCategoryId.setValidateColumns(new String[] { "FieldCodeValue" }); Filter productCategoryFilter[]
-		 * = new Filter[1]; productCategoryFilter[0] = new Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
-		 * this.productCategoryId.setFilters(productCategoryFilter);
-		 */
 
 		setStatusDetails();
 
@@ -302,6 +294,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		}
 		//dealer category
 		try {
+			this.productCategoryId.getValidatedValue();
 			aProductGroup.setProductCategoryId(this.productCategoryId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -345,15 +338,14 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.modelId.isReadonly()) {
+		if (!this.btnModelId.isDisabled()) {
 			this.modelId
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_modelCode.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 		if (!this.productCategoryId.isReadonly()) {
-			this.productCategoryId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_ProductGroupDialog_productCategory.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.productCategoryId.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ProductGroupDialog_productCategory.value"), null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -481,13 +473,14 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 
 		if (this.productGroup.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.modelId);
+			readOnlyComponent(false, this.btnModelId);
 		} else {
 			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.modelId);
+			readOnlyComponent(true, this.btnModelId);
 		}
 
-		readOnlyComponent(isReadOnly("BuilderGroupDialog_segmentation"), this.txtchannel);
+		readOnlyComponent(isReadOnly("ProductGroupDialog_ProductCategoryId"), this.productCategoryId);
+		readOnlyComponent(isReadOnly("ProductGroupDialog_Channel"), this.btnchannels);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -513,7 +506,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		logger.debug(Literal.LEAVING);
 
 		readOnlyComponent(true, this.modelId);
-		readOnlyComponent(true, this.txtchannel);
+		readOnlyComponent(true, this.btnchannels);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

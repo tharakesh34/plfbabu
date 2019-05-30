@@ -54,11 +54,11 @@
 								<row>
 									<label id="label_DealerMappingSearch_MerchantName" value="${c:l('label_DealerMappingSearch_MerchantName.value')}" />
 									<listbox id="sortOperator_merchantName" width="43px" mold="select" rows="1" />
-									<textbox id="merchantName" width="300px" maxlength="100" />
+									<textbox id="merchantName" width="150px" maxlength="100" />
 
 									<label id="label_DealerMappingSearch_StoreName" value="${c:l('label_DealerMappingSearch_StoreName.value')}" />
 									<listbox id="sortOperator_storeName" width="43px" mold="select" rows="1" />
-									<textbox id="storeName" width="300px" maxlength="100" />
+									<textbox id="storeName" width="150px" maxlength="100" />
 								</row>
 
 								<row id="row_AlwWorkflow">

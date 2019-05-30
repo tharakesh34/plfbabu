@@ -1,5 +1,6 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -418,80 +419,58 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (!this.modelId.isReadonly()) {
-			if (this.modelId.getText().length() > 8) {
-				throw new WrongValueException(this.modelId,
-						Labels.getLabel("label_ConsumerProductDialogue_ModelIdLength.value"));
-			}
-		}
+		BigDecimal minAmount = this.minAmount.getActualValue();
+		BigDecimal maxAmount = this.maxAmount.getActualValue();
 
 		if (!this.modelId.isReadonly()) {
 			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
-		}
-
-		if (!this.modelDescription.isReadonly()) {
-			if (this.modelDescription.getText().length() > 20) {
-				throw new WrongValueException(this.modelDescription,
-						Labels.getLabel("label_ConsumerProductDialogue_modelDescriptionLength.value"));
-			}
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 8));
 		}
 
 		if (!this.modelDescription.isReadonly()) {
 			this.modelDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
 		}
 
-		if (!this.txtNames.isReadonly()) {
+		if (!this.btnNames.isDisabled()) {
 			this.txtNames
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ManufacturerName.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.assetDescription.isReadonly()) {
-			if (this.assetDescription.getText().length() > 20) {
-				throw new WrongValueException(this.assetDescription,
-						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
-			}
-		}
-
-		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
 		}
 
 		if (!this.minAmount.isReadonly()) {
-			this.minAmount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ProductList_MinimumAmount.value"), 2, true, false));
+			if (minAmount.compareTo(BigDecimal.ZERO) == 0 || minAmount.compareTo(new BigDecimal("0.00")) == 0) {
+				throw new WrongValueException(this.minAmount,
+						Labels.getLabel("label_CDProductDeatislDialogue_MinAmountAlert.value"));
+			} else {
+				if (minAmount.compareTo(maxAmount) == 1) {
+					throw new WrongValueException(this.minAmount,
+							Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
+				}
+
+			}
 		}
 
 		if (!this.maxAmount.isReadonly()) {
-			this.maxAmount.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_ProductList_MaximumAmount.value"), 2, true, false));
-		}
-
-		if (!this.modelStatus.isReadonly()) {
-			if (this.modelStatus.getText().length() > 20) {
-				throw new WrongValueException(this.modelStatus,
-						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
+			if (maxAmount.compareTo(BigDecimal.ZERO) == 0 || maxAmount.compareTo(new BigDecimal("0.00")) == 0) {
+				throw new WrongValueException(this.minAmount,
+						Labels.getLabel("label_CDProductDeatislDialogue_MaxAmountAlert.value"));
 			}
 		}
 
 		if (!this.modelStatus.isReadonly()) {
 			this.modelStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelStatus.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+					PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
 		}
 
-		if (!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
-			if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
-				throw new WrongValueException(this.minAmount,
-						Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
-			}
-		}
-
-		if (this.txtchannel.getText().equals("")) {
+		if (!this.btnchannels.isDisabled()) {
 			this.txtchannel.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ChannelAlert.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
@@ -593,12 +572,12 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		}
 
 		readOnlyComponent(isReadOnly("ProductDialogue_Description"), this.modelDescription);
-		readOnlyComponent(isReadOnly("ProductDialogue_Name"), this.txtNames);
+		readOnlyComponent(isReadOnly("ProductDialogue_Name"), this.btnNames);
 		readOnlyComponent(isReadOnly("ProductDialogue_AssetDescription"), this.assetDescription);
 		readOnlyComponent(isReadOnly("ProductDialogue_MinimumAmount"), this.minAmount);
 		readOnlyComponent(isReadOnly("ProductDialogue_MaximumAmount"), this.maxAmount);
 		readOnlyComponent(isReadOnly("ProductDialogue_ModelStatus"), this.modelStatus);
-		readOnlyComponent(isReadOnly("ProductDialogue_Channel"), this.txtchannel);
+		readOnlyComponent(isReadOnly("ProductDialogue_Channel"), this.btnchannels);
 		readOnlyComponent(isReadOnly("ProductDialogue_Active"), this.active);
 
 		if (isWorkFlowEnabled()) {
@@ -626,12 +605,12 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 
 		readOnlyComponent(true, this.modelId);
 		readOnlyComponent(true, this.modelDescription);
-		readOnlyComponent(true, this.txtNames);
+		readOnlyComponent(true, this.btnNames);
 		readOnlyComponent(true, this.assetDescription);
 		readOnlyComponent(true, this.minAmount);
 		readOnlyComponent(true, this.maxAmount);
 		readOnlyComponent(true, this.modelStatus);
-		readOnlyComponent(true, this.txtchannel);
+		readOnlyComponent(true, this.btnchannels);
 		readOnlyComponent(true, this.active);
 
 		if (isWorkFlowEnabled()) {
@@ -877,18 +856,6 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 				getOverideMap());
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
-		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_consumerProductDialogue, "ChannelTypes",
-				String.valueOf(this.txtchannel.getValue()), null);
-		if (dataObject != null) {
-			String details = (String) dataObject;
-			this.txtchannel.setValue(details);
-		}
-		logger.debug("Leaving  " + event.toString());
-
-	}
-
 	public void setConsumerProductListCtrl(ConsumerProductListCtrl consumerProductListCtrl) {
 		this.consumerProductListCtrl = consumerProductListCtrl;
 	}
@@ -904,6 +871,18 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		if (dataObject != null) {
 			String details = (String) dataObject;
 			this.txtNames.setValue(details);
+		}
+		logger.debug("Leaving  " + event.toString());
+
+	}
+
+	public void onClick$btnchannels(Event event) throws Exception {
+		logger.debug("Entering  " + event.toString());
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_consumerProductDialogue, "ChannelTypes",
+				String.valueOf(this.txtchannel.getValue()), null);
+		if (dataObject != null) {
+			String details = (String) dataObject;
+			this.txtchannel.setValue(details);
 		}
 		logger.debug("Leaving  " + event.toString());
 

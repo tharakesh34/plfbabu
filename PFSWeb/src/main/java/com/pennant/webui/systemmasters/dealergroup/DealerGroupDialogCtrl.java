@@ -47,15 +47,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	protected Window window_DealerGroupDialog;
 	protected Button btndealerCode;
 	protected Textbox dealerCode;
-	//	protected ExtendedCombobox dealerCode; // autowired
-	protected ExtendedCombobox dealerCategory; // autowired
-	//protected ExtendedCombobox channel; // autowired
+	protected ExtendedCombobox dealerCategory;
 	protected Button btnchannels;
 	protected Textbox txtchannel;
-	protected Checkbox active; // autowired
+	protected Checkbox active;
 
-	private DealerGroup dealerGroup; // overhanded per param
-	private transient DealerGroupListCtrl dealerGroupListCtrl; // overhanded per param
+	private DealerGroup dealerGroup;
+	private transient DealerGroupListCtrl dealerGroupListCtrl;
 	private transient DealerGroupService dealerGroupService;
 
 	/**
@@ -292,7 +290,9 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 		//Code
 		try {
-			aDealerGroup.setDealerCode(this.dealerCode.getValue());
+			if(!this.dealerCode.getValue().equals("")) {
+				aDealerGroup.setDealerCode(this.dealerCode.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -304,6 +304,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		}
 		//dealer category
 		try {
+			this.dealerCategory.getValidatedValue();
 			aDealerGroup.setDealerCategoryId(this.dealerCategory.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -347,17 +348,17 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
-		if (!this.dealerCode.isReadonly()) {
-			this.dealerCode
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.btndealerCode.isDisabled()) {
+			this.dealerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
+		
 		if (!this.dealerCategory.isReadonly()) {
 			this.dealerCategory.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							null, true));
 		}
-
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -483,13 +484,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 		if (this.dealerGroup.isNewRecord()) {
 			this.btnCancel.setVisible(false);
-			readOnlyComponent(false, this.dealerCode);
+			readOnlyComponent(false, this.btndealerCode);
 		} else {
 			this.btnCancel.setVisible(true);
-			readOnlyComponent(true, this.dealerCode);
+			readOnlyComponent(true, this.btndealerCode);
 		}
 
-		readOnlyComponent(isReadOnly("BuilderGroupDialog_segmentation"), this.txtchannel);
+		readOnlyComponent(isReadOnly("DealerGroupDialog_Channel"), this.btnchannels);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

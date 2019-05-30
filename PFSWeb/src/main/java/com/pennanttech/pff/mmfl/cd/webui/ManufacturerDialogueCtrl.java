@@ -1,6 +1,5 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
-import java.awt.Button;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +12,13 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -374,11 +373,9 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ManufacturerList_Description.value"),
 							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
-		if(!this.txtchannel.getText().equals(""))
-		{
-			if(this.txtchannel.getText().length() > 20)
-			{
+
+		if (!this.txtchannel.getText().equals("") && !this.btnchannels.isDisabled()) {
+			if (this.txtchannel.getText().length() > 20) {
 				throw new WrongValueException(this.txtchannel,
 						Labels.getLabel("label_ConsumerProductDialogue_channelLength.value"));
 			}
@@ -476,7 +473,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 
 		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Description"), this.description);
 		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Channel"), this.active);
-		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Active"), this.txtchannel);
+		readOnlyComponent(isReadOnly("CDManufacturersDialogue_Active"), this.btnchannels);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

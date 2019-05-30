@@ -360,7 +360,7 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 
 		if (this.schemeId.getText().equals("")) {
 			this.schemeId.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeDealerGroup_SchemeId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true, 1, 20));
 		}
 
 		if (!this.dealerGroupCode.isReadonly()) {
@@ -453,9 +453,9 @@ public class SchemeDealerGroupDialogueCtrl extends GFCBaseCtrl<SchemeDealerGroup
 		logger.debug(Literal.ENTERING);
 
 		if (this.schemeDealerGroup.isNewRecord()) {
-			this.schemeId.setDisabled(false);
+			this.btnSchemeId.setDisabled(false);
 		} else {
-			this.schemeId.setDisabled(true);
+			this.btnSchemeId.setDisabled(true);
 		}
 
 		readOnlyComponent(isReadOnly("CDSchemeDealerGroupDialogue_DealerGroupCode"), this.dealerGroupCode);

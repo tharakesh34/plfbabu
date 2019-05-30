@@ -368,9 +368,9 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	private void doSetValidation() {
 		logger.debug(Literal.ENTERING);
 
-		if (this.schemeId.getText().equals("")) {
+		if (!this.btnSchemeId.isDisabled()) {
 			this.schemeId.setConstraint(new PTStringValidator(Labels.getLabel("label_SchemeDealerGroup_SchemeId.value"),
-					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+					null, true, 1, 20));
 		}
 
 		if (!this.productGroupCode.isReadonly()) {
@@ -378,10 +378,11 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 					Labels.getLabel("label_SchemeProductGroupList_ProductGroupCode.value"), true, false));
 		}
 
-		if (this.posVendor.getText().equals("")) {
-			this.posVendor.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_SchemeProductGroupList_POSVendor.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		if (!this.posVendor.isReadonly()) {
+			if(!this.posVendor.getText().equals("0") && !this.posVendor.getText().equals("1")) {
+				throw new WrongValueException(this.posVendor,
+						Labels.getLabel("label_CDProductDeatislDialogue_MinAmountAlert.value"));
+			}
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -469,9 +470,9 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		logger.debug(Literal.ENTERING);
 
 		if (this.schemeProductGroup.isNewRecord()) {
-			this.schemeId.setDisabled(false);
+			this.btnSchemeId.setDisabled(false);
 		} else {
-			this.schemeId.setDisabled(true);
+			this.btnSchemeId.setDisabled(true);
 		}
 
 		readOnlyComponent(isReadOnly("CDSchemeProductGroupDialogue_ProductGroupCode"), this.productGroupCode);

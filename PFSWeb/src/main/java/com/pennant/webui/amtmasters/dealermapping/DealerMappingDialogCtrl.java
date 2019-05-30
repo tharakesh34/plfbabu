@@ -250,7 +250,6 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			if (details != null) {
 				this.merchantName.setErrorMessage("");
 				merchant = this.merchantName.getValue();
-				//merchantName.setValue("", merchant);
 			}
 		}
 
@@ -261,7 +260,6 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.storeName.setValue("");
 		this.storeName.setDescription("");
 
-		//fillStoredetails(storeName);
 		if (merchant != null) {
 			onfulfillMerchantName();
 		}
@@ -277,6 +275,10 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		if (dataObject instanceof String) {
 			this.storeName.setValue("");
 			this.storeName.setDescription("");
+			this.storeAddress.setValue("");
+			this.storeCity.setValue("");
+			this.storeId.setValue("");
+			this.dealerCode.setValue("");
 		} else {
 			MerchantDetails merchantDetails = (MerchantDetails) dataObject;
 			if (merchantDetails != null) {
@@ -378,7 +380,10 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getValue()));
+			this.merchantName.getValidatedValue();
+			if (this.merchantName.getDescription() != null && !this.merchantName.getDescription().equals("")) {
+				aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getDescription()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -463,13 +468,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		if (!this.merchantName.isReadonly()) {
 			this.merchantName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_MerchantName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+							null, true));
 		}
 
 		if (!this.storeName.isReadonly()) {
 			this.storeName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_StoreName.value"),
-							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
+							null, true));
 		}
 
 		logger.debug(Literal.LEAVING);
