@@ -564,14 +564,14 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		if (!this.addressLine1.isReadonly()) {
 			this.addressLine1
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine1.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+							PennantRegularExpressions.REGEX_ADDRESS, true));
 		}
 
 		if (!this.addressLine2.isReadonly()) {
 			if (!this.addressLine2.getText().equals("")) {
 				this.addressLine2.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine2.value"),
-								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 		}
 
@@ -579,7 +579,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 			if (!this.addressLine3.getText().equals("")) {
 				this.addressLine3.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_MerchantDetails_AddressLine3.value"),
-								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 		}
 
@@ -1050,21 +1050,9 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 				getOverideMap());
 	}
 
-	public void onClick$btnchannels(Event event) throws Exception {
-		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_merchantDetailsDialogue, "ChannelTypes",
-				String.valueOf(this.txtchannel.getValue()), null);
-		if (dataObject != null) {
-			String details = (String) dataObject;
-			this.txtchannel.setValue(details);
-		}
-		logger.debug("Leaving  " + event.toString());
-
-	}
-
 	public void onClick$btnChannel(Event event) throws Exception {
 		logger.debug("Entering  " + event.toString());
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_merchantDetailsDialogue, "Manufacturer",
+		Object dataObject = MultiSelectionSearchListBox.show(this.window_merchantDetailsDialogue, "ChannelTypes",
 				String.valueOf(this.txtchannel.getValue()), null);
 		if (dataObject != null) {
 			String details = (String) dataObject;
