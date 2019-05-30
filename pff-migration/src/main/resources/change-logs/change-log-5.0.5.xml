@@ -3397,4 +3397,40 @@
 			          WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 			 </createView>
 	</changeSet>
+
+
+
+	<changeSet id="78_pre" author="Sai" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finadvancepayments');
+					select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_temp');
+					select deps_save_and_drop_dependencies ('plf', 'disbursement_requests');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="78" author="Sai">
+		<modifyDataType tableName="FinAdvancePayments" columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
+	</changeSet>
+
+	<changeSet id="79" author="Sai">
+		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="payableLoc" newDataType="varchar(200)" />
+	</changeSet>
+
+	<changeSet id="80" author="Sai">
+		<modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="DRAWEE_LOCATION" newDataType="varchar(200)" />
+	</changeSet>
+
+	<changeSet id="78_post" author="Sai" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finadvancepayments');
+					select deps_restore_dependencies ('plf', 'finadvancepayments_temp');
+					select deps_restore_dependencies ('plf', 'disbursement_requests');
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
