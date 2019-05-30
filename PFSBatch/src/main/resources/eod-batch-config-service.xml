@@ -14,11 +14,9 @@
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
-
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
-
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -30,18 +28,18 @@
 		<property name="finInsurancesDAO" ref="finInsurancesDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
-
 		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="secondaryAccountDAO" ref="secondaryAccountDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
-
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	<bean id="paymentRecoveryService" class="com.pennant.eod.PaymentRecoveryService">
 		<property name="paymentRecoveryHeaderDAO" ref="paymentRecoveryHeaderDAO" />
@@ -108,7 +106,6 @@
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
-		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 

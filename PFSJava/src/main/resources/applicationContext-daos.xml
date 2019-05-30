@@ -7817,7 +7817,6 @@
 	<!-- payment Helper -->
 	<bean id="serviceHelper" class="com.pennant.app.core.ServiceHelper" abstract="true">
 		<property name="dataSource" ref="dataSource" />
-
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="customerStatusCodeDAO" ref="customerStatusCodeDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
@@ -7844,6 +7843,8 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper"/>
@@ -7851,12 +7852,10 @@
 	<!-- LPP/LPI Accrual -->
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
-		<!-- GST Invoice Changes -->
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 	</bean>
 
