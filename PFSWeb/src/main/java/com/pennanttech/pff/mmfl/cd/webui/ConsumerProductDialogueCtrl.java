@@ -1,6 +1,5 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -425,7 +424,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 						Labels.getLabel("label_ConsumerProductDialogue_ModelIdLength.value"));
 			}
 		}
-		
+
 		if (!this.modelId.isReadonly()) {
 			this.modelId.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelId.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
@@ -437,7 +436,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 						Labels.getLabel("label_ConsumerProductDialogue_modelDescriptionLength.value"));
 			}
 		}
-		
+
 		if (!this.modelDescription.isReadonly()) {
 			this.modelDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelDescription.value"),
@@ -456,7 +455,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
 			}
 		}
-		
+
 		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),
@@ -479,19 +478,24 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 						Labels.getLabel("label_ConsumerProductDialogue_AssetDescriptionLength.value"));
 			}
 		}
-		
+
 		if (!this.modelStatus.isReadonly()) {
 			this.modelStatus.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ModelStatus.value"),
 					PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
 
 		if (!this.minAmount.isReadonly() && !this.maxAmount.isReadonly()) {
-				if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
-					throw new WrongValueException(this.minAmount,
-							Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
-				}
+			if (this.minAmount.getActualValue().compareTo(this.maxAmount.getActualValue()) == 1) {
+				throw new WrongValueException(this.minAmount,
+						Labels.getLabel("label_ConsumerProductDialogue_MinValueAlert.value"));
 			}
-		
+		}
+
+		if (this.txtchannel.getText().equals("")) {
+			this.txtchannel.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ChannelAlert.value"),
+					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
