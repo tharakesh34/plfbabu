@@ -3433,4 +3433,47 @@
 			 ]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="81" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				delete from SMTPARAMETERS where sysparmcode='UDC_ALLOW_ZERO_AMT';
+				delete from SMTPARAMETERS where sysparmcode='GROUP_BATCH_BY_BANK';
+				delete from SMTPARAMETERS where sysparmcode='BPI_INCOMIZED_ON_ORG';
+				delete from SMTPARAMETERS where sysparmcode='MANDATE_ALW_PARTNER_BANK';
+				delete from SMTPARAMETERS where sysparmcode='ALW_AUTO_SCHD_BUILD';
+				delete from SMTPARAMETERS where sysparmcode='ALLOW_LEGAL_REQ_CHANGE';
+				delete from SMTPARAMETERS where sysparmcode='DOC_OWNER_VALIDATION';
+				delete from SMTPARAMETERS where sysparmcode='CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE';
+				delete from SMTPARAMETERS where sysparmcode='CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES';
+				delete from SMTPARAMETERS where sysparmcode='NEW_COVENANT_MODULE';
+				delete from SMTPARAMETERS where sysparmcode='UPFRONT_FEE_REVERSAL_REQ';
+				delete from SMTPARAMETERS where sysparmcode='INVOICE_ADDRESS_ENTITY_BASIS';
+				delete from SMTPARAMETERS where sysparmcode='DISB_ACCNO_MASKING';
+				delete from SMTPARAMETERS where sysparmcode='PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE';
+				delete from SMTPARAMETERS where sysparmcode='DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE';
+				delete from SMTPARAMETERS where sysparmcode='ALLOW_ORGANISATIONAL_STRUCTURE';
+				delete from SMTPARAMETERS where sysparmcode='ALLOW_ACCESS_CONTROL_TYPE';
+		
+				INSERT INTO SMTPARAMETERS VALUES ('UDC_ALLOW_ZERO_AMT','Allow zero amount for UDC','String', 0, 'N', 1, 0, NULL, NULL,'Allow zero amount for UDC',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('GROUP_BATCH_BY_BANK','Present batch group by bakn ?','String', 0, 'Y', 1, 0, NULL, NULL,'Present batch group by bakn ?',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('BPI_INCOMIZED_ON_ORG','BPI incomized in loan orgination','String', 0, 'Y', 1, 0, NULL, NULL,'BPI incomized in loan orgination',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('MANDATE_ALW_PARTNER_BANK','Allow partner bank in mandate screen','String', 0, 'N', 1, 0, NULL, NULL,'Allow partner bank in mandate screen',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('ALW_AUTO_SCHD_BUILD','Allow auto schedule build ?','String', 0, 'N', 1, 0, NULL, NULL,'Allow auto schedule build ?',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_LEGAL_REQ_CHANGE','Allow legal required change','String', 0, 'Y', 1, 0, NULL, NULL,'Allow legal required change',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('DOC_OWNER_VALIDATION','DOC OWNER VALIDATION','String', 0, 'N', 1, 0, NULL, NULL,'DOC OWNER VALIDATION',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('CLEAR_FREQUENCY_DATES_ON_STARTDATE_CHANGE','Clear frequency dates on loan start date change', 'String', 0, 'N', 1, 0, NULL, NULL,'Clear frequency dates on loan start date change', 1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('CHANGE_GESTATION_PERIOD_CLEAR_FREQUENCY_DATES','Change gestation perios on frequency date clear', 'String', 0, 'N', 1, 0, NULL, NULL,'Change gestation perios on frequency date clear', 1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('NEW_COVENANT_MODULE','New covenant module required?','String', 0, 'Y', 1, 0, NULL, NULL,'New covenant module required?',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('UPFRONT_FEE_REVERSAL_REQ','Upfront fee reversal req','String', 0, 'Y', 1, 0, NULL, NULL,'Upfront fee reversal req',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('INVOICE_ADDRESS_ENTITY_BASIS','Entity base GST invoice required ?','String', 0, 'Y', 1, 0, NULL, NULL,'Entity base GST invoice required ?',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('DISB_ACCNO_MASKING','Account number masking required ?','String', 0, 'N', 1, 0, NULL, NULL,'Account number masking required ?',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE', 'Allow instrument type in presement response', 'String', 0, 'N', 1, 0, NULL, NULL,'Allow instrument type in presement response', 1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('DISBURSEMENT_RESPONSE_ALLOW_PAYMENT_TYPE', 'Allow payment type in disbursement type','String', 0, 'N', 1, 0, NULL, NULL,'Allow payment type in disbursement type', 1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_ORGANISATIONAL_STRUCTURE','Allow Organisational Structure','String', 0, 'N', 1, 0, NULL, NULL,'Allow Organisational Structure',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_ACCESS_CONTROL_TYPE','Allow Access Control Type','String', 0, 'N', 1, 0, NULL, NULL,'Allow Access Control Type',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
