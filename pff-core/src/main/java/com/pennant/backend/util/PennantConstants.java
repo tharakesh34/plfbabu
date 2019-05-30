@@ -211,6 +211,7 @@ public class PennantConstants {
 	public static final String METHOD_OFFERLETTER = "executeofferLetter";
 	public static final String METHOD_UPDATE_ATTRIBUTE = "doUpdateAttribute";
 	public static final String METHOD_REVERT_QUEUE = "doRevertQueue";
+	public static final String method_HunterService = "doClixHunterService";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
