@@ -56,7 +56,7 @@
 									<label value="${c:l('label_MerchantDetails_MerchantName.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="merchantName" width="100px" />
+										<textbox id="merchantName" width="100px" maxlength="50"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_AvgNumOfTraPerMnth.value')}" />
 									<hbox>
@@ -67,7 +67,7 @@
 									<label value="${c:l('label_MerchantDetails_StoreId.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<intbox id="storeId" width="300px" />
+										<intbox id="storeId" width="300px" maxlength="8"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_AvgTraAmtPerMnth.value')}" />
 									<hbox>
@@ -78,7 +78,7 @@
 									<label value="${c:l('label_MerchantDetails_StoreName.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="storeName" width="300px" />
+										<textbox id="storeName" width="300px" maxlength="50"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_TransAmtLmtPerMnth.value')}" />
 									<hbox>
@@ -89,7 +89,7 @@
 									<label value="${c:l('label_MerchantDetails_AddressLine1.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="addressLine1" width="300px" />
+										<textbox id="addressLine1" width="300px" maxlength="200"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_TransAmtLmtPerDay.value')}" />
 									<hbox>
@@ -100,19 +100,19 @@
 									<label value="${c:l('label_MerchantDetails_AddressLine2.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="addressLine2" width="300px" />
+										<textbox id="addressLine2" width="300px" maxlength="100"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_PeakTransPerDay.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<intbox id="peakTransPerDay" width="150px" />
+										<intbox id="peakTransPerDay" width="150px" maxlength="20"/>
 									</hbox>
 								</row>
 								<row>
 									<label value="${c:l('label_MerchantDetails_AddressLine3.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<textbox id="addressLine3" width="300px" />
+										<textbox id="addressLine3" width="300px" maxlength="100"/>
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_RefundAllowed.value')}" />
 									<hbox>
