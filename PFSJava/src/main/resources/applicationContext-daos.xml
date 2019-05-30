@@ -4609,13 +4609,8 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
-		<!-- Subvention -->
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
-
-		<!-- Assignments -->
-		<!-- <property name="assignmentDealDAO" ref="assignmentDealDAO" /> -->
-		<!-- <property name="assignmentDAO" ref="assignmentDAO" /> -->
-
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -7840,11 +7835,9 @@
 		<property name="provisionDAO" ref="provisionDAO" />
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper"/>
