@@ -239,7 +239,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="81" author="Sai">
+	<changeSet id="33" author="Sai">
 		<modifyDataType tableName="AdtFinAdvancePayments" columnName="liabilityHoldName" newDataType="varchar(200)" />
 		<modifyDataType tableName="AdtFinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
