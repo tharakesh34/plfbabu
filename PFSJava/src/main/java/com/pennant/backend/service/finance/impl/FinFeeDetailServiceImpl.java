@@ -1788,11 +1788,4 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
 	}
-
-	@Override
-	public BigDecimal calculateGstPercentage(FinFeeDetail finFeeDetail, String finCcy,
-			Map<String, Object> gstExecutionMap) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

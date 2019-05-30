@@ -3941,30 +3941,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql
-				.append(" SELECT FinReference, FinType, CustID, ClosingStatus, FinIsActive, MaturityDate, ClosedDate ");
-
-		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference = :FinReference ");
-
-		// logger.debug("selectSql: " + selectSql.toString());
-		try {
-			RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
-
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		}
-		return null;
-	}
-
-	@Override
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
 		logger.debug("Entering");
 
@@ -4811,7 +4787,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, Long.class);
 		} catch (Exception e) {
-			Log.error(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);
