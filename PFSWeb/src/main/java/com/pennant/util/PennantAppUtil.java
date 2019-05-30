@@ -903,6 +903,7 @@ public class PennantAppUtil {
 		searchObject.addField("SalutationCode");
 		searchObject.addField("SaluationDesc");
 		searchObject.addFilter(new Filter("SalutationGenderCode", salutationGenderCode, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("SalutationIsActive", 1, Filter.OP_EQUAL));
 
 		List<Salutation> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
