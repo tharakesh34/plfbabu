@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerDedup;
@@ -26,10 +25,8 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
 public class FetchDedupDetails {
-
 	private static final Logger logger = Logger.getLogger(FetchDedupDetails.class);
-	protected Window window_CustomerQDEDialog;
-	private static DedupParmService dedupParmService;
+
 	private int userAction = -1;
 
 	private String FINDEDUPLABELSWBG = "CustCIF,FinLimitRef,CustCRCPR,CustShrtName,MobileNumber,DupReference,StartDate,"
@@ -37,11 +34,13 @@ public class FetchDedupDetails {
 
 	private String FINDEDUPLABELSPBG = "CustCIF,CustCRCPR,CustShrtName,MobileNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
-
+	
 	private CustomerDetails customerDetails;
 	private FinanceDetail financeDetail;
 	private List<FinanceDedup> financeDedupList;
-	public static MasterDefService masterDefService;
+	
+	private static DedupParmService dedupParmService;
+	private static MasterDefService masterDefService;
 
 	public FetchDedupDetails() {
 		super();
@@ -49,12 +48,12 @@ public class FetchDedupDetails {
 
 	public static CustomerDetails getCustomerDedup(String userRole, CustomerDetails aCustomerDetails,
 			Component parent) {
-		return new FetchDedupDetails(userRole, aCustomerDetails, parent).getCustomerDetails();
+		return new FetchDedupDetails(userRole, aCustomerDetails, parent, dedupParmService).getCustomerDetails();
 	}
 
 	public static FinanceDetail getLoanDedup(String userRole, FinanceDetail aFinanceDetail, Component parent,
 			String curLoginUser) {
-		return new FetchDedupDetails(userRole, aFinanceDetail, parent, curLoginUser).getFinanceDetail();
+		return new FetchDedupDetails(userRole, aFinanceDetail, parent, curLoginUser, masterDefService).getFinanceDetail();
 	}
 
 	/**
@@ -64,12 +63,12 @@ public class FetchDedupDetails {
 	 * @param aCustomerDetails
 	 * @param parent
 	 */
-	private FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails, Component parent) {
+	private FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails, Component parent, DedupParmService dedupParmService) {
 		super();
 
 		setCustomerDetails(aCustomerDetails);
 
-		List<CustomerDedup> customerDedup = getDedupParmService().fetchCustomerDedupDetails(userRole, aCustomerDetails);
+		List<CustomerDedup> customerDedup = dedupParmService.fetchCustomerDedupDetails(userRole, aCustomerDetails);
 		ShowDedupListBox details = null;
 
 		if (customerDedup.size() > 0) {
@@ -113,7 +112,7 @@ public class FetchDedupDetails {
 	 * @param parent
 	 */
 	@SuppressWarnings("unchecked")
-	private FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String curLoginUser) {
+	private FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String curLoginUser, MasterDefService masterDefService) {
 		super();
 
 		//Data Preparation for Rule Executions
@@ -145,7 +144,7 @@ public class FetchDedupDetails {
 		financeDedup.setStartDate(aFinanceMain.getFinStartDate());
 		financeDedup.setFinLimitRef(aFinanceMain.getFinLimitRef());
 		String masterType = MasterTypes.DOC_TYPE.toString();
-		Map<String, String> map = getMasterDefService().getMasterDef(masterType);
+		Map<String, String> map = masterDefService.getMasterDef(masterType);
 		if (aFinanceDetail.getCustomerDetails() != null) {
 			for (CustomerDocument document : aFinanceDetail.getCustomerDetails().getCustomerDocumentsList()) {
 				if (StringUtils.equals(map.get(DocumentTypes.AADHAAR.toString()), document.getCustDocCategory())) {
@@ -181,8 +180,8 @@ public class FetchDedupDetails {
 
 		//For Existing Customer/ New Customer
 		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();
-		List<FinanceDedup> dedupeRuleData = getDedupParmService().fetchFinDedupDetails(userRole, financeDedup,
-				curLoginUser, aFinanceMain.getFinType());
+		List<FinanceDedup> dedupeRuleData = dedupParmService.fetchFinDedupDetails(userRole, financeDedup, curLoginUser,
+				aFinanceMain.getFinType());
 		loanDedup.addAll(dedupeRuleData);
 
 		ShowDedupListBox details = null;
@@ -240,36 +239,12 @@ public class FetchDedupDetails {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public DedupParmService getDedupParmService() {
-		return dedupParmService;
-	}
-
-	public void setDedupParmService(DedupParmService dedupParmService) {
-		FetchDedupDetails.dedupParmService = dedupParmService;
-	}
-
 	public int getUserAction() {
 		return userAction;
 	}
 
 	public void setUserAction(int userAction) {
 		this.userAction = userAction;
-	}
-
-	public CustomerDetails getCustomerDetails() {
-		return customerDetails;
-	}
-
-	public void setCustomerDetails(CustomerDetails customerDetails) {
-		this.customerDetails = customerDetails;
-	}
-
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
 	}
 
 	public List<FinanceDedup> getFinanceDedupList() {
@@ -280,11 +255,27 @@ public class FetchDedupDetails {
 		this.financeDedupList = financeDedupList;
 	}
 
-	public static MasterDefService getMasterDefService() {
-		return masterDefService;
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
 	}
 
-	public static void setMasterDefService(MasterDefService masterDefService) {
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
+	}
+
+	public CustomerDetails getCustomerDetails() {
+		return customerDetails;
+	}
+
+	public void setDedupParmService(DedupParmService dedupParmService) {
+		FetchDedupDetails.dedupParmService = dedupParmService;
+	}
+
+	public void setMasterDefService(MasterDefService masterDefService) {
 		FetchDedupDetails.masterDefService = masterDefService;
 	}
 

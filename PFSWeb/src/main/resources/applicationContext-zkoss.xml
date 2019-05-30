@@ -1240,6 +1240,7 @@
 
 	<bean name="FetchDedupDetails" class="com.pennant.webui.dedup.dedupparm.FetchDedupDetails">
 		<property name="dedupParmService" ref="dedupParmService" />
+		<property name="masterDefService" ref="masterDefService" />
 	</bean>
 
 	<!--============ Rule Detail ============== -->
