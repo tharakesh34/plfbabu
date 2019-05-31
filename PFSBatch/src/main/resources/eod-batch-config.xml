@@ -105,6 +105,11 @@
 					commit-interval="10" />
 			</tasklet>
 			<fail on="FAILED" />
+			<next on="*" to="oglDownload" />
+		</step>
+		<step id="oglDownload">
+			<tasklet ref="oglDownloadTaskLet" />
+			<fail on="FAILED" />
 			<end on="*" exit-code="COMPLETED" />
 		</step>
 
