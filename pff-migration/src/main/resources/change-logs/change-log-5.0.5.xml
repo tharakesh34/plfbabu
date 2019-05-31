@@ -3475,6 +3475,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="82" author="Manoj">
+		 <sql>
+		 	<![CDATA[
+				INSERT INTO SMTPARAMETERS VALUES ('HOLD_DISB_INST_POST','Disbursement Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 	<!-- 5.0.5 is Under QC please use 5.0.6 -->
 
 </databaseChangeLog>
