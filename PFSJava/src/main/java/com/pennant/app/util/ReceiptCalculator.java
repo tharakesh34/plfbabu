@@ -118,6 +118,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.rits.cloning.Cloner;
 
 public class ReceiptCalculator implements Serializable {
@@ -798,7 +799,7 @@ public class ReceiptCalculator implements Serializable {
 				reqMaxODDate, null, true);
 
 		// No Overdue penalty exit
-		if (overdueList == null || overdueList.isEmpty()) {
+		if (CollectionUtils.isEmpty(overdueList)) {
 			return receiptData;
 		}
 
@@ -1872,11 +1873,17 @@ public class ReceiptCalculator implements Serializable {
 	}
 
 	private ManualAdviseMovements buildManualAdvsieMovements(ReceiptAllocationDetail allocate, Date valueDate) {
+		logger.debug(Literal.ENTERING);
+		
 		ManualAdviseMovements movement = new ManualAdviseMovements();
 		movement.setAdviseID(allocate.getAllocationTo());
 		movement.setMovementDate(valueDate);
 		movement.setMovementAmount(allocate.getPaidNow());
-		movement.setPaidAmount(allocate.getPaidNow().subtract(allocate.getPaidGST()));
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+			movement.setPaidAmount(allocate.getPaidNow().subtract(allocate.getPaidGST()));
+		} else {
+			movement.setPaidAmount(allocate.getPaidNow());
+		}
 		movement.setWaivedAmount(allocate.getWaivedNow());
 		movement.setFeeTypeCode(allocate.getFeeTypeCode());
 		
@@ -1885,6 +1892,9 @@ public class ReceiptCalculator implements Serializable {
 		movement.setPaidSGST(allocate.getPaidSGST());
 		movement.setPaidIGST(allocate.getPaidIGST());
 		movement.setPaidUGST(allocate.getPaidUGST());
+		
+		logger.debug(Literal.LEAVING);
+		
 		return movement;
 	}
 
@@ -2347,6 +2357,7 @@ public class ReceiptCalculator implements Serializable {
 		FinRepayHeader rph = null;
 
 		List<FinODDetails> finODDetails = finScheduleData.getFinODDetails();
+		FeeType lppFeeType = null;
 		for (int i = 0; i < finODDetails.size(); i++) {
 			rch.setOdIdx(i);
 			FinODDetails fod = finODDetails.get(i);
@@ -2374,6 +2385,25 @@ public class ReceiptCalculator implements Serializable {
 			if (odBal.compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
+			
+			//calculating GST for LPP
+			if (lppFeeType == null) {
+				lppFeeType = feeTypeDAO.getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
+			}
+			String taxType = null;
+
+			if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
+				taxType = lppFeeType.getTaxComponent();
+			}
+			
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+				TaxAmountSplit taxSplit = new TaxAmountSplit();
+				taxSplit.setAmount(odBal);
+				taxSplit.setTaxType(taxType);
+				taxSplit = getGST(receiptData.getFinanceDetail(), taxSplit);
+				odBal = odBal.add(taxSplit.gettGST());
+			}
+			
 			if (allocate.getWaivedAvailable().compareTo(BigDecimal.ZERO) > 0) {
 				if (allocate.getWaivedAvailable().compareTo(odBal) > 0) {
 					odWaiveNow = odBal;
@@ -3396,18 +3426,18 @@ public class ReceiptCalculator implements Serializable {
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
-		if (overdueList == null || overdueList.isEmpty()) {
+		if (CollectionUtils.isEmpty(overdueList)) {
 			logger.debug("Leaving");
 			return overdueList;
 		}
 
-		if (finSchdDtls != null && finSchdDtls.isEmpty()) {
+		if (CollectionUtils.isEmpty(finSchdDtls)) {
 			finSchdDtls = finScheduleData.getFinanceScheduleDetails();
 		}
 
 		// Repayment Details
 		List<FinanceRepayments> repayments = new ArrayList<FinanceRepayments>();
-		if (finRepayments != null && !finRepayments.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(finRepayments)) {
 			repayments = finRepayments;
 		} else {
 			repayments = financeRepaymentsDAO.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
