@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+<changeSet id="1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_LOWER_TAX_DED_REQ';
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2" author="Manoj">
+		<sql>
+			<![CDATA[
+				Delete from plf.DATA_ENGINE_COLUMN  where TABLEID IN (select ID from plf.DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from plf.DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_EXPORT'));
+				Delete from plf.DATA_ENGINE_TABLE where configid = (select id from plf.DATA_ENGINE_CONFIG where name = 'DISB_HDFC_EXPORT');
+				Delete from plf.DATA_ENGINE_CONFIG where name = 'DISB_HDFC_EXPORT';
+				
+				Insert into plf.DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_CONFIG),'DISB_HDFC_EXPORT','HDFC Bank Disbursements[NEFT/RTGS/CHEQUE/DD] Download.',2,null,null,null,',',0,0, null, null, null,'A','/opt/PFF/disbursements/request','${CLIENT_CODE}','.csv',0,to_date('28-03-19','DD-MM-RR'),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
+				
+				Insert into plf.DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_TABLE),(Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT'),'DISBURSEMENT_REQUESTS',0,'ID','ID IN (:ID)','UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC'' WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')QUERY:UPDATE PAYMENTINSTRUCTIONS SET STATUS = ''AC'' WHERE PAYMENTINSTRUCTIONID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')',null,null,null,null,null,0,0,0);
+				
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'DISBURSEMENT_TYPE',       0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')),  'CUSTCIF',                0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ACCOUNT',      0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'DISBURSEMENT_AMOUNT',     0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_NAME',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'DRAWEE_LOCATION',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PRINT_LOCATION',          0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ADDRESS1',	  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ADDRESS2',	  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ADDRESS3',	  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ADDRESS4',	  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_ADDRESS5',	  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'FinReference',			  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'ID',					  0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL1',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL2',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL3',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL4',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL5',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL6',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'PAYMENT_DETAIL7',         0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'CHEQUE_NUMBER',           0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'DISBURSEMENT_DATE',       0,'N',null,null,  '${SYS_DATE}',null,'0',null,null,null,'DATE:dd/MM/yyyy','O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'MICR_CODE',               0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'IFSC_CODE',               0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_BANK',         0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIARY_BRANCH',       0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+				Insert into plf.DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_EXPORT')), 'BENFICIRY_EMAIL',         0,'N',null,null,	null,null,'0',null,null,null,null,'O');
+			 ]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="3" author="Manoj">
+	<sql>
+			<![CDATA[
+				DELETE FROM plf.DATA_ENGINE_COLUMN  where TABLEID IN (select ID from plf.DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from plf.DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
+				Delete from plf.DATA_ENGINE_TABLE where configid = (select id from plf.DATA_ENGINE_CONFIG where name = 'DISB_HDFC_IMPORT');
+				Delete from plf.DATA_ENGINE_CONFIG where name = 'DISB_HDFC_IMPORT';
+
+				Insert into plf.DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_CONFIG),'DISB_HDFC_IMPORT','HDFC Disbursement Response File.',1,null,null,null,',',0,0, null, null, null,'C','/opt/PFF/disbursements/reponse','${CLIENT_CODE}','.csv',0,to_date('28-03-19','DD-MM-RR'),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
+				
+				Insert into plf.DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_TABLE),(Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'),'DISBURSEMENT_REQUESTS',2,'ID',null,null,null,null,null,null,15,0,0);
+				
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'RESP_BATCH_ID',               0,'N',NULL,NULL,'${FILE_ID}',NULL,'0',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'DISBURSEMENT_TYPE',           0,'N',NULL,NULL,   NULL,     NULL,'0',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'CUSTCIF',                     0,'N',NULL,NULL,   NULL,     NULL,'1',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'BENFICIARY_NAME',             0,'N',NULL,NULL,   NULL,     NULL,'2',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'DISBURSEMENT_AMOUNT',         0,'N',NULL,NULL,   NULL,     NULL,'3',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'CHEQUE_NUMBER',               0,'N',NULL,NULL,   NULL,     NULL,'4',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'DISBURSEMENT_DATE',           0,'N',NULL,NULL,   NULL,     NULL,'5',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'ID',                          0,'N',NULL,NULL,   NULL,     NULL,'6',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'PAYMENT_DETAIL1',             0,'N',NULL,NULL,   NULL,     NULL,'7',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'PAYMENT_DETAIL2',             0,'N',NULL,NULL,   NULL,     NULL,'8',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'BENFICIARY_ACCOUNT',          0,'N',NULL,NULL,   NULL,     NULL,'9',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF',              0,'N',NULL,NULL,   NULL,     NULL,'10',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'STATUS',                      0,'N',NULL,NULL,   NULL,     NULL,'11',NULL,NULL,NULL,NULL,'CHECK:E,R,P');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'REJECT_REASON',               0,'N',NULL,NULL,   NULL,     NULL,'12',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'IFSC_CODE',                   0,'N',NULL,NULL,   NULL,     NULL,'13',NULL,NULL,NULL,NULL,'O');
+ 			]]>
+ 			</sql>
+	</changeSet>
+	
+	<changeSet id="4" author="Manoj">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='HOLD_DISB_INST_POST';
+			]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>
