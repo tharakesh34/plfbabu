@@ -32,12 +32,13 @@
 	<include file="change-logs/change-log-4.13.0.xml" />
 	<include file="change-logs/change-log-seqobjects-mssql.xml" />
 	<include file="change-logs/change-core-stabilize.xml" />  -->
-	<include file="change-logs/change-log-covenants-1.1.xml" />
+	<!-- <include file="change-logs/change-log-covenants-1.1.xml" />
 	<include file="change-logs/change-log-put-call-1.1.xml" />
 	<include file="change-logs/change-log-advance-emai.xml" />
 	<include file="change-logs/change-log-4.14.0.xml" />
 	<include file="change-logs/change-log-receipts-new-1.0.xml" />
-	<!-- <include file="change-logs/change-log-5.0.0.xml" /> -->
-	<include file="change-logs/change-log-5.0.5.xml" />
-	<include file="change-logs/change-log-indas_amz.xml" />
+	<include file="change-logs/change-log-5.0.0.xml" /> -->
+	<include file="change-logs/change-log-5.0.5.xml" /> 
+	<!-- <include file="change-logs/change-log-indas_amz.xml" /> -->
+	<include file="change-logs/change-log-5.0.6.xml" />
 </databaseChangeLog>
