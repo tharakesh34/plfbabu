@@ -22,6 +22,150 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
+	<changeSet id="1" author="Saikiran.v">
+		<sql>
+		   <![CDATA[
+			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			 update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			 update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+			 
+			 delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENT_MAKER');
+			 delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENT_APPROVER');
+			 
+			 delete from secgroups where grpcode='COMMITMENT_APPROVER';
+			 delete from secgroups where grpcode='COMMITMENT_MAKER';
+			 
+			 delete from SecRights where page='CommitmentDialog';
+			 delete from SecRights where rightname='menuItem_Commitment_Commitment';
+			 delete from SecRights where rightname='menuItem_Enquiry_CommitmentEnquiry';
+				
+			 insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENT_MAKER', 'Commitment Process Maker', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+			 insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENT_APPROVER', 'Commitment Process Approver', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+			 	
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtAccount','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtAccount'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtActiveStatus','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtActiveStatus'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtAmount','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtAmount'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtAvailable','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtAvailable'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtAvailableMonths','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtAvailableMonths'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtBranch','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtBranch'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtCcy','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtCcy'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtCharges','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtCharges'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtChargesAccount','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtChargesAccount'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtEndDate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtEndDate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtExpDate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtExpDate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtLimitLine','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtLimitLine'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtNonperformingStatus','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtNonperformingStatus'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtNotes','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtNotes'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtPftRateMax','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtPftRateMax'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtPromisedDate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtPromisedDate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtReference','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtReference'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtRvwDate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtRvwDate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtStartDate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtStartDate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtStopRateRange','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtStopRateRange'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
 
 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtTitle','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtTitle'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CmtUtilizedAmount','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CmtUtilizedAmount'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CollateralRequired','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CollateralRequired'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CommitmentFlags','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CommitmentFlags'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_CustCIF','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_CustCIF'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_FacilityRef','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_FacilityRef'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_MultiBranch','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_MultiBranch'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_OpenAccount','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_OpenAccount'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_Revolving','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_Revolving'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentDialog_SharedCmt','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_SharedCmt'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentDialog_btnSave','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_APPROVER'), (select RightID from SecRights WHERE RightName='button_CommitmentDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_Enquiry_CommitmentEnquiry','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_Enquiry_CommitmentEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_APPROVER'), (select RightID from SecRights WHERE RightName='menuItem_Enquiry_CommitmentEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_Commitment_Commitment','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_Commitment_Commitment'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_APPROVER'), (select RightID from SecRights WHERE RightName='menuItem_Commitment_Commitment'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );	
+			
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentDialog_btnNewCmtRate','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentDialog_btnNewCmtRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentDialog_btnEdit','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentDialog_btnEdit'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 			 
+ 			 insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentDialog_btnDelete','CommitmentDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 			 insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentDialog_btnDelete'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			  	
+			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			 update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			 update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+		    ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="2" author="Saikiran.v">
+		<sql>
+		 	<![CDATA[
+				INSERT INTO SMTPARAMETERS Values('ALLOW_COMMITMENTS','Commitments Required Or Not','String', 0, 'N', 1, 0, NULL, NULL,'Commitments Required Or Not',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
