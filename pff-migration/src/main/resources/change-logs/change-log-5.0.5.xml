@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,7 +22,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -97,7 +98,8 @@
 	</changeSet>
 
 	<changeSet id="07" author="Irfan">
-		<addPrimaryKey tableName="FinTaxIncomeDetail" columnNames="RepayID, TaxFor" />
+		<addPrimaryKey tableName="FinTaxIncomeDetail"
+			columnNames="RepayID, TaxFor" />
 	</changeSet>
 
 
@@ -148,17 +150,22 @@
 	</changeSet>
 
 	<changeSet id="14" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="TDSAllowToModify"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="TDSAllowToModify"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify" />
-		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes"
+			columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes_Temp"
+			columnName="TDSAllowToModify" />
 	</changeSet>
 
 	<changeSet id="16" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview"
+			replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -396,7 +403,8 @@
 	</changeSet>
 
 	<changeSet id="17" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_view"
+			replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -871,7 +879,8 @@
 	</changeSet>
 
 	<changeSet id="18" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_orgview"
+			replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -2297,13 +2306,17 @@
 	</changeSet>
 
 	<changeSet id="28.1" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions" defaultValue="0" />
-		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions"
+			defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable"
+			tableName="FinMaintainInstructions_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="29" author="Varaprasad.K">
-		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable" />
-		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions"
+			columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions_Temp"
+			columnName="TDSApplicable" />
 	</changeSet>
 
 	<changeSet id="30" author="Varaprasad.K">
@@ -2332,7 +2345,8 @@
 
 	<changeSet id="31" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW"
+			replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2378,7 +2392,8 @@
 
 	<changeSet id="32" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW"
+			replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2402,7 +2417,8 @@
 
 	<changeSet id="33" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW"
+			replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2467,7 +2483,8 @@
 
 	<changeSet id="46" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW"
+			replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2515,7 +2532,8 @@
 
 	<changeSet id="47" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW"
+			replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2540,7 +2558,8 @@
 
 	<changeSet id="48" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW"
+			replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2564,8 +2583,8 @@
 	</changeSet>
 
 	<changeSet id="49" author="Saikiran.v">
-		<createSequence sequenceName="SEQGST_RATES" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQGST_RATES"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="50" author="Saikiran.v">
@@ -2634,19 +2653,25 @@
 	</changeSet>
 
 	<changeSet id="52" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Active" tableName="GST_RATES" defaultValue="1" />
-		<addDefaultValue columnName="Active" tableName="GST_RATES_Temp" defaultValue="1" />
+		<addDefaultValue columnName="Active" tableName="GST_RATES"
+			defaultValue="1" />
+		<addDefaultValue columnName="Active" tableName="GST_RATES_Temp"
+			defaultValue="1" />
 	</changeSet>
 
 	<changeSet id="53" author="Saikiran.v">
-		<addNotNullConstraint tableName="GST_RATES" columnName="Active" />
-		<addNotNullConstraint tableName="GST_RATES_Temp" columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES"
+			columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES_Temp"
+			columnName="Active" />
 	</changeSet>
 
 
 	<changeSet id="54" author="Saikiran.v">
-		<addUniqueConstraint tableName="GST_RATES" columnNames="FromState, ToState, TaxType" />
-		<addUniqueConstraint tableName="GST_RATES_Temp" columnNames="FromState, ToState, TaxType" />
+		<addUniqueConstraint tableName="GST_RATES"
+			columnNames="FromState, ToState, TaxType" />
+		<addUniqueConstraint tableName="GST_RATES_Temp"
+			columnNames="FromState, ToState, TaxType" />
 	</changeSet>
 
 	<changeSet id="55" author="Saikiran.v">
@@ -2727,7 +2752,8 @@
 	</changeSet>
 
 	<changeSet id="59" author="Varaprasad.K">
-		<createView viewName="verification_pd_aview" replaceIfExists="true">
+		<createView viewName="verification_pd_aview"
+			replaceIfExists="true">
             SELECT pd.verificationid,
                 pd.agentcode,
                 pd.agentname,
@@ -2790,7 +2816,8 @@
 	</changeSet>
 
 	<changeSet id="60" author="Varaprasad.K">
-		<createView viewName="verification_pd_view" replaceIfExists="true">
+		<createView viewName="verification_pd_view"
+			replaceIfExists="true">
             SELECT pd.verificationid,
                 pd.agentcode,
                 pd.agentname,
@@ -3128,7 +3155,8 @@
 	</changeSet>
 
 	<changeSet id="75" author="Saikiran.v">
-		<createView viewName="finadvancepayments_aview" replaceIfExists="true">
+		<createView viewName="finadvancepayments_aview"
+			replaceIfExists="true">
 				SELECT t1.finreference,
 				t1.paymentid,
 				t1.paymentseq,
@@ -3196,7 +3224,8 @@
 	</changeSet>
 
 	<changeSet id="76" author="Saikiran.v">
-		<createView viewName="finadvancepayments_Tview" replaceIfExists="true">
+		<createView viewName="finadvancepayments_Tview"
+			replaceIfExists="true">
 	 	 SELECT t1.finreference,
 	   			t1.paymentid,
 	   			t1.paymentseq,
@@ -3264,7 +3293,8 @@
 	</changeSet>
 
 	<changeSet id="77" author="Saikiran.v">
-		<createView viewName="finadvancepayments_view" replaceIfExists="true">
+		<createView viewName="finadvancepayments_view"
+			replaceIfExists="true">
 		SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -3411,17 +3441,22 @@
 	</changeSet>
 
 	<changeSet id="78" author="Sai">
-		<modifyDataType tableName="FinAdvancePayments" columnName="liabilityHoldName" newDataType="varchar(200)" />
-		<modifyDataType tableName="FinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments"
+			columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments"
+			columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="79" author="Sai">
-		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="liabilityHoldName" newDataType="varchar(200)" />
-		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="payableLoc" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments_Temp"
+			columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments_Temp"
+			columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="80" author="Sai">
-		<modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="DRAWEE_LOCATION" newDataType="varchar(200)" />
+		<modifyDataType tableName="DISBURSEMENT_REQUESTS"
+			columnName="DRAWEE_LOCATION" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="78_post" author="Sai" dbms="postgresql">
@@ -3475,11 +3510,106 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="82" author="Manoj">
-		 <sql>
+		<sql>
 		 	<![CDATA[
 				INSERT INTO SMTPARAMETERS VALUES ('HOLD_DISB_INST_POST','Disbursement Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="83" author="Varaprasad.K">
+		<sql>
+		 	<![CDATA[
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion');
+					Delete From plf.SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion';
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 0, 'menu_Item_Agencies_Pesonal_Discussion','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM plf.SEQSECRIGHTS WHERE 0=0;
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
+					
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active');
+					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber');
+					
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active';
+					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber';
+					
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
+					
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
 			]]>
 		</sql>
 	</changeSet>
