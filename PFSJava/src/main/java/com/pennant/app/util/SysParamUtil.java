@@ -136,7 +136,7 @@ public class SysParamUtil {
 			return false;
 		}
 
-		if (PennantConstants.YES.equalsIgnoreCase(code)) {
+		if (PennantConstants.YES.equalsIgnoreCase(valueAsString)) {
 			return true;
 		} else {
 			return false;
