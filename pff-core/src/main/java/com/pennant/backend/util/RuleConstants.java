@@ -148,6 +148,14 @@ public class RuleConstants {
 	public static final String CODE_UGST = "UGST"; // UGST
 	public static final String CODE_TOTAL_GST = "TOTAL_GST"; // UGST
 
+	public static final String CODE_TOTAL_AMOUNT_INCLUDINGGST = "TOTAL_IGST";
+	public static final String CODE_CESST = "CESS";
+
+	public static final String CALCTYPE_FIXED_AMOUNT = "F";
+	public static final String CALCTYPE_PERCENTAGE = "P";
+
+	public static final String CALCON_TRANSACTION_AMOUNT = "TRANSCAMT";
+
 	private RuleConstants() {
 		super();
 	}

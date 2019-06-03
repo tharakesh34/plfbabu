@@ -10848,4 +10848,31 @@
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 	</bean>
 
+	<!-- GSTRate -->
+	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl"
+		parent="sequenceDao" />
+	<bean id="gstRateService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="gstRateServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="gstRateServiceTarget"
+		class="com.pennant.backend.service.rmtmasters.impl.GSTRateServiceImpl">
+		<property name="gstRateDAO" ref="gstRateDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
 </beans>

@@ -5307,4 +5307,15 @@
 	<!-- Receipt Notification -->
 	<bean id="receiptNotificationCtrl" class="com.pennanttech.receiptnotification.ReceiptNotificationCtrl" 
 		parent="basisCtrl" scope="prototype"/>
+		
+	<!-- GSTRate -->
+	<bean id="gstRateListCtrl" class="com.pennant.webui.rmtmasters.gstrate.GSTRateListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="gstRateService" ref="gstRateService" />
+	</bean>
+	<bean id="gstRateDialogCtrl" class="com.pennant.webui.rmtmasters.gstrate.GSTRateDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="gstRateService" ref="gstRateService" />
+	</bean>
+
 </beans>

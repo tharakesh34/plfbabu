@@ -303,6 +303,9 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> receiptAgainstList;
 	private static List<String> noWaiverList;
 	private static ArrayList<ValueLabel> presetmentTypeList;
+	private static ArrayList<ValueLabel> calcTypeList;
+	private static ArrayList<ValueLabel> calcOnList;
+	private static ArrayList<ValueLabel> taxtTypeList;
 
 	/**
 	 * Gets the list of applications.
@@ -4951,5 +4954,49 @@ public class PennantStaticListUtil {
 			Collections.reverse(monthEndList);
 		}
 		return monthEndList;
+	}
+
+	public static ArrayList<ValueLabel> getCalcTypeList() {
+		if (calcTypeList == null) {
+			calcTypeList = new ArrayList<ValueLabel>(2);
+			calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_FIXED_AMOUNT,
+					Labels.getLabel("label_CalcTypeList_FixedAmount")));
+			calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_PERCENTAGE,
+					Labels.getLabel("label_CalcTypeList_Percentage")));
+		}
+		return calcTypeList;
+	}
+
+	public static ArrayList<ValueLabel> getCalcOnList() {
+		if (calcOnList == null) {
+			calcOnList = new ArrayList<ValueLabel>(2);
+			calcOnList.add(new ValueLabel(RuleConstants.CALCON_TRANSACTION_AMOUNT,
+					Labels.getLabel("label_CalcOnList_Transaction_Amount")));
+			calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,
+					Labels.getLabel("label_CalcOnList_TotalAmount_IncludingGST")));
+			calcOnList.add(
+					new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
+			calcOnList.add(new ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST")));
+			calcOnList.add(new ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST")));
+			calcOnList.add(new ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST")));
+			calcOnList
+					.add(new ValueLabel(RuleConstants.CODE_TOTAL_GST,
+							Labels.getLabel("label_TaxTypeList_Total_GST")));
+		}
+		return calcOnList;
+	}
+
+	public static ArrayList<ValueLabel> getTaxtTypeList() {
+		if (taxtTypeList == null) {
+			taxtTypeList = new ArrayList<ValueLabel>(6);
+			taxtTypeList.add(
+					new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
+			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST")));
+			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST")));
+			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST")));
+			taxtTypeList
+					.add(new ValueLabel(RuleConstants.CODE_CESST, Labels.getLabel("label_TaxTypeList_CESST")));
+		}
+		return taxtTypeList;
 	}
 }

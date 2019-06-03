@@ -350,6 +350,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
@@ -3280,6 +3281,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionMapping", TransactionMapping.class,
 						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
 						new String[] { "MID", "TID" }, null, 600));
+		ModuleUtil.register("GSTRate",
+				new ModuleMapping("GSTRate", GSTRate.class, new String[] { "GST_RATES", "GST_RATES_AView" }, masterWF,
+						new String[] { "FromState", "ToState", "TaxType", "Amount", "Percentage", "CalcOn", "Active" },
+						null, 600));
 
 		registerCustomModules();
 	}

@@ -44,6 +44,9 @@
 			rightName="menu_Item_FinanceUserAuthorizationLimit" />
 		<menuItem id="menu_Item_VASProviderAccDetail" zulNavigation="/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul"
 			rightName="menuItem_SystemMaster_VASProviderAccDetail" />
+		<menuItem id="menu_Item_GSTRate" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateList.zul"  rightName="menuItem_RMTMasters_GSTRate"/>
+		<menuItem id="menu_Item_GSTRateEnquiry" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_RMTMasters_GSTRateEnquiry"/>
+			
 	</menu>
 
 	<!-- Masters -->
