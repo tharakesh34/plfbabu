@@ -420,10 +420,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(" WHERE FinReference=:FinReference AND FinEvent IN( :FinEvent ) ");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<Long> mapper = ParameterizedBeanPropertyRowMapper.newInstance(Long.class);
 		List<Long> linkedTranIdList = null;
 		try {
-			linkedTranIdList = this.jdbcTemplate.query(selectSql.toString(), source, mapper);
+			linkedTranIdList = this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			linkedTranIdList = null;
