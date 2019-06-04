@@ -19,38 +19,49 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
-	
+
 	<changeSet id="1" author="dheerendra.d">
 		<createView viewName="ogl_view" replaceIfExists="true">
-			SELECT a.postdate AS accountingdate,
-	a.entitycode,
-	a.acccy AS currency_code,
-	a.finevent AS event,
-	a.finreference AS loan_acount_number,
-	'PENNANT' AS user_je_source_name,
-	'00000000000' AS nonbankingrows,
-	'000000' AS segment5,
-		CASE
+			SELECT
+			a.postdate AS accountingdate,
+			a.entitycode,
+			a.acccy AS currency_code,
+			a.finevent AS event,
+			a.finreference AS loan_acount_number,
+			'PENNANT' AS
+			user_je_source_name,
+			'00000000000' AS nonbankingrows,
+			'000000' AS
+			segment5,
+			CASE
 			WHEN a.drorcr = 'D'::citext THEN a.postamount
-			WHEN a.drorcr = 'C'::citext THEN 0::numeric
+			WHEN
+			a.drorcr =
+			'C'::citext THEN 0::numeric
 			ELSE NULL::numeric
-		END AS entered_debit,
-		CASE
+			END AS
+			entered_debit,
+			CASE
 			WHEN a.drorcr = 'D'::citext THEN 0::numeric
-			WHEN a.drorcr = 'C'::citext THEN a.postamount
+			WHEN
+			a.drorcr =
+			'C'::citext THEN a.postamount
 			ELSE NULL::numeric
-		END AS entered_credit,
-	a.valuedate AS transactiondate,
-	b.fintype AS loantype,
-	c.fincategory AS productcategorycode,
-	f.custshrtname AS customername,
-	f.custid AS customerid,
-	c.findivision AS divisioncode
-	FROM postings a
-	 LEFT JOIN financemain b ON a.finreference = b.finreference
-	 LEFT JOIN rmtfinancetypes c ON c.fintype = b.fintype
-	 LEFT JOIN customers f ON f.custid = b.custid
-    	 </createView>
+			END AS
+			entered_credit,
+			a.valuedate AS transactiondate,
+			b.fintype AS loantype,
+			c.fincategory AS productcategorycode,
+			f.custshrtname AS customername,
+			f.custid AS customerid,
+			c.findivision AS divisioncode
+			FROM postings a
+			LEFT JOIN financemain b ON a.finreference = b.finreference
+			LEFT JOIN
+			rmtfinancetypes c ON c.fintype = b.fintype
+			LEFT JOIN customers f ON
+			f.custid = b.custid
+		</createView>
 	</changeSet>
 
 	<changeSet id="2" author="dheerendra.d">
@@ -97,7 +108,7 @@
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'entereddr', 0, 'N', 0);
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'enteredcr', 0, 'N', 0);
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'reference_batchname', 0, 'N', 0);
-				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'reference4_journalname', 0, 'N', 0);
+			INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'reference4_journalname', 0, 'N', 0);
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'attribute6_chequenumber', 0, 'N', 0);
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'attribute7_valuedate', 0, 'N', 0);
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'reference10_journallinedescornarration', 0, 'N', 0);
@@ -105,5 +116,16 @@
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from data_engine_column), (select id from data_engine_table where name = 'OGL_DOWNLOAD'), 'userjecatname', 0, 'N', 0);
 			]]>
 		</sql>
+	</changeSet>
+
+
+	<changeSet id="4" author="dheerendra.d">
+		<dropColumn tableName="ogl_download" columnName="currencycode" />
+	</changeSet>
+
+	<changeSet id="5" author="dheerendra.d">
+		<addColumn tableName="ogl_download">
+			<column name="currencycode" type="varchar(3)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>
