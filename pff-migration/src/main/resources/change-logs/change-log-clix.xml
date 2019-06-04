@@ -1554,5 +1554,16 @@
      ]]>
 	</sql>
 </changeSet>
+
+	<changeSet id="11" author="dheerendra.d">
+		<dropColumn tableName="ogl_download" columnName="currencycode" />
+	</changeSet>
+
+	<changeSet id="12" author="dheerendra.d">
+		<addColumn tableName="ogl_download">
+			<column name="currencycode" type="varchar(3)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
 
