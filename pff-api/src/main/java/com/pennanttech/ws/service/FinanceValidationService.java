@@ -564,7 +564,7 @@ public class FinanceValidationService {
 
 						// validate disbType
 						if (StringUtils.isNotBlank(advPayment.getPaymentType())) {
-							List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypes(false);
+							List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypesWithIST();
 							boolean paymentTypeSts = false;
 							for (ValueLabel value : paymentTypes) {
 								if (StringUtils.equals(value.getValue(), advPayment.getPaymentType())) {

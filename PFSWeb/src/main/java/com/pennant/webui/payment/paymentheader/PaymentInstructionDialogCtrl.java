@@ -370,7 +370,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 
 		fillComboBox(this.paymentType, paymentInstruction.getPaymentType(),
-				PennantStaticListUtil.getPaymentTypes(false), "");
+				PennantStaticListUtil.getPaymentTypesWithIST(), "");
 		if (paymentInstruction.getPartnerBankId() != Long.MIN_VALUE && paymentInstruction.getPartnerBankId() != 0) {
 			this.partnerBankID.getButton().setDisabled(isReadOnly("PaymentInstructionDialog_partnerBankID"));
 			this.partnerBankID.setAttribute("partnerBankId", paymentInstruction.getPartnerBankId());
@@ -576,7 +576,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		if (!this.paymentType.isDisabled()) {
 			this.paymentType
 					.setConstraint(new PTListValidator(Labels.getLabel("label_DisbInstructionsDialog_DisbType.value"),
-							PennantStaticListUtil.getPaymentTypes(false), true));
+							PennantStaticListUtil.getPaymentTypesWithIST(), true));
 		}
 
 		if (this.paymentAmount.isDisabled()) {

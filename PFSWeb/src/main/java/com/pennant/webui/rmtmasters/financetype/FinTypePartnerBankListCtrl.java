@@ -225,7 +225,7 @@ public class FinTypePartnerBankListCtrl extends GFCBaseCtrl<FinTypePartnerBank> 
 		this.listBoxFinTypePartnerBank.getItems().clear();
 
 		List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-		List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
+		List<ValueLabel> paymentModesList = PennantStaticListUtil.getAllPaymentTypesWithIST();
 
 		for (FinTypePartnerBank finTypePartnerBank : finTypePartnerBankList) {
 			Listitem item = new Listitem();

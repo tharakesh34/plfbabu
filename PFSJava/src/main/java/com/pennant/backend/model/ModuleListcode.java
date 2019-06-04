@@ -43,7 +43,7 @@
 package com.pennant.backend.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 public class ModuleListcode implements Serializable {
 
@@ -52,9 +52,9 @@ public class ModuleListcode implements Serializable {
 	private String listCode;
 	private String moduleListName;
 	private String[] fieldHeading;
-	private ArrayList<ValueLabel> valueLabels;
+	private List<ValueLabel> valueLabels;
 
-	public ModuleListcode(String listCode, String moduleListName, ArrayList<ValueLabel> valueLabels,
+	public ModuleListcode(String listCode, String moduleListName, List<ValueLabel> valueLabels,
 			String[] fieldHeading) {
 		this.listCode = listCode;
 		this.moduleListName = moduleListName;
@@ -78,11 +78,11 @@ public class ModuleListcode implements Serializable {
 		this.moduleListName = moduleListName;
 	}
 
-	public ArrayList<ValueLabel> getValueLabels() {
+	public List<ValueLabel> getValueLabels() {
 		return valueLabels;
 	}
 
-	public void setValueLabels(ArrayList<ValueLabel> valueLabels) {
+	public void setValueLabels(List<ValueLabel> valueLabels) {
 		this.valueLabels = valueLabels;
 	}
 

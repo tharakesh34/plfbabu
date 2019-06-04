@@ -4061,7 +4061,10 @@ public class PennantStaticListUtil {
 	// Change to customize the drop down list
 	private static Map<String, ValueLabel> scheduleCalculationCodes = new HashMap<>();
 	private static Map<String, ValueLabel> bpimethods = new HashMap<>();
-	private static ArrayList<ValueLabel> paymentTypes = new ArrayList<>();
+	private static List<ValueLabel> paymentTypes = new ArrayList<>();
+	private static List<ValueLabel> allPaymentTypes = new ArrayList<>();
+	private static List<ValueLabel> paymentTypesWithIST = new ArrayList<>();
+	private static List<ValueLabel> paymentTypesWithOnlyIST = new ArrayList<>();
 	private static ArrayList<ValueLabel> disbRegistrationTypes = new ArrayList<>();
 	// This Should be Similar to the Schedule Calculation Codes.
 	private static Map<String, ValueLabel> disbCalculationCodes = new HashMap<>();
@@ -4143,30 +4146,51 @@ public class PennantStaticListUtil {
 		disbRegistrationTypes.addAll(paymentTypes);
 	}
 
-	public static ArrayList<ValueLabel> getPaymentTypes(boolean addSwitchTransfer) {
-		ArrayList<ValueLabel> payments = new ArrayList<ValueLabel>();
-		payments.addAll(paymentTypes);
-
-		if (addSwitchTransfer) {
-			payments.add(
-					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH, Labels.getLabel("label_PaymentType_CASH")));
-			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,
-					Labels.getLabel("label_PaymentType_ESCROW")));
-			payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_MOBILE,
-					Labels.getLabel("label_PaymentType_MOBILE")));
-			/*
-			 * payments.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_NACH,
-			 * Labels.getLabel("label_PaymentType_NACH")));
-			 */
-		}
-		return payments;
+	public static List<ValueLabel> getPaymentTypes() {
+		return paymentTypes;
 	}
 
+	public static List<ValueLabel> getAllPaymentTypesWithIST() {
+		if (paymentTypesWithIST.isEmpty()) {
+			paymentTypesWithIST.addAll(getAllPaymentTypes());
+			paymentTypesWithIST.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST, Labels.getLabel("label_PaymentType_IST")));
+		}
+
+		return paymentTypesWithIST;
+	}
+
+	public static List<ValueLabel> getAllPaymentTypes() {
+		if (allPaymentTypes.isEmpty()) {
+			allPaymentTypes.addAll(getPaymentTypes());
+			allPaymentTypes.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_CASH, Labels.getLabel("label_PaymentType_CASH")));
+			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_ESCROW,
+					Labels.getLabel("label_PaymentType_ESCROW")));
+			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_MOBILE,
+					Labels.getLabel("label_PaymentType_MOBILE")));
+		
+		}
+
+		return allPaymentTypes;
+	}
+	
+	public static List<ValueLabel> getPaymentTypesWithIST() {
+		if (paymentTypesWithOnlyIST.isEmpty()) {
+			paymentTypesWithOnlyIST.addAll(getPaymentTypes());
+			paymentTypesWithOnlyIST.add(
+					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_IST, Labels.getLabel("label_PaymentType_IST")));
+		}
+
+		return paymentTypesWithOnlyIST;
+	}
+
+	
 	public static List<ValueLabel> getPaymentTypes(boolean addSwitchTransfer, boolean bttpReq) {
-		List<ValueLabel> payments = getPaymentTypes(addSwitchTransfer);
+		List<ValueLabel> payments = getPaymentTypes();
 
 		if (bttpReq) {
-			paymentTypes.add(
+			payments.add(
 					new ValueLabel(DisbursementConstants.PAYMENT_TYPE_BTTP, Labels.getLabel("label_PaymentType_BTTP")));
 		}
 		return payments;
@@ -4974,14 +4998,12 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_CalcOnList_Transaction_Amount")));
 			calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,
 					Labels.getLabel("label_CalcOnList_TotalAmount_IncludingGST")));
-			calcOnList.add(
-					new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
+			calcOnList.add(new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
 			calcOnList.add(new ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST")));
 			calcOnList.add(new ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST")));
 			calcOnList.add(new ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST")));
 			calcOnList
-					.add(new ValueLabel(RuleConstants.CODE_TOTAL_GST,
-							Labels.getLabel("label_TaxTypeList_Total_GST")));
+					.add(new ValueLabel(RuleConstants.CODE_TOTAL_GST, Labels.getLabel("label_TaxTypeList_Total_GST")));
 		}
 		return calcOnList;
 	}
@@ -4989,13 +5011,11 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getTaxtTypeList() {
 		if (taxtTypeList == null) {
 			taxtTypeList = new ArrayList<ValueLabel>(6);
-			taxtTypeList.add(
-					new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
+			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
 			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST")));
 			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST")));
 			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST")));
-			taxtTypeList
-					.add(new ValueLabel(RuleConstants.CODE_CESST, Labels.getLabel("label_TaxTypeList_CESST")));
+			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_CESST, Labels.getLabel("label_TaxTypeList_CESST")));
 		}
 		return taxtTypeList;
 	}

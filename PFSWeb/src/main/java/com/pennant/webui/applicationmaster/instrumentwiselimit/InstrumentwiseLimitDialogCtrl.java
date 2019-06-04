@@ -104,7 +104,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 																				// param
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 
-	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getPaymentTypes(true, false);
+	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getAllPaymentTypes();
 
 	/**
 	 * default constructor.<br>

@@ -31,15 +31,15 @@ public class PennantLOVListUtil {
 					getHeadings(new String[] { "label_FrequencyDaysMethod", "label_FrequencyDaysMethodDesc" })));
 			put("AccountTypeDisbModes",
 					new ModuleListcode("AccountTypeDisbModes", getHeading("Account Type Modes"),
-							PennantStaticListUtil.getPaymentTypes(false),
+							PennantStaticListUtil.getPaymentTypesWithIST(),
 							getHeadings(new String[] { "label_AccountTypeCode", "label_AccountTypeDescription" })));
 			put("AccountTypeRecptModes",
 					new ModuleListcode("AccountTypeRecptModes", getHeading("Account Type Modes"),
-							PennantStaticListUtil.getPaymentTypes(true),
+							PennantStaticListUtil.getAllPaymentTypes(),
 							getHeadings(new String[] { "label_AccountTypeCode", "label_AccountTypeDescription" })));
 			put("AccountTypePayModes",
 					new ModuleListcode("AccountTypeModes", getHeading("Account Type Modes"),
-							PennantStaticListUtil.getPaymentTypes(false),
+							PennantStaticListUtil.getPaymentTypesWithIST(),
 							getHeadings(new String[] { "label_AccountTypeCode", "label_AccountTypeDescription" })));
 		}
 	};

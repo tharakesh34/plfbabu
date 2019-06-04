@@ -45,6 +45,7 @@ package com.pennant.webui.util.searchdialogs;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
@@ -99,7 +100,7 @@ public class ExtendedStaticListBox extends Window implements Serializable {
 	private Object objClass = null;
 	private transient PagedListService pagedListService;
 	private String[] fieldString = null;
-	private ArrayList<ValueLabel> arrayList;
+	private List<ValueLabel> arrayList;
 	private ModuleListcode moduleListcode;
 
 	public ExtendedStaticListBox() {

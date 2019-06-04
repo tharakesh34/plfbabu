@@ -177,7 +177,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
 		//paymentType
-		fillComboBox(this.paymentType, "", PennantStaticListUtil.getPaymentTypes(false), "");
+		fillComboBox(this.paymentType, "", PennantStaticListUtil.getPaymentTypesWithIST(), "");
 
 		//SetFormats 
 		this.approvedOn.setFormat(PennantConstants.dateFormat);

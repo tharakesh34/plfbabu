@@ -76,7 +76,7 @@ public class PaymentHeaderListModelItemRenderer implements ListitemRenderer<Paym
 		lc.setParent(item);
 
 		lc = new Listcell(PennantAppUtil.getlabelDesc(paymentHeader.getPaymentInstrType(),
-				PennantStaticListUtil.getPaymentTypes(false)));
+				PennantStaticListUtil.getPaymentTypesWithIST()));
 		lc.setParent(item);
 
 		lc = new Listcell(DateUtil.format(paymentHeader.getApprovedOn(), PennantConstants.dateFormat));

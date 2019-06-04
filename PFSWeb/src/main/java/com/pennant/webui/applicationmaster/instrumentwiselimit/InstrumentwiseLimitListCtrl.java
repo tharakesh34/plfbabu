@@ -116,7 +116,7 @@ public class InstrumentwiseLimitListCtrl extends GFCBaseListCtrl<InstrumentwiseL
 	protected Listbox sortOperator_ReceiptMaxAmtperDay;
 
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
-	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getPaymentTypes(true, false);
+	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getAllPaymentTypes();
 
 	/**
 	 * default constructor.<br>

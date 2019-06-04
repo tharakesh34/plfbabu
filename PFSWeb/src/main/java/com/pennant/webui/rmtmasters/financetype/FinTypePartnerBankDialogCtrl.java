@@ -104,7 +104,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	private String finDivision = null;
 
 	List<ValueLabel> purposeList = PennantStaticListUtil.getPurposeList();
-	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
+	List<ValueLabel> paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 	private List<FinTypePartnerBank> finTypePartnerBankList;
 
 	/**
@@ -663,9 +663,9 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		String purposeValue = this.purpose.getSelectedItem().getValue();
 
 		if (StringUtils.equals(purposeValue, AccountConstants.PARTNERSBANK_DISB)) {
-			this.paymentModesList = PennantStaticListUtil.getPaymentTypes(false);
+			this.paymentModesList = PennantStaticListUtil.getPaymentTypesWithIST();
 		} else {
-			this.paymentModesList = PennantStaticListUtil.getPaymentTypes(true);
+			this.paymentModesList = PennantStaticListUtil.getAllPaymentTypes();
 		}
 
 		fillComboBox(this.paymentMode, "", paymentModesList, "");

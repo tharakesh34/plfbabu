@@ -46,6 +46,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -107,8 +108,8 @@ public class MultiSelectionStaticListBox extends Window implements Serializable 
 	private transient PagedListService pagedListService;
 	private String selectedValues = null;
 	private Map<String, String> checkMap = new HashMap<String, String>();
-	private ArrayList<ValueLabel> arrayList;
-	private ArrayList<ValueLabel> defaultValuesList = new ArrayList<ValueLabel>();
+	private List<ValueLabel> arrayList;
+	private List<ValueLabel> defaultValuesList = new ArrayList<ValueLabel>();
 	private ModuleListcode moduleListcode;
 
 	public MultiSelectionStaticListBox() {

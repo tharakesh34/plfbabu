@@ -2553,7 +2553,7 @@ public class FinanceDataValidation {
 					valueParm[0] = "disbType";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 				} else {
-					List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypes(false);
+					List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypesWithIST();
 					boolean paymentTypeSts = false;
 					for (ValueLabel value : paymentTypes) {
 						if (StringUtils.equals(value.getValue(), advPayment.getPaymentType())) {

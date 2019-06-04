@@ -817,7 +817,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}
 		fillComboBox(this.paymentType, aFinAdvnancePayments.getPaymentType(),
-				PennantStaticListUtil.getPaymentTypes(false), "");
+				PennantStaticListUtil.getPaymentTypesWithIST(), "");
 		this.remarks.setValue(aFinAdvnancePayments.getRemarks());
 		//banking
 		if (aFinAdvnancePayments.getBankBranchID() != Long.MIN_VALUE && aFinAdvnancePayments.getBankBranchID() != 0) {
