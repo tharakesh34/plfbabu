@@ -32,6 +32,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -520,8 +521,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinReceiptDetail rcd = getReceiptDetail(receiptAmount, valueDate, receiptID, excessID, receiptMode);
 
 		/* 3. Receipt Allocation Details */
-		List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(receiptID, receiptAmount, curSchd.getTDSPaid(),
-				BigDecimal.ZERO);
+		List<ReceiptAllocationDetail> allocations = getAdvIntAllocations(finReference, receiptID, receiptAmount,
+				curSchd.getTDSPaid(), BigDecimal.ZERO);
 
 		/* 4. Repay Header */
 		FinRepayHeader rph = getRepayHeader(finReference, valueDate, rch, rcd);
@@ -566,8 +567,16 @@ public class AdvancePaymentService extends ServiceHelper {
 		return rcd;
 	}
 
-	private List<ReceiptAllocationDetail> getAdvIntAllocations(long receiptID, BigDecimal payNow, BigDecimal tdsPayNow,
-			BigDecimal netPay) {
+	private List<ReceiptAllocationDetail> getAdvIntAllocations(String finReference, long receiptID, BigDecimal payNow,
+			BigDecimal tdsPayNow, BigDecimal netPay) {
+
+		FinReceiptData receiptData = new FinReceiptData();
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinReference(finReference);
+		FinanceDetail financeDetail = new FinanceDetail();
+		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+		receiptData.setFinanceDetail(financeDetail);
+
 		List<ReceiptAllocationDetail> list = new ArrayList<>();
 		if (payNow.compareTo(BigDecimal.ZERO) == 0) {
 			return list;
@@ -576,21 +585,24 @@ public class AdvancePaymentService extends ServiceHelper {
 		int id = 1;
 		ReceiptAllocationDetail allocation;
 		String desc = Labels.getLabel("label_RecceiptDialog_AllocationType_PFT");
-		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_PFT, id, payNow, desc, 0, "", false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_PFT, id, payNow, desc, 0,
+				"", false);
 		allocation.setPaidNow(payNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_TDS");
-		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_TDS, id, tdsPayNow, desc, 0, "", false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_TDS, id, tdsPayNow, desc,
+				0, "", false);
 		allocation.setPaidNow(tdsPayNow);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
 		id = id + 1;
 
 		desc = Labels.getLabel("label_RecceiptDialog_AllocationType_NPFT");
-		allocation = receiptCalculator.getAllocation(RepayConstants.ALLOCATION_NPFT, id, netPay, desc, 0, "", false);
+		allocation = receiptCalculator.setAllocRecord(receiptData, RepayConstants.ALLOCATION_NPFT, id, netPay, desc, 0,
+				"", false);
 		allocation.setPaidNow(netPay);
 		allocation.setReceiptID(receiptID);
 		list.add(allocation);
