@@ -2568,7 +2568,13 @@ public class ReceiptCalculator implements Serializable {
 			rps.setLatePftSchdWaivedNow(allocation.getWaivedNow());
 
 		} else if (StringUtils.equals(updFor, "LPP")) {
-			rps.setPenaltyPayNow(allocation.getPaidNow());
+			//if Exclusive type GST is there we have to subtract the gst amount
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocation.getTaxType())) {
+				rps.setPenaltyPayNow(allocation.getPaidNow().subtract(allocation.getPaidGST()));
+			} else {
+				rps.setPenaltyPayNow(allocation.getPaidNow());
+			}
+			
 			rps.setWaivedAmt(allocation.getWaivedNow());
 			rps.setPaidPenaltyCGST(allocation.getPaidCGST());
 			rps.setPaidPenaltySGST(allocation.getPaidSGST());

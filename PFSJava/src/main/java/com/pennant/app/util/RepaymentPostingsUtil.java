@@ -1296,7 +1296,9 @@ public class RepaymentPostingsUtil implements Serializable {
 			getFinODDetailsDAO().updateLatePftTotals(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(),
 					finRepayQueue.getLatePayPftPayNow(), finRepayQueue.getLatePayPftWaivedNow());
 		}
-		if (finRepayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
+		
+		//FIXME Temporarly we are commented the below code for avoiding 2 time update on FinOdDetails
+		/*if (finRepayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
 				|| finRepayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 			FinODDetails detail = new FinODDetails();
 			detail.setFinReference(finRepayQueue.getFinReference());
@@ -1307,7 +1309,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			detail.setTotPenaltyBal((finRepayQueue.getPenaltyPayNow().add(finRepayQueue.getWaivedAmount())).negate());
 			detail.setTotWaived(finRepayQueue.getWaivedAmount());
 			getFinODDetailsDAO().updateTotals(detail);
-		}
+		}*/
 
 		// Finance Repayments Details
 		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate, postDate, linkedTranId,
