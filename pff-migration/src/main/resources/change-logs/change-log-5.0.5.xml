@@ -3614,6 +3614,26 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="84" author="Varaprasad K">
+        <sql>
+            update Master_Def set key_type='01', KEY_CODE='01' where key_type='AADHAAR' and KEY_CODE ='ADHCRD';
+            update Master_Def set key_type='02', KEY_CODE='02' where key_type='PASSPORT' and KEY_CODE ='PASSPRT';
+            update Master_Def set key_type='03', KEY_CODE='03' where key_type='PAN' and KEY_CODE ='PANCRD';
+        </sql>
+    </changeSet>
+   
+    <changeSet id="85" author="Varaprasad K">
+        <comment>Externalize customer primary identity</comment>
+        <sql>
+            delete from smtparameters where sysparmcode in('CUST_PRIMARY_ID_RETL_DOC_TYPE','CUST_PRIMARY_ID_CORP_DOC_TYPE');
+            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_RETL_DOC_TYPE', 'CustomerPrimary ID DocType for Retl', 'String', 0, '03', '50', 0, NULL,NULL, 'Retail Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP_DOC_TYPE', 'CustomerPrimary ID DocType for Corp', 'String', 0, '03', '50', 0, NULL,NULL, 'Corp Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+        </sql>
+    </changeSet>
+
+
+	
 	<!-- 5.0.5 is Under QC please use 5.0.6 -->
 
 </databaseChangeLog>

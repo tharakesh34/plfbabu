@@ -57,7 +57,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="2" author="vijaya.a">
+	<!-- <changeSet id="2" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities" columnNames="HSNCode" />
 	</changeSet>
 
@@ -71,7 +71,62 @@
 
 	<changeSet id="2.3" author="vijaya.a">
 		<addUniqueConstraint tableName="Commodities_Temp" columnNames="CommodityType, Code, HSNCode" />
+	</changeSet> -->
+	
+	<changeSet id="2" author="vijaya.a">
+    	<addUniqueConstraint columnNames="HSNCode"
+            constraintName="UK_HSNCode"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities"/>
 	</changeSet>
+	
+	<changeSet id="2.1" author="vijaya.a">
+    	<addUniqueConstraint columnNames="HSNCode"
+            constraintName="UK_HSNCode"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities_Temp"/>
+	</changeSet>
+
+	<changeSet id="2.2" author="vijaya.a" dbms="postgresql, oracle">
+    	<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" 
+            constraintName="UK_Comm_Comm_CT_Cd_HSNC"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities"/>
+	</changeSet>
+
+	<changeSet id="2.3" author="vijaya.a" dbms="postgresql, oracle">
+    	<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" 
+            constraintName="UK_Comm_Temp_Comm_CT_Cd_HSNC"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities_Temp"/>
+   </changeSet>
+   
+   <changeSet id="2.4" author="vijaya.a" dbms="mssql">
+    	<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" 
+            constraintName="UK_Commodities_CommodityType_Code_HSNCode"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities"/>
+	</changeSet>
+
+	<changeSet id="2.5" author="vijaya.a" dbms="mssql">
+    	<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" 
+            constraintName="UK_Commodities_Temp_CommodityType_Code_HSNCode"
+            deferrable="true"
+            disabled="true"
+            initiallyDeferred="true"            
+            tableName="Commodities_Temp"/>
+   </changeSet>
+   
 
 	<changeSet id="1.1" author="vijaya.a">
 		<dropDefaultValue columnName="Active" tableName="Commodities" />
@@ -522,7 +577,7 @@
 	</changeSet>
 
 	<changeSet id="10" author="aditya.a">
-		<comment>New column added for Account Types</comment>
+		<!-- <comment>New column added for Account Types</comment> -->
 		<sql>
 			INSERT INTO SecRights Values ((select max(RightId)+1 from
 			SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ','
@@ -2096,6 +2151,11 @@ UNION ALL
 			<column name="EffectiveDate" type="datetime" />
 			<column name="NotificationFlag" type="varchar(1)" />
 		</createTable>
+	</changeSet>
+	
+	
+	<changeSet id="51.1" author="murthy.y">
+		<modifyDataType tableName="LMSServiceLog" columnName="NotificationFlag" newDataType="char(1)" />
 	</changeSet>
 
 	<changeSet id="50" author="Durgaprasad G">
