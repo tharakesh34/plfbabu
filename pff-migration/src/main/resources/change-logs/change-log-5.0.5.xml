@@ -3631,9 +3631,5 @@
             INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP_DOC_TYPE', 'CustomerPrimary ID DocType for Corp', 'String', 0, '03', '50', 0, NULL,NULL, 'Corp Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
         </sql>
     </changeSet>
-
-
-	
 	<!-- 5.0.5 is Under QC please use 5.0.6 -->
-
 </databaseChangeLog>
