@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,8 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -98,8 +97,7 @@
 	</changeSet>
 
 	<changeSet id="07" author="Irfan">
-		<addPrimaryKey tableName="FinTaxIncomeDetail"
-			columnNames="RepayID, TaxFor" />
+		<addPrimaryKey tableName="FinTaxIncomeDetail" columnNames="RepayID, TaxFor" />
 	</changeSet>
 
 
@@ -150,22 +148,17 @@
 	</changeSet>
 
 	<changeSet id="14" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="TDSAllowToModify"
-			tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="TDSAllowToModify"
-			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="TDSAllowToModify" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="RMTFinanceTypes"
-			columnName="TDSAllowToModify" />
-		<addNotNullConstraint tableName="RMTFinanceTypes_Temp"
-			columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify" />
 	</changeSet>
 
 	<changeSet id="16" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_aview"
-			replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -403,8 +396,7 @@
 	</changeSet>
 
 	<changeSet id="17" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_view"
-			replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -879,8 +871,7 @@
 	</changeSet>
 
 	<changeSet id="18" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_orgview"
-			replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -2306,17 +2297,13 @@
 	</changeSet>
 
 	<changeSet id="28.1" author="Varaprasad.K" dbms="postgresql, oracle">
-		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions"
-			defaultValue="0" />
-		<addDefaultValue columnName="TDSApplicable"
-			tableName="FinMaintainInstructions_Temp" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions" defaultValue="0" />
+		<addDefaultValue columnName="TDSApplicable" tableName="FinMaintainInstructions_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="29" author="Varaprasad.K">
-		<addNotNullConstraint tableName="FinMaintainInstructions"
-			columnName="TDSApplicable" />
-		<addNotNullConstraint tableName="FinMaintainInstructions_Temp"
-			columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable" />
 	</changeSet>
 
 	<changeSet id="30" author="Varaprasad.K">
@@ -2345,8 +2332,7 @@
 
 	<changeSet id="31" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2392,8 +2378,7 @@
 
 	<changeSet id="32" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2417,8 +2402,7 @@
 
 	<changeSet id="33" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
 			  SELECT t1.finmaintainid,
 					t1.finreference,
 					t1.event,
@@ -2483,8 +2467,7 @@
 
 	<changeSet id="46" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2532,8 +2515,7 @@
 
 	<changeSet id="47" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_AVIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2558,8 +2540,7 @@
 
 	<changeSet id="48" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
-		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINMAINTAININSTRUCTIONS_TVIEW" replaceIfExists="true">
               SELECT t1.finmaintainid,
                     t1.finreference,
                     t1.event,
@@ -2583,8 +2564,8 @@
 	</changeSet>
 
 	<changeSet id="49" author="Saikiran.v">
-		<createSequence sequenceName="SEQGST_RATES"
-			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQGST_RATES" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
 	</changeSet>
 
 	<changeSet id="50" author="Saikiran.v">
@@ -2653,25 +2634,19 @@
 	</changeSet>
 
 	<changeSet id="52" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Active" tableName="GST_RATES"
-			defaultValue="1" />
-		<addDefaultValue columnName="Active" tableName="GST_RATES_Temp"
-			defaultValue="1" />
+		<addDefaultValue columnName="Active" tableName="GST_RATES" defaultValue="1" />
+		<addDefaultValue columnName="Active" tableName="GST_RATES_Temp" defaultValue="1" />
 	</changeSet>
 
 	<changeSet id="53" author="Saikiran.v">
-		<addNotNullConstraint tableName="GST_RATES"
-			columnName="Active" />
-		<addNotNullConstraint tableName="GST_RATES_Temp"
-			columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES" columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES_Temp" columnName="Active" />
 	</changeSet>
 
 
 	<changeSet id="54" author="Saikiran.v">
-		<addUniqueConstraint tableName="GST_RATES"
-			columnNames="FromState, ToState, TaxType" />
-		<addUniqueConstraint tableName="GST_RATES_Temp"
-			columnNames="FromState, ToState, TaxType" />
+		<addUniqueConstraint tableName="GST_RATES" columnNames="FromState, ToState, TaxType" />
+		<addUniqueConstraint tableName="GST_RATES_Temp" columnNames="FromState, ToState, TaxType" />
 	</changeSet>
 
 	<changeSet id="55" author="Saikiran.v">
@@ -2752,8 +2727,7 @@
 	</changeSet>
 
 	<changeSet id="59" author="Varaprasad.K">
-		<createView viewName="verification_pd_aview"
-			replaceIfExists="true">
+		<createView viewName="verification_pd_aview" replaceIfExists="true">
             SELECT pd.verificationid,
                 pd.agentcode,
                 pd.agentname,
@@ -2816,8 +2790,7 @@
 	</changeSet>
 
 	<changeSet id="60" author="Varaprasad.K">
-		<createView viewName="verification_pd_view"
-			replaceIfExists="true">
+		<createView viewName="verification_pd_view" replaceIfExists="true">
             SELECT pd.verificationid,
                 pd.agentcode,
                 pd.agentname,
@@ -3155,8 +3128,7 @@
 	</changeSet>
 
 	<changeSet id="75" author="Saikiran.v">
-		<createView viewName="finadvancepayments_aview"
-			replaceIfExists="true">
+		<createView viewName="finadvancepayments_aview" replaceIfExists="true">
 				SELECT t1.finreference,
 				t1.paymentid,
 				t1.paymentseq,
@@ -3224,8 +3196,7 @@
 	</changeSet>
 
 	<changeSet id="76" author="Saikiran.v">
-		<createView viewName="finadvancepayments_Tview"
-			replaceIfExists="true">
+		<createView viewName="finadvancepayments_Tview" replaceIfExists="true">
 	 	 SELECT t1.finreference,
 	   			t1.paymentid,
 	   			t1.paymentseq,
@@ -3293,8 +3264,7 @@
 	</changeSet>
 
 	<changeSet id="77" author="Saikiran.v">
-		<createView viewName="finadvancepayments_view"
-			replaceIfExists="true">
+		<createView viewName="finadvancepayments_view" replaceIfExists="true">
 		SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -3441,22 +3411,17 @@
 	</changeSet>
 
 	<changeSet id="78" author="Sai">
-		<modifyDataType tableName="FinAdvancePayments"
-			columnName="liabilityHoldName" newDataType="varchar(200)" />
-		<modifyDataType tableName="FinAdvancePayments"
-			columnName="payableLoc" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments" columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="79" author="Sai">
-		<modifyDataType tableName="FinAdvancePayments_Temp"
-			columnName="liabilityHoldName" newDataType="varchar(200)" />
-		<modifyDataType tableName="FinAdvancePayments_Temp"
-			columnName="payableLoc" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="liabilityHoldName" newDataType="varchar(200)" />
+		<modifyDataType tableName="FinAdvancePayments_Temp" columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="80" author="Sai">
-		<modifyDataType tableName="DISBURSEMENT_REQUESTS"
-			columnName="DRAWEE_LOCATION" newDataType="varchar(200)" />
+		<modifyDataType tableName="DISBURSEMENT_REQUESTS" columnName="DRAWEE_LOCATION" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="78_post" author="Sai" dbms="postgresql">
@@ -3518,7 +3483,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="83" author="Varaprasad.K">
 		<sql>
 		 	<![CDATA[
@@ -3614,22 +3579,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="84" author="Varaprasad K">
-        <sql>
-            update Master_Def set key_type='01', KEY_CODE='01' where key_type='AADHAAR' and KEY_CODE ='ADHCRD';
-            update Master_Def set key_type='02', KEY_CODE='02' where key_type='PASSPORT' and KEY_CODE ='PASSPRT';
-            update Master_Def set key_type='03', KEY_CODE='03' where key_type='PAN' and KEY_CODE ='PANCRD';
-        </sql>
-    </changeSet>
-   
-    <changeSet id="85" author="Varaprasad K">
-        <comment>Externalize customer primary identity</comment>
-        <sql>
-            delete from smtparameters where sysparmcode in('CUST_PRIMARY_ID_RETL_DOC_TYPE','CUST_PRIMARY_ID_CORP_DOC_TYPE');
-            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_RETL_DOC_TYPE', 'CustomerPrimary ID DocType for Retl', 'String', 0, '03', '50', 0, NULL,NULL, 'Retail Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP_DOC_TYPE', 'CustomerPrimary ID DocType for Corp', 'String', 0, '03', '50', 0, NULL,NULL, 'Corp Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-        </sql>
-    </changeSet>
 	<!-- 5.0.5 is Under QC please use 5.0.6 -->
 </databaseChangeLog>
