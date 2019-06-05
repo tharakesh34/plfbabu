@@ -160,7 +160,7 @@
 		    ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="2" author="Saikiran.v">
 		<sql>
 		 	<![CDATA[
@@ -168,4 +168,129 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="3" author="Saikiran.v">
+		<sql>
+		   <![CDATA[
+	<!-- 		 delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTWORKFLOW_MAKER');
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTWORKFLOW_APPROVER');
+
+			delete from secgroups where grpcode='COMMITMENTWORKFLOW_MAKER';
+			delete from secgroups where grpcode='COMMITMENTWORKFLOW_APPROVER';
+
+			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENT_REFERENCEDETAIL_MAKER');		 
+			delete from secgrouprights where rightid=(select rightid from SecRights where rightname='menuItem_SolutionFactory_CommitmentWorkFlow');
+			delete from secgrouprights where rightid=(select rightid from SecRights where rightname='menuItem_SolutionFactory_CommitmentReferenceDetail');
+
+			delete from secgroups where grpcode='COMMITMENT_REFERENCEDETAIL_MAKER';
+			delete from SecRights where page='CommitmentWorkFlowDialog';
+			delete from SecRights where page='CommitmentList';
+			delete from SecRights where rightname='menuItem_SolutionFactory_CommitmentWorkFlow';
+			delete from SecRights where rightname='menuItem_SolutionFactory_CommitmentReferenceDetail';  -->
+
+			
+			insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTWORKFLOW_MAKER', 'Maker for Commitment Workflow', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+			insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTWORKFLOW_APPROVER', 'Approver for Commitment Workflow', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentWorkFlowDialog_finEvent','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentWorkFlowDialog_finEvent'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentWorkFlowDialog_finType','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentWorkFlowDialog_finType'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentWorkFlowDialog_btnDelete','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentWorkFlowDialog_btnDelete'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_CommitmentWorkFlowDialog_btnSave','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentWorkFlowDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_APPROVER'), (select RightID from SecRights WHERE RightName='button_CommitmentWorkFlowDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CommitmentList_NewCommitment','CommitmentList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentList_NewCommitment'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_SolutionFactory_CommitmentWorkFlow','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_SolutionFactory_CommitmentWorkFlow'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTWORKFLOW_APPROVER'), (select RightID from SecRights WHERE RightName='menuItem_SolutionFactory_CommitmentWorkFlow'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			delete from lmtfinanceworkflowdef where fintype='CMTMNT';
+			delete from lmtfinanceworkflowdef where fintype='CMTNEW';
+
+			INSERT INTO lmtfinanceworkflowdef(fintype, screencode, workflowtype, modulename, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, finevent) VALUES   ('CMTMNT', 'DDE', 'MSTGRP1', 'COMMITMENT' ,1, 1000, current_timestamp, 'Approved',null,null,null,null,null, 0, 'Origination');
+			INSERT INTO lmtfinanceworkflowdef(fintype, screencode, workflowtype, modulename, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid, finevent) VALUES   ('CMTNEW', 'DDE', 'MSTGRP1', 'COMMITMENT' ,1, 1000, current_timestamp, 'Approved',null,null,null,null,null, 0, 'Origination');
+
+			insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENT_REFERENCEDETAIL_MAKER', 'Commitment Process Editor Maker', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'menuItem_SolutionFactory_CommitmentReferenceDetail','MENU',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_REFERENCEDETAIL_MAKER'), (select RightID from SecRights WHERE RightName='menuItem_SolutionFactory_CommitmentReferenceDetail'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'CommitmentWorkFlowDialog_screenCode','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_REFERENCEDETAIL_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentWorkFlowDialog_screenCode'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),0,'CommitmentWorkFlowDialog_workFlowType','CommitmentWorkFlowDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+			insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_REFERENCEDETAIL_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentWorkFlowDialog_workFlowType'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+			delete from CommitmentType where typecode='CMTMNT';
+			delete from CommitmentType where typecode='CMTNEW';
+
+			insert into CommitmentType values ('CMTNEW','CMT NEW Process',1);
+			insert into CommitmentType values ('CMTMNT','CMT Maintaint Process',1);  
+	    ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="Saikiran.v">
+		<createView viewName="commitments_aview" replaceIfExists="true">
+			 SELECT t1.cmtreference,
+				t1.custid,
+				t2.custshrtname,
+				t1.cmtbranch,
+				t3.branchdesc,
+				t1.openaccount,
+				t1.cmtaccount,
+				t1.cmtccy,
+				t1.cmtpftratemin,
+				t1.cmtpftratemax,
+				t1.cmtamount,
+				t1.cmtutilizedamount,
+				t1.cmtavailable,
+				t1.cmtpromiseddate,
+				t1.cmtstartdate,
+				t1.cmtexpdate,
+				t1.cmtrvwdate,
+				t1.cmttitle,
+				t1.cmtnotes,
+				t1.revolving,
+				t1.sharedcmt,
+				t1.multibranch,
+				t1.facilityref,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t1.cmtstopraterange,
+				t1.cmtactive,
+				t1.nonperforming,
+				t1.cmtcharges,
+				t1.chargesaccount,
+				t2.custcif,
+				t6.fintypedesc AS facilityrefdesc,
+				t1.cmtavailablemonths,
+				t1.collateralrequired,
+				t1.cmtenddate,
+				t1.limitlineid,
+				t4.CcyEditField
+				 from commitments t1
+				 JOIN customers t2 ON t1.custid = t2.custid
+				 JOIN rmtbranches t3 ON t1.cmtbranch = t3.branchcode
+				 JOIN RMTCurrencies t4 ON T1.CmtCcy = T4.CcyCode 
+				 JOIN limitdetails t5 ON t1.limitlineid = t5.detailid
+				 LEFT JOIN rmtfinancetypes t6 ON t1.facilityref = t6.fintype
+		</createView>
+	</changeSet>
+
 </databaseChangeLog>
