@@ -441,7 +441,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		selectSql.append(
 				" Doctype, DocName, ReferenceId ,FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal,DocBarcode,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID ");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, instructionUID, DocRefId ");
 		selectSql.append(" From DocumentDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ReferenceId =:ReferenceId AND DocCategory =:DocCategory AND DocModule =:DocModule");

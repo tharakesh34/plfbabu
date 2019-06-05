@@ -72,6 +72,7 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	private long pdfMappingRef = Long.MIN_VALUE;
 	private String pdfPassWord;
 	private boolean docIsPdfExtRequired = false;
+	@XmlElement
 	private WSReturnStatus returnStatus;
 	// New proeprty added for holding the DocumentManager table's ID
 	private long docRefId = Long.MIN_VALUE;

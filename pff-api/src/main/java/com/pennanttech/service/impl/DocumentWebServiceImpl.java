@@ -1,6 +1,7 @@
 package com.pennanttech.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -9,15 +10,19 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.validation.DocumentDetailsGroup;
+import com.pennant.validation.GetFinDocumentDetailsGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennanttech.controller.DocumentController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pffws.DocumentRestService;
 import com.pennanttech.pffws.DocumentSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class DocumentWebServiceImpl implements DocumentRestService, DocumentSoapService {
+
+	private static final Logger logger = Logger.getLogger(DocumentWebServiceImpl.class);
 
 	private ValidationUtility validationUtility;
 	private DocumentController documentController;
@@ -64,6 +69,34 @@ public class DocumentWebServiceImpl implements DocumentRestService, DocumentSoap
 			}
 		}
 		return APIErrorHandlerService.getSuccessStatus();
+	}
+
+	@Override
+	public DocumentDetails getFinanceDocument(DocumentDetails documentDetails) {
+		logger.debug(Literal.ENTERING);
+		DocumentDetails response = null;
+
+		//Considering Approved records only.
+		String type = "";
+
+		//basic field Validation
+		validationUtility.validate(documentDetails, GetFinDocumentDetailsGroup.class);
+
+		//validate given finReference is valid or not.
+		if (!financeMainDAO.isFinReferenceExists(documentDetails.getReferenceId(), type, false)) {
+			response = new DocumentDetails();
+			String[] valueParm = new String[1];
+			valueParm[0] = "finreference: " + documentDetails.getReferenceId();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
+		}
+
+		//getDocumentDetails
+		response = documentController.getFinanceDocument(documentDetails.getReferenceId(),
+				documentDetails.getDocCategory(), type);
+
+		logger.debug(Literal.LEAVING);
+		return response;
 	}
 
 	@Autowired

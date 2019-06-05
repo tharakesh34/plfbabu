@@ -450,6 +450,11 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 
 	}
 
+	@Override
+	public DocumentType getApprovedDocumentTypeById(String docType) {
+		return documentTypeService.getApprovedDocumentTypeById(docType);
+	}
+
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}

@@ -17,6 +17,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.DocumentDetailsGroup</value>
+					<value>com.pennant.validation.GetFinDocumentDetailsGroup</value>
 				</groups>
 			</constraint>
 			<constraint annotation="org.hibernate.validator.constraints.Length">
@@ -28,6 +29,7 @@
 					<value>com.pennant.validation.UpdateValidationGroup</value>
 					<value>com.pennant.validation.CreateFinanceWithCollateral</value>
 					<value>com.pennant.validation.DocumentDetailsGroup</value>
+					<value>com.pennant.validation.GetFinDocumentDetailsGroup</value>
 				</groups>
 				<element name="max">50</element>
 			</constraint>
@@ -92,6 +94,22 @@
 			</constraint>
 		</field>
 
+	<field name="referenceId">
+		<constraint annotation="org.hibernate.validator.constraints.NotBlank">
+			<message>finReference is Mandatory</message>
+			<groups>
+				<value>com.pennant.validation.GetFinDocumentDetailsGroup</value>
+			</groups>
+		</constraint>
+		<constraint annotation="org.hibernate.validator.constraints.Length">
+			<message>finReference should have maximum 20 characters</message>
+			<groups>
+				<value>com.pennant.validation.GetFinDocumentDetailsGroup</value>
+			</groups>
+			<element name="max">20</element>
+		</constraint>
+	</field>
+	
 	</bean>
 </constraint-mappings>
 		
