@@ -1564,6 +1564,12 @@
 			<column name="currencycode" type="varchar(3)" />
 		</addColumn>
 	</changeSet>
-
+	<changeSet id="13" author="dheerendra.d">
+		<sql>
+		<![CDATA[
+			update data_engine_config set uploadpath ='/opt/clix_8090/PFF/BASE/OGL' where name ='OGL_DOWNLOAD';
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 
