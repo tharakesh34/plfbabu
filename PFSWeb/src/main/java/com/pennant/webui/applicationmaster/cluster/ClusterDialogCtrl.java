@@ -597,7 +597,7 @@ public class ClusterDialogCtrl extends GFCBaseCtrl<Cluster> {
 		}
 		if (!this.name.isReadonly()) {
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_ClusterDialog_Name.value"),
-					PennantRegularExpressions.REGEX_CUST_NAME, true));
+					PennantRegularExpressions.REGEX_CLUST_NAME, true));
 		}
 		if (!this.parent.isReadonly()) {
 			this.parent.setConstraint(
