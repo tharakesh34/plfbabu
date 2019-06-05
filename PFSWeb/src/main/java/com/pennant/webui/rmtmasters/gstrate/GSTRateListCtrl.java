@@ -100,11 +100,11 @@ public class GSTRateListCtrl extends GFCBaseListCtrl<GSTRate> {
 	protected Button button_GSTRateList_GSTRateSearch;
 
 	// Search Fields
-	protected Textbox fromState; // autowired
-	protected Textbox toState; // autowired
-	protected Combobox taxType; // autowired
-	protected Combobox calcOn; // autowired
-	protected Checkbox active; // autowired
+	protected Textbox fromState;
+	protected Textbox toState;
+	protected Combobox taxType;
+	protected Combobox calcOn;
+	protected Checkbox active;
 
 	protected Listbox sortOperator_FromState;
 	protected Listbox sortOperator_ToState;

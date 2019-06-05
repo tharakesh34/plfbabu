@@ -346,5 +346,4 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 		return auditDetail;
 	}
 
-
 }

@@ -44,9 +44,6 @@
 			rightName="menu_Item_FinanceUserAuthorizationLimit" />
 		<menuItem id="menu_Item_VASProviderAccDetail" zulNavigation="/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul"
 			rightName="menuItem_SystemMaster_VASProviderAccDetail" />
-		<menuItem id="menu_Item_GSTRate" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateList.zul"  rightName="menuItem_RMTMasters_GSTRate"/>
-		<menuItem id="menu_Item_GSTRateEnquiry" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_RMTMasters_GSTRateEnquiry"/>
-			
 	</menu>
 
 	<!-- Masters -->
@@ -231,6 +228,7 @@
 				rightName="menuItem_ApplicationMaster_MandateCheckDigit" /> -->
 			<menuItem id="menu_Item_TaxDetail" zulNavigation="/WEB-INF/pages/ApplicationMaster/TaxDetail/TaxDetailList.zul"
 				rightName="menuItem_applicationmaster_TaxDetail" />
+			<menuItem id="menu_Item_GSTRate" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateList.zul"  rightName="menuItem_RMTMasters_GSTRate"/>
 			<menuItem id="menu_Item_Language" zulNavigation="/WEB-INF/pages/StaticParms/Language/LanguageList.zul"
 				rightName="menuItem_StaticParms_Language" />
 			<menuItem id="menu_Item_FinanceStatusCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinanceStatusCodes/FinanceStatusCodesList.zul"
@@ -858,6 +856,9 @@
 				rightName="menuItem_PresentmentDetail_PresentmentEnquiry" />
 			<menuItem id="menu_Item_PresentmentFileImport_Report" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_PresentmentDetail_PresentmentFileImport" />
+		</menu>
+		<menu id="menu_Item_MastersEnquiry">
+			 <menuItem id="menu_Item_GSTRateEnquiry" zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateEnquiryList.zul?enqiryModule=Y"  rightName="menuItem_RMTMasters_GSTRateEnquiry"/>
 		</menu>
 	</menu>
 

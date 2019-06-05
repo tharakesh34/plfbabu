@@ -105,7 +105,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	protected Decimalbox percentage;
 	protected Combobox calcOn;
 	protected Checkbox active;
-	private GSTRate gSTRate; // overhanded per param
+	private GSTRate gSTRate;
 
 	protected Label label_Amount;
 	protected Label label_Percentage;
@@ -113,7 +113,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	protected Label label_CalcOn;
 	protected Space space_CalcOn;
 
-	private transient GSTRateListCtrl gstRateListCtrl; // overhanded per param
+	private transient GSTRateListCtrl gstRateListCtrl;
 	private transient GSTRateService gstRateService;
 
 	private List<ValueLabel> listTaxType = PennantStaticListUtil.getTaxtTypeList();
@@ -197,7 +197,6 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 		this.fromState.setProperties("Province", "CPProvince", "CPProvinceName", true, 8);
 		this.toState.setProperties("Province", "CPProvince", "CPProvinceName", true, 8);
-
 
 		this.amount.setProperties(false, PennantConstants.defaultCCYDecPos);
 
@@ -372,7 +371,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * @param aGSTRate
 	 */
 	public void doWriteComponentsToBean(GSTRate aGSTRate) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
@@ -423,8 +422,8 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		//Amount
 		try {
 			if (this.amount.getActualValue() != null) {
-				aGSTRate.setAmount(PennantApplicationUtil
-						.unFormateAmount(this.amount.getActualValue(), PennantConstants.defaultCCYDecPos));
+				aGSTRate.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(),
+						PennantConstants.defaultCCYDecPos));
 			} else {
 				aGSTRate.setAmount(BigDecimal.ZERO);
 			}
@@ -483,17 +482,17 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	private void onchangetaxType(String calcValue) {
 		String calcTypeVal = getComboboxValue(this.taxType);
 		if (!StringUtils.equals(RuleConstants.CODE_CESST, calcTypeVal)) {
-			String exlcudeFeilds = "," + RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST + ","
-					+ RuleConstants.CODE_CGST + "," + RuleConstants.CODE_SGST + "," + RuleConstants.CODE_IGST + ","
-					+ RuleConstants.CODE_UGST + "," + RuleConstants.CODE_TOTAL_GST + ",";
+			String exlcudeFeilds = "," + RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST + "," + RuleConstants.CODE_CGST
+					+ "," + RuleConstants.CODE_SGST + "," + RuleConstants.CODE_IGST + "," + RuleConstants.CODE_UGST
+					+ "," + RuleConstants.CODE_TOTAL_GST + ",";
 			fillComboBox(this.calcOn, StringUtils.isNotBlank(calcValue) ? calcValue : PennantConstants.List_Select,
 					listCalcOn, exlcudeFeilds);
 		} else {
 			fillComboBox(this.calcOn, StringUtils.isNotBlank(calcValue) ? calcValue : PennantConstants.List_Select,
-					listCalcOn,
-					"," + RuleConstants.CODE_TOTAL_GST + ",");
+					listCalcOn, "," + RuleConstants.CODE_TOTAL_GST + ",");
 		}
 	}
+
 	public void onChange$calcType(Event event) throws ParseException {
 		onchangeCalcType();
 	}
@@ -514,7 +513,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			this.calcOn.setVisible(false);
 			this.calcOn.setConstraint("");
 			this.calcOn.setErrorMessage("");
-			fillComboBox(this.calcOn, PennantConstants.List_Select, listCalcOn, "");
+			onchangetaxType(this.calcOn.getSelectedItem().getValue());
 			this.label_CalcOn.setVisible(false);
 			this.space_CalcOn.setVisible(false);
 
@@ -534,6 +533,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		}
 		
 	}
+
 	/**
 	 * Displays the dialog page.
 	 * 
@@ -541,7 +541,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(GSTRate gSTRate) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (gSTRate.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -579,15 +579,15 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (!this.fromState.isReadonly()) {
-			this.fromState.setConstraint(new PTStringValidator(Labels.getLabel("label_GSTRateDialog_FromState.value"),
-					null, true));
+			this.fromState.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GSTRateDialog_FromState.value"), null, true));
 		}
 		if (!this.toState.isReadonly()) {
-			this.toState.setConstraint(new PTStringValidator(Labels.getLabel("label_GSTRateDialog_ToState.value"),
-					null, true));
+			this.toState.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_GSTRateDialog_ToState.value"), null, true));
 		}
 		if (!this.taxType.isDisabled()) {
 			this.taxType.setConstraint(
@@ -601,13 +601,13 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			this.calcOn.setConstraint(
 					new StaticListValidator(listCalcOn, Labels.getLabel("label_GSTRateDialog_CalcOn.value")));
 		}
-		
+
 		String calcTypeVal = getComboboxValue(this.calcType);
 		if (StringUtils.equals(RuleConstants.CALCTYPE_FIXED_AMOUNT, calcTypeVal)) {
 			if (!this.amount.isDisabled() && (BigDecimal.ZERO.compareTo(this.amount.getActualValue()) != 0)) {
 				this.amount.setConstraint(
 						new PTDecimalValidator(Labels.getLabel("label_GSTRateDialog_AmountOrPercentage.value"),
-						PennantConstants.defaultCCYDecPos, true, false, 0));
+								PennantConstants.defaultCCYDecPos, true, false, 0));
 			}
 		} else if (StringUtils.equals(RuleConstants.CALCTYPE_PERCENTAGE, calcTypeVal)) {
 			if (!this.percentage.isReadonly() && (BigDecimal.ZERO.compareTo(this.percentage.getValue()) != 0)) {
@@ -615,7 +615,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 						Labels.getLabel("label_GSTRateDialog_Percentage.value"), 2, true, false, 99));
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -623,7 +623,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.fromState.setConstraint("");
 		this.toState.setConstraint("");
@@ -641,7 +641,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 */
 
 	private void doSetLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -651,7 +651,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 */
 
 	private void doRemoveLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -661,7 +661,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -672,7 +672,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final GSTRate aGSTRate = new GSTRate();
 		BeanUtils.copyProperties(this.gSTRate, aGSTRate);
@@ -714,7 +714,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.gSTRate.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -756,7 +756,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.fromState);
 		readOnlyComponent(true, this.toState);
@@ -775,7 +775,6 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			this.userAction.setSelectedIndex(0);
 
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -783,7 +782,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * Clears the components values. <br>
 	 */
 	public void doClear() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.fromState.setValue("");
 		this.toState.setValue("");
 		this.taxType.setSelectedIndex(0);
@@ -793,14 +792,14 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		this.calcOn.setSelectedIndex(0);
 		this.active.setChecked(false);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Saves the components to table. <br>
 	 */
 	public void doSave() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		final GSTRate aGSTRate = new GSTRate();
 		BeanUtils.copyProperties(this.gSTRate, aGSTRate);
 		boolean isNew = false;
@@ -841,7 +840,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			logger.error(e);
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -857,7 +856,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 * 
 	 */
 	private boolean doProcess(GSTRate aGSTRate, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -931,7 +930,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -947,7 +946,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	 */
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		GSTRate aGSTRate = (GSTRate) auditHeader.getAuditDetail().getModelData();
@@ -1006,11 +1005,11 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 				}
 			}
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

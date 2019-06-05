@@ -83,9 +83,8 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append("   fromStateName , toStateName ,");
 		}
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From GST_RATES");
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId From GST_RATES");
 		sql.append(type);
 		sql.append(" Where id = :id");
 
@@ -157,13 +156,12 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		sql.append(tableType.getSuffix());
 		sql.append("(id, fromState, toState, taxType, calcType, amount, ");
 		sql.append(" percentage, calcOn, active, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
+		sql.append(" RecordType, WorkflowId) values(");
 		sql.append(" :id, :fromState, :toState, :taxType, :calcType, :amount, ");
 		sql.append(" :percentage, :calcOn, :active, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId,");
+		sql.append(" :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (gSTRate.getId() == Long.MIN_VALUE) {
 			gSTRate.setId(getNextValue("SeqGST_RATES"));
@@ -210,7 +208,6 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
