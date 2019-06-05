@@ -172,7 +172,6 @@
 	<changeSet id="3" author="Saikiran.v">
 		<sql>
 		   <![CDATA[
-		   
 	  		delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTWORKFLOW_MAKER');
 			delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTWORKFLOW_APPROVER');
 
@@ -189,7 +188,6 @@
 			delete from SecRights where rightname='menuItem_SolutionFactory_CommitmentWorkFlow';
 			delete from SecRights where rightname='menuItem_SolutionFactory_CommitmentReferenceDetail';
 
-			
 			insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTWORKFLOW_MAKER', 'Maker for Commitment Workflow', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
 			insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTWORKFLOW_APPROVER', 'Approver for Commitment Workflow', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
 
