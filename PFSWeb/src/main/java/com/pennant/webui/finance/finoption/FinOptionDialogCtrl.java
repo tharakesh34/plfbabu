@@ -476,6 +476,19 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		if (currentDate.equalsIgnoreCase("A")) {
 			nextOption.setValue(DateUtil.addMonths(option.getCurrentOptionDate(), 12));
 		}
+
+		if (currentDate.equalsIgnoreCase("5")) {
+			nextOption.setValue(DateUtil.addYears(option.getCurrentOptionDate(), 5));
+		}
+
+		if (currentDate.equalsIgnoreCase("8")) {
+			nextOption.setValue(DateUtil.addYears(option.getCurrentOptionDate(), 8));
+		}
+
+		if (currentDate.equalsIgnoreCase("B")) {
+			nextOption.setValue(DateUtil.addYears(option.getCurrentOptionDate(), 2));
+		}
+
 		if (option.getFrequency().equalsIgnoreCase("O")) {
 			nextOption.setValue(null);
 		}
@@ -558,6 +571,18 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (currentDate.equalsIgnoreCase("A") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addMonths(option, 12));
+		}
+
+		if (currentDate.equalsIgnoreCase("5") && !optExcerciseFlag) {
+			nextOption.setValue(DateUtil.addYears(option, 5));
+		}
+
+		if (currentDate.equalsIgnoreCase("8") && !optExcerciseFlag) {
+			nextOption.setValue(DateUtil.addYears(option, 8));
+		}
+		
+		if (currentDate.equalsIgnoreCase("B") && !optExcerciseFlag) {
+			nextOption.setValue(DateUtil.addYears(option, 2));
 		}
 
 		if (currentDate.equalsIgnoreCase("O")) {
@@ -908,6 +933,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				days = 180;
 			else if (frequencyValue.equals("A"))
 				days = 365;
+			else if (frequencyValue.equals("5"))
+				days = 1825;
+			if (frequencyValue.equals("8"))
+				days = 2920;
 			else if (frequencyValue.equals("B"))
 				days = 750;
 
@@ -940,12 +969,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 						Labels.getLabel("label_FinOptionDialog_Frequency.value")));
 			}
 
-			if (!alertDays.isDisabled() || alertDays.getValue() == 0) {
+			if (!alertDays.isDisabled() && alertDays.getValue() != 0) {
 				alertDays.setConstraint(new PTNumberValidator(Labels.getLabel("label_FinOptionDialog_AlertDays.value"),
 						true, false, 0, days));
 			}
 
-			if (!noticePeriodDays.isDisabled() || noticePeriodDays.getValue() == 0) {
+			if (!noticePeriodDays.isDisabled() && noticePeriodDays.getValue() != 0) {
 				noticePeriodDays.setConstraint(new PTNumberValidator(
 						Labels.getLabel("label_FinOptionDialog_NoticePeriodDays.value"), true, false, 0, days));
 			}

@@ -116,7 +116,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			putCallNotifyCust.setKeyReference(finOption.getFinReference());
 			putCallNotifyCust.setModule("LOAN");
 			putCallNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_PUTCALL);
-			putCallNotifyCust.setTemplateCode(finOption.getUserTemplateCode());
+			putCallNotifyCust.setTemplateCode(finOption.getCustomerTemplateCode());
 			putCallNotifyCust.setEmails(emails);
 			long putCallNotifyId = sendNotification(financeDetail, putCallNotifyCust);
 
