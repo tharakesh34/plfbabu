@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -67,6 +68,10 @@ import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -82,6 +87,7 @@ import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
+import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -129,6 +135,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 	protected Groupbox gb_RejectDetails;
 	protected Groupbox gb_financeDetails;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanel tabPanel_dialogWindow;
 
 	// not auto wired variables
 	private ReinstateFinance reinstateFinance; // overHanded per parameter
@@ -406,6 +415,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	public void doWriteBeanToComponents(ReinstateFinance aReinstateFinance) {
 		logger.debug("Entering");
 		doSetFinanceData(aReinstateFinance.getFinReference());
+		appendPostingDetailsTab();
 		this.recordStatus.setValue(aReinstateFinance.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -1226,6 +1236,65 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		setDialog(DialogType.EMBEDDED);
 
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * Method for Rendering Postings Enquiry Details.
+	 */
+	protected void appendPostingDetailsTab() {
+		logger.debug("Entering");
+		try {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("reinstateFinance", this.reinstateFinance);
+			map.put("fromRejectFinance", true);
+			map.put("finReference", this.finReference.getValue());
+			createTab(AssetConstants.UNIQUE_ID_POSTINGS, true);
+			Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/PostingsEnquiryDialog.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_POSTINGS), map);
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+
+	/**
+	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
+	 * parameter
+	 * 
+	 * @param moduleID
+	 * @param tabVisible
+	 */
+	public void createTab(String moduleID, boolean tabVisible) {
+		logger.debug("Entering");
+
+		String tabName = "";
+		if (StringUtils.equals(AssetConstants.UNIQUE_ID_POSTINGS, moduleID)) {
+			tabName = Labels.getLabel("tab_Postings");
+		}
+		Tab tab = new Tab(tabName);
+		tab.setId(getTabID(moduleID));
+		tab.setVisible(tabVisible);
+		tabsIndexCenter.appendChild(tab);
+		Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setId(getTabpanelID(moduleID));
+		tabpanel.setStyle("overflow:auto;");
+		tabpanel.setParent(tabpanelsBoxIndexCenter);
+		tabpanel.setHeight("100%");
+
+		logger.debug("Leaving");
+	}
+
+	private String getTabID(String id) {
+		return "TAB" + StringUtils.trimToEmpty(id);
+	}
+
+	private Tabpanel getTabpanel(String id) {
+		return (Tabpanel) tabpanelsBoxIndexCenter.getFellowIfAny(getTabpanelID(id));
+	}
+
+	private String getTabpanelID(String id) {
+		return "TABPANEL" + StringUtils.trimToEmpty(id);
 	}
 
 	private void setWorkflowDetails(String finType) {

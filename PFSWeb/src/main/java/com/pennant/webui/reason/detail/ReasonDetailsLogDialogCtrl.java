@@ -51,6 +51,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -84,6 +85,10 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox mobileNo;
 	protected Textbox emailID;
 	protected Listbox listReasonDetailsLog;
+	protected Row row1;
+	protected Row row2;
+	protected Row row3;
+	protected Row row4;
 
 	private CustomerFinanceDetail customerFinanceDetail;
 	private List<ReasonDetailsLog> reasonDetails;
@@ -140,16 +145,23 @@ public class ReasonDetailsLogDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 */
 	public void doWriteBeanToComponents() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
-		this.custCIF.setValue(customerFinanceDetail.getCustCIF());
-		this.custShrtName.setValue(customerFinanceDetail.getCustShrtName());
-		this.finReference.setValue(customerFinanceDetail.getFinReference());
-		this.finBranch.setValue(customerFinanceDetail.getFinBranch());
-		this.custID.setValue(StringUtils.trimToEmpty(customerFinanceDetail.getFinCcy()));
-		this.custDocType.setValue(customerFinanceDetail.getFinTypeDesc());
-		this.mobileNo.setValue(PennantApplicationUtil.amountFormate(
-				customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
-				CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
-		this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
+		if (customerFinanceDetail != null) {
+			this.custCIF.setValue(customerFinanceDetail.getCustCIF());
+			this.custShrtName.setValue(customerFinanceDetail.getCustShrtName());
+			this.finReference.setValue(customerFinanceDetail.getFinReference());
+			this.finBranch.setValue(customerFinanceDetail.getFinBranch());
+			this.custID.setValue(StringUtils.trimToEmpty(customerFinanceDetail.getFinCcy()));
+			this.custDocType.setValue(customerFinanceDetail.getFinTypeDesc());
+			this.mobileNo.setValue(PennantApplicationUtil.amountFormate(
+					customerFinanceDetail.getFinAmount().add(customerFinanceDetail.getFeeChargeAmt()),
+					CurrencyUtil.getFormat(customerFinanceDetail.getFinCcy())));
+			this.emailID.setValue(DateUtility.formatToLongDate(customerFinanceDetail.getFinStartDate()));
+		} else {
+			this.row1.setVisible(false);
+			this.row2.setVisible(false);
+			this.row3.setVisible(false);
+			this.row4.setVisible(false);
+		}
 		fillReasonDeatilsLog();
 		logger.debug(Literal.LEAVING);
 	}

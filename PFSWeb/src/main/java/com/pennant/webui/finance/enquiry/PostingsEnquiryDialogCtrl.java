@@ -43,24 +43,29 @@
 package com.pennant.webui.finance.enquiry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.GroupsModelArray;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.rmtmasters.TransactionDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -71,7 +76,9 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsComparator;
 import com.pennant.webui.finance.enquiry.model.FinanceEnquiryPostingsListItemRenderer;
+import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
@@ -94,6 +101,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	protected Checkbox showZeroCals;
 	private Tabpanel tabPanel_dialogWindow;
 	protected Combobox postingGroup;
+	protected Toolbar toolbar_printButton;
+	protected Groupbox finBasicdetails;
 
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 
@@ -101,7 +110,11 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private String finReference = "";
 	private FinanceDetailService financeDetailService;
 	private FinanceEnquiry enquiry;
+	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	StringBuilder accEvents = new StringBuilder("");
+
+	private String tableType = "_View";
+	private boolean fromRejectFinance = false;
 
 	/**
 	 * default constructor.<br>
@@ -149,6 +162,25 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						.get("financeEnquiryHeaderDialogCtrl");
 			}
 
+			if (arguments.containsKey("fromRejectFinance")) {
+				fromRejectFinance = (Boolean) arguments.get("fromRejectFinance");
+				if (fromRejectFinance) {
+					tableType = "_RView";
+					this.toolbar_printButton.setVisible(false);
+					this.showAccrual.setDisabled(true);
+				}
+			}
+
+			if (fromRejectFinance && arguments.containsKey("reinstateFinance")) {
+				ReinstateFinance reinstateFinance = (ReinstateFinance) arguments.get("reinstateFinance");
+				if (reinstateFinance != null) {
+					appendFinBasicDetails(getFinBasicDetails(reinstateFinance));
+				}
+
+			} else {
+				this.finBasicdetails.setVisible(false);
+			}
+
 			doShowDialog();
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -177,8 +209,15 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			if (tabPanel_dialogWindow != null) {
 
 				getBorderLayoutHeight();
-				int rowsHeight = (financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20)
-						+ 1;
+
+				int rowsHeight;
+				if (financeEnquiryHeaderDialogCtrl != null) {
+					rowsHeight = (financeEnquiryHeaderDialogCtrl.grid_BasicDetails.getRows().getVisibleItemCount() * 20)
+							+ 1;
+				} else {
+					rowsHeight = 20;
+				}
+
 				this.listBoxFinPostings.setHeight(this.borderLayoutHeight - rowsHeight - 200 + "px");
 				this.window_PostingsEnquiryDialog.setHeight(this.borderLayoutHeight - rowsHeight + "px");
 				tabPanel_dialogWindow.appendChild(this.window_PostingsEnquiryDialog);
@@ -232,7 +271,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		accEvents = events;
 		if (StringUtils.isNotEmpty(events.toString())) {
 			postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference, events.toString(),
-					this.showZeroCals.isChecked(), "");
+					this.showZeroCals.isChecked(), "", tableType);
+
 		}
 		doGetListItemRenderer(postingDetails);
 		logger.debug("Leaving");
@@ -242,7 +282,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Entering" + event.toString());
 		List<ReturnDataSet> postingList = new ArrayList<>();
 		postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference, accEvents.toString(),
-				this.showZeroCals.isChecked(), this.postingGroup.getSelectedItem().getValue().toString());
+				this.showZeroCals.isChecked(), this.postingGroup.getSelectedItem().getValue().toString(), tableType);
+
 		logger.debug("Leaving" + event.toString());
 		for (ReturnDataSet returnDataSet : postingDetails) {
 			returnDataSet.setPostingGroupBy(this.postingGroup.getSelectedItem().getValue().toString());
@@ -299,6 +340,57 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	/**
+	 * This method is for append finance basic details to respective parent tabs
+	 */
+	private void appendFinBasicDetails(ArrayList<Object> finHeaderList) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("parentCtrl", this);
+			if (finHeaderList != null) {
+				map.put("finHeaderList", finHeaderList);
+			}
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
+					map);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getFinBasicDetails(ReinstateFinance reinstateFinance) {
+		logger.debug(Literal.ENTERING);
+
+		//FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, reinstateFinance.getFinType());
+		arrayList.add(1, reinstateFinance.getFinCcy());
+		arrayList.add(2, reinstateFinance.getScheduleMethod());
+		arrayList.add(3, reinstateFinance.getFinReference());
+		arrayList.add(4, reinstateFinance.getProfitDaysBasis());
+		arrayList.add(5, reinstateFinance.getGrcPeriodEndDate());
+		arrayList.add(6, reinstateFinance.isAllowGrcPeriod());
+		if (StringUtils.isNotEmpty(reinstateFinance.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, reinstateFinance.getFinCategory());
+		arrayList.add(9, reinstateFinance.getCustShrtName());
+		arrayList.add(10, reinstateFinance.isNewRecord());
+		arrayList.add(11, "");
+		logger.debug(Literal.LEAVING);
+		return arrayList;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -309,6 +401,18 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
+	}
+
+	public FinBasicDetailsCtrl getFinBasicDetailsCtrl() {
+		return finBasicDetailsCtrl;
+	}
+
+	public void setFinBasicDetailsCtrl(FinBasicDetailsCtrl finBasicDetailsCtrl) {
+		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
+	}
+
+	public void doSetLabels(ArrayList<Object> finHeaderList) {
+		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
 }

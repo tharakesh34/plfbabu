@@ -76,6 +76,10 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 	private Date rejectedOn;
 	private String rejectStatus;
 	private String rejectRemarks;
+	private boolean allowGrcPeriod;
+	private Date grcPeriodEndDate;
+	private String scheduleMethod;
+	private String product = "";
 
 	private long lovDescWorkflowId;
 	private String lovDescRoleCode;
@@ -139,6 +143,10 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 		excludeFields.add("finCategory");
 		excludeFields.add("finPreApprovedRef");
 		excludeFields.add("scheduleChange");
+		excludeFields.add("allowGrcPeriod");
+		excludeFields.add("grcPeriodEndDate");
+		excludeFields.add("scheduleMethod");
+		excludeFields.add("product");
 
 		return excludeFields;
 	}
@@ -425,6 +433,38 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 
 	public void setScheduleChange(boolean scheduleChange) {
 		this.scheduleChange = scheduleChange;
+	}
+
+	public boolean isAllowGrcPeriod() {
+		return allowGrcPeriod;
+	}
+
+	public void setAllowGrcPeriod(boolean allowGrcPeriod) {
+		this.allowGrcPeriod = allowGrcPeriod;
+	}
+
+	public Date getGrcPeriodEndDate() {
+		return grcPeriodEndDate;
+	}
+
+	public void setGrcPeriodEndDate(Date grcPeriodEndDate) {
+		this.grcPeriodEndDate = grcPeriodEndDate;
+	}
+
+	public String getScheduleMethod() {
+		return scheduleMethod;
+	}
+
+	public void setScheduleMethod(String scheduleMethod) {
+		this.scheduleMethod = scheduleMethod;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
 	}
 
 }

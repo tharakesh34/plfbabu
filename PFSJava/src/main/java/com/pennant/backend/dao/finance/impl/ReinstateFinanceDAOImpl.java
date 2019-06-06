@@ -164,6 +164,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		selectSql.append(
 				" FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, T7.UsrLogin RejectedBy, T1.LastMntOn RejectedOn, ");
 		selectSql.append(" T8.Activity RejectStatus, T8.Remarks RejectRemarks ");
+		selectSql.append(" ,T1.ScheduleMethod, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.ProfitDaysBasis, T3.Product ");
 		selectSql.append(" From RejectFinanceMain T1 LEFT OUTER JOIN  ");
 		selectSql.append(" Customers T2 ON T1.CustID = T2.CustID LEFT OUTER JOIN  ");
 		selectSql.append(" RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN  ");

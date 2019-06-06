@@ -123,8 +123,8 @@ public interface FinanceDetailService {
 	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);
 
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
-			String postingGroubBy);
-
+			String postingGroubBy, String type);
+	
 	FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired);
 
 	AuditHeader doCheckLimits(AuditHeader auditHeader);

@@ -11,6 +11,8 @@
 
 			<borderlayout id="borderlayoutFinPostings">
 				<center border="none" id="divCenter">
+				<div style="border:none;">
+					<groupbox id="finBasicdetails" zclass="null" />
 					<vlayout width="100%">
 						<grid id="grid_postings" sclass="GridLayoutNoBorder" fixedLayout="true"
 							style="padding-left:20px;padding-bottom:5px;padding-top:0px;">
@@ -47,7 +49,7 @@
 								</row>
 							</rows>
 						</grid>
-						<toolbar>
+						<toolbar id="toolbar_printButton">
 							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 								<button id="btnPrintAccounting" label="${c:l('label_Print')}" />
 							</hbox>
@@ -79,6 +81,7 @@
 							</listhead>
 						</listbox>
 					</vlayout>
+					</div>
 				</center>
 			</borderlayout>
 

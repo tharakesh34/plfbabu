@@ -149,7 +149,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		if (isEnquiry) {
 			suspHead.setSuspDetailsList(getFinanceSuspHeadDAO().getFinanceSuspDetailsListById(finRef));
 			suspHead.setSuspPostingsList(getPostingsDAO().getPostingsByFinRefAndEvent(suspHead.getFinReference(),
-					"'PIS_NORM','NORM_PIS'", true, ""));
+					"'PIS_NORM','NORM_PIS'", true, "", "_View"));
 		}
 
 		FinanceDetail financeDetail = new FinanceDetail();

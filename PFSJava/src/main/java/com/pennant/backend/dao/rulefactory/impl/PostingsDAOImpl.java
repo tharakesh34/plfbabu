@@ -111,7 +111,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
-			String postingGroupBy) {
+			String postingGroupBy, String type) {
 		logger.debug("Entering");
 
 		ReturnDataSet dataSet = new ReturnDataSet();
@@ -122,7 +122,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(
 				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
 		selectSql.append(" FinEvent, LovDescEventCodeName, AcCcy, PostBranch, UserBranch ");
-		selectSql.append(" FROM Postings_View");
+		selectSql.append(" FROM Postings" + type);
 		selectSql.append(" Where FinReference =:FinReference AND FinEvent IN (" + finEvent + ")");
 		if (!showZeroBal) {
 			selectSql.append(" AND PostAmount != 0");

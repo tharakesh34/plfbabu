@@ -71,7 +71,7 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByPostRef(long postingId);
 
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
-			String postingGroupBy);
+			String postingGroupBy, String type);
 
 	void updateBatch(List<ReturnDataSet> dataSetList, String type);
 
@@ -90,6 +90,7 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 
 	void updatePostCtg();
-
+	
 	List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference);
+
 }

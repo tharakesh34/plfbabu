@@ -256,8 +256,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 				MessageUtil.showError(e);
 			}
 		} else if (finBasic_finReference != null && finBasic_finReference.getValue() != null) {
-			MessageUtil.showError(
-					"No Reason details are available for the reference : " + finBasic_finReference.getValue());
+			MessageUtil.showInfo("REASON_DETAILS_LOG", finBasic_finReference.getValue());
 		}
 
 		logger.debug("Leaving ");
