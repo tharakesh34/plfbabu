@@ -171,29 +171,40 @@ public class AdvancePaymentUtil {
 	 * @param finScheduleData
 	 * @param fee
 	 */
-	public static void calculateLMSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee) {
+	public static void calculateLMSAdvPayment(final FinScheduleData finScheduleData, FinFeeDetail fee,
+			List<FinFeeDetail> prvfeesColl) {
 		AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 
-		if (advanceRule == null && (advanceRule != AdvanceRuleCode.ADVINT)) {
+		if (advanceRule == null || (advanceRule != AdvanceRuleCode.ADVINT && advanceRule != AdvanceRuleCode.ADVEMI)) {
 			return;
 		}
 
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		String repayAdvType = fm.getAdvType();
+		BigDecimal oldAmount = BigDecimal.ZERO;
 
-		AdvanceType advanceType = AdvanceType.getType(repayAdvType);
-
-		BigDecimal advanceIntrest = BigDecimal.ZERO;
-		if (advanceType == AdvanceType.UF) {
-			advanceIntrest = finScheduleData.getPftChg();
-		} else {
-			advanceIntrest = calculateAdvPayment(finScheduleData);
+		if (prvfeesColl != null && !prvfeesColl.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : prvfeesColl) {
+				oldAmount = oldAmount.add(finFeeDetail.getActualAmount());
+			}
 		}
 
-		fee.setActualAmount(advanceIntrest);
-		fee.setCalculatedAmount(advanceIntrest);
-		fee.setActualAmountOriginal(advanceIntrest);
-		fee.setNetAmountOriginal(advanceIntrest);
+		BigDecimal amount = BigDecimal.ZERO;
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		AdvanceType advanceType = AdvanceType.getType(fm.getAdvType());
+		AdvanceStage advanceStage = AdvanceStage.getStage(fm.getAdvStage());
+
+		if (advanceRule == AdvanceRuleCode.ADVINT) {
+			BigDecimal instNow = calculateAdvanseInterest(finScheduleData);
+			amount = (oldAmount.subtract(instNow)).abs();
+		} else if (advanceRule == AdvanceRuleCode.ADVEMI && advanceType == AdvanceType.AE
+				&& advanceStage == AdvanceStage.AD) {
+			BigDecimal instNow = calculateAdvanseEMI(finScheduleData);
+			amount = oldAmount.subtract(instNow).abs();
+		}
+
+		fee.setActualAmount(amount);
+		fee.setCalculatedAmount(amount);
+		fee.setActualAmountOriginal(amount);
+		fee.setNetAmountOriginal(amount);
 	}
 
 	/**

@@ -104,6 +104,7 @@ import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -1341,7 +1342,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (AccountEventConstants.ACCEVENT_ADDDBSP.equals(finEvent)) {
 			AdvancePaymentUtil.calculateLOSAdvPayment(scheduleData, fee);
 		} else if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
-			AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee);
+			AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
+			if (advanceRule!=null && (advanceRule == AdvanceRuleCode.ADVINT || advanceRule == AdvanceRuleCode.ADVEMI)) {
+				List<String> list=new ArrayList<>();
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
+				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
+				String finReference = financeMain.getFinReference();
+				List<FinFeeDetail> fees = finFeeDetailDAO.getFeeDetails(finReference, advanceRule.name(), list);
+				AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee,fees);
+			}
 		}
 
 		calculateFees(fee, financeMain, taxPercentages);

@@ -786,4 +786,27 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
+	
+	@Override
+	public List<FinFeeDetail> getFeeDetails(String finReference,String feetypeCode,List<String> finEvents) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("select * from FinFeeDetail");
+		sql.append(" where FinReference = :FinReference and FinEvent in (:FinEvent) ");
+		sql.append(" and FeeTypeID = (select FeeTypeID from feetypes where FeetypeCode=:FeeTypeCode)");
+		
+		logger.trace(Literal.SQL + sql.toString());
+		
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("FinEvent",finEvents);
+		source.addValue("FeeTypeCode", feetypeCode);
+		
+		
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		logger.debug(Literal.LEAVING);
+		
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
 }

@@ -93,4 +93,6 @@ public interface FinFeeDetailDAO {
 	boolean isFinTypeFeeExists(long feeTypeId, String finType, int moduleId, boolean originationFee);
 
 	public List<FinFeeDetail> getPreviousAdvPayments(String finReferee);
+
+	List<FinFeeDetail> getFeeDetails(String finReference, String feetypeCode, List<String> finEvents);
 }
