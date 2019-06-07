@@ -341,7 +341,14 @@
 												<!-- Facility Details Start -->
 												<row id="row_commitment">
 													<label id="label_FinanceMainDialog_CommitRef" value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
-													<extendedcombobox id="commitmentRef" />
+													<hbox>
+														<extendedcombobox id="commitmentRef" />
+														<button
+															id="btnSearchCommitmentRef"
+															tooltiptext="${c:l('label_FinanceMainDialog_CommitRef.value')}"
+															image="/images/icons/more.png"
+															autodisable="btnSearchCommitmentRef" />
+													</hbox>
 												</row>
 												<row id="rowLimitRef">
 													<label id="label_FinanceMainDialog_FinLimitRef" value="${c:l('label_FinanceMainDialog_FinLimitRef.value')}" />

@@ -475,7 +475,7 @@ public class PennantJavaUtil {
 	private static String crReviewCommWF = "CREDIT_REVIEW_COMMERCIAL";
 	//private static String crReviewCorpWF = "CREDIT_REVIEW_CORPORATE";sa
 	private static String crReviewCorpWF = "CORPORATECREDITREVIEW";
-	private static String facilityCommitWF = "FACILITY_COMMITMENT";
+	private static String facilityCommitWF = "MSTGRP1";
 	//private static String scoreGrpWF = "SCORGRP";
 	private static String comInvenWF = "COMMODITY_INVENTORY";
 	private static String realizationWF = "RECEIPT_REALIZATION";
@@ -1604,7 +1604,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Commitment", new ModuleMapping("Commitment", Commitment.class,
 				new String[] { "Commitments", "Commitments_AView" }, facilityCommitWF,
-				new String[] { "CmtReference", "custID", "CustShrtName", "CmtTitle", "CmtExpDate" }, null, 800));
+				new String[] { "CmtReference", "CustCIF", "CustShrtName", "CmtTitle" }, null, 800));
 
 		ModuleUtil.register("CommitmentMovement",
 				new ModuleMapping("CommitmentMovement", CommitmentMovement.class,

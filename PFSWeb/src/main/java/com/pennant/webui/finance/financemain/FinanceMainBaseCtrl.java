@@ -677,6 +677,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Button btnLockRecord;
 	protected Button btnSearchCustCIF;
 
+	protected Button btnSearchCommitmentRef;
 	protected transient BigDecimal oldVar_finAmount;
 	protected transient BigDecimal oldVar_utilizedAmount;
 	protected transient BigDecimal oldVar_downPayBank;
@@ -15376,6 +15377,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug("Leaving " + event.toString());
+	}
+
+	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		this.commitmentRef.setErrorMessage("");
+
+		if (StringUtils.isBlank(this.commitmentRef.getValue())) {
+			throw new WrongValueException(this.commitmentRef, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_FinanceMainDialog_CommitRef.value") }));
+		}
+
+		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(this.commitmentRef.getValidatedValue(),
+				curRoleCode, true);
+
+		if (aCommitment == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("commitment", aCommitment);
+		arg.put("enqiryModule", true);
+		arg.put("fromLoan", true);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

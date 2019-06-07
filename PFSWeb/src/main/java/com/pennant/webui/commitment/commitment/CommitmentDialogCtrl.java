@@ -173,10 +173,10 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
@@ -394,6 +394,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	private boolean proceed = true;
 	private boolean isValidCust = true;
 
+	private boolean fromLoan = false;
+
 	private List<CommitmentRate> commitmentRateDetailList = new ArrayList<CommitmentRate>();
 	private List<FinFlagsDetail> cmtFlagsDetailList = null;
 	private List<FinanceCheckListReference> collateralChecklists = null;
@@ -437,7 +439,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			} else {
 				enqiryModule = false;
 			}
-
+			if (arguments.containsKey("fromLoan")) {
+				fromLoan = true;
+			}
 			if (arguments.containsKey("commitment")) {
 				this.commitment = (Commitment) arguments.get("commitment");
 				Commitment befImage = new Commitment();
@@ -733,7 +737,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		CaluculateSummary();
-		this.openAccount.setChecked(true);
+		//this.openAccount.setChecked(true);
 		//doCheckOpenAccount();
 		this.custID.setValue(details.getCustID());
 		this.custCIF.setValue(details.getCustCIF());
@@ -748,13 +752,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			}
 		}
 
-		// Facility Reference
-		Filter[] filters = new Filter[1];
-		long custid = StringUtils.trimToEmpty(this.custCIF.getValue()) == "" ? 0
-				: Long.valueOf(this.custCIF.getValue());
-		filters[0] = new Filter("CustID", custid, Filter.OP_EQUAL);
-		this.facilityRef.setFilters(filters);
-
 		//Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData(details.getCustCIF());
 		getCommitment().setCustomerDetails(customerDetails);
@@ -762,10 +759,16 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		appendCustomerDetailTab(false);
 		this.tab_Customer.setVisible(true);
 
+		// Facility Reference
+		Filter[] filters = new Filter[1];
+
+		filters[0] = new Filter("CustID", customerDetails.getCustID(), Filter.OP_EQUAL);
+		this.facilityRef.setFilters(filters);
+
 		// Limit Header
 		long headerId = 0;
 		LimitHeader limitHeader = getCommitmentService()
-				.getLimitHeaderByCustomerId(Long.valueOf(this.custCIF.getValue()));
+				.getLimitHeaderByCustomerId(customerDetails.getCustID());
 		if (limitHeader != null) {
 			headerId = limitHeader.getHeaderId();
 			limitHeader.setCustFullName(PennantApplicationUtil.getFullName(limitHeader.getCustFName(),
@@ -902,8 +905,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				PennantConstants.COMMITMENT_FIN_EVENT, details.getCcyCode());
 		this.cmtChargesAccount.setFormatter(details.getCcyEditField());
 
-		this.openAccount.setChecked(true);
-		doCheckOpenAccount();
+		//this.openAccount.setChecked(true);
+		//doCheckOpenAccount();
 
 		logger.debug("Leaving");
 	}
@@ -1053,7 +1056,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			doCheckEnq();
 
 			// during user action.
-			setDialog(DialogType.EMBEDDED);
+			if (fromLoan) {
+				setDialog(DialogType.MODAL);
+			} else {
+				setDialog(DialogType.EMBEDDED);
+			}
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CommitmentDialog.onClose();
@@ -1161,9 +1168,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.btnSearchCommitmentFlags.setDisabled(isReadOnly("CommitmentDialog_CommitmentFlags"));
 
-		setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount,
+		/*setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount,
 				this.label_OpenAccount, this.hlayout_OpenAccount, null);
-		setAccountBoxAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.cmtAccount, null);
+*/		setAccountBoxAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.cmtAccount, null);
 
 		setComponentAccessType("CommitmentDialog_CmtPftRateMin", tempReadOnly, this.cmtPftRateMin,
 				this.space_CmtPftRateMin, this.label_CmtPftRateMin, this.hlayout_CmtPftRateMin, null);
@@ -1683,8 +1690,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 											Labels.getLabel("label_CommitmentDialog_LimitLineAvailableAmt.value") })));
 				}
 			}
+			if (this.cmtAmount.getValidateValue() != null) {
 			aCommitment.setCmtAmount(
 					PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValidateValue(), defaultCCYDecPos));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1701,7 +1710,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Available Amount
 		try {
-			aCommitment.setCmtAvailable(aCommitment.getCmtAmount().subtract(aCommitment.getCmtUtilizedAmount()));
+			if (this.cmtAmount.getValidateValue() != null) {
+				aCommitment.setCmtAvailable(aCommitment.getCmtAmount().subtract(aCommitment.getCmtUtilizedAmount()));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2253,7 +2264,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	public void onCheck$openAccount(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 
-		doCheckOpenAccount();
+		//doCheckOpenAccount();
 
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2482,7 +2493,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtCcy.value"), null, true, true));
 		}
 		// Commitment Account
-		if (!openAccount.isChecked()) {
+		if (!openAccount.isChecked() && !this.cmtAccount.isReadonly()) {
 			this.cmtAccount.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CommitmentDialog_CmtAccount.value"), null, true));
 		}
@@ -2798,14 +2809,18 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
 					notification.setModule("COMMITMENT");
-					notification.setSubModule(aCommitment.getCmtTitle());
+					notification.setSubModule(FinanceConstants.FINSER_EVENT_ORG);
 					notification.setKeyReference(aCommitment.getCmtReference());
 					notification.setStage(aCommitment.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
+					String finType = CommitmentConstants.WF_NEWCOMMITMENT;
+					if (StringUtils.isEmpty(commitment.getRecordType())) {
+						finType = CommitmentConstants.WF_MAINTAINCOMMITMENT;
+					}
+
 					try {
-						notificationService.sendNotifications(notification, aCommitment, aCommitment.getCmtTitle(),
-								null);
+						notificationService.sendNotifications(notification, aCommitment, finType, null);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
@@ -2891,7 +2906,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 
 		Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>();
-		List<FinanceCheckListReference> chkList = getCollateralChecklists();
+		List<FinanceCheckListReference> chkList = getCommitmentChecklists();
 		selAnsCountMap = getSelectedAnsCountMap();
 
 		if (chkList != null && chkList.size() >= 0) {
@@ -3443,7 +3458,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				lc.setParent(item);
 				lc = new Listcell(financeMain.getFinType());
 				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(financeMain.getFinAmount(),
+				lc = new Listcell(PennantApplicationUtil.amountFormate(financeMain.getFinAmount(),
 						CurrencyUtil.getFormat(financeMain.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -3506,7 +3521,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			for (CommitmentMovement commitmentMovement : commitmentMovements) {
 				Listitem listItem = new Listitem();
 				Listcell listcell;
-				listcell = new Listcell(PennantAppUtil.getlabelDesc(commitmentMovement.getMovementType(),
+				listcell = new Listcell(PennantApplicationUtil.getLabelDesc(commitmentMovement.getMovementType(),
 						PennantStaticListUtil.getCmtMovementTypes()));
 				listcell.setParent(listItem);
 				listcell = new Listcell(String.valueOf(commitmentMovement.getMovementOrder()));
@@ -3578,8 +3593,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				Listcell listcell;
 				listcell = new Listcell("");
 				listcell.setParent(item);
-				listcell = new Listcell(
-						PennantAppUtil.getlabelDesc(returnDataSet.getDrOrCr(), PennantStaticListUtil.getTranType()));
+				listcell = new Listcell(PennantApplicationUtil.getLabelDesc(returnDataSet.getDrOrCr(),
+						PennantStaticListUtil.getTranType()));
 				listcell.setParent(item);
 				listcell = new Listcell(returnDataSet.getTranDesc());
 				listcell.setParent(item);
@@ -4337,11 +4352,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.selectedAnsCountMap = selectedAnsCountMap;
 	}
 
-	public List<FinanceCheckListReference> getCollateralChecklists() {
+	public List<FinanceCheckListReference> getCommitmentChecklists() {
 		return collateralChecklists;
 	}
 
-	public void setCollateralChecklists(List<FinanceCheckListReference> collateralChecklists) {
+	public void setCommitmentChecklists(List<FinanceCheckListReference> collateralChecklists) {
 		this.collateralChecklists = collateralChecklists;
 	}
 }

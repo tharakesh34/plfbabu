@@ -960,8 +960,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.space_PftDueSchdOn.setSclass("");
 
 		this.row_ManualSchedule.setVisible(ImplementationConstants.ALLOW_MANUAL_SCHEDULE);
-		this.row_Commitment.setVisible(ImplementationConstants.ALLOW_COMMITMENT && !isOverdraft);
-
+		this.row_Commitment.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_COMMITMENTS) && !isOverdraft);
 		if (ImplementationConstants.ALLOW_PLANNED_EMIHOLIDAY) {
 			fillComboBox(this.planEmiMethod, FinanceConstants.PLANEMIHMETHOD_FRQ,
 					PennantStaticListUtil.getPlanEmiHolidayMethod(), "");

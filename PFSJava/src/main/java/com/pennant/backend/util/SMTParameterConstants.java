@@ -129,6 +129,9 @@ public class SMTParameterConstants {
 
 	//The below variable is set for Branch screen in Entity Masters for Masters menu.
 	public static final String ALLOW_ORGANISATIONAL_STRUCTURE = "ALLOW_ORGANISATIONAL_STRUCTURE";
+	
+	//COMMITMENTS is Required or Not
+	public static final String ALLOW_COMMITMENTS = "ALLOW_COMMITMENTS";
 
 
 }

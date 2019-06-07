@@ -88,6 +88,7 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
+import com.pennant.backend.util.CommitmentConstants;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -979,6 +980,9 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				try {
 					if (StringUtils.equals(moduleName, CollateralConstants.MODULE_NAME)) {
 						getFinanceDialogCtrl().getClass().getMethod("setCollateralChecklists", List.class)
+								.invoke(getFinanceDialogCtrl(), (List<FinanceCheckListReference>) returnedList.get(1));
+					} else if (StringUtils.equals(moduleName, CommitmentConstants.MODULE_NAME)) {
+						getFinanceDialogCtrl().getClass().getMethod("setCommitmentChecklists", List.class)
 								.invoke(getFinanceDialogCtrl(), (List<FinanceCheckListReference>) returnedList.get(1));
 					} else if (StringUtils.equals(moduleName, VASConsatnts.MODULE_NAME)) {
 						getFinanceDialogCtrl().getClass().getMethod("setVasChecklists", List.class)
