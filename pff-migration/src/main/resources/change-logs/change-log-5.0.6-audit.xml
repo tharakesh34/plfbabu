@@ -33,5 +33,8 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 
+	<changeSet id="1" author="Saikiran.V">
+		<modifyDataType tableName="adtcommitmentrates" columnName="cmtspecialrate" newDataType="varchar(8)" />
+	</changeSet>
 
 </databaseChangeLog>
