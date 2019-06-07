@@ -292,4 +292,72 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="5_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'commitmentrates');
+					select deps_save_and_drop_dependencies ('plf', 'commitmentrates_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="Saikiran.v">
+		<modifyDataType tableName="commitmentrates" columnName="cmtspecialrate" newDataType="varchar(8)" />
+		<modifyDataType tableName="commitmentrates_Temp" columnName="cmtspecialrate" newDataType="varchar(8)" />
+	</changeSet>
+
+	<changeSet id="5_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'commitmentrates');
+					select deps_restore_dependencies ('plf', 'commitmentrates_temp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='CommitmentRateDialog');
+
+				delete from secgroups where grpcode='COMMITMENTRATE_MAKER';
+				delete from secgroups where grpcode='COMMITMENTRATE_APPROVER';
+
+				insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTRATE_MAKER', 'CommitmentRate Maker', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+				insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COMMITMENTRATE_APPROVER', 'CommitmentRate Approver', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CommitmentRateDialog_btnDelete','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentRateDialog_btnDelete'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CommitmentRateDialog_btnEdit','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentRateDialog_btnEdit'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CommitmentRateDialog_btnSave','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='button_CommitmentRateDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_APPROVER'), (select RightID from SecRights WHERE RightName='button_CommitmentRateDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtActualRate','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtActualRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtBaseRate','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtBaseRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtCalculatedRate','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtCalculatedRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtMargin','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtMargin'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtReference','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtReference'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtRvwFrq','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtRvwFrq'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+
+				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtSpecialRate','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtSpecialRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
