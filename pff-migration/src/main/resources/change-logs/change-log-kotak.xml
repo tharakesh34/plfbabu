@@ -74,4 +74,12 @@
 			]]>
 		</sql>
     </changeSet>
+    
+    <changeSet id="5" author="DurgaPrasad.G">
+		<sql>
+		 	<![CDATA[
+		 		UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_COMMITMENTS';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
