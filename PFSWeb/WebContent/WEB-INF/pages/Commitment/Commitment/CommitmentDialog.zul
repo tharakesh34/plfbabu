@@ -219,7 +219,7 @@
 														<accountSelectionBox id="cmtChargesAccount" />
 													</hlayout>
 												</row>
-												<row id="row10">
+												<row id="row10" visible="false">
 													<label id="label_CollateralRequired" value="${c:l('label_CommitmentDialog_CollateralRequired.value')}" />
 													<hlayout id="hlayout_CollateralRequired" spacing="2px">
 														<space id="space_CollateralRequired" spacing="2px" />
@@ -259,12 +259,12 @@
 													<label id="label_CmtNotes" value="${c:l('label_CommitmentDialog_CmtNotes.value')}" />
 													<hlayout id="hlayout_CmtNotes">
 														<space id="space_CmtNotes" spacing="2px" />
-														<textbox id="cmtNotes" maxlength="600" multiline="true" rows="23" style="resize:none;" width="400px" />
+														<textbox id="cmtNotes" maxlength="600" multiline="true" rows="13" style="resize:none;" width="400px" />
 													</hlayout>
 
 													<vlayout>
 														<!-- Commitment Review Rates -->
-														<groupbox id="gb_CmtReviewRates">
+														<groupbox id="gb_CmtReviewRates" visible="false">
 															<div sclass="z-toolbar" style="padding:0">
 																<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" height="24px" align="center">
 
