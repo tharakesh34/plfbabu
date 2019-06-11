@@ -1363,7 +1363,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(finFeeDetail.getWaivedAmount());
 		BigDecimal paidAmountOriginal = finFeeDetail.getPaidAmountOriginal();
-		BigDecimal remainingAmountOriginal = finFeeDetail.getRemainingFeeOriginal();
 
 		FinTaxDetails finTaxDetails = null;
 		if (finFeeDetail.getFinTaxDetails() == null) {
@@ -1422,6 +1421,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetail.setNetAmount(netAmountOriginal.add(taxSplit.gettGST()));
 
 				//Remaining Fee
+				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
+						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(finFeeDetail.getWaivedAmount());
 				taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal, taxPercentages);
 				finTaxDetails.setRemFeeSGST(taxSplit.getcGST());
 				finTaxDetails.setRemFeeIGST(taxSplit.getiGST());
@@ -1429,12 +1430,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setRemFeeUGST(taxSplit.getuGST());
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
 
-				BigDecimal remTGST = finFeeDetail.getNetAmountGST().subtract(finFeeDetail.getPaidAmountGST());
-				finTaxDetails.setRemFeeTGST(remTGST);
-				finFeeDetail.setRemainingFeeGST(remTGST);
-				finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal()
-						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(finFeeDetail.getWaivedAmount()));
-				finFeeDetail.setRemainingFee(finFeeDetail.getNetAmount().subtract(finFeeDetail.getPaidAmount()));
+				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
+				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
+				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
+				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(taxSplit.gettGST()));
 
 			} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
 					finFeeDetail.getTaxComponent())) {
