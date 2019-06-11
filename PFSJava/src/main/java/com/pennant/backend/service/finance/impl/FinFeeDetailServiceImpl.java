@@ -735,11 +735,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			int auditSeq = 1;
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
-				getFinFeeDetailDAO().delete(finFeeDetail, isWIF, tableType);
+				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
+				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), tableType);
+				finFeeDetailDAO.delete(finFeeDetail, isWIF, tableType);
 				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
-						finFeeDetail.getBefImage(), finFeeDetail));
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], finFeeDetail.getBefImage(), finFeeDetail));
 				auditSeq++;
 			}
 		}
@@ -1374,9 +1374,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		if (finFeeDetail.isTaxApplicable()) {
 
 			BigDecimal cGST = taxPercentages.get(RuleConstants.CODE_CGST);
+			BigDecimal sGST = taxPercentages.get(RuleConstants.CODE_SGST);
 			BigDecimal iGST = taxPercentages.get(RuleConstants.CODE_IGST);
-			BigDecimal uGST = taxPercentages.get(RuleConstants.CODE_SGST);
-			BigDecimal sGST = taxPercentages.get(RuleConstants.CODE_UGST);
+			BigDecimal uGST = taxPercentages.get(RuleConstants.CODE_UGST);
 
 			finFeeDetail.setCgst(cGST);
 			finFeeDetail.setIgst(iGST);
@@ -1393,6 +1393,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setActualIGST(taxSplit.getiGST());
 				finTaxDetails.setActualSGST(taxSplit.getsGST());
 				finTaxDetails.setActualUGST(taxSplit.getuGST());
+				finTaxDetails.setActualTGST(taxSplit.gettGST());
 
 				finFeeDetail.setActualAmountGST(taxSplit.gettGST());
 				finFeeDetail.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
