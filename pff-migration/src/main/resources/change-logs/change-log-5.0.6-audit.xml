@@ -38,13 +38,13 @@
 	</changeSet>
 
 	<changeSet id="2" author="Saikiran.v">
-		<addColumn tableName="AdtPartnerBank">
+		<addColumn tableName="AdtPartnerBanks">
 			<column name="DownloadType" type="varchar(10)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="3" author="Saikiran.v">
-		<addColumn tableName="AdtPartnerBank">
+		<addColumn tableName="AdtPartnerBanks">
 			<column name="DateEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
