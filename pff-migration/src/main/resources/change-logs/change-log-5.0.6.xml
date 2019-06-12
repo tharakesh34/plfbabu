@@ -318,7 +318,9 @@
 	<changeSet id="6" author="Saikiran.v">
 		<sql>
 			<![CDATA[
-				delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='CommitmentRateDialog');
+				delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTRATE_MAKER');
+				delete from secgrouprights where grpid=(select grpid from secgroups where grpcode='COMMITMENTRATE_APPROVER'); 
+				delete from SecRights where page='CommitmentRateDialog';
 
 				delete from secgroups where grpcode='COMMITMENTRATE_MAKER';
 				delete from secgroups where grpcode='COMMITMENTRATE_APPROVER';
@@ -357,6 +359,189 @@
 				insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CommitmentRateDialog_CmtSpecialRate','CommitmentRateDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 				insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENTRATE_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentRateDialog_CmtSpecialRate'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="Saikiran.v">
+		<addColumn tableName="PartnerBanks">
+			<column name="DownloadType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="8" author="Saikiran.v">
+		<addColumn tableName="PartnerBanks">
+			<column name="DateEngineConfigName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="9" author="Saikiran.v">
+		<addColumn tableName="PartnerBanks_temp">
+			<column name="DownloadType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="10" author="Saikiran.v">
+		<addColumn tableName="PartnerBanks_temp">
+			<column name="DateEngineConfigName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="11" author="Saikiran.v">
+		<createView viewName="partnerbanks_aview" replaceIfExists="true">
+						SELECT t1.partnerbankid,
+			    t1.partnerbankcode,
+			    t1.partnerbankname,
+			    t1.bankcode,
+			    t1.bankbranchcode,
+			    t1.branchmicrcode,
+			    t1.branchifsccode,
+			    t1.branchcity,
+			    t1.utilitycode,
+			    t1.accountno,
+			    t1.actype,
+			    t1.alwfiledownload,
+			    t1.alwdisb,
+			    t1.alwpayment,
+			    t1.alwreceipt,
+			    t1.infavourlength,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.bankname  bankcodename,
+			    t3.branchdesc  bankbranchcodename,
+			    t4.actypedesc  actypename,
+			    t1.hostglcode,
+			    t1.profitcenterid,
+			    t1.costcenterid,
+			    t1.filename,
+			    t1.entity,
+			    t1.downloadType,
+			    t1.dateEngineConfigName,
+			    t5.entitydesc
+			    FROM partnerbanks t1
+			    JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+			    JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+			    JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+			    LEFT JOIN entity t5 ON t1.entity = t5.entitycode
+		</createView>
+	</changeSet>
+
+	<changeSet id="12" author="Saikiran.v">
+		<createView viewName="partnerbanks_view" replaceIfExists="true">
+		 				SELECT t1.partnerbankid,
+			    t1.partnerbankcode,
+			    t1.partnerbankname,
+			    t1.bankcode,
+			    t1.bankbranchcode,
+			    t1.branchmicrcode,
+			    t1.branchifsccode,
+			    t1.branchcity,
+			    t1.utilitycode,
+			    t1.accountno,
+			    t1.actype,
+			    t1.alwfiledownload,
+			    t1.alwdisb,
+			    t1.alwpayment,
+			    t1.alwreceipt,
+			    t1.infavourlength,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.bankname AS bankcodename,
+			    t3.branchdesc AS bankbranchcodename,
+			    t4.actypedesc AS actypename,
+			    t1.hostglcode,
+			    t1.profitcenterid,
+			    t1.costcenterid,
+			    t1.filename,
+			    t1.entity,
+			    t5.entitydesc,
+			    t1.downloadType,
+			    t1.dateEngineConfigName
+			   FROM partnerbanks_temp t1
+			     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+			     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+			     JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+			     LEFT JOIN entity t5 ON t1.entity = t5.entitycode
+			UNION ALL
+			 SELECT t1.partnerbankid,
+			    t1.partnerbankcode,
+			    t1.partnerbankname,
+			    t1.bankcode,
+			    t1.bankbranchcode,
+			    t1.branchmicrcode,
+			    t1.branchifsccode,
+			    t1.branchcity,
+			    t1.utilitycode,
+			    t1.accountno,
+			    t1.actype,
+			    t1.alwfiledownload,
+			    t1.alwdisb,
+			    t1.alwpayment,
+			    t1.alwreceipt,
+			    t1.infavourlength,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.bankname AS bankcodename,
+			    t3.branchdesc AS bankbranchcodename,
+			    t4.actypedesc AS actypename,
+			    t1.hostglcode,
+			    t1.profitcenterid,
+			    t1.costcenterid,
+			    t1.filename,
+			    t1.entity,
+			    t5.entitydesc,
+			    t1.downloadType,
+			    t1.dateEngineConfigName
+			   FROM partnerbanks t1
+			     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
+			     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
+			     JOIN rmtaccounttypes t4 ON t1.actype = t4.actype
+			     LEFT JOIN entity t5 ON t1.entity = t5.entitycode
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM partnerbanks_temp
+			          WHERE partnerbanks_temp.partnerbankid = t1.partnerbankid))		
+		</createView>
+	</changeSet>
+
+	<changeSet id="13" author="Saikiran.v">
+		<sql>
+			update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DownloadType','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DownloadType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DateEngineConfigName','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DateEngineConfigName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
 
