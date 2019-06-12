@@ -37,4 +37,16 @@
 		<modifyDataType tableName="adtcommitmentrates" columnName="cmtspecialrate" newDataType="varchar(8)" />
 	</changeSet>
 
+	<changeSet id="2" author="Saikiran.v">
+		<addColumn tableName="AdtPartnerBank">
+			<column name="DownloadType" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="3" author="Saikiran.v">
+		<addColumn tableName="AdtPartnerBank">
+			<column name="DateEngineConfigName" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
