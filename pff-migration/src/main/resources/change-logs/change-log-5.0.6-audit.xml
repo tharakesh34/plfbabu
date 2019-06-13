@@ -45,7 +45,7 @@
 
 	<changeSet id="3" author="Saikiran.v">
 		<addColumn tableName="AdtPartnerBanks">
-			<column name="DateEngineConfigName" type="varchar(50)" />
+			<column name="DataEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
