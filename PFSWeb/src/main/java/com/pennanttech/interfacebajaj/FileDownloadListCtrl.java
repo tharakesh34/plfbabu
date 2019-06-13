@@ -185,10 +185,10 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 			this.searchObject.addField("PARTNERBANKNAME");
 			this.searchObject.addField("ALWFILEDOWNLOAD");
 
-			list.add("DISB_CITI_EXPORT");
-			list.add("DISB_IMPS_EXPORT");
-			list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
-			list.add("DISB_OTHER_NEFT_RTGS_EXPORT");
+			list.add("DISB_EXPORT_CITI");
+			list.add("DISB_EXPORT_IMPS");
+			list.add("DISB_EXPORT_OTHER_CHEQUE_DD");
+			list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 			break;
 		case MANDATES:
 			list.add("MANDATES_EXPORT");

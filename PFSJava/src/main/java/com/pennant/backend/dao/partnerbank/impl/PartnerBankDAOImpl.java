@@ -102,6 +102,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				"Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql.append(
 				", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
+		selectSql.append(", DownloadType, DataEngineConfigName ");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -174,12 +175,14 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				" ( PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		sql.append(
 				", AcType, AlwFileDownload,  InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity ");
+		sql.append(", DownloadType, DataEngineConfigName ");
 		sql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(
 				" values( :PartnerBankId, :PartnerBankCode, :PartnerBankName, :BankCode, :BankBranchCode, :BranchMICRCode, :BranchIFSCCode, :BranchCity, :UtilityCode, :AccountNo ");
 		sql.append(
 				", :AcType, :AlwFileDownload, :InFavourLength, :Active, :AlwDisb, :AlwPayment, :AlwReceipt, :HostGLCode, :ProfitCenterID, :CostCenterID, :FileName, :Entity");
+		sql.append(", :DownloadType, :DataEngineConfigName ");
 		sql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -213,7 +216,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				" set PartnerBankName = :PartnerBankName, BankCode = :BankCode, BankBranchCode = :BankBranchCode, BranchMICRCode = :BranchMICRCode, BranchIFSCCode = :BranchIFSCCode, BranchCity = :BranchCity, UtilityCode = :UtilityCode, AccountNo = :AccountNo");
 		sql.append(
 				" , AcType = :AcType, AlwFileDownload = :AlwFileDownload,  InFavourLength = :InFavourLength,  Active = :Active, AlwDisb = :AlwDisb, AlwPayment = :AlwPayment, AlwReceipt = :AlwReceipt, HostGLCode = :HostGLCode, ProfitCenterID = :ProfitCenterID, CostCenterID = :CostCenterID, FileName = :FileName");
-		sql.append(", Entity = :Entity");
+		sql.append(", Entity = :Entity , DownloadType = :DownloadType, DataEngineConfigName =:DataEngineConfigName");
 		sql.append(
 				", Version= :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where PartnerBankId =:PartnerBankId");
@@ -519,6 +522,7 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 				"Select PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode, BranchIFSCCode, BranchCity, UtilityCode, AccountNo ");
 		selectSql.append(
 				", AcType, AlwFileDownload, InFavourLength, Active, AlwDisb, AlwPayment, AlwReceipt, HostGLCode, ProfitCenterID, CostCenterID, FileName, Entity");
+		selectSql.append(", DownloadType, DataEngineConfigName ");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 

@@ -306,6 +306,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> calcTypeList;
 	private static ArrayList<ValueLabel> calcOnList;
 	private static ArrayList<ValueLabel> taxtTypeList;
+	private static ArrayList<ValueLabel> downloadTypeList;
 
 	/**
 	 * Gets the list of applications.
@@ -5018,5 +5019,16 @@ public class PennantStaticListUtil {
 			taxtTypeList.add(new ValueLabel(RuleConstants.CODE_CESST, Labels.getLabel("label_TaxTypeList_CESST")));
 		}
 		return taxtTypeList;
+	}
+
+	public static ArrayList<ValueLabel> getDownloadTypeList() {
+		if (downloadTypeList == null) {
+			downloadTypeList = new ArrayList<ValueLabel>(6);
+			downloadTypeList
+					.add(new ValueLabel(PennantConstants.ONLINE, Labels.getLabel("label_PartnerBankDialog_Online")));
+			downloadTypeList
+					.add(new ValueLabel(PennantConstants.OFFLINE, Labels.getLabel("label_PartnerBankDialog_Offline")));
+		}
+		return downloadTypeList;
 	}
 }

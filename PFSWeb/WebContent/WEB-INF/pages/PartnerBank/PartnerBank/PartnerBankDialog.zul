@@ -150,18 +150,6 @@
 								</hlayout>
 							</row>
 							<row>
-								<label id="label_PartnerBankDialog_ReqFileDownload" value="${c:l('label_PartnerBankDialog_ReqFileDownload.value')}" />
-								<hlayout>
-									<space spacing="2px" />
-									<checkbox id="reqFileDownload" checked="false" />
-								</hlayout>
-								<label id="label_PartnerBankDialog_Filename" value="${c:l('label_PartnerBankDialog_FileName.value')}" />
-								<hlayout>
-									<space id="space_FileName" spacing="2px" />
-									<textbox id="fileName" maxlength="15" width="100" />
-								</hlayout>
-							</row>
-							<row>
 								<label id="label_PartnerBankDialog_FavourLength" value="${c:l('label_PartnerBankDialog_FavourLength.value')}" />
 								<hlayout>
 									<space spacing="2px" />
@@ -171,6 +159,30 @@
 								<hlayout>
 									<space spacing="2px" />
 									<textbox id="sapGLCode" maxlength="15" width="100" />
+								</hlayout>
+							</row>
+							<row id="row_DownloadType" visible="false">
+								<label id="label_PartnerBankDialog_DownloadType" value="${c:l('label_PartnerBankDialog_DownloadType.value')}" />
+								<hlayout>
+									<space id="space_downloadType" spacing="2px" sclass="mandatory" />
+									<combobox id="downloadType" width="100"  />
+								</hlayout>
+								<label id="label_PartnerBankDialog_DataEngineConfigName" value="${c:l('label_PartnerBankDialog_DataEngineConfigName.value')}" />
+								<hlayout>
+									<space spacing="2px" />
+									<combobox id="dataEngineConfigName"  width="100"  />
+								</hlayout>
+							</row>
+							<row id="row_ReqFileDownload" visible="false">
+								<label id="label_PartnerBankDialog_ReqFileDownload" value="${c:l('label_PartnerBankDialog_ReqFileDownload.value')}" />
+								<hlayout>
+									<space spacing="2px" />
+									<checkbox id="reqFileDownload" checked="false" />
+								</hlayout>
+								<label id="label_PartnerBankDialog_Filename" value="${c:l('label_PartnerBankDialog_FileName.value')}" visible="false"/>
+								<hlayout visible="false">
+									<space id="space_FileName" spacing="2px" />
+									<textbox id="fileName" maxlength="15" width="100" visible="false"/>
 								</hlayout>
 							</row>
 							<row>

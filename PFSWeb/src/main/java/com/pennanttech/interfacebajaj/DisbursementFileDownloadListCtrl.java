@@ -50,8 +50,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,7 +153,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 	protected void doAddFilters() {
 		super.doAddFilters();
-		List<String> list = new ArrayList<>();
+		//List<String> list = new ArrayList<>();
 
 		searchObject.removeField("PARTNERBANKNAME");
 		searchObject.removeField("ALWFILEDOWNLOAD");
@@ -163,12 +161,12 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		this.searchObject.addField("PARTNERBANKNAME");
 		this.searchObject.addField("ALWFILEDOWNLOAD");
 
-		list.add("DISB_HDFC_EXPORT");
-		list.add("DISB_IMPS_EXPORT");
-		list.add("DISB_OTHER_CHEQUE_DD_EXPORT");
-		list.add("DISB_OTHER_NEFT_RTGS_EXPORT");
+		//list.add("DISB_EXPORT_DEFAULT");
+		//list.add("DISB_EXPORT_IMPS");
+		//list.add("DISB_EXPORT_OTHER_CHEQUE_DD");
+		//list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 
-		this.searchObject.addFilterIn("NAME", list);
+		this.searchObject.addFilterLike("NAME", "DISB_EXPORT");
 	}
 
 	/**

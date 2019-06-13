@@ -36,7 +36,7 @@ public class TestImps {
 			List<String> list = new ArrayList<>();
 			list.add("175");
 			//impsRequest.setDisbursments(list);
-			impsRequest.process("DISB_IMPS_EXPORT");
+			impsRequest.process("DISB_EXPORT_IMPS");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

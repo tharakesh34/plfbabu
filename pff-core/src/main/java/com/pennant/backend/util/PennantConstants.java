@@ -838,6 +838,7 @@ public class PennantConstants {
 	public static final String DSA = "DSA";
 	public static final String PSF = "PSF";
 	public static final String ONLINE = "ONL";
+	public static final String OFFLINE = "OFFL";
 	public static final String REFERRAL = "REF";
 	public static final String NTB = "NTB";
 	public static final String ASM = "ASM";

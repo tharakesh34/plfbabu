@@ -31,6 +31,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
+import com.pennanttech.pff.model.disbursment.DisbursementData;
 
 public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -43,27 +44,24 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		super();
 	}
 
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	@Override
 	public void sendReqest(Object... params) throws Exception {
-		String finType = (String) params[0];
-		List<FinAdvancePayments> disbusments = (List<FinAdvancePayments>) params[1];
-		long userId = (long) params[2];
-		String fileNamePrefix = (String) params[3];
+		DisbursementData disbursementDatasb = new DisbursementData();
+		disbursementDatasb.setFinType((String) params[0]);
+		disbursementDatasb.setDisbursements((List<FinAdvancePayments>) params[1]);
+		disbursementDatasb.setUserId((long) params[2]);
+		disbursementDatasb.setFileNamePrefix((String) params[3]);
 
-		processDisbursements(finType, userId, disbusments, fileNamePrefix);
+		sendReqest(disbursementDatasb);
 	}
 
-	private void processDisbursements(String finType, long userId, List<FinAdvancePayments> disbursements,
-			String fileNamePrefix) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		generateRequest(finType, userId, disbursements, fileNamePrefix);
-		logger.debug(Literal.LEAVING);
+	@Override
+	public void sendReqest(DisbursementData disbursementDatasb) throws Exception {
+		generateRequest(disbursementDatasb);
 	}
 
-	private void generateRequest(String finType, long userId, List<FinAdvancePayments> disbusments,
-			String fileNamePrefix) throws Exception {
+	private void generateRequest(DisbursementData disbursementData) throws Exception {
 		List<FinAdvancePayments> stp_IMPS = new ArrayList<>();
 		List<FinAdvancePayments> other_IMPS = new ArrayList<>();
 
@@ -84,47 +82,53 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 		DisbursementTypes type = null;
 
-		for (FinAdvancePayments disbursment : disbusments) {
+		String finType = disbursementData.getFinType();
+		List<FinAdvancePayments> disbursements = disbursementData.getDisbursements();
+		long userId = disbursementData.getUserId();
+		String fileNamePrefix = disbursementData.getFileNamePrefix();
+		String configName = disbursementData.getDataEngineConfigName();
+
+		for (FinAdvancePayments disbursment : disbursements) {
 			type = DisbursementTypes.valueOf(disbursment.getPaymentType());
 
 			switch (type) {
 			case IMPS:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_IMPS.add(disbursment);
 				} else {
 					other_IMPS.add(disbursment);
 				}
 				break;
 			case NEFT:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_NEFT.add(disbursment);
 				} else {
 					other_NEFT.add(disbursment);
 				}
 				break;
 			case RTGS:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_RTGS.add(disbursment);
 				} else {
 					other_RTGS.add(disbursment);
 				}
 				break;
 			case DD:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_DD.add(disbursment);
 				} else {
 					other_DD.add(disbursment);
 				}
 				break;
 			case CHEQUE:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_CHEQUE.add(disbursment);
 				} else {
 					other_CHEQUE.add(disbursment);
 				}
 				break;
 			default:
-				if (!disbursment.isAlwFileDownload()) {
+				if (!StringUtils.isBlank(configName)) {
 					stp_Other.add(disbursment);
 				} else {
 					other_Other.add(disbursment);
@@ -132,61 +136,66 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				break;
 			}
 		}
+
 		/*
 		 * if (!stp_IMPS.isEmpty()) { List<Long> idList = null; try { idList = prepareRequest(getPaymentIds(stp_IMPS),
 		 * type.name()); } catch (Exception e) { logger.error(Literal.EXCEPTION, e); }
 		 * 
-		 * sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId); }
+		 * sendIMPSRequest("DISB_EXPORT_IMPS", idList, userId); }
 		 * 
 		 * if (!other_IMPS.isEmpty()) { List<Long> idList = null; try { idList =
 		 * prepareRequest(getPaymentIds(other_IMPS), type.name()); } catch (Exception e) {
 		 * logger.error(Literal.EXCEPTION, e); }
 		 * 
-		 * sendIMPSRequest("DISB_IMPS_EXPORT", idList, userId); }
+		 * sendIMPSRequest("DISB_EXPORT_IMPS", idList, userId); }
 		 */
 
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
-		generateFile("DISB_HDFC_EXPORT", DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.NEFT.name(), finType, userId, stp_NEFT, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.RTGS.name(), finType, userId, stp_RTGS, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.CHEQUE.name(), finType, userId, stp_CHEQUE, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.DD.name(), finType, userId, stp_DD, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.I.name(), finType, userId, stp_Other, fileNamePrefix);
+		generateFile(configName, DisbursementTypes.IMPS.name(), finType, userId, stp_IMPS, fileNamePrefix);
 
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
-		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
-		generateFile("DISB_OTHER_CHEQUE_DD_EXPORT", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE,
+		// FIXME-MUR check me where i am using.
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.NEFT.name(), finType, userId, other_NEFT, null);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.RTGS.name(), finType, userId, other_RTGS, null);
+		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.DD.name(), finType, userId, other_DD, null);
+		generateFile("DISB_EXPORT_OTHER_CHEQUE_DD", DisbursementTypes.CHEQUE.name(), finType, userId, other_CHEQUE,
 				null);
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.I.name(), finType, userId, other_Other, null);
-		generateFile("DISB_OTHER_NEFT_RTGS_EXPORT", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.I.name(), finType, userId, other_Other, null);
+		generateFile("DISB_EXPORT_OTHER_NEFT_RTGS", DisbursementTypes.IMPS.name(), finType, userId, other_IMPS, null);
 
 	}
 
 	private void generateFile(String configName, String paymentType, String finType, long userId,
 			List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
-		Map<String, List<FinAdvancePayments>> map = null;
-		if (!disbusments.isEmpty()) {
-			map = getOtherBankMap(disbusments);
 
-			List<String> parnerBanks = new ArrayList<String>(map.keySet());
+		if (CollectionUtils.isEmpty(disbusments)) {
+			return;
+		}
 
-			for (String bank : parnerBanks) {
-				List<Long> idList = null;
-				try {
-					idList = prepareRequest(getPaymentIds(map.get(bank)), paymentType);
+		Map<String, List<FinAdvancePayments>> map = getOtherBankMap(disbusments);
 
-					if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
-						throw new ConcurrencyException();
-					}
+		List<String> parnerBanks = new ArrayList<String>(map.keySet());
 
-					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+		for (String bank : parnerBanks) {
+			List<Long> idList = null;
+			try {
+				idList = prepareRequest(getPaymentIds(map.get(bank)), paymentType);
 
-				} catch (Exception e) {
-					conclude(null, idList);
-					throw e;
+				if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
+					throw new ConcurrencyException();
 				}
+
+				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+
+			} catch (Exception e) {
+				conclude(null, idList);
+				throw e;
 			}
 		}
+
 	}
 
 	private Map<String, List<FinAdvancePayments>> getOtherBankMap(List<FinAdvancePayments> disbursemens) {
@@ -198,6 +207,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 			}
 			map.get(disbursement.getPartnerbankCode()).add(disbursement);
 		}
+
 		return map;
 	}
 
@@ -225,7 +235,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		try {
-			if ("DISB_CITI_EXPORT".equals(configName)) {
+			if ("DISB_EXPORT_CITI".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
 				parameterMap.put("SEQ_LPAD_SIZE", 3);
 				parameterMap.put("SEQ_LPAD_VALUE", "0");

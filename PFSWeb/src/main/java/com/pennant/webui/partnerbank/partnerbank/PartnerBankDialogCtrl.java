@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
@@ -65,6 +66,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.backend.model.Property;
+import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -78,9 +81,12 @@ import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionStaticListBox;
@@ -139,6 +145,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Button btnSearchBranchCode;
 	protected Space space_AlwBankBranchCode;
 	protected ExtendedCombobox entity;
+	protected Combobox downloadType;
+	protected Combobox dataEngineConfigName;
+
+	protected Row row_DownloadType;
+	protected Row row_ReqFileDownload;
 
 	private PartnerBank partnerBank;
 	private transient PartnerBankListCtrl partnerBankListCtrl;
@@ -146,6 +157,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	private transient PartnerBankService partnerBankService;
 	private transient BankDetailService bankDetailService;
 	//protected int							accNoLength;
+
+	private static List<ValueLabel> downloadTypesList = PennantStaticListUtil.getDownloadTypeList();
+	private static List<Property> dataEngineConfigNameList = PennantAppUtil.getDibursementConfigs();
 
 	/**
 	 * default constructor.<br>
@@ -389,6 +403,11 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.fileName.setValue(aPartnerBank.getFileName());
 		this.entity.setValue(aPartnerBank.getEntity());
 
+		fillComboBox(this.downloadType, aPartnerBank.getDownloadType(), downloadTypesList, "");
+		fillList(this.dataEngineConfigName, dataEngineConfigNameList, aPartnerBank.getDataEngineConfigName());
+		onChangeDownloadType(aPartnerBank.getDownloadType());
+		this.dataEngineConfigName.setTooltip(aPartnerBank.getDataEngineConfigName());
+
 		this.alwDisburment.setChecked(aPartnerBank.isAlwDisb());
 
 		if (this.alwDisburment.isChecked()) {
@@ -401,11 +420,19 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			} else {
 				this.space_FileName.setSclass(PennantConstants.mandateSclass);
 			}
+			this.row_DownloadType.setVisible(true);
+			this.row_ReqFileDownload.setVisible(true);
 		} else {
 			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
 			this.space_modeDisbursments.setSclass("");
 			this.btnSearchModeDisbursment.setDisabled(true);
+
+			this.row_DownloadType.setVisible(false);
+			this.row_ReqFileDownload.setVisible(false);
+			this.reqFileDownload.setChecked(false);
+			fillList(this.dataEngineConfigName, dataEngineConfigNameList, PennantConstants.List_Select);
+			fillComboBox(this.downloadType, PennantConstants.List_Select, downloadTypesList, "");
 		}
 
 		this.alwPayments.setChecked(aPartnerBank.isAlwPayment());
@@ -445,6 +472,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.bankBranchCode.setDescription("");
 			this.acType.setDescription("");
 			this.entity.setDescription("");
+			fillComboBox(this.downloadType, PennantConstants.OFFLINE, downloadTypesList, "");
+			this.dataEngineConfigName.setDisabled(false);
 		} else {
 			this.bankCode.setDescription(aPartnerBank.getBankCodeName());
 			this.bankBranchCode.setDescription(aPartnerBank.getBankBranchCodeName());
@@ -611,6 +640,23 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		//Entity
 		try {
 			aPartnerBank.setEntity(this.entity.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aPartnerBank.setDownloadType(this.downloadType.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			String value = (String) this.dataEngineConfigName.getSelectedItem().getValue();
+			String configName = "";
+			if (!StringUtils.equals(PennantConstants.List_Select, value)) {
+				configName = value;
+			}
+			aPartnerBank.setDataEngineConfigName(configName);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -863,7 +909,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		//Branch IFSC Code
-		if (!this.fileName.isReadonly() && this.alwDisburment.isChecked()
+		if (this.fileName.isVisible() && !this.fileName.isReadonly() && this.alwDisburment.isChecked()
 				|| this.alwPayments.isChecked() && !this.reqFileDownload.isChecked()) {
 			this.fileName.setConstraint(new PTStringValidator(Labels.getLabel("label_PartnerBankDialog_FileName.value"),
 					PennantRegularExpressions.REGEX_ALPHANUM_UNDERSCORE, !this.reqFileDownload.isChecked()));
@@ -875,6 +921,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					PennantRegularExpressions.REGEX_ALPHANUM, true));
 		}
 
+		if (!this.downloadType.isDisabled() && this.alwDisburment.isChecked()) {
+			this.downloadType.setConstraint(new StaticListValidator(downloadTypesList,
+					Labels.getLabel("label_PartnerBankDialog_DownloadType.value")));
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1110,6 +1160,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.costCenterID.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
 		this.fileName.setReadonly(isReadOnly("PartnerBankDialog_CrossCentre"));
 		this.entity.setReadonly(isReadOnly("PartnerBankDialog_Entity"));
+		this.downloadType.setDisabled(isReadOnly("PartnerBankDialog_DownloadType"));
+		this.dataEngineConfigName.setDisabled(isReadOnly("PartnerBankDialog_DataEngineConfigName"));
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -1153,6 +1206,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.modePayments.setReadonly(true);
 		this.modeReceipts.setReadonly(true);
 		this.fileName.setReadonly(true);
+		this.downloadType.setDisabled(true);
+		this.dataEngineConfigName.setDisabled(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1204,6 +1259,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.profitCenterID.setValue("");
 		this.costCenterID.setValue("");
 		this.fileName.setValue("");
+		this.downloadType.setValue("");
+		this.dataEngineConfigName.setValue("");
+
 		logger.debug("Leaving");
 	}
 
@@ -1673,7 +1731,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.modeDisbursment.setReadonly(true);
 			this.modeDisbursment.setValue("");
 			this.space_modeDisbursments.setSclass(PennantConstants.mandateSclass);
-
+			this.row_DownloadType.setVisible(true);
+			this.row_ReqFileDownload.setVisible(true);
 			if (this.reqFileDownload.isChecked()) {
 				this.space_FileName.setSclass("");
 				this.fileName.setErrorMessage("");
@@ -1686,7 +1745,14 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 			this.space_modeDisbursments.setSclass("");
 			this.modeDisbursment.setValue("");
+			this.row_DownloadType.setVisible(false);
+			this.row_ReqFileDownload.setVisible(false);
 
+			this.reqFileDownload.setChecked(false);
+
+			fillList(this.dataEngineConfigName, dataEngineConfigNameList, PennantConstants.List_Select);
+			fillComboBox(this.downloadType, PennantConstants.List_Select, downloadTypesList, "");
+			this.downloadType.setConstraint("");
 			this.fileName.setErrorMessage("");
 		}
 
@@ -1728,6 +1794,27 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	public void onChange$downloadType(Event event) {
+		onChangeDownloadType(this.downloadType.getSelectedItem().getValue());
+	}
+
+	private void onChangeDownloadType(String downloadType) {
+
+		if (StringUtils.equals(downloadType, PennantConstants.ONLINE)) {
+			this.dataEngineConfigName.setDisabled(true);
+			this.reqFileDownload.setDisabled(true);
+			this.reqFileDownload.setChecked(false);
+			this.dataEngineConfigName.setSelectedIndex(0);
+		} else {
+			this.dataEngineConfigName.setDisabled(false);
+			this.dataEngineConfigName.setConstraint("");
+			this.dataEngineConfigName.setErrorMessage("");
+			this.reqFileDownload.setChecked(true);
+			this.reqFileDownload.setDisabled(false);
+
+		}
 	}
 
 	private void onCheckReceipts() {

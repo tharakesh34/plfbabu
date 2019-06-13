@@ -66,6 +66,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.BuilderTable;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -123,15 +124,21 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
-import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.Search;
+import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.pff.document.DocumentCategories;
 
 public class PennantAppUtil {
+	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
+
 	public static ArrayList<ValueLabel> getProductByCtg(Filter[] filters) {
 		ArrayList<ValueLabel> productList = new ArrayList<ValueLabel>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -2253,5 +2260,29 @@ public class PennantAppUtil {
 			receiptModesList.add(receiptMode);
 		}
 		return receiptModesList;
+	}
+
+	public static List<Property> getDibursementConfigs() {
+		List<Property> configNames = new ArrayList<>();
+
+		Search search = new Search();
+		search.setSearchClass(Configuration.class);
+		search.addTabelName("DATA_ENGINE_CONFIG");
+		search.addField("Name");
+		search.addFilterLike("Name", "DISB_EXPORT_");
+
+		List<Configuration> list = SEARCH_PROCESSOR.getResults(search);
+
+		Property property;
+		for (Configuration role : list) {
+			property = new Property(role.getName(), role.getName());
+			configNames.add(property);
+		}
+
+		return configNames;
+	}
+
+	public static SearchProcessor getSearchProcessor() {
+		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 	}
 }

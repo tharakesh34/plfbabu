@@ -108,11 +108,12 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.external.DisbursementRequest;
+import com.pennanttech.pff.model.disbursment.DisbursementData;
 
 /**
  * ************************************************************<br>
@@ -774,10 +775,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		try {
 			btnDownload.setDisabled(true);
 			button_Search.setDisabled(true);
+			PartnerBank partnerBanks = (PartnerBank) partnerBank.getObject();
 
-			getDisbursementRequest().sendReqest(this.finType.getValue(), disbushmentList,
-					getUserWorkspace().getLoggedInUser().getUserId(),
-					((PartnerBank) partnerBank.getObject()).getFileName());
+			DisbursementData disbursementData = new DisbursementData();
+			disbursementData.setFinType(this.finType.getValue());
+			disbursementData.setDisbursements(disbushmentList);
+			disbursementData.setUserId(getUserWorkspace().getLoggedInUser().getUserId());
+			disbursementData.setFileNamePrefix(partnerBanks.getFileName());
+			disbursementData.setDataEngineConfigName(partnerBanks.getDataEngineConfigName());
+
+			disbursementRequest.sendReqest(disbursementData);
 
 			Map<String, Object> args = new HashMap<String, Object>();
 			args.put("module", "DISBURSEMENT");
