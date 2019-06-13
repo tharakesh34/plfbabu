@@ -370,7 +370,7 @@
 
 	<changeSet id="8" author="Saikiran.v">
 		<addColumn tableName="PartnerBanks">
-			<column name="DateEngineConfigName" type="varchar(50)" />
+			<column name="DataEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
@@ -382,7 +382,7 @@
 
 	<changeSet id="10" author="Saikiran.v">
 		<addColumn tableName="PartnerBanks_temp">
-			<column name="DateEngineConfigName" type="varchar(50)" />
+			<column name="DataEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
 
@@ -424,7 +424,7 @@
 			    t1.filename,
 			    t1.entity,
 			    t1.downloadType,
-			    t1.dateEngineConfigName,
+			    t1.dataEngineConfigName,
 			    t5.entitydesc
 			    FROM partnerbanks t1
 			    JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
@@ -473,7 +473,7 @@
 			    t1.entity,
 			    t5.entitydesc,
 			    t1.downloadType,
-			    t1.dateEngineConfigName
+			    t1.dataEngineConfigName
 			   FROM partnerbanks_temp t1
 			     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
 			     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
@@ -517,7 +517,7 @@
 			    t1.entity,
 			    t5.entitydesc,
 			    t1.downloadType,
-			    t1.dateEngineConfigName
+			    t1.dataEngineConfigName
 			   FROM partnerbanks t1
 			     JOIN bmtbankdetail t2 ON t1.bankcode = t2.bankcode
 			     JOIN bankbranches t3 ON t1.bankbranchcode = t3.branchcode AND t1.bankcode = t3.bankcode
@@ -537,8 +537,8 @@
 			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DownloadType','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DownloadType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DateEngineConfigName','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DateEngineConfigName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PartnerBankDialog_DataEngineConfigName','PartnerBankDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PARTNERBANK_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PartnerBankDialog_DataEngineConfigName'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
 			update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
 			update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
