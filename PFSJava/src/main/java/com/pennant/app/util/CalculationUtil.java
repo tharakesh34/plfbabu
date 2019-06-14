@@ -170,12 +170,12 @@ public class CalculationUtil implements Serializable {
 		int yearOfStart = startCalendar.get(Calendar.YEAR);
 		int yearOfEnd = endCalendar.get(Calendar.YEAR);
 
-		if (monthOfStart == 2 && dayOfStart > 27) {
+		if (monthOfStart == 1 && dayOfStart > 27) {
 			dayOfStart = 30;
 		}
 
-		if (monthOfEnd == 2 && dayOfEnd > 27) {
-			dayOfStart = 30;
+		if (monthOfEnd == 1 && dayOfEnd > 27) {
+			dayOfEnd = 30;
 		}
 
 		if (dayOfEnd == 31) {
