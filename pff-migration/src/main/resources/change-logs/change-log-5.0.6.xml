@@ -531,6 +531,7 @@
 
 	<changeSet id="13" author="Saikiran.v">
 		<sql>
+			<![CDATA[
 			update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
 			update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 
@@ -542,6 +543,33 @@
 
 			update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
 			update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+		
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				update data_engine_config set Name = 'DISB_EXPORT_DEFAULT' where name = 'DISB_HDFC_EXPORT';
+				update data_engine_status set Name = 'DISB_EXPORT_DEFAULT' where name = 'DISB_HDFC_EXPORT';
+				update data_engine_config set Name = 'DISB_EXPORT_CITI' where name = 'DISB_CITI_EXPORT';
+				update data_engine_status set Name = 'DISB_EXPORT_CITI' where name = 'DISB_CITI_EXPORT';
+				update data_engine_config set Name = 'DISB_EXPORT_IMPS' where name = 'DISB_IMPS_EXPORT';
+				update data_engine_status set Name = 'DISB_EXPORT_IMPS' where name = 'DISB_IMPS_EXPORT';
+
+				update data_engine_config set Name = 'DISB_EXPORT_OTHER_NEFT_RTGS' where name = 'DISB_OTHER_NEFT_RTGS_EXPORT';
+				update data_engine_status set Name = 'DISB_EXPORT_OTHER_NEFT_RTGS' where name = 'DISB_OTHER_NEFT_RTGS_EXPORT';
+
+				update data_engine_config set Name = 'DISB_EXPORT_OTHER_CHEQUE_DD' where name = 'DISB_OTHER_CHEQUE_DD_EXPORT';
+				update data_engine_status set Name = 'DISB_EXPORT_OTHER_CHEQUE_DD' where name = 'DISB_OTHER_CHEQUE_DD_EXPORT';
+
+				update partnerbanks set downloadType ='OFFL';
+				update partnerbanks_Temp set downloadType ='OFFL';
+
+				update partnerbanks set dataEngineConfigName ='DISB_EXPORT_DEFAULT' where AlwFileDownload=1;
+				update partnerbanks_Temp set dataEngineConfigName ='DISB_EXPORT_DEFAULT' where AlwFileDownload=1;
+			 ]]>
 		</sql>
 	</changeSet>
 
