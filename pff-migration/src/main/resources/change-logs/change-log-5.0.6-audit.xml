@@ -48,10 +48,9 @@
 			<column name="DataEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
-	
+		
 	<changeSet id="4" author="Saikiran.V">
-		<addColumn tableName="AdtPartnerBank">
+		<addColumn tableName="AdtPartnerBanks">
 			<column name="VanCode" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
