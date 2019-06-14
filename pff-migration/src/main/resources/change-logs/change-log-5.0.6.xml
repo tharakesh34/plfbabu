@@ -22,7 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="1" author="Saikiran.v">
+	 <changeSet id="1" author="Saikiran.v">
 		<sql>
 		   <![CDATA[
 			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
@@ -35,7 +35,11 @@
 			 delete from secgroups where grpcode='COMMITMENT_APPROVER';
 			 delete from secgroups where grpcode='COMMITMENT_MAKER';
 			 
+			 delete from secgrouprights  where rightid in (Select rightid from SecRights where page='CommitmentDialog');
+			 delete from secgrouprights  where rightid in (Select rightid from SecRights where rightname='menuItem_Commitment_Commitment');
+			 delete from secgrouprights  where rightid in (Select rightid from SecRights where rightname='menuItem_Enquiry_CommitmentEnquiry');
 			 delete from SecRights where page='CommitmentDialog';
+			 
 			 delete from SecRights where rightname='menuItem_Commitment_Commitment';
 			 delete from SecRights where rightname='menuItem_Enquiry_CommitmentEnquiry';
 				
@@ -183,6 +187,12 @@
 			delete from secgrouprights where rightid=(select rightid from SecRights where rightname='menuItem_SolutionFactory_CommitmentReferenceDetail');
 
 			delete from secgroups where grpcode='COMMITMENT_REFERENCEDETAIL_MAKER';
+			delete from secgrouprights  where rightid in (Select rightid from SecRights where page='CommitmentWorkFlowDialog');
+			delete from secgrouprights  where rightid in (Select rightid from SecRights where page='CommitmentList');
+			 delete from secgrouprights  where rightid in (Select rightid from SecRights where rightname='menuItem_SolutionFactory_CommitmentWorkFlow');
+			 delete from secgrouprights  where rightid in (Select rightid from SecRights where rightname='menuItem_SolutionFactory_CommitmentReferenceDetail');
+			 
+			 
 			delete from SecRights where page='CommitmentWorkFlowDialog';
 			delete from SecRights where page='CommitmentList';
 			delete from SecRights where rightname='menuItem_SolutionFactory_CommitmentWorkFlow';
@@ -546,8 +556,8 @@
 		
 			]]>
 		</sql>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="14" author="Saikiran.v">
 		<sql>
 			<![CDATA[
@@ -572,7 +582,8 @@
 			 ]]>
 		</sql>
 	</changeSet>
-<changeSet id="15" author="Saikiran.v">
+	
+	<changeSet id="15" author="Saikiran.v">
 		<addColumn tableName="PartnerBanks">
 			<column name="VanCode" type="varchar(50)" />
 		</addColumn>
@@ -753,17 +764,7 @@
     	<dropView viewName="'wiffinancemain_aview'"/>
 	</changeSet>
 
-	 <changeSet id="20_pre" author="Saikiran.v" dbms="postgresql"> 
-		<sql>
-			<![CDATA[
-					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
-					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
-					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
-					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes');
-					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_temp');
-			]]>
-		</sql>
-	</changeSet>	
+		
 	
 	<changeSet id="20" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
@@ -813,20 +814,6 @@
 		<addDefaultValue columnName="AlwVan" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="20_post" author="Saikiran.V" dbms="postgresql">
-		<sql>
-			<![CDATA[
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes');
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_temp');
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
-					select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
-			]]>
-		</sql>
-	</changeSet>
-	
-	
-	
 	<changeSet id="27" author="Saikiran.v">
 		 <createView viewName="rmtfinancetypes_aview" replaceIfExists="true" >
 SELECT t1.fintype,
@@ -1065,7 +1052,7 @@ SELECT t1.fintype,
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="28" author="Saikiran.v">
 		 <createView viewName="rmtfinancetypes_orgview" replaceIfExists="true" >
 			 SELECT t1.fintype,
@@ -2063,4 +2050,5 @@ SELECT t1.fintype,
      LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
 		 </createView>
 	</changeSet>
+
 </databaseChangeLog>
