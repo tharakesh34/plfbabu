@@ -48,5 +48,31 @@
 			<column name="DataEngineConfigName" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
+	
+	<changeSet id="4" author="Saikiran.V">
+		<addColumn tableName="AdtPartnerBank">
+			<column name="VanCode" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="5" author="Saikiran.V">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="AlwVan" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="6" author="Saikiran.V">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="VanAllocationMethod" type="varchar(10)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="7" author="Saikiran.V">
+		<addColumn tableName="AdtFinTypePartnerBanks">
+			<column name="VanApplicable" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
