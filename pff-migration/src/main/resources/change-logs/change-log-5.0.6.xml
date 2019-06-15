@@ -22,7 +22,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	 <changeSet id="1" author="Saikiran.v">
+	<changeSet id="1" author="Saikiran.v">
 		<sql>
 		   <![CDATA[
 			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
@@ -556,8 +556,8 @@
 		
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="14" author="Saikiran.v">
 		<sql>
 			<![CDATA[
@@ -582,19 +582,19 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="Saikiran.v">
 		<addColumn tableName="PartnerBanks">
 			<column name="VanCode" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="16" author="Saikiran.v">
 		<addColumn tableName="PartnerBanks_temp">
 			<column name="VanCode" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="17" author="Saikiran.v">
 		<createView viewName="partnerbanks_aview" replaceIfExists="true">
 				SELECT t1.partnerbankid,
@@ -643,9 +643,9 @@
 			    LEFT JOIN entity t5 ON t1.entity = t5.entitycode
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="18" author="Saikiran.v">
-		 <createView viewName="partnerbanks_view" replaceIfExists="true" >
+		<createView viewName="partnerbanks_view" replaceIfExists="true">
 				SELECT t1.partnerbankid,
 			    t1.partnerbankcode,
 			    t1.partnerbankname,
@@ -742,7 +742,7 @@
 	</changeSet>
 
 	<changeSet id="19" author="Saikiran.v">
-			<sql>
+		<sql>
 			 	<![CDATA[
 					update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
 					update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
@@ -757,24 +757,24 @@
 					update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
 					update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 				]]>
-			</sql>
-	</changeSet>
-	
-	<changeSet id="20.0" author="ADARSH">
-    	<dropView viewName="'wiffinancemain_aview'"/>
+		</sql>
 	</changeSet>
 
-		
-	
+	<changeSet id="20.0" author="ADARSH">
+		<dropView viewName="'wiffinancemain_aview'" />
+	</changeSet>
+
+
+
 	<changeSet id="20" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AlwVan" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="21" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="VanAllocationMethod" type="varchar(10)" /> 
+			<column name="VanAllocationMethod" type="varchar(10)" />
 		</addColumn>
 	</changeSet>
 
@@ -783,14 +783,14 @@
 			<column name="AlwVan" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="23" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="VanAllocationMethod" type="varchar(10)" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="24" author="Saikiran.v">
+
+	<changeSet id="24" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set AlwVan = 0;
@@ -815,7 +815,7 @@
 	</changeSet>
 
 	<changeSet id="27" author="Saikiran.v">
-		 <createView viewName="rmtfinancetypes_aview" replaceIfExists="true" >
+		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 SELECT t1.fintype,
     t1.fincategory,
     t1.fintypedesc,
@@ -1054,7 +1054,7 @@ SELECT t1.fintype,
 	</changeSet>
 
 	<changeSet id="28" author="Saikiran.v">
-		 <createView viewName="rmtfinancetypes_orgview" replaceIfExists="true" >
+		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			 SELECT t1.fintype,
 					t1.fincategory,
 					t1.fintypedesc,
@@ -1250,9 +1250,9 @@ SELECT t1.fintype,
 					 LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="29" author="Saikiran.v">
-		 <createView viewName="rmtfinancetypes_view" replaceIfExists="true" >
+		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 
 			 SELECT t1.fintype,
 				t1.fincategory,
@@ -1730,21 +1730,21 @@ SELECT t1.fintype,
 					  WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		</createView>
 	</changeSet>
-	
-		
-	
+
+
+
 	<changeSet id="30" author="Saikiran.V">
 		<addColumn tableName="FinTypePartnerBanks">
 			<column name="VanApplicable" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="31" author="Saikiran.V">
 		<addColumn tableName="FinTypePartnerBanks_temp">
 			<column name="VanApplicable" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="32" author="Saikiran.v">
 		<sql>
 			<![CDATA[
@@ -1768,9 +1768,9 @@ SELECT t1.fintype,
 		<addDefaultValue columnName="VanApplicable" tableName="FinTypePartnerBanks" defaultValue="0" />
 		<addDefaultValue columnName="VanApplicable" tableName="FinTypePartnerBanks_temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="35" author="Saikiran.v">
-		 <createView viewName="Fintypepartnerbanks_aview" replaceIfExists="true" >
+		<createView viewName="Fintypepartnerbanks_aview" replaceIfExists="true">
 		   SELECT t1.id,
 					t1.fintype,
 					t1.purpose,
@@ -1799,9 +1799,9 @@ SELECT t1.fintype,
 					 LEFT JOIN smtdivisiondetail t4 ON t3.findivision = t4.divisioncode
 		 </createView>
 	</changeSet>
-	
+
 	<changeSet id="36" author="Saikiran.v">
-		 <createView viewName="Fintypepartnerbanks_view" replaceIfExists="true" >
+		<createView viewName="Fintypepartnerbanks_view" replaceIfExists="true">
 				 SELECT t1.id,
 					t1.fintype,
 					t1.purpose,
@@ -1867,188 +1867,1415 @@ SELECT t1.fintype,
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="38" author="Saikiran.v">
-		 <createView viewName="wiffinancemain_aview" replaceIfExists="true" >
-		 
-		 
+		<createView viewName="wiffinancemain_aview" replaceIfExists="true">
 		 SELECT t1.finreference,
-    t1.numberofterms,
-    t1.grcperiodenddate,
-    t1.allowgrcperiod,
-    t1.gracebaserate,
-    t1.gracespecialrate,
-    t1.grcpftrate,
-    t1.grcpftfrq,
-    t1.nextgrcpftdate,
-    t1.allowgrcpftrvw,
-    t1.grcpftrvwfrq,
-    t1.nextgrcpftrvwdate,
-    t1.allowgrccpz,
-    t1.grccpzfrq,
-    t1.nextgrccpzdate,
-    t1.repaybaserate,
-    t1.repayspecialrate,
-    t1.repayprofitrate,
-    t1.repayfrq,
-    t1.nextrepaydate,
-    t1.repaypftfrq,
-    t1.nextrepaypftdate,
-    t1.allowrepayrvw,
-    t1.repayrvwfrq,
-    t1.nextrepayrvwdate,
-    t1.allowrepaycpz,
-    t1.repaycpzfrq,
-    t1.nextrepaycpzdate,
-    t1.maturitydate,
-    t1.cpzatgraceend,
-    t1.downpayment,
-    t1.graceflatamount,
-    t1.reqrepayamount,
-    t1.totalprofit,
-    t1.totalcpz,
-    t1.totalgrosspft,
-    t1.totalgracepft,
-    t1.totalgracecpz,
-    t1.grcratebasis,
-    t1.repayratebasis,
-    t1.fintype,
-    t1.finremarks,
-    t1.finccy,
-    t1.schedulemethod,
-    t1.profitdaysbasis,
-    t1.reqmaturity,
-    t1.calterms,
-    t1.calmaturity,
-    t1.firstrepay,
-    t1.lastrepay,
-    t1.finstartdate,
-    t1.finamount,
-    t1.finrepaymentamount,
-    t1.custid,
-    t1.defferments,
-    t1.plandefercount,
-    t1.finisactive,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t15.custcif AS lovdesccustcif,
-    t7.fintypedesc AS lovdescfintypename,
-    t1.finbranch,
-    t1.finsourceid,
-    t1.alloweddefrpychange,
-    t1.availeddefrpychange,
-    t1.alloweddeffrqchange,
-    t1.availeddeffrqchange,
-    t7.finmaxamount AS lovdescfinmaxamt,
-    t7.finminamount AS lovdescfinminamount,
-    t7.finisalwdifferment AS lovdescfinalwdeferment,
-    t1.mindownpayperc,
-    t7.finisdwpayrequired AS lovdescdwnpayreq,
-    t1.recaltype,
-    t1.finassetvalue,
-    t7.finmaxdifferment AS lovdescfinmaxdifferment,
-    t1.lastrepaydate,
-    t1.lastrepaypftdate,
-    t1.lastrepayrvwdate,
-    t1.lastrepaycpzdate,
-    t1.disbaccountid,
-    t1.repayaccountid,
-    t1.allowgrcrepay,
-    t1.grcschdmthd,
-    t1.repaymargin,
-    t1.grcmargin,
-    t1.depreciationfrq,
-    t1.fincommitmentref,
-    t1.fincurrassetvalue,
-    t1.fincontractdate,
-    t1.nextdepdate,
-    t1.lastdepdate,
-    t1.finaccount,
-    t1.fincustpftaccount,
-    t7.finrvwrateapplfor,
-    t1.totalrepayamt,
-    t1.closingstatus,
-    t1.finapproveddate,
-    t1.finrepaypftonfrq,
-    t1.anualizedpercrate,
-    t1.effectiverateofreturn,
-    t1.downpaybank,
-    t1.downpaysupl,
-    t7.findivision AS lovdescfindivisionname,
-    t1.graceterms,
-    t14.facilitytype,
-    t15.custshrtname AS lovdesccustshrtname,
-    t16.branchdesc AS lovdescfinbranchname,
-    t1.totalgrossgrcpft,
-    t1.grcprofitdaysbasis,
-    t1.stepfinance,
-    t1.steptype,
-    t1.steppolicy,
-    t1.alwmanualsteps,
-    t1.noofsteps,
-    t1.linkedfinref,
-    t7.product AS lovdescfinproduct,
-    t1.grcminrate,
-    t1.grcmaxrate,
-    t1.rpyminrate,
-    t1.rpymaxrate,
-    t1.manualschedule,
-    t1.takeoverfinance,
-    t1.grcadvbaserate,
-    t1.grcadvmargin,
-    t1.grcadvpftrate,
-    t1.rpyadvbaserate,
-    t1.rpyadvmargin,
-    t1.rpyadvpftrate,
-    t1.supplementrent,
-    t1.increasedcost,
-    t1.feeaccountid,
-    t1.tdsapplicable,
-    t1.insuranceamt,
-    t1.deductinsdisb,
-    t1.alwbpi,
-    t1.bpitreatment,
-    t1.planemihalw,
-    t1.planemihmethod,
-    t1.planemihmaxperyear,
-    t1.planemihmax,
-    t1.planemihlockperiod,
-    t1.planemicpz,
-    t1.calroundingmode,
-    t1.alwmultidisb,
-    t1.bpiamount,
-    t1.deductfeedisb,
-    t1.feechargeamt,
-    t1.rvwrateapplfor,
-    t1.schcalonrvw,
-    t1.pastduepftcalmthd,
-    t1.pastduepftmargin,
-    t1.droppingmethod,
-    t1.ratechganyday,
-    t1.roundingtarget,
-    t1.grcmaxamount,
-    t1.advanceemi,
-    t1.advemiterms,
-    t1.bpipftdaysbasis AS bpiratebasis,
-    t1.grcadvtype,
-    t1.grcadvterms,
-    t1.advtype,
-    t1.advterms,
-    t1.advstage
-   FROM wiffinancemain t1
-     LEFT JOIN wifindicativetermdetail_temp t14 ON t14.finreference = t1.finreference
-     LEFT JOIN customers t15 ON t15.custid = t1.custid
-     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
-     LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
+			    t1.numberofterms,
+			    t1.grcperiodenddate,
+			    t1.allowgrcperiod,
+			    t1.gracebaserate,
+			    t1.gracespecialrate,
+			    t1.grcpftrate,
+			    t1.grcpftfrq,
+			    t1.nextgrcpftdate,
+			    t1.allowgrcpftrvw,
+			    t1.grcpftrvwfrq,
+			    t1.nextgrcpftrvwdate,
+			    t1.allowgrccpz,
+			    t1.grccpzfrq,
+			    t1.nextgrccpzdate,
+			    t1.repaybaserate,
+			    t1.repayspecialrate,
+			    t1.repayprofitrate,
+			    t1.repayfrq,
+			    t1.nextrepaydate,
+			    t1.repaypftfrq,
+			    t1.nextrepaypftdate,
+			    t1.allowrepayrvw,
+			    t1.repayrvwfrq,
+			    t1.nextrepayrvwdate,
+			    t1.allowrepaycpz,
+			    t1.repaycpzfrq,
+			    t1.nextrepaycpzdate,
+			    t1.maturitydate,
+			    t1.cpzatgraceend,
+			    t1.downpayment,
+			    t1.graceflatamount,
+			    t1.reqrepayamount,
+			    t1.totalprofit,
+			    t1.totalcpz,
+			    t1.totalgrosspft,
+			    t1.totalgracepft,
+			    t1.totalgracecpz,
+			    t1.grcratebasis,
+			    t1.repayratebasis,
+			    t1.fintype,
+			    t1.finremarks,
+			    t1.finccy,
+			    t1.schedulemethod,
+			    t1.profitdaysbasis,
+			    t1.reqmaturity,
+			    t1.calterms,
+			    t1.calmaturity,
+			    t1.firstrepay,
+			    t1.lastrepay,
+			    t1.finstartdate,
+			    t1.finamount,
+			    t1.finrepaymentamount,
+			    t1.custid,
+			    t1.defferments,
+			    t1.plandefercount,
+			    t1.finisactive,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t15.custcif AS lovdesccustcif,
+			    t7.fintypedesc AS lovdescfintypename,
+			    t1.finbranch,
+			    t1.finsourceid,
+			    t1.alloweddefrpychange,
+			    t1.availeddefrpychange,
+			    t1.alloweddeffrqchange,
+			    t1.availeddeffrqchange,
+			    t7.finmaxamount AS lovdescfinmaxamt,
+			    t7.finminamount AS lovdescfinminamount,
+			    t7.finisalwdifferment AS lovdescfinalwdeferment,
+			    t1.mindownpayperc,
+			    t7.finisdwpayrequired AS lovdescdwnpayreq,
+			    t1.recaltype,
+			    t1.finassetvalue,
+			    t7.finmaxdifferment AS lovdescfinmaxdifferment,
+			    t1.lastrepaydate,
+			    t1.lastrepaypftdate,
+			    t1.lastrepayrvwdate,
+			    t1.lastrepaycpzdate,
+			    t1.disbaccountid,
+			    t1.repayaccountid,
+			    t1.allowgrcrepay,
+			    t1.grcschdmthd,
+			    t1.repaymargin,
+			    t1.grcmargin,
+			    t1.depreciationfrq,
+			    t1.fincommitmentref,
+			    t1.fincurrassetvalue,
+			    t1.fincontractdate,
+			    t1.nextdepdate,
+			    t1.lastdepdate,
+			    t1.finaccount,
+			    t1.fincustpftaccount,
+			    t7.finrvwrateapplfor,
+			    t1.totalrepayamt,
+			    t1.closingstatus,
+			    t1.finapproveddate,
+			    t1.finrepaypftonfrq,
+			    t1.anualizedpercrate,
+			    t1.effectiverateofreturn,
+			    t1.downpaybank,
+			    t1.downpaysupl,
+			    t7.findivision AS lovdescfindivisionname,
+			    t1.graceterms,
+			    t14.facilitytype,
+			    t15.custshrtname AS lovdesccustshrtname,
+			    t16.branchdesc AS lovdescfinbranchname,
+			    t1.totalgrossgrcpft,
+			    t1.grcprofitdaysbasis,
+			    t1.stepfinance,
+			    t1.steptype,
+			    t1.steppolicy,
+			    t1.alwmanualsteps,
+			    t1.noofsteps,
+			    t1.linkedfinref,
+			    t7.product AS lovdescfinproduct,
+			    t1.grcminrate,
+			    t1.grcmaxrate,
+			    t1.rpyminrate,
+			    t1.rpymaxrate,
+			    t1.manualschedule,
+			    t1.takeoverfinance,
+			    t1.grcadvbaserate,
+			    t1.grcadvmargin,
+			    t1.grcadvpftrate,
+			    t1.rpyadvbaserate,
+			    t1.rpyadvmargin,
+			    t1.rpyadvpftrate,
+			    t1.supplementrent,
+			    t1.increasedcost,
+			    t1.feeaccountid,
+			    t1.tdsapplicable,
+			    t1.insuranceamt,
+			    t1.deductinsdisb,
+			    t1.alwbpi,
+			    t1.bpitreatment,
+			    t1.planemihalw,
+			    t1.planemihmethod,
+			    t1.planemihmaxperyear,
+			    t1.planemihmax,
+			    t1.planemihlockperiod,
+			    t1.planemicpz,
+			    t1.calroundingmode,
+			    t1.alwmultidisb,
+			    t1.bpiamount,
+			    t1.deductfeedisb,
+			    t1.feechargeamt,
+			    t1.rvwrateapplfor,
+			    t1.schcalonrvw,
+			    t1.pastduepftcalmthd,
+			    t1.pastduepftmargin,
+			    t1.droppingmethod,
+			    t1.ratechganyday,
+			    t1.roundingtarget,
+			    t1.grcmaxamount,
+			    t1.advanceemi,
+			    t1.advemiterms,
+			    t1.bpipftdaysbasis AS bpiratebasis,
+			    t1.grcadvtype,
+			    t1.grcadvterms,
+			    t1.advtype,
+			    t1.advterms,
+			    t1.advstage
+			   FROM wiffinancemain t1
+			     LEFT JOIN wifindicativetermdetail_temp t14 ON t14.finreference = t1.finreference
+			     LEFT JOIN customers t15 ON t15.custid = t1.custid
+			     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+			     LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
 		 </createView>
 	</changeSet>
 
+	<changeSet id="39" author="Saikiran.v">
+		<addColumn tableName="Financemain_temp">
+			<column name="VanReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="40" author="Saikiran.v">
+		<addColumn tableName="Financemain_temp">
+			<column name="vanCode" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="41" author="Saikiran.v">
+		<addColumn tableName="Financemain">
+			<column name="VanReq" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="42" author="Saikiran.v">
+		<addColumn tableName="Financemain">
+			<column name="vanCode" type="varchar(100)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="43" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				UPDATE Financemain Set VanReq = 0;
+				UPDATE Financemain_temp Set VanReq = 0;
+			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Financemain ADD CONSTRAINT DF_Financemain_VanReq DEFAULT 0 FOR VanReq;
+				ALTER TABLE Financemain_temp ADD CONSTRAINT DF_Financemain_temp_VanReq DEFAULT 0 FOR VanReq;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="45" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="VanReq" tableName="Financemain" defaultValue="0" />
+		<addDefaultValue columnName="VanReq" tableName="Financemain_temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="46" author="Saikiran.v">
+		<createView viewName="financemain_aview" replaceIfExists="true">
+		 
+	 SELECT t1.finreference,
+				t1.investmentref,
+				t1.numberofterms,
+				t1.grcperiodenddate,
+				t1.allowgrcperiod,
+				t1.gracebaserate,
+				t1.gracespecialrate,
+				t1.grcpftrate,
+				t1.grcpftfrq,
+				t1.nextgrcpftdate,
+				t1.allowgrcpftrvw,
+				t1.grcpftrvwfrq,
+				t1.nextgrcpftrvwdate,
+				t1.allowgrccpz,
+				t1.grccpzfrq,
+				t1.nextgrccpzdate,
+				t1.repaybaserate,
+				t1.repayspecialrate,
+				t1.repayprofitrate,
+				t1.repayfrq,
+				t1.nextrepaydate,
+				t1.repaypftfrq,
+				t1.nextrepaypftdate,
+				t1.allowrepayrvw,
+				t1.repayrvwfrq,
+				t1.nextrepayrvwdate,
+				t1.allowrepaycpz,
+				t1.repaycpzfrq,
+				t1.nextrepaycpzdate,
+				t1.maturitydate,
+				t1.cpzatgraceend,
+				t1.downpayment,
+				t1.graceflatamount,
+				t1.reqrepayamount,
+				t1.totalprofit,
+				t1.totalcpz,
+				t1.totalgrosspft,
+				t1.totalgrossgrcpft,
+				t1.totalgracepft,
+				t1.totalgracecpz,
+				t1.grcratebasis,
+				t1.repayratebasis,
+				t1.fintype,
+				t1.finremarks,
+				t1.finccy,
+				t1.schedulemethod,
+				t1.profitdaysbasis,
+				t1.reqmaturity,
+				t1.calterms,
+				t1.calmaturity,
+				t1.firstrepay,
+				t1.lastrepay,
+				t1.finstartdate,
+				t1.finamount,
+				t1.finamount + t1.feechargeamt - t1.downpayment  lovdescfinancingamount,
+				t1.finrepaymentamount,
+				t1.custid,
+				t1.defferments,
+				t1.plandefercount,
+				t1.finbranch,
+				t1.finsourceid,
+				t1.alloweddefrpychange,
+				t1.availeddefrpychange,
+				t1.alloweddeffrqchange,
+				t1.availeddeffrqchange,
+				t1.recaltype,
+				t1.finassetvalue,
+				t1.disbaccountid,
+				t1.repayaccountid,
+				t1.finisactive,
+				t1.limitvalid,
+				t1.overridelimit,
+				t1.securitydeposit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t7.fintypedesc  lovdescfintypename,
+				t7.finmaxamount  lovdescfinmaxamt,
+				t7.finminamount  lovdescfinminamount,
+				t1.mindownpayperc,
+				t7.finisalwdifferment  lovdescfinalwdeferment,
+				t7.finisdwpayrequired  lovdescdwnpayreq,
+				t7.finmaxdifferment  lovdescfinmaxdifferment,
+				t12.branchdesc  lovdescfinbranchname,
+				t12.branchprovince  finbranchprovincecode,
+				t1.lastrepaydate,
+				t1.lastrepaypftdate,
+				t1.lastrepayrvwdate,
+				t1.lastrepaycpzdate,
+				t1.allowgrcrepay,
+				t1.grcschdmthd,
+				t1.grcmargin,
+				t1.repaymargin,
+				t1.fincurrassetvalue,
+				t1.fincommitmentref,
+				t1.finlimitref,
+				t1.depreciationfrq,
+				t1.fincontractdate,
+				t1.nextdepdate,
+				t1.lastdepdate,
+				t1.finaccount,
+				t1.fincustpftaccount,
+				t17.acrtilllbd  lovdescaccruedtilllbd,
+				t7.finrvwrateapplfor,
+				t1.totalrepayamt,
+				t1.closingstatus,
+				t1.finapproveddate,
+				t1.feechargeamt,
+				t1.blacklisted,
+				t1.finrepaypftonfrq,
+				t1.anualizedpercrate,
+				t1.effectiverateofreturn,
+				t1.migratedfinance,
+				t1.schedulemaintained,
+				t1.scheduleregenerated,
+				t1.finpurpose,
+				t39.loanpurposedesc  lovdescfinpurposename,
+				t1.finstatus,
+				t1.finstsreason,
+				t1.initiateuser,
+				t1.bankname,
+				t1.iban,
+				t1.accounttype,
+				t1.ddareferenceno,
+				t7.finscheduleon  lovdescfinscheduleon,
+				t1.custdsr,
+				t1.jointaccount,
+				t1.jointcustid,
+				t1.downpaybank,
+				t1.downpaysupl,
+				t1.downpayaccount,
+				t1.securitycollateral,
+				t1.approved,
+				t1.discrepancy,
+				t1.limitapproved,
+				t1.graceterms,
+				t7.findivision  lovdescfindivision,
+				t1.rcdmaintainsts,
+				t1.finrepaymethod,
+				t1.grcprofitdaysbasis,
+				t1.stepfinance,
+				t1.steptype,
+				t1.steppolicy,
+				t1.alwmanualsteps,
+				t1.noofsteps,
+				t1.linkedfinref,
+				t1.nextuserid,
+				t1.priority,
+				t24.policydesc  lovdescsteppolicyname,
+				t1.grcminrate,
+				t1.grcmaxrate,
+				t1.rpyminrate,
+				t1.rpymaxrate,
+				t1.deviationapproval,
+				t1.manualschedule,
+				t1.takeoverfinance,
+				t1.grcadvbaserate,
+				t1.grcadvmargin,
+				t1.grcadvpftrate,
+				t1.rpyadvbaserate,
+				t1.rpyadvmargin,
+				t1.rpyadvpftrate,
+				t1.supplementrent,
+				t1.increasedcost,
+				t1.creditinsamt,
+				t1.rolloverfrq,
+				t1.nextrolloverdate,
+				t27.custstsdescription,
+				t1.shariastatus,
+				t1.initiatedate,
+				t1.finpreapprovedref,
+				t1.mmaid,
+				t1.accountsofficer,
+				t1.feeaccountid,
+				t1.fincancelac,
+				t28.dealername  lovdescaccountsofficer,
+				t28.dealercity  lovdescsourcecity,
+				t1.dsacode,
+				t30.rofficerdesc  dsacodedesc,
+				t1.tdsapplicable,
+				t1.mandateid,
+				t1.droplinefrq,
+				t1.firstdroplinedate,
+				t1.pftservicingodlimit,
+				t1.insuranceamt,
+				t1.deductinsdisb,
+				t1.alwbpi,
+				t1.bpitreatment,
+				t1.planemihalw,
+				t1.planemihmethod,
+				t1.planemihmaxperyear,
+				t1.planemihmax,
+				t1.planemihlockperiod,
+				t1.planemicpz,
+				t1.calroundingmode,
+				t1.alwmultidisb,
+				t1.applicationno,
+				t1.referralid,
+				t33.rofficerdesc  referraliddesc,
+				t1.dmacode,
+				t34.rofficerdesc  dmacodedesc,
+				t1.salesdepartment,
+				t35.gendeptdesc  salesdepartmentdesc,
+				t1.quickdisb,
+				t1.wifreference,
+				t1.unplanemihlockperiod,
+				t1.unplanemicpz,
+				t1.reagecpz,
+				t1.maxunplannedemi,
+				t1.maxreageholidays,
+				t1.availedunplanemi,
+				t1.availedreageh,
+				t1.bpiamount,
+				t1.deductfeedisb,
+				t1.rvwrateapplfor,
+				t1.schcalonrvw,
+				t1.pastduepftcalmthd,
+				t1.pastduepftmargin,
+				t1.droppingmethod,
+				t1.ratechganyday,
+				t1.promotioncode,
+				t1.restructureloan,
+				t1.oldfinreference,
+				t1.reagebucket,
+				t1.fincategory,
+				t1.productcategory,
+				t1.roundingtarget,
+				t36.entitycode  lovdescentitycode,
+				t1.eligibilitymethod,
+				t38.fieldcodevalue  loveligibilitymethod,
+				t38.valuedesc  lovdesceligibilitymethod,
+				t1.employeename,
+				t37.rofficerdesc  employeenamedesc,
+				t1.samplingrequired,
+				t1.legalrequired,
+				t1.grcmaxamount,
+				t1.connector,
+				t40.dealername  connectorcode,
+				t40.dealercity  connectordesc,
+				t1.advanceemi,
+				t1.advemiterms,
+				t1.bpipftdaysbasis,
+				t1.fixedratetenor,
+				t1.fixedtenorrate,
+				t12.branchtel  finbranchcontact,
+				t1.processattributes,
+				t1.businessvertical,
+				bv.code  businessverticalcode,
+				bv.description  businessverticaldesc,
+				t1.grcadvtype,
+				t1.grcadvterms,
+				t1.advtype,
+				t1.advterms,
+				t1.advstage,
+				t1.tdspercentage,
+				t1.tdsstartdate,
+				t1.tdsenddate,
+				t1.tdslimitamt,
+				t1.vanReq,
+				t1.vanCode
+			   FROM financemain t1
+				 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+				 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+				 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+				 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+				 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+				 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+				 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+				 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+				 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+				 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+				 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+				 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+				 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+				 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+				 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+				 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
+					 
+		 </createView>
+	</changeSet>
+
+	<changeSet id="47" author="Saikiran.v">
+		<createView viewName="financemain_tview" replaceIfExists="true">
+		  
+			 SELECT t1.finreference,
+				t1.investmentref,
+				t1.numberofterms,
+				t1.grcperiodenddate,
+				t1.allowgrcperiod,
+				t1.gracebaserate,
+				t1.gracespecialrate,
+				t1.grcpftrate,
+				t1.grcpftfrq,
+				t1.nextgrcpftdate,
+				t1.allowgrcpftrvw,
+				t1.grcpftrvwfrq,
+				t1.nextgrcpftrvwdate,
+				t1.allowgrccpz,
+				t1.grccpzfrq,
+				t1.nextgrccpzdate,
+				t1.repaybaserate,
+				t1.repayspecialrate,
+				t1.repayprofitrate,
+				t1.repayfrq,
+				t1.nextrepaydate,
+				t1.repaypftfrq,
+				t1.nextrepaypftdate,
+				t1.allowrepayrvw,
+				t1.repayrvwfrq,
+				t1.nextrepayrvwdate,
+				t1.allowrepaycpz,
+				t1.repaycpzfrq,
+				t1.nextrepaycpzdate,
+				t1.maturitydate,
+				t1.cpzatgraceend,
+				t1.downpayment,
+				t1.graceflatamount,
+				t1.reqrepayamount,
+				t1.totalprofit,
+				t1.totalcpz,
+				t1.totalgrosspft,
+				t1.totalgrossgrcpft,
+				t1.totalgracepft,
+				t1.totalgracecpz,
+				t1.grcratebasis,
+				t1.repayratebasis,
+				t1.fintype,
+				t1.finremarks,
+				t1.finccy,
+				t1.schedulemethod,
+				t1.profitdaysbasis,
+				t1.reqmaturity,
+				t1.calterms,
+				t1.calmaturity,
+				t1.firstrepay,
+				t1.lastrepay,
+				t1.finstartdate,
+				t1.finamount,
+				t1.finamount + t1.feechargeamt - t1.downpayment  lovdescfinancingamount,
+				t1.finrepaymentamount,
+				t1.custid,
+				t1.defferments,
+				t1.plandefercount,
+				t1.finbranch,
+				t1.finsourceid,
+				t1.alloweddefrpychange,
+				t1.availeddefrpychange,
+				t1.alloweddeffrqchange,
+				t1.availeddeffrqchange,
+				t1.recaltype,
+				t1.finassetvalue,
+				t1.disbaccountid,
+				t1.repayaccountid,
+				t1.finisactive,
+				t1.limitvalid,
+				t1.overridelimit,
+				t1.securitydeposit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t7.fintypedesc  lovdescfintypename,
+				t7.finmaxamount  lovdescfinmaxamt,
+				t7.finminamount  lovdescfinminamount,
+				t1.mindownpayperc,
+				t7.finisalwdifferment  lovdescfinalwdeferment,
+				t7.finisdwpayrequired  lovdescdwnpayreq,
+				t7.finmaxdifferment  lovdescfinmaxdifferment,
+				t12.branchdesc  lovdescfinbranchname,
+				t12.branchprovince  finbranchprovincecode,
+				t1.lastrepaydate,
+				t1.lastrepaypftdate,
+				t1.lastrepayrvwdate,
+				t1.lastrepaycpzdate,
+				t1.allowgrcrepay,
+				t1.grcschdmthd,
+				t1.grcmargin,
+				t1.repaymargin,
+				t1.fincurrassetvalue,
+				t1.fincommitmentref,
+				t1.finlimitref,
+				t1.depreciationfrq,
+				t1.fincontractdate,
+				t1.nextdepdate,
+				t1.lastdepdate,
+				t1.finaccount,
+				t1.fincustpftaccount,
+				t17.acrtilllbd  lovdescaccruedtilllbd,
+				t7.finrvwrateapplfor,
+				t1.totalrepayamt,
+				t1.closingstatus,
+				t1.finapproveddate,
+				t1.feechargeamt,
+				t1.blacklisted,
+				t1.finrepaypftonfrq,
+				t1.anualizedpercrate,
+				t1.effectiverateofreturn,
+				t1.migratedfinance,
+				t1.schedulemaintained,
+				t1.scheduleregenerated,
+				t1.finpurpose,
+				t39.loanpurposedesc  lovdescfinpurposename,
+				t1.finstatus,
+				t1.finstsreason,
+				t1.initiateuser,
+				t1.bankname,
+				t1.iban,
+				t1.accounttype,
+				t1.ddareferenceno,
+				t7.finscheduleon  lovdescfinscheduleon,
+				t1.custdsr,
+				t1.jointaccount,
+				t1.jointcustid,
+				t1.downpaybank,
+				t1.downpaysupl,
+				t1.downpayaccount,
+				t1.securitycollateral,
+				t1.approved,
+				t1.discrepancy,
+				t1.limitapproved,
+				t1.graceterms,
+				t7.findivision  lovdescfindivision,
+				t1.rcdmaintainsts,
+				t1.finrepaymethod,
+				t1.grcprofitdaysbasis,
+				t1.stepfinance,
+				t1.steptype,
+				t1.steppolicy,
+				t1.alwmanualsteps,
+				t1.noofsteps,
+				t1.linkedfinref,
+				t1.nextuserid,
+				t1.priority,
+				t24.policydesc  lovdescsteppolicyname,
+				t1.grcminrate,
+				t1.grcmaxrate,
+				t1.rpyminrate,
+				t1.rpymaxrate,
+				t1.deviationapproval,
+				t1.manualschedule,
+				t1.takeoverfinance,
+				t1.grcadvbaserate,
+				t1.grcadvmargin,
+				t1.grcadvpftrate,
+				t1.rpyadvbaserate,
+				t1.rpyadvmargin,
+				t1.rpyadvpftrate,
+				t1.supplementrent,
+				t1.increasedcost,
+				t1.creditinsamt,
+				t1.rolloverfrq,
+				t1.nextrolloverdate,
+				t27.custstsdescription,
+				t1.shariastatus,
+				t1.initiatedate,
+				t1.finpreapprovedref,
+				t1.mmaid,
+				t1.accountsofficer,
+				t1.feeaccountid,
+				t1.fincancelac,
+				t28.dealername  lovdescaccountsofficer,
+				t28.dealercity  lovdescsourcecity,
+				t1.dsacode,
+				t30.rofficerdesc  dsacodedesc,
+				t1.tdsapplicable,
+				t1.mandateid,
+				t1.droplinefrq,
+				t1.firstdroplinedate,
+				t1.pftservicingodlimit,
+				t1.insuranceamt,
+				t1.deductinsdisb,
+				t1.alwbpi,
+				t1.bpitreatment,
+				t1.planemihalw,
+				t1.planemihmethod,
+				t1.planemihmaxperyear,
+				t1.planemihmax,
+				t1.planemihlockperiod,
+				t1.planemicpz,
+				t1.calroundingmode,
+				t1.alwmultidisb,
+				t1.applicationno,
+				t1.referralid,
+				t33.rofficerdesc  referraliddesc,
+				t1.dmacode,
+				t34.rofficerdesc  dmacodedesc,
+				t1.salesdepartment,
+				t35.gendeptdesc  salesdepartmentdesc,
+				t1.quickdisb,
+				t1.wifreference,
+				t1.unplanemihlockperiod,
+				t1.unplanemicpz,
+				t1.reagecpz,
+				t1.maxunplannedemi,
+				t1.maxreageholidays,
+				t1.availedunplanemi,
+				t1.availedreageh,
+				t1.bpiamount,
+				t1.deductfeedisb,
+				t1.rvwrateapplfor,
+				t1.schcalonrvw,
+				t1.pastduepftcalmthd,
+				t1.pastduepftmargin,
+				t1.droppingmethod,
+				t1.ratechganyday,
+				t1.promotioncode,
+				t1.restructureloan,
+				t1.oldfinreference,
+				t1.reagebucket,
+				t1.fincategory,
+				t1.productcategory,
+				t1.roundingtarget,
+				t36.entitycode  lovdescentitycode,
+				t1.eligibilitymethod,
+				t38.fieldcodevalue  loveligibilitymethod,
+				t38.valuedesc  lovdesceligibilitymethod,
+				t1.employeename,
+				t37.rofficerdesc  employeenamedesc,
+				t1.samplingrequired,
+				t1.legalrequired,
+				t1.grcmaxamount,
+				t1.connector,
+				t40.dealername  connectorcode,
+				t40.dealercity  connectordesc,
+				t1.advanceemi,
+				t1.advemiterms,
+				t1.bpipftdaysbasis,
+				t1.fixedratetenor,
+				t1.fixedtenorrate,
+				t12.branchtel  finbranchcontact,
+				t1.processattributes,
+				t1.businessvertical,
+				bv.code  businessverticalcode,
+				bv.description  businessverticaldesc,
+				t1.grcadvtype,
+				t1.grcadvterms,
+				t1.advtype,
+				t1.advterms,
+				t1.advstage,
+				t1.tdspercentage,
+				t1.tdsstartdate,
+				t1.tdsenddate,
+				t1.tdslimitamt,
+				t1.vanReq,
+				t1.vanCode
+			   FROM financemain_temp t1
+				 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+				 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+				 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+				 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+				 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+				 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+				 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+				 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+				 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+				 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+				 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+				 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+				 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+				 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+				 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+				 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
+		 </createView>
+	</changeSet>
+
+	<changeSet id="48" author="Saikiran.v">
+		<createView viewName="financemain_view" replaceIfExists="true">
+						  
+			 SELECT t1.finreference,
+				t1.investmentref,
+				t1.numberofterms,
+				t1.grcperiodenddate,
+				t1.allowgrcperiod,
+				t1.gracebaserate,
+				t1.gracespecialrate,
+				t1.grcpftrate,
+				t1.grcpftfrq,
+				t1.nextgrcpftdate,
+				t1.allowgrcpftrvw,
+				t1.grcpftrvwfrq,
+				t1.nextgrcpftrvwdate,
+				t1.allowgrccpz,
+				t1.grccpzfrq,
+				t1.nextgrccpzdate,
+				t1.repaybaserate,
+				t1.repayspecialrate,
+				t1.repayprofitrate,
+				t1.repayfrq,
+				t1.nextrepaydate,
+				t1.repaypftfrq,
+				t1.nextrepaypftdate,
+				t1.allowrepayrvw,
+				t1.repayrvwfrq,
+				t1.nextrepayrvwdate,
+				t1.allowrepaycpz,
+				t1.repaycpzfrq,
+				t1.nextrepaycpzdate,
+				t1.maturitydate,
+				t1.cpzatgraceend,
+				t1.downpayment,
+				t1.graceflatamount,
+				t1.reqrepayamount,
+				t1.totalprofit,
+				t1.totalcpz,
+				t1.totalgrosspft,
+				t1.totalgrossgrcpft,
+				t1.totalgracepft,
+				t1.totalgracecpz,
+				t1.grcratebasis,
+				t1.repayratebasis,
+				t1.fintype,
+				t1.finremarks,
+				t1.finccy,
+				t1.schedulemethod,
+				t1.profitdaysbasis,
+				t1.reqmaturity,
+				t1.calterms,
+				t1.calmaturity,
+				t1.firstrepay,
+				t1.lastrepay,
+				t1.finstartdate,
+				t1.finamount,
+				t1.finamount + t1.feechargeamt - t1.downpayment  lovdescfinancingamount,
+				t1.finrepaymentamount,
+				t1.custid,
+				t1.defferments,
+				t1.plandefercount,
+				t1.finbranch,
+				t1.finsourceid,
+				t1.alloweddefrpychange,
+				t1.availeddefrpychange,
+				t1.alloweddeffrqchange,
+				t1.availeddeffrqchange,
+				t1.recaltype,
+				t1.finassetvalue,
+				t1.disbaccountid,
+				t1.repayaccountid,
+				t1.finisactive,
+				t1.limitvalid,
+				t1.overridelimit,
+				t1.securitydeposit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t7.fintypedesc  lovdescfintypename,
+				t7.finmaxamount  lovdescfinmaxamt,
+				t7.finminamount  lovdescfinminamount,
+				t1.mindownpayperc,
+				t7.finisalwdifferment  lovdescfinalwdeferment,
+				t7.finisdwpayrequired  lovdescdwnpayreq,
+				t7.finmaxdifferment  lovdescfinmaxdifferment,
+				t12.branchdesc  lovdescfinbranchname,
+				t12.branchprovince  finbranchprovincecode,
+				t1.lastrepaydate,
+				t1.lastrepaypftdate,
+				t1.lastrepayrvwdate,
+				t1.lastrepaycpzdate,
+				t1.allowgrcrepay,
+				t1.grcschdmthd,
+				t1.grcmargin,
+				t1.repaymargin,
+				t1.fincurrassetvalue,
+				t1.fincommitmentref,
+				t1.finlimitref,
+				t1.depreciationfrq,
+				t1.fincontractdate,
+				t1.nextdepdate,
+				t1.lastdepdate,
+				t1.finaccount,
+				t1.fincustpftaccount,
+				t17.acrtilllbd  lovdescaccruedtilllbd,
+				t7.finrvwrateapplfor,
+				t1.totalrepayamt,
+				t1.closingstatus,
+				t1.finapproveddate,
+				t1.feechargeamt,
+				t1.blacklisted,
+				t1.finrepaypftonfrq,
+				t1.anualizedpercrate,
+				t1.effectiverateofreturn,
+				t1.migratedfinance,
+				t1.schedulemaintained,
+				t1.scheduleregenerated,
+				t1.finpurpose,
+				t39.loanpurposedesc  lovdescfinpurposename,
+				t1.finstatus,
+				t1.finstsreason,
+				t1.initiateuser,
+				t1.bankname,
+				t1.iban,
+				t1.accounttype,
+				t1.ddareferenceno,
+				t7.finscheduleon  lovdescfinscheduleon,
+				t1.custdsr,
+				t1.jointaccount,
+				t1.jointcustid,
+				t1.downpaybank,
+				t1.downpaysupl,
+				t1.downpayaccount,
+				t1.securitycollateral,
+				t1.approved,
+				t1.discrepancy,
+				t1.limitapproved,
+				t1.graceterms,
+				t7.findivision  lovdescfindivision,
+				t1.rcdmaintainsts,
+				t1.finrepaymethod,
+				t1.grcprofitdaysbasis,
+				t1.stepfinance,
+				t1.steptype,
+				t1.steppolicy,
+				t1.alwmanualsteps,
+				t1.noofsteps,
+				t1.linkedfinref,
+				t1.nextuserid,
+				t1.priority,
+				t24.policydesc  lovdescsteppolicyname,
+				t1.grcminrate,
+				t1.grcmaxrate,
+				t1.rpyminrate,
+				t1.rpymaxrate,
+				t1.deviationapproval,
+				t1.manualschedule,
+				t1.takeoverfinance,
+				t1.grcadvbaserate,
+				t1.grcadvmargin,
+				t1.grcadvpftrate,
+				t1.rpyadvbaserate,
+				t1.rpyadvmargin,
+				t1.rpyadvpftrate,
+				t1.supplementrent,
+				t1.increasedcost,
+				t1.creditinsamt,
+				t1.rolloverfrq,
+				t1.nextrolloverdate,
+				t27.custstsdescription,
+				t1.shariastatus,
+				t1.initiatedate,
+				t1.finpreapprovedref,
+				t1.mmaid,
+				t1.accountsofficer,
+				t1.feeaccountid,
+				t1.fincancelac,
+				t28.dealername  lovdescaccountsofficer,
+				t28.dealercity  lovdescsourcecity,
+				t1.dsacode,
+				t30.rofficerdesc  dsacodedesc,
+				t1.tdsapplicable,
+				t1.mandateid,
+				t1.droplinefrq,
+				t1.firstdroplinedate,
+				t1.pftservicingodlimit,
+				t1.insuranceamt,
+				t1.deductinsdisb,
+				t1.alwbpi,
+				t1.bpitreatment,
+				t1.planemihalw,
+				t1.planemihmethod,
+				t1.planemihmaxperyear,
+				t1.planemihmax,
+				t1.planemihlockperiod,
+				t1.planemicpz,
+				t1.calroundingmode,
+				t1.alwmultidisb,
+				t1.applicationno,
+				t1.referralid,
+				t33.rofficerdesc  referraliddesc,
+				t1.dmacode,
+				t34.rofficerdesc  dmacodedesc,
+				t1.salesdepartment,
+				t35.gendeptdesc  salesdepartmentdesc,
+				t1.quickdisb,
+				t1.wifreference,
+				t1.unplanemihlockperiod,
+				t1.unplanemicpz,
+				t1.reagecpz,
+				t1.maxunplannedemi,
+				t1.maxreageholidays,
+				t1.availedunplanemi,
+				t1.availedreageh,
+				t1.bpiamount,
+				t1.deductfeedisb,
+				t1.rvwrateapplfor,
+				t1.schcalonrvw,
+				t1.pastduepftcalmthd,
+				t1.pastduepftmargin,
+				t1.droppingmethod,
+				t1.ratechganyday,
+				t1.promotioncode,
+				t1.restructureloan,
+				t1.oldfinreference,
+				t1.reagebucket,
+				t1.fincategory,
+				t1.productcategory,
+				t1.roundingtarget,
+				t36.entitycode  lovdescentitycode,
+				t1.eligibilitymethod,
+				t38.fieldcodevalue  loveligibilitymethod,
+				t38.valuedesc  lovdesceligibilitymethod,
+				t1.employeename,
+				t37.rofficerdesc  employeenamedesc,
+				t1.samplingrequired,
+				t1.legalrequired,
+				t1.grcmaxamount,
+				t1.connector,
+				t40.dealername  connectorcode,
+				t40.dealercity  connectordesc,
+				t1.advanceemi,
+				t1.advemiterms,
+				t1.bpipftdaysbasis,
+				t1.fixedratetenor,
+				t1.fixedtenorrate,
+				t12.branchtel  finbranchcontact,
+				t1.processattributes,
+				t1.businessvertical,
+				bv.code  businessverticalcode,
+				bv.description  businessverticaldesc,
+				t1.grcadvtype,
+				t1.grcadvterms,
+				t1.advtype,
+				t1.advterms,
+				t1.advstage,
+				t1.tdspercentage,
+				t1.tdsstartdate,
+				t1.tdsenddate,
+				t1.tdslimitamt,
+				t1.vanReq,
+				t1.vanCode
+			   FROM financemain_temp t1
+				 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+				 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+				 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+				 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+				 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+				 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+				 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+				 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+				 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+				 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+				 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+				 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+				 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+				 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+				 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+				 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
+			UNION ALL
+			 SELECT t1.finreference,
+				t1.investmentref,
+				t1.numberofterms,
+				t1.grcperiodenddate,
+				t1.allowgrcperiod,
+				t1.gracebaserate,
+				t1.gracespecialrate,
+				t1.grcpftrate,
+				t1.grcpftfrq,
+				t1.nextgrcpftdate,
+				t1.allowgrcpftrvw,
+				t1.grcpftrvwfrq,
+				t1.nextgrcpftrvwdate,
+				t1.allowgrccpz,
+				t1.grccpzfrq,
+				t1.nextgrccpzdate,
+				t1.repaybaserate,
+				t1.repayspecialrate,
+				t1.repayprofitrate,
+				t1.repayfrq,
+				t1.nextrepaydate,
+				t1.repaypftfrq,
+				t1.nextrepaypftdate,
+				t1.allowrepayrvw,
+				t1.repayrvwfrq,
+				t1.nextrepayrvwdate,
+				t1.allowrepaycpz,
+				t1.repaycpzfrq,
+				t1.nextrepaycpzdate,
+				t1.maturitydate,
+				t1.cpzatgraceend,
+				t1.downpayment,
+				t1.graceflatamount,
+				t1.reqrepayamount,
+				t1.totalprofit,
+				t1.totalcpz,
+				t1.totalgrosspft,
+				t1.totalgrossgrcpft,
+				t1.totalgracepft,
+				t1.totalgracecpz,
+				t1.grcratebasis,
+				t1.repayratebasis,
+				t1.fintype,
+				t1.finremarks,
+				t1.finccy,
+				t1.schedulemethod,
+				t1.profitdaysbasis,
+				t1.reqmaturity,
+				t1.calterms,
+				t1.calmaturity,
+				t1.firstrepay,
+				t1.lastrepay,
+				t1.finstartdate,
+				t1.finamount,
+				t1.finamount + t1.feechargeamt - t1.downpayment  lovdescfinancingamount,
+				t1.finrepaymentamount,
+				t1.custid,
+				t1.defferments,
+				t1.plandefercount,
+				t1.finbranch,
+				t1.finsourceid,
+				t1.alloweddefrpychange,
+				t1.availeddefrpychange,
+				t1.alloweddeffrqchange,
+				t1.availeddeffrqchange,
+				t1.recaltype,
+				t1.finassetvalue,
+				t1.disbaccountid,
+				t1.repayaccountid,
+				t1.finisactive,
+				t1.limitvalid,
+				t1.overridelimit,
+				t1.securitydeposit,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t7.fintypedesc  lovdescfintypename,
+				t7.finmaxamount  lovdescfinmaxamt,
+				t7.finminamount  lovdescfinminamount,
+				t1.mindownpayperc,
+				t7.finisalwdifferment  lovdescfinalwdeferment,
+				t7.finisdwpayrequired  lovdescdwnpayreq,
+				t7.finmaxdifferment  lovdescfinmaxdifferment,
+				t12.branchdesc  lovdescfinbranchname,
+				t12.branchprovince  finbranchprovincecode,
+				t1.lastrepaydate,
+				t1.lastrepaypftdate,
+				t1.lastrepayrvwdate,
+				t1.lastrepaycpzdate,
+				t1.allowgrcrepay,
+				t1.grcschdmthd,
+				t1.grcmargin,
+				t1.repaymargin,
+				t1.fincurrassetvalue,
+				t1.fincommitmentref,
+				t1.finlimitref,
+				t1.depreciationfrq,
+				t1.fincontractdate,
+				t1.nextdepdate,
+				t1.lastdepdate,
+				t1.finaccount,
+				t1.fincustpftaccount,
+				t17.acrtilllbd  lovdescaccruedtilllbd,
+				t7.finrvwrateapplfor,
+				t1.totalrepayamt,
+				t1.closingstatus,
+				t1.finapproveddate,
+				t1.feechargeamt,
+				t1.blacklisted,
+				t1.finrepaypftonfrq,
+				t1.anualizedpercrate,
+				t1.effectiverateofreturn,
+				t1.migratedfinance,
+				t1.schedulemaintained,
+				t1.scheduleregenerated,
+				t1.finpurpose,
+				t39.loanpurposedesc  lovdescfinpurposename,
+				t1.finstatus,
+				t1.finstsreason,
+				t1.initiateuser,
+				t1.bankname,
+				t1.iban,
+				t1.accounttype,
+				t1.ddareferenceno,
+				t7.finscheduleon  lovdescfinscheduleon,
+				t1.custdsr,
+				t1.jointaccount,
+				t1.jointcustid,
+				t1.downpaybank,
+				t1.downpaysupl,
+				t1.downpayaccount,
+				t1.securitycollateral,
+				t1.approved,
+				t1.discrepancy,
+				t1.limitapproved,
+				t1.graceterms,
+				t7.findivision  lovdescfindivision,
+				t1.rcdmaintainsts,
+				t1.finrepaymethod,
+				t1.grcprofitdaysbasis,
+				t1.stepfinance,
+				t1.steptype,
+				t1.steppolicy,
+				t1.alwmanualsteps,
+				t1.noofsteps,
+				t1.linkedfinref,
+				t1.nextuserid,
+				t1.priority,
+				t24.policydesc  lovdescsteppolicyname,
+				t1.grcminrate,
+				t1.grcmaxrate,
+				t1.rpyminrate,
+				t1.rpymaxrate,
+				t1.deviationapproval,
+				t1.manualschedule,
+				t1.takeoverfinance,
+				t1.grcadvbaserate,
+				t1.grcadvmargin,
+				t1.grcadvpftrate,
+				t1.rpyadvbaserate,
+				t1.rpyadvmargin,
+				t1.rpyadvpftrate,
+				t1.supplementrent,
+				t1.increasedcost,
+				t1.creditinsamt,
+				t1.rolloverfrq,
+				t1.nextrolloverdate,
+				t27.custstsdescription,
+				t1.shariastatus,
+				t1.initiatedate,
+				t1.finpreapprovedref,
+				t1.mmaid,
+				t1.accountsofficer,
+				t1.feeaccountid,
+				t1.fincancelac,
+				t28.dealername  lovdescaccountsofficer,
+				t28.dealercity  lovdescsourcecity,
+				t1.dsacode,
+				t30.rofficerdesc  dsacodedesc,
+				t1.tdsapplicable,
+				t1.mandateid,
+				t1.droplinefrq,
+				t1.firstdroplinedate,
+				t1.pftservicingodlimit,
+				t1.insuranceamt,
+				t1.deductinsdisb,
+				t1.alwbpi,
+				t1.bpitreatment,
+				t1.planemihalw,
+				t1.planemihmethod,
+				t1.planemihmaxperyear,
+				t1.planemihmax,
+				t1.planemihlockperiod,
+				t1.planemicpz,
+				t1.calroundingmode,
+				t1.alwmultidisb,
+				t1.applicationno,
+				t1.referralid,
+				t33.rofficerdesc  referraliddesc,
+				t1.dmacode,
+				t34.rofficerdesc  dmacodedesc,
+				t1.salesdepartment,
+				t35.gendeptdesc  salesdepartmentdesc,
+				t1.quickdisb,
+				t1.wifreference,
+				t1.unplanemihlockperiod,
+				t1.unplanemicpz,
+				t1.reagecpz,
+				t1.maxunplannedemi,
+				t1.maxreageholidays,
+				t1.availedunplanemi,
+				t1.availedreageh,
+				t1.bpiamount,
+				t1.deductfeedisb,
+				t1.rvwrateapplfor,
+				t1.schcalonrvw,
+				t1.pastduepftcalmthd,
+				t1.pastduepftmargin,
+				t1.droppingmethod,
+				t1.ratechganyday,
+				t1.promotioncode,
+				t1.restructureloan,
+				t1.oldfinreference,
+				t1.reagebucket,
+				t1.fincategory,
+				t1.productcategory,
+				t1.roundingtarget,
+				t36.entitycode  lovdescentitycode,
+				t1.eligibilitymethod,
+				t38.fieldcodevalue  loveligibilitymethod,
+				t38.valuedesc  lovdesceligibilitymethod,
+				t1.employeename,
+				t37.rofficerdesc  employeenamedesc,
+				t1.samplingrequired,
+				t1.legalrequired,
+				t1.grcmaxamount,
+				t1.connector,
+				t40.dealername  connectorcode,
+				t40.dealercity  connectordesc,
+				t1.advanceemi,
+				t1.advemiterms,
+				t1.bpipftdaysbasis,
+				t1.fixedratetenor,
+				t1.fixedtenorrate,
+				t12.branchtel  finbranchcontact,
+				t1.processattributes,
+				t1.businessvertical,
+				bv.code  businessverticalcode,
+				bv.description  businessverticaldesc,
+				t1.grcadvtype,
+				t1.grcadvterms,
+				t1.advtype,
+				t1.advterms,
+				t1.advstage,
+				t1.tdspercentage,
+				t1.tdsstartdate,
+				t1.tdsenddate,
+				t1.tdslimitamt,
+				t1.vanReq,
+				t1.vanCode
+			   FROM financemain t1
+				 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+				 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+				 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+				 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+				 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+				 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+				 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+				 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+				 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+				 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+				 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+				 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+				 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+				 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+				 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+				 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
+			  WHERE NOT (EXISTS ( SELECT 1
+					   FROM financemain_temp
+					  WHERE financemain_temp.finreference = t1.finreference))
+		 </createView>
+	</changeSet>
+
+	<changeSet id="49" author="Saikiran.v">
+		<sql>
+		   <![CDATA[
+			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			  update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			  
+			  insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'FINANCEMAIN_VANCODE_MAKER', 'Partner Bank Maker for VanCode ', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+		  
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_VanReq','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FINANCEMAIN_VANCODE_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_VanReq'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_VanCode','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='FINANCEMAIN_VANCODE_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_VanCode'),1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			  update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
