@@ -88,6 +88,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.SubventionDetail;
@@ -3258,15 +3259,46 @@ public class ScheduleCalculator {
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
+		
+		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
+		LowerTaxDeduction ltd = null;
+		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = finScheduleDetails.get(i);
 			schdDate = curSchd.getSchDate();
 
 			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
-				BigDecimal tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-						RoundingMode.HALF_DOWN);
-				tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
+
+				BigDecimal tdsAmount = null;
+				boolean taxOnSysPerc = true;
+				if (ltdApplicable) {
+
+					if (ltd == null || DateUtility.compare(schdDate, ltd.getEndDate()) > 0) {
+						ltd = fetchLTDRecord(ltdList, schdDate);
+						ltdLimitByRcd = BigDecimal.ZERO;
+					}
+
+					if (ltd != null) {
+						tdsAmount = (curSchd.getProfitSchd().multiply(ltd.getPercentage())).divide(new BigDecimal(100),
+								0, RoundingMode.HALF_DOWN);
+						tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
+						if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) > 0
+								&& ltd.getLimitAmt().compareTo(ltdLimitByRcd.add(tdsAmount)) >= 0) {
+							taxOnSysPerc = false;
+						} else if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) == 0) {
+							taxOnSysPerc = false;
+						}
+						ltdLimitByRcd = ltdLimitByRcd.add(tdsAmount);
+					}
+				}
+
+				if (taxOnSysPerc) {
+					tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, tdsRoundMode, tdsRoundingTarget);
+				}
 				curSchd.setTDSAmount(tdsAmount);
 			}
 
@@ -3353,6 +3385,49 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
+	
+	/**
+	 * Method for Fetching Lower Tax Deduction details
+	 * @param scheduleData
+	 * @return
+	 */
+	private LowerTaxDeduction fetchLTDRecord(List<LowerTaxDeduction> ltdList, Date schDate){
+		
+		if(ltdList == null || ltdList.isEmpty()){
+			return null;
+		}
+		
+		for (int i = 0; i < ltdList.size(); i++) {
+			LowerTaxDeduction taxDeduction = ltdList.get(i);
+			
+			// If No LTD for the Current Schedule Dates
+			if(DateUtility.compare(taxDeduction.getStartDate(), schDate) > 0){
+				break;
+			}
+			
+			// If Current LTD End date is more than Schedule Date
+			if(DateUtility.compare(taxDeduction.getEndDate(), schDate) < 0){
+				continue;
+			}
+			//if End Date Greater than Start Date
+			if (DateUtility.compare(taxDeduction.getEndDate(), taxDeduction.getStartDate()) <= 0) {
+				continue;
+			}
+			
+			//If LTD percentage less than Zero
+			if (taxDeduction.getPercentage().compareTo(BigDecimal.ZERO) <= 0) {
+				continue;
+			}
+			
+			if(DateUtility.compare(taxDeduction.getStartDate(), schDate) <= 0){
+				if(DateUtility.compare(taxDeduction.getEndDate(), schDate) >= 0){
+					return taxDeduction;
+				}
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Method for calculate TDS Amount
@@ -3362,18 +3437,58 @@ public class ScheduleCalculator {
 	 * @param tdsPerc
 	 * @return
 	 */
+	//FIXME Have to disucss with Siva and remove this method
 	private BigDecimal calTDSAmount(FinanceMain finMain, FinanceScheduleDetail curSchd, BigDecimal tdsPerc) {
 
 		BigDecimal tdsAmount = BigDecimal.ZERO;
 
-		if (curSchd.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
+		LowerTaxDeduction ltd = null;
+		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 
-			tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
-					RoundingMode.HALF_DOWN);
-			tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
-					finMain.getRoundingTarget());
+		Date schdDate = new Date();
+		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
+
+		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
+			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+			schdDate = curSchd.getSchDate();
+
+			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+
+			 tdsAmount = null;
+				boolean taxOnSysPerc = true;
+				if (ltdApplicable) {
+
+					if (ltd == null || DateUtility.compare(schdDate, ltd.getEndDate()) > 0) {
+						ltd = fetchLTDRecord(ltdList, schdDate);
+						ltdLimitByRcd = BigDecimal.ZERO;
+					}
+
+					if (ltd != null) {
+						tdsAmount = (curSchd.getProfitSchd().multiply(ltd.getPercentage())).divide(new BigDecimal(100),
+								0, RoundingMode.HALF_DOWN);
+						tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
+								finMain.getRoundingTarget());
+						if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) > 0
+								&& ltd.getLimitAmt().compareTo(ltdLimitByRcd.add(tdsAmount)) >= 0) {
+							taxOnSysPerc = false;
+						} else if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) == 0) {
+							taxOnSysPerc = false;
+						}
+						ltdLimitByRcd = ltdLimitByRcd.add(tdsAmount);
+					}
+				}
+
+				if (taxOnSysPerc) {
+					tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
+
+				}
+				curSchd.setTDSAmount(tdsAmount);
+			}
 		}
-
 		return tdsAmount;
 	}
 
@@ -5270,6 +5385,26 @@ public class ScheduleCalculator {
 		}
 
 		return overdraftSchedules;
+	}
+	
+	/*
+	 * ________________________________________________________________________________________________________________
+	 * Method : sortLowerTaxDeduction Description: Sort Lower Tax Details
+	 * ________________________________________________________________________________________________________________
+	 */
+	private List<LowerTaxDeduction> sortLowerTaxDeduction(List<LowerTaxDeduction> taxDeductions) {
+
+		if (taxDeductions != null && taxDeductions.size() > 0) {
+
+			Collections.sort(taxDeductions, new Comparator<LowerTaxDeduction>() {
+				@Override
+				public int compare(LowerTaxDeduction odSchd1, LowerTaxDeduction odSchd2) {
+					return DateUtility.compare(odSchd1.getStartDate(), odSchd2.getStartDate());
+				}
+			});
+		}
+
+		return taxDeductions;
 	}
 
 	/*
@@ -7565,23 +7700,59 @@ public class ScheduleCalculator {
 	private FinScheduleData procChangeTDS(FinScheduleData finScheduleData) {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> finScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-
+		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
 		FinanceScheduleDetail curSchd = null;
-		Date evtFromDate = finMain.getEventFromDate();
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		Date schdDate = new Date();
+		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
+		
+		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
+		LowerTaxDeduction ltd = null;
+
+		BigDecimal tdsAmount = BigDecimal.ZERO;
 
 		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 
 		for (int i = 0; i < sdSize; i++) {
 
-			curSchd = finScheduleDetails.get(i);
+			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+			schdDate = curSchd.getSchDate();
 
-			if (DateUtility.compare(curSchd.getSchDate(), evtFromDate) < 0) {
-				continue;
+			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+
+			    tdsAmount = null;
+				boolean taxOnSysPerc = true;
+				if (ltdApplicable) {
+
+					if (ltd == null || DateUtility.compare(schdDate, ltd.getEndDate()) > 0) {
+						ltd = fetchLTDRecord(ltdList, schdDate);
+						ltdLimitByRcd = BigDecimal.ZERO;
+					}
+
+					if (ltd != null) {
+						tdsAmount = (curSchd.getProfitSchd().multiply(ltd.getPercentage())).divide(new BigDecimal(100),
+								0, RoundingMode.HALF_DOWN);
+						tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
+								finMain.getRoundingTarget());
+						if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) > 0
+								&& ltd.getLimitAmt().compareTo(ltdLimitByRcd.add(tdsAmount)) >= 0) {
+							taxOnSysPerc = false;
+						} else if (ltd.getLimitAmt().compareTo(BigDecimal.ZERO) == 0) {
+							taxOnSysPerc = false;
+						}
+						ltdLimitByRcd = ltdLimitByRcd.add(tdsAmount);
+					}
+				}
+
+				if (taxOnSysPerc) {
+					tdsAmount = (curSchd.getProfitSchd().multiply(tdsPerc)).divide(new BigDecimal(100), 0,
+							RoundingMode.HALF_DOWN);
+					tdsAmount = CalculationUtil.roundAmount(tdsAmount, finMain.getCalRoundingMode(),
+							finMain.getRoundingTarget());
+
+				}
+				curSchd.setTDSAmount(tdsAmount);
 			}
-			BigDecimal tdsAmount = calTDSAmount(finMain, curSchd, tdsPerc);
-			curSchd.setTDSAmount(tdsAmount);
 		}
 
 		return finScheduleData;
