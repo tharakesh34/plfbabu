@@ -3281,7 +3281,7 @@ SELECT t1.fintype,
 	<changeSet id="50" author="Saikiran.v">
 			<sql>
 			<![CDATA[
-				INSERT INTO ErrorDetails VALUES('90400','EN','E','Partner Bank with VAN Already Exist.','','Approved','','','','','',0,GETDATE(),1000,0);
+				INSERT INTO ErrorDetails VALUES('90400','EN','E','Partner Bank with VAN Already Exist.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 			]]>
 			</sql>
 	</changeSet>
@@ -3291,5 +3291,77 @@ SELECT t1.fintype,
 				INSERT INTO SMTPARAMETERS Values('VAN_REQUIRED','VAN Required Or Not','String', 0, 'N', 1, 0, NULL, NULL,'VAN Required Or Not',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 			</sql>
+	</changeSet>
+	
+	<changeSet id="52" author="Manoj.P">
+		<createTable tableName="LowerTaxDeduction_Temp">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint"/>
+			<column name="FinMaintainId" type="bigint"/>
+			<column name="Percentage" type="decimal(5,2)" />
+			<column name="StartDate" type="datetime" />
+			<column name="Enddate" type="datetime" />
+			<column name="Limitamt" type="decimal(18,0)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+</changeSet>
+
+<changeSet id="53" author="Manoj.P">
+		<createTable tableName="LowerTaxDeduction">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqNo" type="bigint"/>
+			<column name="FinMaintainId" type="bigint"/>
+			<column name="Percentage" type="decimal(5,2)" />
+			<column name="StartDate" type="datetime" />
+			<column name="Enddate" type="datetime" />
+			<column name="Limitamt" type="decimal(18,0)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+</changeSet>
+
+
+	<changeSet id="54" author="Manoj.P" dbms="oracle,postgresql">
+		<createSequence sequenceName="SeqLowerTaxDeduction"
+			startValue="1" maxValue="9223372036854775807" incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="55" author="Manoj.P" dbms="mssql">
+		<createTable tableName="SeqLowerTaxDeduction">
+			<column name="SeqNo" type="bigint"
+		autoIncrement="true"/>
+			<column name="Value" type="int"/>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
