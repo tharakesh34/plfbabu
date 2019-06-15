@@ -53,14 +53,17 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,6 +72,7 @@ import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -96,6 +100,9 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 	protected Combobox paymentMode;
 	protected ExtendedCombobox partnerBankID;
 	private FinTypePartnerBank finTypePartnerBank; // overhanded per param
+	protected Row row_Van;
+	protected Label label_VanApplicable;
+	protected Checkbox vanApplicable;
 
 	private transient FinTypePartnerBankListCtrl finTypePartnerBankListCtrl; // overhanded per param
 
@@ -371,7 +378,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			this.partnerBankID.setAttribute("PartnerBankId", aFinTypePartnerBank.getPartnerBankID());
 
 		}
-
+		this.vanApplicable.setChecked(aFinTypePartnerBank.isVanApplicable());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -427,6 +434,12 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 				aFinTypePartnerBank.setPartnerBankID(0);
 			}
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinTypePartnerBank.setVanApplicable(this.vanApplicable.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -711,6 +724,13 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		this.partnerBankID.setDescription("");
 		this.partnerBankID.setFilters(filters);
 
+		if (StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS, this.purpose.getSelectedItem().getValue())) {
+			this.row_Van.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED));
+		} else {
+			this.vanApplicable.setChecked(false);
+			this.row_Van.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -827,6 +847,17 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 			for (int i = 0; i < existingList.size(); i++) {
 				FinTypePartnerBank finTypePartnerBank = existingList.get(i);
 
+				if (StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS, finTypePartnerBank.getPurpose())
+						&& StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS, aFinTypePartnerBank.getPurpose())
+						&& (finTypePartnerBank.isVanApplicable() && aFinTypePartnerBank.isVanApplicable())) {
+					// Both Current and Existing list rating same
+					if (aFinTypePartnerBank.isNew()) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+
 				if (StringUtils.equals(finTypePartnerBank.getPaymentMode(), aFinTypePartnerBank.getPaymentMode())
 						&& finTypePartnerBank.getPartnerBankID() == aFinTypePartnerBank.getPartnerBankID()
 						&& StringUtils.equals(finTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
@@ -866,6 +897,7 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
 							finTypePartnerBankList.add(finTypePartnerBank);
 						}
+					}
 					}
 				} else {
 					finTypePartnerBankList.add(finTypePartnerBank);

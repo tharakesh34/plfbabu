@@ -336,6 +336,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_finMaxDifferment;
 	protected Space space_planDeferCount;
 	protected Div repayDetailDiv; // autoWired
+	protected Div extDetailsDiv; // autoWired
 	protected Checkbox applyRpyPricing;
 	protected ExtendedCombobox rpyPricingMethod;
 	protected Space space_rpyHierarchy;
@@ -452,6 +453,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_finSuspAcType;
 	protected Row row_finBankContingentAcType;
 	protected Row row_finContingentAcType;
+
+	protected Groupbox gb_vanDetails;
+	protected Checkbox vanRequired;
+	protected Label label_FinanceTypeDialog_VanRequired;
+
+	protected Label label_FinanceTypeDialog_AllocationMethod;
+	protected Combobox vaAllocationMethod;
+	protected Space space_vaAllocationMethod;
 
 	// Features Tab
 	protected PTCKeditor remarks; // autowired
@@ -592,6 +601,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	//tasks # >>End Advance EMI and DSF
 
 	private ArrayList<ValueLabel> finLVTCheckList = PennantStaticListUtil.getfinLVTCheckList();
+	private ArrayList<ValueLabel> vanAllocationMethodsList = PennantStaticListUtil.getVanAllocationMethods();
 	FinanceType fintypeLTVCheck = null;
 
 	/**
@@ -663,6 +673,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 			this.basicDetailDiv.setHeight(this.borderLayoutHeight - 90 + "px");
 			this.repayDetailDiv.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
+			this.extDetailsDiv.setHeight(this.borderLayoutHeight - 100 + "px");// 425px
 			this.listBoxFinTypeAccounts.setHeight(this.borderLayoutHeight - 145 + "px");
 
 			this.isCompReadonly = !isMaintainable();
@@ -1026,6 +1037,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.finDivision.setButtonDisabled(true);
 		this.finDivision.setReadonly(false);
+
+		this.gb_vanDetails.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED));
 
 		// Allow Minimum Cap Amount
 		this.row_ODMinCapAmount.setVisible(ImplementationConstants.ALW_LPP_MIN_CAP_AMT);
@@ -1666,6 +1679,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.dsfReq.setChecked(aFinanceType.isDsfReq());
 			this.cashCollateralReq.setChecked(aFinanceType.isCashCollateralReq());
 		}
+
+		this.vanRequired.setChecked(aFinanceType.isAlwVan());
+		setVanDetails(aFinanceType.isAlwVan());
+		fillComboBox(this.vaAllocationMethod, aFinanceType.getVanAllocationMethod(),
+				vanAllocationMethodsList, "");
 		// tasks # >>End Advance EMI and DSF
 
 		logger.debug("Leaving doWriteBeanToComponents()");
@@ -3561,6 +3579,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aFinanceType.setAlwVan(this.vanRequired.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setVanAllocationMethod(getComboboxValue(this.vaAllocationMethod));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 
 		if (isOverdraft) {
 			showErrorDetails(wve, basicDetails);
@@ -4045,6 +4073,13 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		// tasks # >>End Advance EMI and DSF
 
+		if (this.gb_vanDetails.isVisible() && this.vanRequired.isChecked()) {
+			if (!this.vaAllocationMethod.isDisabled()) {
+				this.vaAllocationMethod.setConstraint(new StaticListValidator(vanAllocationMethodsList,
+						Labels.getLabel("label_FinanceTypeDialog_AllocationMethod.value")));
+			}
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -4634,6 +4669,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.space_endDate.setSclass("");
 			this.space_finAssetType.setSclass("");
 		}
+		//Van Details
+		this.vanRequired.setDisabled(isTrue);
+		this.vaAllocationMethod.setDisabled(isTrue);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -7436,6 +7474,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	/*
+	 * onCheck Event For vanRequired
+	 */
+	public void onCheck$vanRequired(Event event) {
+		logger.debug(Literal.ENTERING);
+		setVanDetails(this.vanRequired.isChecked());
+		logger.debug(Literal.LEAVING);
+	}
+	/*
 	 * onCheck Event For allowManualSteps
 	 */
 	public void onCheck$allowManualSteps(Event event) {
@@ -7563,6 +7609,24 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.sp_alwdStepPolices.setSclass(sClass);
 		this.sp_dftStepPolicy.setSclass(sClass);
 		logger.debug("Leaving");
+	}
+
+	private void setVanDetails(boolean vanChecked) {
+		logger.debug(Literal.ENTERING);
+		if (vanChecked) {
+			this.label_FinanceTypeDialog_AllocationMethod.setVisible(true);
+			this.vaAllocationMethod.setVisible(true);
+			this.space_vaAllocationMethod.setVisible(true);
+		} else {
+			//	this.vaAllocationMethod.setSelectedIndex(0);
+			this.space_vaAllocationMethod.setVisible(false);
+			this.label_FinanceTypeDialog_AllocationMethod.setVisible(false);
+			this.vaAllocationMethod.setVisible(false);
+			this.vaAllocationMethod.setConstraint("");
+			this.vaAllocationMethod.setErrorMessage("");
+
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSearchStepPolicy(Event event) {

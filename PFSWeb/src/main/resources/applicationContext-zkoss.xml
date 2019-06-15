@@ -2296,6 +2296,7 @@
 	<bean id="finAdvancePaymentsDialogCtrl" class="com.pennant.webui.finance.financemain.FinAdvancePaymentsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="bankDetailService" ref="bankDetailService" />
+		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
 
 	<!--============ Finance Fee Details ============== -->

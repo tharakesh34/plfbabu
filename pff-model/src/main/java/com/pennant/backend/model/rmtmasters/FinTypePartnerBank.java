@@ -80,6 +80,7 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 	private String accountType;
 	private FinTypePartnerBank befImage;
 	private LoggedInUser userDetails;
+	private boolean vanApplicable;
 
 	private String finTypeDesc;
 
@@ -228,6 +229,14 @@ public class FinTypePartnerBank extends AbstractWorkflowEntity implements Entity
 
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
+	}
+
+	public boolean isVanApplicable() {
+		return vanApplicable;
+	}
+
+	public void setVanApplicable(boolean vanApplicable) {
+		this.vanApplicable = vanApplicable;
 	}
 
 }

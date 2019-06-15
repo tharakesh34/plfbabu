@@ -692,6 +692,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String connectorCode;
 	private String connectorDesc;
 
+	private boolean vanReq;
+	private String vanCode;
+
 	@XmlElement
 	private int fixedRateTenor = 0;
 
@@ -4339,5 +4342,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setCoreBankId(String coreBankId) {
 		this.coreBankId = coreBankId;
+	}
+
+	public String getVanCode() {
+		return vanCode;
+	}
+
+	public void setVanCode(String vanCode) {
+		this.vanCode = vanCode;
+	}
+
+	public boolean isVanReq() {
+		return vanReq;
+	}
+
+	public void setVanReq(boolean vanReq) {
+		this.vanReq = vanReq;
 	}
 }

@@ -3278,4 +3278,18 @@ SELECT t1.fintype,
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="50" author="Saikiran.v">
+			<sql>
+			<![CDATA[
+				INSERT INTO ErrorDetails VALUES('90400','EN','E','Partner Bank with VAN Already Exist.','','Approved','','','','','',0,GETDATE(),1000,0);
+			]]>
+			</sql>
+	</changeSet>
+	<changeSet id="51" author="Saikiran.v">
+			<sql>
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS Values('VAN_REQUIRED','VAN Required Or Not','String', 0, 'N', 1, 0, NULL, NULL,'VAN Required Or Not',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+			</sql>
+	</changeSet>
 </databaseChangeLog>

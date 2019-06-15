@@ -209,6 +209,11 @@
 								<label id="label_Entity" value="${c:l('label_PartnerBankDialog_Entity.value')}" />
 								<extendedcombobox id="entity" />
 							</row>
+							<row id = "row_Van" visible="false">
+								<label id="label_van" value="${c:l('label_PartnerBankDialog_vanCode.value')}" />
+								<textbox id="vanCode" />
+							</row>
+							
 						</rows>
 					</grid>
 				</groupbox>

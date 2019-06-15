@@ -81,7 +81,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, ");
+		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, vanApplicable,");
 		if (type.contains("View")) {
 			sql.append("PartnerBankName, PartnerBankCode,");
 		}
@@ -122,7 +122,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		finTypePartnerBank.setFinType(finType);
 
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, ");
+		sql.append(" iD, finType, purpose, paymentMode, partnerBankID, vanApplicable, ");
 		if (type.contains("View")) {
 			sql.append("PartnerBankName, PartnerBankCode,");
 		}
@@ -154,11 +154,11 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		}
 		StringBuilder sql = new StringBuilder(" insert into FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
-		sql.append(" (iD, finType, purpose, paymentMode, partnerBankID, ");
+		sql.append(" (iD, finType, purpose, paymentMode, partnerBankID, vanApplicable, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :iD, :finType, :purpose, :paymentMode, :partnerBankID, ");
+		sql.append(" :iD, :finType, :purpose, :paymentMode, :partnerBankID, :vanApplicable,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -184,7 +184,7 @@ public class FinTypePartnerBankDAOImpl extends SequenceDao<FinTypePartnerBank> i
 		StringBuilder sql = new StringBuilder("update FinTypePartnerBanks");
 		sql.append(tableType.getSuffix());
 		sql.append("  set finType = :finType, purpose = :purpose, paymentMode = :paymentMode, ");
-		sql.append(" partnerBankID = :partnerBankID, ");
+		sql.append(" partnerBankID = :partnerBankID, vanApplicable = :vanApplicable, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

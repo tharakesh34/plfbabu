@@ -624,6 +624,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_Connector;
 	protected ExtendedCombobox connector;
 
+	//	VAN Details
+	private Row row_Van;
+	private Checkbox vanReq;
+	protected Textbox vanCode;
+
 	protected Row samplingRequiredRow;
 	protected Checkbox samplingRequired;
 
@@ -3389,7 +3394,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finContractDate.setValue(aFinanceMain.getFinStartDate());
 		}
-
+		//Van details
+		if (financeType.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+			this.row_Van.setVisible(true);
+			this.vanReq.setChecked(true);
+			this.vanCode.setValue(aFinanceMain.getVanCode());
+		}
 		setDownpaymentRulePercentage(false);
 
 		if (financeType.isFinIsDwPayRequired() && aFinanceMain.getMinDownPayPerc().compareTo(BigDecimal.ZERO) >= 0) {
@@ -10961,6 +10971,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
+			aFinanceMain.setVanCode(this.vanCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setVanReq(this.vanReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 
 			if (StringUtils.equals(getProductCode(), FinanceConstants.PRODUCT_SUKUKNRM)) {
 				if (this.finAmount.getActualValue().longValue() % 10 != 0) {
@@ -14426,6 +14447,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSStartDate"), this.tDSStartDate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSEndDate"), this.tDSEndDate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSLimitAmt"), this.tDSLimitAmt);
+
+		readOnlyComponent(isReadOnly("FinanceMainDialog_VanReq"), this.vanReq);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_VanCode"), this.vanCode);
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));

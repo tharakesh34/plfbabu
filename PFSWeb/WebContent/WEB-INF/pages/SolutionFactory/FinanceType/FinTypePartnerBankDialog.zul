@@ -79,6 +79,10 @@
 								<label id="label_PartnerBankID" value="${c:l('label_FinTypePartnerBankDialog_PartnerBankID.value')}" />
 								<extendedcombobox id="partnerBankID" />
 							</row>
+							<row visible="false" id="row_Van">
+								<label id="label_VanApplicable" value="${c:l('label_FinTypePartnerBankDialog_VanApplicable.value')}" />
+								<checkbox id="vanApplicable" />
+							</row>
 						</rows>
 					</grid>
 				</groupbox>

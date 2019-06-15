@@ -244,7 +244,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(
 				" , PromotionCode,RvwRateApplFor , SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin, ReAgeBucket, FinCategory, ProductCategory,EligibilityMethod,connector ");
 		selectSql.append(", AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor,ProcessAttributes");
-		selectSql.append(", BusinessVertical, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
+		selectSql.append(", BusinessVertical, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , vanReq, vanCode ");
 		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -321,7 +321,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append(" AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor ");
 		selectSql.append(", BusinessVertical");
 		selectSql.append(
-				", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
+				", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , VanReq, VanCode ");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(", lovDescFinTypeName, lovDescFinBranchName, ");
@@ -681,7 +681,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		sql.append(
-				" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt)");
+				" NextTaskId, RecordType, WorkflowId, PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , VanReq, VanCode )");
 		sql.append(" values (:FinReference,:GraceTerms, :NumberOfTerms, :GrcPeriodEndDate, :AllowGrcPeriod,");
 		sql.append(" :GraceBaseRate, :GraceSpecialRate,:GrcPftRate,:GrcPftFrq,:NextGrcPftDate,:AllowGrcPftRvw,");
 		sql.append(" :GrcPftRvwFrq,:NextGrcPftRvwDate,:AllowGrcCpz,:GrcCpzFrq,:NextGrcCpzDate,:RepayBaseRate,");
@@ -732,7 +732,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(
 				", :OldFinReference, :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
 		sql.append(
-				" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt)");
+				" :NextTaskId,:RecordType,:WorkflowId, :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt , :VanReq, :VanCode )");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -845,7 +845,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				", GrcAdvType = :GrcAdvType, GrcAdvTerms = :GrcAdvTerms, AdvType = :AdvType, AdvTerms = :AdvTerms, AdvStage = :AdvStage");
 		sql.append(", PromotionCode = :PromotionCode");
 		sql.append(
-				", TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
+				", TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt , VanReq =:VanReq, VanCode =:VanCode");
 
 		// For InActive Loans, Update Loan Closed Date
 		if (!financeMain.isFinIsActive()) {

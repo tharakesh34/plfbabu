@@ -133,5 +133,10 @@ public class SMTParameterConstants {
 	//COMMITMENTS is Required or Not
 	public static final String ALLOW_COMMITMENTS = "ALLOW_COMMITMENTS";
 
+	public static final String CALCULATE_GST_ON_GSTRATE_MASTER = "CALCULATE_GST_ON_GSTRATE_MASTER";
+
+	public static final String VAN_REQUIRED = "VAN_REQUIRED";
+
+
 
 }

@@ -93,6 +93,7 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 	private String costCenterID;
 	private String entity;
 	private String entityDesc;
+	private String vanCode;
 	private String downloadType;
 	private String dataEngineConfigName;
 
@@ -392,6 +393,14 @@ public class PartnerBank extends AbstractWorkflowEntity implements Entity {
 
 	public void setEntityDesc(String entityDesc) {
 		this.entityDesc = entityDesc;
+	}
+
+	public String getVanCode() {
+		return vanCode;
+	}
+
+	public void setVanCode(String vanCode) {
+		this.vanCode = vanCode;
 	}
 
 	public String getDownloadType() {

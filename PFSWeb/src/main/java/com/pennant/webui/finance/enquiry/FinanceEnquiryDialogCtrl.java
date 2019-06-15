@@ -122,14 +122,15 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
@@ -225,6 +226,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox finRemarks;
 	protected Row row_LinkedFinRef;
 	protected Textbox linkedFinRef;
+
+	protected Row row_Van;
+	protected Checkbox vanReq;
+	protected Uppercasebox vanCode;
 
 	// Grace period Details
 	protected Datebox gracePeriodEndDate_two;
@@ -1435,6 +1440,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.businessVertical.setAttribute("Id", aFinanceMain.getBusinessVertical());
 		} else {
 			this.businessVertical.setAttribute("Id", null);
+		}
+
+		if (aFinanceType.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+			this.row_Van.setVisible(true);
+			this.vanReq.setChecked(aFinanceMain.isVanReq());
+			this.vanCode.setValue(aFinanceMain.getVanCode());
+			this.vanCode.setDisabled(true);
 		}
 
 		logger.debug("Leaving");

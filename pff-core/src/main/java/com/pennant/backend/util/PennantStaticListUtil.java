@@ -307,6 +307,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> calcOnList;
 	private static ArrayList<ValueLabel> taxtTypeList;
 	private static ArrayList<ValueLabel> downloadTypeList;
+	private static ArrayList<ValueLabel> vanAllocationMethods;
 
 	/**
 	 * Gets the list of applications.
@@ -5031,4 +5032,16 @@ public class PennantStaticListUtil {
 		}
 		return downloadTypeList;
 	}
+
+	public static ArrayList<ValueLabel> getVanAllocationMethods() {
+		if (vanAllocationMethods == null) {
+			vanAllocationMethods = new ArrayList<ValueLabel>(2);
+			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_AUTO,
+					Labels.getLabel("label_AllocationMethod_AutoAllocation")));
+			vanAllocationMethods.add(new ValueLabel(RepayConstants.ALLOCATIONTYPE_PARK_IN_EXCESS,
+					Labels.getLabel("label_AllocationMethod_ParkInExcess")));
+		}
+		return vanAllocationMethods;
+	}
+
 }

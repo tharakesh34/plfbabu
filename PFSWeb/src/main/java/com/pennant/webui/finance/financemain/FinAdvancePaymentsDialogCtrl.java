@@ -88,9 +88,11 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -223,6 +225,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	protected int accNoLength;
 	private transient BankDetailService bankDetailService;
+
+	private transient PartnerBankService partnerBankService;
 	private FinanceMain financeMain;
 	private DocumentDetails documentDetails;
 	@Autowired
@@ -1312,6 +1316,20 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.finAdvancePayments.setPartnerbankCode(partnerBank.getPartnerBankCode());
 				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
 
+				if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED) && financeMainDialogCtrl != null
+						&& financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
+					FinanceMainBaseCtrl finMainbaseCtr = (FinanceMainBaseCtrl) financeMainDialogCtrl;
+					PartnerBank bank = getPartnerBankService()
+							.getApprovedPartnerBankById(partnerBank.getPartnerBankID());
+					if (bank != null && financeMain != null) {
+						if (bank.getVanCode() != null) {
+							finMainbaseCtr.vanCode.setValue(
+									StringUtils.trimToEmpty(bank.getVanCode()).concat(financeMain.getFinReference()));
+						} else {
+							finMainbaseCtr.vanCode.setValue(StringUtils.trimToEmpty(financeMain.getFinReference()));
+						}
+					}
+				}
 			}
 		}
 
@@ -2151,6 +2169,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
+	}
+
+	public PartnerBankService getPartnerBankService() {
+		return partnerBankService;
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 
 }

@@ -442,6 +442,17 @@
 													<label id="label_FinanceMainDialog_Connector" value="${c:l('label_FinanceMainDialog_Connector.value')}" />
 													<extendedcombobox id="connector" width="200px" />
 												</row>
+												<row id="row_Van" visible="false">
+													<label	id="label_FinanceMainDialog_VanReq" value="${c:l('label_FinanceMainDialog_VanReq.value')}" />
+													<hbox>
+														<checkbox id="vanReq" disabled="true"/>
+													</hbox>
+													<label id="label_FinanceMainDialog_VanCode" value="${c:l('label_FinanceMainDialog_VanCode.value')}" />
+													<hbox>
+														<space  spacing="2px" />
+														<uppercasebox id="vanCode" width="170px" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

@@ -66,6 +66,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -82,6 +83,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -145,6 +147,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 	protected Button btnSearchBranchCode;
 	protected Space space_AlwBankBranchCode;
 	protected ExtendedCombobox entity;
+	protected Row row_Van;
+	protected Textbox vanCode;
 	protected Combobox downloadType;
 	protected Combobox dataEngineConfigName;
 
@@ -274,6 +278,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.entity.setDescColumn("EntityDesc");
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
 
+		this.vanCode.setMaxlength(15);
 		setStatusDetails();
 
 		logger.debug("Leaving");
@@ -486,6 +491,10 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+		this.row_Van.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED));
+		if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+			this.vanCode.setValue(aPartnerBank.getVanCode());
+		}		
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
 
 		logger.debug("Leaving");
@@ -695,6 +704,13 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 				prepareCashModes(this.alwBankBranchCode.getValue(), DisbursementConstants.PAYMENT_TYPE_CASH,
 						partnerBranchModesList);
 			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
+		// VAN Code
+		try {
+			aPartnerBank.setVanCode(this.vanCode.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1162,6 +1178,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.entity.setReadonly(isReadOnly("PartnerBankDialog_Entity"));
 		this.downloadType.setDisabled(isReadOnly("PartnerBankDialog_DownloadType"));
 		this.dataEngineConfigName.setDisabled(isReadOnly("PartnerBankDialog_DataEngineConfigName"));
+		this.vanCode.setDisabled(isReadOnly("PartnerBankDialog_VanCode"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

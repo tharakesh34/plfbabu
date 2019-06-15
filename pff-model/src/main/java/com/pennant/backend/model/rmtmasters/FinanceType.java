@@ -265,6 +265,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	//Gst detial
 	private boolean taxNoMand;
 
+	private boolean alwVan;
+	private String vanAllocationMethod;
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -398,6 +401,8 @@ public class FinanceType extends AbstractWorkflowEntity {
 		excludeFields.add("alwCloBefDUe");
 		excludeFields.add("finTypeClassification");
 		excludeFields.add("allowPftBal");
+		excludeFields.add("alwVan");
+		excludeFields.add("vanAllocationMethod");
 
 		return excludeFields;
 	}
@@ -2441,6 +2446,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setTdsAllowToModify(boolean tdsAllowToModify) {
 		this.tdsAllowToModify = tdsAllowToModify;
+	}
+
+	public boolean isAlwVan() {
+		return alwVan;
+	}
+
+	public void setAlwVan(boolean alwVan) {
+		this.alwVan = alwVan;
+	}
+
+	public String getVanAllocationMethod() {
+		return vanAllocationMethod;
+	}
+
+	public void setVanAllocationMethod(String vanAllocationMethod) {
+		this.vanAllocationMethod = vanAllocationMethod;
 	}
 
 }

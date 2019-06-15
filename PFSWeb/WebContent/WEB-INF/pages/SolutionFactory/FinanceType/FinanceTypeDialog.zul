@@ -1121,7 +1121,8 @@
 							</groupbox>
 						</tabpanel>
 
-						<tabpanel style="overflow:auto" ca:data-scrollable="true">
+						<tabpanel style="overflow : auto" ca:data-scrollable="true" >
+							<div id="extDetailsDiv">
 							<groupbox id="gb_OverDuePenalty">
 								<caption label="${c:l('label_FinanceTypeDialog_ODPenalty')}" />
 								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -1361,6 +1362,34 @@
 									</rows>
 								</grid>
 							</groupbox>
+							<groupbox id="gb_vanDetails" visible="false" height="auto">
+								<caption label="${c:l('label_FinanceTypeDialog_VanDetails')}" />
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+									<columns>
+										<column width="260px" />
+										<column />
+										<column width="260px" />
+										<column />
+									</columns>
+									<rows>
+										<row visible="true">
+											<label id="label_FinanceTypeDialog_VanRequired" value="${c:l('label_FinanceTypeDialog_VanRequired.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="vanRequired" />
+											</hbox>
+											
+											<label id="label_FinanceTypeDialog_AllocationMethod" value="${c:l('label_FinanceTypeDialog_AllocationMethod.value')}" visible="false"/>
+											<hbox>
+												<space id="space_vaAllocationMethod" sclass="mandatory" spacing="2px" visible="false"/>
+													<combobox id="vaAllocationMethod" width="275px" readonly="true" visible="false"/>
+											</hbox>
+											
+										</row>
+									</rows>
+								</grid>
+							</groupbox>	
+							</div>	
 						</tabpanel>
 						<tabpanel>
 							<groupbox>

@@ -120,6 +120,7 @@ public class RepayConstants {
 	// Allocation Methods
 	public static final String ALLOCATIONTYPE_AUTO = "A";
 	public static final String ALLOCATIONTYPE_MANUAL = "M";
+	public static final String ALLOCATIONTYPE_PARK_IN_EXCESS = "PIE";
 
 	// Allocation Types
 	public static final String ALLOCATION_PRI = "PRI";
