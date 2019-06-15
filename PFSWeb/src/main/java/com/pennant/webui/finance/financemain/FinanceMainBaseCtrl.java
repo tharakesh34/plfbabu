@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+' * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -67,6 +67,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -221,6 +222,7 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.OverdraftScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -322,6 +324,7 @@ import com.pennant.webui.mandate.mandate.MandateDialogCtrl;
 import com.pennant.webui.pdfupload.PdfParserCaller;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -423,6 +426,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox tDSStartDate;
 	protected Datebox tDSEndDate;
 	protected CurrencyBox tDSLimitAmt;
+	protected Label label_FinanceMainDialog_TDSLimitAmt;
 
 	protected Label label_FinanceMainDialog_TDSApplicable;
 	//Facility Details
@@ -988,6 +992,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private int oldVal_advTerms;
 	private int oldVal_grcTerms;
 
+	
+	protected transient Date oldVal_tDSStartDate ; 
+	protected transient Date oldVal_tDSEndDate  ; 
+	protected transient BigDecimal oldVal_LimitAmt;
+ 
+	
 	//Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	//for pdf extraction
@@ -1018,6 +1028,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
+	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
+
 
 	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	private String isCustomerBranch = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTBRANCH);
@@ -1127,6 +1139,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		
+		this.tDSStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.tDSEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
 
 		this.finAmount.setProperties(true, finFormatter);
 		this.downPayBank.setProperties(true, finFormatter);
@@ -1518,6 +1534,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.advTerms.setDisabled(true);
 			this.advStage.setDisabled(true);
 		}
+		
+		this.tDSPercentage.setMaxlength(6);
+		this.tDSPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -3361,23 +3380,78 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
+		
+		
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
+		
+		
 		//TDSApplicable Visiblitly based on Financetype Selection
-		if (financeType.isTdsApplicable()) {
-			this.hbox_tdsApplicable.setVisible(true);
-			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
-		} else {
-			this.hbox_tdsApplicable.setVisible(false);
-			this.label_FinanceMainDialog_TDSApplicable.setVisible(false);
-		}
 		if (!financeType.isTdsAllowToModify()) {
 			this.tDSPercentage.setReadonly(true);
+			this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		}
-		onchecktDSApplicable();
-		this.tDSPercentage.setValue(aFinanceMain.getTdsPercentage());
-		this.tDSStartDate.setValue(aFinanceMain.getTdsStartDate());
-		this.tDSEndDate.setValue(aFinanceMain.getTdsEndDate());
-		this.tDSLimitAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format));
+		doSetTdsDetails();
+		
+		if (aFinanceMain.isNew()) {
+			if (financeType.isTdsApplicable() && financeType.isTdsAllowToModify() ) {
+				this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
+				this.tDSStartDate.setValue(appDate);
+				setTdsEndDate();
+				List<LowerTaxDeduction> ltDetails = aFinanceDetail.getFinScheduleData().getLowerTaxDeductionDetails();
+				setOldLowerTaxDeductionDetail(ltDetails);
+
+				if (CollectionUtils.isNotEmpty(ltDetails)) {
+					for (LowerTaxDeduction lowerTaxDeduction : ltDetails) {
+
+						if (lowerTaxDeduction.getSeqno() == 1) {
+							this.tDSPercentage.setValue(lowerTaxDeduction.getPercentage());
+							this.tDSStartDate.setValue(appDate);
+							this.tDSEndDate.setValue(lowerTaxDeduction.getEndDate());
+							this.tDSLimitAmt.setValue(
+									PennantApplicationUtil.formateAmount(lowerTaxDeduction.getLimitAmt(), format));
+						}
+					}
+				}
+				doSetTdsDetails();
+			} else {
+				
+			}
+		} else {
+			if (aFinanceMain.isTDSApplicable() || financeType.isTdsAllowToModify()) {
+				List<LowerTaxDeduction> ltDetails = aFinanceDetail.getFinScheduleData().getLowerTaxDeductionDetails();
+				setOldLowerTaxDeductionDetail(ltDetails);
+
+				if (CollectionUtils.isNotEmpty(ltDetails)) {
+					
+					for (LowerTaxDeduction lowerTaxDeduction : ltDetails) {
+
+						if (lowerTaxDeduction.getSeqno() == 1) {
+							this.tDSPercentage.setValue(lowerTaxDeduction.getPercentage());
+							this.tDSStartDate.setValue(lowerTaxDeduction.getStartDate());
+							this.tDSEndDate.setValue(lowerTaxDeduction.getEndDate());
+							this.tDSLimitAmt.setValue(
+									PennantApplicationUtil.formateAmount(lowerTaxDeduction.getLimitAmt(), format));
+						}
+					}
+					
+				}
+				doSetTdsDetails();
+			} else {
+			}
+		}
+		
+		/*if (CollectionUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails())) {
+			for (LowerTaxDeduction list : getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()) {
+				if (list.getSeqno() == 1) {
+					this.tDSPercentage.setValue(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()
+							.get(0).getTdsPercentage());
+					this.tDSStartDate.setValue(aFinanceMain.getTdsStartDate());
+					this.tDSEndDate.setValue(aFinanceMain.getTdsEndDate());
+					this.tDSLimitAmt
+							.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format));
+				}
+			}
+		}*/
 
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
@@ -4281,9 +4355,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayRvwDate.setValue(null);
 			this.nextRepayPftDate.setValue(null);
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
+	
+	
+
+	private void setTdsEndDate() {
+	int month = DateUtility.getMonth(this.tDSStartDate.getValue());
+	int year = DateUtility.getYear(this.tDSStartDate.getValue());
+
+	if (month > 3) {
+		Date tdsformateEndDate = null;
+		try {
+			tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.tDSEndDate.setValue(tdsformateEndDate);
+	} else {
+		Date tdsformateEndDate = null;
+		try {
+			tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.tDSEndDate.setValue(tdsformateEndDate);
+	}
+	}
+
 
 	/**
 	 * Method for Query Management Details Tab in finance
@@ -4941,6 +5042,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVal_grcAdvType = this.grcAdvType.getValue();
 		this.oldVal_advTerms = this.advTerms.intValue();
 		this.oldVal_grcTerms = this.grcAdvTerms.intValue();
+		
+		
+		this.oldVal_tDSStartDate = this.tDSStartDate.getValue(); 
+		this.oldVal_tDSEndDate = this.tDSEndDate.getValue(); 
+		this.oldVal_LimitAmt = this.tDSLimitAmt.getActualValue();
 	}
 
 	/**
@@ -5146,6 +5252,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 		if (!this.manualSchedule.isChecked()) {
 			if (this.numberOfTerms.intValue() != 0) {
@@ -5371,6 +5478,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.oldVal_advTerms != this.advTerms.intValue()) {
 				return true;
 			}
+		}
+		
+		
+		if(DateUtility.compare(this.oldVal_tDSStartDate, this.tDSStartDate.getValue()) != 0){
+			return true;
+		}
+		
+		
+		if(DateUtility.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0){
+			return true;
 		}
 
 		return false;
@@ -5834,6 +5951,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
+		
+		
+		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
+			this.tDSStartDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value"), true));
+		}
+		
+		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
+			this.tDSEndDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSEndDate.value"), true));
+		}
+		
+		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
+			this.tDSStartDate.setConstraint(
+					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value"), true));
+		}
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -6385,6 +6519,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
+		
+		//LTD Detail
+		resetLowerTaxDeductionDetail(aFinScheduleData);
 
 		// Setting Accounting Event Code for Postings execution
 		if (StringUtils.isBlank(eventCode)) {
@@ -7998,6 +8135,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
+		
+		// Lower Tax Deduction details
+		List<LowerTaxDeduction> lowerTaxDeductions = aFinanceDetail.getFinScheduleData().getLowerTaxDeductionDetails();
+		if (CollectionUtils.isNotEmpty(lowerTaxDeductions)) {
+			for (LowerTaxDeduction lowerTaxDeduction : lowerTaxDeductions) {
+				lowerTaxDeduction.setFinReference(afinanceMain.getFinReference());
+				lowerTaxDeduction.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				lowerTaxDeduction.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				lowerTaxDeduction.setWorkflowId(afinanceMain.getWorkflowId());
+				lowerTaxDeduction.setTaskId(taskId);
+				lowerTaxDeduction.setNextTaskId(nextTaskId);
+				lowerTaxDeduction.setRoleCode(getRole());
+				lowerTaxDeduction.setNextRoleCode(nextRoleCode);
+			}
+		}
 
 		// Extended Field details
 		if (aFinanceDetail.getExtendedFieldRender() != null) {
@@ -8762,20 +8914,33 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public void onCheck$tDSApplicable(Event event) {
-		onchecktDSApplicable();
+		doSetTdsDetails();
 	}
 
-	private void onchecktDSApplicable() {
+	private void doSetTdsDetails() {
 		logger.debug(Literal.ENTERING);
 		String allowTaxDeduction = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
 
 		if (PennantConstants.YES.equals(allowTaxDeduction)) {
 			if (this.tDSApplicable.isChecked()) {
 				this.row_tDSPercentage.setVisible(true);
-				this.row_tDSEndDate.setVisible(true);
+				
+				if(getFinanceDetail().getFinScheduleData().getFinanceType().isTdsAllowToModify()) {
+					this.row_tDSEndDate.setVisible(true);
+					this.label_FinanceMainDialog_TDSLimitAmt.setVisible(true);
+					this.tDSLimitAmt.setVisible(true);
+				} else {
+					this.row_tDSEndDate.setVisible(false);
+					this.label_FinanceMainDialog_TDSLimitAmt.setVisible(false);
+					this.tDSLimitAmt.setVisible(false);
+				}
 			} else {
 				this.row_tDSPercentage.setVisible(false);
 				this.row_tDSEndDate.setVisible(false);
+				this.tDSEndDate.setValue(null);
+				this.tDSStartDate.setValue(null);
+				this.tDSPercentage.setValue(BigDecimal.ZERO);
+				this.tDSLimitAmt.setValue(BigDecimal.ZERO);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -8784,6 +8949,45 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onCheck$alwBpiTreatment(Event event) {
 		logger.debug(Literal.ENTERING);
 		oncheckalwBpiTreatment(true);
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	public void onChange$tDSEndDate(Event event) {
+		logger.debug(Literal.ENTERING);
+		if (this.tDSStartDate.getValue() != null && this.tDSEndDate.getValue() != null) {
+			int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
+			int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
+			Date tdsformateEndDate = null;
+			Date tdsEndDate = null;
+			Date tdsStartDate = null;
+			if (startDatemonth > 3) {
+				try {
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear + 1));
+				} catch (ParseException e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			} else {
+
+				try {
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
+				} catch (ParseException e) {
+					logger.error(Literal.EXCEPTION, e);
+
+				}
+			}
+			tdsEndDate = this.tDSEndDate.getValue();
+			tdsStartDate = this.tDSStartDate.getValue();
+			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
+					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
+					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
+				throw new WrongValueException(this.tDSEndDate,
+						"End Date must be after" + " " + DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy")
+								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
+			}
+		} else {
+			
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -11171,30 +11375,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		aFinanceMain.setQuickDisb(this.quickDisb.isChecked());
-		//Commercial Workflow Fields Data Setting
-		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
+	
 
-		try {
-			aFinanceMain.setTdsPercentage(this.tDSPercentage.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceMain.setTdsStartDate(this.tDSStartDate.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceMain.setTdsEndDate(this.tDSEndDate.getValue());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceMain.setTdsLimitAmt(
-					PennantApplicationUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter));
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
 
 		//FinanceMain Details tab ---> 2. Grace Period Details
 		try {
@@ -12881,6 +13063,94 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
 		}
 
+		
+		//Lower tax deduction Details setting
+		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
+		
+		if (this.tDSApplicable.isChecked()) {
+			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
+			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
+			lowerTxDeduction.setFinReference(aFinanceMain.getFinReference());
+			lowerTxDeduction.setSeqno(1);
+
+			try {
+				lowerTxDeduction.setPercentage(this.tDSPercentage.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				lowerTxDeduction.setStartDate(this.tDSStartDate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue())!=0) {
+				throw new WrongValueException(this.tDSStartDate, Labels.getLabel("FRQ_DATE_MISMATCH",
+						new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
+								Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
+			}
+			
+			try {
+				lowerTxDeduction.setEndDate(this.tDSEndDate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				lowerTxDeduction.setLimitAmt(
+						PennantApplicationUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
+			int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
+			Date tdsformateEndDate = null;
+			Date tdsEndDate = null;
+			Date tdsStartDate = null;
+			if (startDatemonth > 3) {
+				try {
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear + 1));
+				} catch (ParseException e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
+			} else {
+
+				try {
+					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
+				} catch (ParseException e) {
+					logger.error(Literal.EXCEPTION, e);
+
+				}
+			}
+			tdsEndDate = this.tDSEndDate.getValue();
+			tdsStartDate = this.tDSStartDate.getValue();
+			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
+					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
+					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
+				throw new WrongValueException(this.tDSEndDate,
+						"End Date must be after" + " " + DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy")
+								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
+			}
+
+			lowerTaxdedecutions.add(lowerTxDeduction);
+			aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxdedecutions);
+		} else {
+			List<LowerTaxDeduction> ltDetails = getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails();
+
+			if (CollectionUtils.isEmpty(ltDetails)) {
+				List<LowerTaxDeduction> lowerTaxDeduction = new ArrayList<LowerTaxDeduction>();
+				for (LowerTaxDeduction deduction : lowerTaxDeduction) {
+					deduction = new LowerTaxDeduction();
+					deduction.setEndDate(null);
+					deduction.setStartDate(null);
+					deduction.setPercentage(BigDecimal.ZERO);
+					deduction.setLimitAmt(BigDecimal.ZERO);
+				}
+				aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxDeduction);
+			} 
+		}
+		
 		//FinanceMain Details Tab Validation Error Throwing
 		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
 			showErrorDetails(wve, financeTypeDetailsTab);
@@ -14443,10 +14713,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_tDSApplicable"), this.tDSApplicable);
 		}
-		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSPercentage"), this.tDSPercentage);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSStartDate"), this.tDSStartDate);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSEndDate"), this.tDSEndDate);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_tDSLimitAmt"), this.tDSLimitAmt);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSPercentage"), this.tDSPercentage);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSStartDate"), this.tDSStartDate);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSEndDate"), this.tDSEndDate);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_TDSLimitAmt"), this.tDSLimitAmt);
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanReq"), this.vanReq);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanCode"), this.vanCode);
@@ -16261,6 +16531,46 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		setCustomerData((Customer) nCustomer);
 		this.custCIFSearchObject = newSearchObject;
 		logger.debug("Leaving ");
+	}
+	
+	
+	private void resetLowerTaxDeductionDetail(FinScheduleData aFinScheduleData) {
+		logger.debug(Literal.ENTERING);
+
+		List<LowerTaxDeduction> oldLowerTaxDeduction = getOldLowerTaxDeductionDetail();
+		List<LowerTaxDeduction> newLowerTaxDeduction = aFinScheduleData.getLowerTaxDeductionDetails();
+		boolean tdsApplicable = this.tDSApplicable.isChecked();
+
+		if (CollectionUtils.isEmpty(oldLowerTaxDeduction)) {
+			if (!tdsApplicable) {
+				aFinScheduleData.setLowerTaxDeductionDetails(null);
+			} else {
+				List<LowerTaxDeduction> ltd = new ArrayList<LowerTaxDeduction>();
+				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
+					lowerTaxDeduction.setNewRecord(true);
+					lowerTaxDeduction.setVersion(1);
+					lowerTaxDeduction.setRecordType(PennantConstants.RCD_ADD);
+					ltd.add(lowerTaxDeduction);
+				}
+				aFinScheduleData.setLowerTaxDeductionDetails(ltd);
+			}
+		} else {
+			if (!tdsApplicable) {
+
+				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
+					lowerTaxDeduction.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				}
+				aFinScheduleData.setLowerTaxDeductionDetails(newLowerTaxDeduction);
+			} else {
+				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
+					lowerTaxDeduction.setNewRecord(false);
+					lowerTaxDeduction.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+				aFinScheduleData.setLowerTaxDeductionDetails(newLowerTaxDeduction);
+
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -19870,4 +20180,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.pdVerificationDialogCtrl = pdVerificationDialogCtrl;
 		this.customerDialogCtrl.setPDVerificationDialogCtrl(pdVerificationDialogCtrl);
 	}
+
+	public List<LowerTaxDeduction> getOldLowerTaxDeductionDetail() {
+		return oldLowerTaxDeductionDetail;
+	}
+
+	public void setOldLowerTaxDeductionDetail(List<LowerTaxDeduction> oldLowerTaxDeductionDetail) {
+		this.oldLowerTaxDeductionDetail = oldLowerTaxDeductionDetail;
+	}
+
 }

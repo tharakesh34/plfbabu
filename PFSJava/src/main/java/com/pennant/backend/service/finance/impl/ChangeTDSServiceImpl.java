@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -17,6 +18,7 @@ import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
+import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -25,6 +27,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.util.FinanceConstants;
@@ -43,6 +46,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 	private FinanceTypeDAO financeTypeDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
 	private AuditHeaderDAO auditHeaderDAO;
+	private LowerTaxDeductionDAO lowertaxDeductionDAO;
 
 	public ChangeTDSServiceImpl() {
 		super();
@@ -98,6 +102,12 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 					false);
 		}
 
+		FinScheduleData finScheduleData = new FinScheduleData();
+		List<FinanceScheduleDetail> finScheduleList = getFinanceScheduleDetailDAO()
+				.getFinScheduleDetails(finMaintainInstruction.getFinReference(), "", false);
+		finScheduleData.setFinanceMain(financeMain);
+		finScheduleData.setFinanceScheduleDetails(finScheduleList);
+		
 		TableType tableType = TableType.MAIN_TAB;
 		if (finMaintainInstruction.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -128,7 +138,18 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		inst.setMakerAppDate(DateUtility.getAppDate());
 		inst.setMakerSysDate(DateUtility.getSysDate());
 		inst.setLinkedTranId(0);
+		
+		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
+		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
+		lowerTaxDeduction.setFinReference(financeMain.getFinReference());
+		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
+		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
+		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
+		ltdList.add(lowerTaxDeduction);
+		
+		finScheduleData.setLowerTaxDeductionDetails(ltdList);
+		
 		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_CHANGETDS,
 				tableType.getSuffix());
 
@@ -136,14 +157,19 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			getFinanceMainDAO().save(financeMain, tableType, false);
 			finMaintainInstruction.setFinMaintainId(
 					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
-
+			finScheduleData.getLowerTaxDeductionDetails().get(0).setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+			getLowertaxDeductionDAO().save(finScheduleData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
 			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
 			auditHeader.setAuditReference(String.valueOf(finMaintainInstruction.getFinMaintainId()));
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 			getFinMaintainInstructionDAO().update(finMaintainInstruction, tableType);
+			getLowertaxDeductionDAO().update(finScheduleData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
+
 		}
 		finServiceInstructionDAO.save(inst, tableType.getSuffix());
+		
+		
 		// Add Audit
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -289,12 +315,36 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		getFinServiceInstructionDAO().deleteList(finServiceInstruction.getFinReference(), "",
 				TableType.TEMP_TAB.getSuffix());
 		getFinServiceInstructionDAO().save(finServiceInstruction, "");
+		
 
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finMaintainInstruction.getFinReference());
 		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		
+		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
+			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
+				getLowertaxDeductionDAO().delete(deductions, TableType.TEMP_TAB.getSuffix());
+			}
+		}
+		
+		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
+			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
+				deductions.setRoleCode(finMaintainInstruction.getRoleCode());
+				deductions.setNextRoleCode(finMaintainInstruction.getNextRoleCode());
+				deductions.setRecordStatus(finMaintainInstruction.getRecordStatus());
+				deductions.setRecordType(finMaintainInstruction.getRecordType());
+				deductions.setTaskId(finMaintainInstruction.getTaskId());
+				deductions.setNextTaskId(finMaintainInstruction.getNextTaskId());
+				deductions.setWorkflowId(finMaintainInstruction.getWorkflowId());
+				deductions.setLastMntOn(finMaintainInstruction.getLastMntOn());
+				deductions.setLastMntBy(finMaintainInstruction.getLastMntBy());
+				deductions.setVersion(finMaintainInstruction.getVersion());
+				deductions.setWorkflowId(finMaintainInstruction.getWorkflowId());
+				getLowertaxDeductionDAO().save(deductions, "");
+			}
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
@@ -429,6 +479,21 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		finScheduleData.setFinanceMain(financeMain);
 		finScheduleData.setFinanceScheduleDetails(finScheduleList);
+		
+		finScheduleData.setLowerTaxDeductionDetails(
+				getLowertaxDeductionDAO().getLowerTaxDeductionDetails(financeMain.getFinReference(), ""));
+		
+		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
+
+		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
+		lowerTaxDeduction.setFinReference(financeMain.getFinReference());
+		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
+		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
+        lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
+        lowerTaxDeduction.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+		ltdList.add(lowerTaxDeduction);
+		
+		finScheduleData.getLowerTaxDeductionDetails().addAll(ltdList);
 
 		for (FinanceScheduleDetail schedule : finScheduleData.getFinanceScheduleDetails()) {
 			if (schedule.getSchDate().compareTo(appDate) >= 0 && schedule.getPresentmentId() == 0) {
@@ -498,6 +563,15 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public LowerTaxDeductionDAO getLowertaxDeductionDAO() {
+		return lowertaxDeductionDAO;
+	}
+
+	@Autowired
+	public void setLowertaxDeductionDAO(LowerTaxDeductionDAO lowertaxDeductionDAO) {
+		this.lowertaxDeductionDAO = lowertaxDeductionDAO;
 	}
 
 }

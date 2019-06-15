@@ -264,6 +264,7 @@ import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReinstateFinance;
@@ -3281,10 +3282,17 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionMapping", TransactionMapping.class,
 						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
 						new String[] { "MID", "TID" }, null, 600));
+		
+		ModuleUtil.register("LowerTaxDeduction",
+				new ModuleMapping("LowerTaxDeduction", LowerTaxDeduction.class,
+						new String[] { "LowerTaxDeduction", "LowerTaxDeduction" }, masterWF,
+						new String[] { "FinReference", "Type" }, null, 600));
+
 		ModuleUtil.register("GSTRate",
 				new ModuleMapping("GSTRate", GSTRate.class, new String[] { "GST_RATES", "GST_RATES_AView" }, masterWF,
 						new String[] { "FromState", "ToState", "TaxType", "Amount", "Percentage", "CalcOn", "Active" },
 						null, 600));
+
 
 		registerCustomModules();
 	}

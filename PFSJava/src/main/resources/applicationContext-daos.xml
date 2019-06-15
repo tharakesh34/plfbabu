@@ -3405,6 +3405,7 @@
 		<!-- Collateral Setup -->
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
+		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -10848,6 +10849,10 @@
 		<property name="projectedAmortizationService" ref="projectedAmortizationService" />
 	</bean>
 
+
+<!-- Lower Tax deduction -->
+	<bean id="lowerTaxDeductionDAO" class="com.pennant.backend.dao.finance.impl.LowerTaxDeductionDAOImpl" parent="basicDao" />
+	
 	<!-- GSTRate -->
 	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl"
 		parent="sequenceDao" />

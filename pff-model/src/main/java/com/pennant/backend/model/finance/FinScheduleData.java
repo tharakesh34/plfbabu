@@ -191,6 +191,8 @@ public class FinScheduleData implements Serializable {
 
 	//GST Tax Map
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
+	
+	private List<LowerTaxDeduction> lowerTaxDeductionDetails = new ArrayList<>();
 
 	@XmlElement(name = "hostReference")
 	private String oldFinReference;
@@ -701,5 +703,13 @@ public class FinScheduleData implements Serializable {
 
 	public void setOldFinReference(String oldFinReference) {
 		this.oldFinReference = oldFinReference;
+	}
+
+	public List<LowerTaxDeduction> getLowerTaxDeductionDetails() {
+		return lowerTaxDeductionDetails;
+	}
+
+	public void setLowerTaxDeductionDetails(List<LowerTaxDeduction> lowerTaxDeductionDetails) {
+		this.lowerTaxDeductionDetails = lowerTaxDeductionDetails;
 	}
 }
