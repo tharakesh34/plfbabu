@@ -57,7 +57,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -120,6 +119,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTEmailValidator;
@@ -136,16 +136,15 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.security.LdapContext;
 import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.core.security.user.UserSearch;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Administration/SecurityUser/SecurityUserDialog.zul file.
@@ -890,10 +889,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				&& (divBranch_Rows != null && !divBranch_Rows.getChildren().isEmpty())) {
 
 			if (CollectionUtils.isEmpty(tab1)) {
-				if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
-					doSaveDivBranchDetails(aSecurityUser);
-				} else {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 					doSaveDivBasedClusterDetails(aSecurityUser, tab2);
+				} else {
+					doSaveDivBranchDetails(aSecurityUser);
 				}
 			}
 		}
@@ -961,10 +960,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		// fill the data in divisionBranch tab
 		if (this.secUserDivBranchsTab.isVisible()) {
-			if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
-				doFillDivisionBranchTab(aSecurityUser);
-			} else {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 				appendDivisions(getDivisionDetails(aSecurityUser));
+			} else {
+				doFillDivisionBranchTab(aSecurityUser);
 			}
 		}
 
@@ -1294,7 +1293,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			doEditClusterDivisions(false);
 		} else {
 			doDisableDivBranchs(false);

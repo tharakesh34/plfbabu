@@ -2881,6 +2881,13 @@ public class AgreementGeneration implements Serializable {
 				coapplicant.setCustRelation(StringUtils.trimToEmpty(jointAccountDetail.getCatOfcoApplicant()));
 				coapplicant.setCustName(StringUtils.trimToEmpty(customer.getCustShrtName()));
 				coapplicant.setCustCIF(StringUtils.trimToEmpty(customer.getCustCIF()));
+				if (customer.getCustDOB() != null) {
+					Date custDob = customer.getCustDOB();
+					BigDecimal custAge = processDateDiff(custDob);
+					coapplicant.setCustAge(PennantApplicationUtil.amountFormate(custAge, 0));
+				}
+				coapplicant.setCustSalutation(customer.getLovDescCustSalutationCodeName());
+				coapplicant.setCustFatherName(customer.getCustMotherMaiden());
 
 				if (aggModuleDetails.contains(PennantConstants.AGG_LNAPPCB) && null != customer
 						&& StringUtils.isNotBlank(customer.getCustCoreBank())) {
@@ -2980,6 +2987,27 @@ public class AgreementGeneration implements Serializable {
 			agreement.getCoApplicants().add(agreement.new CoApplicant());
 		}
 
+	}
+
+	private BigDecimal processDateDiff(Date fromDate) {
+		Date appDate = DateUtility.getAppDate();
+		BigDecimal dateDiff = BigDecimal.ZERO;
+		dateDiff.setScale(2);
+		int years = 0;
+		int month = 0;
+		if (fromDate.compareTo(appDate) < 0) {
+			int months = DateUtility.getMonthsBetween(appDate, fromDate);
+			years = months / 12;
+			month = months % 12;
+			dateDiff = new BigDecimal(months % 12);
+			dateDiff = dateDiff.divide(new BigDecimal(100), 2, RoundingMode.HALF_EVEN);
+		}
+		if (years == 0 && month == 0) {
+			dateDiff = BigDecimal.ZERO;
+		} else {
+			dateDiff = dateDiff.add(new BigDecimal(years));
+		}
+		return dateDiff;
 	}
 
 	private AgreementDetail getFinRepayHeaderDetails(AgreementDetail agreement, FinRepayHeader finRepayHeader,

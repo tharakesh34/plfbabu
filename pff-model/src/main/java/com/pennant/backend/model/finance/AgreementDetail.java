@@ -5027,6 +5027,9 @@ public class AgreementDetail {
 		private String custEmail = "";
 		private String gstNo = "";
 		private String applicantType = "";
+		private String custAge = "";
+		private String custFatherName = "";
+		private String custSalutation = "";
 
 		public CoApplicant() {
 
@@ -5208,6 +5211,29 @@ public class AgreementDetail {
 			this.custCIF = custCIF;
 		}
 
+		public String getCustAge() {
+			return custAge;
+		}
+
+		public void setCustAge(String custAge) {
+			this.custAge = custAge;
+		}
+
+		public String getCustFatherName() {
+			return custFatherName;
+		}
+
+		public void setCustFatherName(String custFatherName) {
+			this.custFatherName = custFatherName;
+		}
+
+		public String getCustSalutation() {
+			return custSalutation;
+		}
+
+		public void setCustSalutation(String custSalutation) {
+			this.custSalutation = custSalutation;
+		}
 	}
 
 	private List<CustomerBankInfo> customerBankInfos;

@@ -128,7 +128,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.merchantName.setValueColumn("MerchantName");
 		this.merchantName.setDescColumn("MerchantId");
 		this.merchantName.setValidateColumns(new String[] { "MerchantName" });
-		
+
 		this.storeName.setMandatoryStyle(true);
 
 		setStatusDetails();
@@ -346,6 +346,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		}
 
 		this.merchantName.setValue(dealerMapping.getMerchantName());
+		onfulfillMerchantName();
 		this.storeName.setValue(dealerMapping.getStoreName());
 		this.storeName.setDescription(dealerMapping.getStoreId());
 		this.storeCity.setText(dealerMapping.getStoreCity());
@@ -381,9 +382,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 
 		try {
 			this.merchantName.getValidatedValue();
-			if (this.merchantName.getDescription() != null && !this.merchantName.getDescription().equals("")) {
-				aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getDescription()));
-			}
+			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getDescription()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			this.storeName.getValidatedValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -395,7 +400,11 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		}
 
 		try {
-			aDealerMapping.setDealerCode(Long.valueOf(this.dealerCode.getText()));
+			if (this.dealerCode.getText() != null && !this.dealerCode.getText().equals("")) {
+				aDealerMapping.setDealerCode(Long.valueOf(this.dealerCode.getText()));
+			} else {
+				aDealerMapping.setDealerCode(0);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -468,13 +477,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		if (!this.merchantName.isReadonly()) {
 			this.merchantName.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_MerchantName.value"),
-							null, true));
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		if (!this.storeName.isReadonly()) {
 			this.storeName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerMappingDialog_StoreName.value"),
-							null, true));
+							PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
 
 		logger.debug(Literal.LEAVING);

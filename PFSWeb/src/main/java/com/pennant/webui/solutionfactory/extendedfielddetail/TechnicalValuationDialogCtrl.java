@@ -62,6 +62,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	protected Radiogroup numberOfColumns;
 	protected Radio radio_column1;
 	protected Radio radio_column2;
+	protected Radio radio_column3;
 	protected Grid grid_basicDetails;
 
 	private transient boolean validationOn;

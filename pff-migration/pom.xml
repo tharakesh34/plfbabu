@@ -127,7 +127,7 @@
 				<pfs.liquibase.username>postgres</pfs.liquibase.username>
 				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
 			</properties>
-		</profile>	
+		</profile>
 	</profiles>
 
 	<build>

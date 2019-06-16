@@ -509,7 +509,6 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 */
 	private List<ReturnDataSet> prepareAccountingSetResults(AEEvent aeEvent) {
-		logger.debug("Entering");
 		logger.trace("FIN REFERENCE: " + aeEvent.getFinReference());
 		logger.trace("Entity Code" + aeEvent.getEntityCode());
 		String zeroPostingFlag = SysParamUtil.getValueAsString("ALLOW_ZERO_POSTINGS");
@@ -772,8 +771,6 @@ public class AccountEngineExecution implements Serializable {
 		accountsMap = null;
 		accountCcyMap = null;
 
-		logger.debug("Leaving");
-
 		return returnDataSets;
 	}
 
@@ -876,7 +873,6 @@ public class AccountEngineExecution implements Serializable {
 	 */
 	private IAccounts getAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> accountsMap,
 			Map<String, Object> dataMap) {
-		logger.debug("Entering");
 
 		String txnOrder = String.valueOf(txnEntry.getTransOrder());
 		IAccounts newAccount = new IAccounts();
@@ -906,7 +902,6 @@ public class AccountEngineExecution implements Serializable {
 
 		accountsMap.put(txnOrder, txnEntry.getAccount() + txnEntry.getAccountType());
 
-		logger.debug("Leaving");
 		return newAccount;
 	}
 
@@ -926,7 +921,6 @@ public class AccountEngineExecution implements Serializable {
 	 */
 	private BigDecimal executeAmountRule(String event, TransactionEntry transactionEntry, String finCcy,
 			Map<String, Object> dataMap) {
-		logger.debug("Entering");
 
 		// Execute Transaction Entry Rule
 		BigDecimal amount = BigDecimal.ZERO;
@@ -936,7 +930,6 @@ public class AccountEngineExecution implements Serializable {
 
 		String amountRule = transactionEntry.getAmountRule();
 		amount = (BigDecimal) getRuleExecutionUtil().executeRule(amountRule, dataMap, finCcy, RuleReturnType.DECIMAL);
-		logger.debug("Leaving");
 		return amount;
 	}
 

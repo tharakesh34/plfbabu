@@ -94,7 +94,6 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -2442,7 +2441,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 */
 	public void fillPaymentRefComboBox(Combobox combobox, String value, List<FeePaymentDetail> list,
 			String excludeFields) {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
@@ -2465,7 +2464,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.trace(Literal.LEAVING);
 	}
 
 	private void doFillPaymentRefData() {

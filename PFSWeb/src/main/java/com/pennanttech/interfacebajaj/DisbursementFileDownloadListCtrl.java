@@ -232,7 +232,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 		inputStream.close();
 		inputStream = null;
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}
 
@@ -240,7 +240,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		String key = prefix.concat("/").concat(fileName);
 
 		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/plain", fileName);
+		Filedownload.save(fileData, "application/octet-stream", fileName);
 	}
 
 	/**

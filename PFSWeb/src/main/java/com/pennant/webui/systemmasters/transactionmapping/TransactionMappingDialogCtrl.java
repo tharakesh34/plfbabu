@@ -139,6 +139,8 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		this.mid.setMandatoryStyle(true);
 		this.mid.setValidateColumns(new String[] { "StoreId" });
 
+		this.tid.setMaxlength(6);
+
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}

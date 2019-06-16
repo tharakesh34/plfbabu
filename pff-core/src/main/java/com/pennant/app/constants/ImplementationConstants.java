@@ -182,15 +182,15 @@ public class ImplementationConstants {
 	//For Advance Interest/EMI Deposit
 	public static final boolean ALLOW_ADVSTAGE_DEPOSIT = false;
 
-	//The below variable is set for Branch Details tab of Users Screen in Administration menu.
-	public static final boolean ALLOW_DIVISION_BASED_CLUSTER = true;
-
 	//Covenant tab visible
 	public static final boolean COVENANT_REQUIRED = false;
 
 	// Both loan and legal roles will be available for assignment from Loan &
 	// Legal
 	public static final boolean QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES = true;
+
+	// Upfront Fee reversal required on loan cancellation
+	public static final boolean UPFRONT_FEE_REVERSAL_REQ = false;
 
 	//GST Invoice Due basis/Receipt Basis
 	// If Due Basis creation , means LPP created as fixed amount and same should be accrued on creation date then PARAMTER = "D"

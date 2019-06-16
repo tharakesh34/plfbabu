@@ -804,10 +804,10 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		APIErrorHandlerService.logReference(financeDetail.getFinReference());
 		WSReturnStatus returnStatus = null;
 		if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())
-				&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getOldFinReference())) {
+				&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "finReference";
-			valueParm[1] = "hostRefeence";
+			valueParm[1] = "External Reference";
 			return returnStatus = APIErrorHandlerService.getFailedStatus("30511", valueParm);
 
 		}
@@ -820,7 +820,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		} else {
-			returnStatus = validateOldFinReference(financeDetail,true);
+			returnStatus = validateOldFinReference(financeDetail, true);
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				return returnStatus;
 			}
@@ -829,6 +829,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
 	}
+
 	@Override
 	public FinanceDetail reInitiateFinance(FinanceDetail financeDetail) throws ServiceException {
 
@@ -840,11 +841,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		try {
 			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())
-					&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getOldFinReference())) {
+					&& StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
 				findetail = new FinanceDetail();
 				String[] valueParm = new String[2];
 				valueParm[0] = "finReference";
-				valueParm[1] = "hostRefeence";
+				valueParm[1] = "ExternalReference";
 				returnStatus = APIErrorHandlerService.getFailedStatus("30511", valueParm);
 				findetail.setReturnStatus(returnStatus);
 				return findetail;
@@ -870,20 +871,20 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return findetail;
 				}
 			}
-			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getOldFinReference())) {
 				int count = financeMainDAO
-						.getCountByOldFinReference(financeDetail.getFinScheduleData().getExternalReference());
+						.getCountByOldFinReference(financeDetail.getFinScheduleData().getOldFinReference());
 				if (count > 0) {
 					findetail = new FinanceDetail();
 					String[] valueParm = new String[2];
-					valueParm[0] = "Exrernal Reference";
-					valueParm[1] = financeDetail.getFinScheduleData().getExternalReference();
+					valueParm[0] = "Host Reference";
+					valueParm[1] = financeDetail.getFinScheduleData().getOldFinReference();
 					returnStatus = APIErrorHandlerService.getFailedStatus("30506", valueParm);
 					findetail.setReturnStatus(returnStatus);
 					return findetail;
 				}
 			}
-			findetail =createFinanceController.doReInitiateFinance(financeDetail);
+			findetail = createFinanceController.doReInitiateFinance(financeDetail);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			FinanceDetail response = new FinanceDetail();
@@ -893,17 +894,17 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		return findetail;
 
-		
 	}
-	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail,boolean active) {
+
+	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail, boolean active) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		// check records in origination
 		FinanceMain finMain = financeMainDAO
-				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getOldFinReference(),active);
+				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getExternalReference(), active);
 		if (finMain == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = financeDetail.getFinScheduleData().getOldFinReference();
+			valueParm[0] = financeDetail.getFinScheduleData().getExternalReference();
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		} else {
 			financeDetail.setFinReference(finMain.getFinReference());

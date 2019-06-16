@@ -59,6 +59,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -106,16 +107,23 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Column;
+import org.zkoss.zul.Columns;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.East;
 import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
+import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Image;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -163,6 +171,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -192,6 +201,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -340,6 +350,7 @@ import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -833,6 +844,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient int oldVar_odYearlyTerms;
 	protected transient int oldVar_odMnthlyTerms;
 
+	// Split screen components start
+	protected Groupbox gb_DocumentPdf;
+	protected Groupbox gb_SplitScreen_Documents;
+	protected Groupbox gb_iframeriskPropertyPdf;
+	protected Groupbox gb_basicDetails;
+
+	protected Button btnDocPdfClose;
+	protected East btnDocPdfEast;
+	protected Image btnDocPdf;
+
+	protected Iframe iframeriskPropertyPdf;
+	// Split screen components End
+
 	//Sub Window Child Details Dialog Controllers
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
 	private transient ContributorDetailsDialogCtrl contributorDetailsDialogCtrl;
@@ -992,12 +1016,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private int oldVal_advTerms;
 	private int oldVal_grcTerms;
 
-	
-	protected transient Date oldVal_tDSStartDate ; 
-	protected transient Date oldVal_tDSEndDate  ; 
+	protected transient Date oldVal_tDSStartDate;
+	protected transient Date oldVal_tDSEndDate;
 	protected transient BigDecimal oldVal_LimitAmt;
- 
-	
+
 	//Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	//for pdf extraction
@@ -1030,9 +1052,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
 	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
 
-
 	private int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	private String isCustomerBranch = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTBRANCH);
+
+	List<Component> defaultComponentList = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -1139,10 +1162,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.finStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.finContractDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		this.tDSStartDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.tDSEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-
 
 		this.finAmount.setProperties(true, finFormatter);
 		this.downPayBank.setProperties(true, finFormatter);
@@ -1534,7 +1556,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.advTerms.setDisabled(true);
 			this.advStage.setDisabled(true);
 		}
-		
+
 		this.tDSPercentage.setMaxlength(6);
 		this.tDSPercentage.setFormat(PennantApplicationUtil.getAmountFormate(2));
 
@@ -2904,7 +2926,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param tabVisible
 	 */
 	public void createTab(String moduleID, boolean tabVisible) {
-		logger.debug(Literal.ENTERING);
+		logger.trace(Literal.ENTERING);
+
 		String tabName = "";
 		if (StringUtils.equals(AssetConstants.UNIQUE_ID_JOINTGUARANTOR, moduleID)) {
 			tabName = Labels.getLabel("tab_Co-borrower&Gurantors");
@@ -2923,7 +2946,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		tabpanel.setParent(tabpanelsBoxIndexCenter);
 		tabpanel.setHeight("100%");
 		ComponentsCtrl.applyForward(tab, ("onSelect=" + selectMethodName));
-		logger.debug(Literal.LEAVING);
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	public void onSelectTab(ForwardEvent event)
@@ -3380,20 +3404,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
-		
-		
+
 		this.tDSApplicable.setChecked(aFinanceMain.isTDSApplicable());
-		
-		
+
 		//TDSApplicable Visiblitly based on Financetype Selection
 		if (!financeType.isTdsAllowToModify()) {
 			this.tDSPercentage.setReadonly(true);
 			this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		}
 		doSetTdsDetails();
-		
+
 		if (aFinanceMain.isNew()) {
-			if (financeType.isTdsApplicable() && financeType.isTdsAllowToModify() ) {
+			if (financeType.isTdsApplicable() && financeType.isTdsAllowToModify()) {
 				this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 				this.tDSStartDate.setValue(appDate);
 				setTdsEndDate();
@@ -3414,7 +3436,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				doSetTdsDetails();
 			} else {
-				
+
 			}
 		} else {
 			if (aFinanceMain.isTDSApplicable() || financeType.isTdsAllowToModify()) {
@@ -3422,7 +3444,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				setOldLowerTaxDeductionDetail(ltDetails);
 
 				if (CollectionUtils.isNotEmpty(ltDetails)) {
-					
+
 					for (LowerTaxDeduction lowerTaxDeduction : ltDetails) {
 
 						if (lowerTaxDeduction.getSeqno() == 1) {
@@ -3433,25 +3455,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 									PennantApplicationUtil.formateAmount(lowerTaxDeduction.getLimitAmt(), format));
 						}
 					}
-					
+
 				}
 				doSetTdsDetails();
 			} else {
 			}
 		}
-		
-		/*if (CollectionUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails())) {
-			for (LowerTaxDeduction list : getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()) {
-				if (list.getSeqno() == 1) {
-					this.tDSPercentage.setValue(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()
-							.get(0).getTdsPercentage());
-					this.tDSStartDate.setValue(aFinanceMain.getTdsStartDate());
-					this.tDSEndDate.setValue(aFinanceMain.getTdsEndDate());
-					this.tDSLimitAmt
-							.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format));
-				}
-			}
-		}*/
+
+		/*
+		 * if (CollectionUtils.isNotEmpty(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails())) { for
+		 * (LowerTaxDeduction list : getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()) { if
+		 * (list.getSeqno() == 1) {
+		 * this.tDSPercentage.setValue(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails()
+		 * .get(0).getTdsPercentage()); this.tDSStartDate.setValue(aFinanceMain.getTdsStartDate());
+		 * this.tDSEndDate.setValue(aFinanceMain.getTdsEndDate()); this.tDSLimitAmt
+		 * .setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getTdsLimitAmt(), format)); } } }
+		 */
 
 		this.lovDescFinTypeName.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 		this.finCcy.setValue(aFinanceMain.getFinCcy(), CurrencyUtil.getCcyDesc(aFinanceMain.getFinCcy()));
@@ -3832,6 +3851,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.maturityDate.setValue(aFinanceMain.getMaturityDate());
 		}
 		this.maturityDate_two.setValue(aFinanceMain.getMaturityDate());
+
+		// PSD #136202 For the saved loan's if the maturity date is not sync with frequency date's on click of verify button maturity date getting changed.
+		if (this.maturityDate.isReadonly()) {
+			this.maturityDate.setValue(aFinanceMain.getMaturityDate());
+		}
 
 		this.fixedRateTenor.setValue(aFinanceMain.getFixedRateTenor());
 		this.fixedTenorRate.setValue(aFinanceMain.getFixedTenorRate());
@@ -4357,34 +4381,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
 
 	private void setTdsEndDate() {
-	int month = DateUtility.getMonth(this.tDSStartDate.getValue());
-	int year = DateUtility.getYear(this.tDSStartDate.getValue());
+		int month = DateUtility.getMonth(this.tDSStartDate.getValue());
+		int year = DateUtility.getYear(this.tDSStartDate.getValue());
 
-	if (month > 3) {
-		Date tdsformateEndDate = null;
-		try {
-			tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (month > 3) {
+			Date tdsformateEndDate = null;
+			try {
+				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.tDSEndDate.setValue(tdsformateEndDate);
+		} else {
+			Date tdsformateEndDate = null;
+			try {
+				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.tDSEndDate.setValue(tdsformateEndDate);
 		}
-		this.tDSEndDate.setValue(tdsformateEndDate);
-	} else {
-		Date tdsformateEndDate = null;
-		try {
-			tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.tDSEndDate.setValue(tdsformateEndDate);
 	}
-	}
-
 
 	/**
 	 * Method for Query Management Details Tab in finance
@@ -4833,6 +4854,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oldVar_planEMIDates = getFinanceDetail().getFinScheduleData().getPlanEMIHDates();
 			}
 
+			//Document Split Screen is Required
+			String docSplitScreenReq = SysParamUtil.getValueAsString(SMTParameterConstants.DOC_SPLIT_SCREEN_REQ);
+
+			if (StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
+				this.btnDocPdfEast.setVisible(true);
+			}
+
 			setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -5042,10 +5070,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVal_grcAdvType = this.grcAdvType.getValue();
 		this.oldVal_advTerms = this.advTerms.intValue();
 		this.oldVal_grcTerms = this.grcAdvTerms.intValue();
-		
-		
-		this.oldVal_tDSStartDate = this.tDSStartDate.getValue(); 
-		this.oldVal_tDSEndDate = this.tDSEndDate.getValue(); 
+
+		this.oldVal_tDSStartDate = this.tDSStartDate.getValue();
+		this.oldVal_tDSEndDate = this.tDSEndDate.getValue();
 		this.oldVal_LimitAmt = this.tDSLimitAmt.getActualValue();
 	}
 
@@ -5252,7 +5279,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		
 		//FinanceMain Details Tab ---> 3. Repayment Period Details
 		if (!this.manualSchedule.isChecked()) {
 			if (this.numberOfTerms.intValue() != 0) {
@@ -5479,14 +5505,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				return true;
 			}
 		}
-		
-		
-		if(DateUtility.compare(this.oldVal_tDSStartDate, this.tDSStartDate.getValue()) != 0){
+
+		if (DateUtility.compare(this.oldVal_tDSStartDate, this.tDSStartDate.getValue()) != 0) {
 			return true;
 		}
-		
-		
-		if(DateUtility.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0){
+
+		if (DateUtility.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0) {
 			return true;
 		}
 
@@ -5951,23 +5975,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
-		
+
 		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
 			this.tDSStartDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value"), true));
 		}
-		
+
 		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
 			this.tDSEndDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSEndDate.value"), true));
 		}
-		
+
 		if (this.tDSApplicable.isChecked() && financeType.isTdsAllowToModify()) {
 			this.tDSStartDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value"), true));
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -6519,7 +6541,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
-		
+
 		//LTD Detail
 		resetLowerTaxDeductionDetail(aFinScheduleData);
 
@@ -8135,7 +8157,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		
+
 		// Lower Tax Deduction details
 		List<LowerTaxDeduction> lowerTaxDeductions = aFinanceDetail.getFinScheduleData().getLowerTaxDeductionDetails();
 		if (CollectionUtils.isNotEmpty(lowerTaxDeductions)) {
@@ -8454,7 +8476,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@SuppressWarnings("unused")
 	private void autoBuildSchedule() throws ParseException {
 		logger.debug(Literal.ENTERING);
-	
+
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
 				|| isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			return;
@@ -8924,8 +8946,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (PennantConstants.YES.equals(allowTaxDeduction)) {
 			if (this.tDSApplicable.isChecked()) {
 				this.row_tDSPercentage.setVisible(true);
-				
-				if(getFinanceDetail().getFinScheduleData().getFinanceType().isTdsAllowToModify()) {
+
+				if (getFinanceDetail().getFinScheduleData().getFinanceType().isTdsAllowToModify()) {
 					this.row_tDSEndDate.setVisible(true);
 					this.label_FinanceMainDialog_TDSLimitAmt.setVisible(true);
 					this.tDSLimitAmt.setVisible(true);
@@ -8951,8 +8973,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		oncheckalwBpiTreatment(true);
 		logger.debug(Literal.LEAVING);
 	}
-	
-	
+
 	public void onChange$tDSEndDate(Event event) {
 		logger.debug(Literal.ENTERING);
 		if (this.tDSStartDate.getValue() != null && this.tDSEndDate.getValue() != null) {
@@ -8986,7 +9007,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
 			}
 		} else {
-			
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -10230,7 +10251,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					errorList.add(new ErrorDetail("profitDaysBasis", "65003",
 							new String[] { getComboboxValue(this.cbProfitDaysBasis),
-									getFinanceDetail().getFinScheduleData().getFinanceMain().getProfitDaysBasis() },
+									getFinanceDetail().getFinScheduleData().getFinanceType().getFinDaysCalType() },
 							new String[] { getComboboxValue(this.cbProfitDaysBasis) }));
 				}
 			}
@@ -11375,8 +11396,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		aFinanceMain.setQuickDisb(this.quickDisb.isChecked());
-	
-
 
 		//FinanceMain Details tab ---> 2. Grace Period Details
 		try {
@@ -13063,10 +13082,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
 		}
 
-		
 		//Lower tax deduction Details setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
-		
+
 		if (this.tDSApplicable.isChecked()) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
@@ -13085,12 +13103,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 			
-			if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue())!=0) {
-				throw new WrongValueException(this.tDSStartDate, Labels.getLabel("FRQ_DATE_MISMATCH",
-						new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
-								Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
+			if (DateUtility.compare(this.appDate, this.tDSStartDate.getValue()) != 0) {
+				wve.add(new WrongValueException(this.tDSStartDate,
+						Labels.getLabel("FRQ_DATE_MISMATCH",
+								new String[] { Labels.getLabel("label_FinanceMainDialog_FinStartDate.value"),
+										Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") })));
 			}
-			
+
 			try {
 				lowerTxDeduction.setEndDate(this.tDSEndDate.getValue());
 			} catch (WrongValueException we) {
@@ -13102,7 +13121,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			int startDatemonth = DateUtility.getMonth(this.tDSStartDate.getValue());
 			int startDateyear = DateUtility.getYear(this.tDSStartDate.getValue());
 			Date tdsformateEndDate = null;
@@ -13128,9 +13147,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (DateUtility.compare(tdsformateEndDate, tdsEndDate) == -1
 					|| DateUtility.compare(tdsStartDate, tdsEndDate) == 0
 					|| DateUtility.compare(tdsEndDate, tdsStartDate) == -1) {
-				throw new WrongValueException(this.tDSEndDate,
+				wve.add(new WrongValueException(this.tDSEndDate,
 						"End Date must be after" + " " + DateUtil.format(this.tDSStartDate.getValue(), "dd/MM/yyyy")
-								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy"));
+								+ " " + "before" + " " + DateUtil.format(tdsformateEndDate, "dd/MM/yyyy")));
 			}
 
 			lowerTaxdedecutions.add(lowerTxDeduction);
@@ -13148,9 +13167,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					deduction.setLimitAmt(BigDecimal.ZERO);
 				}
 				aFinanceSchData.setLowerTaxDeductionDetails(lowerTaxDeduction);
-			} 
+			}
 		}
-		
+
 		//FinanceMain Details Tab Validation Error Throwing
 		if (!getProductCode().equalsIgnoreCase(FinanceConstants.PRODUCT_SUKUK)) {
 			showErrorDetails(wve, financeTypeDetailsTab);
@@ -13423,11 +13442,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 
 		FinanceProfitDetail profitDetail = null;
+		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			profitDetail = new FinanceProfitDetail();
 		} else {
-			profitDetail = getFinanceDetailService()
-					.getFinProfitDetailsById(getFinanceDetail().getFinScheduleData().getFinReference());
+			profitDetail = getFinanceDetailService().getFinProfitDetailsById(finScheduleData.getFinReference());
 		}
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
@@ -13442,9 +13463,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 
 			//GST Added		
-			String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-			Map<String, Object> gstExecutionMap = getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail(),
-					branch);
+			//String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
+
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+
+			/*
+			 * Map<String, Object> gstExecutionMap =
+			 * getFinanceDetailService().prepareGstMappingDetails(getFinanceDetail(), branch);
+			 */
 			if (gstExecutionMap != null) {
 				for (String key : gstExecutionMap.keySet()) {
 					if (StringUtils.isNotBlank(key)) {
@@ -13453,15 +13479,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
+			setTDSForAdvInt(financeMain, dataMap, amountCodes);
+
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			aeEvent.setDataMap(dataMap);
+
 			aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 			accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 
 		} else {
 
-			List<FinServiceInstruction> serviceInsts = getFinanceDetail().getFinScheduleData()
-					.getFinServiceInstructions();
+			List<FinServiceInstruction> serviceInsts = finScheduleData.getFinServiceInstructions();
 
 			Cloner cloner = new Cloner();
 			for (FinServiceInstruction inst : serviceInsts) {
@@ -13478,12 +13506,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				tempAmountCodes.setPftChg(inst.getPftChg());
 
+				// Advance Interest
+				setTDSForAdvInt(financeMain, dataMap, tempAmountCodes);
+
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setAeAmountCodes(tempAmountCodes);
 				if (inst.getFromDate() != null) {
 					aeEvent.setValueDate(inst.getFromDate());
 				}
 				aeEvent.setDataMap(dataMap);
+
 				aeEvent = getEngineExecution().getAccEngineExecResults(aeEvent);
 				accountingSetEntries.addAll(aeEvent.getReturnDataSet());
 			}
@@ -13496,7 +13528,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				|| eventCode.equals(AccountEventConstants.ACCEVENT_ADDDBSP)) {
 
 			accountingSetEntries.addAll(disbursementPostings.getDisbPosting(getFinanceDetail().getAdvancePaymentsList(),
-					getFinanceDetail().getFinScheduleData().getFinanceMain()));
+					finScheduleData.getFinanceMain()));
 
 			//	prepareDisbInstructionPosting(accountingSetEntries, aeEvent);
 		}
@@ -13523,6 +13555,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void setTDSForAdvInt(FinanceMain financeMain, Map<String, Object> dataMap, AEAmountCodes tempAmountCodes) {
+		if (financeMain.isTDSApplicable()) {
+			String grcAdvType = financeMain.getGrcAdvType();
+			String advType = financeMain.getAdvType();
+			if (AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType)) {
+				tempAmountCodes.setIntTdsAdjusted(AdvancePaymentUtil.getTDSOnAdvanseInterest(dataMap));
+				financeMain.setIntTdsAdjusted(tempAmountCodes.getIntTdsAdjusted());
+			}
+		}
 	}
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
@@ -13577,8 +13620,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 		} else {
 			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
+			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 		}
 
 		if (finMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(finMain.getRecordType())) {
@@ -15367,9 +15412,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_graceBaseRate"), this.finGrcMinRate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_graceBaseRate"), this.finGrcMaxRate);
 
-		//FIXME: We are not giving grace interest days seprately
-		//readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
-
+		readOnlyComponent(isReadOnly("FinanceMainDialog_grcPftDaysBasis"), this.grcPftDaysBasis);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftFrq"), this.gracePftFrq);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcPftDate"), this.nextGrcPftDate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_gracePftRvwFrq"), this.gracePftRvwFrq);
@@ -16532,8 +16575,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.custCIFSearchObject = newSearchObject;
 		logger.debug("Leaving ");
 	}
-	
-	
+
 	private void resetLowerTaxDeductionDetail(FinScheduleData aFinScheduleData) {
 		logger.debug(Literal.ENTERING);
 
@@ -17695,14 +17737,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.oDMaxWaiverPerc.setValue(BigDecimal.ZERO);
 			this.oDMinCapAmount.setValue(BigDecimal.ZERO);
 		} else {
-			if(penaltyRate != null) {
+			if (penaltyRate != null) {
 				this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
 				fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
 						"");
-				fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(), PennantStaticListUtil.getODCCalculatedOn(),
-						"");
+				fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(),
+						PennantStaticListUtil.getODCCalculatedOn(), "");
 				this.oDGraceDays.setValue(penaltyRate.getODGraceDays());
-				this.oDChargeAmtOrPerc.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
+				this.oDChargeAmtOrPerc
+						.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
 				this.oDAllowWaiver.setChecked(penaltyRate.isODAllowWaiver());
 				this.oDMaxWaiverPerc.setValue(penaltyRate.getODMaxWaiverPerc());
 				this.oDMinCapAmount.setValue(penaltyRate.getoDMinCapAmount());
@@ -20070,6 +20113,282 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.btnBuildSchedule.isVisible() && isSchdlRegenerate()) {
 			MessageUtil.showError(Labels.getLabel("label_Finance_FinDetails_Changed"));
 		}
+	}
+
+	//Split screen start
+	public void onClick$btnDocPdf(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		List<DocumentDetails> detailsList = documentDetailDialogCtrl.getDocumentDetailsList();
+
+		List<CustomerDocument> customerDocuments = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+
+		boolean available = false;
+
+		if (CollectionUtils.isNotEmpty(customerDocuments)) {
+			for (CustomerDocument customerDocument : customerDocuments) {
+				if (PennantConstants.DOC_TYPE_PDF.equals(customerDocument.getCustDocType())) {
+
+					byte[] docImage = customerDocument.getCustDocImage();
+					if (docImage == null) {
+						docImage = PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId());
+					}
+					if (docImage != null) {
+						available = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (CollectionUtils.isNotEmpty(detailsList) && !available) {
+			for (DocumentDetails details : detailsList) {
+				if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())) {
+
+					byte[] docImage = details.getDocImage();
+					if (docImage == null) {
+						docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+					}
+					if (docImage != null) {
+						available = true;
+						break;
+					}
+
+				}
+			}
+		}
+
+		if (!available) {
+			MessageUtil.showMessage("Documents are not available.");
+			return;
+		}
+		renderSplitDocuments(detailsList);
+		renderSplitCustDocuments(customerDocuments);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	//Documents Rendering Rendering For The Split Screen Purpose.
+	private void renderSplitDocuments(List<DocumentDetails> detailsList) {
+		for (DocumentDetails details : detailsList) {
+			if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())) {
+
+				byte[] docImage = details.getDocImage();
+				if (docImage == null) {
+					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+				}
+				if (docImage != null) {
+					details.setDocImage(docImage);
+				} else {
+					continue;
+				}
+
+				Groupbox groupbox = new Groupbox();
+				groupbox.setStyle("GridLayoutNoBorder");
+				this.gb_SplitScreen_Documents.appendChild(groupbox);
+
+				Grid grid = new Grid();
+				grid.setSclass("GridLayoutNoBorder");
+				grid.setStyle("border:0px");
+				grid.setHeight("80px");
+				groupbox.appendChild(grid);
+
+				Columns columns = new Columns();
+				Column column = new Column();
+
+				columns.appendChild(column);
+				grid.appendChild(columns);
+
+				Rows rows = new Rows();
+				grid.appendChild(rows);
+
+				Row row1 = new Row();
+				rows.appendChild(row1);
+
+				Label label = new Label(details.getDocCategory() + " - " + details.getLovDescDocCategoryName());
+				row1.appendChild(label);
+
+				Row row2 = new Row();
+				rows.appendChild(row2);
+
+				Hbox hbox2 = new Hbox();
+				row2.appendChild(hbox2);
+
+				A href = new A();
+				href.setAttribute("Object", details);
+				href.addForward("onClick", this.window, "onClicked");
+				href.setLabel(details.getDocName());
+				hbox2.appendChild(href);
+
+				Row row3 = new Row();
+				rows.appendChild(row3);
+
+				Label label3 = new Label(DateUtility.formatToLongDate(details.getLastMntOn()));
+				row3.appendChild(label3);
+
+			}
+		}
+		this.gb_SplitScreen_Documents.setWidth("490px");
+		this.gb_SplitScreen_Documents.setHeight("500px");
+		this.btnDocPdfClose.setVisible(true);
+		this.gb_DocumentPdf.setVisible(true);
+		this.gb_DocumentPdf.setWidth("490px");
+		this.gb_DocumentPdf.setHeight("500px");
+		this.gb_DocumentPdf.setStyle("padding-top: 11px;");
+
+		this.gb_SplitScreen_Documents.setVisible(true);
+		this.gb_iframeriskPropertyPdf.setVisible(false);
+		this.gb_basicDetails.setWidth("1060px");
+		Hbox hbox = new Hbox();
+		this.gb_basicDetails.setParent(hbox);
+		this.gb_DocumentPdf.setParent(hbox);
+
+		if (defaultComponentList.isEmpty()) {
+			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
+		}
+		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
+		hbox.setParent(basicDetailTabDiv);
+		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
+		btnDocPdf.setVisible(false);
+
+	}
+
+	//Customer Documents Rendering For The Split Screen Purpose.
+	private void renderSplitCustDocuments(List<CustomerDocument> detailsList) {
+		for (CustomerDocument details : detailsList) {
+			if (PennantConstants.DOC_TYPE_PDF.equals(details.getCustDocType())) {
+
+				byte[] docImage = details.getCustDocImage();
+				if (docImage == null) {
+					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+				}
+				if (docImage != null) {
+					details.setCustDocImage(docImage);
+				} else {
+					continue;
+				}
+
+				Groupbox groupbox = new Groupbox();
+				groupbox.setStyle("GridLayoutNoBorder");
+				this.gb_SplitScreen_Documents.appendChild(groupbox);
+
+				Grid grid = new Grid();
+				grid.setSclass("GridLayoutNoBorder");
+				grid.setStyle("border:0px");
+				grid.setHeight("80px");
+				groupbox.appendChild(grid);
+
+				Columns columns = new Columns();
+				Column column = new Column();
+
+				columns.appendChild(column);
+				grid.appendChild(columns);
+
+				Rows rows = new Rows();
+				grid.appendChild(rows);
+
+				Row row1 = new Row();
+				rows.appendChild(row1);
+
+				Label label = new Label(details.getCustDocCategory() + " - " + details.getLovDescCustDocCategory());
+				row1.appendChild(label);
+
+				Row row2 = new Row();
+				rows.appendChild(row2);
+
+				Hbox hbox2 = new Hbox();
+				row2.appendChild(hbox2);
+
+				DocumentDetails documentDetails = new DocumentDetails();
+				documentDetails.setDocImage(docImage);
+				documentDetails.setDocName(details.getCustDocName());
+
+				A href = new A();
+				href.setAttribute("Object", documentDetails);
+				href.addForward("onClick", this.window, "onClicked");
+				href.setLabel(details.getCustDocName());
+				hbox2.appendChild(href);
+
+				Row row3 = new Row();
+				rows.appendChild(row3);
+
+				Label label3 = new Label(DateUtility.formatToLongDate(details.getLastMntOn()));
+				row3.appendChild(label3);
+
+			}
+		}
+		this.gb_SplitScreen_Documents.setWidth("490px");
+		this.gb_SplitScreen_Documents.setHeight("500px");
+		this.btnDocPdfClose.setVisible(true);
+		this.gb_DocumentPdf.setVisible(true);
+		this.gb_DocumentPdf.setWidth("490px");
+		this.gb_DocumentPdf.setHeight("500px");
+		this.gb_DocumentPdf.setStyle("padding-top: 11px;");
+
+		this.gb_SplitScreen_Documents.setVisible(true);
+		this.gb_iframeriskPropertyPdf.setVisible(false);
+		this.gb_basicDetails.setWidth("1060px");
+		Hbox hbox = new Hbox();
+		this.gb_basicDetails.setParent(hbox);
+		this.gb_DocumentPdf.setParent(hbox);
+
+		if (defaultComponentList.isEmpty()) {
+			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
+		}
+		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
+		hbox.setParent(basicDetailTabDiv);
+		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
+		btnDocPdf.setVisible(false);
+
+	}
+
+	public void onClick$btnDocPdfClose(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		this.gb_DocumentPdf.setVisible(false);
+		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
+		this.gb_basicDetails.setParent(basicDetailTabDiv);
+		this.gb_iframeriskPropertyPdf.setParent(gb_DocumentPdf);
+		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
+		this.gb_basicDetails.setWidth(getDesktopWidth() - 80 + "px");
+		btnDocPdf.setVisible(true);
+		this.gb_SplitScreen_Documents.getChildren().clear();
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClicked(ForwardEvent event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		A href = (A) event.getOrigin().getTarget();
+		DocumentDetails details = (DocumentDetails) href.getAttribute("Object");
+
+		this.gb_DocumentPdf.setVisible(true);
+		this.gb_SplitScreen_Documents.setVisible(false);
+		this.gb_iframeriskPropertyPdf.setVisible(true);
+		this.gb_iframeriskPropertyPdf.setWidth("480px");
+		this.gb_iframeriskPropertyPdf.setHeight("500px");
+		this.iframeriskPropertyPdf.setVisible(true);
+		this.iframeriskPropertyPdf.setHeight("435px");
+		this.iframeriskPropertyPdf.setWidth("455px");
+		this.gb_basicDetails.setWidth("1060px");
+
+		Hbox hbox = new Hbox();
+		this.gb_basicDetails.setParent(hbox);
+		this.gb_DocumentPdf.setParent(hbox);
+
+		if (defaultComponentList.isEmpty()) {
+			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
+		}
+		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
+		hbox.setParent(basicDetailTabDiv);
+		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
+		btnDocPdf.setVisible(false);
+
+		this.iframeriskPropertyPdf.setContent(
+				new AMedia(details.getDocName(), null, null, new ByteArrayInputStream(details.getDocImage())));
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	public List<String> getAssignCollateralRef() {

@@ -16,6 +16,7 @@ import com.pennant.app.core.DateService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
+import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.util.AmortizationConstants;
 
 public class DatesUpdate implements Tasklet {
@@ -27,6 +28,8 @@ public class DatesUpdate implements Tasklet {
 
 	@Autowired
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
+	@Autowired
+	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext context) throws Exception {
@@ -52,6 +55,11 @@ public class DatesUpdate implements Tasklet {
 					projectedAmortizationDAO.preparePrvProjectedAccruals(prvMonthEnd);
 				}
 			}
+		}
+
+		//GST invoice Sequences set it to 0 in month end
+		if (valueDate.compareTo(DateUtility.getMonthEnd(valueDate)) == 0) {
+			this.gstInvoiceTxnDAO.updateSeqNo();
 		}
 
 		// check extended month end and update the dates.

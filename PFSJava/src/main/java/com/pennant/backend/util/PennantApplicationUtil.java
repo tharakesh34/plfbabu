@@ -776,7 +776,8 @@ public class PennantApplicationUtil {
 	 * @return
 	 */
 	public static String getExtendedFieldRightName(ExtendedFieldDetail detail) {
-		logger.debug(Literal.ENTERING);
+		logger.trace(Literal.ENTERING);
+
 		String rightName = null;
 		if (detail != null) {
 			String pageName = detail.getLovDescModuleName() + "_" + detail.getLovDescSubModuleName();
@@ -786,7 +787,8 @@ public class PennantApplicationUtil {
 				rightName = pageName + "_" + detail.getFieldType() + "_" + detail.getFieldName();
 			}
 		}
-		logger.debug(Literal.LEAVING);
+
+		logger.trace(Literal.LEAVING);
 		return rightName;
 	}
 

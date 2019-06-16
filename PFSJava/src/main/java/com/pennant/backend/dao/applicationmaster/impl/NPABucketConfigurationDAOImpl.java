@@ -306,7 +306,7 @@ public class NPABucketConfigurationDAOImpl extends SequenceDao<NPABucketConfigur
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
-		sql.append(" From NPABUCKETSCONFIG Where ProductCode = :ProductCode");
+		sql.append(" From NPABUCKETSCONFIG Where ProductCode = :ProductCode Order By dueDays");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

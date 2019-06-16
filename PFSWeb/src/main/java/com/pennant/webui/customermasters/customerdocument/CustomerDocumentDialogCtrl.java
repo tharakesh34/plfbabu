@@ -586,9 +586,16 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.custDocIssuedCountry.setValue(aCustomerDocument.getCustDocIssuedCountry());
 
 		if (aCustomerDocument.isNew() && StringUtils.isBlank(this.custDocIssuedCountry.getValue())) {
-			Country defaultCountry = PennantApplicationUtil.getDefaultCounty();
-			this.custDocIssuedCountry.setValue(defaultCountry.getCountryCode());
-			this.custDocIssuedCountry.setDescription(defaultCountry.getCountryDesc());
+			Filter[] countrysystemDefault = new Filter[1];
+
+			countrysystemDefault[0] = new Filter("SystemDefault", 1, Filter.OP_EQUAL);
+			Object countryObj = PennantAppUtil.getSystemDefault("Country", "", countrysystemDefault);
+
+			if (countryObj != null) {
+				Country country = (Country) countryObj;
+				this.custDocIssuedCountry.setValue(country.getCountryCode());
+				this.custDocIssuedCountry.setDescription(country.getCountryDesc());
+			}
 		}
 
 		this.custDocIsVerified.setChecked(aCustomerDocument.isCustDocIsVerified());
@@ -918,9 +925,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 			if (StringUtils.isNotBlank(value)) {
 				String masterDocType = customerDocumentService.getDocTypeByMasterDefByCode("DOC_TYPE", value);
 				String regex = PennantRegularExpressions.REGEX_ALPHANUM_CODE;
-				if (StringUtils.equalsIgnoreCase("PAN", masterDocType)) {
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PANNUMBER, masterDocType)) {
 					regex = PennantRegularExpressions.REGEX_PANNUMBER;
-				} else if (StringUtils.equalsIgnoreCase("AADHAAR", masterDocType)) {
+				} else if (StringUtils.equalsIgnoreCase(PennantConstants.CPRCODE, masterDocType)) {
 					regex = PennantRegularExpressions.REGEX_AADHAR_NUMBER;
 				}
 				if (StringUtils.isNotBlank(regex)) {

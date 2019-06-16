@@ -439,6 +439,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	public void onClick$btnProceed(Event event) throws Exception {
 		logger.debug("Entering " + event.toString());
+		receiptData.setEnquiry(true);
 		doSetValidation();
 		doWriteComponentsToBean();
 
@@ -480,6 +481,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 */
 	public void onClick$btnValidate(Event event) throws Exception {
 		this.btnProceed.setDisabled(true);
+		receiptData.setEnquiry(true);
 		doSetValidation();
 		doWriteComponentsToBean();
 		validateReceiptData();
@@ -493,7 +495,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData = receiptService.calcuateDues(receiptData);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
-				.add(rch.getTotalRcvAdvises().getTotalDue()).add( rch.getTotalFees().getTotalDue()).subtract(receiptData.getExcessAvailable());
+				.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
+				.subtract(receiptData.getExcessAvailable());
 
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
 		this.receiptDues.setDisabled(true);
@@ -625,7 +628,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode,
 				FinanceConstants.FINSER_EVENT_RECEIPT, "");
-		receiptData.setEnquiry(true);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData fsd = financeDetail.getFinScheduleData();

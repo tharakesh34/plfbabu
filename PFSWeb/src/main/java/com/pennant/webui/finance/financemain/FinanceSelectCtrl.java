@@ -1116,7 +1116,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_CANFIN_BACK_DATE");
 			backValueDate = DateUtility.addDays(appDate, backValueDays);
 
-			whereClause.append(" AND MigratedFinance = 0 ");
+			//whereClause.append(" AND MigratedFinance = 0 ");
 			whereClause.append(" AND (FinStartDate = LastRepayDate and FinStartDate = LastRepayPftDate AND ");
 			whereClause.append(" FinStartDate >= '" + backValueDate.toString() + "')");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");

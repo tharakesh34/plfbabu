@@ -98,7 +98,7 @@ public class SMTParameterConstants {
 	public static final String GROUP_BATCH_BY_BANK = "GROUP_BATCH_BY_BANK";
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final String BPI_INCOMIZED_ON_ORG = "BPI_INCOMIZED_ON_ORG";
-	
+
 	// Allow Partner Bank in Mandate based on this flag variable
 	public static final String MANDATE_ALW_PARTNER_BANK = "MANDATE_ALW_PARTNER_BANK";
 
@@ -129,14 +129,16 @@ public class SMTParameterConstants {
 
 	//The below variable is set for Branch screen in Entity Masters for Masters menu.
 	public static final String ALLOW_ORGANISATIONAL_STRUCTURE = "ALLOW_ORGANISATIONAL_STRUCTURE";
-	
+	public static final String HOLD_DISB_INST_POST = "HOLD_DISB_INST_POST";//LMS service log required or not
+	public static final String ALLOW_DIVISION_BASED_CLUSTER = "ALLOW_DIVISION_BASED_CLUSTER";//LMS service log required or not
+	public static final String DOC_SPLIT_SCREEN_REQ = "DOC_SPLIT_SCREEN_REQ";// Document Split Screen is Required
+	public static final String HUNTER_REQ = "HUNTER_REQUIRED";
+
 	//COMMITMENTS is Required or Not
 	public static final String ALLOW_COMMITMENTS = "ALLOW_COMMITMENTS";
 
 	public static final String CALCULATE_GST_ON_GSTRATE_MASTER = "CALCULATE_GST_ON_GSTRATE_MASTER";
 
 	public static final String VAN_REQUIRED = "VAN_REQUIRED";
-
-
 
 }

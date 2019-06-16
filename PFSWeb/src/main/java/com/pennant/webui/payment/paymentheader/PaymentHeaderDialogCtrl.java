@@ -83,6 +83,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -1122,6 +1123,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			amountCodes.setPartnerBankAcType(paymentInstruction.getPartnerBankAcType());
 		}
 
+		// GST parameters
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+
 		aeEvent.setCcy(financeMain.getFinCcy());
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
@@ -1181,6 +1185,15 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		eventMapping.put("pi_emiInAdvance", emiInAdavance);
 		eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
 		aeEvent.setDataMap(eventMapping);
+
+		if (gstExecutionMap != null) {
+			for (String mapkey : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(mapkey)) {
+					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+				}
+			}
+		}
+
 		aeEvent.getAcSetIDList().add(accountsetId);
 		List<ReturnDataSet> returnSetEntries = postingsPreparationUtil.getAccounting(aeEvent).getReturnDataSet();
 		accountingSetEntries.addAll(returnSetEntries);

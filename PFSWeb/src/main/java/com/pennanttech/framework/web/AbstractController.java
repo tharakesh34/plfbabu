@@ -600,7 +600,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 * @param list
 	 */
 	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
+
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);
@@ -619,7 +620,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				combobox.setSelectedItem(comboitem);
 			}
 		}
-		logger.debug("Leaving");
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	public void fillList(Combobox component, List<Property> properties, Object selectedKey) {
@@ -662,7 +664,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	 * @param list
 	 */
 	public void fillComboBox(Combobox combobox, String value, List<ValueLabel> list, List<String> exculdeValues) {
-		logger.debug("Entering fillComboBox()");
+		logger.trace(Literal.ENTERING);
+
 		combobox.getChildren().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue(PennantConstants.List_Select);
@@ -682,7 +685,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				combobox.setSelectedItem(comboitem);
 			}
 		}
-		logger.debug("Leaving fillComboBox()");
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	public void readOnlyComponent(boolean isReadOnly, Component component) {

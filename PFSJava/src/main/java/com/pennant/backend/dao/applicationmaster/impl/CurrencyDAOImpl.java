@@ -107,7 +107,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append("  Where CcyCode =:CcyCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
@@ -140,7 +140,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies");
 		selectSql.append("  Where CcyCode =:CcyCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
@@ -173,7 +173,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT CcyNumber FROM  RMTCurrencies");
 		selectSql.append(" Where CcyCode =:CcyCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 
 		try {
@@ -342,7 +342,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies_View ");
 		selectSql.append(whereCond);
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
@@ -372,7 +372,8 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" CcySpotRate, CcyIsReceprocal, CcyUserRateSell, CcyUserRateBuy, CcyMinorCcyUnits,");
 		selectSql.append(" CcyMinorCcyDesc, CcySymbol");
 		selectSql.append(" FROM  RMTCurrencies");
-		logger.debug("selectSql: " + selectSql.toString());
+
+		logger.trace(Literal.SQL + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		List<Currency> currencies = this.jdbcTemplate.getJdbcOperations().query(selectSql.toString(), typeRowMapper);
@@ -390,7 +391,8 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" CcySpotRate, CcyIsReceprocal, CcyUserRateSell, CcyUserRateBuy, CcyMinorCcyUnits,");
 		selectSql.append(" CcyMinorCcyDesc, CcySymbol");
 		selectSql.append(" FROM  RMTCurrencies where CcyCode = :CcyCode");
-		//	logger.debug("selectSql: " + selectSql.toString()); 
+
+		logger.trace(Literal.SQL + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		Currency currencies = this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
@@ -410,7 +412,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(" FROM  RMTCurrencies");
 		selectSql.append("  Where CcyCode IN(:CCYList)");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		logger.debug("Leaving ");
@@ -427,7 +429,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT CcyCode FROM RMTCurrencies");
 		selectSql.append(" WHERE CcyCode=:CcyCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 
 		logger.debug("Leaving");
 

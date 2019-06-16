@@ -556,7 +556,7 @@ public class RepaymentProcessUtil {
 
 			// Setting/Maintaining Log key for Last log of Schedule Details
 			rcdList.get(rcdList.size() - 1).setLogKey(logKey);
-			
+
 			// preparing GST Invoice Report for Manual Advises and Bounce
 			if (CollectionUtils.isNotEmpty(movements) && financeDetail != null) {
 				List<ManualAdviseMovements> movementList = new ArrayList<ManualAdviseMovements>();
@@ -1120,7 +1120,9 @@ public class RepaymentProcessUtil {
 
 			FinRepayHeader rph = rcd.getRepayHeader();
 			rph.setReceiptSeqID(receiptSeqID);
+			rph.setValueDate(DateUtility.getAppValueDate());
 			rph.setFinReference(rch.getReference());
+			rph.setFinEvent(rch.getReceiptPurpose());
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 				int recordCount = 0;
 				if ((StringUtils.equals(rcd.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)

@@ -527,4 +527,52 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 			return 0;
 		}
 	}
+
+	@Override
+	public long isLimitBlock(long custID, String type, boolean limitBlock) {
+		logger.debug("Entering");
+		LimitHeader limitHeader = getLimitHeader();
+		long count = 0;
+		limitHeader.setCustomerId(custID);
+		limitHeader.setBlocklimit(limitBlock);
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) ");
+		selectSql.append(" From LimitHeader");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustomerId =:CustomerId AND blocklimit =:blocklimit");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitHeader);
+
+		try {
+			count = this.jdbcTemplate.queryForLong(selectSql.toString(), beanParameters);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			limitHeader = null;
+		}
+		return count;
+	}
+
+	@Override
+	public int updateBlockLimit(long custId, long headerId, boolean blockLimit) {
+		logger.debug("Entering");
+		int count = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("HeaderId", headerId);
+		source.addValue("CustomerId", custId);
+		source.addValue("blocklimit", blockLimit);
+
+		StringBuilder updateSql = new StringBuilder("Update LimitHeader");
+		updateSql.append(" Set blocklimit =:blocklimit ");
+		updateSql.append(" Where HeaderId =:HeaderId AND CustomerId =:CustomerId");
+		logger.debug("updateSql: " + updateSql.toString());
+
+		count = this.jdbcTemplate.update(updateSql.toString(), source);
+		if (count <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug("Leaving");
+		return count;
+
+	}
 }

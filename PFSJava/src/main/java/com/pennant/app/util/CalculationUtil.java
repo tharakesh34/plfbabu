@@ -170,12 +170,41 @@ public class CalculationUtil implements Serializable {
 		int yearOfStart = startCalendar.get(Calendar.YEAR);
 		int yearOfEnd = endCalendar.get(Calendar.YEAR);
 
-		if (monthOfStart == 1 && dayOfStart > 27) {
-			dayOfStart = 30;
+		boolean isFebSetReq = true;
+		if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
+			if (DateUtility.isLeapYear(yearOfStart)) {
+				if (dayOfStart == 29 && dayOfEnd == 29) {
+					isFebSetReq = false;
+				}
+			} else {
+				if (dayOfStart == 28 && dayOfEnd == 28) {
+					isFebSetReq = false;
+				}
+			}
 		}
 
-		if (monthOfEnd == 1 && dayOfEnd > 27) {
-			dayOfEnd = 30;
+		if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
+			if (DateUtility.isLeapYear(yearOfStart)) {
+				if (dayOfStart > 28) {
+					dayOfStart = 30;
+				}
+			} else {
+				if (dayOfStart > 27) {
+					dayOfStart = 30;
+				}
+			}
+		}
+
+		if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
+			if (DateUtility.isLeapYear(yearOfEnd)) {
+				if (dayOfEnd > 28) {
+					dayOfEnd = 30;
+				}
+			} else {
+				if (dayOfEnd > 27) {
+					dayOfEnd = 30;
+				}
+			}
 		}
 
 		if (dayOfEnd == 31) {
@@ -358,12 +387,43 @@ public class CalculationUtil implements Serializable {
 			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360I)) {
-			if (monthOfStart == 2 && dayOfStart > 27) {
-				dayOfStart = 30;
+			boolean isFebSetReq = true;
+			if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
+				if (DateUtility.isLeapYear(yearOfStart)) {
+					if (dayOfStart == 29 && dayOfEnd == 29) {
+						isFebSetReq = false;
+					}
+				} else {
+					if (dayOfStart == 28 && dayOfEnd == 28) {
+						isFebSetReq = false;
+					}
+				}
 			}
 
-			if (monthOfEnd == 2 && dayOfEnd > 27) {
-				dayOfStart = 30;
+			if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
+				if (DateUtility.isLeapYear(yearOfStart)) {
+					if (dayOfStart > 28) {
+						dayOfStart = 30;
+					}
+				} else {
+					if (dayOfStart > 27) {
+						dayOfStart = 30;
+					}
+				}
+			}
+
+			if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
+				dayOfEnd = 30;
+
+				if (DateUtility.isLeapYear(yearOfEnd)) {
+					if (dayOfEnd > 28) {
+						dayOfEnd = 30;
+					}
+				} else {
+					if (dayOfEnd > 27) {
+						dayOfEnd = 30;
+					}
+				}
 			}
 
 			if (dayOfEnd == 31) {

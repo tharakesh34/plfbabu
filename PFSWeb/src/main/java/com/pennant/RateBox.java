@@ -54,6 +54,7 @@ import org.zkoss.zul.Space;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class RateBox extends Hbox {
 	private static final long serialVersionUID = 1L;
@@ -73,7 +74,7 @@ public class RateBox extends Hbox {
 	 */
 	public RateBox() {
 		super();
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
 		space = new Space();
 		space.setWidth("2px");
@@ -115,7 +116,7 @@ public class RateBox extends Hbox {
 		hbox.appendChild(effRate);
 
 		this.appendChild(hbox);
-		logger.debug("Leaving");
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**

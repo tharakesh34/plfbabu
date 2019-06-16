@@ -352,8 +352,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				Decimal value = (Decimal) map.get("AlwFlexi");
 				amountCodes.setAlwflexi(value == Decimal.ZERO ? false : true);
 			}
-			amountCodes.setFinbranch((String) map.get("FinBranch"));
 			amountCodes.setEntitycode((String) map.get("Entitycode"));
+			dataMap.put("ae_finbranch", map.get("FinBranch"));
 			dataMap.put("emptype", map.get("emptype"));
 			dataMap.put("branchcity", map.get("branchcity"));
 			dataMap.put("fincollateralreq", map.get("fincollateralreq"));

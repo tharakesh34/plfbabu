@@ -71,6 +71,7 @@ import com.pennant.backend.service.administration.SecurityUserHierarchyService;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -689,7 +690,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 						securityUserDivBranch.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 						securityUserDivBranch.getBefImage(), securityUserDivBranch));
-				if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 					securityUserAccessService.deleteDivBranchDetails(securityUserDivBranch);
 				}
 			}
@@ -895,7 +896,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			division.setRecordStatus(securityUser.getRecordStatus());
 		}
 
-		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			securityUserAccessService.saveDivisionBranches(securityUser, method);
 		} else {
 			securityUsersDAO.deleteBranchs(securityUser, type);

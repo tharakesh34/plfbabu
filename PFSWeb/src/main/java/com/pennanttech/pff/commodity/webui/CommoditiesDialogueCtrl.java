@@ -1,5 +1,6 @@
 package com.pennanttech.pff.commodity.webui;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -703,6 +704,8 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
+		BigDecimal bdcurrentValue = this.currentValue.getActualValue();
+
 		if (!this.type.getButton().isDisabled()) {
 			this.type.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_StockCompanyDialogue_CompanyCode.value"), null, true));
@@ -715,8 +718,14 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		}
 
 		if (!this.currentValue.isReadonly()) {
-			this.currentValue.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
+			if (bdcurrentValue.compareTo(BigDecimal.ZERO) == 0
+					|| bdcurrentValue.compareTo(new BigDecimal("0.00")) == 0) {
+				throw new WrongValueException(this.currentValue,
+						Labels.getLabel("label_CommoditiesDialogue_CurrentValueAlert.value.value"));
+			} else {
+				this.currentValue.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
+			}
 		}
 
 		if (!this.code.isReadonly()) {
@@ -751,6 +760,18 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					Labels.getLabel("label_CommoditiesDialog_CustomerTemplate.value"), null, true, false));
 		}
 
+		if (!this.hsnCode.isReadonly()) {
+			this.hsnCode.setConstraint(new PTStringValidator(Labels.getLabel("label_CommoditiesDialogue_HSNCode.value"),
+					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
+		}
+
+		if (!this.hsnCode.isReadonly())
+			if (this.hsnCode.isValid()) {
+				if (this.hsnCode.getValue().length() > 20) {
+					throw new WrongValueException(this.hsnCode,
+							Labels.getLabel("label_CommoditiesDialogue_HSNAlert.value.value"));
+				}
+			}
 		logger.debug(Literal.LEAVING);
 	}
 

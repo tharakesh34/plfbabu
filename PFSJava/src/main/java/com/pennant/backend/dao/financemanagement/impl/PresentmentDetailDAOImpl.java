@@ -342,7 +342,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
-					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where  Status =1 OR  Status =2 OR Status =3 )) ");
 
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 
@@ -475,7 +475,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
-					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !>3 )) ");
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status =1 OR  Status =2 OR Status =3 )) ");
 
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 
@@ -1293,7 +1293,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
-					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !> 3 )) ");
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status =1 OR  Status =2 OR Status =3 )) ");
 
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 
@@ -1428,7 +1428,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			sql.append(
 					" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinReference = T7.FinReference AND T7.SCHDATE = T1.SCHDATE ");
 			sql.append(
-					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status !> 3 )) ");
+					" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PRESENTMENTHEADER Where Status =1 OR  Status =2 OR Status =3 )) ");
 
 			sql.append(" ORDER BY T1.DEFSCHDDATE, T6.BANKCODE ,T7.EntityCode ");
 

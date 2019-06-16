@@ -179,6 +179,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.pincode.setDescColumn("City");
 		this.pincode.setValidateColumns(new String[] { "PinCode" });
 
+		this.txtchannel.setMaxlength(20);
+
 		logger.debug(Literal.LEAVING);
 	}
 

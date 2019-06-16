@@ -77,7 +77,8 @@
 	</changeSet>
 
 	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="adtRMTFinanceTypes" columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="adtRMTFinanceTypes" columnName="TDSAllowToModify"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="16" author="Varaprasad.K">
@@ -87,6 +88,16 @@
 			<column name="TdsStartDate" type="datetime" />
 			<column name="TdsEndDate" type="datetime" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet id="16.1" author="Varaprasad.K">
+		<addColumn tableName="AdtFinMaintainInstructions">
+			<column name="TdsLimit" type="number(18, 0)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="16.1.1" author="Varaprasad.K">
+		<modifyDataType tableName="AdtFinMaintainInstructions" columnName="TdsLimit" newDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="17" author="Varaprasad.K">
@@ -110,13 +121,8 @@
 	</changeSet>
 
 	<changeSet id="19" author="Varaprasad.K">
-		<addNotNullConstraint tableName="AdtFinMaintainInstructions" columnName="TdSApplicable" />
-	</changeSet>
-
-	<changeSet id="07" author="Varaprasad.K">
-		<addColumn tableName="AdtFinMaintainInstructions">
-			<column name="TdsLimit" type="decimal(18,0)" />
-		</addColumn>
+		<addNotNullConstraint tableName="AdtFinMaintainInstructions" columnName="TdSApplicable"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="24" author="saikiran.v">
@@ -170,7 +176,7 @@
 	</changeSet>
 
 	<changeSet id="26" author="Saikiran.v">
-		<addNotNullConstraint tableName="AdtGST_RATES" columnName="Active" />
+		<addNotNullConstraint tableName="AdtGST_RATES" columnName="Active" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="27" author="Varaprasad.K" dbms="postgresql,oracle">
@@ -244,5 +250,34 @@
 		<modifyDataType tableName="AdtFinAdvancePayments" columnName="payableLoc" newDataType="varchar(200)" />
 	</changeSet>
 
-	<!-- 5.0.5 is Under QC please use 5.0.6 -->
+	<changeSet id="34" author="Varaprasad">
+		<modifyDataType tableName="ADTEXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(1000)" />
+	</changeSet>
+
+	<changeSet id="90" author="Varaprasad.K">
+		<modifyDataType tableName="ADTAMTVehicleDealer" columnName="DEALERNAME" newDataType="varchar(100)" />
+		<modifyDataType tableName="ADTAMTVehicleDealer" columnName="DEALERADDRESS1" newDataType="varchar(100)" />
+		<modifyDataType tableName="ADTAMTVehicleDealer" columnName="DEALERADDRESS2" newDataType="varchar(100)" />
+		<modifyDataType tableName="ADTAMTVehicleDealer" columnName="DEALERADDRESS3" newDataType="varchar(100)" />
+		<modifyDataType tableName="ADTAMTVehicleDealer" columnName="DEALERADDRESS4" newDataType="varchar(100)" />
+	</changeSet>
+	
+	<changeSet id="91" author="Srikanth.M">
+		<addColumn tableName="AdtLimitHeader">
+			<column name="BLOCKLIMIT" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="92" author="Srikanth">
+		<sql>
+		 <![CDATA[
+			update AdtLimitHeader set BLOCKLIMIT=0;
+		 ]]>
+		</sql>
+		</changeSet>
+		
+		<!-- 5.0.5 is Under QC please use 5.0.6 -->
+			
 </databaseChangeLog>

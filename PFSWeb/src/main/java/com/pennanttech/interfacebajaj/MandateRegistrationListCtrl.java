@@ -56,6 +56,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -889,6 +890,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> implem
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;
 	}

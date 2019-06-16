@@ -70,6 +70,7 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class AccountSelectionBox extends Hbox {
@@ -111,7 +112,7 @@ public class AccountSelectionBox extends Hbox {
 	 */
 	public AccountSelectionBox() {
 		super();
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
 		// Create default object. 
 
@@ -159,7 +160,7 @@ public class AccountSelectionBox extends Hbox {
 		this.decimalbox.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.appendChild(decimalbox);
 
-		logger.debug("Leaving");
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**

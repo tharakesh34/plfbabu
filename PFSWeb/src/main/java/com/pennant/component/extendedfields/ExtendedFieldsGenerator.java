@@ -135,6 +135,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pff.commodity.model.Commodity;
 
 @SuppressWarnings("rawtypes")
 public class ExtendedFieldsGenerator extends AbstractController {
@@ -173,6 +174,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
 	private boolean isCommodity = false;
+	private List<String> hsnCodes = new ArrayList<>();
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -1891,7 +1893,26 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 			extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
 		}
+
+		setHSNCodeFilters(extendedCombobox);
+
 		return extendedCombobox;
+	}
+
+	private void setHSNCodeFilters(ExtendedCombobox extendedCombobox) {
+		if (!isCommodity) {
+			return;
+		}
+
+		extendedCombobox.setButtonDisabled(false);
+
+		Filter[] filters = new Filter[getHsnCodes().size()];
+
+		for (int i = 0; i < getHsnCodes().size(); i++) {
+			filters[i] = new Filter("HSNCode", getHsnCodes().get(i), Filter.OP_NOT_EQUAL);
+		}
+
+		extendedCombobox.setFilters(filters);
 	}
 
 	// story #699 Allow Additional filters for extended combobox. Development
@@ -1916,6 +1937,32 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			ExtendedFieldDetail detail = getFieldDetail(fieldName);
 			addFilters(detail);
+
+			setUnitPrice(extendedCombobox);
+		}
+
+		private void setUnitPrice(ExtendedCombobox extendedCombobox) {
+			if (!"HSNCodeData".equals(extendedCombobox.getModuleName())) {
+				return;
+			}
+
+			Commodity commodity = (Commodity) extendedCombobox.getObject();
+			if (commodity == null) {
+				return;
+			}
+
+			for (ExtendedFieldDetail details : getExtendedFieldDetails()) {
+				if (!details.getFieldName().equals("UNITPRICE")) {
+					continue;
+				}
+
+				String id = getComponentId(details.getFieldName());
+				Component componentCurrencyBox = tabpanel.getFellowIfAny(id);
+				if (componentCurrencyBox instanceof CurrencyBox) {
+					CurrencyBox currencyBox = (CurrencyBox) componentCurrencyBox;
+					currencyBox.setValue(PennantApplicationUtil.formateAmount(commodity.getCurrentValue(), ccyFormat));
+				}
+			}
 		}
 	}
 
@@ -1990,6 +2037,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					}
 				}
 			}
+
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -2706,7 +2754,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @param detail
 	 */
 	private void doCheckContainerRights(Component container, ExtendedFieldDetail detail) {
-		logger.debug(Literal.ENTERING);
+		logger.trace(Literal.ENTERING);
+
 		if (container instanceof Tabpanel) {
 			Tabpanel tabpanel = (Tabpanel) container;
 			boolean isVisible = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
@@ -2725,7 +2774,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			Button button = (Button) container;
 			button.setDisabled(!getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail)));
 		}
-		logger.debug(Literal.LEAVING);
+
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**
@@ -3006,6 +3056,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setCommodity(boolean isCommodity) {
 		this.isCommodity = isCommodity;
+	}
+
+	public List<String> getHsnCodes() {
+		return hsnCodes;
+	}
+
+	public void setHsnCodes(List<String> hsnCodes) {
+		this.hsnCodes = hsnCodes;
 	}
 
 }

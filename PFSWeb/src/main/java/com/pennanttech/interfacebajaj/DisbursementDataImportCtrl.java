@@ -266,7 +266,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
-		
+
 		//FIXME format should come from data engine config
 		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".CSV"))) {
 			MessageUtil.showError("Invalid file format.");
@@ -359,12 +359,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	@Autowired
-	@Qualifier(value = "disbursementResponse")
+	@Qualifier(value = "defaultDisbursementResponse")
 	public void setDefaultDisbursementResponse(DisbursementResponse defaultDisbursementResponse) {
 		this.defaultDisbursementResponse = defaultDisbursementResponse;
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "disbursementResponse")
 	public void setDisbursementResponse(DisbursementResponse disbursementResponse) {
 		this.disbursementResponse = disbursementResponse;
 	}

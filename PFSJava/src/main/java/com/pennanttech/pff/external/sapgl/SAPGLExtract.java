@@ -3,7 +3,6 @@ package com.pennanttech.pff.external.sapgl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -21,16 +20,15 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.TrailBalance;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.external.SAPGLProcess;
 
-public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
+public class SAPGLExtract extends DataEngineExport {
 	public static DataEngineStatus SAP_GL_STATUS = new DataEngineStatus("GL_TRANSACTION_SUMMARY_EXPORT");
 
 	private Map<String, String> parameters = new HashMap<>();
@@ -43,12 +41,6 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 	public SAPGLExtract(DataSource dataSource, long userId, Date valueDate, Date appDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, valueDate, SAP_GL_STATUS);
 		this.appDate = appDate;
-	}
-
-	@Override
-	public void process(Object... objects) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void extractReport(String[] entityDetails, Date startDate, Date endDate) throws Exception {
@@ -115,8 +107,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" SELECT  ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(
-				" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR,AM.FINTYPE  FROM POSTINGS P");
+
+		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, SUM(POSTAMOUNT) POSTAMOUNT, P.DRORCR  FROM POSTINGS P");
 		sql.append(" INNER JOIN RMTBRANCHES B ON B.BRANCHCODE = P.POSTBRANCH");
 		sql.append(" INNER JOIN RMTCOUNTRYVSPROVINCE S ON S.CPPROVINCE = B.BRANCHPROVINCE");
 		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = P.ACCOUNT");
@@ -124,7 +116,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" LEFT JOIN COSTCENTERS CC ON CC.COSTCENTERID = AM.COSTCENTERID");
 		sql.append(" WHERE POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
 		sql.append(" GROUP BY ENTITYCODE, AM.HOSTACCOUNT, S.BUSINESSAREA,");
-		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR, AM.FINTYPE ORDER BY S.BUSINESSAREA");
+
+		sql.append(" PC.PROFITCENTERCODE, CC.COSTCENTERCODE, P.DRORCR ORDER BY S.BUSINESSAREA");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("MONTH_STARTDATE", startDate);
@@ -138,8 +131,10 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 							throws SQLException, DataAccessException {
 						Map<String, TrailBalance> map = new LinkedHashMap<>();
 
-						String ZUONR = StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF");
-						String SGTXT = StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF");
+						String ZUONR = StringUtils.upperCase(SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + " - "
+								+ DateUtil.format(startDate, "MMM yy") + " - PLF");
+						String SGTXT = StringUtils.upperCase(SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + " - "
+								+ DateUtil.format(startDate, "MMM yy") + " - PLF");
 
 						TrailBalance item = null;
 						String key = null;
@@ -238,20 +233,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 
 		sql.append(" insert into TRANSACTION_DETAIL_REPORT_TEMP(ID, ENTITY, LINK, BSCHL, HKONT, UMSKZ,");
 		sql.append(" WRBTR, GSBER, BUPLA, KOSTL, PRCTR, ZUONR, SGTXT)");
-		sql.append(" VALUES(:Id, :Entity, :Link,");
-
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(":TransactionAmountType::integer,");
-		} else {
-			sql.append(":TransactionAmountType,");
-		}
-		sql.append(" :LedgerAccount, :Umskz,");
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(":TransactionAmount::integer,");
-		} else {
-			sql.append(":TransactionAmount,");
-		}
-		sql.append(" :BusinessUnit, :BusinessArea, :CostCenter, :ProfitCenter,");
+		sql.append(" VALUES(:Id, :Entity, :Link, :TransactionAmountType, :LedgerAccount, :Umskz,");
+		sql.append(" :TransactionAmount, :BusinessUnit, :BusinessArea, :CostCenter, :ProfitCenter,");
 		sql.append(" :Narration1, :Narration1)");
 
 		Map<String, List<TrailBalance>> entityMap = new HashMap<>();
@@ -262,9 +245,9 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 
 			if (item.getTransactionAmount().compareTo(BigDecimal.ZERO) < 0) {
 				item.setTransactionAmount(BigDecimal.ZERO.subtract(item.getTransactionAmount()));
-				item.setTransactionAmountType("40");
+				item.setTransactionAmountType(40);
 			} else {
-				item.setTransactionAmountType("50");
+				item.setTransactionAmountType(50);
 			}
 
 			transactions = entityMap.get(item.getEntity());
@@ -297,12 +280,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT");
 		jdbcTemplate.execute("DELETE FROM TRANSACTION_DETAIL_REPORT_TEMP");
 
-		if (App.DATABASE == App.Database.ORACLE) {
-			jdbcTemplate
-					.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
-		} else if (App.DATABASE == App.Database.SQL_SERVER) {
-			jdbcTemplate.execute("dbcc checkident ('TRANSACTION_DETAIL_REPORT', reseed, 0)");
-		}
+		//jdbcTemplate.execute("alter table TRANSACTION_DETAIL_REPORT modify ID generated as identity (start with 1)");
+		jdbcTemplate.execute("ALTER SEQUENCE seq_transaction_detail_report RESTART WITH 1");
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("START_DATE", startDate);
@@ -379,7 +358,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 					//parameterMap.put("ENTITY", entityCode);
 					//filterMap.put("ENTITY", entityCode);
 
-					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_HDR_PA");
+					parameterMap.put("ENTITY_CODE", entityCode + "_"
+							+ SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + "_SAP_GL_REPORT_HDR_PA");
 
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
@@ -408,7 +388,8 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 					//parameterMap.put("ENTITY", entityCode);
 					filterMap.put("ENTITY", entityCode);
 
-					parameterMap.put("ENTITY_CODE", entityCode + "_CF_SAP_GL_REPORT_LINE_PA");
+					parameterMap.put("ENTITY_CODE", entityCode + "_"
+							+ SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + "_SAP_GL_REPORT_LINE_PA");
 
 					export.setParameterMap(parameterMap);
 					export.setFilterMap(filterMap);
@@ -518,11 +499,7 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" BUPLA, KOSTL, PRCTR, ZUONR, SGTXT) SELECT");
 		sql.append(" :ENTITY,");
 		sql.append(" :LINK,");
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" :BSCHL::integer,");
-		} else {
-			sql.append(" :BSCHL,");
-		}
+		sql.append(" :BSCHL,");
 		sql.append(" :HKONT,");
 		sql.append(" :UMSKZ,");
 		sql.append(" :WRBTR,");
@@ -618,18 +595,10 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO TRANSACTION_SUMMARY_REPORT SELECT");
 		sql.append("  DISTINCT ENTITY, LINK, ");
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" :BLDAT::date,");
-		} else {
-			sql.append(" :BLDAT,");
-		}
+		sql.append(" :BLDAT,");
 		sql.append(" :BLART,");
 		sql.append(" :BUKRS,");
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" :BUDAT::date,");
-		} else {
-			sql.append(" :BUDAT,");
-		}
+		sql.append(" :BUDAT,");
 		sql.append(" :MONAT,");
 		sql.append(" :APP_DFT_CURR,");
 		sql.append(" :XBLNR,");
@@ -637,21 +606,16 @@ public class SAPGLExtract extends DataEngineExport implements SAPGLProcess {
 		sql.append(" FROM TRANSACTION_DETAIL_REPORT");
 
 		paramMap = new MapSqlParameterSource();
-
-		if (App.DATABASE == Database.POSTGRES) {
-			paramMap.addValue("BLDAT", new SimpleDateFormat("yyyy-MM-dd").format(endDate));
-			paramMap.addValue("BUDAT", new SimpleDateFormat("yyyy-MM-dd").format(endDate));
-		} else {
-			paramMap.addValue("BLDAT", endDate);
-			paramMap.addValue("BUDAT", endDate);
-		}
+		paramMap.addValue("BLDAT", endDate);
 		paramMap.addValue("BLART", parameters.get("BLART"));
 		paramMap.addValue("BUKRS", parameters.get("BUKRS"));
-
+		paramMap.addValue("BUDAT", endDate);
 		paramMap.addValue("MONAT", getFinancialMonth());
 		paramMap.addValue("APP_DFT_CURR", parameters.get("APP_DFT_CURR"));
-		paramMap.addValue("XBLNR", StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF"));
-		paramMap.addValue("BKTXT", StringUtils.upperCase("CF - " + DateUtil.format(startDate, "MMM yy") + " - PLF"));
+		paramMap.addValue("XBLNR", StringUtils.upperCase(SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + " - "
+				+ DateUtil.format(startDate, "MMM yy") + " - PLF"));
+		paramMap.addValue("BKTXT", StringUtils.upperCase(SysParamUtil.getValueAsString("SAP_GL_CATGRY_CODE") + " - "
+				+ DateUtil.format(startDate, "MMM yy") + " - PLF"));
 
 		try {
 			parameterJdbcTemplate.update(sql.toString(), paramMap);

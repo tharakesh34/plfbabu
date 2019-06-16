@@ -48,21 +48,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
-import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * A suite of utilities surrounding the use of the system parameters that contain information about the environment for
  * the system.
  */
 public class SysParamUtil {
-	private static final Logger logger = Logger.getLogger(SysParamUtil.class);
-
 	private static PFSParameterService systemParameterService;
 	private static List<GlobalVariable> globalVariablesList = null;
 
@@ -180,16 +176,13 @@ public class SysParamUtil {
 	}
 
 	public static void updateParamDetails(String code, String value) {
-		logger.debug(Literal.ENTERING);
 		setParmDetails(code, value);
 		systemParameterService.update(code, value, "");
-		logger.debug(Literal.LEAVING);
 	}
 
 	private static HashMap<String, PFSParameter> parmDetails = null;
 
 	public static void setParmDetails(String code, String value) {
-		logger.debug("Entering");
 		if (parmDetails != null) {
 			PFSParameter pfsParameter = parmDetails.get(code);
 			if (pfsParameter != null) {
@@ -198,7 +191,6 @@ public class SysParamUtil {
 				parmDetails.put(code, pfsParameter);
 			}
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -207,12 +199,9 @@ public class SysParamUtil {
 	 * @return HashMap
 	 */
 	public static List<GlobalVariable> getGlobaVariableList() {
-		logger.debug("Entering");
-
 		if (globalVariablesList == null) {
 			globalVariablesList = systemParameterService.getGlobaVariables();
 		}
-		logger.debug("Leaving");
 		return globalVariablesList;
 	}
 

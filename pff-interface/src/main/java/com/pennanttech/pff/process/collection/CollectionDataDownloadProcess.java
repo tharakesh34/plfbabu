@@ -1,5 +1,6 @@
 package com.pennanttech.pff.process.collection;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,7 +19,9 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.model.CollectionCustomerDetail;
 
 /**
@@ -64,43 +67,46 @@ public class CollectionDataDownloadProcess {
 	private int processCollectionData() {
 		logger.debug("Entering");
 
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+		parameterSource.addValue("AppDate", getAppDate());
+
 		int count = 0;
-		StringBuilder selectSql = new StringBuilder(" INSERT INTO collection_financedetails  ");
-		selectSql.append(
+		StringBuilder sql = new StringBuilder(" INSERT INTO collection_financedetails  ");
+		sql.append(
 				" (loanreference,custcif,loantype,loantypedesc,currency,productcode,productdesc,branchcode,branchname ,");
-		selectSql.append(
+		sql.append(
 				"finstartdate,maturitydate,noinst,nopaidinst,firstrepaydate,firstrepayamount,nschddate,nschdpri,nschdpft,");
-		selectSql.append(
+		sql.append(
 				"totoutstandingamt,overduedate,noodinst,curoddays,actualoddays,odprincipal,odprofit,duebucket,penaltypaid	,penaltydue	,");
-		selectSql.append(
+		sql.append(
 				"penaltywaived,bouncecharges,finstatus,finstsreason,finworststatus,finactive,recordstatus,RepayMethod, AppDate) ");
-		selectSql.append("Select * from (SELECT ");
-		selectSql.append(" T1.FinReference LoanReference,T2.CustCIF CustCIF,");
-		selectSql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
-		selectSql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
-		selectSql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
-		selectSql.append(" T1.NoInst NoInt,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
-		selectSql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
-		selectSql.append(
-				" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
-		selectSql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
-		selectSql.append(
+		sql.append("Select * from (SELECT ");
+		sql.append(" T1.FinReference LoanReference,T2.CustCIF CustCIF,");
+		sql.append(" T1.FinType LoanType, T3.FinTypeDesc LoanTypeDesc,T1.FinCcy Currency,");
+		sql.append(" T1.FinCategory ProductCode	,T3.FinTypeDesc ProductDesc,T1.FinBranch BranchCode	,");
+		sql.append(" T4.BranchDesc BranchDesc,T1.FinStartDate FinStartDate,T1.MaturityDate MaturityDate,");
+		sql.append(" T1.NoInst NoInt,T1.NoPaidInst NoPaidInst,T1.FirstRepayDate FirstRepayDate,");
+		sql.append(" T1.FirstRepayAmt FirstRepayAmount,T1.NSchdDate NSchdDate,T1.NSchdPri  NSchdPri,");
+		sql.append(" T1.NSchdPft NSchdPft,(T1.TotalPftBal+T1.TotalPriBal) TotOustandingAmt,T1.PrvOdDate OverdueDate,");
+		sql.append(" T1.NoOdInst NoOdInst,T1.CurODDays curODDays,T1.ActualOdDays ActualOdDays,");
+		sql.append(
 				" T1.ODPrincipal ODPrincipal,T1.ODProfit ODProfit,round(T1.CurODDays/30,0) DueBucket, T1.PenaltyPaid PenaltyPaid, ");
-		selectSql.append(
+		sql.append(
 				" T1.PenaltyDue PenaltyDue,T1.PenaltyWaived PenaltyWaived,(SELECT sum(Adviseamount-paidamount-waivedamount) bounseAmount  FROM MANUALADVISE WHERE FEETYPEID = 0 and  finreference=T1.Finreference)  BounceCharge ,T1.FinStatus FinStatus,");
-		selectSql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
-		selectSql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
-		selectSql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
-		selectSql.append(" (select SYSParmValue from SMTparameters where sysParmcODE='APP_DATE')  AppDate ");
-		selectSql.append("  FROM FinPftDetails T1 ");
-		selectSql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
-		selectSql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
-		selectSql.append("  INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
-		selectSql.append("   WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
+		sql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
+		sql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
+		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
+		sql.append(" :AppDate ");
+		sql.append("  FROM FinPftDetails T1 ");
+		sql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
+		sql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");
+		sql.append("  INNER JOIN RmtBranches T4 on  T1.FinBranch=T4.BranchCode ");
+		sql.append("   WHERE (T1.ODPrincipal+T1.ODProfit) > 0 AND T1.CurODDays >= 1) collectionFinance");
 
-		logger.trace("insertSql: " + selectSql.toString());
+		logger.trace("insertSql: " + sql.toString());
 
-		count = jdbcTemplate.update(selectSql.toString(), new HashMap<String, Object>());
+		count = jdbcTemplate.update(sql.toString(), parameterSource);
 		logger.debug("Leaving");
 		return count;
 	}
@@ -336,5 +342,22 @@ public class CollectionDataDownloadProcess {
 
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	}
+
+	public Date getAppDate() {
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE = :SYSPARMCODE");
+		paramMap.addValue("SYSPARMCODE", "APP_DATE");
+
+		String strDate = null;
+		try {
+			strDate = jdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);
+		} catch (Exception e) {
+			return null;
+		}
+
+		return DateUtil.parse(strDate, PennantConstants.DBDateFormat);
 	}
 }

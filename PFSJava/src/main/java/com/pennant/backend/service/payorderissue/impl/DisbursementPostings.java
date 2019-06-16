@@ -83,6 +83,7 @@ public class DisbursementPostings {
 				aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 				aeEvent.setFinType(finMain.getFinType());
 				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+				amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 				amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 				amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 				amountCodes.setFinType(aeEvent.getFinType());
@@ -161,6 +162,7 @@ public class DisbursementPostings {
 					aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_DISBINS);
 					aeEvent.setFinType(finMain.getFinType());
 					amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
+					amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
 					amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 					amountCodes.setPaymentType(finAdvancePayments.getPaymentType());

@@ -346,12 +346,10 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
-					
+
 					String disbAmount = amountFormate((BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT"),
 							PennantConstants.defaultCCYDecPos);
 					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
-
-
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {
 						try {
@@ -411,7 +409,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 			namedJdbcTemplate.update("delete from DISBURSEMENT_REQUESTS where ID IN(:ID)", paramMap);
 		}
 	}
-	
+
 	public static String amountFormate(BigDecimal amount, int dec) {
 		BigDecimal bigDecimal = BigDecimal.ZERO;
 		if (amount != null) {
@@ -420,7 +418,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 		return formatAmount(bigDecimal, dec, false);
 	}
-	
+
 	public static String formatAmount(BigDecimal value, int decPos, boolean debitCreditSymbol) {
 
 		if (value != null && value.compareTo(BigDecimal.ZERO) != 0) {

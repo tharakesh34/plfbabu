@@ -1682,8 +1682,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.vanRequired.setChecked(aFinanceType.isAlwVan());
 		setVanDetails(aFinanceType.isAlwVan());
-		fillComboBox(this.vaAllocationMethod, aFinanceType.getVanAllocationMethod(),
-				vanAllocationMethodsList, "");
+		fillComboBox(this.vaAllocationMethod, aFinanceType.getVanAllocationMethod(), vanAllocationMethodsList, "");
 		// tasks # >>End Advance EMI and DSF
 
 		logger.debug("Leaving doWriteBeanToComponents()");
@@ -3870,8 +3869,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"), null, true, true));
 		}
-
-		if (this.tDSApplicable.isChecked() && !this.tdsApplicableTo.isDisabled()) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ) && this.tDSApplicable.isChecked()
+				&& !this.tdsApplicableTo.isDisabled()) {
 			this.tdsApplicableTo.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTypeDialog_tdsApplicableTo.value"), null, true));
 		}
@@ -4079,7 +4078,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 						Labels.getLabel("label_FinanceTypeDialog_AllocationMethod.value")));
 			}
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -5549,8 +5548,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	}
 
 	private void checkTDSApplicableChecked() {
-		String valueAsString = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
-		if (StringUtils.isNotEmpty(valueAsString) && StringUtils.equals(valueAsString, PennantConstants.YES)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ)) {
 			if (this.tDSApplicable.isChecked()) {
 				this.label_FinanceTypeDialog_tDSAllowToModify.setVisible(true);
 				this.tDSAllowToModify.setVisible(true);
@@ -7481,6 +7479,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		setVanDetails(this.vanRequired.isChecked());
 		logger.debug(Literal.LEAVING);
 	}
+
 	/*
 	 * onCheck Event For allowManualSteps
 	 */

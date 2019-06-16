@@ -53,6 +53,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -108,11 +109,10 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.sapgl.SAPGLExtract;
 import com.pennanttech.pff.trialbalance.TrailBalanceEngine;
 import com.pennanttech.service.AmazonS3Bucket;
@@ -211,8 +211,8 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				TrailBalanceEngine.Dimension.CONSOLIDATE.name()));
 
 		fillComboBox(dimention, "", dimentionsList, "");
-		fillComboBox(months, "", monthsList, "");
 
+		// Application Deployment Date
 		registerField("Id", SortOrder.DESC);
 		registerField("Name");
 		registerField("Status");
@@ -222,7 +222,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("FileLocation");
 		registerField("UserId");
 		registerField("endTime");
-		registerField("ValueDate");
+		registerField("ValueDate", SortOrder.DESC);
 
 		if (isTrailBalance) {
 			registerField("startDate");
@@ -259,7 +259,11 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		if (isTrailBalance) {
 			list.add("TRIAL_BALANCE_EXPORT_STATE");
 			list.add("TRIAL_BALANCE_EXPORT_CONSOLIDATE");
+			if (App.DATABASE == App.Database.ORACLE) {
+				this.searchObject.addWhereClause(" rownum<11 ");
+			} else {
 
+			}
 		} else {
 			list.add("GL_TRANSACTION_EXPORT");
 			list.add("GL_TRANSACTION_SUMMARY_EXPORT");
@@ -308,7 +312,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
 	public void onClick$btnexecute(Event event) throws Exception {
-		doClearMessage();
 		doSetValidations();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
@@ -365,45 +368,32 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 			try {
+				if (this.fromdate != null && DateUtility.getMonth(this.fromdate.getValue()) < SysParamUtil
+						.getValueAsInt("FINANCIAL_YEAR_START_MONTH")) {
+					throw new WrongValueException(this.fromdate,
+							"From Date should be greater or equal to financial start month");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
-				//if(this.toDate.g)
-				if (this.toDate != null && this.fromdate != null) {
-					if ((DateUtility.getYearsBetween(DateUtility.getYearStartDate(this.fromdate.getValue()),
-							DateUtility.getYearStartDate(this.toDate.getValue())) == 0)) {
+			try {
+				if (this.toDate != null
+						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) != 0
+						&& DateUtility.getMonth(this.toDate.getValue()) > SysParamUtil
+								.getValueAsInt("FINANCIAL_YEAR_END_MONTH")) {
+					throw new WrongValueException(this.toDate,
+							"To Date should be less or equal to financial End month");
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 
-						if ((DateUtility.getMonth(this.fromdate.getValue()) < SysParamUtil
-								.getValueAsInt("FINANCIAL_YEAR_START_MONTH"))
-								&& DateUtility.getMonth(this.toDate.getValue()) > DateUtility
-										.getMonth(this.fromdate.getValue())) {
-
-							if ((DateUtility.getMonth(this.toDate.getValue()) >= SysParamUtil
-									.getValueAsInt("FINANCIAL_YEAR_START_MONTH"))) {
-								throw new WrongValueException(this.toDate,
-										"To Date and From Date should be with in financial Year");
-							}
-						}
-
-					} else {
-						if (DateUtility.getMonth(this.fromdate.getValue()) >= SysParamUtil
-								.getValueAsInt("FINANCIAL_YEAR_START_MONTH")) {
-
-							if (DateUtility.getMonth(this.toDate.getValue()) > SysParamUtil
-									.getValueAsInt("FINANCIAL_YEAR_END_MONTH")) {
-								throw new WrongValueException(this.toDate,
-										"To Date and From Date should be with in financial Year");
-							}
-
-							if (DateUtility.getYearsBetween(DateUtility.getYearStartDate(this.fromdate.getValue()),
-									DateUtility.getYearStartDate(this.toDate.getValue())) > 1) {
-								throw new WrongValueException(this.toDate,
-										"To Date and From Date should be with in financial Year");
-							}
-
-						} else {
-							throw new WrongValueException(this.toDate,
-									"To Date and From Date should be with in financial Year");
-						}
-					}
+			try {
+				if (this.toDate != null && this.fromdate != null
+						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) > 1) {
+					throw new WrongValueException(this.toDate,
+							"To Date and From Date should be with in financial Year");
 				}
 
 			} catch (WrongValueException we) {
@@ -454,7 +444,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 					trialbal.extractReport(TrailBalanceEngine.Dimension.STATE,
 							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
 							this.stateCode.getValue());
-
 				} else if (selectedDimention.equals(TrailBalanceEngine.Dimension.CONSOLIDATE.name())) {
 					trialbal.extractReport(TrailBalanceEngine.Dimension.CONSOLIDATE,
 							new String[] { this.entityCode.getValue(), this.entityCode.getDescription() },
@@ -598,8 +587,6 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 
 	protected void doClearMessage() {
 		this.entityCode.setErrorMessage("");
-		this.toDate.setErrorMessage("");
-		this.fromdate.setErrorMessage("");
 	}
 
 	private void doClearData() {
@@ -681,6 +668,44 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 		}
+	}
+
+	/**
+	 * 
+	 * @param startDate
+	 * @param endDate
+	 * @param sortOrder
+	 * @return
+	 */
+	public static List<ValueLabel> getMonthEndList(Date startDate, Date endDate, SortOrder sortOrder) {
+
+		List<ValueLabel> monthEndList = new ArrayList<ValueLabel>();
+		startDate = DateUtility.getMonthEnd(startDate);
+
+		// Prepare Month End list between two dates, by Default Ascending
+		while (DateUtility.getMonthEnd(endDate).compareTo(startDate) > 0) {
+
+			monthEndList.add(new ValueLabel(DateUtility.format(startDate, PennantConstants.DBDateFormat),
+					DateUtility.format(startDate, DateFormat.LONG_MONTH.getPattern())));
+
+			startDate = DateUtility.addDays(startDate, 1);
+			startDate = DateUtility.getMonthEnd(startDate);
+		}
+
+		// Month End List in Descending order
+		if (sortOrder == SortOrder.DESC) {
+			Collections.reverse(monthEndList);
+		}
+		return monthEndList;
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private static Date getFormatDate(Date date) {
+		return DateUtility.getDBDate(DateUtility.format(date, PennantConstants.DBDateFormat));
 	}
 
 	/**

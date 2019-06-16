@@ -2,9 +2,9 @@ package com.pennanttech.controller;
 
 import java.sql.Timestamp;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 
-import com.amazonaws.util.CollectionUtils;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -46,7 +46,7 @@ public class QueryModuleController {
 	}
 
 	private void doSetDocumentDetails(QueryDetail queryDetail) {
-		if (!CollectionUtils.isNullOrEmpty(queryDetail.getDocumentDetailsList())) {
+		if (CollectionUtils.isNotEmpty(queryDetail.getDocumentDetailsList())) {
 			for (DocumentDetails documentDetail : queryDetail.getDocumentDetailsList()) {
 				documentDetail.setNewRecord(true);
 				documentDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);

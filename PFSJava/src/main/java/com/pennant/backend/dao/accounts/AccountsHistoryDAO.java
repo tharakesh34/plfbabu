@@ -42,8 +42,23 @@
 */
 package com.pennant.backend.dao.accounts;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import com.pennant.backend.model.accounts.AccountHistoryDetail;
 import com.pennant.backend.model.accounts.AccountsHistory;
 
 public interface AccountsHistoryDAO {
 	boolean saveOrUpdate(AccountsHistory accountsHist);
+
+	BigDecimal getClosingBalance(String accountId, Date postDate);
+
+	BigDecimal getPrvClosingBalance(String accountId, Date postDate);
+
+	void save(List<AccountHistoryDetail> accountHist);
+
+	void update(List<AccountHistoryDetail> accountHist);
+
+	void updateCurrAccHstyDetails(List<AccountHistoryDetail> accountHist);
 }

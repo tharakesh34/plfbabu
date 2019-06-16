@@ -631,7 +631,15 @@ public class EntityDialogCtrl extends GFCBaseCtrl<Entity> {
 
 		// Entity Code
 		try {
-			aEntity.setEntityCode(this.entityCode.getValue());
+			String entityCode = this.entityCode.getValue();
+			if (aEntity.isNewRecord()) {
+				if (StringUtils.isNotBlank(entityCode) && entityCode.length() < 2) {
+					throw new WrongValueException(this.entityCode,
+							Labels.getLabel("label_EntityDialog_EntityCode.value")
+									+ " lenth should be greater than 1.");
+				}
+			}
+			aEntity.setEntityCode(entityCode);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

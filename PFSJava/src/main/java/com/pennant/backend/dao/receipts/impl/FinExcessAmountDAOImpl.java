@@ -54,6 +54,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -80,8 +81,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public List<FinExcessAmount> getExcessAmountsByRef(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
 		sql.append(" Where FinReference =:FinReference ");
@@ -94,7 +93,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmount.class);
 
-		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
@@ -103,30 +101,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void saveExcess(FinExcessAmount excess) {
-		logger.debug(Literal.ENTERING);
-
 		if (excess.getId() == 0 || excess.getId() == Long.MIN_VALUE) {
 			excess.setId(getNextValue("SeqFinExcessAmount"));
 			logger.debug("get NextID:" + excess.getId());
 		}
 
-		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmount");
-		sql.append(" (ExcessID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
-		sql.append(" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
-
-		logger.debug("insertSql: " + sql.toString());
+		StringBuilder sql = saveExcessQuery();
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excess);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateExcess(FinExcessAmount excess) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("update FinExcessAmount");
 		sql.append(" set Amount = :Amount, UtilisedAmt = :UtilisedAmt");
@@ -143,13 +132,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("BalanceAmt", excess.getBalanceAmt());
 
 		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public FinExcessAmount getFinExcessAmount(String finreference, String amountType) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from FinExcessAmount");
 		sql.append(" where FinReference = :FinReference and AmountType = :AmountType");
@@ -165,8 +151,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
-		} finally {
-			logger.debug(Literal.LEAVING);
 		}
 
 		return null;
@@ -177,8 +161,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void updateUtilise(long excessID, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excessID);
@@ -194,7 +176,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -202,24 +183,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void updateUtiliseOnly(long excessID, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excessID);
 		source.addValue("PaidNow", amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow ,  BalanceAmt = BalanceAmt - :PaidNow  ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set UtilisedAmt = UtilisedAmt + :PaidNow ,  BalanceAmt = BalanceAmt - :PaidNow  ");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -227,24 +205,21 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void updateExcessBal(long excessID, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excessID);
 		source.addValue("PaidNow", amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -252,22 +227,19 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public int updateExcessBalByRef(String reference, String amountType, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", reference);
 		source.addValue("AmountType", amountType);
 		source.addValue("PaidNow", amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
-		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set Amount = Amount + :PaidNow, BalanceAmt = BalanceAmt + :PaidNow ");
+		sql.append(" Where FinReference =:FinReference And AmountType=:AmountType");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
-		logger.debug("Leaving");
 		return recordCount;
 	}
 
@@ -276,19 +248,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void saveExcessMovement(FinExcessMovement movement) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Insert Into FinExcessMovement");
-		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount");
-		sql.append(" ,MovementFrom, SchDate)");
-		sql.append(" Values(:ExcessID, :ReceiptID, :MovementType, :TranType, :Amount");
-		sql.append(" ,:MovementFrom, :SchDate)");
+		StringBuilder sql = saveFEMQuery();
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -296,8 +261,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void updateExcessReserve(long payAgainstID, BigDecimal reserveAmt) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", payAgainstID);
@@ -307,13 +270,12 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, BalanceAmt = BalanceAmt - :PaidNow ");
 		updateSql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -321,29 +283,26 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public FinExcessAmountReserve getExcessReserve(long receiptSeqID, long payAgainstID) {
-		logger.debug("Entering");
-
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
 		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setExcessID(payAgainstID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptSeqID, ExcessID , ReservedAmt ");
-		selectSql.append(" From FinExcessAmountReserve ");
-		selectSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID=:ExcessID ");
+		StringBuilder sql = new StringBuilder("Select ReceiptSeqID, ExcessID , ReservedAmt ");
+		sql.append(" From FinExcessAmountReserve ");
+		sql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID=:ExcessID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
 		RowMapper<FinExcessAmountReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmountReserve.class);
 
 		try {
-			reserve = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			reserve = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			reserve = null;
 		}
 
-		logger.debug("Leaving");
 		return reserve;
 	}
 
@@ -352,23 +311,20 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public List<FinExcessAmountReserve> getExcessReserveList(long receiptSeqID) {
-		logger.debug("Entering");
-
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
 		reserve.setReceiptSeqID(receiptSeqID);
 
-		StringBuilder selectSql = new StringBuilder(" Select ReceiptSeqID, ExcessID , ReservedAmt ");
-		selectSql.append(" From FinExcessAmountReserve ");
-		selectSql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
+		StringBuilder sql = new StringBuilder(" Select ReceiptSeqID, ExcessID , ReservedAmt ");
+		sql.append(" From FinExcessAmountReserve ");
+		sql.append(" Where ReceiptSeqID =:ReceiptSeqID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
 		RowMapper<FinExcessAmountReserve> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmountReserve.class);
 
-		List<FinExcessAmountReserve> reserveList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+		List<FinExcessAmountReserve> reserveList = this.jdbcTemplate.query(sql.toString(), beanParameters,
 				typeRowMapper);
-		logger.debug("Leaving");
 		return reserveList;
 	}
 
@@ -377,23 +333,20 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void saveExcessReserveLog(long receiptSeqID, long payAgainstID, BigDecimal reserveAmt, String paymentType) {
-		logger.debug("Entering");
-
 		FinExcessAmountReserve reserve = new FinExcessAmountReserve();
 		reserve.setReceiptSeqID(receiptSeqID);
 		reserve.setExcessID(payAgainstID);
 		reserve.setReservedAmt(reserveAmt);
 		reserve.setPaymentType(paymentType);
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinExcessAmountReserve ");
-		insertSql.append(" (ExcessID, ReceiptSeqID, ReservedAmt, PaymentType )");
-		insertSql.append(" Values(:ExcessID, :ReceiptSeqID, :ReservedAmt, :PaymentType)");
+		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmountReserve ");
+		sql.append(" (ExcessID, ReceiptSeqID, ReservedAmt, PaymentType )");
+		sql.append(" Values(:ExcessID, :ReceiptSeqID, :ReservedAmt, :PaymentType)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reserve);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
 
 	/**
@@ -402,7 +355,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	@Override
 	public void updateExcessReserveLog(long receiptID, long payAgainstID, BigDecimal diffInReserve,
 			String paymentType) {
-		logger.debug("Entering");
 
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -411,17 +363,16 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("PaidNow", diffInReserve);
 		source.addValue("PaymentType", paymentType);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmountReserve ");
-		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
-		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID AND PaymentType =:PaymentType ");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmountReserve ");
+		sql.append(" Set ReservedAmt = ReservedAmt + :PaidNow ");
+		sql.append(" Where ReceiptSeqID =:ReceiptSeqID AND ExcessID =:ExcessID AND PaymentType =:PaymentType ");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -429,45 +380,40 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 	 */
 	@Override
 	public void deleteExcessReserve(long receiptID, long payAgainstID, String paymentType) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptSeqID", receiptID);
 		source.addValue("ExcessID", payAgainstID);
 		source.addValue("PaymentType", paymentType);
 
-		StringBuilder updateSql = new StringBuilder("Delete From FinExcessAmountReserve ");
-		updateSql.append(" Where ReceiptSeqID =:ReceiptSeqID AND PaymentType =:PaymentType");
+		StringBuilder sql = new StringBuilder("Delete From FinExcessAmountReserve ");
+		sql.append(" Where ReceiptSeqID =:ReceiptSeqID AND PaymentType =:PaymentType");
 		if (payAgainstID != 0) {
-			updateSql.append(" AND ExcessID =:ExcessID ");
+			sql.append(" AND ExcessID =:ExcessID ");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcTemplate.update(sql.toString(), source);
 	}
 
 	@Override
 	public void updateExcessAmount(long excessID, String amountType, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		FinExcessAmount finExcessAmount = new FinExcessAmount();
 		finExcessAmount.setExcessID(excessID);
 		finExcessAmount.setAmount(amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
 		if ("R".equals(amountType)) {
-			updateSql.append(" Set ReservedAmt = ReservedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
+			sql.append(" Set ReservedAmt = ReservedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
 		} else if ("U".equals(amountType)) {
-			updateSql.append(" Set UtilisedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
+			sql.append(" Set UtilisedAmt = UtilisedAmt + :amount, BalanceAmt = BalanceAmt - :amount ");
 		}
-		updateSql.append(" Where ExcessID =:ExcessID");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
@@ -476,8 +422,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public void updateExcessAmount(long excessID, BigDecimal advanceAmount) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Update FinExcessAmount Set ReservedAmt = ReservedAmt - :AdvanceAmount,");
 		sql.append(" BalanceAmt = BalanceAmt + :AdvanceAmount");
@@ -493,26 +437,18 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			source = null;
-			sql = null;
 		}
 	}
 
 	@Override
 	public void updateUtilizedAndBalance(FinExcessAmount excessAmount) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-
-		sql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		sql.append("Update FinExcessAmount");
 		sql.append(" set UtilisedAmt = :UtilisedAmt, BalanceAmt = :BalanceAmt");
 		sql.append(" Where ExcessID = :ExcessID");
 		logger.debug(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("UtilisedAmt", excessAmount.getUtilisedAmt());
 		source.addValue("BalanceAmt", excessAmount.getBalanceAmt());
 		source.addValue("ExcessID", excessAmount.getExcessID());
@@ -527,35 +463,31 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public FinExcessAmount getExcessAmountsByRefAndType(String finReference, String amountType) {
-		logger.debug("Entering");
 		FinExcessAmount finExcessAmount = new FinExcessAmount();
 		finExcessAmount.setFinReference(finReference);
 		finExcessAmount.setAmountType(amountType);
 
-		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(
-				" Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
-		selectSql.append(" Where FinReference =:FinReference and AmountType = :AmountType");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
+		sql.append(" Where FinReference =:FinReference and AmountType = :AmountType");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finExcessAmount);
 		RowMapper<FinExcessAmount> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinExcessAmount.class);
 
 		try {
-			finExcessAmount = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finExcessAmount = jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			finExcessAmount = null;
 		}
 
-		logger.debug(Literal.LEAVING);
 		return finExcessAmount;
 	}
 
 	@Override
 	public List<FinExcessAmount> getAllExcessAmountsByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 
@@ -574,35 +506,30 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 		}
 
-		logger.debug(Literal.LEAVING);
 		return new ArrayList<>();
 	}
 
 	@Override
 	public void deductExcessReserve(long excessID, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ExcessID", excessID);
 		source.addValue("PaidNow", amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set ReservedAmt = ReservedAmt - :PaidNow,Amount = Amount - :PaidNow ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set ReservedAmt = ReservedAmt - :PaidNow,Amount = Amount - :PaidNow ");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.debug(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public int updateExcessReserveByRef(String reference, String amountType, BigDecimal amount) {
-		logger.debug("Entering");
 
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -610,21 +537,18 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("AmountType", amountType);
 		source.addValue("PaidNow", amount);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, Amount = Amount + :PaidNow");
-		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set ReservedAmt = ReservedAmt + :PaidNow, Amount = Amount + :PaidNow");
+		sql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), source);
 
-		logger.debug("Leaving");
 		return recordCount;
 	}
 
 	@Override
 	public int updExcessAfterRealize(String reference, String amountType, BigDecimal amount) {
-		logger.debug("Entering");
-
 		int recordCount = 0;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", reference);
@@ -635,48 +559,43 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		updateSql.append(" Set  BalanceAmt = BalanceAmt + :PaidNow, ReservedAmt = ReservedAmt - :PaidNow ");
 		updateSql.append(" Where FinReference =:FinReference AND AmountType=:AmountType ");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.trace(Literal.SQL + updateSql.toString());
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), source);
 
-		logger.debug("Leaving");
 		return recordCount;
 	}
 
 	@Override
 	public int updateExcessReserve(FinExcessAmount excessMovement) {
-
 		int recordCount = 0;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt ");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		return recordCount;
 	}
 
 	@Override
 	public int updateReserveUtilization(FinExcessAmount excessMovement) {
-
 		int recordCount = 0;
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(excessMovement);
 
-		StringBuilder updateSql = new StringBuilder("Update FinExcessAmount");
-		updateSql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt, UtilisedAmt=:UtilisedAmt ");
-		updateSql.append(" Where ExcessID =:ExcessID");
+		StringBuilder sql = new StringBuilder("Update FinExcessAmount");
+		sql.append(" Set  BalanceAmt = :BalanceAmt, ReservedAmt = :ReservedAmt, UtilisedAmt=:UtilisedAmt ");
+		sql.append(" Where ExcessID =:ExcessID");
 
-		logger.debug("updateSql: " + updateSql.toString());
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.trace(Literal.SQL + sql.toString());
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
 		return recordCount;
 	}
 
 	@Override
 	public FinExcessMovement getFinExcessMovement(long excessID, String movementFrom, Date schDate) {
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from FinExcessMovement");
 		sql.append(" where ExcessID = :ExcessID and MovementFrom = :MovementFrom and SchDate=:SchDate");
@@ -702,8 +621,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public List<FinExcessMovement> getFinExcessAmount(long presentmentid) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from FinExcessMovement");
 		sql.append(" where ReceiptID = :ReceiptID and MovementType = :MovementType");
@@ -723,8 +640,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 
 	@Override
 	public FinExcessAmount getFinExcessByID(long excessID) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from FinExcessAmount");
 		sql.append(" where ExcessID = :ExcessID");
@@ -739,8 +654,6 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
-		} finally {
-			logger.debug(Literal.LEAVING);
 		}
 
 		return null;
@@ -761,7 +674,52 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		source.addValue("TranType", "I");
 
 		return this.jdbcTemplate.update(sql.toString(), source);
+	}
 
+	@Override
+	public void saveExcessList(List<FinExcessAmount> feaList) {
+		StringBuilder sql = saveExcessQuery();
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(feaList.toArray());
+
+		try {
+			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error("Exception", e);
+			logger.debug("insertSql: " + sql.toString());
+			throw e;
+		}
+
+	}
+
+	private StringBuilder saveExcessQuery() {
+		StringBuilder sql = new StringBuilder("Insert Into FinExcessAmount");
+		sql.append(" (ExcessID, FinReference, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt)");
+		sql.append(" Values(:ExcessID, :FinReference, :AmountType, :Amount, :UtilisedAmt, :ReservedAmt, :BalanceAmt)");
+		return sql;
+	}
+
+	@Override
+	public void saveExcessMovementList(List<FinExcessMovement> movements) {
+		StringBuilder sql = saveFEMQuery();
+
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(movements.toArray());
+
+		try {
+			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
+
+	}
+
+	private StringBuilder saveFEMQuery() {
+		StringBuilder sql = new StringBuilder("Insert Into FinExcessMovement");
+		sql.append(" (ExcessID, ReceiptID, MovementType, TranType, Amount, MovementFrom, SchDate)");
+		sql.append(" Values(:ExcessID, :ReceiptID, :MovementType, :TranType, :Amount, :MovementFrom, :SchDate)");
+
+		return sql;
 	}
 
 }

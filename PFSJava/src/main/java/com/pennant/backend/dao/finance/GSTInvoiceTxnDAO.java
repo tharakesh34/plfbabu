@@ -66,4 +66,5 @@ public interface GSTInvoiceTxnDAO {
 
 	boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate, Date toDate);
 
+	void updateSeqNo();
 }

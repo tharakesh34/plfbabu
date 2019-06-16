@@ -596,4 +596,16 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
+	@Override
+	public void updateLinkedTranId(FinAdvancePayments finAdvancePayments) {
+		StringBuilder sql = new StringBuilder("Update FinAdvancePayments");
+		sql.append(" Set LinkedTranId = :linkedTranId");
+		sql.append(" Where PaymentId = :PaymentId");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+	}
+
 }

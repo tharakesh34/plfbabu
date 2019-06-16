@@ -157,6 +157,8 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String customerName;
 
+	private boolean blocklimit;
+
 	// API validation purpose only
 	@SuppressWarnings("unused")
 	private LimitHeader validateLimitHeader = this;
@@ -569,6 +571,14 @@ public class LimitHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setValidateMaturityDate(boolean validateMaturityDate) {
 		this.validateMaturityDate = validateMaturityDate;
+	}
+
+	public boolean isBlocklimit() {
+		return blocklimit;
+	}
+
+	public void setBlocklimit(boolean blocklimit) {
+		this.blocklimit = blocklimit;
 	}
 
 }

@@ -2,11 +2,14 @@ package com.pennant.app.core;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,6 +24,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
 import com.pennant.backend.dao.rmtmasters.AccountTypeDAO;
+import com.pennant.backend.model.accounts.AccountHistoryDetail;
 import com.pennant.backend.model.accounts.Accounts;
 import com.pennant.backend.model.accounts.AccountsHistory;
 import com.pennant.backend.model.rmtmasters.AccountType;
@@ -109,6 +113,67 @@ public class CustomerAccountService extends ServiceHelper {
 
 		logger.debug(" Leaving ");
 
+	}
+
+	public void processCustomerAccountHstyDetails() throws Exception {
+		logger.debug(" Entering ");
+
+		List<AccountHistoryDetail> accHstyDetailList = new ArrayList<>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(" Select T1.Account AccountID, T1.PostDate, T1.EntityCode, T1.PostBranch, T2.BranchProvince, ");
+		sb.append(" SUM(Case When DrOrCr = 'D' Then PostAmount * -1 Else 0 End) TodayDebits,  ");
+		sb.append(" SUM(Case When DrOrCr = 'C' Then PostAmount Else 0 End) TodayCredits,0 TodayNet, ");
+		sb.append(" 0 ShadowBalance, 0 AcBalance, 0 OpeningBalance from Postings T1  ");
+		sb.append(" Inner Join RMTBranches T2 On  T1.PostBranch = T2.BranchCode ");
+		sb.append(" Where T1.PostDate = ? ");
+		sb.append(" Group BY T1.Account, T1.PostDate,T1.EntityCode, T1.PostBranch, T2.BranchProvince ");
+
+		Connection connection = null;
+		ResultSet resultSet = null;
+		PreparedStatement sqlStatement = null;
+		try {
+			connection = DataSourceUtils.doGetConnection(dataSource);
+			sqlStatement = connection.prepareStatement(sb.toString());
+			sqlStatement.setDate(1, (Date) DateUtility.getAppDate());
+			resultSet = sqlStatement.executeQuery();
+			while (resultSet.next()) {
+				accHstyDetailList.add(getAccountHistoryDetail(resultSet));
+			}
+			accountsHistoryDAO.save(accHstyDetailList);
+			accountsHistoryDAO.update(accHstyDetailList);
+			accountsHistoryDAO.updateCurrAccHstyDetails(accHstyDetailList);
+			//accountsHistoryDAO.updateFields();
+
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			throw e;
+		} finally {
+			DataSourceUtils.releaseConnection(connection, dataSource);
+		}
+
+		logger.debug(" Leaving ");
+
+	}
+
+	private AccountHistoryDetail getAccountHistoryDetail(ResultSet resultSet) {
+		AccountHistoryDetail accountHistoryDetail = new AccountHistoryDetail();
+		try {
+			accountHistoryDetail.setAccountId(resultSet.getString("AccountId"));
+			accountHistoryDetail.setPostDate(resultSet.getDate("PostDate"));
+			accountHistoryDetail.setEntityCode(resultSet.getString("EntityCode"));
+			accountHistoryDetail.setPostBranch(resultSet.getString("PostBranch"));
+			accountHistoryDetail.setBranchProvince(resultSet.getString("BranchProvince"));
+			accountHistoryDetail.setTodayDebits(resultSet.getBigDecimal("TodayDebits"));
+			accountHistoryDetail.setTodayCredits(resultSet.getBigDecimal("TodayCredits"));
+			accountHistoryDetail.setTodayNet(resultSet.getBigDecimal("TodayNet"));
+			accountHistoryDetail.setShadowBal(resultSet.getBigDecimal("ShadowBal"));
+			accountHistoryDetail.setAcBalance(resultSet.getBigDecimal("AcBalance"));
+			accountHistoryDetail.setOpeningBal(resultSet.getBigDecimal("OpeningBalance"));
+
+		} catch (SQLException e) {
+		}
+		return accountHistoryDetail;
 	}
 
 	private ReturnDataSet getReturnDataSet(ResultSet resultSet) {

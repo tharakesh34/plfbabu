@@ -28,7 +28,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
@@ -133,6 +132,8 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 		setStatusDetails();
+
+		this.txtchannel.setMaxlength(20);
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.minAmount.setProperties(true, formatter);

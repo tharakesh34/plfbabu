@@ -614,7 +614,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agency.setValueColumn("DealerName");
 		agency.setValidateColumns(new String[] { "DealerName" });
 		Filter[] agencyFilter = new Filter[1];
-		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
+		agencyFilter[0] = new Filter("DealerType", Agencies.PDAGENCY.getKey(), Filter.OP_EQUAL);
 		agency.setFilters(agencyFilter);
 		logger.debug(Literal.LEAVING);
 	}
@@ -626,7 +626,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		reason.setValueColumn("Code");
 		reason.setValidateColumns(new String[] { "Code" });
 		Filter[] reasonFilter = new Filter[1];
-		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.FIWRES.getKey(), Filter.OP_EQUAL);
+		reasonFilter[0] = new Filter("ReasonTypecode", WaiverReasons.PDWRES.getKey(), Filter.OP_EQUAL);
 		reason.setFilters(reasonFilter);
 
 		logger.debug(Literal.LEAVING);

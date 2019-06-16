@@ -37,6 +37,7 @@ import com.pennant.validation.LimitSetupGroup;
 import com.pennant.validation.SaveValidationGroup;
 import com.pennant.validation.UpdateValidationGroup;
 import com.pennant.validation.ValidationUtility;
+import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.LimitServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pffws.LimitRestService;
@@ -311,6 +312,85 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
+	@Override
+	public WSReturnStatus blockLimit(LimitHeader limitHeader) throws ServiceException {
+		logger.debug("Entering");
+		WSReturnStatus returnStatus = null;
+
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(StringUtils.trimToEmpty(limitHeader.getCustCIF()));
+		returnStatus = blockLimitValidation(limitHeader);
+		if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+		// call cancel Reserve limit method
+		returnStatus = limitServiceController.doBlockLimit(limitHeader, true);
+		logger.debug("Leaving");
+		return returnStatus;
+	}
+
+	private WSReturnStatus blockLimitValidation(LimitHeader limitHeader) {
+		logger.debug("Entering");
+		WSReturnStatus returnStatus = null;
+		if (StringUtils.isBlank(limitHeader.getCustCIF())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "cif";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else {
+			// validate customer CIF
+			Customer customer = null;
+			String custCIF = limitHeader.getCustCIF();
+			if (StringUtils.isNotBlank(custCIF)) {
+				customer = customerDetailsService.getCustomerByCIF(custCIF);
+				if (customer == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = custCIF;
+					return getErrorDetails("90101", valueParm);
+				} else {
+					limitHeader.setCustomerId(customer.getCustID());
+				}
+			}
+		}
+		if (limitHeader.getHeaderId() <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "LimitId";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		} else {
+			LimitHeader limitheader = limitDetailService.getCustomerLimitsById(limitHeader.getHeaderId());
+			if (limitheader == null || !limitheader.isActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = String.valueOf(limitHeader.getHeaderId());
+				return getErrorDetails("90807", valueParm);
+			}
+
+			if (limitHeader.getCustomerId() != limitheader.getCustomerId()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = limitHeader.getCustCIF();
+				valueParm[1] = String.valueOf(limitHeader.getHeaderId());
+				return APIErrorHandlerService.getFailedStatus("90341", valueParm);
+			}
+		}
+		logger.debug("Leaving");
+		return returnStatus;
+	}
+
+	@Override
+	public WSReturnStatus unBlockLimit(LimitHeader limitHeader) throws ServiceException {
+		logger.debug("Entering");
+		WSReturnStatus returnStatus = null;
+
+		// for failure case logging purpose
+		APIErrorHandlerService.logReference(StringUtils.trimToEmpty(limitHeader.getCustCIF()));
+		returnStatus = blockLimitValidation(limitHeader);
+		if (returnStatus != null && StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+		// call cancel Reserve limit method
+		returnStatus = limitServiceController.doBlockLimit(limitHeader, false);
+		logger.debug("Leaving");
+		return returnStatus;
+	}
+
 	/**
 	 * Validate Limit header fields
 	 * 
@@ -551,4 +631,5 @@ public class LimitWebServiceImpl implements LimitRestService, LimitSoapService {
 	public void setLimitTransactionDetailDAO(LimitTransactionDetailsDAO limitTransactionDetailDAO) {
 		this.limitTransactionDetailDAO = limitTransactionDetailDAO;
 	}
+
 }

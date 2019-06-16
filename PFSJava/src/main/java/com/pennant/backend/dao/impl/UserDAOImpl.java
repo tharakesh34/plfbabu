@@ -110,7 +110,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	 */
 
 	public void updateLoginStatus(String userName, int authPass) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		StringBuilder updateSql = new StringBuilder("Update SecUsers  set ");
 
@@ -125,7 +125,8 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			updateSql.append(
 					"LastLoginOn =:LastLoginOn,LastFailLoginOn=:LastFailLoginOn,UsrInvldLoginTries=:UsrInvldLoginTries");
 			updateSql.append(" Where UsrLogin =:UsrLogin");
-			logger.debug("updateSql:" + updateSql.toString());
+
+			logger.trace(Literal.SQL + updateSql.toString());
 			this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 		} else {
 			//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
@@ -137,18 +138,21 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			updateSql.append(
 					" UsrInvldLoginTries=(UsrInvldLoginTries+1), UsrEnabled=:UsrEnabled,LastFailLoginOn =:LastFailLoginOn  Where UsrLogin = :UsrLogin");
 			updateSql.append(" and UsrInvldLoginTries >= :invalidLogins");
-			logger.debug("updateSql:" + updateSql.toString());
+
+			logger.trace(Literal.SQL + updateSql.toString());
 			int count = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 			if (count == 0) {
 				namedParameters.put("LastFailLoginOn", loginTime);
 				updateSql = new StringBuilder("Update SecUsers  set ");
 				updateSql.append("LastFailLoginOn =:LastFailLoginOn");
 				updateSql.append(",UsrInvldLoginTries=(UsrInvldLoginTries+1) Where UsrLogin = :UsrLogin");
-				logger.debug("updateSql:" + updateSql.toString());
+
+				logger.trace(Literal.SQL + updateSql.toString());
 				this.jdbcTemplate.update(updateSql.toString(), namedParameters);
 			}
 		}
-		logger.debug("Leaving ");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

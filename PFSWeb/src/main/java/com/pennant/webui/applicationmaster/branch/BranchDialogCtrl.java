@@ -86,6 +86,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTPhoneNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -199,7 +200,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				this.cityName.setVisible(false);
 			}
 
-			if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_ORGANISATIONAL_STRUCTURE)) {
 				this.row_org_struct.setVisible(true);
 			}
 
@@ -722,7 +723,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			wve.add(we);
 		}
 
-		if ("Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			try {
 				aBranch.setEntity(this.entity.getValidatedValue());
 			} catch (WrongValueException we) {

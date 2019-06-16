@@ -61,6 +61,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Provision model</b> class.<br>
@@ -199,29 +200,26 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 	@Override
 	public String save(Provision provision, String type) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder("Insert Into FinProvisions");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, FinBranch, FinType, CustID, ProvisionCalDate,");
-		insertSql.append(" ProvisionedAmt, ProvisionAmtCal, ProvisionDue, NonFormulaProv, UseNFProv, AutoReleaseNFP,");
-		insertSql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId,");
-		insertSql.append(" Duedays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate)");
-		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
-		insertSql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
-		insertSql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, ");
-		insertSql.append(
+		StringBuilder sql = new StringBuilder("Insert Into FinProvisions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinReference, FinBranch, FinType, CustID, ProvisionCalDate,");
+		sql.append(" ProvisionedAmt, ProvisionAmtCal, ProvisionDue, NonFormulaProv, UseNFProv, AutoReleaseNFP,");
+		sql.append(" PrincipalDue, ProfitDue, DueFromDate, LastFullyPaidDate, ");
+		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId,");
+		sql.append(" Duedays,DpdBucketID,NpaBucketID,PftBal,PriBal,PrvovisionRate)");
+		sql.append(" Values(:FinReference, :FinBranch, :FinType, :CustID, :ProvisionCalDate,");
+		sql.append(" :ProvisionedAmt, :ProvisionAmtCal, :ProvisionDue, :NonFormulaProv,");
+		sql.append(" :UseNFProv, :AutoReleaseNFP, :PrincipalDue, :ProfitDue, :DueFromDate, :LastFullyPaidDate, ");
+		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId,");
-		insertSql.append(" :Duedays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate)");
+		sql.append(" :RecordType, :WorkflowId,");
+		sql.append(" :Duedays,:DpdBucketID,:NpaBucketID,:PftBal,:PriBal,:PrvovisionRate)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 		return provision.getId();
 	}
 
@@ -338,26 +336,23 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 	@Override
 	public Provision getCurNPABucket(final String id) {
-		logger.debug("Entering");
 		Provision provision = new Provision();
-
 		provision.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select NpaBucketID ");
-		selectSql.append(" From FinProvisions");
-		selectSql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = new StringBuilder("Select NpaBucketID ");
+		sql.append(" From FinProvisions");
+		sql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
 		RowMapper<Provision> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Provision.class);
 
 		try {
-			provision = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			provision = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			provision = null;
 		}
-		logger.debug("Leaving");
 		return provision;
 	}
 

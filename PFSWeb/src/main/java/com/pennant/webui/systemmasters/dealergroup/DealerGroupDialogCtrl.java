@@ -183,17 +183,10 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.txtchannel.setMaxlength(20);
+
 		this.dealerCategory.setModuleName("Category");
 		this.dealerCategory.setMandatoryStyle(true);
-
-		/*
-		 * this.dealerCategory.setModuleName("LovFieldDetail"); this.dealerCategory.setMandatoryStyle(true);
-		 * this.dealerCategory.setValueColumn("FieldCodeValue"); this.dealerCategory.setDescColumn("ValueDesc");
-		 * this.dealerCategory.setDisplayStyle(2); this.dealerCategory.setValidateColumns(new String[] {
-		 * "FieldCodeValue" }); Filter dealerCategoryFilter[] = new Filter[1]; dealerCategoryFilter[0] = new
-		 * Filter("FieldCode", "Dealer_Category", Filter.OP_EQUAL);
-		 * this.dealerCategory.setFilters(dealerCategoryFilter);
-		 */
 
 		setStatusDetails();
 
@@ -201,7 +194,12 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	}
 
 	public void onFulfill$dealerCategory(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING + event.toString());
+
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onfullfillDealerCategory() {
 		Object dataObject = dealerCategory.getObject();
 		if (dataObject instanceof String) {
 			this.dealerCategory.setObject(null);
@@ -214,7 +212,6 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 						lovFieldDetail.getValueDesc());
 			}
 		}
-		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onClick$btnchannels(Event event) throws Exception {
@@ -270,7 +267,10 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		this.dealerCategory.setValue(aDealerGroup.getDealerCategoryId());
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
+		lovFieldDetail.setFieldCodeId(Long.valueOf(aDealerGroup.getDealerCategoryId()));
+		this.dealerCategory.setObject(lovFieldDetail);
+		this.dealerCategory.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()), lovFieldDetail.getValueDesc());
 		this.recordStatus.setValue(aDealerGroup.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -290,7 +290,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 		//Code
 		try {
-			if(!this.dealerCode.getValue().equals("")) {
+			if (!this.dealerCode.getValue().equals("")) {
 				aDealerGroup.setDealerCode(this.dealerCode.getValue());
 			}
 		} catch (WrongValueException we) {
@@ -349,16 +349,16 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		logger.debug(Literal.LEAVING);
 
 		if (!this.btndealerCode.isDisabled()) {
-			this.dealerCode.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
-					PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			this.dealerCode
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCode.value"),
+							PennantRegularExpressions.REGEX_DESCRIPTION, true));
 		}
-		
+
 		if (!this.dealerCategory.isReadonly()) {
 			this.dealerCategory.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"),
-							null, true));
+					new PTStringValidator(Labels.getLabel("label_DealerGroupDialog_dealerCategory.value"), null, true));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -490,6 +490,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 			readOnlyComponent(true, this.btndealerCode);
 		}
 
+		readOnlyComponent(isReadOnly("DealerGroupDialog_DealerCategoryId"), this.dealerCategory);
 		readOnlyComponent(isReadOnly("DealerGroupDialog_Channel"), this.btnchannels);
 
 		if (isWorkFlowEnabled()) {
@@ -795,6 +796,12 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 	public void setDealerGroupService(DealerGroupService dealerGroupService) {
 		this.dealerGroupService = dealerGroupService;
+	}
+
+	@Override
+	protected String getReference() {
+		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.dealerGroup.getDealerGroupId()));
+		return referenceBuffer.toString();
 	}
 
 }

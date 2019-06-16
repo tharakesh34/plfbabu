@@ -360,7 +360,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
-	private VehicleDealerService vehicleDealerService;
 	private PSLDetailService pSLDetailService;
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
@@ -395,6 +394,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	private NotificationService notificationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
+	private SubventionDetailDAO subventionDetailDAO;
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
 	private HunterService hunterService;
@@ -424,8 +424,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Check Have to Creating New Finance Accessibility for User or
-	 * not
+	 * Method for Check Have to Creating New Finance Accessibility for User or not
 	 */
 	@Override
 	public boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName) {
@@ -465,8 +464,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailsOrg method.
+	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsOrg method.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -494,12 +492,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// IRR codes tab
 		scheduleData.setiRRDetails(finIRRDetailsDAO.getFinIRRList(financeMain.getFinReference(), "_View"));
-		
-		if (scheduleData.getFinanceMain().istDSApplicable()) {
-			scheduleData.setLowerTaxDeductionDetails(
-					getLowerTaxDeductionDAO().getLowerTaxDeductionDetails(scheduleData.getFinanceMain().getFinReference(), "_Temp"));
-		}
 
+		if (scheduleData.getFinanceMain().istDSApplicable()) {
+			scheduleData.setLowerTaxDeductionDetails(getLowerTaxDeductionDAO()
+					.getLowerTaxDeductionDetails(scheduleData.getFinanceMain().getFinReference(), "_Temp"));
+		}
 
 		financeMain = scheduleData.getFinanceMain();
 
@@ -715,8 +712,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Removing the collateral assignment if the assignment is available in both
-	 * main and temp.
+	 * Removing the collateral assignment if the assignment is available in both main and temp.
 	 * 
 	 * @param financeDetail
 	 * @param assignmentListMain
@@ -964,8 +960,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailsServicing method.
+	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsServicing method.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -1070,15 +1065,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				.addAll((getFinFeeDetailService().getFinFeeDetailById(finReference, false, "_TView", eventCodeRef)));
 
 		/*
-		 * // Finance Receipt Details
-		 * scheduleData.setFinReceiptDetails(getFinFeeDetailService().
-		 * getFinReceiptDetais(finReference)); List<Long> feeIds = new
-		 * ArrayList<Long>(); for (FinFeeDetail finFeeDetail :
-		 * scheduleData.getFinFeeDetailList()) {
-		 * feeIds.add(finFeeDetail.getFeeID()); }
+		 * // Finance Receipt Details scheduleData.setFinReceiptDetails(getFinFeeDetailService().
+		 * getFinReceiptDetais(finReference)); List<Long> feeIds = new ArrayList<Long>(); for (FinFeeDetail finFeeDetail
+		 * : scheduleData.getFinFeeDetailList()) { feeIds.add(finFeeDetail.getFeeID()); }
 		 * 
-		 * if (!feeIds.isEmpty()) {
-		 * scheduleData.setFinFeeReceipts(getFinFeeDetailService().
+		 * if (!feeIds.isEmpty()) { scheduleData.setFinFeeReceipts(getFinFeeDetailService().
 		 * getFinFeeReceiptsById(feeIds, "_TView")); }
 		 */
 
@@ -1104,8 +1095,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailsWIF method.
+	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsWIF method.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -1208,8 +1198,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailById method.
+	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -1228,7 +1217,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Finance Service Instructions
 		financeDetail.getFinScheduleData().setFinServiceInstructions(
 				getFinServiceInstructionDAO().getFinServiceInstructions(finReference, "_Temp", procEdtEvent));
-		
+
 		// Rolledover Finance Details
 		if (StringUtils.equals(procEdtEvent, FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 			RolledoverFinanceHeader header = getRolledoverFinanceDAO().getRolledoverFinanceHeader(finReference,
@@ -1457,8 +1446,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailById method.
+	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -1577,9 +1565,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * getApprovedFinanceDetailById fetch the details by using FinanceMainDAO's
-	 * getFinanceDetailById method . with parameter id and type as blank. it
-	 * fetches the approved records from the FinanceMain.
+	 * getApprovedFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method . with
+	 * parameter id and type as blank. it fetches the approved records from the FinanceMain.
 	 * 
 	 * @param finReference
 	 *            (String)
@@ -1802,10 +1789,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// insurance Details
 			scheduleData.setFinInsuranceList(getFinInsurancesDAO().getFinInsuranceListByRef(finReference, type, isWIF));
-			
+
 			if (scheduleData.getFinanceMain().istDSApplicable()) {
-				scheduleData.setLowerTaxDeductionDetails(
-						getLowerTaxDeductionDAO().getLowerTaxDeductionDetails(scheduleData.getFinanceMain().getFinReference(), ""));
+				scheduleData.setLowerTaxDeductionDetails(getLowerTaxDeductionDAO()
+						.getLowerTaxDeductionDetails(scheduleData.getFinanceMain().getFinReference(), ""));
 			}
 
 			// FinSchFrqInsurance Details
@@ -2012,7 +1999,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				long accountingSetId = getAccountingSetDAO().getAccountingSetId(AccountEventConstants.ACCEVENT_CMTDISB,
 						AccountEventConstants.ACCEVENT_CMTDISB);// TODO :
-																// ACCOUNTINGSET
+																																								// ACCOUNTINGSET
 
 				if (accountingSetId != 0) {
 					financeDetail.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
@@ -2029,36 +2016,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (!"QDE".equals(screenCode) && extFieldsReq) {
 
 				/*
-				 * ExtendedFieldHeader fieldHeader = null;
-				 * List<ExtendedFieldDetail> extendedFieldDetails = null; String
+				 * ExtendedFieldHeader fieldHeader = null; List<ExtendedFieldDetail> extendedFieldDetails = null; String
 				 * assetCode = financeMain.getFinPurpose();
 				 * 
-				 * fieldHeader = getExtendedFieldHeaderDAO().
-				 * getExtendedFieldHeaderByModuleName(FinanceConstants.
+				 * fieldHeader = getExtendedFieldHeaderDAO(). getExtendedFieldHeaderByModuleName(FinanceConstants.
 				 * MODULE_NAME, assetCode, "_AView");
 				 * 
 				 * if (fieldHeader != null) { extendedFieldDetails =
-				 * getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule
-				 * (assetCode, "_AView");
+				 * getExtendedFieldDetailDAO().getExtendedFieldDetailBySubModule (assetCode, "_AView");
 				 * fieldHeader.setExtendedFieldDetails(extendedFieldDetails);
 				 * financeDetail.setExtendedFieldHeader(fieldHeader);
 				 * 
-				 * finReference =
-				 * StringUtils.trimToEmpty(financeDetail.getFinScheduleData().
-				 * getFinReference());
+				 * finReference = StringUtils.trimToEmpty(financeDetail.getFinScheduleData(). getFinReference());
 				 * 
-				 * if (extendedFieldDetails != null &&
-				 * !extendedFieldDetails.isEmpty() &&
-				 * StringUtils.isNotEmpty(finReference)) { String tableName =
-				 * ""; if (PennantStaticListUtil.getModuleName().containsKey(
-				 * FinanceConstants.MODULE_NAME)) { tableName =
-				 * PennantStaticListUtil.getModuleName().get(FinanceConstants.
-				 * MODULE_NAME).get(assetCode); HashMap<String, Object> map =
-				 * (HashMap<String, Object>)
-				 * getExtendedFieldDetailDAO().retrive(tableName, finReference,
-				 * "_Temp"); if (map != null) {
-				 * financeDetail.getLovDescExtendedFieldValues().putAll(map); }
-				 * } } }
+				 * if (extendedFieldDetails != null && !extendedFieldDetails.isEmpty() &&
+				 * StringUtils.isNotEmpty(finReference)) { String tableName = ""; if
+				 * (PennantStaticListUtil.getModuleName().containsKey( FinanceConstants.MODULE_NAME)) { tableName =
+				 * PennantStaticListUtil.getModuleName().get(FinanceConstants. MODULE_NAME).get(assetCode);
+				 * HashMap<String, Object> map = (HashMap<String, Object>)
+				 * getExtendedFieldDetailDAO().retrive(tableName, finReference, "_Temp"); if (map != null) {
+				 * financeDetail.getLovDescExtendedFieldValues().putAll(map); } } } }
 				 */
 			}
 		}
@@ -2130,14 +2107,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FinanceMain/FinanceMain_Temp by using FinanceMainDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinanceMainDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinanceMain by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinanceMain/FinanceMain_Temp by
+	 * using FinanceMainDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using FinanceMainDAO's update method 3) Audit the record in to AuditHeader and AdtFinanceMain by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -2176,8 +2150,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/*
-		 * Cloner cloner = new Cloner(); AuditHeader auditHeader =
-		 * cloner.deepClone(aAuditHeader);
+		 * Cloner cloner = new Cloner(); AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		 */
 		AuditHeader auditHeader = null;
 		try {
@@ -3165,7 +3138,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, true));
 		}
-		// save pd Approval details
+		//  save pd Approval details
 		// =======================================
 		if (financeDetail.isPdApprovalTab()) {
 			adtVerifications
@@ -3205,8 +3178,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Fin Flag
-	 * Details
+	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
 	 * 
 	 * @param auditDetails
 	 * @param financeDetail
@@ -3304,8 +3276,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method For Preparing List of AuditDetails for Check List for Fin Flag
-	 * Details
+	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
 	 * 
 	 * @param financeDetail
 	 * 
@@ -3573,12 +3544,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table FinanceMain by using FinanceMainDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FinanceMain by using FinanceMainDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -3770,19 +3739,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinanceMainDAO().delete with parameters financeMain,"" b) NEW
-	 * Add new record in to main table by using getFinanceMainDAO().save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by
-	 * using getFinanceMainDAO().update with parameters financeMain,"" 3) Delete
-	 * the record from the workFlow table by using getFinanceMainDAO().delete
-	 * with parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinanceMainDAO().delete with
+	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinanceMainDAO().save with
+	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinanceMainDAO().update with
+	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinanceMainDAO().delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -4200,11 +4165,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				/*
-				 * // Save Finance Flag details
-				 * if(financeDetail.getFinFlagsDetails() != null &&
+				 * // Save Finance Flag details if(financeDetail.getFinFlagsDetails() != null &&
 				 * !financeDetail.getFinFlagsDetails().isEmpty()) {
-				 * getFinFlagDetailsDAO().savefinFlagList(financeDetail.
-				 * getFinFlagsDetails(), ""); }
+				 * getFinFlagDetailsDAO().savefinFlagList(financeDetail. getFinFlagsDetails(), ""); }
 				 */
 
 				// Save Contributor Header Details
@@ -4352,7 +4315,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 			}
-			
+
 			// LowerTax Deductions
 			// ===============
 			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getLowerTaxDeductionDetails())
@@ -5173,10 +5136,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		case PennantConstants.method_doCheckAuthLimit:
 			/*
-			 * if (!"Save".equals(afinanceMain.getRecordStatus()) &&
-			 * afinanceMain.getNextRoleCode().equals("")) {
-			 * authorizationLimitService.validateFinanceAuthorizationLimit(
-			 * auditHeader); }
+			 * if (!"Save".equals(afinanceMain.getRecordStatus()) && afinanceMain.getNextRoleCode().equals("")) {
+			 * authorizationLimitService.validateFinanceAuthorizationLimit( auditHeader); }
 			 */
 			authorizationLimitService.validateFinanceAuthorizationLimit(auditHeader);
 
@@ -5236,7 +5197,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		case "doHunterService":
 			if (null != hunterService) {
-				hunterService.getHunterStatus(auditHeader);
+				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
+				if (hunterReq) {
+					hunterService.getHunterStatus(auditHeader);
+				}
 			}
 			break;
 		default:
@@ -5262,8 +5226,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for check weather the record is going forward or not for Query
-	 * Management
+	 * Method for check weather the record is going forward or not for Query Management
 	 * 
 	 * @param financeMain
 	 * @return
@@ -5407,8 +5370,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for process Finance Maintenance and sending handling instruction
-	 * request to ICCS interface
+	 * Method for process Finance Maintenance and sending handling instruction request to ICCS interface
 	 * 
 	 * @param financeDetail
 	 * @throws InterfaceException
@@ -5454,19 +5416,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFinanceMainDAO().delete with parameters financeMain,"" b) NEW
-	 * Add new record in to main table by using getFinanceMainDAO().save with
-	 * parameters financeMain,"" c) EDIT Update record in the main table by
-	 * using getFinanceMainDAO().update with parameters financeMain,"" 3) Delete
-	 * the record from the workFlow table by using getFinanceMainDAO().delete
-	 * with parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtFinanceMain by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFinanceMainDAO().delete with
+	 * parameters financeMain,"" b) NEW Add new record in to main table by using getFinanceMainDAO().save with
+	 * parameters financeMain,"" c) EDIT Update record in the main table by using getFinanceMainDAO().update with
+	 * parameters financeMain,"" 3) Delete the record from the workFlow table by using getFinanceMainDAO().delete with
+	 * parameters financeMain,"_Temp" 4) Audit the record in to AuditHeader and AdtFinanceMain by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinanceMain by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -6094,13 +6052,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFinanceMainDAO().delete with parameters
-	 * financeMain,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFinanceMainDAO().delete with parameters financeMain,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -6542,8 +6497,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Send Collateral DeMark request to interface
 		// ==================================================
 		/**
-		 * Check whether Collateral Marked or not if Marked then send DeMark
-		 * collateral request to interface
+		 * Check whether Collateral Marked or not if Marked then send DeMark collateral request to interface
 		 * 
 		 */
 		if (financeDetail.getFinanceCollaterals() != null) {
@@ -6622,10 +6576,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setFinanceTaxDetail(getFinanceTaxDetailDAO().getFinanceTaxDetail(finReference, type));
 		financeDetail.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
 		/*
-		 * List<LegalDetail> ligelDetailsList =
-		 * legalDetailService.getLegalDetailByFinreference(finReference); if
-		 * (CollectionUtils.isNotEmpty(ligelDetailsList)) {
-		 * financeDetail.setLegalDetailsList(ligelDetailsList); }
+		 * List<LegalDetail> ligelDetailsList = legalDetailService.getLegalDetailByFinreference(finReference); if
+		 * (CollectionUtils.isNotEmpty(ligelDetailsList)) { financeDetail.setLegalDetailsList(ligelDetailsList); }
 		 */
 
 		logger.debug(Literal.LEAVING);
@@ -6679,12 +6631,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getFinanceMainDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getFinanceMainDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -7687,8 +7637,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Methods for Creating List Finance Flag of Audit Details with detailed
-	 * fields
+	 * Methods for Creating List Finance Flag of Audit Details with detailed fields
 	 * 
 	 * @param financeDetail
 	 * @param auditTranType
@@ -7857,8 +7806,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD)
-	 * Currency
+	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD) Currency
 	 */
 	@Override
 	public CustomerEligibilityCheck getCustEligibilityDetail(Customer customer, String productCode, String finReference,
@@ -7989,14 +7937,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// FIXME to be Removed
 			// DSR Calculation
 			/*
-			 * Rule rule =
-			 * getRuleDAO().getRuleByID(RuleConstants.ELGRULE_DSRCAL,
-			 * RuleConstants.MODULE_ELGRULE, RuleConstants.EVENT_ELGRULE, "");
-			 * if (rule != null) { Object dscr =
-			 * getRuleExecutionUtil().executeRule(rule.getSQLRule(),
-			 * eligibilityCheck.getDeclaredFieldValues(), finCcy,
-			 * RuleReturnType.DECIMAL);
-			 * eligibilityCheck.setDSCR(PennantApplicationUtil.getDSR(dscr)); }
+			 * Rule rule = getRuleDAO().getRuleByID(RuleConstants.ELGRULE_DSRCAL, RuleConstants.MODULE_ELGRULE,
+			 * RuleConstants.EVENT_ELGRULE, ""); if (rule != null) { Object dscr =
+			 * getRuleExecutionUtil().executeRule(rule.getSQLRule(), eligibilityCheck.getDeclaredFieldValues(), finCcy,
+			 * RuleReturnType.DECIMAL); eligibilityCheck.setDSCR(PennantApplicationUtil.getDSR(dscr)); }
 			 */
 		}
 
@@ -8024,8 +7968,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD)
-	 * Currency
+	 * Method for Preparing Customer Eligibility Amount Details in Base(BHD) Currency
 	 * 
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -8331,9 +8274,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// commented because we are fetching total fees from FinfeeDeatail
 			// table
 			/*
-			 * summary =
-			 * getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary);
-			 * summary = getFinFeeDetailDAO().getTotalFeeCharges(summary);
+			 * summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary); summary =
+			 * getFinFeeDetailDAO().getTotalFeeCharges(summary);
 			 */
 			summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
 			finSchData.setFinanceSummary(summary);
@@ -8384,6 +8326,26 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain.setEntityDesc(finMain.getEntityDesc());
 		}
 
+		if (financeMain.isAllowSubvention()) {
+			// Disbursement Details
+			List<FinanceDisbursement> disbursementDetails = financeDisbursementDAO
+					.getFinanceDisbursementDetails(finReference, type, false);
+			scheduleData.setDisbursementDetails(disbursementDetails);
+			if (CollectionUtils.isNotEmpty(disbursementDetails)) {
+				for (FinanceDisbursement disbursement : disbursementDetails) {
+					List<SubventionScheduleDetail> subventionScheduleDetails = subventionDetailDAO
+							.getSubventionScheduleDetails(disbursement.getFinReference(), disbursement.getDisbSeq(),
+									type);
+					disbursement.setSubventionSchedules(subventionScheduleDetails);
+				}
+			}
+
+			scheduleData.setSubventionDetail(
+					subventionDetailDAO.getSubventionDetail(financeMain.getFinReference(), "_View"));
+		} else {
+			scheduleData.setSubventionDetail(null);
+		}
+
 		// Repay instructions
 		scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
@@ -8397,41 +8359,31 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Fee Details
 		/*
-		 * scheduleData.setFinFeeDetailList(getFinFeeDetailDAO().
-		 * getFinScheduleFees(finReference, false, "_View"));
+		 * scheduleData.setFinFeeDetailList(getFinFeeDetailDAO(). getFinScheduleFees(finReference, false, "_View"));
 		 * 
-		 * // Finance Fee Schedule Details if
-		 * (scheduleData.getFinFeeDetailList() != null &&
+		 * // Finance Fee Schedule Details if (scheduleData.getFinFeeDetailList() != null &&
 		 * !scheduleData.getFinFeeDetailList().isEmpty()) {
 		 * 
-		 * List<Long> feeIDList = new ArrayList<>(); for (int i = 0; i <
-		 * scheduleData.getFinFeeDetailList().size(); i++) { FinFeeDetail
-		 * feeDetail = scheduleData.getFinFeeDetailList().get(i);
-		 * feeDetail.setRcdVisible(false); feeIDList.add(feeDetail.getFeeID());
-		 * }
+		 * List<Long> feeIDList = new ArrayList<>(); for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++)
+		 * { FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i); feeDetail.setRcdVisible(false);
+		 * feeIDList.add(feeDetail.getFeeID()); }
 		 * 
-		 * if(!feeIDList.isEmpty()){ List<FinFeeScheduleDetail> feeScheduleList
-		 * = getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList,
-		 * false, "");
+		 * if(!feeIDList.isEmpty()){ List<FinFeeScheduleDetail> feeScheduleList =
+		 * getFinFeeScheduleDetailDAO().getFeeScheduleByFinID(feeIDList, false, "");
 		 * 
-		 * if(feeScheduleList != null && !feeScheduleList.isEmpty()){
-		 * HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new
-		 * HashMap<>(); for (int i = 0; i < feeScheduleList.size(); i++) {
-		 * FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
+		 * if(feeScheduleList != null && !feeScheduleList.isEmpty()){ HashMap<Long, List<FinFeeScheduleDetail>>
+		 * schFeeMap = new HashMap<>(); for (int i = 0; i < feeScheduleList.size(); i++) { FinFeeScheduleDetail schdFee
+		 * = feeScheduleList.get(i);
 		 * 
-		 * List<FinFeeScheduleDetail> schList = new ArrayList<>(); if
-		 * (schFeeMap.containsKey(schdFee.getFeeID())) { schList =
-		 * schFeeMap.get(schdFee.getFeeID());
-		 * schFeeMap.remove(schdFee.getFeeID()); } schList.add(schdFee);
+		 * List<FinFeeScheduleDetail> schList = new ArrayList<>(); if (schFeeMap.containsKey(schdFee.getFeeID())) {
+		 * schList = schFeeMap.get(schdFee.getFeeID()); schFeeMap.remove(schdFee.getFeeID()); } schList.add(schdFee);
 		 * schFeeMap.put(schdFee.getFeeID(), schList);
 		 * 
 		 * }
 		 * 
-		 * for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) {
-		 * FinFeeDetail feeDetail = scheduleData.getFinFeeDetailList().get(i);
-		 * if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-		 * feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.
-		 * getFeeID())); } } } } }
+		 * for (int i = 0; i < scheduleData.getFinFeeDetailList().size(); i++) { FinFeeDetail feeDetail =
+		 * scheduleData.getFinFeeDetailList().get(i); if (schFeeMap.containsKey(feeDetail.getFeeID())) {
+		 * feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail. getFeeID())); } } } } }
 		 */
 
 		List<FinFeeDetail> fees = finFeeDetailDAO.getFinScheduleFees(finReference, false, "_View");
@@ -8560,8 +8512,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for fetching list of entries executed based on Linked Transaction
-	 * ID
+	 * Method for fetching list of entries executed based on Linked Transaction ID
 	 */
 	@Override
 	public List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid) {
@@ -8573,12 +8524,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param AuditHeader
 	 * 
-	 *            1. Check limit category exists or not for the account type, if
-	 *            not exists set limitValid = true other wise goto next step. 2.
-	 *            Fetch customer limits from core banking. 3. If the limits not
-	 *            available set the ErrMessage. 4. If available limit is less
-	 *            than finance amount, set warning message if the user have the
-	 *            permission 'override Limits' otherwise set Error message.
+	 *            1. Check limit category exists or not for the account type, if not exists set limitValid = true other
+	 *            wise goto next step. 2. Fetch customer limits from core banking. 3. If the limits not available set
+	 *            the ErrMessage. 4. If available limit is less than finance amount, set warning message if the user
+	 *            have the permission 'override Limits' otherwise set Error message.
 	 * 
 	 */
 	public AuditHeader doCheckLimits(AuditHeader auditHeader) {
@@ -8692,8 +8641,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Checking Black List Abuser data Against Customer Included in
-	 * Finance
+	 * Method for Checking Black List Abuser data Against Customer Included in Finance
 	 * 
 	 * @param financeDetail
 	 * @return
@@ -10637,8 +10585,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/*
-	 * Method to get the schedule change module list from the
-	 * ScheduleEffectModule table
+	 * Method to get the schedule change module list from the ScheduleEffectModule table
 	 */
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
 		return getFinanceMainDAO().getScheduleEffectModuleList(schdChangeReq);
@@ -11326,17 +11273,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
+	@Autowired(required = false)
+	public void setSubventionDetailDAO(SubventionDetailDAO subventionDetailDAO) {
+		this.subventionDetailDAO = subventionDetailDAO;
+	}
+
+	@Autowired
+	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
+		this.advancePaymentService = advancePaymentService;
+	}
+
 	public LowerTaxDeductionDAO getLowerTaxDeductionDAO() {
 		return lowerTaxDeductionDAO;
 	}
 
 	public void setLowerTaxDeductionDAO(LowerTaxDeductionDAO lowerTaxDeductionDAO) {
 		this.lowerTaxDeductionDAO = lowerTaxDeductionDAO;
-	}
-
-	@Autowired
-	public void setAdvancePaymentService(AdvancePaymentService advancePaymentService) {
-		this.advancePaymentService = advancePaymentService;
 	}
 
 }

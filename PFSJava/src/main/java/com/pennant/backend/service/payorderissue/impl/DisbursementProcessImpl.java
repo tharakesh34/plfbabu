@@ -1,5 +1,10 @@
 package com.pennant.backend.service.payorderissue.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +17,10 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -31,6 +38,9 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	protected PostingsPreparationUtil postingsPreparationUtil;
 	@Autowired
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+
+	@Autowired
+	private DisbursementPostings disbursementPostings;
 
 	private static String PAID_STATUS = "E";
 
@@ -50,8 +60,37 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		try {
 			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
+				//Postings entry
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+					financeMain.setLovDescEntityCode(
+							financeMainDAO.getLovDescEntityCode(disbursement.getFinReference(), "_View"));
+					FinanceDetail financeDetail = new FinanceDetail();
+
+					List<FinAdvancePayments> finAdvancePayments = new ArrayList<FinAdvancePayments>();
+					finAdvancePayments.add(disbursement);
+					financeDetail.setAdvancePaymentsList(finAdvancePayments);
+
+					Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
+							financeDetail.getAdvancePaymentsList(), financeMain, financeMain.getFinBranch());
+
+					List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+
+					// loop through the disbursements.
+					if (CollectionUtils.isNotEmpty(advPayList)) {
+						for (int i = 0; i < advPayList.size(); i++) {
+							FinAdvancePayments advPayment = advPayList.get(i);
+							if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+								advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
+								finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
+							}
+						}
+					}
+				}
+
 			} else {
-				postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());
+				if (!PennantConstants.YES.equalsIgnoreCase(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+					postingsPreparationUtil.postReversalsByLinkedTranID(disbursement.getLinkedTranId());
+				}
 
 				/*
 				 * Bug On 19-08-2017 with the mail subject Issue in Posting after Disbursement cancellation AEEvent

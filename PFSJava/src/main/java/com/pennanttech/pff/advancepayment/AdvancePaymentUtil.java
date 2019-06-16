@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -236,7 +238,6 @@ public class AdvancePaymentUtil {
 	}
 
 	private static BigDecimal calculateAdvanseInterest(final FinScheduleData finScheduleData) {
-
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 		Date gracePeriodEndDate = finMain.getGrcPeriodEndDate();
@@ -281,6 +282,83 @@ public class AdvancePaymentUtil {
 							rpyTerm++;
 						}
 						amount = amount.add(sd.getProfitSchd().subtract(sd.getTDSAmount()));
+					}
+				}
+			}
+		}
+
+		return amount;
+	}
+
+	public static BigDecimal getTDSOnAdvanseInterest(Map<String, Object> dataMap) {
+		BigDecimal tds = BigDecimal.ZERO;
+
+		BigDecimal net = (BigDecimal) dataMap.get("ADVINT_N");
+		BigDecimal waived = (BigDecimal) dataMap.get("ADVINT_W");
+		BigDecimal paid = (BigDecimal) dataMap.get("ADVINT_P");
+
+		if (net == null) {
+			net = BigDecimal.ZERO;
+		}
+
+		if (waived == null) {
+			waived = BigDecimal.ZERO;
+		}
+
+		if (paid == null) {
+			paid = BigDecimal.ZERO;
+		}
+
+		tds = tds.add(net).add(waived).add(paid);
+
+		return GSTCalculator.getTDS(tds);
+	}
+
+	public static BigDecimal calculateTDSOnAdvanseInterest(final FinScheduleData finScheduleData) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		Date gracePeriodEndDate = finMain.getGrcPeriodEndDate();
+
+		BigDecimal amount = BigDecimal.ZERO;
+		AdvanceType grcAdvType = AdvanceType.getType(finMain.getGrcAdvType());
+		AdvanceType rpyAdvType = AdvanceType.getType(finMain.getAdvType());
+
+		int grcAdvTerms = getTerms(grcAdvType, finMain.getGrcAdvTerms());
+		int rpyAdvTerms = getTerms(rpyAdvType, finMain.getAdvTerms());
+		int grcTerm = 0;
+		int rpyTerm = 0;
+
+		for (FinanceScheduleDetail sd : schedules) {
+
+			if (FinanceConstants.FLAG_BPI.equals(sd.getBpiOrHoliday())) {
+				continue;
+			}
+
+			if (sd.isRepayOnSchDate() || sd.isPftOnSchDate()) {
+				Date schDate = sd.getSchDate();
+
+				if (schDate.compareTo(gracePeriodEndDate) <= 0) {
+
+					if (grcTerm == grcAdvTerms) {
+						continue;
+					}
+
+					if (grcAdvTerms > 0) {
+						grcTerm++;
+					}
+
+					amount = amount.add(sd.getTDSAmount());
+				} else {
+					if (AdvanceType.AE != rpyAdvType) {
+
+						if (rpyTerm == rpyAdvTerms) {
+							continue;
+						}
+
+						if (rpyAdvTerms > 0) {
+							rpyTerm++;
+						}
+						amount = amount.add(sd.getTDSAmount());
 					}
 				}
 			}

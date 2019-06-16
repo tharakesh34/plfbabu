@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.limit.LimitStructureDetailDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -54,6 +55,7 @@ public class LimitServiceController {
 	private FinanceTypeService financeTypeService;
 	private LimitManagement limitManagement;
 	private FinanceDetailService financeDetailService;
+	private LimitHeaderDAO limitHeaderDAO;
 
 	public LimitServiceController() {
 
@@ -281,6 +283,25 @@ public class LimitServiceController {
 	 */
 	public WSReturnStatus cancelReserveLimit(LimitTransactionDetail limitTransDetail) {
 		return processLimits(limitTransDetail, LimitConstants.UNBLOCK);
+	}
+
+	public WSReturnStatus doBlockLimit(LimitHeader limitHeader, boolean blockLimt) {
+		logger.debug("Entering");
+		WSReturnStatus returnStatus = null;
+		int count = 0;
+		try {
+			count = limitHeaderDAO.updateBlockLimit(limitHeader.getCustomerId(), limitHeader.getHeaderId(), blockLimt);
+			if (count > 0) {
+				returnStatus = APIErrorHandlerService.getSuccessStatus();
+			} else {
+				returnStatus = APIErrorHandlerService.getFailedStatus();
+			}
+		} catch (Exception e) {
+			returnStatus = APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug("Leaving");
+		return returnStatus;
 	}
 
 	/**
@@ -547,5 +568,9 @@ public class LimitServiceController {
 
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
+	}
+
+	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
+		this.limitHeaderDAO = limitHeaderDAO;
 	}
 }

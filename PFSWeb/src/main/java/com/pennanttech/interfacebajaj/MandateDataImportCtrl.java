@@ -4,12 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
-import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -25,7 +24,6 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
-import com.pennanttech.dataengine.constants.DataEngineConstants.ParserNames;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.excecution.ProcessExecution;
 import com.pennanttech.dataengine.model.Configuration;
@@ -63,6 +61,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
+	private DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
+	private DataEngineStatus MANDATES_ACK = new DataEngineStatus("MANDATES_ACK");
 
 	/**
 	 * default constructor.<br>
@@ -90,7 +90,6 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		// Set the page level components.
 		setPageComponents(window);
 
-		ValueLabel valueLabel = null;
 		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
 		userId = getUserWorkspace().getUserDetails().getLoginId();
 		List<Configuration> configList = dataEngineConfig.getMenuList(true);
@@ -99,17 +98,20 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		for (Configuration config : configList) {
 			String configName = config.getName();
+			ValueLabel valueLabel;
 			valueLabel = new ValueLabel(config.getName(), config.getName());
-			if ((StringUtils.equals(configName, "MANDATES_IMPORT"))) {
-				this.config = config;
-				menuList.add(valueLabel);
-				DataEngineStatus status = dataEngineConfig.getLatestExecution(config.getName());
-
-				if (status != null) {
-					BeanUtils.copyProperties(MandateProcesses.MANDATES_IMPORT, status);
+			if ("MANDATES_IMPORT".equals(configName) || "MANDATES_ACK".equals(configName)) {
+				if ("MANDATES_IMPORT".equals(configName)) {
+					MANDATES_IMPORT = dataEngineConfig.getLatestExecution("MANDATES_IMPORT");
+					valueLabel = new ValueLabel(configName, "Mandate Response");
+					doFillPanel(config, MANDATES_IMPORT);
+					menuList.add(valueLabel);
+				} else {
+					MANDATES_ACK = dataEngineConfig.getLatestExecution("MANDATES_ACK");
+					valueLabel = new ValueLabel(configName, "Mandate Acknowledgement");
+					doFillPanel(config, MANDATES_ACK);
+					menuList.add(valueLabel);
 				}
-				doFillPanel();
-				break;
 			}
 		}
 
@@ -128,11 +130,11 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.ENTERING);
 
 		try {
-			String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
+			String fileConfig = this.fileConfiguration.getSelectedItem().getValue();
 			fileName.setValue("");
 			serverFileName.setValue("");
 			row1.setVisible(false);
-			if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
+			if (!StringUtils.equals("#", fileConfig)) {
 				this.btnImport.setDisabled(false);
 				config = dataEngineConfig.getConfigurationByName(fileConfig);
 			} else {
@@ -140,9 +142,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				return;
 			}
 			try {
-				if (!ParserNames.DB.name().equals(config.getParserName())) {
-					fileConfigurationSetup();
-				}
+				fileConfigurationSetup();
 			} catch (Exception e) {
 				exceptionTrace(e);
 			}
@@ -188,6 +188,43 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doFillPanel(Configuration config, DataEngineStatus ds) {
+		ProcessExecution pannel = new ProcessExecution();
+		pannel.setId(config.getName());
+		pannel.setBorder("normal");
+		pannel.setTitle(config.getName());
+		pannel.setWidth("480px");
+		pannel.setProcess(ds);
+		pannel.render();
+
+		Row rows = (Row) panelRows.getLastChild();
+
+		if (rows == null) {
+			Row row = new Row();
+			row.setStyle("overflow: visible !important");
+			Hbox hbox = new Hbox();
+			hbox.setAlign("center");
+			hbox.appendChild(pannel);
+			row.appendChild(hbox);
+			panelRows.appendChild(row);
+		} else {
+			Hbox hbox = null;
+			List<Hbox> item = rows.getChildren();
+			hbox = (Hbox) item.get(0);
+			if (hbox.getChildren().size() == 2) {
+				rows = new Row();
+				rows.setStyle("overflow: visible !important");
+				hbox = new Hbox();
+				hbox.setAlign("center");
+				hbox.appendChild(pannel);
+				rows.appendChild(hbox);
+				panelRows.appendChild(rows);
+			} else {
+				hbox.appendChild(pannel);
+			}
+		}
+	}
+
 	/**
 	 * Setting the components visibility based on the flag
 	 */
@@ -211,6 +248,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			MessageUtil.showError("Please upload any file.");
 			return;
 		}
+
 		if (MandateProcesses.MANDATES_IMPORT != null
 				&& ExecutionStatus.I.name().equals(MandateProcesses.MANDATES_IMPORT.getStatus())) {
 			MessageUtil.showError("Export is in progress for the selected configuration.");
@@ -219,7 +257,14 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 		this.btnImport.setDisabled(true);
 		try {
-			Thread thread = new Thread(new ProcessData(userId));
+			Thread thread;
+
+			if (fileConfiguration.getSelectedItem().getValue().equals("MANDATES_IMPORT")) {
+				thread = new Thread(new ProcessData(userId, MANDATES_IMPORT));
+			} else {
+				thread = new Thread(new ProcessData(userId, MANDATES_ACK));
+			}
+
 			thread.start();
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
@@ -244,7 +289,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		fileName.setText("");
 		media = event.getMedia();
 
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLSX"))) {// FIXME
+		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLS"))) {// FIXME
 																					// this
 																				// should
 																				// not
@@ -267,31 +312,29 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	public void onTimer$timer(Event event) {
+
 		List<Row> rows = this.panelRows.getChildren();
 		for (Row row : rows) {
 			List<Hbox> hboxs = row.getChildren();
 			for (Hbox hbox : hboxs) {
 				List<ProcessExecution> list = hbox.getChildren();
 				for (ProcessExecution pe : list) {
-					pe.setProcess(MandateProcesses.MANDATES_IMPORT);
-
 					String status = pe.getProcess().getStatus();
-					if (ExecutionStatus.I.name().equals(status)) {
-						this.btnImport.setDisabled(true);
-					} else {
-						this.btnImport.setDisabled(false);
+					if ("MANDATES_ACK".equals(pe.getProcess().getName())) {
+						if (ExecutionStatus.I.name().equals(status)) {
+							this.btnImport.setDisabled(true);
+							this.btnFileUpload.setDisabled(true);
+						} else {
+							this.btnImport.setDisabled(false);
+							this.btnFileUpload.setDisabled(false);
+						}
 					}
 
-					String fileConfig = this.fileConfiguration.getSelectedItem().getLabel();
-					if (!StringUtils.equals(Labels.getLabel("Combo.Select"), fileConfig)) {
-						this.btnImport.setDisabled(false);
-					} else {
-						this.btnImport.setDisabled(true);
-					}
 					pe.render();
 				}
 			}
 		}
+
 	}
 
 	private void doFillPanel() {
@@ -300,7 +343,12 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		pannelExecution.setBorder("normal");
 		pannelExecution.setTitle(config.getName());
 		pannelExecution.setWidth("480px");
-		pannelExecution.setProcess(MandateProcesses.MANDATES_IMPORT);
+		if (fileConfiguration.getSelectedItem() != null
+				&& fileConfiguration.getSelectedItem().getValue().equals("MANDATES_ACK")) {
+			pannelExecution.setProcess(MandateProcesses.MANDATES_ACK);
+		} else {
+			pannelExecution.setProcess(MandateProcesses.MANDATES_ACK);
+		}
 		pannelExecution.render();
 
 		Row rows = (Row) panelRows.getLastChild();
@@ -333,9 +381,11 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	public class ProcessData implements Runnable {
 		private long userId;
+		private DataEngineStatus status;
 
-		public ProcessData(long userId) {
+		public ProcessData(long userId, DataEngineStatus status) {
 			this.userId = userId;
+			this.status = status;
 		}
 
 		byte[] fileData;
@@ -343,7 +393,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				getMandateProcess().processResponseFile(userId, file, media);
+				getMandateProcess().processResponseFile(userId, file, media, status);
+
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
@@ -355,6 +406,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;
 	}

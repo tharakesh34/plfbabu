@@ -12,7 +12,7 @@ public class TrailBalance implements Serializable {
 	private int id;
 	private long link;
 	private BigDecimal transactionAmount = BigDecimal.ZERO;
-	private String transactionAmountType;
+	private int transactionAmountType;
 	private String umskz;
 	private String businessArea;
 	private String businessUnit;
@@ -67,11 +67,11 @@ public class TrailBalance implements Serializable {
 		this.transactionAmount = transactionAmount;
 	}
 
-	public String getTransactionAmountType() {
+	public int getTransactionAmountType() {
 		return transactionAmountType;
 	}
 
-	public void setTransactionAmountType(String transactionAmountType) {
+	public void setTransactionAmountType(int transactionAmountType) {
 		this.transactionAmountType = transactionAmountType;
 	}
 

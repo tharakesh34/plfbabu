@@ -739,7 +739,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), tableType);
 				finFeeDetailDAO.delete(finFeeDetail, isWIF, tableType);
 				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], finFeeDetail.getBefImage(), finFeeDetail));
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
+						finFeeDetail.getBefImage(), finFeeDetail));
 				auditSeq++;
 			}
 		}
@@ -1343,13 +1344,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			AdvancePaymentUtil.calculateLOSAdvPayment(scheduleData, fee);
 		} else if (AccountEventConstants.ACCEVENT_ADDDBSN.equals(finEvent)) {
 			AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
-			if (advanceRule!=null && (advanceRule == AdvanceRuleCode.ADVINT || advanceRule == AdvanceRuleCode.ADVEMI)) {
-				List<String> list=new ArrayList<>();
+			if (advanceRule != null
+					&& (advanceRule == AdvanceRuleCode.ADVINT || advanceRule == AdvanceRuleCode.ADVEMI)) {
+				List<String> list = new ArrayList<>();
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSP);
 				list.add(AccountEventConstants.ACCEVENT_ADDDBSN);
 				String finReference = financeMain.getFinReference();
 				List<FinFeeDetail> fees = finFeeDetailDAO.getFeeDetails(finReference, advanceRule.name(), list);
-				AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee,fees);
+				AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee, fees);
 			}
 		}
 

@@ -30,8 +30,12 @@
 
 	<changeSet id="01" author="Irfan">
 		<createTable tableName="FinTaxReceivable">
-			<column name="FinReference" type="NVARCHAR(20)" />
-			<column name="TaxFor" type="VARCHAR(8)" />
+			<column name="FinReference" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxFor" type="VARCHAR(8)">
+				<constraints nullable="false" />
+			</column>
 			<column name="ReceivableAmount" type="NUMBER(18,0)" />
 			<column name="CGST" type="NUMBER(18,0)" />
 			<column name="SGST" type="NUMBER(18,0)" />
@@ -42,6 +46,44 @@
 
 	<changeSet id="02" author="Irfan">
 		<addPrimaryKey tableName="FinTaxReceivable" columnNames="FinReference, TaxFor" />
+	</changeSet>
+
+	<changeSet id="2.0_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN RECEIVABLEAMOUNT
+			DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.1_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN CGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.2_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN CGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.3_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN SGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.4_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN UGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="2.5_ALTER" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXRECEIVABLE ALTER COLUMN IGST DECIMAL(18,0);
+		</sql>
 	</changeSet>
 
 	<changeSet id="03" author="Irfan">
@@ -96,8 +138,44 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="07_pre" author="Irfan">
+		<addNotNullConstraint tableName="FinTaxIncomeDetail" columnName="RepayID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="FinTaxIncomeDetail" columnName="TaxFor" columnDataType="VARCHAR(8)" />
+	</changeSet>
+
 	<changeSet id="07" author="Irfan">
 		<addPrimaryKey tableName="FinTaxIncomeDetail" columnNames="RepayID, TaxFor" />
+	</changeSet>
+
+	<changeSet id="07_01_ALTER_datatype" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXINCOMEDETAIL ALTER COLUMN RECEIVEDAMOUNT
+			DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="07_02_ALTER_datatype" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXINCOMEDETAIL ALTER COLUMN CGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="07_03_ALTER_datatype" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXINCOMEDETAIL ALTER COLUMN SGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="07_04_ALTER_datatype" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXINCOMEDETAIL ALTER COLUMN UGST DECIMAL(18,0);
+		</sql>
+	</changeSet>
+
+	<changeSet id="07_05_ALTER_datatype" author="Irfan" dbms="mssql">
+		<sql>
+			ALTER TABLE FINTAXINCOMEDETAIL ALTER COLUMN IGST DECIMAL(18,0);
+		</sql>
 	</changeSet>
 
 
@@ -153,8 +231,19 @@
 	</changeSet>
 
 	<changeSet id="15" author="Saikiran.v">
-		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify" />
-		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify" />
+		<addNotNullConstraint tableName="RMTFinanceTypes" columnName="TDSAllowToModify" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFinanceTypes_Temp" columnName="TDSAllowToModify"
+			columnDataType="boolean" />
+	</changeSet>
+
+	<changeSet id="16_pre" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypesorg_view');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="16" author="Saikiran.v">
@@ -1064,6 +1153,16 @@
 			LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
 			LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
+	</changeSet>
+
+	<changeSet id="16_post" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
+					select deps_restore_dependencies ('plf', 'rmtfinancetypesorg_view');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="19" author="Saikiran.v">
@@ -2243,8 +2342,8 @@
 			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSStartDate'),1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSEndDate','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
 			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSEndDate'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_TDSLimitAmt','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_TDSLimitAmt'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			  INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_Amt','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_Amt'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
 			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
 			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
@@ -2302,8 +2401,10 @@
 	</changeSet>
 
 	<changeSet id="29" author="Varaprasad.K">
-		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable" />
-		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable" />
+		<addNotNullConstraint tableName="FinMaintainInstructions" columnName="TDSApplicable"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="FinMaintainInstructions_Temp" columnName="TDSApplicable"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="30" author="Varaprasad.K">
@@ -2465,6 +2566,27 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="46.0" author="Varaprasad.K">
+		<addColumn tableName="finmaintaininstructions">
+			<column name="TdsLimit" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="46.1" author="Varaprasad.K">
+		<addColumn tableName="finmaintaininstructions_temp">
+			<column name="TdsLimit" type="decimal(18,2)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="46_pre" author="Sai" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finmaintaininstructions');
+					select deps_save_and_drop_dependencies ('plf', 'finmaintaininstructions_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="46" author="Varaprasad.K">
 		<comment>Added new parameter TdsLimit</comment>
 		<createView viewName="FINMAINTAININSTRUCTIONS_VIEW" replaceIfExists="true">
@@ -2563,6 +2685,16 @@
         </createView>
 	</changeSet>
 
+	<changeSet id="46_post" author="Sai" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finmaintaininstructions');
+					select deps_restore_dependencies ('plf', 'finmaintaininstructions_temp');
+				
+			 ]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="49" author="Saikiran.v">
 		<createSequence sequenceName="SEQGST_RATES" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
@@ -2639,8 +2771,8 @@
 	</changeSet>
 
 	<changeSet id="53" author="Saikiran.v">
-		<addNotNullConstraint tableName="GST_RATES" columnName="Active" />
-		<addNotNullConstraint tableName="GST_RATES_Temp" columnName="Active" />
+		<addNotNullConstraint tableName="GST_RATES" columnName="Active" columnDataType="boolean" />
+		<addNotNullConstraint tableName="GST_RATES_Temp" columnName="Active" columnDataType="boolean" />
 	</changeSet>
 
 
@@ -2947,16 +3079,16 @@
 	<changeSet id="64" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[		 
-					Alter table verification_pd drop column OwnershipStatus;
-					Alter table verification_pd drop column YearsAtPresentAddress;
-					Alter table verification_pd drop column PersonMet;
-					Alter table verification_pd drop column Relationship;
-					Alter table verification_pd drop column ContactNumber;
-					Alter table verification_pd drop column NeighbourhoodFeedBack;
-					Alter table verification_pd drop column LivingStandard;
-					Alter table verification_pd drop column NegativeCheck;
-					Alter table verification_pd drop column NoofAttempts;
-					Alter table verification_pd drop column ObservationRemarks;
+				Alter table verification_pd drop column OwnershipStatus;
+				Alter table verification_pd drop column YearsAtPresentAddress;
+				Alter table verification_pd drop column PersonMet;
+				Alter table verification_pd drop column Relationship;
+				Alter table verification_pd drop column ContactNumber;
+				Alter table verification_pd drop column NeighbourhoodFeedBack;
+				Alter table verification_pd drop column LivingStandard;
+				Alter table verification_pd drop column NegativeCheck;
+				Alter table verification_pd drop column NoofAttempts;
+				Alter table verification_pd drop column ObservationRemarks;
 			]]>
 		</sql>
 	</changeSet>
@@ -3476,106 +3608,911 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="82" author="Manoj">
+	<changeSet id="82" author="vijaya.a">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+			SELECT M.MANDATEID, 
+			BD.BANKSHORTCODE BANKCODE,
+			BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+      		case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+      CUST.CustCoreBank,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount 
+													FROM FINSCHEDULEDETAILS FSD 
+													INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID 
+													GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+			  CASE M.OPENMANDATE
+			    WHEN 1
+			    THEN 'New Open ECS'
+			    ELSE 'No Open ECS'
+			  END OPENMANDATE,
+			M.ACCNUMBER,
+			CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then 'Current Account' WHEN M.ACCTYPE = '11' then 'Cash Credit Account' ELSE  M.ACCTYPE END ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			BB.IFSC,
+			BB.ADDOFBRANCH,
+			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			 COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT, 
+     		 COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+     		 GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT,
+         (select max(numberofterms) from Financemain where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) numberofterms,
+              M.periodicity,
+			  M.STARTDATE,
+			  M.EXPIRYDATE,
+			  FIN.APPLICATIONNO,
+			  M.MANDATETYPE,
+			  M.STATUS,
+			  M.INPUTDATE,
+			  M.RECORDSTATUS,
+			  M.RECORDTYPE,
+        	  M.MANDATECCY,
+			  COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,M.EntityCode,
+              CP.PHONENUMBER,
+			  CE.CUSTEMAIL,
+              PB.PARTNERBANKNAME,
+              M.LASTMNTON
+			FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE 
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+            LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+			LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+			LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH 
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE 
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+
+	<changeSet id="83" author="Manoj">
+		<sql> 
+	  <![CDATA[ 
+		 INSERT INTO SMTPARAMETERS VALUES ('HOLD_DISB_INST_POST','Disbursement Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1, 1000,CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0); 
+	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="84" author="murthy.y">
 		<sql>
-		 	<![CDATA[
-				INSERT INTO SMTPARAMETERS VALUES ('HOLD_DISB_INST_POST','Disbursement Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_DIVISION_BASED_CLUSTER','Allow Division Based Cluster','String', 0, 'N', 1, 0, NULL, NULL,'Allow Division Based Cluster',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
 	</changeSet>
 
+	<!--<changeSet id="85" author="vijaya.a"> <dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS_TEMP" constraintName="FK_COVENANT_DOCUMENTS_TEMP_CID" 
+		/> </changeSet> -->
+
 	<changeSet id="83" author="Varaprasad.K">
 		<sql>
-		 	<![CDATA[
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion');
-					Delete From plf.SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion';
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 0, 'menu_Item_Agencies_Pesonal_Discussion','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM plf.SEQSECRIGHTS WHERE 0=0;
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
-					
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active');
-					Delete From plf.SecGroupRights Where Rightid = (Select Rightid From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber');
-					
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active';
-					Delete From plf.SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber';
-					
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0; 
-					
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-					INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+        	<![CDATA[
+            		Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion');
+                    Delete From SecRights Where RightName = 'menu_Item_Agencies_Pesonal_Discussion';
+					INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_Agencies_Pesonal_Discussion','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM                 SEQSECRIGHTS WHERE 0=0;
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_Agencies_Pesonal_Discussion'), 1, 0,1000,CURRENT_TIMESTAMP, null,null,null,null,null,null,0);
+                    
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active');
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber');
+                    
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerName';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerFax';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress1';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress2';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress3';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerAddress4';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCountry';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerCity';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_dealerProvince';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PaymentMode';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Emirates';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Email';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountingTreatment';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_CalculationRule';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_PoBox';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_SellerType';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_ZipCode';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_Active';
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_AccountNumber';
+                    
+  					INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,             'VehicleDealerDialog_PDAGENCY_dealerName','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerFax','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress1','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress2','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress3','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerAddress4','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCountry','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerCity','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_dealerProvince','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PaymentMode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Emirates','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Email','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountingTreatment','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CommisionPaidAt','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_CalculationRule','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_PoBox','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_SellerType','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_ZipCode','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_Active','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'VehicleDealerDialog_PDAGENCY_AccountNumber','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0; 
+                    
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerName'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerFax'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress1'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress2'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress3'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerAddress4'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCountry'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerCity'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_dealerProvince'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PaymentMode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Emirates'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Email'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountingTreatment'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CommisionPaidAt'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_CalculationRule'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_PoBox'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_SellerType'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_ZipCode'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_Active'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_AccountNumber'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="84" author="Srinivasa Varma">
+		<comment>Ideally this column needs to be added in core level but added in Veritas, please drop the colum in veritas if this change set execution failed.</comment>
+		<addColumn tableName="collection_financedetails">
+			<column name="AppDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="85" author="Varaprasad K">
+		<sql>
+        	<![CDATA[
+	            update Master_Def set key_type='01', KEY_CODE='01' where key_type='AADHAAR' and KEY_CODE ='ADHCRD';
+	            update Master_Def set key_type='02', KEY_CODE='02' where key_type='PASSPORT' and KEY_CODE ='PASSPRT';
+	            update Master_Def set key_type='03', KEY_CODE='03' where key_type='PAN' and KEY_CODE ='PANCRD';
+	         ]]>
+
+		</sql>
+	</changeSet>
+
+	<changeSet id="86" author="Varaprasad K">
+		<comment>Externalize customer primary identity</comment>
+		<sql>
+        	<![CDATA[
+	            delete from smtparameters where sysparmcode in('CUST_PRIMARY_ID_RETL_DOC_TYPE','CUST_PRIMARY_ID_CORP_DOC_TYPE');
+	            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_RETL_DOC_TYPE', 'CustomerPrimary ID DocType for Retl', 'String', 0, '03', '50', 0, NULL,NULL, 'Retail Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+	            INSERT INTO SMTPARAMETERS VALUES ('CUST_PRIMARY_ID_CORP_DOC_TYPE', 'CustomerPrimary ID DocType for Corp', 'String', 0, '03', '50', 0, NULL,NULL, 'Corp Customer Primary ID', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+             ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="87_pre" author="Varaprasad" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'extendedfielddetail');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="87" author="Varaprasad">
+		<modifyDataType tableName="EXTENDEDFIELDDETAIL" columnName="FIELDDEFAULTVALUE" newDataType="varchar(1000)" />
+	</changeSet>
+
+	<changeSet id="87_post" author="Varaprasad" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'extendedfielddetail');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="88" author="Manoj">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+                    SELECT M.MANDATEID,
+                    BD.BANKSHORTCODE BANKCODE,
+                    BD.BANKNAME,
+                    case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+					case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+                    CUST.CUSTCIF,
+                    CUST.CUSTSHRTNAME,
+                    CUST.CustCoreBank,
+                    FT.FINTYPEDESC FINTYPE ,
+                    FIN.FINREFERENCE ,
+                    COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
+                                                                                     FROM FINSCHEDULEDETAILS FSD
+                                                                                     INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
+                                                                                     GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+                    COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+                      CASE M.OPENMANDATE
+                        WHEN 1
+                        THEN 'New Open ECS'
+                        ELSE 'No Open ECS'
+                      END OPENMANDATE,
+                    M.ACCNUMBER,
+                    CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then 'Current Account' WHEN M.ACCTYPE = '11' then 'Cash Credit Account' ELSE  M.ACCTYPE END ACCTYPE,
+                    M.ACCHOLDERNAME,
+                    BB.MICR,
+                    BB.IFSC,
+                    BB.ADDOFBRANCH,
+                    (select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+                    (select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+                    COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT,
+					COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+					GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT, FIN.NumberOfTerms,
+					M.periodicity,
+                    M.STARTDATE,
+                    M.EXPIRYDATE,
+                    FIN.APPLICATIONNO,
+                    M.MANDATETYPE,
+                    M.STATUS,
+                    M.INPUTDATE,
+                    M.RECORDSTATUS,
+                    M.RECORDTYPE,
+					M.MANDATECCY,
+                    COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,M.EntityCode,
+					CP.PHONENUMBER,
+                    CE.CUSTEMAIL,
+					PB.PARTNERBANKNAME,
+					M.LASTMNTON
+                    FROM MANDATES M
+                    INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+                    INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
+                    INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+                    INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+            INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+                    LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+                    LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+                    LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+                    LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+                    LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
+                    LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE
+                    WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+             </createView>
+	</changeSet>
+
+	<changeSet id="89" author="Varaprasad.K">
+		<sql>
+            <![CDATA[
+                    Delete From SecGroupRights Where Rightid = (Select Rightid From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_code');
+                    Delete From SecRights Where RightName = 'VehicleDealerDialog_PDAGENCY_code';
+                    INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,             'VehicleDealerDialog_PDAGENCY_code','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+                    INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='DEALER_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_PDAGENCY_code'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="90_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'amtvehicledealer');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="90" author="Varaprasad.K">
+		<modifyDataType tableName="AMTVehicleDealer" columnName="DEALERNAME" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer" columnName="DEALERADDRESS1" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer" columnName="DEALERADDRESS2" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer" columnName="DEALERADDRESS3" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer" columnName="DEALERADDRESS4" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="90_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'amtvehicledealer');
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- <changeSet id="91" author="Kesav" dbms="postgresql,mssql"> <sql> <![CDATA[ Delete from Seq_GST_Invoice; Insert Into 
+		Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'D' TransactionType, 0 SeqNo from 
+		rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' '; Insert Into Seq_GST_Invoice 
+		(GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 0 SeqNo from rmtcountryvsprovince 
+		where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' '; Insert Into Seq_GST_Invoice (GstStateCode, 
+		TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'W' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode 
+		is not null and TaxStateCode != '' and TaxStateCode != ' '; Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) 
+		Select TaxStateCode GstStateCode, 'B' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and 
+		TaxStateCode != '' and TaxStateCode != ' '; ]]> </sql> </changeSet> <changeSet id="92" author="Kesav" dbms="oracle"> <sql> 
+		<![CDATA[ Delete from Seq_GST_Invoice; Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode 
+		GstStateCode, 'D' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' 
+		'; Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 
+		0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' '; Insert Into Seq_GST_Invoice (GstStateCode, 
+		TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'W' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode 
+		is not null and TaxStateCode != ' '; Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode 
+		GstStateCode, 'B' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' 
+		'; ]]> </sql> </changeSet> -->
+
+	<changeSet id="93" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Insert into RMTLOVFIELDDETAIL  values ((select max(fieldcodeid)+1 from RMTLOVFIELDDETAIL), 'CAT_COAPP', 'Others', 'Others', '1', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0, '0');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="94" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='DOC_SPLIT_SCREEN_REQ';
+			   	INSERT INTO SMTPARAMETERS VALUES ('DOC_SPLIT_SCREEN_REQ', 'Document Split Screen Req', 'String', 1, 'N', 1, 0, NULL, NULL,'Document Split Screen Req', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="95" author="Manoj">
+		<createView viewName="INT_MANDATE_REQUEST_VIEW" replaceIfExists="true">
+		SELECT M.MANDATEID,
+		     BD.BANKSHORTCODE BANKCODE,
+		     BD.BANKNAME,
+			case when LB.BRANCHCODE IS NULL THEN CB.BRANCHCODE ELSE LB.BRANCHCODE END BRANCHCODE,
+			case when LB.BRANCHDESC IS NULL THEN CB.BRANCHDESC ELSE LB.BRANCHDESC END BRANCHDESC,
+			CUST.CUSTCIF,
+			CUST.CUSTSHRTNAME,
+			CUST.CustCoreBank,
+			FT.FINTYPEDESC FINTYPE ,
+			FIN.FINREFERENCE ,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount
+						FROM FINSCHEDULEDETAILS FSD
+						INNER JOIN FINANCEMAIN FM ON FM.FINREFERENCE =FSD.FINREFERENCE AND FM.CUSTID = M.CUSTID
+						GROUP BY FM.FINREFERENCE)T)/CCYMINORCCYUNITS, 0) CUST_EMI,
+			COALESCE((SELECT SUM(TotalAmount) from (Select MAX(FSD.REPAYAMOUNT+FSD.FEESCHD) TotalAmount FROM FINSCHEDULEDETAILS FSD WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID = M.MANDATEID) GROUP BY FINREFERENCE)T)/CCYMINORCCYUNITS, 0) EMI,
+			CASE M.OPENMANDATE WHEN 1 THEN 'New Open ECS' ELSE 'No Open ECS' END OPENMANDATE,
+			M.ACCNUMBER,
+			CASE WHEN M.ACCTYPE = '10' then 'Savings Account' WHEN M.ACCTYPE = '11' then 'Current Account' WHEN M.ACCTYPE = '11' then 'Cash Credit Account' ELSE  M.ACCTYPE END ACCTYPE,
+			M.ACCHOLDERNAME,
+			BB.MICR,
+			BB.IFSC,
+			BB.ADDOFBRANCH,
+			(select MIN(FIRSTREPAYDATE) from FINPFTDETAILS where FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) FIRSTDUEDATE,
+			(select MAX(SCHDATE) from FINSCHEDULEDETAILS where (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) and FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)) EMIENDDATE,
+			COALESCE (M.MAXLIMIT/CCYMINORCCYUNITS, 0) MAXLIMIT,
+			COALESCE((SELECT SUM(MANDATEDEBITAMOUNT) from (Select MAX(REPAYAMOUNT+FEESCHD) MANDATEDEBITAMOUNT FROM FINSCHEDULEDETAILS WHERE (REPAYONSCHDATE = 1 OR PFTONSCHDATE = 1) AND FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE MANDATEID=M.MANDATEID)
+			GROUP BY FINREFERENCE)T), 0)/CCYMINORCCYUNITS DEBITAMOUNT, 
+			FIN.NumberOfTerms,
+			M.periodicity,
+			M.STARTDATE,
+			M.EXPIRYDATE,
+			FIN.APPLICATIONNO,
+			M.MANDATETYPE,
+			M.STATUS,
+			M.INPUTDATE,
+			M.RECORDSTATUS,
+			M.RECORDTYPE,
+			M.MANDATECCY,
+			COALESCE (CCY.CCYMINORCCYUNITS, 100) CCYMINORCCYUNITS,
+			M.EntityCode,
+			CP.PHONENUMBER,
+			CE.CUSTEMAIL,
+			PB.PARTNERBANKNAME,
+			M.LASTMNTON
+	FROM MANDATES M
+			INNER JOIN BANKBRANCHES BB ON BB.BANKBRANCHID = M.BANKBRANCHID
+			INNER JOIN BMTBANKDETAIL BD ON BD.BANKCODE=BB.BANKCODE
+			INNER JOIN CUSTOMERS CUST   ON CUST.CUSTID = M.CUSTID
+			INNER JOIN RMTBRANCHES CB ON CB.BRANCHCODE = CUST.CUSTDFTBRANCH
+			LEFT JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = M.PARTNERBANKID
+			LEFT JOIN CUSTOMEREMAILS CE ON CE.CUSTID = CUST.CUSTID AND CE.CUSTEMAILPRIORITY = 5
+			LEFT JOIN CUSTOMERPHONENUMBERS CP ON CP.PHONECUSTID = CUST.CUSTID AND CP.PHONETYPEPRIORITY = 5
+			LEFT OUTER JOIN RMTCURRENCIES CCY ON CCY.CCYCODE = M.MANDATECCY
+			LEFT OUTER JOIN FINANCEMAIN FIN ON M.ORGREFERENCE=FIN.FINREFERENCE
+			LEFT JOIN RMTBRANCHES LB ON LB.BRANCHCODE = FIN.FINBRANCH
+			LEFT OUTER JOIN RMTFINANCETYPES FT ON FIN.FINTYPE =FT.FINTYPE
+			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
+		</createView>
+	</changeSet>
+
+	<changeSet id="95" author="vijaya.a">
+		<createView viewName="finexcessamount_lovview" replaceIfExists="true">
+        SELECT finexcessamount.excessid,
+               finexcessamount.finreference,
+               finexcessamount.amounttype,
+               cast(round(finexcessamount.amount / 100,2) as numeric(36,2)) AS amount,
+               cast(round(finexcessamount.utilisedamt / 100,2) as numeric(36,2)) AS utilisedamt,
+               cast(round(finexcessamount.reservedamt / 100,2) as numeric(36,2)) AS reservedamt,
+               cast(round(finexcessamount.balanceamt / 100,2) as numeric(36,2)) AS balanceamt
+        FROM finexcessamount           
+    </createView>
+	</changeSet>
+
+	<changeSet id="96" author="Varaprasad K">
+		<sql>
+		  	 <![CDATA[
+			delete from REPORTLIST Where Code = 'PersonalDiscussion';
+			
+			INSERT INTO REPORTLIST Values ('PersonalDiscussion','PersonalDiscussion','listheader_CIF.label,listheader_AddressType.label,listheader_PinCode.label,listheader_LoanReference.label,listheader_Agency.label,listheader_CreadtedOn.label', 'cif,addressType,zipCode,keyReference,agency,createdOn','String,String,String,String,String,Date',' ','ReportList06','Personal Discussion','Personal Discussion',0,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		 	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="97" author="Varaprasad K">
+		<sql>
+		  	 <![CDATA[
+				delete from REPORTLIST Where Code = 'PDAGENCY';
+			
+				INSERT INTO REPORTLIST Values ('PDAGENCY','PDAGENCY','listheader_DealerName.label,listheader_Email.label,listheader_DealerTelephone.label,listheader_DealerProvince.label,listheader_DealerCity.label,listheader_Active.label', 'dealerName,email,dealerTelephone,dealerProvince,dealerCity,active','String,String,String,String,String,String',' ','ReportList06','Personal Discussion','System Masters',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0,0);
+		 	 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="98" author="Srikanth.M">
+		<addColumn tableName="LimitHeader">
+			<column name="BLOCKLIMIT" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="99" author="Srikanth.M">
+		<addColumn tableName="LimitHeader_Temp">
+			<column name="BLOCKLIMIT" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="100" author="Srikanth">
+		<sql>
+		 <![CDATA[
+			update LimitHeader set BLOCKLIMIT=0;
+			update LimitHeader_Temp set BLOCKLIMIT=0;
+		 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="101" author="Manoj">
+		<sql>
+		 <![CDATA[
+			delete from smtparameters where sysparmcode = 'HUNTER_REQUIRED';
+			INSERT INTO SMTPARAMETERS VALUES ('HUNTER_REQUIRED','Hunter Required or not','String', 0, 'N', 1, 0, NULL, NULL,'Hunter Required or not',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="102" author="Sai Krishna">
+		<sql>
+		  	 <![CDATA[
+				update CustomerBankInfo set noOfMonthsBanking = 0 where noOfMonthsBanking is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="103" author="aditya.a">
+		<createView viewName="finjointaccountdetails_view" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+			    t1.finreference,
+			    t1.custcif,
+			    t1.includerepay,
+			    t1.repayaccountid,
+			    t1.catofcoapplicant,
+			    t1.authoritysignatory,
+			    t1.sequence,
+				t1.includeIncome,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.usrlogin,
+			    t2.usrfname,
+			    t2.usrmname,
+			    t2.usrlname,
+			    t3.custshrtname AS lovdesccifname,
+			    t3.custid
+			   FROM finjointaccountdetails_temp t1
+			     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+			     JOIN customers t3 ON t1.custcif = t3.custcif
+			UNION ALL
+			 SELECT t1.jointaccountid,
+			    t1.finreference,
+			    t1.custcif,
+			    t1.includerepay,
+			    t1.repayaccountid,
+			    t1.catofcoapplicant,
+			    t1.authoritysignatory,
+			    t1.sequence,
+			    t1.includeIncome,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.usrlogin,
+			    t2.usrfname,
+			    t2.usrmname,
+			    t2.usrlname,
+			    t3.custshrtname Lovdesccifname,
+			    t3.custid
+			   FROM finjointaccountdetails t1
+			    LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+			     JOIN customers t3 ON t1.custcif = t3.custcif
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM finjointaccountdetails_temp
+			          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
+		</createView>
+	</changeSet>
+
+	<changeSet id="104" author="aditya.a">
+		<createView viewName="FinJointAccountDetails_TView" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+			    t1.finreference,
+			    t1.custcif,
+			    t1.includerepay,
+			    t1.repayaccountid,
+			    t1.catofcoapplicant,
+			    t1.authoritysignatory,
+			    t1.sequence,
+				t1.IncludeIncome,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.usrlogin,
+			    t2.usrfname,
+			    t2.usrmname,
+			    t2.usrlname,
+			    t3.custshrtname Lovdesccifname,
+			    t3.custid
+			   FROM finjointaccountdetails_temp t1
+			     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+			     JOIN customers t3 ON t1.custcif = t3.custcif
+		</createView>
+	</changeSet>
+
+	<changeSet id="105" author="aditya.a">
+		<createView viewName="FinJointAccountDetails_AView" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+			    t1.finreference,
+			    t1.custcif,
+			    t1.includerepay,
+			    t1.repayaccountid,
+			    t1.catofcoapplicant,
+			    t1.authoritysignatory,
+			    t1.sequence,
+				t1.IncludeIncome,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.usrlogin,
+			    t2.usrfname,
+			    t2.usrmname,
+			    t2.usrlname,
+			    t3.custshrtname Lovdesccifname,
+			    t3.custid
+			   FROM finjointaccountdetails t1
+			     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+			     JOIN customers t3 ON t1.custcif = t3.custcif
+		</createView>
+	</changeSet>
+
+	<changeSet id="106" author="Ajay">
+		<createTable tableName="AccountHistoryDetails">
+			<column name="ACCOUNTID" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="POSTDATE" type="DATETIME">
+				<constraints nullable="false" />
+			</column>
+			<column name="ENTITYCODE" type="VARCHAR(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="POSTBRANCH" type="VARCHAR(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BRANCHPROVINCE" type="VARCHAR(10)" />
+			<column name="TODAYDEBITS" type="DECIMAL(18,0)" />
+			<column name="TODAYCREDITS" type="DECIMAL(18,0)" />
+			<column name="TODAYNET" type="DECIMAL(18,0)" />
+			<column name="SHADOWBAL" type="DECIMAL(18,0)" />
+			<column name="ACBALANCE" type="DECIMAL(18,0)" />
+			<column name="OPENINGBAL" type="DECIMAL(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="107" author="Sriram">
+		<addUniqueConstraint tableName="AccountHistoryDetails" columnNames="AccountID,BranchProvince,PostBranch,EntityCode,postdate"
+			constraintName="UK_AccountHistoryDetails" />
+	</changeSet>
+
+	<changeSet id="108" author="Rahul">
+		<createTable tableName="Trial_Balance_Report_Work">
+			<column name="HEADERID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ACTYPEGRPID" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="COUNTRY" type="varchar(2)" />
+			<column name="PROVINCE" type="varchar(8)" />
+			<column name="FINTYPE" type="varchar(8)" />
+			<column name="ACCOUNT" type="varchar(50)" />
+			<column name="HOSTACCOUNT" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DESCRIPTION" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBAL" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OPENINGBALTYPE" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DEBITAMOUNT" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CREDITAMOUNT" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBAL" type="number(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CLOSINGBALTYPE" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="GROUPCODE" type="varchar(20)" />
+			<column name="PLACBALANCE" type="number(18,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="109" author="Rahul">
+		<createView viewName="TRIAL_BALANCE_REPORT_VIEW" replaceIfExists="true">
+			SELECT HEADERID,
+			  COUNTRY,
+			  PROVINCE,
+			  GROUPCODE ACTYPEGRPID,
+			  HOSTACCOUNT,
+			  DESCRIPTION,
+			  ${ADD.SCHEMA}UDF_CONVERTCURRENCY(OPENINGBAL, TBH.CURRENCY, 'INR') OPENINGBAL,
+			  OPENINGBALTYPE,
+			  ${ADD.SCHEMA}UDF_CONVERTCURRENCY(DEBITAMOUNT, TBH.CURRENCY, 'INR') DEBITAMOUNT,
+			  ${ADD.SCHEMA}UDF_CONVERTCURRENCY(CREDITAMOUNT, TBH.CURRENCY, 'INR') CREDITAMOUNT,
+			  ${ADD.SCHEMA}UDF_CONVERTCURRENCY(CLOSINGBAL, TBH.CURRENCY, 'INR') CLOSINGBAL,
+			  CLOSINGBALTYPE,
+			  ACCOUNT,
+			  FINTYPE
+			FROM TRIAL_BALANCE_REPORT_WORK TBR
+			INNER JOIN TRIAL_BALANCE_HEADER TBH
+			ON TBH.ID = TBR.HEADERID
+		</createView>
+	</changeSet>
+
+	<changeSet id="110" author="Sriram">
+		<sql>
+			<![CDATA[
+				Update DATA_ENGINE_TABLE set Name = 'TRIAL_BALANCE_CONSOLIDATE_VIEW' Where CONFIGID IN (Select ID from DATA_ENGINE_CONFIG Where Name IN ('TRIAL_BALANCE_EXPORT_CONSOLIDATE'));
+				Update DATA_ENGINE_TABLE set Name = 'TRIAL_BALANCE_REPORT_FILE_VIEW' Where CONFIGID IN (Select ID from DATA_ENGINE_CONFIG Where Name IN ('TRIAL_BALANCE_EXPORT_STATE'));
+
+				Update DATA_ENGINE_CONFIG set Header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{PARENT GROUP,PLF LEDGER, DESCRIPTION, SAP GL,OPENING
+				BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}' Where Name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+				
+				Update DATA_ENGINE_CONFIG set Header = 'Row:{, ${COMPANY_NAME}}Row:{, ${REPORT_NAME}}Row:{, ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}Row:{STATE,PARENT GROUP,PLF LEDGER,DESCRIPTION,SAP GL,OPENING
+				BALANCE,CR/DR,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE,CR/DR,LOAN TYPE}' Where Name = 'TRIAL_BALANCE_EXPORT_STATE';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="111" author="Sriram">
+		<createIndex tableName="ACCOUNTHISTORYDETAILS" indexName="IDX_ACCOUNTHISTORY_DETAILS">
+			<column name="POSTDATE" type="DATETIME" />
+			<column name="ENTITYCODE" type="VARCHAR(8)" />
+			<column name="BRANCHPROVINCE" type="VARCHAR(10)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="112" author="Sriram">
+		<createIndex tableName="POSTINGS" indexName="IDX_TRIALBAL_POSTINGS">
+			<column name="POSTDATE" type="DATETIME" />
+			<column name="ENTITYCODE" type="VARCHAR(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="113" author="Sriram">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+			SELECT DS.ID,
+			 	DC.NAME,
+			    DC.UPLOADPATH FILELOCATION,
+			  	DS.FILENAME,
+			  	DS.ENDTIME,
+			  	DS.STATUS,
+			  	DC.id AS CONFIGID,
+			  	DC.POSTEVENT,
+			  	DS.VALUEDATE,
+	            DS.USERID,
+	            TH.STARTDATE,
+	            TH.ENDDATE
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
+	        LEFT join TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME		
+		</createView>
+	</changeSet>
+
+	<changeSet id="114" author="Sriram">
+		<sql>
+			<![CDATA[
+				Delete from SMTPARAMETERS Where SYSPARMCODE IN ('FINANCIAL_YEAR_END_MONTH', 'FINANCIAL_YEAR_START_MONTH');
+	
+				Insert into SMTPARAMETERS values ('FINANCIAL_YEAR_END_MONTH', 'Finance year END month',     'String', 1, '3', 4, 0, null, null, 'Finance year END month',   1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS values ('FINANCIAL_YEAR_START_MONTH', 'Finance year Start month', 'String', 1, '4', 4, 0, null, null, 'Finance year Start month', 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="115" author="Sriram" dbms="oracle,postgresql">
+		<sql>
+			<![CDATA[
+				Update Postings Set EntityCode = (select max(EntityCode) from Entity) Where EntityCode is null;
+				Delete from AccounthistoryDetails;
+	
+				Create table
+				ACCOUNTHISTORYDETAILS_PENNANT as select * from AccountHistoryDetails;
+	
+				Delete
+				from ACCOUNTHISTORYDETAILS_PENNANT;
+	
+				Insert
+				INTO ACCOUNTHISTORYDETAILS_PENNANT Select Account AccountID, Postdate,
+				ENTITYCODE, POSTBRANCH,
+				T2.BRANCHPROVINCE,
+				SUM(Case When DrorCr = 'D' Then PostAmount* -1 Else 0 End ) TodayDebits,
+				SUM(Case When DrorCr = 'C' Then PostAmount
+				Else 0 End ) TodayCredits,
+				SUM(Case When DrorCr = 'D' Then PostAmount* -1
+				Else PostAmount End ) TodayNet,
+				0 ShadowBal, 0
+				AcBalance, 0 OpeningBal
+				From Postings T1 Inner Join
+				RMTBranches T2 On
+				T1.Postbranch =
+				T2.BranchCode
+				Group by Account,
+				Postdate, ENTITYCODE, POSTBRANCH, T2.BRANCHPROVINCE;
+	
+				Update
+				ACCOUNTHISTORYDETAILS_PENNANT set OPENINGBAL =
+				T2.OpeningBal - ACCOUNTHISTORYDETAILS_PENNANT.TodayNet , AcBalance =
+				T2.OPENINGBAL from (
+				SELECT
+				AccountID,POSTDATE,ENTITYCODE, POSTBRANCH, BRANCHPROVINCE, SUM(TODAYNET) OVER (PARTITION
+				BY AccountID, ENTITYCODE,
+				POSTBRANCH, BRANCHPROVINCE
+				ORDER BY POSTDATE rows between unbounded preceding and current
+				row ) AS OpeningBal
+				FROM
+				ACCOUNTHISTORYDETAILS_PENNANT )T2 where ACCOUNTHISTORYDETAILS_PENNANT.AccountID =
+				T2.AccountID and
+				ACCOUNTHISTORYDETAILS_PENNANT.POSTDATE = T2.POSTDATE and ACCOUNTHISTORYDETAILS_PENNANT.ENTITYCODE =
+				T2.ENTITYCODE and
+				ACCOUNTHISTORYDETAILS_PENNANT.POSTBRANCH = T2.PostBranch and
+				ACCOUNTHISTORYDETAILS_PENNANT.BRANCHPROVINCE =
+				T2.BRANCHPROVINCE;
+	
+	
+				insert into AccounthistoryDetails Select * from
+				ACCOUNTHISTORYDETAILS_PENNANT;
+			]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="116" author="Sriram" dbms="mssql">
+		<sql>
+			<![CDATA[
+				Update Postings Set EntityCode = (select max(EntityCode) from Entity) Where EntityCode is null;
+				Delete from AccounthistoryDetails;
+	
+				select * into
+				ACCOUNTHISTORYDETAILS_PENNANT from AccountHistoryDetails where 1=0;
+	
+				Delete from ACCOUNTHISTORYDETAILS_PENNANT;
+	
+				Insert
+				INTO ACCOUNTHISTORYDETAILS_PENNANT
+				Select Account AccountID, Postdate, ENTITYCODE, POSTBRANCH, T2.BRANCHPROVINCE
+				SUM(Case When DrorCr = 'D' Then PostAmount* -1 Else 0 End ) TodayDebits,
+				SUM(Case When DrorCr = 'C' Then PostAmount
+				Else 0 End ) TodayCredits,
+				SUM(Case When DrorCr = 'D' Then PostAmount* -1 Else PostAmount End ) TodayNet, 0 ShadowBal,
+				0 AcBalance, 0 OpeningBal
+				From Postings T1 Inner Join
+				RMTBranches T2 On T1.Postbranch = T2.BranchCode Group by Account,
+				Postdate, ENTITYCODE, POSTBRANCH, T2.BRANCHPROVINCE;
+	
+				Update ACCOUNTHISTORYDETAILS_PENNANT set OPENINGBAL =
+				T2.OpeningBal - ACCOUNTHISTORYDETAILS_PENNANT.TodayNet , AcBalance =
+				T2.OPENINGBAL from (
+				SELECT
+				AccountID,POSTDATE,ENTITYCODE, POSTBRANCH, BRANCHPROVINCE,
+				SUM(TODAYNET) OVER (PARTITION BY AccountID, ENTITYCODE,
+				POSTBRANCH, BRANCHPROVINCE
+				ORDER BY POSTDATE rows between unbounded preceding and current row ) AS OpeningBal
+				FROM
+				ACCOUNTHISTORYDETAILS_PENNANT )T2 where ACCOUNTHISTORYDETAILS_PENNANT.AccountID = T2.AccountID and
+				ACCOUNTHISTORYDETAILS_PENNANT.POSTDATE = T2.POSTDATE and ACCOUNTHISTORYDETAILS_PENNANT.ENTITYCODE = T2.ENTITYCODE and
+				ACCOUNTHISTORYDETAILS_PENNANT.POSTBRANCH = T2.PostBranch and ACCOUNTHISTORYDETAILS_PENNANT.BRANCHPROVINCE =
+				T2.BRANCHPROVINCE;
+	
+	
+				insert into AccounthistoryDetails Select * from ACCOUNTHISTORYDETAILS_PENNANT;
+			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="117" author="Sriram">
+		<modifyDataType tableName="TRANSACTION_DETAIL_REPORT_TEMP" columnName="HKONT" newDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="118_pre" author="vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'transaction_detail_report');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="118" author="Sriram">
+		<modifyDataType tableName="TRANSACTION_DETAIL_REPORT" columnName="HKONT" newDataType="varchar(50)" />
+	</changeSet>
+
+	<changeSet id="118_post" author="vinay" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'transaction_detail_report');
 			]]>
 		</sql>
 	</changeSet>

@@ -254,18 +254,17 @@ public class LatePayMarkingService extends ServiceHelper {
 		FinODPenaltyRate penaltyRate = null;
 		boolean isPenaltyFetched = false;
 
+		// Include Today in Late payment Calculation or NOT?
+		Date lppCheckingDate = valueDate;
+		if (ImplementationConstants.LP_MARK_FIRSTDAY) {
+			lppCheckingDate = DateUtility.addDays(valueDate, 1);
+		}
+
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 
-			//Include Today in Late payment Calculation or NOT?
-			if (ImplementationConstants.LP_MARK_FIRSTDAY) {
-				if (curSchd.getSchDate().compareTo(valueDate) > 0) {
-					break;
-				}
-			} else {
-				if (curSchd.getSchDate().compareTo(valueDate) >= 0) {
-					break;
-				}
+			if (curSchd.getSchDate().compareTo(lppCheckingDate) >= 0) {
+				break;
 			}
 
 			boolean isAmountDue = false;
@@ -330,15 +329,13 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	public FinODDetails findExisingOD(List<FinODDetails> finODDetails, FinanceScheduleDetail curSchd) throws Exception {
-		logger.debug("Entering");
-
-		for (FinODDetails fod : finODDetails) {
-			if (fod.getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
-				return fod;
+		//FIXME: For Early exist changed the logic to read from bottom. To be incorporated in all versions
+		for (int i = (finODDetails.size() - 1); i >= 0; i--) {
+			if (finODDetails.get(i).getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
+				return finODDetails.get(i);
 			}
 		}
 
-		logger.debug("Leaving");
 		return null;
 	}
 

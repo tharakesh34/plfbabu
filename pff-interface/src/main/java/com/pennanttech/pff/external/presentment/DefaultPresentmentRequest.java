@@ -34,16 +34,13 @@ import com.pennanttech.pff.external.PresentmentRequest;
 public class DefaultPresentmentRequest extends AbstractInterface implements PresentmentRequest {
 	private static final Logger logger = Logger.getLogger(DefaultPresentmentRequest.class);
 
-	private long presentmentId;
-	private long successCount;
-	private long processedCount;
+	private static final String STATUS = "STATUS";
 
 	@Override
-	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long headerId, boolean isError,
+	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long presentmentId, boolean isError,
 			boolean isPDC) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		this.presentmentId = headerId;
 		boolean isBatchFail = false;
 		StringBuilder sql = null;
 
@@ -58,16 +55,16 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			MapSqlParameterSource paramMap = new MapSqlParameterSource();
 			paramMap.addValue("PRESENTMENTID", presentmentId);
 			paramMap.addValue("EXCLUDEREASON", RepayConstants.PEXC_EMIINCLUDE);
-			paramMap.addValue("STATUS", RepayConstants.PEXC_APPROV);
+			paramMap.addValue(STATUS, RepayConstants.PEXC_APPROV);
 
 			List<Presentment> presements = namedJdbcTemplate.query(sql.toString(), paramMap,
 					new PresentmentRowMapper());
 
 			// Begin Transaction
 			namedJdbcTemplate.update("TRUNCATE TABLE PRESENTMENT_REQ_DETAILS_TEMP", new MapSqlParameterSource());
+			int successCount = 0;
+			int processedCount = 0;
 			try {
-				successCount = 0;
-				processedCount = 0;
 				for (Presentment presement : presements) {
 					processedCount++;
 					save(presement, "PRESENTMENT_REQ_DETAILS_TEMP");
@@ -83,7 +80,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				if (isBatchFail) {
 					clearTables();
 				} else {
-					copyDataFromTempToMainTables();
+					copyDataFromTempToMainTables(presentmentId, successCount);
 					if (isError) {
 						updatePresentmentHeader(presentmentId, 3, presentmentId, processedCount);
 					} else {
@@ -99,6 +96,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				}
 			}
 		}
+
 		if (!isBatchFail && idExcludeEmiList != null && !idExcludeEmiList.isEmpty()) {
 			updatePresentmentDetails(idExcludeEmiList, "A", RepayConstants.PEXC_EMIINADVANCE);
 		}
@@ -112,7 +110,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(Long presentMentID) throws Exception {
+	public void prepareRequestFile(long presentmentId) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -122,9 +120,9 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Object smtPaymentModeConfig = getSMTParameter(paymentModeConfigName, Object.class);
 
 			DataEngineExport dataEngine = null;
-			dataEngine = new DataEngineExport(dataSource, new Long(1000), App.DATABASE.name(), true, getValueDate());
+			dataEngine = new DataEngineExport(dataSource, 1000, App.DATABASE.name(), true, getValueDate());
 			Map<String, Object> filterMap = new HashMap<>();
-			filterMap.put("JOB_ID", presentMentID);
+			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
 
 			if (smtPaymentModeConfig != null) {
@@ -314,26 +312,26 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void copyDataFromTempToMainTables() {
+	private void copyDataFromTempToMainTables(long presentmentId, int successCount) {
 		logger.debug(Literal.ENTERING);
 
-		saveHeader();
+		saveHeader(presentmentId, successCount);
 
 		namedJdbcTemplate.update("INSERT INTO PRESENTMENT_REQ_DETAILS SELECT * FROM PRESENTMENT_REQ_DETAILS_TEMP",
 				new MapSqlParameterSource());
 
-		updateHeader();
+		updateHeader(presentmentId, successCount);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateHeader() {
+	private void updateHeader(long presentmentId, int successCount) {
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource parmMap = null;
 
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("Job_Id", this.presentmentId);
+		parmMap.addValue("Job_Id", presentmentId);
 		parmMap.addValue("Data_trnsfr_status", "C");
 		parmMap.addValue("Total_Cnt", successCount);
 
@@ -355,14 +353,14 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 	}
 
-	private void saveHeader() {
+	private void saveHeader(long presentmentId, int successCount) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource parmMap;
 
 		parmMap = new MapSqlParameterSource();
-		parmMap.addValue("ID", this.presentmentId);
+		parmMap.addValue("ID", presentmentId);
 
 		sql.append(" SELECT  ID, SCHDATE, MANDATETYPE ");
 		sql.append(" FROM PRESENTMENTHEADER  ");
@@ -374,7 +372,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 				logger.debug("Entering");
 				while (rs.next()) {
 					try {
-						Presentment response = mapControlTableDate(rs);
+						Presentment response = mapControlTableDate(rs, successCount);
 						saveToControlTable(response, "PRESENTMENT_REQ_HEADER");
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
@@ -409,7 +407,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.debug("Leaving");
 	}
 
-	private Presentment mapControlTableDate(ResultSet rs) throws SQLException {
+	private Presentment mapControlTableDate(ResultSet rs, int successCount) throws SQLException {
 		Presentment response = new Presentment();
 
 		String mnadteType = rs.getString("MANDATETYPE");
@@ -447,7 +445,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		List<MapSqlParameterSource> sources = new ArrayList<>();
 		for (Long id : idList) {
 			MapSqlParameterSource batchValues = new MapSqlParameterSource();
-			batchValues.addValue("STATUS", status);
+			batchValues.addValue(STATUS, status);
 			batchValues.addValue("ErrorDesc", null);
 			batchValues.addValue("EXCLUDEREASON", excludeReason);
 			batchValues.addValue("ID", id);
@@ -478,7 +476,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		logger.trace(Literal.SQL + sql.toString());
 
 		source = new MapSqlParameterSource();
-		source.addValue("STATUS", manualEcclude);
+		source.addValue(STATUS, manualEcclude);
 		source.addValue("DBSTATUSID", dBStatusId);
 		source.addValue("ID", presentmentId);
 		source.addValue("TOTALRECORDS", totalRecords);

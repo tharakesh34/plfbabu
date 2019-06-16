@@ -115,23 +115,23 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
-	protected Window window_ExtendedFieldDetailDialog; // autowired
-	protected Combobox moduleId; // autowired
-	protected Uppercasebox fieldName; // autowired
-	protected Combobox fieldType; // autowired
-	protected Intbox fieldLength; // autowired
-	protected Intbox fieldPrec; // autowired
-	protected Textbox fieldLabel; // autowired
-	protected Checkbox fieldMandatory; // autowired
-	protected Combobox fieldConstraint; // autowired
-	protected Intbox fieldSeqOrder; // autowired
-	protected Combobox combofieldList; // autowired
-	protected Textbox fieldDefaultValue; // autowired
-	protected Checkbox fieldDefaultValue_Boolean; // autowired
-	protected Combobox fieldDefaultValue_Date; // autowired
-	protected Longbox fieldMinValue; // autowired
-	protected Longbox fieldMaxValue; // autowired
-	protected Checkbox fieldUnique; // autowired
+	protected Window window_ExtendedFieldDetailDialog;
+	protected Combobox moduleId;
+	protected Uppercasebox fieldName;
+	protected Combobox fieldType;
+	protected Intbox fieldLength;
+	protected Intbox fieldPrec;
+	protected Textbox fieldLabel;
+	protected Checkbox fieldMandatory;
+	protected Combobox fieldConstraint;
+	protected Intbox fieldSeqOrder;
+	protected Combobox combofieldList;
+	protected Textbox fieldDefaultValue;
+	protected Checkbox fieldDefaultValue_Boolean;
+	protected Combobox fieldDefaultValue_Date;
+	protected Longbox fieldMinValue;
+	protected Longbox fieldMaxValue;
+	protected Checkbox fieldUnique;
 	protected Label label_ExtendedFieldDetailDialog_FieldListInstrLabel;
 	protected Intbox fieldMultilinetxt;
 	protected Combobox parentTag;
@@ -320,7 +320,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldLength.setMaxlength(4);
 		this.fieldPrec.setMaxlength(2);
 		this.fieldSeqOrder.setMaxlength(4);
-		this.fieldDefaultValue.setMaxlength(200);
+		this.fieldDefaultValue.setMaxlength(1000);
 		this.fieldMultilinetxt.setMaxlength(2);
 
 		//story #699 Allow Additional filters for extended combobox.
@@ -1244,7 +1244,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_DECIMAL)) {
 				maxLength = 21;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_INT)) {
-				maxLength = 8;
+				maxLength = 10;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LONG)) {
 				maxLength = 12;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_LISTFIELD)) {

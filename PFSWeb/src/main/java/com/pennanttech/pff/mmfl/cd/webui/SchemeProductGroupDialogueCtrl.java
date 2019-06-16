@@ -124,6 +124,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+		this.productGroupCode.setMaxlength(8);
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}
@@ -379,9 +380,9 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		}
 
 		if (!this.posVendor.isReadonly()) {
-			if(!this.posVendor.getText().equals("0") && !this.posVendor.getText().equals("1")) {
+			if (!this.posVendor.getText().equals("0") && !this.posVendor.getText().equals("1")) {
 				throw new WrongValueException(this.posVendor,
-						Labels.getLabel("label_CDProductDeatislDialogue_MinAmountAlert.value"));
+						Labels.getLabel("label_SchemeProductDeatislDialoguePOSVendorAlert.value"));
 			}
 		}
 		logger.debug(Literal.LEAVING);

@@ -44,4 +44,12 @@ public interface LimitRestService {
 	public WSReturnStatus cancelLimitReserve(@WebParam(name = "limitSetup") LimitTransactionDetail limitTransDetail)
 			throws ServiceException;
 
+	@POST
+	@Path("/limitService/blockLimit")
+	public WSReturnStatus blockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
+
+	@POST
+	@Path("/limitService/unBlockLimit")
+	public WSReturnStatus unBlockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
+
 }

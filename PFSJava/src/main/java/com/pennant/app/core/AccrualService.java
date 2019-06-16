@@ -83,21 +83,16 @@ public class AccrualService extends ServiceHelper {
 	public int tdsSchdIdx = -2;
 
 	public CustEODEvent processAccrual(CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			finEODEvent = calculateAccruals(finEODEvent, custEODEvent);
 		}
-		logger.debug(" Leaving ");
-
 		return custEODEvent;
 
 	}
 
 	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
-
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		finMain.setRoundingTarget(finEODEvent.getFinType().getRoundingTarget());
 		List<FinanceScheduleDetail> scheduleDetailList = finEODEvent.getFinanceScheduleDetails();
@@ -136,13 +131,11 @@ public class AccrualService extends ServiceHelper {
 			postAccruals(finEODEvent, custEODEvent);
 		}
 
-		logger.debug(" Leaving ");
 		return finEODEvent;
 	}
 
 	public FinanceProfitDetail calProfitDetails(FinanceMain finMain, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, Date valueDate) {
-		logger.debug("Entering");
 
 		setSMTParms();
 
@@ -442,8 +435,6 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private static void calCumulativeTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd) {
-		logger.debug("Entering");
-
 		// profit
 		pftDetail.setTotalPftSchd(pftDetail.getTotalPftSchd().add(curSchd.getProfitSchd()));
 		pftDetail.setTotalPftCpz(pftDetail.getTotalPftCpz().add(curSchd.getCpzAmount()));
@@ -491,12 +482,9 @@ public class AccrualService extends ServiceHelper {
 
 			pftDetail.setLatestDisbDate(curSchd.getSchDate());
 		}
-
-		logger.debug("Leaving");
 	}
 
 	private void calTillDateTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd) {
-		logger.debug("Entering");
 
 		// profit
 		pftDetail.setTdSchdPft(pftDetail.getTdSchdPft().add(curSchd.getProfitSchd()));
@@ -560,11 +548,9 @@ public class AccrualService extends ServiceHelper {
 		pftDetail.setSplRateCode(curSchd.getSplRate());
 		pftDetail.setMrgRate(curSchd.getMrgRate());
 
-		logger.debug("Leaving");
 	}
 
 	private static void calNextDateTotals(FinanceProfitDetail pftDetail, FinanceScheduleDetail curSchd) {
-		logger.debug("Entering");
 
 		// advance Profit and Principal
 		pftDetail.setTotalPftPaidInAdv(pftDetail.getTotalPftPaidInAdv().add(curSchd.getSchdPftPaid()));
@@ -593,7 +579,6 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 		}
 
-		logger.debug("Leaving");
 	}
 
 	private static boolean isHoliday(String bpiOrHoliday) {
@@ -607,7 +592,6 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private void calculateTotals(FinanceMain finMain, FinanceProfitDetail pftDetail, Date dateSusp, Date valueDate) {
-		logger.debug("Entering");
 
 		pftDetail.setTotalPftBal(pftDetail.getTotalPftSchd().subtract(pftDetail.getTotalPftPaid()));
 		pftDetail.setTotalPriBal(pftDetail.getTotalpriSchd().subtract(pftDetail.getTotalPriPaid()));
@@ -681,7 +665,6 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setTdsAccrued(pftDetail.getTdTdsBal().add(accrueTDS));
 		}
 
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -690,8 +673,6 @@ public class AccrualService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void postAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
-		logger.debug(" Entering ");
-
 		String eventCode = AccountEventConstants.ACCEVENT_AMZ;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
@@ -746,7 +727,6 @@ public class AccrualService extends ServiceHelper {
 			finEODEvent.setUpdMonthEndPostings(true);
 		}
 		// these fields should be update after the accrual posting only so these will not be considered in normal update.
-		logger.debug(" Leaving ");
 	}
 
 	private static int getNoDays(Date date1, Date date2) {
@@ -763,7 +743,6 @@ public class AccrualService extends ServiceHelper {
 	 */
 	public static List<ProjectedAccrual> getAccrualsFromCurMonthEnd(FinanceMain finMain,
 			List<FinanceScheduleDetail> schdDetails, Date appDate, String fromFinStartDate) {
-		logger.debug(" Entering ");
 
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
 
@@ -783,7 +762,6 @@ public class AccrualService extends ServiceHelper {
 			}
 		}
 
-		logger.debug(" Leaving ");
 		return list;
 	}
 
@@ -797,7 +775,6 @@ public class AccrualService extends ServiceHelper {
 	 */
 	public static List<ProjectedAccrual> calAccrualsOnMonthEnd(FinanceMain finMain,
 			List<FinanceScheduleDetail> schdDetails, Date appDate, BigDecimal prvMthAmz, boolean calFromFinStartDate) {
-		logger.debug(" Entering ");
 
 		HashMap<Date, ProjectedAccrual> map = new HashMap<Date, ProjectedAccrual>(1);
 		List<ProjectedAccrual> list = new ArrayList<ProjectedAccrual>();
@@ -959,7 +936,6 @@ public class AccrualService extends ServiceHelper {
 			}
 		}
 
-		logger.debug(" Leaving ");
 		return list;
 	}
 

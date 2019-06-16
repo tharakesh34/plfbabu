@@ -71,8 +71,8 @@ public class FinEODEvent implements Serializable {
 	private List<String> finMainUpdateFields = new ArrayList<String>(1);
 
 	// IND AS : Income / Expense Amortization 
-	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<ProjectedAccrual>(1);
-	private List<ProjectedAmortization> incomeAMZList = new ArrayList<ProjectedAmortization>(1);
+	private List<ProjectedAccrual> projectedAccrualList = new ArrayList<>(1);
+	private List<ProjectedAmortization> incomeAMZList = new ArrayList<>(1);
 	private Date appDate;
 
 	public FinanceMain getFinanceMain() {

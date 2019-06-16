@@ -3282,7 +3282,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		String recptMode = getComboboxValue(receiptMode);
-		if (!this.receiptMode.isDisabled()) {
+		if (!this.receiptMode.isDisabled() && this.receiptMode.isVisible()) {
 			this.receiptMode.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceiptModes(),
 					Labels.getLabel("label_ReceiptDialog_ReceiptMode.value")));
 		}
@@ -3542,7 +3542,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		 */
 		try {
 			header.setReceiptMode(getComboboxValue(receiptMode));
-			if (header.getSubReceiptMode().equals("#")) {
+			if ("#".equals(header.getSubReceiptMode())) {
 				header.setSubReceiptMode(header.getReceiptMode());
 			}
 		} catch (WrongValueException we) {
@@ -3585,14 +3585,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		String status = "";
-		try {
+		if (row_ReceiptModeStatus.isVisible()) {
 			if (!isReadOnly("ReceiptDialog_receiptModeStatus") && isValidComboValue(this.receiptModeStatus,
 					Labels.getLabel("label_ReceiptDialog_ReceiptModeStatus.value"))) {
-				status = getComboboxValue(receiptModeStatus);
-				header.setReceiptModeStatus(status);
+				try {
+					status = getComboboxValue(receiptModeStatus);
+					header.setReceiptModeStatus(status);
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
 		}
 
 		if (StringUtils.equals(status, RepayConstants.PAYSTATUS_BOUNCE)) {

@@ -1217,7 +1217,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				financeDetail.setCollaterals(null);
 			}
 			// Collateral coverage will be calculated based on the flag
-			// "Partially Secured?” defined loan type.
+			// "Partially Secured?â€� defined loan type.
 			if (!financeDetail.getFinScheduleData().getFinanceType().isPartiallySecured() && flag) {
 				if (curAssignValue.compareTo(financeMain.getFinAmount()) < 0) {
 					String[] valueParm = new String[2];
@@ -1856,7 +1856,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		try {
 			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
 					FinanceConstants.FINSER_EVENT_ORG, "");
-			
+
 			if (financeDetail != null) {
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
 						ExtendedFieldConstants.MODULE_LOAN,
@@ -2966,18 +2966,76 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = null;
-		financeDetail = financeDetailService.getFinanceDetailById(financeDetail.getFinReference(), false, "", false,
-				FinanceConstants.FINSER_EVENT_ORG, "");
-		financeDetail.getFinScheduleData().getFinanceMain()
-				.setVersion(financeDetail.getFinScheduleData().getFinanceMain().getVersion() + 1);
-		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, financeDetail);
-		AuditHeader auditHeader = new AuditHeader(financeDetail.getFinReference(), null, null, null, auditDetail,
-				financeDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
+		FinanceDetail findetail = financeDetailService.getFinanceDetailById(financeDetail.getFinReference(), false, "",
+				false, FinanceConstants.FINSER_EVENT_ORG, "");
+		FinanceMain financeMain = findetail.getFinScheduleData().getFinanceMain();
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		findetail.getFinScheduleData().getFinanceMain()
+				.setVersion(findetail.getFinScheduleData().getFinanceMain().getVersion() + 1);
+		financeMain.setUserDetails(userDetails);
+		List<ErrorDetail> errorDetailList = null;
+		if (CollectionUtils.isNotEmpty(financeDetail.getExtendedDetails())) {
+			String subModule = findetail.getFinScheduleData().getFinanceType().getFinCategory();
+			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(
+					financeDetail.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
+					FinanceConstants.FINSER_EVENT_CANCELFIN);
+
+			for (ErrorDetail errorDetail : errorDetailList) {
+				response = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+				logger.debug(Literal.LEAVING);
+
+				return response;
+			}
+		}
+
+		// process Extended field details
+		// Get the ExtendedFieldHeader for given module and subModule
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+				ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
+				FinanceConstants.FINSER_EVENT_CANCELFIN, "");
+		// ### 02-05-2018-END
+		findetail.setExtendedFieldHeader(extendedFieldHeader);
+		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
+		if (extendedFieldHeader != null) {
+			int seqNo = 0;
+			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+			exdFieldRender.setReference(financeMain.getFinReference());
+			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			exdFieldRender.setLastMntBy(financeMain.getUserDetails().getUserId());
+			exdFieldRender.setSeqNo(++seqNo);
+			exdFieldRender.setNewRecord(true);
+			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			exdFieldRender.setVersion(1);
+			exdFieldRender.setTypeCode(findetail.getExtendedFieldHeader().getSubModuleName());
+
+			if (extendedFields != null) {
+				for (ExtendedField extendedField : extendedFields) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+						exdFieldRender.setMapValues(mapValues);
+					}
+				}
+				if (extendedFields.isEmpty()) {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
+			} else {
+				Map<String, Object> mapValues = new HashMap<String, Object>();
+				exdFieldRender.setMapValues(mapValues);
+			}
+			findetail.setExtendedFieldRender(exdFieldRender);
+		}
+		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, findetail);
+		AuditHeader auditHeader = new AuditHeader(findetail.getFinReference(), null, null, null, auditDetail,
+				findetail.getFinScheduleData().getFinanceMain().getUserDetails(),
 				new HashMap<String, ArrayList<ErrorDetail>>());
 
 		APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_HEADER_KEY);
 		auditHeader.setApiHeader(reqHeaderDetails);
+
 		auditHeader = financeCancellationService.doApprove(auditHeader, true);
 		if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
 			for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
@@ -3004,7 +3062,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
-	
+
 	public FinanceDetail doReInitiateFinance(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
@@ -3013,17 +3071,69 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			String finReference = String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(
 					finDetail.getFinScheduleData().getFinanceMain(), finDetail.getFinScheduleData().getFinanceType())));
+			FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
 			finDetail.getFinScheduleData().getFinanceMain().setFinReference(finReference);
 			finDetail.getFinScheduleData().getFinanceMain()
-					.setOldFinReference(financeDetail.getFinScheduleData().getExternalReference());
+					.setOldFinReference(financeDetail.getFinScheduleData().getOldFinReference());
 			finDetail.getFinScheduleData().getFinanceMain().setFinIsActive(true);
 			finDetail.getFinScheduleData().getFinanceMain().setClosingStatus("");
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			finDetail.setUserDetails(userDetails);
+			financeMain.setLastMntBy(userDetails.getUserId());
+			financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+			financeMain.setVersion(1);
+			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 			finDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 			finDetail.getFinScheduleData().getFinanceMain().setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			finDetail.getFinScheduleData().setFinReference(finReference);
 			for (FinanceScheduleDetail schdDetail : finDetail.getFinScheduleData().getFinanceScheduleDetails()) {
 				schdDetail.setFinReference(finReference);
 			}
+			//process Extended field details
+			// Get the ExtendedFieldHeader for given module and subModule
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
+					"");
+			// ### 02-05-2018-END
+			finDetail.setExtendedFieldHeader(extendedFieldHeader);
+			List<ExtendedField> extendedFields = finDetail.getExtendedDetails();
+			if (extendedFieldHeader != null) {
+				int seqNo = 0;
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(financeMain.getFinReference());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(finDetail.getUserDetails().getUserId());
+				exdFieldRender.setSeqNo(++seqNo);
+				exdFieldRender.setNewRecord(true);
+				exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				exdFieldRender.setVersion(1);
+				exdFieldRender.setTypeCode(finDetail.getExtendedFieldHeader().getSubModuleName());
+
+				if (extendedFields != null) {
+					for (ExtendedField extendedField : extendedFields) {
+						Map<String, Object> mapValues = new HashMap<String, Object>();
+						for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+							if (!StringUtils.equalsIgnoreCase("InstructionUID", extFieldData.getFieldName())) {
+								mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+							}
+							exdFieldRender.setMapValues(mapValues);
+						}
+					}
+					if (extendedFields.isEmpty()) {
+						Map<String, Object> mapValues = new HashMap<String, Object>();
+						exdFieldRender.setMapValues(mapValues);
+					}
+				} else {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
+
+				finDetail.setExtendedFieldRender(exdFieldRender);
+			}
+
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
 			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,
 					finDetail.getFinScheduleData().getFinanceMain().getUserDetails(),
@@ -3282,6 +3392,5 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
 		this.postValidationHook = postValidationHook;
 	}
-
 
 }

@@ -816,7 +816,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										.equals(bounceFeeType.getTaxComponent())) { //GST Calculation only for Exclusive case
 									BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference,
 											manualAdvise.getAdviseAmount().subtract(manualAdvise.getWaivedAmount()),
-											manualAdvise.getTaxComponent());
+											bounceFeeType.getTaxComponent());
 
 									bounceGreaterZeroAdviseAmount = bounceGreaterZeroAdviseAmount.add(gstAmount);
 								}
@@ -1340,7 +1340,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 							gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
-									manualAdvise.getTaxComponent());
+									taxComponent);
 						}
 
 						soaTranReport.setEvent(manualAdvPrentmentNotIn + finRef);
@@ -1354,6 +1354,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					} else {
 						//Bounce created for particular on Installment 
 						if (manualAdvise.getFeeTypeID() == 0) {
+							String taxComponent = "";
+							BigDecimal gstAmount = BigDecimal.ZERO;
+							taxComponent = manualAdvise.getTaxComponent();
 
 							for (PresentmentDetail presentmentDetail : PresentmentDetailsList) {
 
@@ -1375,7 +1378,20 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 											soaTranReport.setTransactionDate(manualAdvise.getPostDate());
 											soaTranReport.setValueDate(manualAdvise.getValueDate());
 											soaTranReport.setCreditAmount(BigDecimal.ZERO);
-											soaTranReport.setDebitAmount(manualAdvise.getAdviseAmount());
+
+											if (bounceFeeType == null) {
+												bounceFeeType = getFeeTypeDAO()
+														.getTaxDetailByCode(RepayConstants.ALLOCATION_BOUNCE);
+											}
+											if (bounceFeeType != null) {
+												taxComponent = bounceFeeType.getTaxComponent();
+											}
+											if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+												gstAmount = GSTCalculator.getTotalGST(finReference,
+														manualAdvise.getAdviseAmount(), taxComponent);
+
+											}
+											soaTranReport.setDebitAmount(manualAdvise.getAdviseAmount().add(gstAmount));
 											soaTranReport.setPriority(13);
 
 											soaTransactionReports.add(soaTranReport);

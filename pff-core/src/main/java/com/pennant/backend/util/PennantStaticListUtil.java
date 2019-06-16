@@ -4171,12 +4171,12 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PaymentType_ESCROW")));
 			allPaymentTypes.add(new ValueLabel(DisbursementConstants.PAYMENT_TYPE_MOBILE,
 					Labels.getLabel("label_PaymentType_MOBILE")));
-		
+
 		}
 
 		return allPaymentTypes;
 	}
-	
+
 	public static List<ValueLabel> getPaymentTypesWithIST() {
 		if (paymentTypesWithOnlyIST.isEmpty()) {
 			paymentTypesWithOnlyIST.addAll(getPaymentTypes());
@@ -4187,7 +4187,6 @@ public class PennantStaticListUtil {
 		return paymentTypesWithOnlyIST;
 	}
 
-	
 	public static List<ValueLabel> getPaymentTypes(boolean addSwitchTransfer, boolean bttpReq) {
 		List<ValueLabel> payments = getPaymentTypes();
 
@@ -4490,6 +4489,7 @@ public class PennantStaticListUtil {
 		if (CollectionUtils.isEmpty(list)) {
 			return;
 		}
+		queryDetailExtRolesList.clear();
 		queryDetailExtRolesList.addAll(list);
 	}
 

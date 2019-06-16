@@ -116,8 +116,6 @@ public class ScheduleGenerator {
 		for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 
-			//Interest Days basis kept as same for both grace and repayment periods.
-			curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 			curSchd.setTDSApplicable(financeMain.isTDSApplicable());
 
 			if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) < 0) {
@@ -130,6 +128,9 @@ public class ScheduleGenerator {
 				curSchd.setAdvMargin(financeMain.getGrcAdvMargin());
 				curSchd.setAdvPftRate(financeMain.getGrcAdvPftRate());
 				curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
+
+				curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
+
 			} else {
 				if (fixedRateTenor > 0
 						&& (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
@@ -148,9 +149,13 @@ public class ScheduleGenerator {
 				curSchd.setAdvBaseRate(financeMain.getRpyAdvBaseRate());
 				curSchd.setAdvMargin(financeMain.getRpyAdvMargin());
 				curSchd.setAdvPftRate(financeMain.getRpyAdvPftRate());
+				curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 
 				if (curSchd.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE_END);
+					if (DateUtility.compare(financeMain.getFinStartDate(), financeMain.getGrcPeriodEndDate()) == 0) {
+						curSchd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
+					}
 				} else if (curSchd.getSchDate().compareTo(financeMain.getMaturityDate()) == 0) {
 					curSchd.setSpecifier(CalculationConstants.SCH_SPECIFIER_MATURITY);
 				} else {

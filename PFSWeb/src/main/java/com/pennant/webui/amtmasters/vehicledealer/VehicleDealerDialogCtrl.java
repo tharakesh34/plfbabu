@@ -290,13 +290,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		logger.debug(Literal.ENTERING);
 
 		// Empty sent any required attributes
-		this.dealerName.setMaxlength(50);
+		this.dealerName.setMaxlength(100);
 		this.dealerTelephone.setMaxlength(10);
 		this.dealerFax.setMaxlength(10);
-		this.dealerAddress1.setMaxlength(50);
-		this.dealerAddress2.setMaxlength(50);
-		this.dealerAddress3.setMaxlength(50);
-		this.dealerAddress4.setMaxlength(50);
+		this.dealerAddress1.setMaxlength(100);
+		this.dealerAddress2.setMaxlength(100);
+		this.dealerAddress3.setMaxlength(100);
+		this.dealerAddress4.setMaxlength(100);
 		this.dealerType.setMaxlength(50);
 		this.sellerType.setMaxlength(50);
 		this.cityName.setMaxlength(50);
@@ -329,7 +329,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.shortCode.setMaxlength(3);
 		this.email.setMaxlength(100);
 
-		this.dealerPoBox.setMaxlength(8);
+		this.dealerPoBox.setMaxlength(6);
 
 		this.zipCode.setMaxlength(50);
 		this.zipCode.setTextBoxWidth(121);
@@ -385,7 +385,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.branchCity.setReadonly(true);
 
 		this.iBANnumber.setMaxlength(23);
-		this.dealerPoBox.setMaxlength(8);
+		this.dealerPoBox.setMaxlength(6);
 		if (module.equals("DSA")) {
 			this.space_dealerPoBox.setSclass("");
 			this.space_Code.setClass(PennantConstants.mandateSclass);
@@ -1400,7 +1400,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.productCtg.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));
 		this.shortCode.setReadonly(isReadOnly("VehicleDealerDialog_VASM_Code"));
 		this.active.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_Active"));
-		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_Code"));
+		this.code.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_code"));
 		this.panNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_PanNumber"));
 		this.uidNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_UidNumber"));
 		this.taxNumber.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_TaxNumber"));

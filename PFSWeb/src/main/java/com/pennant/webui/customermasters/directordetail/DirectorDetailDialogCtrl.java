@@ -83,6 +83,7 @@ import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -145,6 +146,15 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 	protected Textbox idReference; // autowired
 	protected ExtendedCombobox nationality; // autowired
 	protected Datebox dob; // autowired
+	private transient CustomerDocumentService customerDocumentService;
+
+	public CustomerDocumentService getCustomerDocumentService() {
+		return customerDocumentService;
+	}
+
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
+	}
 
 	// not auto wired vars
 	private DirectorDetail directorDetail; // overhanded per param
@@ -909,6 +919,26 @@ public class DirectorDetailDialogCtrl extends GFCBaseCtrl<DirectorDetail> {
 					new PTStringValidator(Labels.getLabel("label_DirectorDetailDialog_IDReference.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM,
 							StringUtils.equals(PennantConstants.mandateSclass, this.space_idReference.getSclass())));
+		}
+
+		if (!this.idType.isReadonly()) {
+
+			//TODO:Need To move HardCoded values into constants.
+			String value = this.idType.getValue();
+			if (StringUtils.isNotBlank(value)) {
+				String masterDocType = customerDocumentService.getDocTypeByMasterDefByCode("DOC_TYPE", value);
+				String regex = PennantRegularExpressions.REGEX_ALPHANUM_CODE;
+				if (StringUtils.equalsIgnoreCase(PennantConstants.PANNUMBER, masterDocType)) {
+					regex = PennantRegularExpressions.REGEX_PANNUMBER;
+				} else if (StringUtils.equalsIgnoreCase(PennantConstants.CPRCODE, masterDocType)) {
+					regex = PennantRegularExpressions.REGEX_AADHAR_NUMBER;
+				}
+				if (StringUtils.isNotBlank(regex)) {
+					idReference.setConstraint(new PTStringValidator(
+							Labels.getLabel("label_DirectorDetailDialog_IDReference.value"), regex,
+							StringUtils.equals(PennantConstants.mandateSclass, this.space_idReference.getSclass())));
+				}
+			}
 		}
 		logger.debug("Leaving");
 	}

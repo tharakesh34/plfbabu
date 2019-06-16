@@ -120,6 +120,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Datebox docReceivedDt;
 	protected Space space_documentName;
 	protected Space space_docReceivedDt;
+	protected Space space_docBarcode;
 	//protected Space space_docBarcode;
 
 	protected Div finDocumentDiv; // autowired
@@ -299,6 +300,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			this.space_documentName.setSclass("mandatory");
 		} else {
 			this.space_documentName.setSclass("");
+		}
+
+		if (this.docOriginal.isChecked()) {
+			this.space_docBarcode.setSclass("mandatory");
+		} else {
+			this.space_docBarcode.setSclass("");
 		}
 
 		this.documnetName.setMaxlength(200);
@@ -1204,6 +1211,22 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			//this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
+		}
+	}
+
+	/**
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
+	 * 
+	 * @throws Exception
+	 */
+	public void onCheck$docOriginal(Event event) throws Exception {
+		if (this.docOriginal.isChecked()) {
+			this.space_docBarcode.setClass("mandatory");
+		} else {
+			this.space_docBarcode.setClass("");
 		}
 	}
 

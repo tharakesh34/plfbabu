@@ -1031,7 +1031,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Entering");
 
 		if (customer.getCustID() == 0 || customer.getCustID() == Long.MIN_VALUE) {
-			customer.setCustID(getNextValue("SeqWIFCustomer"));
+			customer.setCustID(getNextId("SeqWIFCustomer"));
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into WIFCustomers");
@@ -1909,7 +1909,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public Customer getCustomerEOD(final long id) {
-		logger.debug("Entering");
 		Customer customer = new Customer();
 		customer.setId(id);
 
@@ -1934,7 +1933,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 			logger.warn("Exception: ", e);
 			customer = null;
 		}
-		logger.debug("Leaving");
 		return customer;
 	}
 
@@ -1962,14 +1960,11 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 
 	@Override
 	public Date getCustAppDate(long custId) {
-		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CustId", custId);
 		StringBuilder selectSql = new StringBuilder("select CustAppDate from Customers");
 		selectSql.append(" WHERE CustId=:CustId ");
-		logger.debug("selectSql: " + selectSql.toString());
 
-		logger.debug("Leaving");
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Date.class);
 	}
 

@@ -541,7 +541,7 @@ public class DisbursementInstCtrl {
 			//check is first disbursement
 			if (DateUtility.compare(date, main.getFinStartDate()) == 0 && financeDisbursement.getDisbSeq() == 1) {
 				totdisbAmt = totdisbAmt.subtract(main.getDownPayment());
-				totdisbAmt = totdisbAmt.subtract(main.getDeductFeeDisb());
+				totdisbAmt = totdisbAmt.subtract(financeDisbursement.getDeductFromDisb());
 				totdisbAmt = totdisbAmt.subtract(main.getDeductInsDisb());
 				if (StringUtils.trimToEmpty(main.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
 					totdisbAmt = totdisbAmt.subtract(main.getBpiAmount());

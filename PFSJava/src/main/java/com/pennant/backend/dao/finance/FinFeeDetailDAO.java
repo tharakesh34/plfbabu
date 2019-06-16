@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.finance;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.expenses.UploadTaxPercent;

@@ -67,7 +67,7 @@
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
-				<version>0.6.16.2</version>
+				<version>0.6.17</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
@@ -82,7 +82,7 @@
 			<dependency>
 				<groupId>com.pennanttech.framework.components</groupId>
 				<artifactId>data-engine</artifactId>
-				<version>3.2.6</version>
+				<version>3.2.8</version>
 			</dependency>
 			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>

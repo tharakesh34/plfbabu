@@ -56,40 +56,23 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
-import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.RepaymentProcessUtil;
-import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
-import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.cashmanagement.BranchCashDetailDAO;
-import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
-import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
-import com.pennant.backend.dao.finance.FinODDetailsDAO;
-import com.pennant.backend.dao.finance.FinStageAccountingLogDAO;
-import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
-import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
 import com.pennant.backend.dao.receipts.DepositDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
@@ -97,11 +80,6 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.dao.receipts.ReceiptTaxDetailDAO;
-import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
-import com.pennant.backend.dao.rmtmasters.PromotionDAO;
-import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
-import com.pennant.backend.dao.rulefactory.PostingsDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -142,9 +120,7 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
-import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -167,44 +143,20 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
-	private FinanceRepaymentsDAO financeRepaymentsDAO;
-	private FinLogEntryDetailDAO finLogEntryDetailDAO;
-	private FinanceMainDAO financeMainDAO;
-	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
-	private FinanceDisbursementDAO financeDisbursementDAO;
-	private RepayInstructionDAO repayInstructionDAO;
-	private FinanceProfitDetailDAO financeProfitDetailDAO;
-	private RepaymentPostingsUtil repaymentPostingsUtil;
-	private FinODDetailsDAO finODDetailsDAO;
-	private PostingsDAO postingsDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private FinExcessAmountDAO finExcessAmountDAO;
-	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
-	private FinInsurancesDAO finInsurancesDAO;
-	private AuditHeaderDAO auditHeaderDAO;
-	private BounceReasonDAO bounceReasonDAO;
-	private RuleDAO ruleDAO;
-	private RuleExecutionUtil ruleExecutionUtil;
 	private LimitManagement limitManagement;
-	private CustomerDAO customerDAO;
-	private FinFeeReceiptDAO finFeeReceiptDAO;
-	private LatePayMarkingService latePayMarkingService;
-	private BranchCashDetailDAO branchCashDetailDAO;
-	private PromotionDAO promotionDAO;
-	private FinanceProfitDetailDAO profitDetailDAO;
-	private FinanceTypeDAO financeTypeDAO;
-	private RepaymentProcessUtil repayProcessUtil;
-	private AccrualService accrualService;
-	private FinStageAccountingLogDAO finStageAccountingLogDAO;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
-	private CustomerDetailsService customerDetailsService;
-	private FinanceDetailService financeDetailService;
-	private GSTInvoiceTxnService gstInvoiceTxnService;
-	private ReceiptTaxDetailDAO receiptTaxDetailDAO;
-	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
-
+	private FinFeeReceiptDAO finFeeReceiptDAO;
 	private DepositChequesDAO depositChequesDAO;
 	private DepositDetailsDAO depositDetailsDAO;
+	private BounceReasonDAO bounceReasonDAO;
+	private ReceiptTaxDetailDAO receiptTaxDetailDAO;
+	private FinExcessAmountDAO finExcessAmountDAO;
+	private FinanceDetailService financeDetailService;
+	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private LatePayMarkingService latePayMarkingService;
+	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
+	private RepaymentPostingsUtil repaymentPostingsUtil;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -1087,7 +1039,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					if (linkedTranId > 0) {
 						financeRepaymentsDAO.deleteRpyDetailbyLinkedTranId(linkedTranId, finReference);
 					}
-
 					// Remove FinRepay Header Details
 					// financeRepaymentsDAO.deleteFinRepayHeaderByTranId(finReference, linkedTranId, "");
 
@@ -1108,7 +1059,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					//unRealizeLpiGst = unRealizeLpiGst.add(rpyHeader.getRealizeUnLPIGst());
 
 					// Update Profit Details for UnRealized LPP
-					FinTaxIncomeDetail taxIncome = getFinODAmzTaxDetailDAO()
+					FinTaxIncomeDetail taxIncome = finODAmzTaxDetailDAO
 							.getFinTaxIncomeDetail(receiptHeader.getReceiptID(), "LPP");
 					if (taxIncome != null) {
 						taxIncomeList.add(taxIncome);
@@ -1254,7 +1205,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					scheduleData = new FinScheduleData();
 					scheduleData.setFinanceScheduleDetails(
 							financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
-					scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
+					scheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType()));
 					scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 
 					for (FinanceScheduleDetail schd : scheduleData.getFinanceScheduleDetails()) {
@@ -1841,7 +1792,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Receivable details Updation
 		boolean isSaveRcv = false;
-		FinTaxReceivable taxRcv = getFinODAmzTaxDetailDAO().getFinTaxReceivable(finReference, "LPP");
+		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, "LPP");
 
 		// if receipt done before month end and Already month end crossed with paids, 
 		// Now Old receipt which was done before month end came for cancellation
@@ -1863,9 +1814,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			taxRcv.setIGST(taxRcv.getIGST().add(newTaxRcv.getIGST()));
 
 			if (isSaveRcv) {
-				getFinODAmzTaxDetailDAO().saveTaxReceivable(taxRcv);
+				finODAmzTaxDetailDAO.saveTaxReceivable(taxRcv);
 			} else {
-				getFinODAmzTaxDetailDAO().updateTaxReceivable(taxRcv);
+				finODAmzTaxDetailDAO.updateTaxReceivable(taxRcv);
 			}
 		}
 
@@ -1985,7 +1936,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				newTaxRcv.setIGST(newTaxRcv.getIGST().add(odTaxDetail.getIGST()));
 
 				// Save Tax Details
-				getFinODAmzTaxDetailDAO().save(odTaxDetail);
+				finODAmzTaxDetailDAO.save(odTaxDetail);
 
 				String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
 				if (StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
@@ -2429,221 +2380,73 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return financeScheduleDetail;
 	}
 
-	@Autowired
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	@Autowired
-	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
-		this.finReceiptDetailDAO = finReceiptDetailDAO;
-	}
-
-	@Autowired
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	@Autowired
-	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
-		this.financeRepaymentsDAO = financeRepaymentsDAO;
-	}
-
-	@Autowired
-	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
-		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
-	}
-
-	@Autowired
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
-		this.financeDisbursementDAO = financeDisbursementDAO;
-	}
-
-	@Autowired
-	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
-		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
-	@Autowired
-	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
-		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
-		this.repaymentPostingsUtil = repaymentPostingsUtil;
-	}
-
-	@Autowired
-	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
-		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	@Autowired
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
-	@Autowired
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	@Autowired
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
-		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
-	}
-
-	@Autowired
-	public void setFinInsurancesDAO(FinInsurancesDAO finInsurancesDAO) {
-		this.finInsurancesDAO = finInsurancesDAO;
-	}
-
-	@Autowired
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
-	@Autowired
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
-	}
-
-	@Autowired
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	@Autowired
-	public void setLimitManagement(LimitManagement limitManagement) {
-		this.limitManagement = limitManagement;
-	}
-
-	@Autowired
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	@Autowired
-	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
-		this.finFeeReceiptDAO = finFeeReceiptDAO;
-	}
-
-	@Autowired
-	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
-		this.latePayMarkingService = latePayMarkingService;
-	}
-
-	@Autowired
-	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
-		this.gstInvoiceTxnService = gstInvoiceTxnService;
-	}
-
-	@Autowired
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	@Autowired
-	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
-		this.depositChequesDAO = depositChequesDAO;
-	}
-
-	@Autowired
-	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
-		this.depositDetailsDAO = depositDetailsDAO;
-	}
-
-	@Autowired
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public BranchCashDetailDAO getBranchCashDetailDAO() {
-		return branchCashDetailDAO;
-	}
-
-	public void setBranchCashDetailDAO(BranchCashDetailDAO branchCashDetailDAO) {
-		this.branchCashDetailDAO = branchCashDetailDAO;
-	}
-
-	public PromotionDAO getPromotionDAO() {
-		return promotionDAO;
-	}
-
-	public void setPromotionDAO(PromotionDAO promotionDAO) {
-		this.promotionDAO = promotionDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailDAO() {
-		return profitDetailDAO;
-	}
-
-	public void setProfitDetailDAO(FinanceProfitDetailDAO profitDetailDAO) {
-		this.profitDetailDAO = profitDetailDAO;
-	}
-
-	@Autowired
-	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
-		this.receiptCalculator = receiptCalculator;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public RepaymentProcessUtil getRepayProcessUtil() {
-		return repayProcessUtil;
-	}
-
-	public void setRepayProcessUtil(RepaymentProcessUtil repayProcessUtil) {
-		this.repayProcessUtil = repayProcessUtil;
-	}
-
-	@Autowired
-	public void setAccrualService(AccrualService accrualService) {
-		this.accrualService = accrualService;
-	}
-
-	@Autowired
-	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
-		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
-	}
-
 	@Override
 	public Map<String, Object> getGLSubHeadCodes(String reference) {
 		return this.financeMainDAO.getGLSubHeadCodes(reference);
 	}
 
-	@Autowired
+	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
+		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	}
+
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setLimitManagement(LimitManagement limitManagement) {
+		this.limitManagement = limitManagement;
+	}
+
 	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
 		this.allocationDetailDAO = allocationDetailDAO;
 	}
 
-	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
-		return finODAmzTaxDetailDAO;
+	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
+		this.finFeeReceiptDAO = finFeeReceiptDAO;
+	}
+
+	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
+		this.depositChequesDAO = depositChequesDAO;
+	}
+
+	public void setDepositDetailsDAO(DepositDetailsDAO depositDetailsDAO) {
+		this.depositDetailsDAO = depositDetailsDAO;
+	}
+
+	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
+		this.bounceReasonDAO = bounceReasonDAO;
+	}
+
+	public void setReceiptTaxDetailDAO(ReceiptTaxDetailDAO receiptTaxDetailDAO) {
+		this.receiptTaxDetailDAO = receiptTaxDetailDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
+		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
+		this.latePayMarkingService = latePayMarkingService;
 	}
 
 	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
 		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
+
+	public void setRepaymentPostingsUtil(RepaymentPostingsUtil repaymentPostingsUtil) {
+		this.repaymentPostingsUtil = repaymentPostingsUtil;
+	}
+
 }

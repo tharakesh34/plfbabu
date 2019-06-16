@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -290,15 +289,19 @@ public class ProvinceServiceImpl extends GenericService<Province> implements Pro
 			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
-		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
-			seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
-			seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
 
-			if (seqGstInvoiceTemp == null) {
-				gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
-			}
+		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
 		}
 
+		seqGstInvoice.setTransactionType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
+		seqGstInvoiceTemp = this.gstInvoiceTxnDAO.getSeqGSTInvoice(seqGstInvoice);
+
+		if (seqGstInvoiceTemp == null) {
+			gstInvoiceTxnDAO.saveSeqGSTInvoice(seqGstInvoice);
+		}
 	}
 
 	/**

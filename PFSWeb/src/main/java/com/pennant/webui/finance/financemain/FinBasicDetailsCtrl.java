@@ -25,6 +25,7 @@ import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
@@ -69,7 +70,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_FinBasicDetails(ForwardEvent event) throws Exception {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_FinBasicDetails);
@@ -95,7 +96,7 @@ public class FinBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 		userActivityLog.setVisible(displayLog);
 		reasonDeatilsLog.setVisible(displayLog);
 
-		logger.debug("Leaving " + event.toString());
+		logger.trace(Literal.LEAVING);
 	}
 
 	private String getString(List<Object> finHeaderList, int index) {

@@ -3260,7 +3260,7 @@ public class ScheduleCalculator {
 		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
 		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
-		
+
 		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
 		LowerTaxDeduction ltd = null;
 		BigDecimal ltdLimitByRcd = BigDecimal.ZERO;
@@ -3385,47 +3385,48 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
-	
+
 	/**
 	 * Method for Fetching Lower Tax Deduction details
+	 * 
 	 * @param scheduleData
 	 * @return
 	 */
-	private LowerTaxDeduction fetchLTDRecord(List<LowerTaxDeduction> ltdList, Date schDate){
-		
-		if(ltdList == null || ltdList.isEmpty()){
+	private LowerTaxDeduction fetchLTDRecord(List<LowerTaxDeduction> ltdList, Date schDate) {
+
+		if (ltdList == null || ltdList.isEmpty()) {
 			return null;
 		}
-		
+
 		for (int i = 0; i < ltdList.size(); i++) {
 			LowerTaxDeduction taxDeduction = ltdList.get(i);
-			
+
 			// If No LTD for the Current Schedule Dates
-			if(DateUtility.compare(taxDeduction.getStartDate(), schDate) > 0){
+			if (DateUtility.compare(taxDeduction.getStartDate(), schDate) > 0) {
 				break;
 			}
-			
+
 			// If Current LTD End date is more than Schedule Date
-			if(DateUtility.compare(taxDeduction.getEndDate(), schDate) < 0){
+			if (DateUtility.compare(taxDeduction.getEndDate(), schDate) < 0) {
 				continue;
 			}
 			//if End Date Greater than Start Date
 			if (DateUtility.compare(taxDeduction.getEndDate(), taxDeduction.getStartDate()) <= 0) {
 				continue;
 			}
-			
+
 			//If LTD percentage less than Zero
 			if (taxDeduction.getPercentage().compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
-			
-			if(DateUtility.compare(taxDeduction.getStartDate(), schDate) <= 0){
-				if(DateUtility.compare(taxDeduction.getEndDate(), schDate) >= 0){
+
+			if (DateUtility.compare(taxDeduction.getStartDate(), schDate) <= 0) {
+				if (DateUtility.compare(taxDeduction.getEndDate(), schDate) >= 0) {
 					return taxDeduction;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -3455,7 +3456,7 @@ public class ScheduleCalculator {
 
 			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
-			 tdsAmount = null;
+				tdsAmount = null;
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
 
@@ -3499,7 +3500,8 @@ public class ScheduleCalculator {
 	 * @return
 	 */
 	// ####_ 0.2
-	private void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain, IRRFinanceType irrFinType) {
+	public static void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain,
+			IRRFinanceType irrFinType) {
 		logger.debug("Entering");
 
 		// BigDecimal cal_IRR = BigDecimal.ZERO;
@@ -4010,7 +4012,11 @@ public class ScheduleCalculator {
 			}
 		}
 
-		curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
+		if (finMain.isAllowGrcPeriod()) {
+			curSchd.setPftDaysBasis(finMain.getGrcProfitDaysBasis());
+		} else {
+			curSchd.setPftDaysBasis(finMain.getProfitDaysBasis());
+		}
 
 		// NOT Discount Deal
 		if (!CalculationConstants.RATE_BASIS_D.equals(finMain.getRepayRateBasis())) {
@@ -4056,6 +4062,15 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(iCur);
 		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(iCur - 1);
+
+		//TODO: TO AVOID RECALCULATION OF SCHEDULES COMPLETED
+		if (finMain.getRecalIdx() < 0) {
+			finScheduleData = setRecalIndex(finScheduleData);
+		}
+
+		if (iCur < finMain.getRecalIdx()) {
+			return finScheduleData;
+		}
 
 		if (!finMain.getGrcRateBasis().equals(CalculationConstants.RATE_BASIS_F)) {
 			curSchd.setBalanceForPftCal(prvSchd.getClosingBalance());
@@ -4252,7 +4267,7 @@ public class ScheduleCalculator {
 			}
 
 			curSchd.setNoOfDays(DateUtility.getDaysBetween(curSchDate, prvSchDate));
-			curSchd.setDayFactor(CalculationUtil.getInterestDays(prvSchDate, curSchDate, prvSchd.getPftDaysBasis()));
+			curSchd.setDayFactor(CalculationUtil.getInterestDays(prvSchDate, curSchDate, curSchd.getPftDaysBasis()));
 
 			// Calculate Interest
 			if (curSchd.getBalanceForPftCal().compareTo(BigDecimal.ZERO) > 0) {
@@ -5386,7 +5401,7 @@ public class ScheduleCalculator {
 
 		return overdraftSchedules;
 	}
-	
+
 	/*
 	 * ________________________________________________________________________________________________________________
 	 * Method : sortLowerTaxDeduction Description: Sort Lower Tax Details
@@ -6181,9 +6196,12 @@ public class ScheduleCalculator {
 			isComapareWithEMI = true;
 		}
 
+		//TODO: PV: 25 MAY 19 CHANGED THE CONDITION finMain.getRecalFromDate()) = 0 TO finMain.getRecalFromDate()) >= 0
+		//IF RECAL SPREADS IN TO GRACE AND REPAY, DATE WILL NOT BE FOUND WITH EQUAL CONDITION 
+		//PENDING THOUROUGH TESTING
 		// Get Repayment instruction index
 		for (int i = 0; i < riSize; i++) {
-			if (DateUtility.compare(repayInstructions.get(i).getRepayDate(), finMain.getRecalFromDate()) == 0) {
+			if (DateUtility.compare(repayInstructions.get(i).getRepayDate(), finMain.getRecalFromDate()) >= 0) {
 				iRpyInst = i;
 				approxEMI = repayInstructions.get(i).getRepayAmount();
 				break;
@@ -7705,7 +7723,7 @@ public class ScheduleCalculator {
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 		Date schdDate = new Date();
 		boolean ltdApplicable = SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ);
-		
+
 		List<LowerTaxDeduction> ltdList = sortLowerTaxDeduction(finScheduleData.getLowerTaxDeductionDetails());
 		LowerTaxDeduction ltd = null;
 
@@ -7720,7 +7738,7 @@ public class ScheduleCalculator {
 
 			if (finMain.isTDSApplicable() && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
-			    tdsAmount = null;
+				tdsAmount = null;
 				boolean taxOnSysPerc = true;
 				if (ltdApplicable) {
 

@@ -366,7 +366,6 @@ public class CurrencyBox extends Hbox {
 	}
 
 	private void calculateNumber(String valueToConvert) throws WrongValueException {
-		logger.debug("Entering");
 		if (isValidString(valueToConvert)) {
 			BigDecimal total = BigDecimal.ZERO;
 			boolean conversionExists = false;
@@ -439,8 +438,6 @@ public class CurrencyBox extends Hbox {
 	}
 
 	private boolean isValidString(String value) throws WrongValueException {
-		logger.debug("Entering");
-
 		int indexofb = 0;
 		int indexofm = 0;
 		int indexoft = 0;
@@ -510,7 +507,6 @@ public class CurrencyBox extends Hbox {
 			}
 		}
 
-		logger.debug("Leaving");
 		return true;
 	}
 
@@ -521,8 +517,6 @@ public class CurrencyBox extends Hbox {
 	}
 
 	public void setBalUnvisible(boolean isUnVisible) {
-		logger.debug("Entering");
-
 		if (isUnVisible) {
 			this.decimalbox.setVisible(false);
 			this.setStyle("text-align:right;width:100%;");
@@ -530,20 +524,14 @@ public class CurrencyBox extends Hbox {
 		} else {
 			this.decimalbox.setVisible(true);
 		}
-
-		logger.debug("Leaving");
 	}
 
 	public void setBalUnvisible(boolean isUnVisible, boolean setEnd) {
-		logger.debug("Entering");
-
 		setBalUnvisible(isUnVisible);
 
 		if (isUnVisible && setEnd) {
 			this.setPack("end");
 		}
-
-		logger.debug("Leaving");
 	}
 
 }

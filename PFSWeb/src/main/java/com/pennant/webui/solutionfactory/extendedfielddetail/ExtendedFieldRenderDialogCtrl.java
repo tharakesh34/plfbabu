@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -238,6 +239,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				map.put("queryCode", this.queryCode);
 				map.put("currentValue", this.currentValue);
 				map.put("isCommodity", this.isCommodity);
+				map.put("hsnCodes", getSelectedHSNCodes(getHSNCodeValue(fieldRender.getMapValues())));
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents(
@@ -249,6 +251,32 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 			}
 		}
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private List<String> getSelectedHSNCodes(String currentCode) {
+		List<String> hsnCodes = new ArrayList<>();
+
+		if (CollectionUtils.isEmpty(getExtendedFieldRenderList())) {
+			return hsnCodes;
+		}
+
+		for (ExtendedFieldRender render : getExtendedFieldRenderList()) {
+			if (currentCode != null) {
+				continue;
+			}
+
+			hsnCodes.add(getHSNCodeValue(render.getMapValues()));
+		}
+
+		return hsnCodes;
+	}
+
+	private String getHSNCodeValue(Map<String, Object> values) {
+		if (values.containsKey("HSNCODE")) {
+			return values.get("HSNCODE").toString();
+		}
+
+		return null;
 	}
 
 	/**
@@ -289,6 +317,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		map.put("queryCode", this.queryCode);
 		map.put("currentValue", this.currentValue);
 		map.put("isCommodity", this.isCommodity);
+		map.put("hsnCodes", getSelectedHSNCodes(null));
 
 		Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldCaptureDialog.zul",
 				window_ExtendedFieldRenderDialog, map);

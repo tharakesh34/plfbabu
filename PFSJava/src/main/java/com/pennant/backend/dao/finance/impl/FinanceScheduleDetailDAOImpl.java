@@ -517,7 +517,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public List<FinanceScheduleDetail> getFinScheduleDetails(String id, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
 		FinanceScheduleDetail detail = new FinanceScheduleDetail();
 		detail.setId(id);
 
@@ -563,7 +562,6 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		List<FinanceScheduleDetail> finSchdDetails = this.jdbcTemplate.query(sql.toString(), beanParameters,
 				typeRowMapper);
-		logger.debug(Literal.LEAVING);
 		return finSchdDetails;
 	}
 

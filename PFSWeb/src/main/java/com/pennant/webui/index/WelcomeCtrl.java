@@ -70,6 +70,7 @@ import com.pennant.backend.model.dashboarddetail.DashboardPosition;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Welcome.zul file.
@@ -115,7 +116,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	}
 
 	public void onCreate$window_Welcome(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
 		setPageComponents(window_Welcome);
@@ -136,7 +137,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 
 		this.refreshTimer.setDelay(delayTime);
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override

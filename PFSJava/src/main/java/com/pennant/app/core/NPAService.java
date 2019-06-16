@@ -120,7 +120,7 @@ public class NPAService extends ServiceHelper {
 		 */
 
 		if (StringUtils.isNotBlank(finStatus)) {
-			sortNPABucketConfig(list);
+			//sortNPABucketConfig(list); FIXME MUR commented as per Veritas Need to check with PV
 			for (NPABucketConfiguration configuration : list) {
 				if (configuration.getDueDays() >= dueBucket) {
 					npaBucket = configuration.getBucketID();

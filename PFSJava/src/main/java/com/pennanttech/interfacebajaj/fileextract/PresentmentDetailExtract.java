@@ -77,7 +77,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private PresentmentDetailService presentmentDetailService;
 	private NotificationService notificationService;
 	private String instrumentType = null;
-	private boolean allowInstrumentType;
 	private LoggedInUser userDetails;
 	private DataEngineStatus status;
 	private DataSource dataSource;
@@ -91,11 +90,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	@Override
 	public void run() {
-
-		allowInstrumentType = "Y"
-				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE))
-						? true : false;
-		if (allowInstrumentType) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)) {
 			try {
 				importDataByInstrumentType();
 			} catch (Exception e) {

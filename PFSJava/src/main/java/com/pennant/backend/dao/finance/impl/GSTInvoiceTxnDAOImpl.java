@@ -331,4 +331,27 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		return invoiceExist;
 	}
+
+	@Override
+	public void updateSeqNo() {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder("Update Seq_GST_Invoice");
+		sql.append(" Set SeqNo = :SeqNo");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("SeqNo", 0);
+		int recordCount = jdbcTemplate.update(sql.toString(), source);
+
+		// Check for the concurrency failure.
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 }

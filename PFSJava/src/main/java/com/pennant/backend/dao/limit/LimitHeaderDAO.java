@@ -38,4 +38,8 @@ public interface LimitHeaderDAO {
 
 	int getLimitHeaderAndCustGrpCountById(long headerId, long CustGrpID);
 
+	long isLimitBlock(long custID, String type, boolean limitBlock);
+
+	int updateBlockLimit(long custId, long headerId, boolean blockLimit);
+
 }

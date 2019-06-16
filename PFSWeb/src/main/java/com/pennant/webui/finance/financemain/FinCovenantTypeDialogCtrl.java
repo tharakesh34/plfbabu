@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1271,7 +1272,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		//validate the document selected exists with the customer/Finance
 		boolean isDocNotfound = false;
 		if (!isNotFinanceProcess && getFinancedetail().getCustomerDetails() != null
-				&& !getFinancedetail().getCustomerDetails().getCustomerDocumentsList().isEmpty()) {
+				&& !CollectionUtils.isEmpty(getFinancedetail().getCustomerDetails().getCustomerDocumentsList())) {
 
 			for (CustomerDocument custdocument : getFinancedetail().getCustomerDetails().getCustomerDocumentsList()) {
 				if (custdocument.getCustDocCategory().equals(dcoType.getDocTypeCode())) {

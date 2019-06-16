@@ -74,8 +74,6 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 
 	@Override
 	public FinanceTaxDetail getFinanceTaxDetail(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" finReference, applicableFor, TaxCustId, taxExempted, taxNumber, addrLine1, addrLine2");
 		sql.append(", addrLine3, addrLine4, country, province, city, pinCode, sezCertificateNo , sezValueDate");
@@ -97,10 +95,8 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		RowMapper<FinanceTaxDetail> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceTaxDetail.class);
 
 		try {
-			logger.debug(Literal.LEAVING);
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
 		}
 
 		return null;

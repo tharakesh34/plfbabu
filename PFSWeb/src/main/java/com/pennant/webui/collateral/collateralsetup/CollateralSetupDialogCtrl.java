@@ -150,14 +150,10 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
-import com.pennanttech.pennapps.jdbc.search.Search;
-import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.commodity.model.Commodity;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
@@ -1027,17 +1023,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			map.put("queryId", getCollateralSetup().getCollateralStructure().getQueryId());
 			map.put("querySubCode", getCollateralSetup().getCollateralStructure().getQuerySubCode());
 			map.put("queryCode", getCollateralSetup().getCollateralStructure().getQueryCode());
-			if (getCollateralSetup().getCollateralStructure().getCommodityId() != null
-					&& getCollateralSetup().getCollateralStructure().getCommodityId() > 0) {
-				Search search = new Search(Commodity.class);
-				search.addFilterEqual("Id", getCollateralSetup().getCollateralStructure().getCommodityId());
-
-				SearchProcessor searchProcessor = (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
-				Commodity commodityTypeObject = (Commodity) searchProcessor.getResults(search).get(0);
-				if (commodityTypeObject.getCurrentValue() != BigDecimal.ZERO) {
-					map.put("currentValue", commodityTypeObject.getCurrentValue());
-					map.put("isCommodity", true);
-				}
+			if (getCollateralSetup().getCollateralStructure().isMarketableSecurities()) {
+				map.put("isCommodity", true);
 			}
 
 			Executions.createComponents(
@@ -1346,7 +1333,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		if (!this.valuator.isReadonly()) {
 			this.valuator
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_CollateralSetupDialog_Valuator.value"),
-							PennantRegularExpressions.REGEX_NAME, true));
+							PennantRegularExpressions.REGEX_COMPANY_NAME, true));
 		}
 		//Expiry Date
 		if (!this.expiryDate.isDisabled()) {
@@ -1442,9 +1429,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * @param event
 	 */
 	public void onChange$specialLTV(Event event) {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 		calBankValuation();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1513,9 +1500,9 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 			// Fields setting based on Configuration parameters
 			CollateralStructure cs = getCollateralSetup().getCollateralStructure();
-			if (!cs.isAllowLtvWaiver()) {
-				this.specialLTV.setDisabled(true);
-			}
+			/*
+			 * if (!cs.isAllowLtvWaiver()) { this.specialLTV.setDisabled(true); }
+			 */
 			if (cs.isCollateralLocReq()) {
 				this.space_CollateralLoc.setSclass(PennantConstants.mandateSclass);
 			} else {

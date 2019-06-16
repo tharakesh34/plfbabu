@@ -35,49 +35,34 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		super();
 	}
 
-	/*@Override
-	public void receiveResponse(Object... params) throws Exception {
-		logger.debug(Literal.ENTERING);
-		long userId = (Long) params[0];
-		DataEngineStatus status = (DataEngineStatus) params[1];
-		File file = (File) params[2];
-		Media media = (Media) params[3];
-
-		String configName = status.getName();
-
-		String name = "";
-
-		if (file != null) {
-			name = file.getName();
-		} else if (media != null) {
-			name = media.getName();
-		}
-
-		status.reset();
-		status.setFileName(name);
-		status.setRemarks("initiated disbursement response file [ " + name + " ] processing..");
-
-		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
-		dataEngine.setFile(file);
-		dataEngine.setMedia(media);
-		dataEngine.setValueDate(getValueDate());
-
-		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
-		dataEngine.setFilterMap(filterMap);
-
-		dataEngine.importData(configName);
-
-		do {
-			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
-				receiveResponse(status.getId());
-				break;
-			}
-		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
-
-		logger.info(name + " file processing completed");
-	}*/
+	/*
+	 * @Override public void receiveResponse(Object... params) throws Exception { logger.debug(Literal.ENTERING); long
+	 * userId = (Long) params[0]; DataEngineStatus status = (DataEngineStatus) params[1]; File file = (File) params[2];
+	 * Media media = (Media) params[3];
+	 * 
+	 * String configName = status.getName();
+	 * 
+	 * String name = "";
+	 * 
+	 * if (file != null) { name = file.getName(); } else if (media != null) { name = media.getName(); }
+	 * 
+	 * status.reset(); status.setFileName(name); status.setRemarks("initiated disbursement response file [ " + name +
+	 * " ] processing..");
+	 * 
+	 * DataEngineImport dataEngine; dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true,
+	 * getValueDate(), status); dataEngine.setFile(file); dataEngine.setMedia(media);
+	 * dataEngine.setValueDate(getValueDate());
+	 * 
+	 * Map<String, Object> filterMap = new HashMap<>(); filterMap.put(DisbursementConstants.STATUS_AWAITCON,
+	 * DisbursementConstants.STATUS_AWAITCON); dataEngine.setFilterMap(filterMap);
+	 * 
+	 * dataEngine.importData(configName);
+	 * 
+	 * do { if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) { receiveResponse(status.getId());
+	 * break; } } while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
+	 * 
+	 * logger.info(name + " file processing completed"); }
+	 */
 
 	@Override
 	public void processResponseFile(Object... params) throws Exception {
@@ -139,7 +124,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			sql.append(" FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME, FA.BANKBRANCHID, FA.BANKCODE,");
 			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE,");
 			sql.append(" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,");
-			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF");
+			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
 			sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID AND CHANNEL = :CHANNEL");
@@ -241,7 +226,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	@Override
 	public void receiveResponse(Object... params) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

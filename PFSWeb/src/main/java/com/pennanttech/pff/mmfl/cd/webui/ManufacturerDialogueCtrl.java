@@ -119,6 +119,7 @@ public class ManufacturerDialogueCtrl extends GFCBaseCtrl<Manufacturer> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+		this.txtchannel.setMaxlength(20);
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
 	}

@@ -1603,9 +1603,10 @@ public class PennantJavaUtil {
 
 		/************* Commitment *************/
 
-		ModuleUtil.register("Commitment", new ModuleMapping("Commitment", Commitment.class,
-				new String[] { "Commitments", "Commitments_AView" }, facilityCommitWF,
-				new String[] { "CmtReference", "CustCIF", "CustShrtName", "CmtTitle" }, null, 800));
+		ModuleUtil.register("Commitment",
+				new ModuleMapping("Commitment", Commitment.class, new String[] { "Commitments", "Commitments_AView" },
+						facilityCommitWF, new String[] { "CmtReference", "CustCIF", "CustShrtName", "CmtTitle" }, null,
+						800));
 
 		ModuleUtil.register("CommitmentMovement",
 				new ModuleMapping("CommitmentMovement", CommitmentMovement.class,
@@ -3174,7 +3175,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
 						new String[] { "AdviseID", "FeeTypeID", "AdviseAmount", "ReservedAmt", "BalanceAmt" },
 						new String[][] { { "AdviseType", "0", "2" } }, 750));
-		
+
 		ModuleUtil.register("LoanClosureEnquiry",
 				new ModuleMapping("LoanClosureEnquiry", ForeClosure.class, null, masterWF, null, null, 400));
 
@@ -3282,7 +3283,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("TransactionMapping", TransactionMapping.class,
 						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
 						new String[] { "MID", "TID" }, null, 600));
-		
+
+		ModuleUtil.register("HSNCodeData",
+				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
+						masterWF, new String[] { "HSNCode", "Code" }, null, 600));//"CurrentValue", 
+
 		ModuleUtil.register("LowerTaxDeduction",
 				new ModuleMapping("LowerTaxDeduction", LowerTaxDeduction.class,
 						new String[] { "LowerTaxDeduction", "LowerTaxDeduction" }, masterWF,
@@ -3292,7 +3297,6 @@ public class PennantJavaUtil {
 				new ModuleMapping("GSTRate", GSTRate.class, new String[] { "GST_RATES", "GST_RATES_AView" }, masterWF,
 						new String[] { "FromState", "ToState", "TaxType", "Amount", "Percentage", "CalcOn", "Active" },
 						null, 600));
-
 
 		registerCustomModules();
 	}

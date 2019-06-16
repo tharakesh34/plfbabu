@@ -211,7 +211,7 @@ public class PennantConstants {
 	public static final String METHOD_OFFERLETTER = "executeofferLetter";
 	public static final String METHOD_UPDATE_ATTRIBUTE = "doUpdateAttribute";
 	public static final String METHOD_REVERT_QUEUE = "doRevertQueue";
-	public static final String method_HunterService = "doClixHunterService";
+	public static final String method_HunterService = "doHunterService";
 
 	// Error Severity Codes
 	public static final String ERR_SEV_INFO = "I";
@@ -809,7 +809,8 @@ public class PennantConstants {
 	// GST Invoice Constants
 	public static final String GST_INVOICE_TRANSACTION_TYPE_DEBIT = "D";
 	public static final String GST_INVOICE_TRANSACTION_TYPE_CREDIT = "C";
-	public static final String GST_INVOICE_TRANSACTION_TYPE_EXEMPTED = "E";
+	public static final String GST_INVOICE_TRANSACTION_TYPE_EXEMPTED = "B";
+	public static final String GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT = "W";
 	public static final String GST_INVOICE_STATUS_INITIATED = "I";
 	public static final String GST_INVOICE_STATUS_PRINTED = "P";
 	public static final String GST_INVOICE_STATUS_CANCELLED = "C";

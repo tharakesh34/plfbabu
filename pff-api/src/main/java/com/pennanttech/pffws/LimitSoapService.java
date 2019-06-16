@@ -35,4 +35,9 @@ public interface LimitSoapService {
 	public WSReturnStatus cancelLimitReserve(@WebParam(name = "limitSetup") LimitTransactionDetail limitTransDetail)
 			throws ServiceException;
 
+	@WebResult(name = "limitSetup")
+	public WSReturnStatus blockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
+
+	@WebResult(name = "limitSetup")
+	public WSReturnStatus unBlockLimit(@WebParam(name = "limitSetup") LimitHeader limitHeader) throws ServiceException;
 }

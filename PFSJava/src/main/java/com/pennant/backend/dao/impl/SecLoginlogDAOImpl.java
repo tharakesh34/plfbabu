@@ -51,6 +51,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecLoginlogDAO {
 	private static final Logger logger = Logger.getLogger(SecLoginlogDAOImpl.class);
@@ -61,7 +62,7 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 
 	@Override
 	public long saveLog(SecLoginlog logingLog) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		logingLog.setId(getNextValue("SeqSecLoginLog"));
 		StringBuilder insertSql = new StringBuilder(
@@ -69,13 +70,12 @@ public class SecLoginlogDAOImpl extends SequenceDao<SecLoginlog> implements SecL
 		insertSql.append("LoginSessionID,LoginError)");
 		insertSql.append(
 				"VALUES (:LoginLogID,:loginUsrLogin,:LoginTime,:LoginIP,:LoginBrowserType,:LoginStsID,:LoginSessionID,:LoginError)");
-		logger.debug("insertSql: " + insertSql.toString());
 
+		logger.trace(Literal.SQL + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(logingLog);
 		jdbcTemplate.update(insertSql.toString(), beanParameters);
 
-		logger.debug("Leaving ");
-
+		logger.debug(Literal.LEAVING);
 		return logingLog.getId();
 	}
 

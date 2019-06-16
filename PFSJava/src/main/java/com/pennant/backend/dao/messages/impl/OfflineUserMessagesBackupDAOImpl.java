@@ -57,6 +57,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.messages.OfflineUserMessagesBackupDAO;
 import com.pennant.backend.model.messages.OfflineUsersMessagesBackup;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * @author s057
@@ -78,21 +79,24 @@ public class OfflineUserMessagesBackupDAOImpl extends BasicDao<OfflineUsersMessa
 	 */
 	@Override
 	public List<OfflineUsersMessagesBackup> getMessagesBackupByUserId(String toUsrId) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
+
 		OfflineUsersMessagesBackup offlineUsersMessagesBackup = new OfflineUsersMessagesBackup();
 		offlineUsersMessagesBackup.setToUsrID(toUsrId);
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT  TOUSRID,FROMUSRID,SENDTIME,MESSAGE");
 		selectSql.append("  FROM OFFLINEUSRMESSAGESBACKUP where ToUsrID=:ToUsrID order by SENDTIME Asc ");
-		logger.debug("selectSql : " + selectSql.toString());
+
+		logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(offlineUsersMessagesBackup);
 		RowMapper<OfflineUsersMessagesBackup> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(OfflineUsersMessagesBackup.class);
-		logger.debug("Leaving ");
+
 		try {
+			logger.debug(Literal.LEAVING);
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			return null;
 		}
 	}

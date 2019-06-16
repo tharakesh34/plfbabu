@@ -268,7 +268,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 
 		inputStream.close();
 		inputStream = null;
-		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}
 

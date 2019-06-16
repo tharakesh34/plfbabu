@@ -216,8 +216,6 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 
 	@Override
 	public boolean isDueCreatedForDate(String finReference, Date valueDate, String taxFor) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("ValueDate", valueDate);
@@ -226,7 +224,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		StringBuilder selectSql = new StringBuilder(" Select COUNT(*)  From FinODAmzTaxDetail");
 		selectSql.append(" Where FinReference = :FinReference AND ValueDate= :ValueDate AND TaxFor = :TaxFor ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + selectSql.toString());
 
 		int recordCount = 0;
 		try {
@@ -234,8 +232,6 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		} catch (EmptyResultDataAccessException e) {
 			recordCount = 0;
 		}
-
-		logger.debug("Leaving");
 
 		if (recordCount > 0) {
 			return true;

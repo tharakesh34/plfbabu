@@ -134,6 +134,16 @@
 	</welcome-file-list>
 	<distributable />
 
+	<session-config>
+		<session-timeout>30</session-timeout>
+		<cookie-config>
+			<name>NSA-JSESSIONID</name>
+			<http-only>true</http-only>
+		</cookie-config>
+		<tracking-mode>COOKIE</tracking-mode>
+		<tracking-mode>URL</tracking-mode>
+	</session-config>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/default-error.jsp</location>

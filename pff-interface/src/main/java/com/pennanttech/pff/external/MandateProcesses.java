@@ -9,14 +9,16 @@ import com.pennanttech.dataengine.model.DataEngineStatus;
 
 public interface MandateProcesses {
 	public static DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
+	public static DataEngineStatus MANDATES_ACK = new DataEngineStatus("MANDATES_ACK");
 
 	public void sendReqest(Object... object) throws Exception;
-
-	public void receiveResponse(long respBatchId) throws Exception;
 
 	public boolean registerMandate(Mandate mandate) throws Exception;
 
 	public void updateMandateStatus() throws Exception;
 
-	public void processResponseFile(long userId, File file, Media media) throws Exception;
+	public void processResponseFile(long userId, File file, Media media, DataEngineStatus status) throws Exception;
+
+	void receiveResponse(long respBatchId, DataEngineStatus status) throws Exception;
+
 }

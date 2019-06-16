@@ -104,6 +104,12 @@ public final class ExtFieldStaticList {
 		list.add("PRelationCode");
 		list.add("PropertyType");
 		list.add("PinCode");
+		list.add("Clix_natureofbusiness");
+		list.add("Clix_industry");
+		list.add("Clix_Segment");
+		list.add("Clix_Product");
+		list.add("TransactionMapping");
+		list.add("HSNCodeData");
 
 		return list;
 	}

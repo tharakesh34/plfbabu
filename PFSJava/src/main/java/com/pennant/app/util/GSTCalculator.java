@@ -37,6 +37,12 @@ public class GSTCalculator {
 	private static String TAX_ROUNDING_MODE;
 	private static int TAX_ROUNDING_TARGET;
 
+	private static BigDecimal TDS_PERCENTAGE = BigDecimal.ZERO;
+	private static String TAX_ROUND_MODE = null;
+	private static String TDS_ROUND_MODE = null;
+	private static int TDS_ROUNDING_TARGET = 0;
+	private static BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
+
 	public GSTCalculator(RuleDAO ruleDAO, BranchDAO branchDAO, ProvinceDAO provinceDAO, FinanceMainDAO financeMainDAO,
 			FinanceTaxDetailDAO financeTaxDetailDAO, RuleExecutionUtil ruleExecutionUtil) {
 		initilize(ruleDAO, branchDAO, provinceDAO, financeMainDAO, financeTaxDetailDAO, ruleExecutionUtil);
@@ -120,7 +126,8 @@ public class GSTCalculator {
 		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
 		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
-		taxSplit.setNetAmount(taxableAmount.subtract(taxSplit.gettGST()));
+		//taxSplit.setNetAmount(taxableAmount.subtract(taxSplit.gettGST()));
+		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST()));
 		return taxSplit;
 	}
 
@@ -197,11 +204,9 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 
-
 		Map<String, Object> dataMap = getGSTDataMap(finReference);
-		
-		String finCCY = (Object) dataMap.get("FinCCY") == null ? ""
-				: String.valueOf((Object) dataMap.get("FinCCY"));
+
+		String finCCY = (Object) dataMap.get("FinCCY") == null ? "" : String.valueOf((Object) dataMap.get("FinCCY"));
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 
 		String ruleCode;
@@ -356,5 +361,35 @@ public class GSTCalculator {
 		GSTCalculator.financeMainDAO = financeMainDAO;
 		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
 		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
+	}
+
+	public static BigDecimal getTDS(BigDecimal amount) {
+		initilizeTDSAttributes();
+
+		BigDecimal tds = amount.multiply(TDS_PERCENTAGE);
+		tds = tds.divide(HUNDRED, 9, RoundingMode.HALF_UP);
+		tds = CalculationUtil.roundAmount(tds, TDS_ROUND_MODE, TDS_ROUNDING_TARGET);
+		return tds;
+	}
+
+	public static BigDecimal getNetTDS(BigDecimal amount) {
+		initilizeTDSAttributes();
+
+		BigDecimal netAmount = amount.multiply(TDS_MULTIPLIER);
+		netAmount = CalculationUtil.roundAmount(netAmount, TAX_ROUND_MODE, TDS_ROUNDING_TARGET);
+
+		return netAmount;
+	}
+
+	private static void initilizeTDSAttributes() {
+		if (StringUtils.isEmpty(TAX_ROUND_MODE) || StringUtils.isEmpty(TDS_ROUND_MODE)) {
+			TAX_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
+			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
+
+			TDS_ROUND_MODE = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
+			TDS_ROUNDING_TARGET = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
+			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+			TDS_MULTIPLIER = HUNDRED.divide(HUNDRED.subtract(TDS_PERCENTAGE), 20, RoundingMode.HALF_DOWN);
+		}
 	}
 }

@@ -2259,5 +2259,16 @@
 			]]>
 			</sql>
 		</changeSet>
-	
+		
+		<changeSet id="12" author="Vijaya.a">
+			<sql>
+			<![CDATA[ 
+				alter table ProductGroup modify (channel Varchar(20));
+				alter table ProductGroup_Temp modify (channel Varchar(20));
+				alter table DealerGroupId modify (channel Varchar(20));
+				alter table DealerGroupId_Temp modify (channel Varchar(20));
+			]]>
+			</sql>
+		</changeSet>
+		
 </databaseChangeLog>	

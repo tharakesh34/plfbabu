@@ -2,7 +2,6 @@ package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,8 +80,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	private String moduleType = "";
 	private ScriptValidationService scriptValidationService;
 	private DedupParmService dedupParmService;
-	private BigDecimal currentValue;
-	private boolean isCommodity = false;
 
 	/**
 	 * default constructor.<br>
@@ -139,18 +136,18 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		if (arguments.containsKey("moduleType")) {
 			this.moduleType = (String) arguments.get("moduleType");
 		}
-		if (arguments.containsKey("currentValue")) {
-			currentValue = (BigDecimal) arguments.get("currentValue");
-		}
-		if (arguments.containsKey("isCommodity")) {
-			isCommodity = (boolean) arguments.get("isCommodity");
-		}
 
 		// Extended Field Details auto population / Rendering into Screen
 		generator = new ExtendedFieldsGenerator();
-		if (isCommodity && currentValue != null && currentValue != BigDecimal.ZERO) {
-			generator.setCommodity(true);
+
+		if (arguments.containsKey("isCommodity")) {
+			generator.setCommodity((boolean) arguments.get("isCommodity"));
 		}
+
+		if (arguments.containsKey("hsnCodes")) {
+			generator.setHsnCodes((List<String>) arguments.get("hsnCodes"));
+		}
+
 		generator.setWindow(this.window_ExtendedFieldCaptureDialog);
 		generator.setTabpanel(extendedFieldTabPanel);
 		generator.setRowWidth(260);
@@ -202,14 +199,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 		if (getExtendedFieldRender().getRecordStatus() != null) {
 			if (getExtendedFieldRender().getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED)) {
 				this.btnDelete.setVisible(false);
-			}
-		}
-		if (this.currentValue != null) {
-			if (newRecord) {
-				if (fieldValuesMap == null) {
-					fieldValuesMap = new HashMap<>();
-				}
-				fieldValuesMap.put("UNITPRICE", this.currentValue);
 			}
 		}
 		if (fieldValuesMap != null) {

@@ -334,7 +334,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
-		
+
 		scheduleData.setFeeEvent(eventCode);
 
 		// Overdraft Details from main table
@@ -1284,7 +1284,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(receiptData.getReceiptHeader().getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
 				|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptModeStatus(),
 						RepayConstants.PAYSTATUS_CANCEL)) {
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			FinReceiptData recData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+			FinReceiptHeader rch = recData.getReceiptHeader();
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
 				FinRepayHeader rph = financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), "");
 				rcd.setRepayHeader(rph);
@@ -3501,7 +3502,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			if (StringUtils.equals(alcType, "P") || StringUtils.equals(alcType, "I")
 					|| StringUtils.equals(alcType, "EM") || StringUtils.equals(alcType, "L")
-					|| StringUtils.equals(alcType, "O") && !StringUtils.equals(alcType, "F")
+					|| StringUtils.equals(alcType, "O") || !StringUtils.equals(alcType, "F")
 					|| StringUtils.equals(alcType, "M") || StringUtils.equals(alcType, "B")
 					|| StringUtils.equals(alcType, "FP") || StringUtils.equals(alcType, "FI")
 					|| StringUtils.equals(alcType, "E") || StringUtils.equals(alcType, "A")) {
@@ -3824,9 +3825,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptData.setValueDate(DateUtility.getAppDate());
 			rch.setValueDate(DateUtility.getAppDate());
 		}
-
+		rch.setAllocationType(fsi.getAllocationType());
 		if (fsi.isReceiptUpload()) {
-			rch.setAllocationType(fsi.getAllocationType());
 
 			if (StringUtils.equals(rcd.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
 				rch.setRealizationDate(fsi.getRealizationDate());
@@ -3885,7 +3885,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setFinFeeDetails(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
 		}
 
-		if (fsi.isReceiptUpload() && !StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
+		if (!StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) {
 			receiptData = updateAllocationsPaid(receiptData);
 		}
 
@@ -4517,9 +4517,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), eventCode, false,
 				FinanceConstants.MODULEID_FINTYPE));
-		
+
 		scheduleData.setFeeEvent(eventCode);
-		
+
 		// Finance Schedule Details from Main table
 		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
 

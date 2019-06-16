@@ -43,6 +43,7 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.dao.loanquery.QueryCategoryDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
@@ -192,6 +193,7 @@ public class FinanceDataValidation {
 	private SalutationDAO salutationDAO;
 	private DocumentTypeDAO documentTypeDAO;
 	private QueryCategoryDAO queryCategoryDAO;
+	private LimitHeaderDAO limitHeaderDAO;
 
 	public void setQueryCategoryDAO(QueryCategoryDAO queryCategoryDAO) {
 		this.queryCategoryDAO = queryCategoryDAO;
@@ -1181,6 +1183,14 @@ public class FinanceDataValidation {
 			 * "finLimitRef"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); } else {
 			 * //TODO }
 			 */
+			long count = limitHeaderDAO.isLimitBlock(finMain.getCustID(), "", true);
+			if (count > 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Loan";
+				valueParm[1] = "blocked limit Customer";
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+			}
+
 		}
 		if (financeType.isFinCollateralReq() && financeDetail.isStp()) {
 			if (financeDetail.getCollateralAssignmentList() == null
@@ -6256,6 +6266,10 @@ public class FinanceDataValidation {
 
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
+	}
+
+	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
+		this.limitHeaderDAO = limitHeaderDAO;
 	}
 
 }

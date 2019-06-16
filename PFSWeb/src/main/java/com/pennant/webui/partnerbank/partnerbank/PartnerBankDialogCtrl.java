@@ -494,7 +494,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		this.row_Van.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED));
 		if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
 			this.vanCode.setValue(aPartnerBank.getVanCode());
-		}		
+		}
 		this.recordStatus.setValue(aPartnerBank.getRecordStatus());
 
 		logger.debug("Leaving");
@@ -707,7 +707,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// VAN Code
 		try {
 			aPartnerBank.setVanCode(this.vanCode.getValue());
@@ -919,7 +919,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 					Labels.getLabel("label_PartnerBankDialog_FavourLength.value"), false, false, 99));
 		}
 
-		if (!this.btnSearchBranchCode.isDisabled() && !this.alwBankBranchCode.isVisible()) {
+		if (!this.btnSearchBranchCode.isDisabled() && this.alwBankBranchCode.isVisible()) {
 			this.alwBankBranchCode.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_PartnerBankDialog_AlwBankBranchCode.value"), null, true));
 		}

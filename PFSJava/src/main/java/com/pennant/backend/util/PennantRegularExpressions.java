@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -212,12 +211,12 @@ public class PennantRegularExpressions {
 			put(REGEX_ALPHANUM_UNDERSCORE, "^[A-Za-z0-9]+[A-Za-z0-9\\_]*");
 			put(REGEX_ALPHANUM_UNDERSCORE_SLASH, "^[A-Za-z0-9]+[A-Za-z0-9\\_\\/]*");
 			put(REGEX_ALPHA_UNDERSCORE, "^[A-Za-z]+[A-Za-z\\_]*");
-			put(REGEX_COMPANY_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\s]*");
+			put(REGEX_COMPANY_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
 			put(REGEX_NAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPERCASENAME, "^[A-Za-z]+[A-Za-z.\\s]*");
 			put(REGEX_UPPER_ALPHANUM_SPACE, "^[A-Za-z0-9]+[A-Za-z0-9.\\s\\/\\-]*");
 			put(REGEX_ALPHANUM_FSLASH_SPACE, "^[A-Za-z0-9\\/]+[A-Za-z0-9.\\s\\/\\-]*");
-			put(REGEX_CUST_NAME, "^[A-Za-z]+[A-Za-z.\\-\\'\\_\\/\\s]*");
+			put(REGEX_CUST_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
 			put(REGEX_DESCRIPTION, "^[A-Za-z0-9]+[A-Za-z0-9\\.\\-\\s\\(\\)]*");
 			put(REGEX_ADDRESS, "[a-zA-Z0-9.\\>\\<\\,\\-\\/\\!\\@\\#\\$\\%\\&\\(\\)\\[\\]\\{\\}\\s]*");
 			put(REGEX_NM_AMOUNT, "[0-9.\\-]*");
@@ -256,16 +255,16 @@ public class PennantRegularExpressions {
 			put(REGEX_ACCOUNTNUMBER, "^(?![a-zA-Z]*$)+[a-zA-Z0-9]+$");
 			put(REGEX_PANNUMBER, "[A-Za-z]{5}\\d{4}[A-Za-z]{1}");
 			put(REGEX_GSTIN, "[A-Za-z0-9]{2}[A-Za-z]{5}\\d{4}[A-Za-z]{1}[A-z0-9]{3}");
-			put(REGEX_ACC_HOLDER_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\s]*");
-			put(REGEX_FAVOURING_NAME, "^[A-Za-z]+[A-Za-z0-9.\\&\\(\\)\\-\\/\\'\\s,:]*");
+			put(REGEX_ACC_HOLDER_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
+			put(REGEX_FAVOURING_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\/\\'\\s,:]*");
 			put(REGEX_LOOK_UP_VALUE, "^[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_BARCODE_NUMBER, "[0-9]{9}[A-Za-z0-9\\!\\@\\$\\%\\&\\#\\%\\/\\^]*");
 			put(REGEX_SPECIAL_REGX,
-					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_]*");
+					"^[A-Za-z0-9]+[A-Za-z0-9.\\>\\<\\!\\/\\,\\+\\-\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s\\_\\=]*");
 			put(REGEX_ALPHA_NUMERIC_DOT_SPACE, "[A-Za-z0-9 .]+");
 			put(REGEX_CLUST_NAME, "^[A-Za-z]+[A-Za-z0-9&\\-\\_\\,\\s,:]*");
 			put(REGEX_ALPHANUM_ALPHAFIRST, "^[A-Za-z]+[A-Za-z0-9]*");
-
+			put(REGEX_CLUST_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
 		}
 	};
 

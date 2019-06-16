@@ -483,11 +483,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="18" author="Srinivasa Varma">
+	<!-- <changeSet id="18" author="Srinivasa Varma">
 		<addColumn tableName="collection_financedetails">
 			<column name="AppDate" type="datetime" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="19" author="aditya.a">
 		<sql>
@@ -6212,6 +6212,13 @@ UNION ALL
 			UPDATE SMTPARAMETERS SET SysParmValue = 'Y' WHERE SysParmCode = 'ALLOW_ORGANISATIONAL_STRUCTURE'; 				
 			UPDATE SMTPARAMETERS SET SysParmValue = 'N' WHERE SysParmCode = 'ALLOW_ACCESS_CONTROL_TYPE'; 					
 		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="94" author="murthy.y">
+		<sql>
+		<![CDATA[
+			UPDATE SMTPARAMETERS SET SysParmValue = 'N' WHERE SysParmCode = 'ALLOW_DIVISION_BASED_CLUSTER'; 
+			]]>
 		</sql>
 	</changeSet>
 

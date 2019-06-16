@@ -76,11 +76,13 @@
 												<columns>
 													<column width="90px" />
 													<column width="90px" />
+													<column width="90px" />
 												</columns>
 												<rows>
 													<row visible="true">
 														<radio id="radio_column1" value="1" label="1 column" />
 														<radio id="radio_column2" value="2" label="2 columns" />
+														<radio id="radio_column3" value="3" label="3 columns" />
 													</row>
 												</rows>
 											</grid>

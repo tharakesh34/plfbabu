@@ -75,6 +75,7 @@ import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.commitment.CommitmentMovement;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -85,6 +86,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -112,6 +114,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -604,6 +607,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		//updating the processed with 1 in finstageAccountingLog
 		getFinStageAccountingLogDAO().update(financeMain.getFinReference(), financeDetail.getModuleDefiner(), false);
 
+		// Extended Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					financeDetail.getExtendedFieldHeader(), "", serviceUID);
+			auditDetails.addAll(details);
+		}
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -626,6 +637,17 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = auditHeader.getUsrLanguage();
+
+		// Extended field details Validation
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
@@ -658,6 +680,12 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
+		// Extended Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService
+					.setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, method, null));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
 		//Finance Checklist Details
 		//=======================================
 		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
@@ -965,6 +993,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

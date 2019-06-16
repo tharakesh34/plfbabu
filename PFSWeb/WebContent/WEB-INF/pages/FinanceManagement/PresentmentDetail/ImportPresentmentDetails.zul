@@ -50,7 +50,7 @@
 			</north>
 			<center border="none" autoscroll="true" style="overflow: visible !important">
 				<groupbox style="overflow: visible !important">
-					<grid style="overflow: visible !important">
+					<grid id="grid_Default" style="overflow: visible !important" visible="false">
 						<columns>
 							<column width="90%" />
 						</columns> 

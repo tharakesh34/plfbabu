@@ -184,8 +184,12 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
+		this.txtchannel.setMaxlength(20);
+
 		this.productCategoryId.setMandatoryStyle(true);
 		this.productCategoryId.setModuleName("ProductCategory");
+
+		this.modelId.setMaxlength(8);
 
 		setStatusDetails();
 
@@ -262,7 +266,10 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		this.productCategoryId.setValue(aProductGroup.getProductCategoryId());
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
+		lovFieldDetail.setFieldCodeId(Long.valueOf(aProductGroup.getProductCategoryId()));
+		this.productCategoryId.setObject(lovFieldDetail);
+		this.productCategoryId.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()), lovFieldDetail.getValueDesc());
 		this.recordStatus.setValue(aProductGroup.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -280,19 +287,19 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			aProductGroup.setModelId(this.modelId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Chaneel
+		// Chaneel
 		try {
 			aProductGroup.setChannel(this.txtchannel.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//dealer category
+		// dealer category
 		try {
 			this.productCategoryId.getValidatedValue();
 			aProductGroup.setProductCategoryId(this.productCategoryId.getValue());
@@ -300,7 +307,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 			wve.add(we);
 		}
 
-		//cative
+		// cative
 		try {
 			aProductGroup.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -371,9 +378,9 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//id
-		//Name
-		//Segmentation
+		// id
+		// Name
+		// Segmentation
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -528,7 +535,7 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 		this.modelId.setValue("");
 		this.productCategoryId.setValue("");
 		this.txtchannel.setValue("");
-		//this.channel.setDescription("");
+		// this.channel.setDescription("");
 
 		this.active.setValue("");
 
@@ -782,6 +789,12 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 
 	public void setProductGroupService(ProductGroupService productGroupService) {
 		this.productGroupService = productGroupService;
+	}
+
+	@Override
+	protected String getReference() {
+		StringBuilder referenceBuffer = new StringBuilder(String.valueOf(this.productGroup.getProductGroupId()));
+		return referenceBuffer.toString();
 	}
 
 }

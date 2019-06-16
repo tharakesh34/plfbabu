@@ -58,19 +58,33 @@
 	</changeSet>
 
 	<changeSet id="2" author="vijaya.a">
-		<addUniqueConstraint tableName="Commodities" columnNames="HSNCode" />
+		<addUniqueConstraint columnNames="HSNCode" constraintName="UK_HSNCode" deferrable="true"
+			initiallyDeferred="true" tableName="Commodities" />
 	</changeSet>
 
 	<changeSet id="2.1" author="vijaya.a">
-		<addUniqueConstraint tableName="Commodities_Temp" columnNames="HSNCode" />
+		<addUniqueConstraint columnNames="HSNCode" constraintName="UK_HSNCode" deferrable="true"
+			initiallyDeferred="true" tableName="Commodities_Temp" />
 	</changeSet>
 
-	<changeSet id="2.2" author="vijaya.a">
-		<addUniqueConstraint tableName="Commodities" columnNames="CommodityType, Code, HSNCode" />
+	<changeSet id="2.2" author="vijaya.a" dbms="postgresql, oracle">
+		<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" constraintName="UK_Comm_Comm_CT_Cd_HSNC"
+			deferrable="true" initiallyDeferred="true" tableName="Commodities" />
 	</changeSet>
 
-	<changeSet id="2.3" author="vijaya.a">
-		<addUniqueConstraint tableName="Commodities_Temp" columnNames="CommodityType, Code, HSNCode" />
+	<changeSet id="2.3" author="vijaya.a" dbms="postgresql, oracle">
+		<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" constraintName="UK_Comm_Temp_Comm_CT_Cd_HSNC"
+			deferrable="true" initiallyDeferred="true" tableName="Commodities_Temp" />
+	</changeSet>
+
+	<changeSet id="2.4" author="vijaya.a" dbms="mssql">
+		<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" constraintName="UK_Comm_Comm_CT_Cd_HSNC"
+			deferrable="true" initiallyDeferred="true" tableName="Commodities" />
+	</changeSet>
+
+	<changeSet id="2.5" author="vijaya.a" dbms="mssql">
+		<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" constraintName="UK_Comm_Temp_Comm_CT_Cd_HSNC"
+			deferrable="true" disabled="true" initiallyDeferred="true" tableName="Commodities_Temp" />
 	</changeSet>
 
 	<changeSet id="1.1" author="vijaya.a">
@@ -139,7 +153,7 @@
 			<column name="Active" type="boolean" defaultValue="1">
 				<constraints nullable="false" />
 			</column>
-			<column name="Version" type="int">
+			<column name="Version" type="int" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
@@ -166,7 +180,7 @@
 			<column name="Active" type="boolean" defaultValue="1">
 				<constraints nullable="false" />
 			</column>
-			<column name="Version" type="int">
+			<column name="Version" type="int" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
@@ -179,6 +193,24 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</addColumn>
+	</changeSet>
+	
+	<changeSet id="4.1.1" author="shinde.b">
+		<addDefaultValue columnName="LastMntBy" tableName="Commodities_temp" columnDataType="bigint" defaultValue="0"/>
+		<addDefaultValue columnName="WorkflowId" tableName="Commodities_temp" columnDataType="bigint" defaultValue="0"/>
+		<addDefaultValue columnName="LastMntBy" tableName="Commodities" columnDataType="bigint" defaultValue="0"/>
+		<addDefaultValue columnName="WorkflowId" tableName="Commodities" columnDataType="bigint" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="4.1.1.2" author="shinde.b">
+		<sql>
+			<![CDATA[
+				update Commodities_temp set LastMntBy = 0 where LastMntBy is null;
+				update Commodities_temp set WorkflowId = 0 where WorkflowId is null;
+				update Commodities set LastMntBy = 0 where LastMntBy is null;
+				update Commodities set WorkflowId = 0 where WorkflowId is null;
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="4.2" author="shinde.b">
@@ -524,9 +556,9 @@
 	<changeSet id="10" author="aditya.a">
 		<comment>New column added for Account Types</comment>
 		<sql>
-			INSERT INTO SecRights Values ((select max(RightId)+1 from
-			SecRights),3,'AccountTypeDialog_isControlAc','AccountTypeDialog',1,1000,current_timestamp,'Approved','',' ','',' ','
-			',0);
+			<![CDATA[
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights), 3, 'AccountTypeDialog_isControlAc', 'AccountTypeDialog', 1, 1000, current_timestamp, 'Approved', '', ' ', '', ' ', ' ', 0);
+			]]>
 		</sql>
 	</changeSet>
 
@@ -897,18 +929,21 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="17" author="saikiran.v">
 		<addColumn tableName="fintaxdetail">
 			<column name="sezCertificateNo" type="varchar(20)" />
 			<column name="sezValueDate" type="datetime" />
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="18" author="saikiran.v">
 		<addColumn tableName="Fintaxdetail_Temp">
 			<column name="sezCertificateNo" type="varchar(20)" />
 			<column name="sezValueDate" type="datetime" />
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="19" author="saikiran.v">
 		<createView viewName="fintaxdetail_aview" replaceIfExists="true">
 			SELECT t1.finreference,
@@ -1073,6 +1108,7 @@ UNION ALL
 				          WHERE fintaxdetail_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
+
 	<changeSet id="22" author="saikiran.v">
 		<sql>
 			<![CDATA[
@@ -1562,14 +1598,14 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="34" author="Varaprasad">
+<!-- 	<changeSet id="34" author="Varaprasad">
 		<addForeignKeyConstraint constraintName="fk_verification_pd_country" referencedTableName="bmtcountries"
 			referencedColumnNames="countrycode" baseTableName="Verification_pd" baseColumnNames="Country" />
 		<addForeignKeyConstraint constraintName="fk_verification_pd_province" referencedTableName="rmtcountryvsprovince"
 			referencedColumnNames="cpcountry,cpprovince" baseTableName="Verification_pd" baseColumnNames="Country, Province" />
 		<addForeignKeyConstraint constraintName="fk_verification_pd_city" referencedTableName="rmtprovincevscity"
 			referencedColumnNames="pccity" baseTableName="Verification_pd" baseColumnNames="City" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="35" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd" defaultValue="0" />
@@ -1663,7 +1699,7 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="39" author="Varaprasad">
+<!-- 	<changeSet id="39" author="Varaprasad">
 		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_country" referencedTableName="bmtcountries"
 			referencedColumnNames="countrycode" baseTableName="Verification_pd_temp" baseColumnNames="Country" />
 		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_prvince" referencedTableName="rmtcountryvsprovince"
@@ -1671,7 +1707,7 @@ UNION ALL
 		cpprovince" baseTableName="Verification_pd_temp" baseColumnNames="Country, Province" />
 		<addForeignKeyConstraint constraintName="fk_verification_pd_tmp_city" referencedTableName="rmtprovincevscity"
 			referencedColumnNames="pccity" baseTableName="Verification_pd_temp" baseColumnNames="City" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="40" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="OwnershipStatus" tableName="verification_pd_temp" defaultValue="0" />
@@ -2098,6 +2134,10 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
+	<changeSet id="51.1" author="murthy.y">
+		<modifyDataType tableName="LMSServiceLog" columnName="NotificationFlag" newDataType="char(1)" />
+	</changeSet>
+
 	<changeSet id="50" author="Durgaprasad G">
 		<sql>
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -2236,7 +2276,7 @@ UNION ALL
 	<changeSet id="38_postgresql_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_save_and_drop_dependencies ('plf', 'Verification_pd_temp');
+					select deps_save_and_drop_dependencies ('plf', 'verification_pd_temp');
 			]]>
 		</sql>
 	</changeSet>
@@ -2250,7 +2290,7 @@ UNION ALL
 	<changeSet id="38_postgresql_post" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
-					select deps_restore_dependencies ('plf', 'Verification_pd_temp');
+					select deps_restore_dependencies ('plf', 'verification_pd_temp');
 			]]>
 		</sql>
 	</changeSet>
@@ -2267,6 +2307,5 @@ UNION ALL
         FROM finexcessamount           
     </createView>
 	</changeSet>
-
 	<!-- 5.0.0 is Under QC please use 5.0.5 -->
 </databaseChangeLog>

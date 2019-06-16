@@ -53,6 +53,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
@@ -822,8 +823,9 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		FinanceProfitDetail profitDetail = profitDetailsDAO
 				.getFinProfitDetailsById(presentmentDetail.getFinReference());
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
-		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, presentmentDetail.getSchDate(), true);
-		finReceiptData = receiptService.calculateRepayments(finReceiptData, true);
+		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
+				profitDetail, header, financeType.getRpyHierarchy(), presentmentDetail.getSchDate(),
+				DateUtility.getAppDate());
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
@@ -839,6 +841,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "presentmentRequest")
 	public void setPresentmentRequest(PresentmentRequest presentmentRequest) {
 		this.presentmentRequest = presentmentRequest;
 	}

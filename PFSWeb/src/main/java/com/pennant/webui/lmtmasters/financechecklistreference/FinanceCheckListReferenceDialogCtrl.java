@@ -250,6 +250,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				moduleCheckList = getFinanceDetail().getFinanceCheckList();
 			}
 
+			prevAnswersMap = doGetPreviowsAnswers(moduleCheckList);
 			doWriteBeanToComponents(checkList, moduleCheckList, true);
 			if (!isNotFinanceProcess && StringUtils.equals("", moduleDefiner)) {
 				loadDeviationDetails(checkList);
@@ -358,7 +359,6 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 			setRefDetailsList(tempCheckList);
 		}
 
-		prevAnswersMap = doGetPreviowsAnswers(finCheckRefList);
 		temp_PrevAnswersMap.putAll(prevAnswersMap);
 		List<CheckListDetail> checkListDetailsList = new ArrayList<CheckListDetail>();
 		checkListDocTypeMap = new HashMap<String, List<Listitem>>();

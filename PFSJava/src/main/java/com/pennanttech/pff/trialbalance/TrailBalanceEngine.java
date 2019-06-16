@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -32,7 +34,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -40,6 +41,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 public class TrailBalanceEngine extends DataEngineExport {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus();
+	private static final Logger logger = Logger.getLogger(TrailBalanceEngine.class);
 
 	private int batchSize = 1000;
 	private Date appDate = null;
@@ -53,6 +55,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private Date fromDate = null;
 	private Date toDate = null;
 	private String stateCode = null;
+	Date financeEndDate = null;
+	int recordCount = 0;
+	private boolean stateWiseReport;
+	private List<String> stateCodeList = null;
 
 	private static final String QUERY_CONSOLIDATE = "select distinct HOSTACCOUNT, ACCOUNT, FINTYPE from ACCOUNTMAPPING";
 	private static final String QUERY_STATE = "select distinct HOSTACCOUNT, ACCOUNT, FINTYPE, BRANCHCOUNTRY, BRANCHPROVINCE from ACCOUNTMAPPING, RMTBRANCHES";
@@ -71,11 +77,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		this.toDate = toDate;
 	}
 
-	public TrailBalanceEngine(DataSource dataSource, long userId, Date valueDate, Date appDate) {
-		super(dataSource, userId, App.DATABASE.name(), true, appDate, EXTRACT_STATUS);
-		this.appDate = appDate;
-	}
-
 	/**
 	 * Validate the Account Mapping and Posting data
 	 * 
@@ -85,7 +86,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.ENTERING);
 		//validateAccountHistory();
 		validateAccountMapping();
-		//validatePostings();
+		validatePostings();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -100,7 +101,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("START_DATE", fromDate);
 		paramMap.addValue("END_DATE", toDate);
 		paramMap.addValue("ENTITYCODE", entityCode);
-		String sql = "Select count (*) from POSTINGS where POSTDATE <= :START_DATE and POSTAMOUNT <>0  AND ENTITYCODE = :ENTITYCODE and account not in(select account from AccountMapping) ";
+		String sql = "Select count (*) from POSTINGS where POSTDATE <= :END_DATE and POSTAMOUNT <>0  AND ENTITYCODE = :ENTITYCODE and account not in(select account from AccountMapping) ";
 		logger.trace(Literal.SQL + sql.toString());
 		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) > 0) {
 			EXTRACT_STATUS.setStatus("F");
@@ -163,7 +164,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 		this.entityCode = entityDetails[0];
 		this.entityDescription = entityDetails[1];
 		this.stateCode = stateCode;
-
+		if (dimension == Dimension.STATE) {
+			stateWiseReport = true;
+			stateCodeList = Arrays.asList(this.stateCode.split(","));
+		}
 		extractReport();
 	}
 
@@ -230,213 +234,364 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private void extract() throws Exception {
 		logger.debug(Literal.ENTERING);
 		logger.info("Extracting data...");
-		// Load system parameters and clear the table data
+		//Load system parameters and clear the table data
 		initilize();
-		// Set Plfledger Account And Hostaccount to TrialBalance 
-		Map<String, TrailBalance> accounts = getLedgerAccounts();
-		totalRecords = accounts.size();
-		EXTRACT_STATUS.setTotalRecords(totalRecords);
-		// Get group code and description.
-		Map<String, TrailBalance> groups = getAccountDetails();
-
-		String key = null;
-		TrailBalance group = null;
-		TrailBalance trialBalance = null;
-
-		for (Entry<String, TrailBalance> entry : accounts.entrySet()) {
-
-			if (dimension == Dimension.STATE) {
-				key = entry.getKey().split("-")[0];
-			} else {
-				key = entry.getKey();
-			}
-			trialBalance = entry.getValue();
-			group = groups.get(key);
-
-			if (group == null || group.getAccountType() == null) {
-				trialBalance.setAccountType("NA");
-				trialBalance.setAccountTypeDes("NA");
-			} else {
-				trialBalance.setAccountType(group.getAccountType());
-				trialBalance.setAccountTypeDes(group.getAccountTypeDes());
-			}
-			EXTRACT_STATUS.setProcessedRecords(processedCount++);
-			EXTRACT_STATUS.setSuccessRecords(successCount++);
-		}
-		groups = null;
-
-		// get list of every financeYear
-		List<TrailBalance> financialOpeningBal = getOpeningBalanceByDate(getFinanceEndDate());
-
-		// Get opening balance
-		List<TrailBalance> openingBals = getOpeningBalance();
-		key = null;
-
-		for (TrailBalance openingBal : openingBals) {
-			key = getKey(openingBal);
-			trialBalance = accounts.get(key);
-
-			if (openingBal.getOpeningBalance() == null
-					|| openingBal.getOpeningBalance().compareTo(BigDecimal.ZERO) == 0) {
-				trialBalance.setOpeningBalance(BigDecimal.ZERO);
-				if (ImplementationConstants.NEGATE_SIGN_TB) {
-					trialBalance.setOpeningBalanceType("Dr");
-				} else {
-					trialBalance.setOpeningBalanceType("Cr");
-				}
-			} else {
-				trialBalance.setOpeningBalanceType(getSignOfBalanceType(openingBal.getOpeningBalance()));
-				trialBalance.setOpeningBalance(openingBal.getOpeningBalance());
-			}
-			// Post year end activity,income and expense GL's opening balance
-			// will be updated based on finance year amount
-			if (String.join("|", "INCOME,EXPENSE").contains(trialBalance.getAccountType())) {
-				boolean isFound = false;
-				for (TrailBalance trBalance : financialOpeningBal) {
-
-					if (trBalance.getOpeningBalance() == null) {
-						trBalance.setOpeningBalance(BigDecimal.ZERO);
-					}
-
-					if (StringUtils.equals(trialBalance.getAccount(), trBalance.getAccount())
-							&& StringUtils.equals(trialBalance.getAccountType(), trBalance.getAccountType())) {
-						trialBalance.setOpeningBalance(
-								openingBal.getOpeningBalance().subtract(trBalance.getOpeningBalance()));
-						isFound = true;
-						break;
-					} else {
-						trialBalance.setOpeningBalance(openingBal.getOpeningBalance());
-					}
-				}
-
-				if (isFound) {
-
-					trialBalance.setOpeningBalanceType(getSignOfBalanceType(trialBalance.getOpeningBalance()));
-
-				} else {
-
-					trialBalance.setOpeningBalanceType(getSignOfBalanceType(openingBal.getOpeningBalance()));
-				}
-			}
-		}
-		openingBals = null;
-
-		// Get credit and Debit amount
-		List<TrailBalance> creditAndDeditAmt = getCreditAndDebitAmt();
-		key = null;
-
-		for (TrailBalance creditDebitAmount : creditAndDeditAmt) {
-			key = getKey(creditDebitAmount);
-			trialBalance = accounts.get(key);
-
-			// FIXME: Fix the data.
-			if (trialBalance == null) {
-				continue;
-			}
-
-			if (creditDebitAmount.getCreditAmount() == null) {
-				trialBalance.setCreditAmount(BigDecimal.ZERO);
-			} else {
-				trialBalance.setCreditAmount(creditDebitAmount.getCreditAmount());
-			}
-
-			if (creditDebitAmount.getDebitAmount() == null) {
-				trialBalance.setDebitAmount(BigDecimal.ZERO);
-			} else {
-				trialBalance.setDebitAmount(creditDebitAmount.getDebitAmount());
-			}
-		}
-		creditAndDeditAmt = null;
-
-		// Calculate closing balance.
-		for (Entry<String, TrailBalance> entry : accounts.entrySet()) {
-			trialBalance = entry.getValue();
-			BigDecimal openingBal = trialBalance.getOpeningBalance();
-
-			if (trialBalance.getOpeningBalance() == null
-					|| trialBalance.getOpeningBalance().compareTo(BigDecimal.ZERO) == 0) {
-				trialBalance.setOpeningBalance(BigDecimal.ZERO);
-				if (ImplementationConstants.NEGATE_SIGN_TB) {
-					trialBalance.setOpeningBalanceType("Dr");
-				} else {
-					trialBalance.setOpeningBalanceType("Cr");
-				}
-			}
-
-			if (ImplementationConstants.NEGATE_SIGN_TB) {
-				if (trialBalance.getOpeningBalanceType().equals("Dr")) {
-					openingBal = openingBal.negate();
-				}
-			} else {
-				if (trialBalance.getOpeningBalanceType().equals("Cr")) {
-					openingBal = openingBal.negate();
-				}
-			}
-
-			trialBalance.setClosingBalance(
-					(openingBal.subtract(trialBalance.getDebitAmount())).add(trialBalance.getCreditAmount()));
-
-			trialBalance.setClosingBalanceType(getSignOfBalanceType(trialBalance.getClosingBalance()));
-
-			trialBalance.setClosingBalance(trialBalance.getClosingBalance().abs());
-		}
-
-		// Save to database
-		save(accounts);
-
-		// Log the derived month trail balance into separate table
-		logTrialBalace();
+		createHeader();
+		insertRecords();
+		setCreditAndDebitAmt();
+		setOpeningBalance();
+		setProfiTLossBalance();
+		BigDecimal profitLossAmt = calculateProfitLoss();
+		deleleExtraData();
+		updateClosingBalance();
+		logTrialBalace(profitLossAmt);
+		resetWorkingTable();
+		// logTrialBalace();
 		logger.debug(Literal.LEAVING);
 	}
 
-	private List<TrailBalance> getCreditAndDebitAmt() {
+	private void getStates() {
+		logger.debug(Literal.ENTERING);
+
+		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
+			String[] arr = stateCode.split(",");
+			stateCode = String.join("','", arr);
+			// stateCode = StringUtils.join(arr, "','");
+			this.stateCode = "'".concat(stateCode).concat("'");
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void insertRecords() throws Exception {
+
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = new StringBuilder();
 
-		if (dimension == Dimension.STATE) {
-			sql.append(" select C.ACCOUNT Account,C.HOSTACCOUNT ledgerAccount,  RB.BRANCHPROVINCE stateCode, ");
-			sql.append(" SUM(case when D.DRORCR='C' then D.POSTAMOUNT else 0 end)  creditAmount, ");
-			sql.append(" SUM(case when D.DRORCR='D' then D.POSTAMOUNT else 0 end) debitAmount ");
-			sql.append(" from PLF.POSTINGS D ");
-			sql.append(" inner join PLF.ACCOUNTMAPPING C on d.ACCOUNT = C.ACCOUNT ");
-			sql.append(" inner join RMTBRANCHES RB on d.postbranch = Rb.BRANCHCODE ");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-
-			if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-				String[] arr = stateCode.split(",");
-				String listofState = StringUtils.join(arr, "','");
-				sql.append(" and RB.BRANCHPROVINCE in ('" + listofState + "') ");
+		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_WORK (HeaderID, AcTypeGrpID, FinType, Account,");
+		sql.append(" HostAccount, Description, GroupCode, OpeningBal, OpeningBalType, DebitAmount, ");
+		sql.append(" CreditAmount, ClosingBal, ClosingBalType, PLACBALANCE");
+		if (stateWiseReport) {
+			sql.append(", Country, Province)");
+			sql.append(" Select Distinct (:HeaderID) HeaderID, T2.AcTypeGrpID, FinType, Account,");
+			sql.append(" HostAccount, T2.AcTYpeDesc Description,  T3.GroupCode, 0 OpeningBal, 'Dr' OpeningBalType,");
+			sql.append(" 0 DebitAmount, 0 CreditAmount, 0 ClosingBal, 'Dr' ClosingBalType, 0 PLACBalance,");
+			sql.append(" BranchCountry Country, BranchProvince Province From AccountMapping  T1 ");
+			sql.append(" Inner Join RMTAccountTypes T2 on T1.AccountTYpe = T2.AcType ");
+			sql.append(" Inner Join AccountTypeGroup T3  ON T3.GroupID = T2.AcTypeGrpID, RMTBranches ");
+			if (StringUtils.isNotEmpty(stateCode)) {
+				sql.append("Where BranchProvince IN (:BranchProvince)");
 			}
-
-			sql.append(" GROUP BY C.ACCOUNT,C.HOSTACCOUNT, RB.BRANCHPROVINCE");
 		} else {
-			sql = new StringBuilder();
-			sql.append(" select C.ACCOUNT Account,C.HOSTACCOUNT ledgerAccount, ");
-			sql.append(" SUM(case when D.DRORCR='C' then D.POSTAMOUNT else 0 end)  creditAmount, ");
-			sql.append(" SUM(case when D.DRORCR='D' then D.POSTAMOUNT else 0 end) debitAmount ");
-			sql.append(" from PLF.POSTINGS D ");
-			sql.append(" inner join PLF.ACCOUNTMAPPING C on d.ACCOUNT = C.ACCOUNT ");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-			sql.append(" GROUP BY C.ACCOUNT,C.HOSTACCOUNT");
+			sql.append(")");
+			sql.append(" Select  Distinct  ( :HeaderID )  HeaderID,  T2.ACTYPEGRPID,  FinType,  Account, ");
+			sql.append(" HostAccount,  T2.AcTYpeDesc Description,  T3.GroupCode,  0 OpeningBal, 'Dr' OpeningBalType,");
+			sql.append(" 0 DebitAmount, 0 CreditAmount, 0 ClosingBal , 'Dr' ClosingBalType, 0 PLACBalance");
+			sql.append(" From AccountMapping  T1 Inner Join RMTAccountTypes T2 on T1.AccountTYpe = T2.AcType ");
+			sql.append(" Inner Join AccountTypeGroup T3  ON T3.GroupID = T2.AcTypeGrpID ");
 		}
-
 		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MONTH_STARTDATE", fromDate);
-		paramMap.addValue("MONTH_ENDDATE", toDate);
-		paramMap.addValue("ENTITYCODE", entityCode);
-
-		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
+		paramMap.addValue("HeaderID", headerId);
+		paramMap.addValue("BranchProvince", stateCodeList);
 
 		try {
 			logger.trace(Literal.SQL + sql.toString());
-			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug("Count: " + count);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void setCreditAndDebitAmt() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FromDate", fromDate);
+		paramMap.addValue("ToDate", toDate);
+		paramMap.addValue("EntityCode", entityCode);
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(
+				"Update TRIAL_BALANCE_REPORT_WORK set DebitAmount = T2.DebitAmount, CreditAmount = T2.CreditAmount from");
+
+		if (stateWiseReport) {
+			sql.append(
+					" (Select Distinct T1.Account, SUM(Case When DrOrCr = 'D' Then PostAmount Else 0 End) DebitAmount,");
+			sql.append(" SUM(Case When DrOrCr = 'C' Then PostAmount * -1 Else 0 End)  CreditAmount, T2.BranchProvince");
+			sql.append(" From Postings T1 Inner Join RMTBranches T2 on T1.POSTBRANCH = T2.BRANCHCODE");
+			sql.append(" Where T1.ENTITYCODE = :EntityCode and T1.PostDate >= :FromDate and T1.PostDate <= :ToDate ");
+			sql.append(
+					" Group By Account, BranchProvince )T2 where TRIAL_BALANCE_REPORT_WORK.Account = T2.Account And TRIAL_BALANCE_REPORT_WORK.Province = T2.BranchProvince");
+		} else {
+			sql.append(
+					" (Select Distinct T1.Account, SUM(Case When DrOrCr = 'D' Then PostAmount Else 0 End) DebitAmount,");
+			sql.append(" SUM(Case When DrOrCr = 'C' Then PostAmount * -1 Else 0 End)  CreditAmount ");
+			sql.append(" From Postings T1 Where T1.ENTITYCODE = :EntityCode and T1.PostDate >= :FromDate ");
+			sql.append(
+					" and T1.PostDate <= :ToDate Group By Account)T2 where TRIAL_BALANCE_REPORT_WORK.Account = T2.Account  ");
+		}
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug("count " + count);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setOpeningBalance() throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FromDate", fromDate);
+		paramMap.addValue("EntityCode", entityCode);
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(
+				" Update TRIAL_BALANCE_REPORT_WORK set OpeningBal = T3.OpeningBalance, OpeningBalType = T3.OpeningBalType from ");
+		if (stateWiseReport) {
+			sql.append(" (Select Distinct T1.AccountID Account, T1.BranchProvince StateCode,");
+			sql.append(" Sum(T1.ACBALANCE)*-1  OpeningBalance,");
+			sql.append(" (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
+			sql.append(" From AccountHistoryDetails T1 Inner Join( Select Distinct T2.AccountID, ");
+			sql.append(" T2.BranchProvince, T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate");
+			sql.append(" From AccountHistoryDetails T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
+			sql.append(" Group By T2.AccountID, T2.BranchProvince, T2.PostBranch, T2.EntityCode) T2 ");
+			sql.append(" ON T1.AccountID = T2.AccountID and T1.PostDate = T2.PostDate And ");
+			sql.append(" T2.PostBranch = T1.PostBranch And T2.BranchProvince = T1.BranchProvince");
+			sql.append(" And T2.EntityCode = T1.EntityCode Group By T1.AccountID,T1.BranchProvince)T3 ");
+			sql.append(
+					" where TRIAL_BALANCE_REPORT_WORK.Account = T3.Account And TRIAL_BALANCE_REPORT_WORK.Province = T3.StateCode ");
+
+		} else {
+			sql.append(" (Select Distinct T1.AccountID Account, Sum(T1.ACBALANCE)*-1  OpeningBalance,");
+			sql.append(" (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
+			sql.append(" From AccountHistoryDetails T1 Inner Join( Select Distinct T2.AccountID,");
+			sql.append(" T2.BranchProvince, T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate");
+			sql.append(" From AccountHistoryDetails T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
+			sql.append(" Group By T2.AccountID, T2.BranchProvince, T2.PostBranch, T2.EntityCode) T2 ");
+			sql.append(" ON T1.AccountID = T2.AccountID and T1.PostDate = T2.PostDate And ");
+			sql.append(" T2.BranchProvince = T1.BranchProvince And T2.POSTBRANCH = T1.POSTBRANCH And ");
+			sql.append(
+					" T2.ENTITYCODE = T1.ENTITYCODE group by T1.ACCOUNTID)T3 where TRIAL_BALANCE_REPORT_WORK.Account = T3.Account");
+		}
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug("count " + count);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setProfiTLossBalance() throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("FinanceEndDate", getFinanceEndDate());
+		paramMap.addValue("EntityCode", entityCode);
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(
+				" Update TRIAL_BALANCE_REPORT_WORK set PLACBalance =  T3.openingBal, OpeningBal = TRIAL_BALANCE_REPORT_WORK.OpeningBal - T3.openingBal from ");
+		if (stateWiseReport) {
+			sql.append(" (Select T1.AccountID, T1.BranchProvince, Sum(T1.ACBALANCE)*-1  OpeningBal ");
+			sql.append(" From AccountHistoryDetails T1 Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
+			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From AccountHistoryDetails T2");
+			sql.append(" Where T2.postdate <= :FinanceEndDate And EntityCode = :EntityCode ");
+			sql.append(" Group By T2.ACCOUNTID,T2.BRANCHPROVINCE,T2.POSTBRANCH,T2.ENTITYCODE) T2 ");
+			sql.append(
+					" ON T1.AccountID = T2.AccountID And T1.PostDate = T2.PostDate And T1.PostBranch = T2.PostBranch");
+			sql.append(" And T1.BranchProvince = T2.BranchProvince And T2.EntityCode = T1.EntityCode ");
+			sql.append(
+					" Group By T1.AccountID,T1.BranchProvince) T3 where  TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  ");
+			sql.append(
+					" And TRIAL_BALANCE_REPORT_WORK.Province = T3.BranchProvince And TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE') ");
+
+		} else {
+			sql.append(" (Select T1.AccountID, Sum(T1.ACBALANCE)*-1  OpeningBal ");
+			sql.append(" From AccountHistoryDetails T1 Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
+			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From AccountHistoryDetails T2");
+			sql.append(" Where T2.postdate <= :FinanceEndDate And EntityCode = :EntityCode ");
+			sql.append(" Group By T2.AccountID,T2.BranchProvince,T2.PostBranch,T2.EntityCode) T2 ");
+			sql.append(
+					" ON T1.AccountID = T2.AccountID And T1.PostDate = T2.PostDate And T1.PostBranch = T2.PostBranch");
+			sql.append(" And T1.BranchProvince = T2.BranchProvince And T2.EntityCode = T1.EntityCode ");
+			sql.append(
+					" Group By T1.AccountID) T3  where TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  And TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE')");
+		}
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug("count " + count);
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private BigDecimal calculateProfitLoss() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource parmsource = new MapSqlParameterSource();
+
+		sql.append("SELECT SUM(PLACBALANCE) AMT ");
+		sql.append(" from TRIAL_BALANCE_REPORT_WORK where GROUPCODE in ('INCOME', 'EXPENSE') ");
+
+		BigDecimal profitLossAmt = parameterJdbcTemplate.queryForObject(sql.toString(), parmsource, BigDecimal.class);
+		if (profitLossAmt == null) {
+			profitLossAmt = BigDecimal.ZERO;
+		}
+		logger.debug(Literal.LEAVING);
+		return profitLossAmt;
+	}
+
+	private void deleleExtraData() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" Delete From TRIAL_BALANCE_REPORT_Work");
+		sql.append(" Where (DebitAmount = 0 And CreditAmount = 0 And OpeningBal = 0) And HeaderID =:HeaderID");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HeaderID", headerId);
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateClosingBalance() throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" Update TRIAL_BALANCE_REPORT_WORK set ClosingBal = T2.ClosingBal, OpeningBalType = T2.OpeningBalType , ClosingBalType = T2.ClosingBalType from ");
+		if (stateWiseReport) {
+			sql.append(" (Select Account, Province, (OpeningBal + CreditAmount + DebitAmount) ClosingBal,");
+			sql.append(" (Case When OpeningBal > 0 Then 'Dr' else 'Cr' End) OpeningBalType, ");
+			sql.append(
+					" (Case When (OpeningBal + CreditAmount + DebitAmount) > 0 Then 'Dr' else 'Cr' End) ClosingBalType ");
+			sql.append(
+					" From TRIAL_BALANCE_REPORT_WORK) T2 where TRIAL_BALANCE_REPORT_WORK.Account = T2.Account And  TRIAL_BALANCE_REPORT_WORK.Province = T2.Province");
+
+		} else {
+			sql.append(" (Select Account, (OpeningBal + CreditAmount + DebitAmount) ClosingBal,");
+			sql.append(" (Case When OpeningBal > 0 Then 'Dr' else 'Cr' End) OpeningBalType, ");
+			sql.append(
+					" (Case When (OpeningBal + CreditAmount + DebitAmount) > 0 Then 'Dr' else 'Cr' End) ClosingBalType ");
+			sql.append(" From TRIAL_BALANCE_REPORT_WORK) T2 where TRIAL_BALANCE_REPORT_WORK.Account = T2.Account");
+		}
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug(count);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void logInFileTable() throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HeaderID", headerId);
+
+		StringBuilder data = new StringBuilder();
+		data.append(
+				" INSERT INTO TRIAL_BALANCE_REPORT_FILE(Account,AcTypeGrpID, Country, Province, HostAccount, Description,");
+		data.append(" OpeningBal, OpeningBalType, DebitAmount, CreditAmount, ClosingBal, ClosingBalType, FinType)");
+		data.append(" Select Distinct Account, AcTypeGrpId, Country, Province, HostAccount, Description,");
+		data.append(
+				" ABS(OpeningBal), OpeningBalType, ABS(DebitAmount), ABS(CreditAmount), ABS(ClosingBal), ClosingBalType, FinType");
+		data.append(" From TRIAL_BALANCE_REPORT_VIEW Where HeaderID =:HeaderID");
+		if (stateWiseReport) {
+			data.append(" Order By Province");
+		} else {
+			data.append(" Order By AcTypeGrpId");
+		}
+		try {
+			logger.trace(Literal.SQL + data.toString());
+			int count = parameterJdbcTemplate.update(data.toString(), paramMap);
+			logger.debug(count);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateOpeningBalance() throws Exception {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("headerId", headerId);
+		StringBuilder sql = new StringBuilder();
+		sql.append(
+				" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (Select ACCOUNT,PROVINCE, (OPENINGBAL - PLACBALANCE) OPENINGBAL");
+		sql.append(" from TRIAL_BALANCE_REPORT_WORK ) T2 ");
+		sql.append(" ON (T1.ACCOUNT = T2.ACCOUNT And  T1.PROVINCE = T2.PROVINCE)");
+		sql.append(" WHEN MATCHED THEN UPDATE SET T1.OPENINGBAL = T2.OPENINGBAL");
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug(count);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new Exception(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setCreditOrDebitType() {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource paramMap = null;
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (");
+		sql.append(" Select Account, Province, ClosingBal, OpeningBal,OpeningBalType,");
+		sql.append(" (CASE WHEN ClosingBalType = 'Dr' THEN 'Cr' ELSE 'Dr' END) ClosingBalType");
+		sql.append(" from TRIAL_BALANCE_REPORT_WORK) T2 ON (T1.Account = T2.Acoount And T1.Province = T2.Province)");
+		sql.append(
+				" WHEN MATCHED THEN UPDATE SET T1.CLOSINGBAL = (0-T2.CLOSINGBAL), T1.OpeningBal = (0 - OpeningBal),");
+		sql.append("T1.CLOSINGBALTYPE = T2.CLOSINGBALTYPE");
+
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("headerId", headerId);
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
+			logger.debug("Count: " + count);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
 	}
 
 	/**
@@ -461,7 +616,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		try {
 			financeEndDate = new SimpleDateFormat("dd/MM/yyyy").parse(financeStartDate);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return financeEndDate;
@@ -617,6 +771,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 					.execute("alter table TRIAL_BALANCE_REPORT_FILE modify ID generated as identity (start with 1)");
 		} else if (App.DATABASE == App.Database.SQL_SERVER) {
 			jdbcTemplate.execute("dbcc checkident ('TRIAL_BALANCE_REPORT_FILE', reseed, 0)");
+		} else if (App.DATABASE == App.Database.POSTGRES) {
+			jdbcTemplate.execute("ALTER SEQUENCE seq_transaction_detail_report RESTART WITH 1");
 		}
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -633,20 +789,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		// delete the data between start and end date if already available
 		StringBuilder sql = new StringBuilder();
-		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT WHERE HEADERID = ");
-		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER");
-		sql.append(
-				" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION AND ENTITYCODE = :ENTITYCODE)");
-		logger.trace(Literal.SQL + sql.toString());
-		parameterJdbcTemplate.update(sql.toString(), paramMap);
-
-		sql = new StringBuilder();
-		sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID =");
-		sql.append(" (SELECT ID FROM TRIAL_BALANCE_HEADER");
-		sql.append(
-				" WHERE STARTDATE = :START_DATE AND ENDDATE = :END_DATE AND DIMENSION = :DIMENSION AND ENTITYCODE = :ENTITYCODE)");
-		logger.trace(Literal.SQL + sql.toString());
-		parameterJdbcTemplate.update(sql.toString(), paramMap);
 
 		sql = new StringBuilder();
 		sql = sql.append("Delete from DATA_ENGINE_LOG where ID IN (");
@@ -780,8 +922,9 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
 
+		logger.trace(Literal.SQL + sql.toString());
 		try {
-			logger.trace(Literal.SQL + sql.toString());
+			logger.debug(Literal.LEAVING);
 			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -801,6 +944,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
+
 		sql.append(" SELECT distinct T1.account,T5.ACBALANCE openingBalance,RB.BRANCHPROVINCE stateCode, ");
 		sql.append(" ATG.GROUPCODE accountType,AT.ACTYPEDESC accountTypeDes From postings T1 ");
 		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = T1.POSTBRANCH ");
@@ -809,20 +953,10 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID ");
 		sql.append(" INNER JOIN ( Select T1.ACCOUNTID,T1.ACBALANCE, T1.POSTDATE from ACCOUNTSHISTORY T1 ");
 		sql.append(" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 ");
-
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" where to_char(T2.postdate,'dd-MM-yyyy')<= :FROMDATE group by T2.accountid) T2 ");
-		} else {
-			sql.append(" where T2.postdate  <= :FROMDATE group by T2.accountid) T2 ");
-		}
+		sql.append(" where T2.postdate <= :FROMDATE group by T2.accountid) T2 ");
 		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
 		sql.append("  where atg.GROUPCODE in ('EXPENSE','INCOME') and T1.EntityCode = :EntityCode ");
-
-		if (App.DATABASE == Database.POSTGRES) {
-			sql.append(" and T1.postamount<>0 and to_char(T1.POSTDATE,'dd-MM-yyyy')<= :FROMDATE ");
-		} else {
-			sql.append("  and T1.postamount<>0 and  T1.POSTDATE <= :FROMDATE ");
-		}
+		sql.append("  and T1.postamount<>0 and  T1.POSTDATE <= :FROMDATE");
 
 		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
 			String[] arr = stateCode.split(",");
@@ -983,10 +1117,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 					&& (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) == 0)) {
 
 			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
+					&& BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
 					&& BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0
 					&& BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
 				tempList.add(tb);
 			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
+					|| (BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
 					|| (BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0)
 					|| (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
 				tempList.add(tb);
@@ -1013,40 +1149,12 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void logTrialBalace() throws Exception {
+	private void logTrialBalace(BigDecimal profitLossAmt) throws Exception {
 		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("HEADERID", headerId);
-		paramMap.addValue("DIMENSION", dimension.name());
-		paramMap.addValue("FROMDATE", fromDate);
-		paramMap.addValue("TODATE", toDate);
 
-		try {
-			StringBuilder sql = new StringBuilder();
-			sql.append(" DELETE FROM TRIAL_BALANCE_REPORT_LAST_RUN WHERE HEADERID IN(");
-			sql.append(
-					" (SELECT ID FROM TRIAL_BALANCE_HEADER WHERE DIMENSION = :DIMENSION AND STARTDATE = :FROMDATE and ENDDATE =:TODATE))");
-			parameterJdbcTemplate.update(sql.toString(), paramMap);
-
-			sql = new StringBuilder();
-			sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_LAST_RUN");
-			sql.append(" SELECT * FROM TRIAL_BALANCE_REPORT WHERE HEADERID = :HEADERID");
-			logger.trace(Literal.SQL + sql.toString());
-			parameterJdbcTemplate.update(sql.toString(), paramMap);
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new Exception("Unable to insert current month trail balance.");
-		}
-
-		if (dimension == Dimension.STATE) {
-			loginfileTableForState();
-			addSummaryRecord();
-		} else {
-			logInFileTable();
-			addFinancialSummaryForConsolidate();
-			addSummaryRecord();
-		}
+		logInFileTable();
+		addFinancialSummary(profitLossAmt);
+		addSummaryRecord();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1055,28 +1163,32 @@ public class TrailBalanceEngine extends DataEngineExport {
 	 * Second last row shall be the sum of balances of income (Account type group code) minus sum of balances of expense
 	 * (Account type group code) ledgers for the previous financial year
 	 */
-	private void addFinancialSummaryForConsolidate() {
+	private void addFinancialSummary(BigDecimal profitLossAmt) {
 		logger.debug(Literal.ENTERING);
 
-		String closingBaltype = "";
 		StringBuilder sql = new StringBuilder();
+		;
 		MapSqlParameterSource parmsource = new MapSqlParameterSource();
-		BigDecimal closingBal = getPreviousFinancialYearBalances(getFinanceEndDate());
-		closingBal = PennantApplicationUtil.formateAmount(closingBal, PennantConstants.defaultCCYDecPos);
 
-		closingBaltype = getSignOfBalanceType(closingBal);
-		closingBal = closingBal.abs();
+		String openingBalType = "";
+		if (profitLossAmt.compareTo(BigDecimal.ZERO) > 0) {
+			openingBalType = "Dr";
+		} else {
+			openingBalType = "Cr";
+		}
 
-		sql = new StringBuilder();
 		String accountCode = parameters.get("PRFT_LOSS_GLCODE");
+		sql = new StringBuilder();
 		sql.append(
-				"INSERT INTO TRIAL_BALANCE_REPORT_FILE (ACCOUNT, DESCRIPTION, OPENINGBAL, CLOSINGBAL, CLOSINGBALTYPE, OPENINGBALTYPE)");
-		sql.append("VALUES (:ACCOUNT, :DESCRIPTION, :CLOSINGBAL, :CLOSINGBAL, :CLOSINGBALTYPE, :CLOSINGBALTYPE)");
+				" INSERT INTO TRIAL_BALANCE_REPORT_FILE (ACCOUNT, DESCRIPTION, OPENINGBAL, CLOSINGBAL,OpeningBalType,ClosingBalType)");
+		sql.append(
+				" VALUES (:ACCOUNT, :DESCRIPTION, :ProfitLossAmt, :ProfitLossAmt, :OpeningBalType, :OpeningBalType)");
 
+		parmsource.addValue("ProfitLossAmt",
+				PennantApplicationUtil.formateAmount(profitLossAmt.abs(), PennantConstants.defaultCCYDecPos));
 		parmsource.addValue("ACCOUNT", accountCode);
 		parmsource.addValue("DESCRIPTION", parameters.get(accountCode));
-		parmsource.addValue("CLOSINGBAL", closingBal.toString());
-		parmsource.addValue("CLOSINGBALTYPE", closingBaltype);
+		parmsource.addValue("OpeningBalType", openingBalType);
 		logger.trace(Literal.SQL + sql.toString());
 		parameterJdbcTemplate.update(sql.toString(), parmsource);
 		logger.debug(Literal.LEAVING);
@@ -1091,70 +1203,30 @@ public class TrailBalanceEngine extends DataEngineExport {
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_FILE(DEBITAMOUNT, CREDITAMOUNT) values");
-		sql.append(
-				" ((select sum(debitamount) from TRIAL_BALANCE_REPORT_FILE  where hostaccount is not null) ,(select sum(CREDITAMOUNT) from TRIAL_BALANCE_REPORT_FILE  where hostaccount is not null))");
+		sql.append(" ((select Sum(DebitAmount) from TRIAL_BALANCE_REPORT_FILE) ,");
+		sql.append(" (select Sum(CreditAmount) from TRIAL_BALANCE_REPORT_FILE))");
 		logger.trace(Literal.SQL + sql.toString());
 		parameterJdbcTemplate.update(sql.toString(), new MapSqlParameterSource());
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void logInFileTable() {
+	private void resetWorkingTable() {
 		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("HEADERID", headerId);
 
-		StringBuilder data = new StringBuilder();
-		data.append("INSERT INTO TRIAL_BALANCE_REPORT_FILE(ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION,");
-		data.append(
-				" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE, ACCOUNT, FINTYPE)");
-		data.append(" select ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION, OPENINGBAL, OPENINGBALTYPE,");
-		data.append(" DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE, ACCOUNT, FINTYPE");
-		data.append(" from TRIAL_BALANCE_REPORT_VIEW WHERE HEADERID = :HEADERID");
-		data.append(" AND(OPENINGBAL>0 OR CLOSINGBAL>0 OR DEBITAMOUNT>0 OR CREDITAMOUNT>0) ORDER BY PROVINCE");
-		logger.trace(Literal.SQL + data.toString());
-		parameterJdbcTemplate.update(data.toString(), paramMap);
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void loginfileTableForState() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder data = new StringBuilder();
-		data.append("INSERT INTO TRIAL_BALANCE_REPORT_FILE(ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION,");
-		data.append(
-				" OPENINGBAL, OPENINGBALTYPE, DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE, ACCOUNT, FINTYPE)");
-		data.append(" select ACTYPEGRPID, COUNTRY, PROVINCE, HOSTACCOUNT, DESCRIPTION, OPENINGBAL, OPENINGBALTYPE,");
-		data.append(" DEBITAMOUNT, CREDITAMOUNT, CLOSINGBAL, CLOSINGBALTYPE, ACCOUNT, FINTYPE");
-		data.append(" from TRIAL_BALANCE_REPORT_VIEW WHERE HEADERID = :HEADERID order by PROVINCE");
-
-		MapSqlParameterSource datesMap = new MapSqlParameterSource();
-		datesMap.addValue("HEADERID", headerId);
-		parameterJdbcTemplate.update(data.toString(), datesMap);
-
-		String closingBaltype = "";
-		BigDecimal closingBal = BigDecimal.ZERO;
-
-		closingBal = getPreviousFinancialYearBalances(getFinanceEndDate());
-		closingBal = PennantApplicationUtil.formateAmount(closingBal, PennantConstants.defaultCCYDecPos);
-
-		closingBaltype = getSignOfBalanceType(closingBal);
-		closingBal = closingBal.abs();
-
-		datesMap = new MapSqlParameterSource();
-		String accountCode = parameters.get("PRFT_LOSS_GLCODE");
-		datesMap.addValue("ACCOUNT", parameters.get("PRFT_LOSS_GLCODE"));
-		datesMap.addValue("DESCRIPTION", parameters.get(accountCode));
-		datesMap.addValue("CLOSINGBAL", closingBal.toString());
-		datesMap.addValue("CLOSINGBALTYPE", closingBaltype);
-		datesMap.addValue("HEADERID", headerId);
-
+		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = new StringBuilder();
-		sql.append(" INSERT INTO TRIAL_BALANCE_REPORT_FILE");
-		sql.append(" (ACCOUNT, DESCRIPTION, OPENINGBAL, CLOSINGBAL, CLOSINGBALTYPE, OPENINGBALTYPE)");
-		sql.append(" VALUES(:ACCOUNT, :DESCRIPTION, :CLOSINGBAL, :CLOSINGBAL, :CLOSINGBALTYPE, :CLOSINGBALTYPE)");
 
-		logger.trace(Literal.SQL + sql.toString());
-		parameterJdbcTemplate.update(sql.toString(), datesMap);
+		sql.append(" Delete  From TRIAL_BALANCE_REPORT_WORK Where HeaderId = :HeaderID");
 
+		paramMap = new MapSqlParameterSource();
+		paramMap.addValue("HeaderID", headerId);
+
+		try {
+			logger.trace(Literal.SQL + sql.toString());
+			parameterJdbcTemplate.update(sql.toString(), paramMap);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 

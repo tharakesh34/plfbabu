@@ -458,6 +458,34 @@
 											</rows>
 										</grid>
 									</groupbox>
+									
+									<!-- Split Screen Components Start-->
+									<groupbox id="gb_DocumentPdf"
+										visible="false">
+										<button id="btnDocPdfClose"
+											tooltiptext="${c:l('btnClose.tooltiptext')}" label="CLOSE"
+											sclass="z-toolbarbutton"
+											style="background-color: #bc5c5c; padding-right: 20px; position: relative; right: -407px;"
+											visible="false" />
+										<space></space>
+										<hbox
+											style="font-size: 16px;">
+											Documents
+										</hbox>
+										<groupbox
+											id="gb_SplitScreen_Documents" visible="false">
+
+										</groupbox>
+
+										<groupbox
+											id="gb_iframeriskPropertyPdf" visible="false">
+											<iframe
+												id="iframeriskPropertyPdf" visible="false" />
+										</groupbox>
+									</groupbox>
+
+									<!-- Split Screen Components End-->
+
 									<groupbox id="gb_RolloverFinance" visible="false" closable="true">
 										<caption label="${c:l('label_FinanceMainDialog_RolloverFinance')}" />
 										<listbox id="listBoxRolledoverFinance" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
@@ -1039,6 +1067,22 @@
 						</hbox>
 					</groupbox>
 				</south>
+				<east id="btnDocPdfEast" width="28px;" left="1367px;"
+					visible="false">
+					<vlayout>
+						<space></space>
+						<space></space>
+						<space></space>
+						<space></space>
+						<space></space>
+						<space></space>
+						<space></space>
+						<space></space>
+						<image id="btnDocPdf" width="24px"
+							style="cursor:pointer;" src="/images/icons/document_pdf.png">
+						</image>
+					</vlayout>
+				</east>
 			</borderlayout>
 		</window>
 	</window>

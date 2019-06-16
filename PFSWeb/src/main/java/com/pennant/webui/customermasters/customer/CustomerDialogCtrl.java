@@ -2318,37 +2318,27 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custFirstName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFirstName.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
-				this.custFirstName.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustFirstName.value"),
-								"RETAIL_CUSTOMER_NAME", isMandValidate));
 			}
 			if (!this.custMiddleName.isReadonly()) {
 				this.custMiddleName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMiddleName.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, false));
-				this.custMiddleName.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerDialog_CustMiddleName.value"), "RETAIL_CUSTOMER_NAME", false));
 			}
 			if (!this.custLastName.isReadonly()) {
 				this.custLastName
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLastName.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
-				this.custLastName
-						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustLastName.value"),
-								"RETAIL_CUSTOMER_NAME", isMandValidate));
 			}
 			if (!this.motherMaidenName.isReadonly()) {
 				this.motherMaidenName.setConstraint(
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
-				this.motherMaidenName.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
-								"RETAIL_CUSTOMER_NAME", isMandValidate));
 			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {
-				this.custShrtName.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CustomerDialog_CustomerName.value"), "CORP_CUSTOMER_NAME", true));
+				this.custShrtName
+						.setConstraint(new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustomerName.value"),
+								PennantRegularExpressions.REGEX_CUST_NAME, true));
 			}
 		}
 		if (!this.custArabicName.isReadonly()) {

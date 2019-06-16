@@ -744,6 +744,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date tdsStartDate;
 	private Date tdsEndDate;
 	private BigDecimal tdsLimitAmt;
+	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -933,6 +934,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("strtPrdHdays");
 		excludeFields.add("strtprdCpzMethod");
 		excludeFields.add("coreBankId");
+		excludeFields.add("intTdsAdjusted");
 
 		return excludeFields;
 	}
@@ -4342,6 +4344,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setCoreBankId(String coreBankId) {
 		this.coreBankId = coreBankId;
+	}
+
+	public BigDecimal getIntTdsAdjusted() {
+		return intTdsAdjusted;
+	}
+
+	public void setIntTdsAdjusted(BigDecimal intTdsAdjusted) {
+		this.intTdsAdjusted = intTdsAdjusted;
 	}
 
 	public String getVanCode() {

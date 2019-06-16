@@ -66,6 +66,7 @@ import com.pennant.backend.model.administration.SecurityUserDivBranch;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -506,13 +507,7 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder();
 
-		if (!"Y".equals(SysParamUtil.getValueAsString("ALLOW_ORGANISATIONAL_STRUCTURE"))) {
-			sql.append("select usrId, userDivision, UserBranch");
-			sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
-			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
-			sql.append(" FROM  SecurityUserDivBranch");
-			sql.append(type);
-		} else {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DIVISION_BASED_CLUSTER)) {
 			sql.append("select t1.usrid, t1.division UserDivision, dd.divisionCodeDesc divisionDesc");
 			sql.append(", t1.branch UserBranch, t2.branchdesc, t1.accessType, t1.ClusterId, t1.ClusterType");
 			sql.append(", t4.code ClusterCode, t4.Name ClusterNmae, t1.Entity, t3.EntityDesc");
@@ -525,7 +520,12 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 			sql.append(" left join clusters t4 ON t4.Id = t1.clusterId");
 			sql.append(" left join clusters t5 ON t5.Id = t1.parentCluster");
 			sql.append(" left join cluster_Hierarchy t6 ON t6.entity = t1.entity and t6.clusterType = t1.clusterType");
-
+		} else {
+			sql.append("select usrId, userDivision, UserBranch");
+			sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode,");
+			sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+			sql.append(" FROM  SecurityUserDivBranch");
+			sql.append(type);
 		}
 		sql.append(" Where UsrID = :UsrID");
 

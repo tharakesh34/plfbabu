@@ -67,4 +67,9 @@ public interface FinExcessAmountDAO {
 	FinExcessAmount getFinExcessByID(long excessID);
 
 	int deleteMovemntByPrdID(long presentmentId);
+
+	void saveExcessMovementList(List<FinExcessMovement> movements);
+
+	void saveExcessList(List<FinExcessAmount> feaList);
+
 }

@@ -152,10 +152,10 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	@Override
-	public void processResponseFile(long userId, File file, Media media) throws Exception {
+	public void processResponseFile(long userId, File file, Media media, DataEngineStatus status) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String configName = MANDATES_IMPORT.getName();
+		String configName = status.getName();
 
 		String name = "";
 
@@ -165,31 +165,30 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			name = media.getName();
 		}
 
-		MANDATES_IMPORT.reset();
-		MANDATES_IMPORT.setFileName(name);
-		MANDATES_IMPORT.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
+		status.reset();
+		status.setFileName(name);
+		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(),
-				MANDATES_IMPORT);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(getValueDate());
 		dataEngine.importData(configName);
 
 		do {
-			if ("S".equals(MANDATES_IMPORT.getStatus()) || "F".equals(MANDATES_IMPORT.getStatus())) {
-				receiveResponse(MANDATES_IMPORT.getId());
+			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
+				receiveResponse(status.getId(), status);
 				break;
 			}
-		} while ("S".equals(MANDATES_IMPORT.getStatus()) || "F".equals(MANDATES_IMPORT.getStatus()));
+		} while ("S".equals(status.getStatus()) || "F".equals(status.getStatus()));
 
 		logger.debug(Literal.LEAVING);
 
 	}
 
 	@Override
-	public void receiveResponse(long respBatchId) throws Exception {
+	public void receiveResponse(long respBatchId, DataEngineStatus status) throws Exception {
 		MapSqlParameterSource paramMap = null;
 		StringBuilder sql = null;
 		List<Mandate> mandates = null;
@@ -252,7 +251,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 									processSwappedMandate(mandate);
 								}
 							} catch (EmptyResultDataAccessException e) {
-								logger.warn("Exception: ", e);
+								logger.warn(Literal.EXCEPTION, e);
 							}
 
 							logMandateHistory(respMandate, mandate.getRequestID());
@@ -288,7 +287,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		} finally {
-			updateRemarks(respBatchId, approved, rejected, notMatched);
+			updateRemarks(respBatchId, approved, rejected, notMatched, status);
 		}
 	}
 
@@ -307,6 +306,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		sql.append(" ADDOFBRANCH BRANCH_ADDRESS,");
 		sql.append(" CUSTCIF,");
 		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
+		sql.append("CustCoreBank AUXILIARY_FIELD3,");
 		sql.append(" PHONENUMBER CUSTOMER_PHONE,");
 		sql.append(" CUSTEMAIL CUSTOMER_EMAIL,");
 		sql.append(" FINTYPE,");
@@ -355,6 +355,25 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
 					rowMap.put("EXTRACTION_DATE", getAppDate());
+
+					String frequency = null;
+
+					if (rowMap.get("FREQUENCY") != null) {
+						String temp = rowMap.get("FREQUENCY").toString();
+						if (temp.contains("D")) {
+							frequency = "DIAL";
+						} else if (temp.contains("M")) {
+							frequency = "MNTH";
+						} else if (temp.contains("W")) {
+							frequency = "Week";
+						} else if (temp.contains("Q")) {
+							frequency = "QURT";
+						} else {
+							frequency = "";
+						}
+						rowMap.put("FREQUENCY", frequency);
+
+					}
 
 					String appId = null;
 					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
@@ -482,7 +501,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		return bankCodeMap;
 	}
 
-	private void logMandateHistory(Long mandateId, long requestId) {
+	protected void logMandateHistory(Long mandateId, long requestId) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -525,7 +544,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		return null;
 	}
 
-	private void updateMandateResponse(Mandate respmandate) {
+	protected void updateMandateResponse(Mandate respmandate) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -547,7 +566,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void logMandate(long respBatchId, Mandate respMandate) {
+	protected void logMandate(long respBatchId, Mandate respMandate) {
 		SqlParameterSource beanParameters = null;
 		DataEngineLog log = new DataEngineLog();
 
@@ -652,6 +671,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		} else {
 			paramMap.addValue("STATUS", "APPROVED");
 		}
+
 		paramMap.addValue("REASON", respmandate.getReason());
 		paramMap.addValue("changeDate", getAppDate());
 		paramMap.addValue("fileID", requestId);
@@ -660,7 +680,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateMandateRequest(Mandate respmandate, long id) {
+	protected void updateMandateRequest(Mandate respmandate, long id) {
 		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
@@ -680,10 +700,11 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateRemarks(long respBatchId, long approved, long rejected, long notMatched) {
+	protected void updateRemarks(long respBatchId, long approved, long rejected, long notMatched,
+			DataEngineStatus status) {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-		StringBuilder remarks = new StringBuilder(MANDATES_IMPORT.getRemarks());
+		StringBuilder remarks = new StringBuilder(status.getRemarks());
 		remarks.append(", Approved: ");
 		remarks.append(approved);
 		remarks.append(", Rejected: ");
@@ -691,7 +712,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		remarks.append(", Not Matched: ");
 		remarks.append(notMatched);
 
-		MANDATES_IMPORT.setRemarks(remarks.toString());
+		status.setRemarks(remarks.toString());
 
 		StringBuffer query = new StringBuffer();
 		query.append(" UPDATE DATA_ENGINE_STATUS set EndTime = :EndTime, Remarks = :Remarks ");

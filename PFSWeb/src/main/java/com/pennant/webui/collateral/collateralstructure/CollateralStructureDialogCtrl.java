@@ -118,6 +118,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
@@ -279,7 +280,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			extendedFieldHeader.setModuleName(CollateralConstants.MODULE_NAME);
 			if (collateralStructure.isNew()) {
 				extendedFieldHeader.setSubModuleName(collateralStructure.getCollateralType());
-				extendedFieldHeader.setNumberOfColumns("2");
+				extendedFieldHeader.setNumberOfColumns("3");
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("extendedFieldHeader", extendedFieldHeader);
@@ -350,11 +351,14 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.queryId.setValueType(DataType.LONG);
 		this.queryId.setValidateColumns(new String[] { "QueryId", "QueryCode", "QueryModule", "QuerySubCode" });
 
+		this.commodity.setVisible(false);
 		this.commodity.setModuleName("Commodity");
 		this.commodity.setValueColumn("Id");
 		this.commodity.setDescColumn("Code");
 		this.commodity.setValueType(DataType.LONG);
 		this.commodity.setValidateColumns(new String[] { "Id", "CommodityTypeCode", "Code" });
+
+		this.nextValuationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		setStatusDetails();
 		logger.debug("Leaving");
@@ -1246,10 +1250,6 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 					Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"), true));
 		}
 		if (this.rw_commodity.isVisible()) {
-			if (!this.commodity.getButton().isDisabled()) {
-				this.commodity.setConstraint(new PTStringValidator(
-						Labels.getLabel("label_CollateralStructureDialog_commodity.value"), null, true));
-			}
 			if (!this.thresholdLtv.isDisabled()) {
 				if (StringUtils.equals(CollateralConstants.FIXED_LTV, getComboboxValue(this.ltvType))) {
 					this.thresholdLtv.setConstraint(new PTDecimalValidator(

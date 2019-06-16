@@ -106,6 +106,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	protected Radiogroup numberOfColumns;
 	protected Radio radio_column1;
 	protected Radio radio_column2;
+	protected Radio radio_column3;
 	protected Grid grid_basicDetails;
 
 	private transient boolean validationOn;
@@ -348,6 +349,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
 					|| StringUtils.equals(aExtendedFieldHeader.getModuleName(), AssetConstants.EXTENDEDFIELDS_MODULE)) {
 				//TODO: Modify dynamic from static
+
 				ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
 				unitCount.setFieldName("NOOFUNITS");
 				unitCount.setFieldLabel("Number of Units");
@@ -372,8 +374,24 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				unitPrice.setInputElement(true);
 				unitPrice.setEditable(true);
 
-				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
+				ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
+				hsnCode.setFieldName("HSNCODE");
+				hsnCode.setFieldLabel("HSN Code");
+				hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
+				hsnCode.setFieldLength(20);
+				hsnCode.setFieldSeqOrder(50);
+				hsnCode.setFieldMandatory(false);
+				hsnCode.setRecordType(PennantConstants.RCD_ADD);
+				hsnCode.setVersion(1);
+				hsnCode.setInputElement(true);
+				hsnCode.setFieldList("HSNCodeData");
+				hsnCode.setFieldConstraint("HSNCode");
+				hsnCode.setEditable(true);
+
+				aExtendedFieldHeader.getExtendedFieldDetails().add(hsnCode);
 				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
+				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
+
 			}
 
 		}

@@ -61,6 +61,7 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FrequencyBox extends Hbox {
 	private static final long serialVersionUID = 1L;
@@ -83,7 +84,7 @@ public class FrequencyBox extends Hbox {
 	 * FrequencyBox Constructor Defining the components and events
 	 */
 	public FrequencyBox() {
-		logger.debug("Entering");
+		logger.trace(Literal.ENTERING);
 
 		// Space
 		space = new Space();
@@ -129,7 +130,7 @@ public class FrequencyBox extends Hbox {
 		hbox.appendChild(frqDay);
 		this.appendChild(hbox);
 
-		logger.debug("Leaving");
+		logger.trace(Literal.LEAVING);
 	}
 
 	/**

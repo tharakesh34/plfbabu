@@ -892,10 +892,11 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		this.exchangeRateType.setMaxlength(8);
 		this.exchangeRateType.setMandatoryStyle(true);
 		this.exchangeRateType.setTextBoxWidth(40);
-		this.exchangeRateType.setModuleName("RateType");
-		this.exchangeRateType.setValueColumn("RateTypeCode");
-		this.exchangeRateType.setDescColumn("RateTypeDescription");
-		this.exchangeRateType.setValidateColumns(new String[] { "RateTypeCode" });
+		this.exchangeRateType.setModuleName("Currency");
+		this.exchangeRateType.setValueColumn("CcyCode");
+		this.exchangeRateType.setDescColumn("CcyDesc");
+		this.exchangeRateType.setValidateColumns(new String[] { "CcyCode" });
+
 		this.debitCount.setMaxlength(10);
 		this.creditsCount.setMaxlength(10);
 		this.totDebitsByBatchCcy.setMaxlength(18);

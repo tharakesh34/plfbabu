@@ -49,7 +49,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
@@ -66,9 +65,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RateUtil implements Serializable {
-
 	private static final long serialVersionUID = 3360714221070313516L;
-	private static Logger logger = Logger.getLogger(RateUtil.class);
 
 	private static BaseRateDAO baseRateDAO;
 	private static SplRateDAO splRateDAO;
@@ -81,7 +78,6 @@ public class RateUtil implements Serializable {
 	 * the given date returns Base rate,Special rate ,Reference Rate in a HashMap
 	 */
 	public static RateDetail getRefRate(RateDetail rateDetail) {
-		logger.debug("Entering");
 		boolean error = false;
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -171,7 +167,6 @@ public class RateUtil implements Serializable {
 			rateDetail.setErrorDetails(errorDetails.get(0));
 		}
 
-		logger.debug("Leaving");
 		return rateDetail;
 	}
 
@@ -183,7 +178,6 @@ public class RateUtil implements Serializable {
 	 */
 	public static RateDetail rates(String baseRateCode, String currency, String splRateCode, BigDecimal margin,
 			BigDecimal minRate, BigDecimal maxRate) {
-		logger.debug("Entering");
 
 		RateDetail rate = new RateDetail();
 		rate.setBaseRateCode(baseRateCode);
@@ -193,7 +187,6 @@ public class RateUtil implements Serializable {
 		rate.setValueDate(DateUtility.getAppDate());
 		rate = getRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), minRate, maxRate));
-		logger.debug("Leaving");
 
 		return rate;
 	}
@@ -206,7 +199,6 @@ public class RateUtil implements Serializable {
 	 */
 	public static RateDetail rates(String baseRateCode, String currency, String splRateCode, BigDecimal margin,
 			Date valueDate, BigDecimal minRate, BigDecimal maxRate) {
-		logger.debug("Entering");
 		RateDetail rate = new RateDetail();
 		rate.setBaseRateCode(baseRateCode);
 		rate.setCurrency(currency);
@@ -215,7 +207,6 @@ public class RateUtil implements Serializable {
 		rate.setValueDate(valueDate);
 		rate = getRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), minRate, maxRate));
-		logger.debug("Leaving");
 		return rate;
 	}
 
@@ -226,7 +217,6 @@ public class RateUtil implements Serializable {
 	 *            BaseRateCode splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static BigDecimal ratesFromLoadedData(FinScheduleData finScheduleData, int iSchd) {
-		logger.debug("Entering");
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
@@ -250,7 +240,6 @@ public class RateUtil implements Serializable {
 		if (StringUtils.isBlank(finSchdDetails.get(iSchd).getBaseRate())) {
 			netRefRate = finSchdDetails.get(iSchd).getActRate();
 			calRate = getEffRate(netRefRate, minRate, maxRate);
-			logger.debug("Leaving");
 			return calRate;
 		}
 
@@ -288,7 +277,6 @@ public class RateUtil implements Serializable {
 				? BigDecimal.ZERO : finSchdDetails.get(iSchd).getMrgRate());
 		calRate = getEffRate(netRefRate, minRate, maxRate);
 
-		logger.debug("Leaving");
 		return calRate;
 	}
 
@@ -301,7 +289,6 @@ public class RateUtil implements Serializable {
 	 * @return
 	 */
 	public static BigDecimal getEffRate(BigDecimal effRate, BigDecimal minRate, BigDecimal maxRate) {
-		logger.debug("Entering");
 
 		if (minRate == null) {
 			minRate = BigDecimal.ZERO;
@@ -315,7 +302,6 @@ public class RateUtil implements Serializable {
 		}
 
 		if (minRate.compareTo(BigDecimal.ZERO) == 0 && maxRate.compareTo(BigDecimal.ZERO) == 0) {
-			logger.debug("Leaving");
 			return effRate;
 		}
 
@@ -327,7 +313,6 @@ public class RateUtil implements Serializable {
 			effRate = maxRate;
 		}
 
-		logger.debug("Leaving");
 		return effRate;
 	}
 
@@ -338,8 +323,6 @@ public class RateUtil implements Serializable {
 	 *            BaseRateCode currency splRateCode SplRateCode Decimalbox rateBox
 	 */
 	public static RateDetail cofRate(String cofRateCode, String currency) {
-		logger.debug("Entering");
-
 		RateDetail rate = new RateDetail();
 		rate.setBaseRateCode(cofRateCode);
 		rate.setCurrency(currency);
@@ -348,8 +331,6 @@ public class RateUtil implements Serializable {
 		rate.setValueDate(DateUtility.getAppDate());
 		rate = getCofRefRate(rate);
 		rate.setNetRefRateLoan(getEffRate(rate.getNetRefRateLoan(), null, null));
-		logger.debug("Leaving");
-
 		return rate;
 	}
 
@@ -360,7 +341,6 @@ public class RateUtil implements Serializable {
 	 * the given date returns Base rate,Special rate ,Reference Rate in a HashMap
 	 */
 	public static RateDetail getCofRefRate(RateDetail rateDetail) {
-		logger.debug("Entering");
 		boolean error = false;
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -429,7 +409,6 @@ public class RateUtil implements Serializable {
 			rateDetail.setErrorDetails(errorDetails.get(0));
 		}
 
-		logger.debug("Leaving");
 		return rateDetail;
 	}
 

@@ -361,16 +361,16 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		if (StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_MAKER)) {
 			listheader_DepositDate.setVisible(true);
-			this.button_ReceiptList_Submit.setVisible(true);
-			listHeader_CheckBox_Name.setVisible(true);
+			this.button_ReceiptList_Submit.setVisible(false);
+			listHeader_CheckBox_Name.setVisible(false);
 		} else if (StringUtils.equals(this.module, FinanceConstants.RECEIPT_APPROVER)
 				|| StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_APPROVER)
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_APPROVER)) {
 			listheader_RealizationDate.setVisible(true);
 			listheader_DepositDate.setVisible(true);
-			this.button_ReceiptList_Approve.setVisible(true);
-			this.button_ReceiptList_Resubmit.setVisible(true);
-			listHeader_CheckBox_Name.setVisible(true);
+			this.button_ReceiptList_Approve.setVisible(false);
+			this.button_ReceiptList_Resubmit.setVisible(false);
+			listHeader_CheckBox_Name.setVisible(false);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
 			listheader_DepositDate.setVisible(false);

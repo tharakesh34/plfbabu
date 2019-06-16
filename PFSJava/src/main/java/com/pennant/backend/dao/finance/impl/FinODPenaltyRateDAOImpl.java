@@ -12,6 +12,7 @@ import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> implements FinODPenaltyRateDAO {
 	private static Logger logger = Logger.getLogger(FinODPenaltyRateDAOImpl.class);
@@ -31,30 +32,27 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	 */
 	@Override
 	public FinODPenaltyRate getFinODPenaltyRateByRef(final String finReference, String type) {
-		logger.debug("Entering");
 		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
 		finODPenaltyRate.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays,");
-		selectSql.append(
+		StringBuilder sql = new StringBuilder(" SELECT FinReference ,FinEffectDate, ApplyODPenalty, ODIncGrcDays,");
+		sql.append(
 				" ODChargeType, ODGraceDays, ODChargeCalOn , ODChargeAmtOrPerc, ODAllowWaiver , ODMaxWaiverPerc , oDRuleCode, ODMinCapAmount ");
-		selectSql.append(" From FinODPenaltyRates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference ");
+		sql.append(" From FinODPenaltyRates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODPenaltyRate);
 		RowMapper<FinODPenaltyRate> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinODPenaltyRate.class);
 
 		try {
-			finODPenaltyRate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			finODPenaltyRate = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			finODPenaltyRate = null;
 		}
-		logger.debug("Leaving");
 		return finODPenaltyRate;
 	}
 

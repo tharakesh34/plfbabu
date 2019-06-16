@@ -467,41 +467,38 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 */
 	@Override
 	public List<FinODDetails> getFinODDByFinRef(String finReference, Date odSchdDate) {
-		logger.debug("Entering");
-
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 		finODDetails.setFinODSchdDate(odSchdDate);
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
-		selectSql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
-		selectSql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
-		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
-		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
-		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
-		selectSql.append(" FinLMdfDate, ODRuleCode ");
+		StringBuilder sql = new StringBuilder("Select FinReference, FinODSchdDate, FinODFor, FinBranch,");
+		sql.append(" FinType, CustID, FinODTillDate, FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt,");
+		sql.append(" FinMaxODPri, FinMaxODPft, GraceDays, IncGraceDays, FinCurODDays,");
+		sql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
+		sql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
+		sql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		sql.append(" FinLMdfDate, ODRuleCode ");
 
-		selectSql.append(" From FinODDetails");
-		selectSql.append(" Where FinReference =:FinReference ");
+		sql.append(" From FinODDetails");
+		sql.append(" Where FinReference =:FinReference ");
 
 		if (odSchdDate != null) {
-			selectSql.append(" AND FinODSchdDate >= :FinODSchdDate ");
+			sql.append(" AND FinODSchdDate >= :FinODSchdDate ");
 		}
 
-		selectSql.append(" ORDER BY FinODSchdDate");
+		sql.append(" ORDER BY FinODSchdDate");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODDetails);
 		RowMapper<FinODDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinODDetails.class);
 
 		List<FinODDetails> finODDetailsList = null;
 
 		try {
-			finODDetailsList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			finODDetailsList = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 		}
 
-		logger.debug("Leaving");
 		return finODDetailsList;
 	}
 

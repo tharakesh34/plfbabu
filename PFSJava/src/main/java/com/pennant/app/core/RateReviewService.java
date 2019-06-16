@@ -105,6 +105,7 @@ public class RateReviewService extends ServiceHelper {
 		FinanceMain finMain = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finEODEvent.getFinanceScheduleDetails();
 
+		//Reverify really Rate Review Required
 		finEODEvent.setRateReviewExist(false);
 
 		//No Rate Review on start date
@@ -128,7 +129,7 @@ public class RateReviewService extends ServiceHelper {
 		for (int i = 0; i < finSchdDetails.size(); i++) {
 			if (finSchdDetails.get(i).getSchDate().compareTo(valueDate) == 0
 					&& !StringUtils.isEmpty(finSchdDetails.get(i).getBaseRate())) {
-				//FIXME Filed name should be renamed
+				// FIXME Field name should be renamed
 				finEODEvent.setRateOnChgDate(finSchdDetails.get(i).getBaseRate());
 				iEvtFrom = i;
 				break;
