@@ -76,7 +76,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.google.common.collect.ComparisonChain;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
@@ -91,7 +90,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.systemmasters.SOATransactionReport;
 import com.pennant.backend.service.finance.ChangeTDSService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -764,7 +762,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		 * this.installmentDate .setValue(changeTDSService.getInstallmentDate(financeMain. getFinReference(),
 		 * DateUtility.getAppDate())); this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
 		 */
-		if (StringUtils.equals(finMaintainInstruction.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
+		/*if (StringUtils.equals(finMaintainInstruction.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
 			this.eventHistory.setVisible(true);
 			this.eventHistoryCaption.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_TDSDetails"));
 			this.currentTDS.setLabel(Labels.getLabel("label_ScheduleDetailDialog_CurrentTDS"));
@@ -777,14 +775,14 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			lc = new Listcell(String.valueOf(finMaintainInstruction.istDSApplicable()));
 			lc.setParent(item);
 			listBoxEventHistory.appendChild(item);
-		}
+		}*/
 
-		/*Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
+		Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
 				new Comparator<LowerTaxDeduction>() {
 					public int compare(LowerTaxDeduction o1, LowerTaxDeduction o2) {
 						return DateUtility.compare(o1.getEndDate(), o2.getEndDate());
 					}
-				});*/
+				});
 
 		logger.debug("Leaving");
 	}
