@@ -286,6 +286,7 @@
 			t1.tdsallowtomodify,
 			t1.tdsapplicableto,
 			t1.alwvan,
+			t1.vanallocationmethod,
 			t1.AllowDrawingPower
 		   FROM rmtfinancetypes t1
 			 LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
