@@ -797,12 +797,12 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 					.getEndDate();
 		}
 		
-		Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
+		/*Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
 				new Comparator<LowerTaxDeduction>() {
 					public int compare(LowerTaxDeduction o1, LowerTaxDeduction o2) {
 						return DateUtility.compare(o1.getEndDate(), o2.getEndDate());
 					}
-				});
+				});*/
 		doFillListbox(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails());
 		logger.debug("Leaving");
 	}
