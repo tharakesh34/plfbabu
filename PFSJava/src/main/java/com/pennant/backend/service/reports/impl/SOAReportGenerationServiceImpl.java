@@ -453,19 +453,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaTransactionReport.setCreditAmount(
 						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
 
-			} else {
-				//AdvanceEMI credit entry with maturity date
-				soaTransactionReport.setFinReference(finReference);
-				soaTransactionReport.setCcyEditField(statementOfAccount.getCcyEditField());
-				soaTransactionReport.setFromDate(finMain.getMaturityDate());
-				soaTransactionReport.setToDate(finMain.getMaturityDate());
-				soaTransactionReport.setCcyMinorCcyUnits(ccyMinorCcyUnits);
-
-				soaTransactionReport.setDebitAmount(
-						PennantApplicationUtil.formateAmount(soaTransactionReport.getDebitAmount(), ccyEditField));
-				soaTransactionReport.setCreditAmount(
-						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
-
 			}
 			finalSOATransactionReports.add(soaTransactionReport);
 		}
@@ -1060,7 +1047,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			List<FinanceDisbursement> disbursements = soaReportGenerationDAO
 					.getFinanceDisbursementByFinRef(finReference);
 
-			if (StringUtils.isBlank(finMain.getClosingStatus())
+			/*if (StringUtils.isBlank(finMain.getClosingStatus())
 					|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")
 							&& CollectionUtils.isNotEmpty(disbursements)) {
 				for (FinanceDisbursement financeDisbursement : disbursements) {
@@ -1084,7 +1071,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 					soaTransactionReports.add(soaTranReport);
 				}
-			}
+			}*/
 
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();
