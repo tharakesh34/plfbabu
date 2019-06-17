@@ -127,4 +127,6 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<!-- 5.0.6 is Under QC please use 5.0.7 -->
 </databaseChangeLog>
