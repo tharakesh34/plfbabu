@@ -32,5 +32,12 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	<changeSet id="1" author="Saikiran.V">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+</changeSet>
+	
 
 </databaseChangeLog>
