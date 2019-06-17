@@ -2701,7 +2701,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// LowerTax Deductions
 			// ===============
 			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getLowerTaxDeductionDetails())
-					|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+					&& FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LowerTaxDeductionDetails");
 				details = processLowerTaxDeductionDetails(details, tableType, financeDetail);
 				auditDetails.addAll(details);
@@ -4319,7 +4319,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// LowerTax Deductions
 			// ===============
 			if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getLowerTaxDeductionDetails())
-					|| FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+					&& FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LowerTaxDeductionDetails");
 				details = processLowerTaxDeductionDetails(details, TableType.MAIN_TAB, financeDetail);
 				auditDetails.addAll(details);
