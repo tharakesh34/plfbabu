@@ -219,7 +219,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="31.0" author="Varaprasad.K" dbms="mssql">
+		<sql>
+		<![CDATA[		 
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_OWNER;
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_YEARSAT;
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_NHF;
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_LSD;
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_NCHECK;
+					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_NOOFAT;
+			]]>
 
+		
+		</sql>
+	</changeSet>
+	
 	<changeSet id="31" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[		 
@@ -277,7 +292,5 @@
 		 ]]>
 		</sql>
 		</changeSet>
-		
-		<!-- 5.0.5 is Under QC please use 5.0.6 -->
 			
 </databaseChangeLog>
