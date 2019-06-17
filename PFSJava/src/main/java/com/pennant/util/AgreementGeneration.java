@@ -274,7 +274,7 @@ public class AgreementGeneration implements Serializable {
 	private DocumentManagerDAO documentManagerDAO;
 
 	private List<DocumentType> documentTypeList;
-
+	@Autowired
 	private MasterDefService masterDefService;
 
 	private List<ValueLabel> listLandHolding = PennantStaticListUtil.getYesNo();
