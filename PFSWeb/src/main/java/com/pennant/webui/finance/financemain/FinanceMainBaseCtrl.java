@@ -1019,7 +1019,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient Date oldVal_tDSStartDate;
 	protected transient Date oldVal_tDSEndDate;
 	protected transient BigDecimal oldVal_LimitAmt;
-
+	protected transient BigDecimal oldVal_tdsPercentage;
 	//Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	//for pdf extraction
@@ -5073,7 +5073,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.oldVal_tDSStartDate = this.tDSStartDate.getValue();
 		this.oldVal_tDSEndDate = this.tDSEndDate.getValue();
-		this.oldVal_LimitAmt = this.tDSLimitAmt.getActualValue();
+		if (this.tDSLimitAmt.getActualValue() != null) {
+			this.oldVal_LimitAmt = this.tDSLimitAmt.getActualValue();
+		}
+		if (this.tDSPercentage.getValue() != null) {
+			this.oldVal_tdsPercentage = this.tDSPercentage.getValue();
+		}
 	}
 
 	/**
@@ -5513,6 +5518,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (DateUtility.compare(this.oldVal_tDSEndDate, this.tDSEndDate.getValue()) != 0) {
 			return true;
 		}
+		
+		
+		BigDecimal oldTdsAmt = PennantAppUtil.unFormateAmount(this.oldVal_LimitAmt, formatter);
+		BigDecimal newTdsAmt = PennantAppUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter);
+		if (oldTdsAmt.compareTo(newTdsAmt) != 0) {
+			return true;
+		}
+		
+		
+		//if(oldva)
 
 		return false;
 	}

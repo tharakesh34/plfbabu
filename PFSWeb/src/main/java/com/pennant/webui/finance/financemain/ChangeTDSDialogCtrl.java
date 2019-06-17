@@ -59,6 +59,7 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Checkbox;
@@ -89,8 +90,11 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
+import com.pennant.backend.model.lmtmasters.FacilityReferenceDetail;
+import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.ChangeTDSService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -135,6 +139,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	private transient ChangeTDSService changeTDSService;
 	protected transient FinanceSelectCtrl financeSelectCtrl = null;
 	private FinMaintainInstruction finMaintainInstruction;
+	protected Listbox listBoxTdsDetails;
 
 	protected Row rowFinance;
 
@@ -162,6 +167,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected Row row_TDS3;
 	private FinanceDetail financeDetail = null;
 	boolean istdsAllowToModify = false;
+	protected transient Date previousLTDEndDate  ; 
+
 	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
 
 	/**
@@ -447,6 +454,12 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
+			
+			if(DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate)<=0) {
+				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH",
+						new String[] { "Previous LTD End Date",
+								Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));			}
+			
 			try {
 				lowerTxDeduction.setEndDate(this.tdsEndDate.getValue());
 			} catch (WrongValueException we) {
@@ -777,14 +790,45 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			listBoxEventHistory.appendChild(item);
 		}*/
 
+		
+		if (getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails() != null
+				&& getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().size() == 1) {
+			this.previousLTDEndDate = getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().get(0)
+					.getEndDate();
+		}
+		
 		Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
 				new Comparator<LowerTaxDeduction>() {
 					public int compare(LowerTaxDeduction o1, LowerTaxDeduction o2) {
 						return DateUtility.compare(o1.getEndDate(), o2.getEndDate());
 					}
 				});
-
+		doFillListbox(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails());
 		logger.debug("Leaving");
+	}
+	
+	
+	private void doFillListbox(List<LowerTaxDeduction> list) {
+		this.listBoxTdsDetails.getItems().clear();
+		if (list == null || list.isEmpty()) {
+			return;
+		}
+		for (LowerTaxDeduction lowerTaxDeduction : list) {
+			Listitem item = new Listitem();
+			Listcell lc;
+			lc = new Listcell(String.valueOf(lowerTaxDeduction.getPercentage()));
+			lc.setParent(item);
+			lc = new Listcell(DateUtility.formatToLongDate(lowerTaxDeduction.getStartDate()));
+			lc.setParent(item);
+			lc = new Listcell(DateUtility.formatToLongDate(lowerTaxDeduction.getEndDate()));
+			lc.setParent(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(lowerTaxDeduction.getLimitAmt(),
+					CurrencyUtil.getFormat("")));
+			lc.setParent(item);
+			this.listBoxTdsDetails.appendChild(item);
+
+		}
+
 	}
 
 	/**
@@ -911,11 +955,11 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		readOnlyComponent(isReadOnly("ChangeTDSDialog_TDSPercentage"), this.tdsPercentage);
 		readOnlyComponent(isReadOnly("ChangeTDSDialog_TDSStartDate"), this.tdsStartDate);
 		readOnlyComponent(isReadOnly("ChangeTDSDialog_TDSEndDate"), this.tdsEndDate);
-		readOnlyComponent(isReadOnly("ChangeTDSDialog_TDSLimit"), this.tdsLimit);
+		readOnlyComponent(isReadOnly("ChangeTDSDialog_TDSPercentage"), this.tdsLimit);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -930,14 +974,14 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.finReference.setReadonly(true);
 		this.finBranch.setReadonly(true);
 		this.custCIF.setReadonly(true);
@@ -949,7 +993,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		/*
 		 * this.tdsPercentage.setReadonly(true); this.tdsStartDate.setReadonly(true); this.tdsEndDate.setReadonly(true);
 		 */
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -959,10 +1003,10 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnClose(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doClose();
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doClose() {
@@ -977,8 +1021,11 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	}
 
 	private void doSetValidation() {
-		logger.debug("Entering");
-		BigDecimal tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
+		logger.debug(Literal.ENTERING);
+		BigDecimal tdsPerc = BigDecimal.ZERO;
+		if (this.tdsPercentage.getValue() != null) {
+			 tdsPerc = this.tdsPercentage.getValue();
+		}
 		if (tdsPerc.compareTo(this.tdsPercentage.getValue()) != 0) {
 			if (!this.tdsStartDate.isDisabled()) {
 				this.tdsStartDate.setConstraint(
@@ -1007,7 +1054,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 					PennantConstants.defaultCCYDecPos, false, false));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1017,7 +1064,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * @throws InterruptedException
 	 */
 	public void onCheck$tDSApplicable(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.LEAVING);
 
 		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
 			this.row_TDS2.setVisible(true);
@@ -1033,7 +1080,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			this.row_TDS3.setVisible(false);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1041,7 +1088,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * @param event
 	 */
 	public void onChange$tdsStartDate(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.tdsStartDate.getValue() != null) {
 
@@ -1051,7 +1098,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			this.row_TDS3.setVisible(false);
 			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -1086,7 +1133,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	 * @param event
 	 */
 	public void onChange$tdsEndDate(Event event) {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 		finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
 		if (this.tdsStartDate.getValue() != null && this.tdsEndDate.getValue() != null) {
 
@@ -1129,7 +1176,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			this.tdsLimit.setValue(BigDecimal.ZERO);
 		}
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 
 	}
 

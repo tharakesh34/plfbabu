@@ -137,6 +137,20 @@
 								</grid>
 							</groupbox>
 						</groupbox>
+						
+						<listbox id="listBoxTdsDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
+							<listhead sizable="true">
+								<listheader id="listheader_TdsPercentage" label="${c:l('listheader_TdsPercentage.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_TdsStartDate" label="${c:l('listheader_TdsStartDate.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_TdsEndDate" label="${c:l('listheader_TdsEndDate.label')}" sort="auto"
+									hflex="min" />
+								<listheader id="listheader_LimitAmount" label="${c:l('listheader_LimitAmount.label')}" sort="auto" hflex="min" />
+							</listhead>
+						</listbox>
+						
 					</div>
 				</center>
 				<south id="south" sclass="south-dialog">
