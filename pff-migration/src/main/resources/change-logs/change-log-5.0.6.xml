@@ -820,7 +820,7 @@
 		<addDefaultValue columnName="AlwVan" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="27" author="Saikiran.v">
+	<changeSet id="27.1" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -1042,7 +1042,8 @@
 			t1.cashcollateralreq,
 			t1.tdsallowtomodify,
 			t1.tdsapplicableto,
-			t1.AlwVan
+			t1.AlwVan,
+			t1.vanallocationmethod
 			FROM rmtfinancetypes t1
 			LEFT JOIN bmtproduct t2 ON t1.fincategory = t2.productcode
 			LEFT JOIN rmtaccounttypes t4 ON t1.fincontingentactype = t4.actype
