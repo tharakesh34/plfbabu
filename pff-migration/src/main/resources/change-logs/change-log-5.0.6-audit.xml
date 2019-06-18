@@ -32,6 +32,12 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
 
 	<changeSet id="1" author="Saikiran.V">
 		<modifyDataType tableName="adtcommitmentrates" columnName="cmtspecialrate" newDataType="varchar(8)" />
