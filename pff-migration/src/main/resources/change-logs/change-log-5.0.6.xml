@@ -820,7 +820,8 @@
 		<addDefaultValue columnName="AlwVan" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="27.1" author="Saikiran.v">
+		
+<changeSet id="27.2" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -1058,8 +1059,8 @@
 			LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
 			LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
-	</changeSet>
-
+	</changeSet> 
+	
 	<changeSet id="28" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
