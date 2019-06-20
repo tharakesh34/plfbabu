@@ -301,6 +301,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			this.space_documentName.setSclass("");
 		}
+		
+		if(this.docOriginal.isChecked()){
+			this.space_docBarcode.setSclass("mandatory");
+		}else{
+			this.space_docBarcode.setSclass("");
+		}
+		
 
 		if (this.docOriginal.isChecked()) {
 			this.space_docBarcode.setSclass("mandatory");
@@ -1211,6 +1218,21 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			//this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
+		}
+	}
+	/**
+	 * Get the window for entering Notes
+	 * 
+	 * @param event
+	 *            (Event)
+	 * 
+	 * @throws Exception
+	 */
+	public void onCheck$docOriginal(Event event) throws Exception {
+		if (this.docOriginal.isChecked()) {
+			this.space_docBarcode.setClass("mandatory");
+		} else {
+			this.space_docBarcode.setClass("");
 		}
 	}
 

@@ -376,11 +376,11 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 
 				ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
 				hsnCode.setFieldName("HSNCODE");
-				hsnCode.setFieldLabel("HSN Code");
+				hsnCode.setFieldLabel("HSN / ISIN Code");
 				hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
 				hsnCode.setFieldLength(20);
 				hsnCode.setFieldSeqOrder(50);
-				hsnCode.setFieldMandatory(false);
+				hsnCode.setFieldMandatory(true);
 				hsnCode.setRecordType(PennantConstants.RCD_ADD);
 				hsnCode.setVersion(1);
 				hsnCode.setInputElement(true);

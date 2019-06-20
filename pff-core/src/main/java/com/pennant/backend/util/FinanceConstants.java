@@ -467,8 +467,8 @@ public class FinanceConstants {
 	public static final String RECEIPT_MAKER = "RECEIPT_MAKER";
 	public static final String DEPOSIT_MAKER = "DEPOSIT_MAKER";
 	public static final String DEPOSIT_APPROVER = "DEPOSIT_APPROVER";
-	public static final String RECEIPTREALIZE_MAKER = "REALIZATION_MAKER";
-	public static final String RECEIPTREALIZE_APPROVER = "REALIZATION_APPROVER";
+	public static final String REALIZATION_MAKER = "REALIZATION_MAKER";
+	public static final String REALIZATION_APPROVER = "REALIZATION_APPROVER";
 	public static final String RECEIPT_APPROVER = "RECEIPT_APPROVER";
 	public static final String CLOSURE_MAKER = "RECEIPTCLOSURE_MAKER";
 	public static final String CLOSURE_APPROVER = "RECEIPTCLOSURE_APPROVER";

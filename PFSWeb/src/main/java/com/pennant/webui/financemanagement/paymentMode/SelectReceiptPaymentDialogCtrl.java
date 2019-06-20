@@ -469,6 +469,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 						.getErrorDetail(receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)));
 				return;
 			}
+			
 			doShowDialog();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -500,13 +501,13 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				.subtract(receiptData.getExcessAvailable());
 
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
+		
 		this.receiptDues.setDisabled(true);
 		this.btnProceed.setDisabled(false);
 		this.btnValidate.setDisabled(true);
 		this.receiptAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
-
-		logger.debug("Leaving " + event.toString());
 	}
+
 
 	public Customer fetchCustomerDataByCIF() {
 
@@ -791,8 +792,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	}
 
 	public void doWriteComponentsToBean() throws Exception {
-		logger.debug("Entering ");
-
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
@@ -868,14 +867,22 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				receiptAmt = PennantApplicationUtil.unFormateAmount(receiptAmt, formatter);
 
 				if (receiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
-					throw new WrongValueException(this.receiptAmount.getCcyTextBox(),
-							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" }));
+					wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" })));
 				}
+				
+				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
+					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()) > 0) {
+						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(), "Receipt Amount should greater than or equal to Receipt Dues."));
+					}
+				}
+
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
+		
 		validateBasicReceiptDate();
 
 		doRemoveValidation();
@@ -888,8 +895,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 			throw new WrongValuesException(wvea);
 		}
-
-		logger.debug("Leaving ");
 	}
 
 	private void validateBasicReceiptDate() {
@@ -936,6 +941,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
 			MessageUtil.showError(Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" }));
 		}
+		
 		if (isKnockOff) {
 			BigDecimal availableAmount = BigDecimal.ZERO;
 

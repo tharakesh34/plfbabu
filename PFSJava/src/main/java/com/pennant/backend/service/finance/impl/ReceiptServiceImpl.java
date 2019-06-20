@@ -609,9 +609,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 		} else if (StringUtils.equals(FinanceConstants.DEPOSIT_APPROVER, receiptHeader.getRoleCode()) && changeStatus) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
-		} else if (StringUtils.equals(FinanceConstants.RECEIPTREALIZE_MAKER, receiptHeader.getRoleCode())) {
+		} else if (StringUtils.equals(FinanceConstants.REALIZATION_MAKER, receiptHeader.getRoleCode())) {
 
-		} else if (StringUtils.equals(FinanceConstants.RECEIPTREALIZE_APPROVER, receiptHeader.getRoleCode())) {
+		} else if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, receiptHeader.getRoleCode())) {
 
 		} else {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
@@ -870,8 +870,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			befRctHeader = getFinReceiptHeaderById(receiptHeader.getReceiptID(), false, "_View");
 		}
 		// FinReceiptDetail Audit Details Preparation
-		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
-				receiptHeader.getReceiptDetails().get(0).getExcludeFields());
+		FinReceiptDetail adtFinReceiptDetail  = new FinReceiptDetail();
+		String[] rhFields = PennantJavaUtil.getFieldDetails(adtFinReceiptDetail,
+				adtFinReceiptDetail.getExcludeFields());
 		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
 			if (CollectionUtils.isNotEmpty(befRctHeader.getReceiptDetails())) {
 				auditDetails.add(new AuditDetail(auditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1],
@@ -1298,7 +1299,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			aAuditHeader.getAuditDetail().setModelData(receiptData);
 			return aAuditHeader;
 		}
-		if (StringUtils.equals(FinanceConstants.RECEIPTREALIZE_APPROVER, roleCode)) {
+		if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
 			if ((StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 					FinanceConstants.FINSER_EVENT_SCHDRPY))
 					&& (StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
@@ -4942,7 +4943,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	public void setReceiptModeStatus(FinReceiptHeader rch) {
-		if ((rch.getNextRoleCode() == null || rch.getNextRoleCode().equals(FinanceConstants.RECEIPTREALIZE_MAKER))
+		if ((rch.getNextRoleCode() == null || rch.getNextRoleCode().equals(FinanceConstants.REALIZATION_MAKER))
 				&& StringUtils.equals(RepayConstants.PAYSTATUS_INITIATED, rch.getReceiptModeStatus())) {
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
@@ -5198,7 +5199,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (fsi.isReceiptdetailExits()) {
 			FinReceiptData oldReceiptData = this.getFinReceiptDataById(fsi.getFinReference(),
 					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.FINSER_EVENT_RECEIPT,
-					"RECEIPTREALIZE_MAKER");
+					FinanceConstants.REALIZATION_MAKER);
 			receiptData = oldReceiptData;
 
 			version = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
@@ -5224,8 +5225,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						|| StringUtils.equals(fsi.getPaymentMode(), "DD"))) {
 
 			WorkFlowDetails workFlowDetails = null;
-			String roleCode = "DEPOSIT_APPROVER";// default value
-			String nextRolecode = "RECEIPTREALIZE_MAKER";// defaulting role
+			String roleCode = FinanceConstants.DEPOSIT_APPROVER;// default value
+			String nextRolecode = FinanceConstants.REALIZATION_MAKER;// defaulting role
 			// codes
 			String taskid = null;
 			String nextTaskId = null;

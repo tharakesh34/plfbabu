@@ -21,6 +21,7 @@ import com.pennant.app.core.ServiceHelper;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -50,6 +51,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
@@ -89,17 +91,25 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			FinanceScheduleDetail curSchd = finEODEvent.getFinanceScheduleDetails().get(idx);
 
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-				continue;
-			}
-
 			AdvanceType advanceType = null;
 			String amountType = "";
 
-			if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
-				advanceType = AdvanceType.getType(fm.getGrcAdvType());
+			boolean isBPi = false;
+			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+				if (!StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, fm.getBpiTreatment())) {
+					continue;
+				} else if (!SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
+					continue;
+				}
+				advanceType = AdvanceType.AF;
+				isBPi = true;
 			} else {
-				advanceType = AdvanceType.getType(fm.getAdvType());
+
+				if (curSchd.getSchDate().compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+					advanceType = AdvanceType.getType(fm.getGrcAdvType());
+				} else {
+					advanceType = AdvanceType.getType(fm.getAdvType());
+				}
 			}
 
 			if (advanceType == null) {
@@ -108,6 +118,13 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			BigDecimal profitDue = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid())
 					.subtract(curSchd.getTDSAmount());
+
+			boolean tdsInclOnPftPaid = false;
+			if (isBPi && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
+				profitDue = curSchd.getProfitSchd();
+				tdsInclOnPftPaid = true;
+			}
+
 			BigDecimal principalDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
 
 			//get excess
@@ -176,14 +193,18 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			if (curSchd.getTDSAmount().compareTo(BigDecimal.ZERO) > 0) {
-				if ((curSchd.getProfitSchd().subtract(curSchd.getTDSAmount()))
-						.compareTo(curSchd.getSchdPftPaid()) == 0) {
+				if (tdsInclOnPftPaid) {
 					curSchd.setTDSPaid(curSchd.getTDSAmount());
-					curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(curSchd.getTDSPaid()));
 				} else {
-					BigDecimal tds = receiptCalculator.getTDS(curSchd.getSchdPftPaid());
-					curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().subtract(tds));
-					curSchd.setTDSPaid(tds);
+					if ((curSchd.getProfitSchd().subtract(curSchd.getTDSAmount()))
+							.compareTo(curSchd.getSchdPftPaid()) == 0) {
+						curSchd.setTDSPaid(curSchd.getTDSAmount());
+						curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().add(curSchd.getTDSPaid()));
+					} else {
+						BigDecimal tds = receiptCalculator.getTDS(curSchd.getSchdPftPaid());
+						curSchd.setSchdPftPaid(curSchd.getSchdPftPaid().subtract(tds));
+						curSchd.setTDSPaid(tds);
+					}
 				}
 			}
 
@@ -250,6 +271,12 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setPriAdjusted(curSchd.getSchdPriPaid());
 		amountCodes.setIntAdjusted(curSchd.getSchdPftPaid());
 		amountCodes.setIntTdsAdjusted(curSchd.getTDSPaid());
+		if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+				&& StringUtils.equals(fm.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
+				amountCodes.setIntTdsAdjusted(BigDecimal.ZERO);
+			}
+		}
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
@@ -790,6 +817,50 @@ public class AdvancePaymentService extends ServiceHelper {
 		manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Creating Excess Amount record for the BPI processing Amount Movement.
+	 * 
+	 * @param finReference
+	 * @param tdsApplicable
+	 * @param pftSchd
+	 * @param tdsAmount
+	 */
+	public void processBpiAmount(String finReference, boolean tdsApplicable, BigDecimal pftSchd, BigDecimal tdsAmount) {
+		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+				RepayConstants.EXAMOUNTTYPE_ADVINT);
+
+		BigDecimal bpiAmt = pftSchd;
+		if (tdsApplicable && !SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
+			bpiAmt = pftSchd.subtract(tdsAmount);
+		}
+
+		if (BigDecimal.ZERO.compareTo(bpiAmt) == 0) {
+			return;
+		}
+
+		// Excess Record Creation
+		if (exAmount == null) {
+			exAmount = new FinExcessAmount();
+			exAmount.setFinReference(finReference);
+			exAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_ADVINT);
+			exAmount.setAmount(bpiAmt);
+			exAmount.setBalanceAmt(bpiAmt);
+
+			this.finExcessAmountDAO.saveExcess(exAmount);
+		} else {
+			this.finExcessAmountDAO.updateExcessBal(exAmount.getExcessID(), bpiAmt);
+		}
+
+		// Excess Movement Creation for Credit
+		FinExcessMovement movement = new FinExcessMovement();
+		movement.setExcessID(exAmount.getExcessID());
+		movement.setReceiptID(null);
+		movement.setMovementType(RepayConstants.RECEIPTTYPE_PAYABLE);
+		movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
+		movement.setAmount(bpiAmt);
+		this.finExcessAmountDAO.saveExcessMovement(movement);
 	}
 
 	@Autowired

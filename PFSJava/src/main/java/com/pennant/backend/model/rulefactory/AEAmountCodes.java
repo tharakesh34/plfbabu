@@ -113,6 +113,8 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal addFeeToFinance = BigDecimal.ZERO;
 	private BigDecimal paidFee = BigDecimal.ZERO;
 	private BigDecimal bpi = BigDecimal.ZERO;
+	private BigDecimal bpiTds = BigDecimal.ZERO;
+	private boolean bpiToAdvInt = false;
 	private BigDecimal deductFeeDisb = BigDecimal.ZERO;
 	private BigDecimal deductInsDisb = BigDecimal.ZERO;
 	private BigDecimal disbInstAmt = BigDecimal.ZERO;
@@ -1512,5 +1514,21 @@ public class AEAmountCodes implements Serializable {
 
 	public void setPriAdjusted(BigDecimal priAdjusted) {
 		this.priAdjusted = priAdjusted;
+	}
+
+	public BigDecimal getBpiTds() {
+		return bpiTds;
+	}
+
+	public void setBpiTds(BigDecimal bpiTds) {
+		this.bpiTds = bpiTds;
+	}
+
+	public boolean isBpiToAdvInt() {
+		return bpiToAdvInt;
+	}
+
+	public void setBpiToAdvInt(boolean bpiToAdvInt) {
+		this.bpiToAdvInt = bpiToAdvInt;
 	}
 }

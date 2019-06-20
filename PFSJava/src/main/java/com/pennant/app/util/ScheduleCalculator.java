@@ -3307,7 +3307,7 @@ public class ScheduleCalculator {
 			}
 
 			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-				finMain.setBpiAmount(curSchd.getProfitSchd());
+				finMain.setBpiAmount(curSchd.getProfitSchd().subtract(curSchd.getTDSAmount()));
 			}
 
 			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0) {

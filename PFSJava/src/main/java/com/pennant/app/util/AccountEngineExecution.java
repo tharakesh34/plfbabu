@@ -122,13 +122,9 @@ public class AccountEngineExecution implements Serializable {
 	 * @return
 	 */
 	public AEEvent getAccEngineExecResults(AEEvent aeEvent) {
-		logger.debug("Entering");
-
 		List<ReturnDataSet> returnList = prepareAccountingSetResults(aeEvent);
 
 		aeEvent.setReturnDataSet(returnList);
-		logger.debug("Leaving");
-
 		return aeEvent;
 	}
 

@@ -217,13 +217,13 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -838,8 +838,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.hbox_ReceiptDialog_DepositDate.setVisible(true);
 		}
 
-		if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)
-				|| StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)) {
+		if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)
+				|| StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)) {
 			this.row_CancelReason.setVisible(true);
 			this.row_BounceRemarks.setVisible(true);
 			this.row_RealizationDate.setVisible(true);
@@ -5455,6 +5455,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return false;
 			}
 		}
+		
 		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
 			return false;
@@ -5466,7 +5467,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
 			if (firstInstDate != null && receiptValueDate.compareTo(firstInstDate) < 0) {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_First_Inst_Date",
-						new String[] { firstInstDate.toString() }));
+						new String[] { DateUtil.formatToLongDate(firstInstDate) }));
 				return false;
 			}
 		}
@@ -5969,6 +5970,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		ReceiptReport receipt = new ReceiptReport();
 		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		receipt.setReceiptNo(this.receiptId.getValue());
 		receipt.setUserName(loggedInUser.getUserName() + " - " + loggedInUser.getFullName());
 		receipt.setFinReference(this.finReference.getValue());
 		receipt.setCustName(receiptData.getReceiptHeader().getCustShrtName());

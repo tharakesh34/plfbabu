@@ -1209,4 +1209,10 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		this.commoditiesService = commoditiesService;
 	}
 
+	public void onFulfill$alertToRoles(Event event) {
+		logger.debug(Literal.ENTERING);
+		this.alertToRoles.setTooltiptext(this.alertToRoles.getValue());
+		logger.debug(Literal.LEAVING);
+	}
+
 }

@@ -194,7 +194,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.label_DepositDate.setValue(Labels.getLabel("label_SelectReceiptDialog_DepositDate.value"));
 			this.row_DepositBank.setVisible(true);
 			this.receiptStatus.setValue(RepayConstants.PAYSTATUS_DEPOSITED);
-		} else if (FinanceConstants.RECEIPTREALIZE_MAKER.equals(module)) {
+		} else if (FinanceConstants.REALIZATION_MAKER.equals(module)) {
 			this.row_ReceiptStatus.setVisible(true);
 			this.row_Remarks.setVisible(true);
 			this.label_title.setValue(Labels.getLabel("window_ReceiptDialog.title.Realization"));
@@ -203,8 +203,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.row_DepositDate.setVisible(false);
 		}
 
-		if (FinanceConstants.RECEIPTREALIZE_APPROVER.equals(module)
-				|| FinanceConstants.DEPOSIT_APPROVER.equals(module)) {
+		if (FinanceConstants.REALIZATION_APPROVER.equals(module) || FinanceConstants.DEPOSIT_APPROVER.equals(module)) {
 			String msg = "label_SelectReceiptDialog_Msg1.value";
 			if (MessageUtil.YES == MessageUtil.confirm(Labels.getLabel(msg, new String[] { recordAction }))) {
 				doProcess(); //processing records
@@ -501,7 +500,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		for (FinReceiptHeader receiptHeader : recHeaderColl) {
 			if (FinanceConstants.DEPOSIT_APPROVER.equals(roleCode)
-					|| FinanceConstants.RECEIPTREALIZE_APPROVER.equals(roleCode)) {
+					|| FinanceConstants.REALIZATION_APPROVER.equals(roleCode)) {
 				receiptHeader.setBatchId(batchId);
 				receiptHeader.setRecordStatus(recordAction);
 				if (FinanceConstants.DEPOSIT_APPROVER.equals(module)) {
@@ -525,7 +524,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (FinanceConstants.DEPOSIT_MAKER.equals(module)) {
 					receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_INITIATED);
 				}
-				if (FinanceConstants.RECEIPTREALIZE_MAKER.equals(roleCode)) {
+				if (FinanceConstants.REALIZATION_MAKER.equals(roleCode)) {
 					if (RepayConstants.PAYSTATUS_REALIZED.equals(finReceiptHeader.getReceiptModeStatus())) {
 						receiptHeader.setRealizationDate(finReceiptDetail.getDepositDate());
 

@@ -99,6 +99,10 @@ public class SMTParameterConstants {
 	// BPI on Deduct from disbursement is Incomized or Receivable
 	public static final String BPI_INCOMIZED_ON_ORG = "BPI_INCOMIZED_ON_ORG";
 
+	// BPI on Deduct from disbursement is Paid on Up-front in Origination or On Installment Due date
+	public static final String BPI_PAID_ON_INSTDATE = "BPI_PAID_ON_INSTDATE";
+	public static final String BPI_TDS_DEDUCT_ON_ORG = "BPI_TDS_DEDUCT_ON_ORG";
+
 	// Allow Partner Bank in Mandate based on this flag variable
 	public static final String MANDATE_ALW_PARTNER_BANK = "MANDATE_ALW_PARTNER_BANK";
 

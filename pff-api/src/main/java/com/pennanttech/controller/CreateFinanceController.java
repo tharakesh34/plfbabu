@@ -21,6 +21,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
@@ -3389,6 +3390,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	@Autowired(required = false)
+	@Qualifier(value = "createFinancePostValidationHook")
 	public void setPostValidationHook(PostValidationHook postValidationHook) {
 		this.postValidationHook = postValidationHook;
 	}

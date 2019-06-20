@@ -3,6 +3,7 @@ package com.pennanttech.pff.eod.collateral.reval.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class CollateralRevaluation implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -31,6 +32,9 @@ public class CollateralRevaluation implements Serializable {
 	private String customerTemplateCode;
 	private String userTemplateCode;
 	private String tableName;
+	private String hsnCode;
+	private BigDecimal currentValue;
+	private List<CollateralRevaluation> collHSNData;
 
 	public long getId() {
 		return id;
@@ -222,6 +226,30 @@ public class CollateralRevaluation implements Serializable {
 
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	public String getHsnCode() {
+		return hsnCode;
+	}
+
+	public void setHsnCode(String hsnCode) {
+		this.hsnCode = hsnCode;
+	}
+
+	public BigDecimal getCurrentValue() {
+		return currentValue;
+	}
+
+	public void setCurrentValue(BigDecimal currentValue) {
+		this.currentValue = currentValue;
+	}
+
+	public List<CollateralRevaluation> getCollHSNData() {
+		return collHSNData;
+	}
+
+	public void setCollHSNData(List<CollateralRevaluation> collHSNData) {
+		this.collHSNData = collHSNData;
 	}
 
 }

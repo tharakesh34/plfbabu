@@ -102,7 +102,6 @@ import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.dao.finance.IndicativeTermDetailDAO;
-import com.pennant.backend.dao.finance.LowerTaxDeductionDAO;
 import com.pennant.backend.dao.finance.OverdraftScheduleDetailDAO;
 import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
@@ -161,6 +160,8 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinExcessAmount;
+import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -191,7 +192,6 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.IndicativeTermDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.LMSServiceLog;
-import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.OverdraftMovements;
 import com.pennant.backend.model.finance.ProspectCustomer;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
@@ -226,7 +226,6 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.IncomeType;
 import com.pennant.backend.service.UpdateAttributeServiceTask;
-import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.authorization.AuthorizationLimitService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -256,6 +255,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -4061,18 +4061,25 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						&& StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment())) {
 					for (int i = 0; i < finScheduleData.getFinanceScheduleDetails().size(); i++) {
 						FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+
 						if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
-							curSchd.setSchdPftPaid(financeMain.getBpiAmount());
-							if (curSchd.getProfitSchd().compareTo(curSchd.getSchdPftPaid()) == 0) {
+
+							// Update Amount on FinExcessAmount as Amount Type : "ADVANCE INTEREST"
+							if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
+								this.advancePaymentService.processBpiAmount(financeMain.getFinReference(),
+										financeMain.isTDSApplicable(), curSchd.getProfitSchd(), curSchd.getTDSAmount());
+							} else {
+								// Default to PAID
+								curSchd.setSchdPftPaid(curSchd.getProfitSchd());
 								curSchd.setSchPftPaid(true);
 								long linkedTranId = finScheduleData.getDisbursementDetails().get(0).getLinkedTranId();
 								repayment = prepareBpiRepayData(financeMain, curSchd.getSchDate(), linkedTranId,
-										financeMain.getBpiAmount());
+										curSchd.getProfitSchd(), curSchd.getTDSAmount());
+								break;
 							}
-							break;
-						}
-						if (curSchd.getInstNumber() > 1) {
-							break;
+							if (curSchd.getInstNumber() > 1) {
+								break;
+							}
 						}
 					}
 				}
@@ -10146,7 +10153,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * @return
 	 */
 	private FinanceRepayments prepareBpiRepayData(FinanceMain finMain, Date bpiDate, long linkedTranId,
-			BigDecimal bpiAmount) {
+			BigDecimal bpiAmount, BigDecimal tdsAmount) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceRepayments repayment = new FinanceRepayments();
@@ -10164,6 +10171,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		repayment.setFinType(finMain.getFinType());
 		repayment.setFinCustID(finMain.getCustID());
 		repayment.setFinSchdPftPaid(bpiAmount);
+		repayment.setFinSchdTdsPaid(tdsAmount);
 		repayment.setFinSchdPriPaid(BigDecimal.ZERO);
 		repayment.setFinTotSchdPaid(bpiAmount);
 		repayment.setFinFee(BigDecimal.ZERO);

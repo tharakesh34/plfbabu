@@ -704,24 +704,27 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		@Override
 		public void onEvent(Event event) throws Exception {
-			if (multySelection && ExtendedSearchListBox.this.listbox.getSelectedItems() != null) {
-				for (Listitem item : ExtendedSearchListBox.this.listbox.getSelectedItems()) {
-					final Object object = item.getAttribute("data");
-					String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase()
-							+ fieldString[0].substring(1);
-					String fieldValue = "";
-					if (object.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-						fieldValue = (String) object.getClass().getMethod(fieldMethod).invoke(object);
-					} else {
-						fieldValue = object.getClass().getMethod(fieldMethod).invoke(object).toString();
-					}
+			if (multySelection) {
+				selectedValues.clear();
+				if (ExtendedSearchListBox.this.listbox.getSelectedItems() != null) {
+					for (Listitem item : ExtendedSearchListBox.this.listbox.getSelectedItems()) {
+						final Object object = item.getAttribute("data");
+						String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase()
+								+ fieldString[0].substring(1);
+						String fieldValue = "";
+						if (object.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+							fieldValue = (String) object.getClass().getMethod(fieldMethod).invoke(object);
+						} else {
+							fieldValue = object.getClass().getMethod(fieldMethod).invoke(object).toString();
+						}
 
-					selectedValues.remove(fieldValue);
-					if (item.isSelected()) {
-						selectedValues.put(fieldValue, object);
+						selectedValues.remove(fieldValue);
+						if (item.isSelected()) {
+							selectedValues.put(fieldValue, object);
+						}
 					}
+					setObject(selectedValues);
 				}
-				setObject(selectedValues);
 			} else if (ExtendedSearchListBox.this.listbox.getSelectedItem() != null) {
 				final Listitem li = ExtendedSearchListBox.this.listbox.getSelectedItem();
 				final Object object = li.getAttribute("data");

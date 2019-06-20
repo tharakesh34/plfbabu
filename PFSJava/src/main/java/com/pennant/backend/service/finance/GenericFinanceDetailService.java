@@ -1394,6 +1394,20 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
+			if(finMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)){
+				for (int i = 0; i < finSchdDetails.size(); i++) {
+					FinanceScheduleDetail curSchd = finSchdDetails.get(i);
+					if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+						amountCodes.setBpiTds(curSchd.getTDSAmount());
+						break;
+					}
+				}
+			}
+			
+			// BPI Payment on Installment Due Date
+			if(SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)){
+				amountCodes.setBpiToAdvInt(true);
+			}
 		}
 
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
@@ -1745,7 +1759,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// BPI Updation Checking for Deduct from Disbursement case only
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)
 				&& StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, financeMain.getBpiTreatment())
-				&& aeEvent.isBpiIncomized() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_INCOMIZED_ON_ORG)) {
+				&& aeEvent.isBpiIncomized() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_INCOMIZED_ON_ORG)
+				&& !SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
 			pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().add(amountCodes.getBpi()));
 		}
 

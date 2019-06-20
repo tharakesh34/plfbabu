@@ -58,6 +58,9 @@ public interface FinAdvancePaymentsDAO {
 	int getAdvancePaymentsCountByPartnerBank(long partnerBankID, String type);
 
 	void update(FinAdvancePayments finAdvancePaymentsDAO, String type);
+	
+	void updateLinkedTranId(FinAdvancePayments finAdvancePaymentsDAO);
+
 
 	void updateLinkedTranId(FinAdvancePayments finAdvancePaymentsDAO);
 

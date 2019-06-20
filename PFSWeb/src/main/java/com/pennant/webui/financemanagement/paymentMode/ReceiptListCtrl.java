@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Borderlayout;
@@ -134,7 +133,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Checkbox list_CheckBox;
 
 	private String roleCode;
-	private String nextRoleCode;
 	private String recordAction;
 
 	private Map<Long, FinReceiptHeader> recHeaderMap = new HashMap<Long, FinReceiptHeader>();
@@ -166,7 +164,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			super.queueTableName = "RECEIPTDETAILS_TVIEW";
 		}
 		this.module = getArgument("module");
-		if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) {
+		if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
 			super.tableName = "RECEIPT_Realization_VIEW";
 			super.queueTableName = "RECEIPT_Realization_VIEW";
 		}
@@ -279,24 +277,24 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			List<String> filterList = new ArrayList<>();
 			filterList.add(FinanceConstants.FINSER_EVENT_FEEPAYMENT);
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
-			//searchObject.addWhereClause(" PAYAGAINSTID = 0");
+			searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
-			if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_APPROVER)
+			if (StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)
 					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
 				List<String> filterList = new ArrayList<>();
-				filterList.add(FinanceConstants.RECEIPTREALIZE_APPROVER);
+				filterList.add(FinanceConstants.REALIZATION_APPROVER);
 				filterList.add(FinanceConstants.RECEIPT_APPROVER);
 				searchObject.addFilterIn("NEXTROLECODE", filterList);
 				searchObject.addWhereClause(" PAYAGAINSTID = 0");
 
-			} else if (StringUtils.equals(module, FinanceConstants.RECEIPTREALIZE_MAKER)) {
+			} else if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
 								+ module + "')");
 
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE is null or NEXTROLECODE='"
+						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '' or NEXTROLECODE='"
 								+ module + "')");
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
 				searchObject.addWhereClause(
@@ -358,13 +356,13 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.partnerBank.setDescColumn("PartnerBankName");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
 
-		if (StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_MAKER)
+		if (StringUtils.equals(this.module, FinanceConstants.REALIZATION_MAKER)
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_MAKER)) {
 			listheader_DepositDate.setVisible(true);
 			this.button_ReceiptList_Submit.setVisible(false);
 			listHeader_CheckBox_Name.setVisible(false);
 		} else if (StringUtils.equals(this.module, FinanceConstants.RECEIPT_APPROVER)
-				|| StringUtils.equals(this.module, FinanceConstants.RECEIPTREALIZE_APPROVER)
+				|| StringUtils.equals(this.module, FinanceConstants.REALIZATION_APPROVER)
 				|| StringUtils.equals(this.module, FinanceConstants.DEPOSIT_APPROVER)) {
 			listheader_RealizationDate.setVisible(true);
 			listheader_DepositDate.setVisible(true);
@@ -670,21 +668,23 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetail.getError());
 
-			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			//Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			doRefresh();
 			logger.debug("Leaving");
 			return;
 		}
 
 		boolean canProcessReceipt = receiptService.canProcessReceipt(finReceiptHeader.getReceiptID());
 
-		if (!canProcessReceipt) {
+		if (!canProcessReceipt && !enqiryModule) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "Unable to process the request, loan is in in-active state";
+			valueParm[0] = "You are not allowed to view the receipt, since the loan is in active state.";
 			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm),
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetail.getError());
 
-			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			// Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			doRefresh();
 			logger.debug("Leaving");
 			return;
 		}
@@ -719,7 +719,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					ErrorDetail errorDtl = ErrorUtil.getErrorDetail(errorDetail);
 					MessageUtil.showError(errorDtl.getError());
 
-					Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+					//Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+					doRefresh();
 					logger.debug("Leaving");
 					return;
 				}

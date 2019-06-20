@@ -223,79 +223,71 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	 */
 	@Override
 	public FinReceiptHeader getReceiptHeaderByID(long receiptID, String type) {
-		logger.debug("Entering");
-
 		FinReceiptHeader header = new FinReceiptHeader();
 		header.setReceiptID(receiptID);
 
-		StringBuilder selectSql = new StringBuilder(
+		StringBuilder sql = new StringBuilder(
 				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, InstructionUID, ");
-		selectSql.append(
+		sql.append(
 				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
-		selectSql.append(
+		sql.append(
 				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
-		selectSql.append(
+		sql.append(
 				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
-		selectSql.append(
+		sql.append(
 				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch,ActFinReceipt");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(
+			sql.append(
 					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
-			selectSql.append(
+			sql.append(
 					" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate, collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				selectSql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName");
+				sql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName");
 			}
 			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
-				selectSql.append(" , CustID, CustomerCIF, CustomerName");
+				sql.append(" , CustID, CustomerCIF, CustomerName");
 			}
 		}
-		selectSql.append(" From FinReceiptHeader");
-		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" Where ReceiptID =:ReceiptID ");
+		sql.append(" From FinReceiptHeader");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where ReceiptID =:ReceiptID ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(header);
 		RowMapper<FinReceiptHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinReceiptHeader.class);
 
 		try {
-			header = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			header = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
-		return header;
+		return null;
 	}
 
 	@Override
 	public int geFeeReceiptCount(String reference, String receiptPurpose, long receiptId) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = null;
 		int count = 0;
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select count(*)  from (select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader union all ");
-		selectSql.append("select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp)T");
-		selectSql.append(
-				" Where ReceiptID <> :ReceiptID AND Reference = :Reference AND ReceiptPurpose = :ReceiptPurpose AND ReceiptModeStatus in('A','F')");
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("Select count(*)  from (");
+		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader union all ");
+		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp) T");
+		sql.append(" Where ReceiptID <> :ReceiptID and Reference = :Reference");
+		sql.append(" and ReceiptPurpose = :ReceiptPurpose and ReceiptModeStatus in('A','F')");
+		
+		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("ReceiptPurpose", receiptPurpose);
 		source.addValue("ReceiptID", receiptId);
 
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (DataAccessException e) {
-			logger.error(e);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION);
 		}
-
-		logger.debug("Leaving");
 
 		return count;
 	}

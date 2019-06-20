@@ -85,9 +85,6 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 	private QueryDetailDAO queryDetailDAO;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
-
-	@Autowired(required = false)
-	@Qualifier("queryPostExteranalServiceHook")
 	private PostExteranalServiceHook postExteranalServiceHook;
 
 	// ******************************************************//
@@ -526,4 +523,9 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		return queryDetailDAO.getQueryListByReference(reference);
 	}
 
+	@Autowired(required = false)
+	@Qualifier("queryPostExteranalServiceHook")
+	public void setPostExteranalServiceHook(PostExteranalServiceHook postExteranalServiceHook) {
+		this.postExteranalServiceHook = postExteranalServiceHook;
+	}
 }

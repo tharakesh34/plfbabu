@@ -259,31 +259,27 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 	 */
 	@Override
 	public FeeType getApprovedFeeTypeByFeeCode(String feeTypeCode) {
-		logger.debug("Entering");
 
 		FeeType feeType = new FeeType();
 		feeType.setFeeTypeCode(feeTypeCode);
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append(
-				" Select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId, HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent,refundable");
-		selectSql.append(" From FeeTypes");
-		selectSql.append(" Where FeeTypeCode = :FeeTypeCode");
+		sql.append("select FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, AdviseType, AccountSetId");
+		sql.append(", HostFeeTypeCode, AmortzReq, TaxApplicable, TaxComponent, Refundable");
+		sql.append(" From FeeTypes");
+		sql.append(" Where FeeTypeCode = :FeeTypeCode");
 
-		logger.debug("sql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
 		RowMapper<FeeType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FeeType.class);
 
 		try {
-			feeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			feeType = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
 
-		logger.debug("Leaving");
-
-		return feeType;
+		return null;
 	}
 
 	@Override

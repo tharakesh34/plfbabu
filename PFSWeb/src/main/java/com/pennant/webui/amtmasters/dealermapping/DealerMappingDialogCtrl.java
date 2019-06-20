@@ -298,9 +298,9 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 	private void onfulfillMerchantName() {
 		this.storeName.setMandatoryStyle(true);
 		this.storeName.setModuleName("Stores");
-		this.storeName.setValueColumn("StoreId");
-		this.storeName.setDescColumn("StoreName");
-		this.storeName.setValidateColumns(new String[] { "StoreId" });
+		this.storeName.setValueColumn("StoreName");
+		this.storeName.setDescColumn("StoreId");
+		this.storeName.setValidateColumns(new String[] { "StoreName" });
 
 		Filter[] filters = new Filter[1];
 		filters[0] = Filter.in("MerchantName", this.merchantName.getValue());

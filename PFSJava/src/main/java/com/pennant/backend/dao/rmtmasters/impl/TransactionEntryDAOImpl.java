@@ -68,6 +68,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>TransactionEntry model</b> class.<br>
@@ -237,24 +238,22 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 	 */
 	@Override
 	public List<TransactionEntry> getListTranEntryForBatch(final long id, String type) {
-		logger.debug("Entering");
-
 		TransactionEntry transactionEntry = new TransactionEntry();
 		transactionEntry.setId(id);
 
-		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc, Debitcredit, ");
-		selectSql.append(" ShadowPosting, Account, AccountType,AccountBranch, AccountSubHeadRule, ");
-		selectSql.append(" TranscationCode, RvsTransactionCode, AmountRule,ChargeType, FeeCode , OpenNewFinAc,");
-		selectSql.append(" PostToSys, DerivedTranOrder  ");
-		selectSql.append(" From RMTTransactionEntry");
-		selectSql.append(" Where AccountSetid =:AccountSetid Order by TransOrder");
+		StringBuilder sql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc, Debitcredit, ");
+		sql.append(" ShadowPosting, Account, AccountType,AccountBranch, AccountSubHeadRule, ");
+		sql.append(" TranscationCode, RvsTransactionCode, AmountRule,ChargeType, FeeCode , OpenNewFinAc,");
+		sql.append(" PostToSys, DerivedTranOrder  ");
+		sql.append(" From RMTTransactionEntry");
+		sql.append(" Where AccountSetid =:AccountSetid Order by TransOrder");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(transactionEntry);
 		RowMapper<TransactionEntry> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(TransactionEntry.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**

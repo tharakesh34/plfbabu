@@ -81,34 +81,30 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 	@Override
 	public List<FinReceiptDetail> getReceiptHeaderByID(long receiptID, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select ReceiptID, ReceiptSeqID, ReceiptType, PaymentTo, PaymentType, PayAgainstID");
+		sql.append(", Amount, FavourNumber, ValueDate, BankCode, FavourName, DepositDate, DepositNo, PaymentRef");
+		sql.append(", TransactionRef, ChequeAcNo, FundingAc, ReceivedDate, Status, PayOrder, LogKey, ValueDate");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType");
+			if (StringUtils.trimToEmpty(type).contains("AView")) {
+				sql.append(", FeeTypeCode, FeeTypeDesc");
+			}
+		}
+		sql.append(" From FinReceiptDetail");
+		sql.append(StringUtils.trim(type));
+		sql.append(" Where ReceiptID =:ReceiptID ");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReceiptID", receiptID);
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select ReceiptID , ReceiptSeqID , ReceiptType , PaymentTo , PaymentType , PayAgainstID  , ");
-		selectSql.append(
-				" Amount  , FavourNumber , ValueDate , BankCode , FavourName , DepositDate , DepositNo , PaymentRef , ");
-		selectSql.append(
-				" TransactionRef , ChequeAcNo , FundingAc , ReceivedDate , Status , PayOrder, LogKey, ValueDate ");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" ,BankCodeDesc, fundingAcCode, FundingAcDesc, PartnerBankAc, PartnerBankAcType  ");
-			if (StringUtils.trimToEmpty(type).contains("AView")) {
-				selectSql.append(" ,FeeTypeCode,FeeTypeDesc ");
-			}
-		}
-		selectSql.append(" From FinReceiptDetail");
-		selectSql.append(StringUtils.trim(type));
-		selectSql.append(" Where ReceiptID =:ReceiptID ");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<FinReceiptDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinReceiptDetail.class);
 
-		List<FinReceiptDetail> receiptList = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		logger.debug("Leaving");
-		return receiptList;
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 
 	@Override

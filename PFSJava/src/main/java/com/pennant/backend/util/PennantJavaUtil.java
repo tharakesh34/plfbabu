@@ -3288,6 +3288,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
 						masterWF, new String[] { "HSNCode", "Code" }, null, 600));//"CurrentValue", 
 
+		ModuleUtil.register("HSNCodeData",
+				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },
+						masterWF, new String[] { "HSNCode", "Code" }, null, 600));//"CurrentValue", 
+
 		ModuleUtil.register("LowerTaxDeduction",
 				new ModuleMapping("LowerTaxDeduction", LowerTaxDeduction.class,
 						new String[] { "LowerTaxDeduction", "LowerTaxDeduction" }, masterWF,

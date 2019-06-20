@@ -42,8 +42,9 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	private static final Logger logger = Logger.getLogger(ProductGroupDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ProductGroupDialog;
 	protected Button btnModelId;
@@ -238,7 +239,8 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -408,7 +410,8 @@ public class ProductGroupDialogCtrl extends GFCBaseCtrl<ProductGroup> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {

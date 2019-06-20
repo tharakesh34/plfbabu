@@ -253,8 +253,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method Deletes the Record from the FinFeeDetail or FinFeeDetail_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
+	 * This method Deletes the Record from the FinFeeDetail or
+	 * FinFeeDetail_Temp. if Record not deleted then throws DataAccessException
+	 * with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)
@@ -365,8 +366,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)
@@ -453,8 +455,9 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if
+	 * Record not updated then throws DataAccessException with error 41004.
+	 * update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)

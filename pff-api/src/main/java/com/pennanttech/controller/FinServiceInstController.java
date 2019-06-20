@@ -1443,7 +1443,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			if (finServiceInst.isReceiptdetailExits()) {
 				FinReceiptData oldReceiptData = this.receiptService.getFinReceiptDataById(
 						finServiceInst.getFinReference(), AccountEventConstants.ACCEVENT_REPAY,
-						FinanceConstants.FINSER_EVENT_RECEIPT, "RECEIPTREALIZE_MAKER");
+						FinanceConstants.FINSER_EVENT_RECEIPT, FinanceConstants.REALIZATION_MAKER);
 				receiptData = oldReceiptData;
 
 				version = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
@@ -1471,9 +1471,9 @@ public class FinServiceInstController extends SummaryDetailService {
 							|| StringUtils.equals(finServiceInst.getPaymentMode(), "DD"))) {
 
 				WorkFlowDetails workFlowDetails = null;
-				String roleCode = "DEPOSIT_APPROVER";// default value
-				String nextRolecode = "RECEIPTREALIZE_MAKER";// defaulting role
-																// codes
+				String roleCode = FinanceConstants.DEPOSIT_APPROVER;// default value
+				String nextRolecode = FinanceConstants.REALIZATION_MAKER;// defaulting role
+				// codes
 				String taskid = null;
 				String nextTaskId = null;
 				long workFlowId = 0;

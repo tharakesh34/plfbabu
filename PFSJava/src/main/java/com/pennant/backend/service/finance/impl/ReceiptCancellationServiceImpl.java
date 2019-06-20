@@ -1551,7 +1551,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					ManualAdvise advise = receiptHeader.getManualAdvise();
 					boolean prepareInvoice = false;
 
-					if (boucneFeeType.isAmortzReq()) {
+					if (boucneFeeType != null && boucneFeeType.isAmortzReq()) {
 
 						String invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
 
