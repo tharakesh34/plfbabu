@@ -3585,15 +3585,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 
 		String status = "";
-		if (row_ReceiptModeStatus.isVisible()) {
-			if (!isReadOnly("ReceiptDialog_receiptModeStatus") && isValidComboValue(this.receiptModeStatus,
-					Labels.getLabel("label_ReceiptDialog_ReceiptModeStatus.value"))) {
-				try {
+		if (row_ReceiptModeStatus.isVisible() && !isReadOnly("ReceiptDialog_receiptModeStatus")) {
+			try {
+				if (isValidComboValue(this.receiptModeStatus,
+						Labels.getLabel("label_ReceiptDialog_ReceiptModeStatus.value"))) {
+
 					status = getComboboxValue(receiptModeStatus);
 					header.setReceiptModeStatus(status);
-				} catch (WrongValueException we) {
-					wve.add(we);
 				}
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
 		}
 

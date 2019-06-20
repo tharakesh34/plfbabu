@@ -4517,4 +4517,80 @@
 		</sql>
 	</changeSet>
 	<!-- 5.0.5 is Under QC please use 5.0.6 -->
+	
+	
+	<changeSet id="119" author="Vidhya">
+		<comment>Creation of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
+		<sql>
+		  	 <![CDATA[
+		  	 	UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS_VIEW);
+		  	 	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS_VIEW);
+		  	 	
+            	INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary','FinAdvancePaymentsDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinAdvancePayments_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinAdvancePaymentsDialog_btnGetCustBeneficiary'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);            		
+            		
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS_VIEW);
+		  	 	UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS_VIEW);
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="120" author="aditya.a">
+		<dropTable tableName="FinODDetails_Snapshot" />
+	</changeSet>
+
+	<changeSet id="120.1" author="aditya.a">
+		<createTable tableName="FinODDetails_Snapshot">
+			<column name="APPDATE" type="datetime" />
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="FINODSCHDDATE" type="datetime" />
+			<column name="FINODFOR" type="VARCHAR(1)" />
+			<column name="FINBRANCH" type="VARCHAR(12))" />
+			<column name="FINTYPE" type="VARCHAR(8)" />
+			<column name="CUSTID" type="BIGINT" />
+			<column name="FINODTILLDATE" type="datetime" />
+			<column name="FINCURODAMT" type="DECIMAL(18,0)" />
+			<column name="FINCURODPRI" type="DECIMAL(18,0)" />
+			<column name="FINCURODPFT" type="DECIMAL(18,0)" />
+			<column name="FINMAXODAMT" type="DECIMAL(18,0)" />
+			<column name="FINMAXODPRI" type="DECIMAL(18,0)" />
+			<column name="FINMAXODPFT" type="DECIMAL(18,0)" />
+			<column name="GRACEDAYS" type="INT" />
+			<column name="INCGRACEDAYS" type="BOOLEAN" />
+			<column name="FINCURODDAYS" type="INT" />
+			<column name="TOTPENALTYAMT" type="DECIMAL(18,0)" />
+			<column name="TOTWAIVED" type="DECIMAL(18,0)" />
+			<column name="TOTPENALTYPAID" type="DECIMAL(18,0)" />
+			<column name="TOTPENALTYBAL" type="DECIMAL(18,0)" />
+			<column name="FINLMDFDATE" type="datetime" />
+			<column name="LPIAMT" type="DECIMAL(18,0)" />
+			<column name="LPIPAID" type="DECIMAL(18,0)" />
+			<column name="LPIBAL" type="DECIMAL(18,0)" />
+			<column name="LPIWAIVED" type="DECIMAL(18,0)" />
+			<column name="ODINCGRCDAYS" type="BOOLEAN" />
+			<column name="ODCHARGETYPE" type="CHAR(1)" />
+			<column name="ODGRACEDAYS" type="INT" />
+			<column name="ODCHARGECALON	" type="VARCHAR(8)" />
+			<column name="ODCHARGEAMTORPERC" type="DECIMAL(18,0)" />
+			<column name="ODALLOWWAIVER" type="BOOLEAN" />
+			<column name="ODMAXWAIVERPERC" type="NUMBER(5,2)" />
+			<column name="APPLYODPENALTY" type="BOOLEAN" />
+			<column name="ODMinCapAmount" type="DECIMAL(18,0)" />
+			<column name="oDRuleCode" type="VARCHAR(8)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="120.2" author="aditya.a">
+		<addNotNullConstraint tableName="FinODDetails_Snapshot" columnName="APPDATE" columnDataType="datetime" />
+		<addNotNullConstraint tableName="FinODDetails_Snapshot" columnName="FINREFERENCE" columnDataType="VARCHAR(20)" />
+		<addNotNullConstraint tableName="FinODDetails_Snapshot" columnName="FINODSCHDDATE"
+			columnDataType="datetime" />
+		<addNotNullConstraint tableName="FinODDetails_Snapshot" columnName="FINODFOR" columnDataType="VARCHAR(1)" />
+	</changeSet>
+
+	<changeSet id="120.3" author="aditya.a">
+		<addPrimaryKey tableName="FinODDetails_Snapshot" constraintName="pk_finODDetails_Snapshot"
+			columnNames="APPDATE,FINREFERENCE,FINODSCHDDATE,FINODFOR" />
+	</changeSet>
+
 </databaseChangeLog>

@@ -291,6 +291,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
+			excess.setBalanceAmt(excess.getAmount().subtract((excess.getReservedAmt().add(excess.getUtilisedAmt()))));
 			finExcessAmountDAO.updateReserveUtilization(excess);
 
 			//movement

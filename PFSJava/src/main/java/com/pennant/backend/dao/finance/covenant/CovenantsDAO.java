@@ -78,4 +78,6 @@ public interface CovenantsDAO {
 
 	List<Covenant> getCovenants(String finReference);
 
+	void deleteDocuments(Covenant covenant, TableType tempTab);
+
 }

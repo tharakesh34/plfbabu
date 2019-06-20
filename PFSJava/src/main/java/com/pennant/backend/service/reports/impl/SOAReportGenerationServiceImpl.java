@@ -1047,31 +1047,26 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			List<FinanceDisbursement> disbursements = soaReportGenerationDAO
 					.getFinanceDisbursementByFinRef(finReference);
 
-			/*if (StringUtils.isBlank(finMain.getClosingStatus())
-					|| !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C")
-							&& CollectionUtils.isNotEmpty(disbursements)) {
-				for (FinanceDisbursement financeDisbursement : disbursements) {
-					BigDecimal transactionAmount = BigDecimal.ZERO;
-
-					if (financeDisbursement.getDisbAmount() != null) {
-						transactionAmount = financeDisbursement.getDisbAmount();
-					}
-
-					if (DateUtility.compare(financeDisbursement.getDisbDate(), finMain.getFinStartDate()) == 0) {
-						transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
-					}
-
-					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(finSchedulePayable);
-					soaTranReport.setTransactionDate(financeDisbursement.getDisbReqDate());
-					soaTranReport.setValueDate(financeDisbursement.getDisbDate());
-					soaTranReport.setCreditAmount(transactionAmount);
-					soaTranReport.setDebitAmount(BigDecimal.ZERO);
-					soaTranReport.setPriority(1);
-
-					soaTransactionReports.add(soaTranReport);
-				}
-			}*/
+			/*
+			 * if (StringUtils.isBlank(finMain.getClosingStatus()) ||
+			 * !StringUtils.equalsIgnoreCase(finMain.getClosingStatus(), "C") &&
+			 * CollectionUtils.isNotEmpty(disbursements)) { for (FinanceDisbursement financeDisbursement :
+			 * disbursements) { BigDecimal transactionAmount = BigDecimal.ZERO;
+			 * 
+			 * if (financeDisbursement.getDisbAmount() != null) { transactionAmount =
+			 * financeDisbursement.getDisbAmount(); }
+			 * 
+			 * if (DateUtility.compare(financeDisbursement.getDisbDate(), finMain.getFinStartDate()) == 0) {
+			 * transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt()); }
+			 * 
+			 * soaTranReport = new SOATransactionReport(); soaTranReport.setEvent(finSchedulePayable);
+			 * soaTranReport.setTransactionDate(financeDisbursement.getDisbReqDate());
+			 * soaTranReport.setValueDate(financeDisbursement.getDisbDate());
+			 * soaTranReport.setCreditAmount(transactionAmount); soaTranReport.setDebitAmount(BigDecimal.ZERO);
+			 * soaTranReport.setPriority(1);
+			 * 
+			 * soaTransactionReports.add(soaTranReport); } }
+			 */
 
 			//Finance Schedule Details
 			String closingStatus = finMain.getClosingStatus();

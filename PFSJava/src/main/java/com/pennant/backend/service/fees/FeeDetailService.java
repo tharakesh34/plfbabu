@@ -320,12 +320,12 @@ public class FeeDetailService {
 		}
 
 		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
-			/*
-			 * if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
-			 * disbursement.setDeductFromDisb(deductFromDisbursement); }
-			 */
+			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
+				disbursement.setDeductFromDisb(deductFromDisbursement);
+			}
+			 
 
-			disbursement.setDeductFromDisb(deductFromDisbursement);
+			//disbursement.setDeductFromDisb(deductFromDisbursement);
 		}
 	}
 

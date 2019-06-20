@@ -363,9 +363,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		if (isForeClosure) {
+		
+		//if (isForeClosure) {
 			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
-		}
+		//}
 
 	}
 

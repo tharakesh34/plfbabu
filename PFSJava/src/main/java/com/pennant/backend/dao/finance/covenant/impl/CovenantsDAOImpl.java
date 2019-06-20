@@ -366,6 +366,26 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		}
 		logger.debug(Literal.LEAVING);
 	}
+	
+	@Override
+	public void deleteDocuments(Covenant covenant, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Delete from COVENANT_DOCUMENTS");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where CovenantId = :Id");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(covenant);
+		int recordCount = 0;
+
+		try {
+			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 
 	@Override
 	public void deleteDocuments(List<CovenantDocument> documents, TableType tableType) {

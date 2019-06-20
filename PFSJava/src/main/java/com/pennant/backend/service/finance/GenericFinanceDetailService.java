@@ -963,7 +963,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					// Pass the docRefId here to save this in place of docImage column. Or add another column for now to save this.
 					if (!StringUtils.equals(rcdType, PennantConstants.RECORD_TYPE_UPD)
 							&& documentDetails.getDocId() > 0) {
-						documentDetails.setDocId(0);
 					}
 					getDocumentDetailsDAO().save(documentDetails, type);
 				}
