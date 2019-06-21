@@ -181,6 +181,13 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_ADVSTAGE_REAREND = true;
 	//For Advance Interest/EMI Deposit
 	public static final boolean ALLOW_ADVSTAGE_DEPOSIT = false;
+	
+	/*
+	 * For Advance Interest/EMI if there is change in the interest or EMI, due to any servicing changes , do we need to
+	 * created advice (Payable /Receivable) will be depended on this flag.
+	 * Defaulted to true, Since it is the default behavior
+	 */
+	public static final boolean ALW_ADV_INTEMI_EXCESS_MOVEMENT = true;
 
 	//Covenant tab visible
 	public static final boolean COVENANT_REQUIRED = false;

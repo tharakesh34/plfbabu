@@ -4868,20 +4868,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
 					processAdvancePayment(finFeeDetails, finScheduleData);
-				} else if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
-						|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
-						|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
-					processAdvancePayment(finScheduleData);
+				} else if (ImplementationConstants.ALW_ADV_INTEMI_EXCESS_MOVEMENT) {
+					if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
+							|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RMVTERM.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELDISB.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGPFT.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGFRQ.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CANCELFIN.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_PLANNEDEMI.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_UNPLANEMIH.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RESCHD.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_RECALCULATE.equals(moduleDefiner)
+							|| FinanceConstants.FINSER_EVENT_CHGRPY.equals(moduleDefiner)) {
+						processAdvancePayment(finScheduleData);
+					}
 				}
 			}
 			// tasks # >>Start Advance EMI and DSF
