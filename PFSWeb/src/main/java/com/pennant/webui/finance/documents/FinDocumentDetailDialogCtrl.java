@@ -1237,22 +1237,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	/**
-	 * Get the window for entering Notes
-	 * 
-	 * @param event
-	 *            (Event)
-	 * 
-	 * @throws Exception
-	 */
-	public void onCheck$docOriginal(Event event) throws Exception {
-		if (this.docOriginal.isChecked()) {
-			this.space_docBarcode.setClass("mandatory");
-		} else {
-			this.space_docBarcode.setClass("");
-		}
-	}
-
-	/**
 	 * Get the Reference value
 	 */
 	@Override

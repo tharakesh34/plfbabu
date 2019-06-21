@@ -61,9 +61,6 @@ public interface FinAdvancePaymentsDAO {
 	
 	void updateLinkedTranId(FinAdvancePayments finAdvancePaymentsDAO);
 
-
-	void updateLinkedTranId(FinAdvancePayments finAdvancePaymentsDAO);
-
 	void delete(FinAdvancePayments finAdvancePaymentsDAO, String type);
 
 	String save(FinAdvancePayments finAdvancePaymentsDAO, String type);

@@ -150,7 +150,6 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 
 public class FinanceDataValidation {
-
 	private static final Logger logger = Logger.getLogger(FinanceDataValidation.class);
 
 	private BaseRateDAO baseRateDAO;
@@ -1179,10 +1178,9 @@ public class FinanceDataValidation {
 		}
 		if (financeType.isLimitRequired() && ImplementationConstants.LIMIT_INTERNAL) {
 			/*
-			 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[]
-			 * valueParm = new String[1]; valueParm[0] = "finLimitRef";
-			 * errorDetails.add(ErrorUtil.getErrorDetail(new
-			 * ErrorDetails("90502", valueParm))); } else { //TODO }
+			 * if (StringUtils.isBlank(finMain.getFinLimitRef())) { String[] valueParm = new String[1]; valueParm[0] =
+			 * "finLimitRef"; errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90502", valueParm))); } else {
+			 * //TODO }
 			 */
 			long count = limitHeaderDAO.isLimitBlock(finMain.getCustID(), "", true);
 			if (count > 0) {
@@ -6267,9 +6265,6 @@ public class FinanceDataValidation {
 
 	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
 		this.documentTypeDAO = documentTypeDAO;
-	}
-	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
-		this.limitHeaderDAO = limitHeaderDAO;
 	}
 
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {

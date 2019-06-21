@@ -4353,4 +4353,20 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setIntTdsAdjusted(BigDecimal intTdsAdjusted) {
 		this.intTdsAdjusted = intTdsAdjusted;
 	}
+
+	public String getVanCode() {
+		return vanCode;
+	}
+
+	public void setVanCode(String vanCode) {
+		this.vanCode = vanCode;
+	}
+
+	public boolean isVanReq() {
+		return vanReq;
+	}
+
+	public void setVanReq(boolean vanReq) {
+		this.vanReq = vanReq;
+	}
 }
