@@ -24,7 +24,7 @@ public class UploadAlloctionDetail extends AbstractWorkflowEntity implements Ent
 	private long uploadAlloctionDetailId = Long.MIN_VALUE;
 
 	private String rootId;
-	@XmlElement
+	@XmlElement(name = "allocationItem")
 	private String allocationType;
 	@XmlElement
 	private String referenceCode;

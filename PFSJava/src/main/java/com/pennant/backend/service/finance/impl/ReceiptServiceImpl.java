@@ -870,7 +870,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			befRctHeader = getFinReceiptHeaderById(receiptHeader.getReceiptID(), false, "_View");
 		}
 		// FinReceiptDetail Audit Details Preparation
-		FinReceiptDetail adtFinReceiptDetail  = new FinReceiptDetail();
+		FinReceiptDetail adtFinReceiptDetail = new FinReceiptDetail();
 		String[] rhFields = PennantJavaUtil.getFieldDetails(adtFinReceiptDetail,
 				adtFinReceiptDetail.getExcludeFields());
 		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
@@ -3503,7 +3503,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			if (StringUtils.equals(alcType, "P") || StringUtils.equals(alcType, "I")
 					|| StringUtils.equals(alcType, "EM") || StringUtils.equals(alcType, "L")
-					|| StringUtils.equals(alcType, "O") || !StringUtils.equals(alcType, "F")
+					|| StringUtils.equals(alcType, "O") || StringUtils.equals(alcType, "F")
 					|| StringUtils.equals(alcType, "M") || StringUtils.equals(alcType, "B")
 					|| StringUtils.equals(alcType, "FP") || StringUtils.equals(alcType, "FI")
 					|| StringUtils.equals(alcType, "E") || StringUtils.equals(alcType, "A")) {
@@ -3969,7 +3969,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 
 				if (StringUtils.equals(ulAlcType, "M") || StringUtils.equals(ulAlcType, "F")) {
-					if (!ulAlc.getReferenceCode().equals(allocate.getFeeTypeCode())) {
+					if (!StringUtils.equals(ulAlc.getReferenceCode(), (allocate.getFeeTypeCode()))) {
 						continue;
 					}
 				}

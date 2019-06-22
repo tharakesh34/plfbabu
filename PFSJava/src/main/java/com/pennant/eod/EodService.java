@@ -117,7 +117,7 @@ public class EodService {
 		custEODEvent = npaService.processNPABuckets(custEODEvent);
 
 		//LatePay Due creation Service
-		custEODEvent = npaService.processNPABuckets(custEODEvent);
+		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);
 
 		/**************** SOD ***********/
 		//moving customer date to sod
