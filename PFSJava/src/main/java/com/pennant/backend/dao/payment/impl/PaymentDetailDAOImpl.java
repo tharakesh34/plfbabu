@@ -113,15 +113,15 @@ public class PaymentDetailDAOImpl extends SequenceDao<PaymentDetail> implements 
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PaymentDetails");
+		StringBuilder sql = new StringBuilder("insert into PaymentDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" (paymentDetailId, paymentId, amountType, amount, referenceId, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" (PaymentDetailId, PaymentId, AmountType, Amount, ReferenceId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :paymentDetailId, :paymentId, :amountType, :amount, :referenceId, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :PaymentDetailId, :PaymentId, :AmountType, :Amount, :ReferenceId");
+		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the sequence number.
 		if (paymentDetail.getPaymentDetailId() <= 0) {

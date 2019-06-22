@@ -667,7 +667,9 @@ public class AccountEngineExecution implements Serializable {
 
 			if (acc == null || StringUtils.isBlank(acc.getAccountId())) {
 				if (BigDecimal.ZERO.compareTo(postAmt) != 0) {
-					throw new AppException("Invalid accounting configuration, please contact administrator");
+					throw new AppException(
+							String.format("Acconting for %S Event is invalid, please contact administrator",
+									aeEvent.getAccountingEvent()));
 				}
 				continue;
 			}

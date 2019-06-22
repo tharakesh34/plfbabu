@@ -226,26 +226,28 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		FinReceiptHeader header = new FinReceiptHeader();
 		header.setReceiptID(receiptID);
 
-		StringBuilder sql = new StringBuilder(
-				" Select ReceiptID, ReceiptDate , ReceiptType, RecAgainst, Reference , ReceiptPurpose,RcdMaintainSts, InstructionUID, ");
-		sql.append(
-				" ReceiptMode, ExcessAdjustTo , AllocationType , ReceiptAmount, EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks,");
-		sql.append(
-				" GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount,CashierBranch,InitiateDate, ");
-		sql.append(
-				" DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ExtReference, Module, FinDivision, PostBranch,ActFinReceipt");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose");
+		sql.append(", RcdMaintainSts, InstructionUID, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount");
+		sql.append(", EffectSchdMethod, ReceiptModeStatus,RealizationDate, CancelReason, WaviedAmt, TotFeeAmount");
+		sql.append(", BounceDate, Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
+		sql.append(", CashierBranch, InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount");
+		sql.append(", GstLppAmount, subReceiptMode, receiptChannel, receivedFrom, panNumber, collectionAgentId");
+		sql.append(", ExtReference, Module, FinDivision, PostBranch, ActFinReceipt");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(
-					" ,FinType, FinCcy, FinBranch, CustCIF, CustShrtName,FinTypeDesc, FinCcyDesc, FinBranchDesc, CancelReasonDesc, ");
-			sql.append(
-					" FinIsActive,PromotionCode,ProductCategory, NextRepayRvwDate, collectionAgentCode, collectionAgentDesc, PostBranchDesc, CashierBranchDesc, FinDivisionDesc, EntityCode");
+			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc, FinCcyDesc, FinBranchDesc");
+			sql.append(", CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");
+			sql.append(", CollectionAgentCode, CollectionAgentDesc, PostBranchDesc, CashierBranchDesc");
+			sql.append(", FinDivisionDesc, EntityCode");
+			
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
-				sql.append(" ,ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName");
+				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName, CustBaseCcy");
 			}
+			
 			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
-				sql.append(" , CustID, CustomerCIF, CustomerName");
+				sql.append(", CustID, CustomerCIF, CustomerName");
 			}
 		}
 		sql.append(" From FinReceiptHeader");

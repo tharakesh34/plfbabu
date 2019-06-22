@@ -191,6 +191,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -5455,9 +5456,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return false;
 			}
 		}
-		
+
 		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
-			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
+			String[] args = new String[2];
+
+			args[0] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(), formatter);
+			args[1] = PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), formatter);
+			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt", args));
 			return false;
 		}
 		// in case of early settlement,do not allow before first installment

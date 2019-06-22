@@ -135,8 +135,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
 
-import software.amazon.ion.Decimal;
-
 /**
  * This is the controller class for the WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptDialog.zul
  */
@@ -773,6 +771,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.bankCode.setMandatoryStyle(true);
 				this.row_DepositDate.setVisible(true);
 				this.row_PaymentRef.setVisible(false);
+				this.bankCode.setMandatoryStyle(false);
 
 				if (StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CHEQUE)) {
 					this.row_ChequeAcNo.setVisible(true);
@@ -1267,6 +1266,10 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		aeEvent.setCcy(getReceiptHeader().getFinCcy());
 		aeEvent.setCustID(getReceiptHeader().getCustID());
 
+		if (aeEvent.getCcy() == null) {
+			aeEvent.setCcy(getReceiptHeader().getCustBaseCcy());
+		}
+
 		Map<String, Object> map = null;
 		long accountingSetID = 0;
 		if (this.groupbox_Finance.isVisible()) {
@@ -1285,6 +1288,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		FinReceiptDetail receiptDetail = getReceiptHeader().getReceiptDetails().get(0);
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
+		amountCodes.setPaymentType(receiptDetail.getPaymentType());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		amountCodes.setFinType(getReceiptHeader().getFinType());
@@ -1302,9 +1306,6 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			} else if (map.get("AlwFlexi") instanceof Integer) {
 				int value = (int) map.get("AlwFlexi");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof Decimal) {
-				Decimal value = (Decimal) map.get("AlwFlexi");
-				amountCodes.setAlwflexi(value == Decimal.ZERO ? false : true);
 			}
 		} else {
 			amountCodes.setEntitycode(getReceiptHeader().getEntityCode());
@@ -1328,7 +1329,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			aeEvent.setDataMap(dataMap);
 			prepareFeeRulesMap(getReceiptHeader().getPaidFeeList(), aeEvent.getDataMap());
-			
+
 			//execute accounting
 			accountingSetEntries.addAll(engineExecution.getAccEngineExecResults(aeEvent).getReturnDataSet());
 		} else {

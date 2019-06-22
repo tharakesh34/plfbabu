@@ -19,6 +19,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -61,8 +62,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
-
-import software.amazon.ion.Decimal;
 
 public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> implements FeeReceiptService {
 	private static final Logger logger = Logger.getLogger(FeeReceiptServiceImpl.class);
@@ -306,6 +305,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setPostingUserBranch(receiptHeader.getPostBranch());
 		aeEvent.setValueDate(DateUtility.getAppDate());
 
+		if (aeEvent.getCcy() == null) {
+			aeEvent.setCcy(receiptHeader.getCustBaseCcy());
+		}
+		
+		if (aeEvent.getCcy() == null) {
+			aeEvent.setCcy(SysParamUtil.getAppCurrency());
+		}
+
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
@@ -331,10 +338,12 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		FinReceiptDetail finreceiptDetail = receiptHeader.getReceiptDetails().get(0);
 		amountCodes.setPartnerBankAc(finreceiptDetail.getPartnerBankAc());
+		amountCodes.setPaymentType(finreceiptDetail.getPaymentType());
 		amountCodes.setPartnerBankAcType(finreceiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(finreceiptDetail.getAmount());
 		amountCodes.setFinType(receiptHeader.getFinType());
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
+
 		if (map != null) {
 			amountCodes.setBusinessvertical((String) map.get("Businessvertical"));
 
@@ -348,22 +357,22 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			} else if (map.get("AlwFlexi") instanceof Integer) {
 				int value = (int) map.get("AlwFlexi");
 				amountCodes.setAlwflexi(value == 0 ? false : true);
-			} else if (map.get("AlwFlexi") instanceof Decimal) {
-				Decimal value = (Decimal) map.get("AlwFlexi");
-				amountCodes.setAlwflexi(value == Decimal.ZERO ? false : true);
 			}
+
 			amountCodes.setEntitycode((String) map.get("Entitycode"));
 			dataMap.put("ae_finbranch", map.get("FinBranch"));
 			dataMap.put("emptype", map.get("emptype"));
 			dataMap.put("branchcity", map.get("branchcity"));
 			dataMap.put("fincollateralreq", map.get("fincollateralreq"));
 			dataMap.put("btloan", map.get("btloan"));
+
 		} else {
 			amountCodes.setEntitycode(receiptHeader.getEntityCode());
 			amountCodes.setFinbranch(receiptHeader.getPostBranch());
 		}
 
 		aeEvent.setDataMap(dataMap);
+		aeEvent.setPostRefId(receiptHeader.getReceiptID());
 
 		aeEvent.getAcSetIDList().add(accountingSetID);
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
@@ -379,6 +388,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		receiptHeader.setTaskId("");
 		receiptHeader.setNextTaskId("");
 		receiptHeader.setWorkflowId(0);
+		//receiptHeader.setLinkedTranId(aeEvent.getLinkedTranId());
 		getFinReceiptHeaderDAO().save(receiptHeader, TableType.MAIN_TAB);
 
 		// Save Receipt Header
