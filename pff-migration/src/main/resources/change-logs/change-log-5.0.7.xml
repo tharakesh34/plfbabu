@@ -986,4 +986,35 @@
 					  WHERE rmtfinancetypes_temp.fintype = t1.fintype))				  
 		  </createView>
 	</changeSet>
+
+	<changeSet id="8.0" author="meena.a">
+		<sql>
+			<![CDATA[
+				INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('USR_ACCT_LOCK_DAYS', 'Numbre of days to auto lock the user account when the user is not login from the N number of days.', 'int', '0', '25', 2, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('USR_ACCT_LOCK_CRON_EXPRESSION', 'Cron Expression for user account locking Job.', 'String', '0', '0 0 5 1/1 * ? *', 20, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8.1" author="meena.a">
+		<addColumn tableName="SecUsers">
+			<column name="AccountLockedOn" type="datetime" />
+			<column name="AccountUnLockedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="8.2" author="meena.a">
+		<addColumn tableName="SecUsers_temp">
+			<column name="AccountLockedOn" type="datetime" />
+			<column name="AccountUnLockedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="8.3" author="meena.a">
+		<sql>
+			<![CDATA[
+				update SMTparameters set SysParmMaint = 1 where SysParmCode = 'USR_ACCT_LOCK_DAYS';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -42,8 +42,11 @@
  */
 package com.pennant.backend.dao.administration.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,6 +54,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -58,6 +62,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
@@ -72,6 +77,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>SecurityUsers model</b> class.<br>
@@ -286,17 +292,21 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", UsrBranchCode = :UsrBranchCode, UsrDeptCode = :UsrDeptCode");
 		sql.append(", UsrIsMultiBranch = :UsrIsMultiBranch, UsrInvldLoginTries = :UsrInvldLoginTries");
 		sql.append(", UsrDesg = :UsrDesg, AuthType = :AuthType, PwdExpDt = :PwdExpDt");
+		sql.append(", BusinessVertical= :BusinessVertical");
+		sql.append(", AccountLockedOn =:AccountLockedOn, AccountUnLockedOn =:AccountUnLockedOn");
 		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
 		sql.append(", RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType");
-		sql.append(", WorkflowId = :WorkflowId, businessVertical= :businessVertical");
+		sql.append(", WorkflowId = :WorkflowId");
 
 		sql.append(" Where UsrID =:UsrID");
+
 		if (StringUtils.isBlank(type)) {
 			sql.append(" AND Version= :Version-1");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUser);
 		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
 
@@ -696,4 +706,70 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.debug("Leaving ");
 		return securityUser;
 	}
+
+	private void updateLockUser(List<? extends SecurityUser> userAccounts) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update SecUsers");
+		sql.append(" set UsrAcLocked = 1, AccountLockedOn = :AccountLockedOn");
+		sql.append(", AccountUnLockedOn = null where UsrID = :UsrID");
+
+		try {
+			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(userAccounts.toArray()));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+	}
+
+	@Override
+	public void lockUserAccounts() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("select UsrID, LastLoginOn, AccountUnLockedOn from SecUsers where UsrAcLocked = 0");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+
+		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.USR_ACCT_LOCK_DAYS);
+
+		Date appDate = DateUtility.getAppDate();
+		List<SecurityUser> userAccounts = new ArrayList<>();
+		this.jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
+
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+
+				SecurityUser secUsersData = new SecurityUser();
+				Long userId = rs.getLong(1);
+				Date lastLoginOn = rs.getDate(2);
+				Date accountUnlockedOn = rs.getDate(3);
+
+				Date startDate = null;
+				if (accountUnlockedOn == null) {
+					startDate = lastLoginOn;
+				} else {
+					startDate = accountUnlockedOn;
+				}
+
+				if (DateUtil.getDaysBetween(appDate, startDate) > days) {
+					secUsersData.setUsrID(userId);
+					secUsersData.setUsrAcLocked(true);
+					secUsersData.setAccountLockedOn(DateUtility.getAppDate());
+					userAccounts.add(secUsersData);
+				}
+
+				if (userAccounts.size() > 1000) {
+					// call batch update method
+					updateLockUser(userAccounts);
+					userAccounts.clear();
+				}
+			}
+		});
+
+		if (userAccounts.size() > 0) {
+			// call batch update method
+			updateLockUser(userAccounts);
+			userAccounts.clear();
+		}
+	}
+
 }

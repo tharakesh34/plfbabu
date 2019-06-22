@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
@@ -263,12 +264,19 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		SecurityUser securityUser = new SecurityUser();
 		BeanUtils.copyProperties((SecurityUser) auditHeader.getAuditDetail().getModelData(), securityUser);
+
 		String tranType = "";
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
 			logger.debug("Leaving");
 			return auditHeader;
+		}
+
+		SecurityUser befSecurityUser = securityUsersDAO.getSecurityUserByLogin(securityUser.getUsrLogin(), "");
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(securityUser.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(befSecurityUser);
 		}
 
 		if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -290,6 +298,16 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				securityUser.setRecordType("");
+				if (befSecurityUser != null) {
+					if (befSecurityUser.isUsrAcLocked() == true && securityUser.isUsrAcLocked() == false) {
+						securityUser.setAccountUnLockedOn(DateUtility.getAppDate());
+						securityUser.setAccountLockedOn(null);
+					} else if (befSecurityUser.isUsrAcLocked() == false && securityUser.isUsrAcLocked() == true) {
+						securityUser.setAccountLockedOn(DateUtility.getAppDate());
+						securityUser.setAccountUnLockedOn(null);
+					}
+				}
+
 				securityUsersDAO.update(securityUser, "");
 			}
 

@@ -1,8 +1,11 @@
 package com.pennanttech.pff.jobs;
 
+import java.text.ParseException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.TriggerBuilder;
@@ -40,6 +43,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registercovenantAlertsJob();
 		registerPutCallAlertsJob();
 		registerLMSServiceAlertsJob();
+		registerUserAccountLockingJob();
 	}
 
 	/**
@@ -62,6 +66,14 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationInvokeJob() {
+		
+		try {
+			CronExpression.validateExpression(SYS_NOTIFICATION_INVOKE_TIME);
+		} catch (Exception e) {
+			return;
+		}
+
+		
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsInvokeJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_INVOKE_JOB, SYS_NOTIFICATIONS_INVOKE_JOB)
@@ -76,6 +88,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationProcessJob() {
+		
+		try {
+			CronExpression.validateExpression(SYS_NOTIFICATION_PROCESS_TIME);
+		} catch (Exception e) {
+			return;
+		}
+		
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsProcessJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_PROCESS_JOB, SYS_NOTIFICATIONS_PROCESS_JOB)
@@ -94,6 +113,12 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		Job job = new Job();
 
 		String scheduleTime = SysParamUtil.getValueAsString("RECEIPT_RESPONSE_JOB_CORNEXP");
+		
+		try {
+			CronExpression.validateExpression(scheduleTime);
+		} catch (Exception e) {
+			return;
+		}
 
 		job.setJobDetail(JobBuilder.newJob(ReceiptResponseJob.class)
 				.withIdentity(AUTO_RECPT_RESPONSE_JOB, AUTO_RECPT_RESPONSE_JOB)
@@ -125,6 +150,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = CovenantAlertsJob.JOB_KEY;
 		String trigger = CovenantAlertsJob.JOB_TRIGGER;
 		String cronExpression = CovenantAlertsJob.getCronExpression();
+		
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
+
 
 		Job job = new Job();
 
@@ -155,6 +187,12 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = FinPutCallAlertsJob.JOB_KEY;
 		String trigger = FinPutCallAlertsJob.JOB_TRIGGER;
 		String cronExpression = FinPutCallAlertsJob.getCronExpression();
+		
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
 
 		Job job = new Job();
 
@@ -175,6 +213,12 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = LMSServiceLogAlertsJob.JOB_KEY;
 		String trigger = LMSServiceLogAlertsJob.JOB_TRIGGER;
 		String cronExpression = LMSServiceLogAlertsJob.CRON_EXPRESSION;
+		
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			return;
+		}
 
 		String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
 		if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
@@ -191,6 +235,39 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	/**
+	 * Lock the user accounts when the user is not logging into the application from the specified number of days.
+	 */
+	private void registerUserAccountLockingJob() {
+		logger.debug(Literal.ENTERING);
+
+		String cronExpression = SysParamUtil.getValueAsString(SMTParameterConstants.USR_ACCT_LOCK_CRON_EXPRESSION);
+
+		if (cronExpression == null) {
+			cronExpression = SecurityUserAccountLockJob.CRON_EXPRESSION;
+		}
+
+		try {
+			CronExpression.validateExpression(cronExpression);
+		} catch (Exception e) {
+			logger.warn(String.format("The cron expression specified with %s SMTP parameter is invalid.",
+					SMTParameterConstants.USR_ACCT_LOCK_CRON_EXPRESSION));
+			return;
+		}
+
+		String jobTriggger = SecurityUserAccountLockJob.JOB_TRIGGER;
+		String jobKey = SecurityUserAccountLockJob.JOB_KEY;
+
+		Job job = new Job();
+		job.setJobDetail(JobBuilder.newJob(SecurityUserAccountLockJob.class).withIdentity(jobKey, jobKey)
+				.withDescription("User account locking job").build());
+		job.setTrigger(TriggerBuilder.newTrigger().withIdentity(jobTriggger, jobTriggger)
+				.withDescription("User account locking job trigger")
+				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
+		jobs.put(jobKey, job);
+		logger.debug(Literal.LEAVING);
 	}
 
 }

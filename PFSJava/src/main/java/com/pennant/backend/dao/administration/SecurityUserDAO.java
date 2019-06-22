@@ -87,4 +87,6 @@ public interface SecurityUserDAO {
 	List<SecurityUser> getSecUsersByRoles(String[] roles);
 
 	SecurityUser getSecurityUserAccessToAllBranches(long id);
+
+	void lockUserAccounts();
 }

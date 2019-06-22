@@ -145,4 +145,15 @@ public class SMTParameterConstants {
 
 	public static final String VAN_REQUIRED = "VAN_REQUIRED";
 
+	/**
+	 * Parameter code to specify the number of days to lock the user account, when the user is not logging into the
+	 * application.
+	 */
+	public static final String USR_ACCT_LOCK_DAYS = "USR_ACCT_LOCK_DAYS";
+
+	/**
+	 * Parameter code to specify the cron expression for Security user account locking job.
+	 */
+	public static final String USR_ACCT_LOCK_CRON_EXPRESSION = "USR_ACCT_LOCK_CRON_EXPRESSION";
+
 }

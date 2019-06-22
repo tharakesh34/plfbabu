@@ -111,6 +111,9 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String lovDescFirstName;
 
+	private Date accountLockedOn;
+	private Date accountUnLockedOn;
+
 	private boolean accessToAllBranches;
 
 	public Set<String> getExcludeFields() {
@@ -558,4 +561,29 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	public void setAccessToAllBranches(boolean accessToAllBranches) {
 		this.accessToAllBranches = accessToAllBranches;
 	}
+
+	public Date getAccountLockedOn() {
+		return accountLockedOn;
+	}
+
+	public void setAccountLockedOn(Date accountLockedOn) {
+		this.accountLockedOn = accountLockedOn;
+	}
+
+	public Date getAccountUnLockedOn() {
+		return accountUnLockedOn;
+	}
+
+	public void setAccountUnLockedOn(Date accountUnLockedOn) {
+		this.accountUnLockedOn = accountUnLockedOn;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Timestamp getPrevMntOn() {
+		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
 }
