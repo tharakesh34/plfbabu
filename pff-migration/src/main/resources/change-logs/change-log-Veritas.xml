@@ -6221,5 +6221,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="95" author="aditya.a">
+		<sql>
+		<![CDATA[
+			UPDATE SMTPARAMETERS SET SYSPARMVALUE = 'Y' WHERE SYSPARMCODE = 'DISB_ACCNO_MASKING'; 
+		]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
