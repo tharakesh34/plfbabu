@@ -18,11 +18,13 @@ public class JsonServiceDetail implements Serializable {
 	private String serviceName;
 
 	private transient Object requestData;
+	private transient Object responceData;
 	private String requestString;
 	private String responseString;
 	private Map<String, String> queryParams;
 	private Map<String, String> pathParams;
-
+	private boolean xmlRequest=false;
+	
 	public String getReference() {
 		return reference;
 	}
@@ -103,6 +105,15 @@ public class JsonServiceDetail implements Serializable {
 		this.responseString = responseString;
 	}
 
+
+	public Object getResponceData() {
+		return responceData;
+	}
+
+	public void setResponceData(Object responceData) {
+		this.responceData = responceData;
+	}
+
 	public Map<String, String> getQueryParams() {
 		return queryParams;
 	}
@@ -119,4 +130,11 @@ public class JsonServiceDetail implements Serializable {
 		this.pathParams = pathParams;
 	}
 
+	public boolean isXmlRequest() {
+		return xmlRequest;
+	}
+
+	public void setXmlRequest(boolean xmlRequest) {
+		this.xmlRequest = xmlRequest;
+	}
 }

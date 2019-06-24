@@ -1,5 +1,7 @@
 package com.pennanttech.external.services;
 
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
 import java.net.URISyntaxException;
@@ -7,6 +9,10 @@ import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,12 +74,17 @@ public abstract class JsonService<T> {
 
 	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
-
-		serviceDetail.setRequestString(getObjectToJson(serviceDetail));
+		
+		if(serviceDetail.isXmlRequest()){
+			serviceDetail.setRequestString(getObjectToXML(serviceDetail));
+		}else{
+			serviceDetail.setRequestString(getObjectToJson(serviceDetail));
+		}
+		
 		Timestamp reqSentOn = null;
 
 		String url = App.getProperty(serviceDetail.getServiceName());
-
+			
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
 			if (MapUtils.isNotEmpty(serviceDetail.getPathParams())) {
@@ -101,7 +112,7 @@ public abstract class JsonService<T> {
 		logger.trace(String.format("URL %s%nMethod %s%nRequest Data %s", url, method.name(),
 				serviceDetail.getRequestString()));
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
-				getHttpHeader(serviceDetail.getHeaders()));
+				getHttpHeader(serviceDetail.getHeaders(), serviceDetail.isXmlRequest()));
 		ResponseEntity<String> response = null;
 		InterfaceLogDetail logDetail = null;
 
@@ -156,11 +167,15 @@ public abstract class JsonService<T> {
 		return serviceDetail;
 	}
 
-	protected T processMessage(JsonServiceDetail serviceDetail, Class<T> valueType) {
+	public T processMessage(JsonServiceDetail serviceDetail, Class<T> valueType) {
 		logger.debug(Literal.ENTERING);
-		processMessage(serviceDetail, valueType);
+		processMessage(serviceDetail);
 		logger.debug(Literal.LEAVING);
-		return getResponse(serviceDetail.getResponseString(), valueType);
+		if(serviceDetail.isXmlRequest()){
+			return getXMLResponse(serviceDetail.getResponseString(), valueType);
+		}else{
+			return getResponse(serviceDetail.getResponseString(), valueType);	
+		}
 	}
 
 	public String getObjectToJson(JsonServiceDetail jsonServiceDetail) {
@@ -174,6 +189,19 @@ public abstract class JsonService<T> {
 		return resuestData;
 	}
 
+	public String getObjectToXML(JsonServiceDetail jsonServiceDetail) {
+		StringWriter sw = new StringWriter();
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(jsonServiceDetail.getRequestData().getClass());
+			Marshaller marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.marshal(jsonServiceDetail.getRequestData(),sw);
+		} catch (Exception e) {
+			throw new InterfaceException("8902", "RequesrGeneration Expection", e);
+		}
+		return sw.toString();
+	}
+
 	private RestTemplate getTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
@@ -184,20 +212,49 @@ public abstract class JsonService<T> {
 	}
 
 	protected HttpHeaders getHttpHeader(HttpHeaders headers) {
+		return getHttpHeader(headers, false);
+	}
+
+	
+	protected HttpHeaders getHttpHeader(HttpHeaders headers,boolean xmlRequest) {
 		if (headers == null) {
 			headers = new HttpHeaders();
 		}
-
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+		
+		if(xmlRequest){
+			headers.setContentType(MediaType.APPLICATION_XML);
+			headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
+		}else{
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+		}
+		
 		return headers;
 	}
 
+	
+	
 	public T getResponse(String content, Class<T> valueType) {
 		T resp = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			resp = mapper.readValue(content, valueType);
+		} catch (Exception e) {
+			throw new InterfaceException("8903", "Response Generation Expection", e);
+		}
+		return resp;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T getXMLResponse(String content, Class<T> valueType) {
+		T resp = null;
+		StringReader sr = new StringReader(content);
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(valueType);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			resp = (T) unmarshaller.unmarshal(sr);
+			
+					
 		} catch (Exception e) {
 			throw new InterfaceException("8903", "Response Generation Expection", e);
 		}

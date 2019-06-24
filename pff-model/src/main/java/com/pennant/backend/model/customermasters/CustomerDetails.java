@@ -177,7 +177,7 @@ public class CustomerDetails implements java.io.Serializable {
 	private List<CollateralSetup> collateraldetailList;
 
 	@XmlElement
-	private WSReturnStatus returnStatus = null;
+	public WSReturnStatus returnStatus = null;
 	@XmlElement
 	private boolean dedupReq;
 	@XmlElement

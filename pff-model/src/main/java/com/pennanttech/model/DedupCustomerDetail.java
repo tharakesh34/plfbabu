@@ -54,6 +54,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.customermasters.CustomerDedup;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -98,7 +99,9 @@ public class DedupCustomerDetail implements java.io.Serializable {
 	@XmlElementWrapper(name = "emails")
 	@XmlElement(name = "email")
 	private List<CustomerEMail> customerEMailList;
-
+	// added customer dedupe class for preparing the request data
+	List<CustomerDedup> customerDedupList;
+		
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 
@@ -222,6 +225,14 @@ public class DedupCustomerDetail implements java.io.Serializable {
 				+ ", customerDocumentsList=" + customerDocumentsList + ", addressList=" + addressList
 				+ ", customerPhoneNumList=" + customerPhoneNumList + ", customerEMailList=" + customerEMailList
 				+ ", returnStatus=" + returnStatus + "]";
+	}
+
+	public List<CustomerDedup> getCustomerDedupList() {
+		return customerDedupList;
+	}
+
+	public void setCustomerDedupList(List<CustomerDedup> customerDedupList) {
+		this.customerDedupList = customerDedupList;
 	}
 
 }
