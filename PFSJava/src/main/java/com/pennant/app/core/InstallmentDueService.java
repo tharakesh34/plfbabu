@@ -28,6 +28,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -156,7 +157,7 @@ public class InstallmentDueService extends ServiceHelper {
 			financeDetail.setFinanceTaxDetail(null);
 			financeDetail.setCustomerDetails(null);
 			getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
-					curSchd.getProfitSchd());
+					curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
 		}
 
 		//Accrual posted on the installment due postings
@@ -323,7 +324,7 @@ public class InstallmentDueService extends ServiceHelper {
 				aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 				if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0) {
 					getGstInvoiceTxnService().createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail,
-							curSchd.getProfitSchd());
+							curSchd.getProfitSchd(), PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
 				}
 			} else {
 				aeEvent = engineExecution.getAccEngineExecResults(aeEvent);

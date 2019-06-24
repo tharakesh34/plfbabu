@@ -39,6 +39,11 @@ public class FinRepayQueueHeader {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
+	
+	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
 
 	private String payType;
 	private String postBranch;
@@ -389,6 +394,38 @@ public class FinRepayQueueHeader {
 
 	public void setRepayID(long repayID) {
 		this.repayID = repayID;
+	}
+
+	public BigDecimal getPenaltyWaiverCGST() {
+		return penaltyWaiverCGST;
+	}
+
+	public void setPenaltyWaiverCGST(BigDecimal penaltyWaiverCGST) {
+		this.penaltyWaiverCGST = penaltyWaiverCGST;
+	}
+
+	public BigDecimal getPenaltyWaiverSGST() {
+		return penaltyWaiverSGST;
+	}
+
+	public void setPenaltyWaiverSGST(BigDecimal penaltyWaiverSGST) {
+		this.penaltyWaiverSGST = penaltyWaiverSGST;
+	}
+
+	public BigDecimal getPenaltyWaiverUGST() {
+		return penaltyWaiverUGST;
+	}
+
+	public void setPenaltyWaiverUGST(BigDecimal penaltyWaiverUGST) {
+		this.penaltyWaiverUGST = penaltyWaiverUGST;
+	}
+
+	public BigDecimal getPenaltyWaiverIGST() {
+		return penaltyWaiverIGST;
+	}
+
+	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
+		this.penaltyWaiverIGST = penaltyWaiverIGST;
 	}
 
 }

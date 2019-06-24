@@ -17,6 +17,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -40,6 +41,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 	private List<ReceiptAllocationDetail> allocList;
 	private String buttonId;
 
+	@SuppressWarnings("unchecked")
 	public void onCreate$window_BounceDetails(Event event) throws Exception {
 		logger.debug("Entering");
 
@@ -83,10 +85,11 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		Listitem item = null;
 		Listcell lc = null;
 		BigDecimal rcdAmount = BigDecimal.ZERO;
+		BigDecimal dueGST = BigDecimal.ZERO;
 		BigDecimal inProgressAmt = BigDecimal.ZERO;
 		BigDecimal curDueAmt = BigDecimal.ZERO;
 		BigDecimal curPaidAmt = BigDecimal.ZERO;
-		BigDecimal curWaiverAmt = BigDecimal.ZERO;
+		BigDecimal curPaidGstAmt = BigDecimal.ZERO;
 		BigDecimal remainingAmt = BigDecimal.ZERO;
 		for (ReceiptAllocationDetail allocate : details) {
 
@@ -100,16 +103,21 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			rcdAmount = rcdAmount.add(allocate.getTotRecv());
+			
+			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueGST(), 2));
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			dueGST = dueGST.add(allocate.getDueGST());
 
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getInProcess(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			inProgressAmt = inProgressAmt.add(allocate.getInProcess());
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueAmount(), 2));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getTotalDue(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
-			curDueAmt = curDueAmt.add(allocate.getDueAmount());
+			curDueAmt = curDueAmt.add(allocate.getTotalDue());
 
 			lc = new Listcell();
 			CurrencyBox allocationPaid = new CurrencyBox();
@@ -123,18 +131,34 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			curPaidAmt = curPaidAmt.add(allocate.getPaidAmount());
+			
+			//Paid GST
+			lc = new Listcell();
+			CurrencyBox allocationPaidGst = new CurrencyBox();
+			allocationPaidGst.setStyle("text-align:right;");
+			allocationPaidGst.setBalUnvisible(true, true);
+			setProps(allocationPaidGst, false, 2, 120);
+			allocationPaidGst.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidGST(), 2));
+			allocationPaidGst.setReadonly(true);
+			
+			lc.appendChild(allocationPaidGst);
+			lc.setStyle("text-align:right;");
+			lc.setParent(item);
+			curPaidGstAmt = curPaidGstAmt.add(allocate.getPaidGST());
 
 			// Amount Setting
-
-			lc = new Listcell(PennantApplicationUtil
-					.amountFormate(allocate.getDueAmount().subtract(allocate.getPaidAmount()), 2));
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+				lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueAmount().subtract(allocate.getPaidAmount()).add(allocate.getPaidGST()), 2));
+			} else {
+				lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueAmount().subtract(allocate.getPaidAmount()), 2));
+			}
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			remainingAmt = remainingAmt.add(curDueAmt.subtract(curPaidAmt));
 
 			this.listDetails.appendChild(item);
 		}
-		addFooter(rcdAmount, inProgressAmt, curDueAmt, curPaidAmt, curWaiverAmt, remainingAmt, 2);
+		addFooter(rcdAmount, inProgressAmt, curDueAmt, curPaidAmt, remainingAmt, dueGST, curPaidGstAmt, 2);
 
 		logger.debug("Leaving");
 	}
@@ -148,8 +172,9 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 	 * @param formatter
 	 * @param isPastDue
 	 */
+	@SuppressWarnings("deprecation")
 	private void addFooter(BigDecimal rcdAmount, BigDecimal inProgressAmt, BigDecimal curDueAmt, BigDecimal curPaidAmt,
-			BigDecimal curWaiverAmt, BigDecimal remainingAmt, int formatter) {
+			BigDecimal remainingAmt, BigDecimal dueGST, BigDecimal paidGST,int formatter) {
 
 		Listitem item = new Listitem();
 		item.setStyle("background-color: #C0EBDF;align:bottom;");
@@ -160,6 +185,13 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc = new Listcell();
 		Label label = new Label(PennantAppUtil.amountFormate(rcdAmount, formatter));
 		label.setId("AllocateAmount_rcdAmount");
+		lc.setStyle("text-align:right;font-weight:bold;");
+		lc.appendChild(label);
+		lc.setParent(item);
+		
+		lc = new Listcell();
+		label = new Label(PennantAppUtil.amountFormate(dueGST, formatter));
+		label.setId("AllocateAmount_dueGST");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
@@ -184,10 +216,10 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-
+		
 		lc = new Listcell();
-		label = new Label(PennantAppUtil.amountFormate(curWaiverAmt, formatter));
-		label.setId("AllocateAmount_curWaiverAmt");
+		label = new Label(PennantAppUtil.amountFormate(paidGST, formatter));
+		label.setId("AllocateAmount_curPaidGSTAmt");
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);

@@ -106,6 +106,12 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
+	
+	//Waiver GST Fields
+	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;
+	private BigDecimal penaltyWaiverIGST = BigDecimal.ZERO;
 
 	private String chargeType = "";
 	private long linkedTranId = 0;
@@ -612,6 +618,38 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	public BigDecimal getPenaltyWaiverCGST() {
+		return penaltyWaiverCGST;
+	}
+
+	public void setPenaltyWaiverCGST(BigDecimal penaltyWaiverCGST) {
+		this.penaltyWaiverCGST = penaltyWaiverCGST;
+	}
+
+	public BigDecimal getPenaltyWaiverSGST() {
+		return penaltyWaiverSGST;
+	}
+
+	public void setPenaltyWaiverSGST(BigDecimal penaltyWaiverSGST) {
+		this.penaltyWaiverSGST = penaltyWaiverSGST;
+	}
+
+	public BigDecimal getPenaltyWaiverUGST() {
+		return penaltyWaiverUGST;
+	}
+
+	public void setPenaltyWaiverUGST(BigDecimal penaltyWaiverUGST) {
+		this.penaltyWaiverUGST = penaltyWaiverUGST;
+	}
+
+	public BigDecimal getPenaltyWaiverIGST() {
+		return penaltyWaiverIGST;
+	}
+
+	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
+		this.penaltyWaiverIGST = penaltyWaiverIGST;
 	}
 
 }

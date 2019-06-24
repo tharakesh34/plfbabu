@@ -202,6 +202,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		dataMap.put("LPP_SGST_P", movement.getPaidSGST());
 		dataMap.put("LPP_UGST_P", movement.getPaidUGST());
 		dataMap.put("LPP_IGST_P", movement.getPaidIGST());
+		
+		//GST Waivers Details
+		dataMap.put("LPP_CGST_W", rpyQueueHeader.getPenaltyWaiverCGST());
+		dataMap.put("LPP_SGST_W", rpyQueueHeader.getPenaltyWaiverSGST());
+		dataMap.put("LPP_UGST_W", rpyQueueHeader.getPenaltyWaiverUGST());
+		dataMap.put("LPP_IGST_W", rpyQueueHeader.getPenaltyWaiverIGST());
 
 		if (taxRcv != null) {
 			if (taxRcv.getCGST().compareTo(movement.getPaidCGST()) < 0) {
@@ -301,8 +307,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			finScheduleData.setFinanceType(financeType);
 			financeDetail.setFinScheduleData(finScheduleData);
 			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
-					advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(),
-					false);
+					advMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
 
 			// Saving Tax Income Details
 			FinTaxIncomeDetail taxIncome = new FinTaxIncomeDetail();

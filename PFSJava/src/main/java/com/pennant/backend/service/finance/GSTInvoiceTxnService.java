@@ -10,7 +10,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 public interface GSTInvoiceTxnService {
 
 	void gstInvoicePreparation(long linkedTranId, FinanceDetail financeDetail, List<FinFeeDetail> finFeeDetailsList,
-			List<ManualAdviseMovements> movements, String invoiceType, String finReference, boolean origination);
+			List<ManualAdviseMovements> movements, String invoiceType, boolean origination, boolean isWaiver);
 
-	void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout);
+	void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout, String invoiceType);
 }

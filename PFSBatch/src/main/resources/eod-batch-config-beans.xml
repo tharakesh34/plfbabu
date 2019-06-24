@@ -412,8 +412,15 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="latePayBucketService" ref="latePayBucketService" />
 		<property name="accrualService" ref="accrualService" />
-		<!--<property name="manualAdviseDAO" ref="manualAdviseDAO" /> -->
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="assignmentDAO" ref="assignmentDAO" />
+		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
+	
+	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl" parent="sequenceDao" />
+	<bean id="assignmentDealDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDealDAOImpl" parent="sequenceDao" />
 
 	<!--============ Finance Excess Amounts Details ============== -->
 	<bean id="finExcessAmountDAO" class="com.pennant.backend.dao.receipts.impl.FinExcessAmountDAOImpl" parent="sequenceDao" />
@@ -573,9 +580,7 @@
 		<property name="provinceService" ref="provinceService" />
 		<!-- GST Invoice Changes -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerService" ref="customerService" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
@@ -828,5 +833,8 @@
 		<constructor-arg ref="financeTaxDetailDAO" />
 		<constructor-arg ref="ruleExecutionUtil" />
 	</bean>
+	
+	<!-- GST FinTaxDetails -->
+	<bean id="finTaxDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinTaxDetailsDAOImpl" parent="sequenceDao" />
 
 </beans>

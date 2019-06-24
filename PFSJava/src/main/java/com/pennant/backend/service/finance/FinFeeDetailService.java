@@ -44,7 +44,6 @@
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,5 +125,7 @@ public interface FinFeeDetailService {
 	BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId);
 
 	Branch getBranchById(String branchCode, String type);
+
+	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); //TO get the Servicing Fees
 
 }

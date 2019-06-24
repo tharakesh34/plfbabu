@@ -4429,10 +4429,8 @@ public class PennantStaticListUtil {
 			if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
 				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED,
 						Labels.getLabel("Invoice_Type_Exempted")));
-			}
-			if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE) {
-				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED,
-						Labels.getLabel("Invoice_Type_Exempted")));
+				invoiceTypes.add(new ValueLabel(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT,
+						Labels.getLabel("Invoice_Type_Exempted_Credit")));
 			}
 		}
 		return invoiceTypes;

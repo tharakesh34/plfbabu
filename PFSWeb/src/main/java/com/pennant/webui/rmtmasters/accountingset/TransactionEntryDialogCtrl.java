@@ -1556,8 +1556,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		Listgroup group = null;
 		Listcell lc = null;
 
-		String[] feeExtensions = new String[25];
-		String[] feeExtensionLabels = new String[25];
+		String[] feeExtensions = new String[29];
+		String[] feeExtensionLabels = new String[29];
 
 		fillAccountingDetails(feeExtensions, feeExtensionLabels);
 
@@ -1617,65 +1617,68 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeExtensionLabels[4] = Labels.getLabel("label_TransactionEntryDialog_FeeSF");
 
 		//GST Fields 
+		String label_CGST = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		String label_SGST = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		String label_UGST = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		String label_IGST = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		
+		//CGST
 		feeExtensions[5] = "_CGST_C";
-		feeExtensionLabels[5] = Labels.getLabel("label_TransactionEntryDialog_CGST");
-
+		feeExtensionLabels[5] = label_CGST;
 		feeExtensions[6] = "_CGST_N";
-		feeExtensionLabels[6] = Labels.getLabel("label_TransactionEntryDialog_CGST");
-
+		feeExtensionLabels[6] = label_CGST;
 		feeExtensions[7] = "_CGST_P";
-		feeExtensionLabels[7] = Labels.getLabel("label_TransactionEntryDialog_CGST");
-
+		feeExtensionLabels[7] = label_CGST;
 		feeExtensions[8] = "_CGST_SCH";
-		feeExtensionLabels[8] = Labels.getLabel("label_TransactionEntryDialog_CGST");
-
+		feeExtensionLabels[8] = label_CGST;
 		feeExtensions[9] = "_CGST_AF";
-		feeExtensionLabels[9] = Labels.getLabel("label_TransactionEntryDialog_CGST");
+		feeExtensionLabels[9] = label_CGST;
 
+		//SGST
 		feeExtensions[10] = "_SGST_C";
-		feeExtensionLabels[10] = Labels.getLabel("label_TransactionEntryDialog_SGST");
-
+		feeExtensionLabels[10] = label_SGST;
 		feeExtensions[11] = "_SGST_N";
-		feeExtensionLabels[11] = Labels.getLabel("label_TransactionEntryDialog_SGST");
-
+		feeExtensionLabels[11] = label_SGST;
 		feeExtensions[12] = "_SGST_P";
-		feeExtensionLabels[12] = Labels.getLabel("label_TransactionEntryDialog_SGST");
-
+		feeExtensionLabels[12] = label_SGST;
 		feeExtensions[13] = "_SGST_SCH";
-		feeExtensionLabels[13] = Labels.getLabel("label_TransactionEntryDialog_SGST");
-
+		feeExtensionLabels[13] = label_SGST;
 		feeExtensions[14] = "_SGST_AF";
-		feeExtensionLabels[14] = Labels.getLabel("label_TransactionEntryDialog_SGST");
+		feeExtensionLabels[14] = label_SGST;
 
+		//UGST
 		feeExtensions[15] = "_UGST_C";
-		feeExtensionLabels[15] = Labels.getLabel("label_TransactionEntryDialog_UGST");
-
+		feeExtensionLabels[15] = label_UGST;
 		feeExtensions[16] = "_UGST_N";
-		feeExtensionLabels[16] = Labels.getLabel("label_TransactionEntryDialog_UGST");
-
+		feeExtensionLabels[16] = label_UGST;
 		feeExtensions[17] = "_UGST_P";
-		feeExtensionLabels[17] = Labels.getLabel("label_TransactionEntryDialog_UGST");
-
+		feeExtensionLabels[17] = label_UGST;
 		feeExtensions[18] = "_UGST_SCH";
-		feeExtensionLabels[18] = Labels.getLabel("label_TransactionEntryDialog_UGST");
-
+		feeExtensionLabels[18] = label_UGST;
 		feeExtensions[19] = "_UGST_AF";
-		feeExtensionLabels[19] = Labels.getLabel("label_TransactionEntryDialog_UGST");
+		feeExtensionLabels[19] = label_UGST;
 
+		//IGST
 		feeExtensions[20] = "_IGST_C";
-		feeExtensionLabels[20] = Labels.getLabel("label_TransactionEntryDialog_IGST");
-
+		feeExtensionLabels[20] = label_IGST;
 		feeExtensions[21] = "_IGST_N";
-		feeExtensionLabels[21] = Labels.getLabel("label_TransactionEntryDialog_IGST");
-
+		feeExtensionLabels[21] = label_IGST;
 		feeExtensions[22] = "_IGST_P";
-		feeExtensionLabels[22] = Labels.getLabel("label_TransactionEntryDialog_IGST");
-
+		feeExtensionLabels[22] = label_IGST;
 		feeExtensions[23] = "_IGST_SCH";
-		feeExtensionLabels[23] = Labels.getLabel("label_TransactionEntryDialog_IGST");
-
+		feeExtensionLabels[23] = label_IGST;
 		feeExtensions[24] = "_IGST_AF";
-		feeExtensionLabels[24] = Labels.getLabel("label_TransactionEntryDialog_IGST");
+		feeExtensionLabels[24] = label_IGST;
+		
+		//Waivers
+		feeExtensions[25] = "_CGST_W";
+		feeExtensionLabels[25] = Labels.getLabel("label_TransactionEntryDialog_W_CGST");
+		feeExtensions[26] = "_SGST_W";
+		feeExtensionLabels[26] = Labels.getLabel("label_TransactionEntryDialog_W_SGST");
+		feeExtensions[27] = "_UGST_W";
+		feeExtensionLabels[27] = Labels.getLabel("label_TransactionEntryDialog_W_UGST");
+		feeExtensions[28] = "_IGST_W";
+		feeExtensionLabels[28] = Labels.getLabel("label_TransactionEntryDialog_W_IGST");		
 	}
 
 	/**

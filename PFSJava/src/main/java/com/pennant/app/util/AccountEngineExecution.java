@@ -564,6 +564,11 @@ public class AccountEngineExecution implements Serializable {
 					addZeroifNotContains(dataMap, feeCode + "_SGST_P");
 					addZeroifNotContains(dataMap, feeCode + "_IGST_P");
 					addZeroifNotContains(dataMap, feeCode + "_CGST_P");
+					
+					addZeroifNotContains(dataMap, feeCode + "_UGST_W");
+					addZeroifNotContains(dataMap, feeCode + "_SGST_W");
+					addZeroifNotContains(dataMap, feeCode + "_IGST_W");
+					addZeroifNotContains(dataMap, feeCode + "_CGST_W");
 
 					addZeroifNotContains(dataMap, feeCode + "_UGST_SCH");
 					addZeroifNotContains(dataMap, feeCode + "_SGST_SCH");
@@ -657,8 +662,7 @@ public class AccountEngineExecution implements Serializable {
 			returnDataSet.setEntityCode(aeEvent.getEntityCode());
 			//Set Account Number
 			IAccounts acc = (IAccounts) accountsMap.get(String.valueOf(transactionEntry.getTransOrder()));
-			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(),
-					dataMap);
+			BigDecimal postAmt = executeAmountRule(aeEvent.getAccountingEvent(), transactionEntry, aeEvent.getCcy(), dataMap);
 
 			//If parameter flag is 'N' for zero postings not allow to insert zero postings
 			if (BigDecimal.ZERO.compareTo(postAmt) == 0 && "N".equalsIgnoreCase(zeroPostingFlag)) {

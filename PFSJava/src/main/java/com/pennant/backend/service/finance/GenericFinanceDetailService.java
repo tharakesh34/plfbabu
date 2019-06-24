@@ -1503,6 +1503,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				isPreIncomized = true;
 			}
 
+			FinTaxDetails finTaxDetails = fee.getFinTaxDetails();
 			String feeTypeCode = fee.getFeeTypeCode();
 			feeRule.setFeeCode(feeTypeCode);
 			feeRule.setFeeAmount(fee.getActualAmount());
@@ -1510,14 +1511,21 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			feeRule.setPaidAmount(fee.getPaidAmount());
 			feeRule.setFeeToFinance(fee.getFeeScheduleMethod());
 			feeRule.setFeeMethod(fee.getFeeScheduleMethod());
+			
 			dataMap.put(feeTypeCode + "_C", isPreIncomized ? BigDecimal.ZERO : fee.getActualAmountOriginal());
-			dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount());
+			
+			//GST Waiver Changes
+			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
+				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+			} else {
+				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount());
+			}
+			
 			dataMap.put(feeTypeCode + "_P", isPreIncomized ? BigDecimal.ZERO : fee.getPaidAmountOriginal());
 
 			//GST Added
 			dataMap.put(feeTypeCode + "_N", isPreIncomized ? BigDecimal.ZERO : fee.getNetAmount());
 			//Calculated Amount 
-			FinTaxDetails finTaxDetails = fee.getFinTaxDetails();
 			dataMap.put(feeTypeCode + "_CGST_C", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getActualCGST());
 			dataMap.put(feeTypeCode + "_SGST_C", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getActualSGST());
 			dataMap.put(feeTypeCode + "_IGST_C", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getActualIGST());
@@ -1535,6 +1543,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			dataMap.put(feeTypeCode + "_IGST_N", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getNetIGST());
 			dataMap.put(feeTypeCode + "_UGST_N", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getNetUGST());
 
+			//Waiver GST Amounts (GST Waiver Changes)
+			dataMap.put(feeTypeCode + "_CGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedCGST());
+			dataMap.put(feeTypeCode + "_SGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedSGST());
+			dataMap.put(feeTypeCode + "_IGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedIGST());
+			dataMap.put(feeTypeCode + "_UGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedUGST());
+			
 			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
@@ -1638,6 +1652,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		Date valueDate = null;
 
 		boolean isNew = false;
+		String finReference = financeMain.getFinReference();
+		
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
 			isNew = true;
@@ -1645,7 +1661,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Added Value date as Finance Start Date in case of origination Disbursement
 			valueDate = financeMain.getFinStartDate();
 		} else {
-			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(financeMain.getFinReference());
+			pftDetail = getProfitDetailsDAO().getFinProfitDetailsById(finReference);
 		}
 
 		aeEvent = prepareAccountingData(financeDetail, aeEvent, pftDetail, valueDate);
@@ -1661,6 +1677,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = aeEvent.getDataMap();
+		
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 
 		/*
@@ -1771,9 +1788,23 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				orgination = true;
 			}
+			
+			//Normal Fees invoice preparation
 			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail,
 					financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
-					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, financeMain.getFinReference(), orgination);
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, orgination, false);
+			
+			//Waiver Fees Invoice Preparation
+			List<FinFeeDetail> waiverFees = new ArrayList<>();
+			for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+				if (fee.isTaxApplicable() && fee.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
+					waiverFees.add(fee);
+				}
+			}
+			if (CollectionUtils.isNotEmpty(waiverFees)) {
+				gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, waiverFees, null,
+						PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, orgination, true);
+			}	
 		}
 
 		//Disbursement Instruction Posting

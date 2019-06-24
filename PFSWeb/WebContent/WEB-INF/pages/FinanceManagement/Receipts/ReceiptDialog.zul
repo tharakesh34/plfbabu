@@ -507,9 +507,13 @@
 													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_ReceiptInProcess.label')}" align="right" sort="false"
 													hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivableGST.label')}" align="right"
+													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right"
 													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"
+													hflex="min" />
+												<listheader label="${c:l('listheader_ReceiptDialog_PaidGST.label')}" align="right" sort="false"
 													hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_WaivedAmount.label')}" align="right" sort="false"
 													hflex="min" />

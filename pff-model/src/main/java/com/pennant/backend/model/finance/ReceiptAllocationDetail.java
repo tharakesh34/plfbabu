@@ -41,6 +41,13 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
 
+	//Waiver GST fields
+	private BigDecimal waivedCGST = BigDecimal.ZERO;
+	private BigDecimal waivedSGST = BigDecimal.ZERO;
+	private BigDecimal waivedIGST = BigDecimal.ZERO;
+	private BigDecimal waivedUGST = BigDecimal.ZERO;
+	private BigDecimal waivedGST = BigDecimal.ZERO;
+
 	//In Process Allocation along with GST and TDS
 	private BigDecimal inProcess = BigDecimal.ZERO;
 
@@ -320,6 +327,46 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setSubList(List<ReceiptAllocationDetail> subList) {
 		this.subList = subList;
+	}
+
+	public BigDecimal getWaivedGST() {
+		return waivedGST;
+	}
+
+	public void setWaivedGST(BigDecimal waivedGST) {
+		this.waivedGST = waivedGST;
+	}
+
+	public BigDecimal getWaivedCGST() {
+		return waivedCGST;
+	}
+
+	public void setWaivedCGST(BigDecimal waivedCGST) {
+		this.waivedCGST = waivedCGST;
+	}
+
+	public BigDecimal getWaivedSGST() {
+		return waivedSGST;
+	}
+
+	public void setWaivedSGST(BigDecimal waivedSGST) {
+		this.waivedSGST = waivedSGST;
+	}
+
+	public BigDecimal getWaivedIGST() {
+		return waivedIGST;
+	}
+
+	public void setWaivedIGST(BigDecimal waivedIGST) {
+		this.waivedIGST = waivedIGST;
+	}
+
+	public BigDecimal getWaivedUGST() {
+		return waivedUGST;
+	}
+
+	public void setWaivedUGST(BigDecimal waivedUGST) {
+		this.waivedUGST = waivedUGST;
 	}
 
 }

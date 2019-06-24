@@ -94,4 +94,6 @@ public interface FinFeeDetailDAO {
 	public List<FinFeeDetail> getPreviousAdvPayments(String finReferee);
 
 	List<FinFeeDetail> getFeeDetails(String finReference, String feetypeCode, List<String> finEvents);
+
+	List<FinFeeDetail> getFinFeeDetailByReferenceId(long referenceId, String finEvent, String type);
 }

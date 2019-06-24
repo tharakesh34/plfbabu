@@ -4,7 +4,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_BounceDetails" apply="${bounceDetailsDialogCtrl}" width="80%">
+	<window id="window_BounceDetails" apply="${bounceDetailsDialogCtrl}" width="90%">
 
 		<borderlayout id="borderLayout_BounceDetails">
 			<north>
@@ -31,11 +31,15 @@
 						<listheader id="listheader_Code" sort="none" hflex="min" />
 						<listheader id="listheader_ReceivableAmount" label="${c:l('listheader_ReceivableAmount.label')}" sort="none"
 							hflex="min" style="text-align:left;" />
+						<listheader id="listheader_ReceivableGST" label="${c:l('listheader_ReceivableGST.label')}" sort="none"
+							hflex="min" style="text-align:left;" />
 						<listheader id="listheader_ReceiptInProgress" label="${c:l('listheader_ReceiptInProgress.label')}"
 							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_CurrentReceivable" label="${c:l('listheader_CurrentReceivable.label')}"
 							sort="none" hflex="min" style="text-align:left;" />
 						<listheader id="listheader_PaidAmount" label="${c:l('listheader_PaidAmount.label')}" sort="none" hflex="min"
+							style="text-align:left;" />
+						<listheader id="listheader_PaidAmountGST" label="${c:l('listheader_PaidAmountGST.label')}" sort="none" hflex="min"
 							style="text-align:left;" />
 						<listheader id="listheader_BalanceDueAmount" label="${c:l('listheader_BalanceDueAmount.label')}" sort="none"
 							hflex="min" style="text-align:left;" />

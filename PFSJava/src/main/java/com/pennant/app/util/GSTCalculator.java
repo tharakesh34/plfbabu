@@ -15,6 +15,7 @@ import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
+import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -225,6 +226,42 @@ public class GSTCalculator {
 
 		return gstPercentages;
 	}
+	
+	public static Map<String, BigDecimal> getTaxPercentages(Map<String, Object> dataMap, String finCcy) {
+
+		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
+
+		BigDecimal totalTaxPerc = BigDecimal.ZERO;
+		Map<String, BigDecimal> taxPercMap = new HashMap<>();
+		taxPercMap.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
+		taxPercMap.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
+
+		for (Rule rule : rules) {
+			BigDecimal taxPerc = BigDecimal.ZERO;
+			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_CGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_IGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_SGST, taxPerc);
+			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
+				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
+				totalTaxPerc = totalTaxPerc.add(taxPerc);
+				taxPercMap.put(RuleConstants.CODE_UGST, taxPerc);
+			}
+		}
+		taxPercMap.put("TOTALGST", totalTaxPerc);
+
+		return taxPercMap;
+	}
 
 	public static Map<String, Object> getGSTDataMap(String finReference) {
 		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference);
@@ -243,7 +280,7 @@ public class GSTCalculator {
 		return dataMap;
 	}
 
-	private static Map<String, Object> getGSTDataMap(String finBranch, String custBranch, String custState,
+	public static Map<String, Object> getGSTDataMap(String finBranch, String custBranch, String custState,
 			String custCountry, FinanceTaxDetail taxDetail) {
 
 		HashMap<String, Object> gstExecutionMap = new HashMap<>();
@@ -361,6 +398,40 @@ public class GSTCalculator {
 		GSTCalculator.financeMainDAO = financeMainDAO;
 		GSTCalculator.financeTaxDetailDAO = financeTaxDetailDAO;
 		GSTCalculator.ruleExecutionUtil = ruleExecutionUtil;
+	}
+	
+	/**
+	 * Advise Waiver Calculation
+	 * @param finReference
+	 * @param movement
+	 */
+	public static void waiverAdviseCalc(String finReference, ManualAdviseMovements movement) {
+		TaxAmountSplit taxSplit = null;
+		Map<String, BigDecimal> taxPercentages = getTaxPercentages(finReference);
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(movement.getTaxComponent())) {
+			taxSplit = getExclusiveGST(movement.getPaidAmount(), taxPercentages);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
+			taxSplit = getInclusiveGST(movement.getPaidAmount(), taxPercentages);
+		} else {
+			return;
+		}
+		if (taxSplit != null) {
+			movement.setWaivedCGST(taxSplit.getcGST());
+			movement.setWaivedSGST(taxSplit.getsGST());
+			movement.setWaivedIGST(taxSplit.getiGST());
+			movement.setWaivedUGST(taxSplit.getuGST());
+		}
+	}
+	
+	public static BigDecimal calGstTaxAmount(BigDecimal actTaxAmount, BigDecimal gstPerc, BigDecimal totalGSTPerc) {
+		BigDecimal gstAmount = BigDecimal.ZERO;
+		
+		if (gstPerc.compareTo(BigDecimal.ZERO) > 0) {
+			gstAmount = (actTaxAmount.multiply(gstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
+			gstAmount = CalculationUtil.roundAmount(gstAmount, getTaxRoundingMode(), getTaxRoundingTarget());
+		}
+		
+		return gstAmount;
 	}
 
 	public static BigDecimal getTDS(BigDecimal amount) {

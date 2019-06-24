@@ -555,7 +555,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		if (CollectionUtils.isNotEmpty(adviseMovements)) {
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
 			this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetail, null, adviseMovements,
-					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, finReference, false);
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, false);
 		}
 		logger.debug("Leaving");
 		return auditDetails;

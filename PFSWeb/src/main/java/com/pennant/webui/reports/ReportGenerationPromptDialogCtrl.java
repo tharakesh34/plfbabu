@@ -2335,12 +2335,14 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								PennantConstants.DBDateFormat);
 					} else if (template.getFieldID() == 5) { // Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {
-							if ("Credit".equals(template.getFieldValue())) {
+							if (StringUtils.equals(Labels.getLabel("Invoice_Type_Credit"), template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT;
-							} else if ("Debit".equals(template.getFieldValue())) {
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Debit"), template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
-							} else if ("Exempted".equals(template.getFieldValue())) {
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted"), template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED;
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted_Credit"), template.getFieldValue())) {
+								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT;
 							}
 						}
 					}

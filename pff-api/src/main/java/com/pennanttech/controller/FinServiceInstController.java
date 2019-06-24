@@ -1556,6 +1556,7 @@ public class FinServiceInstController extends SummaryDetailService {
 						allocate.setTotalPaid(BigDecimal.ZERO);
 						allocate.setBalance(allocate.getTotalDue());
 						allocate.setWaivedAmount(BigDecimal.ZERO);
+						allocate.setWaivedGST(BigDecimal.ZERO);
 					}
 
 					receiptData.setBuildProcess("R");
@@ -1632,6 +1633,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				allocate.setTotalPaid(BigDecimal.ZERO);
 				allocate.setBalance(allocate.getTotalDue());
 				allocate.setWaivedAmount(BigDecimal.ZERO);
+				allocate.setWaivedGST(BigDecimal.ZERO);
 			}
 			receiptData.setBuildProcess("R");
 			receiptData = receiptCalculator.initiateReceipt(receiptData, false);

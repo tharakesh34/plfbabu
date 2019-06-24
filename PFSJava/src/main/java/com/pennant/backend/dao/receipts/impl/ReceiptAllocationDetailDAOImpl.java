@@ -79,7 +79,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		source.addValue("ReceiptID", receiptID);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue");
+				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,TypeDesc ");
 		}
@@ -127,9 +127,9 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append("Insert Into ReceiptAllocationDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
-		sql.append(", PaidAmount , WaivedAmount, WaiverAccepted, PaidGST,TotalDue)");
+		sql.append(", PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST)");
 		sql.append(" Values(:ReceiptAllocationid, :ReceiptID, :AllocationID, :AllocationType, :AllocationTo");
-		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue)");
+		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -150,7 +150,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		StringBuilder selectSql = new StringBuilder(" Select ");
 		selectSql.append(" T2.ReceiptAllocationid, T2.ReceiptID, T2.AllocationID, T2.AllocationType,");
-		selectSql.append(" T2.AllocationTo, T2.PaidAmount, T2.PaidGST, T2.WaivedAmount,T2.TotalDue");
+		selectSql.append(" T2.AllocationTo, T2.PaidAmount, T2.PaidGST, T2.WaivedAmount, T2.TotalDue, T2.WaivedGST");
 		selectSql.append(" From FINRECEIPTHEADER");
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T1");
@@ -187,7 +187,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		StringBuilder selectSql = new StringBuilder("");
 		selectSql.append(" Select RAD.AllocationType AllocationType, SUM(RAD.PaidAmount) PaidAmount, ");
-		selectSql.append(" SUM(RAD.WaivedAmount) WaivedAmount, SUM(RAD.PaidGST) PaidGST ");
+		selectSql.append(" SUM(RAD.WaivedAmount) WaivedAmount, SUM(RAD.PaidGST) PaidGST, SUM(RAD.WaivedGST) WaivedGST");
 		selectSql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP RAD ");
 		selectSql.append(" INNER JOIN FINRECEIPTHEADER_TEMP RCH ON RAD.RECEIPTID = RCH.RECEIPTID ");
 		selectSql.append(" Where RCH.Reference = :Reference AND RCH.ReceiptID <> :ReceiptID");

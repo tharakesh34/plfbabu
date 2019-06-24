@@ -25,6 +25,12 @@ public class ManualAdviseMovements implements Serializable {
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
 
+	// GST Waiver Fields
+	private BigDecimal waivedCGST = BigDecimal.ZERO;
+	private BigDecimal waivedSGST = BigDecimal.ZERO;
+	private BigDecimal waivedUGST = BigDecimal.ZERO;
+	private BigDecimal waivedIGST = BigDecimal.ZERO;
+
 	private boolean taxApplicable;
 	private String taxComponent;
 	private int adviseType;
@@ -203,6 +209,38 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setAdviseType(int adviseType) {
 		this.adviseType = adviseType;
+	}
+
+	public BigDecimal getWaivedCGST() {
+		return waivedCGST;
+	}
+
+	public void setWaivedCGST(BigDecimal waivedCGST) {
+		this.waivedCGST = waivedCGST;
+	}
+
+	public BigDecimal getWaivedSGST() {
+		return waivedSGST;
+	}
+
+	public void setWaivedSGST(BigDecimal waivedSGST) {
+		this.waivedSGST = waivedSGST;
+	}
+
+	public BigDecimal getWaivedUGST() {
+		return waivedUGST;
+	}
+
+	public void setWaivedUGST(BigDecimal waivedUGST) {
+		this.waivedUGST = waivedUGST;
+	}
+
+	public BigDecimal getWaivedIGST() {
+		return waivedIGST;
+	}
+
+	public void setWaivedIGST(BigDecimal waivedIGST) {
+		this.waivedIGST = waivedIGST;
 	}
 
 }

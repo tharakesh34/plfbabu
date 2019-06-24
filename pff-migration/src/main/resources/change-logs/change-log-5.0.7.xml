@@ -1017,4 +1017,689 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<!-- GST Waiver Changes Start -->
+	
+	<changeSet author="Kesav" id="11">
+		<comment>New columns added for GST Waivers</comment>
+		<addColumn tableName="FinRepayScheduleDetail_Temp">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="12">
+		<comment>New columns added for GST Waivers</comment>
+		<addColumn tableName="FinRepayScheduleDetail">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="13">
+		<comment>WaivedGST columns added for GST Waivers</comment>
+		<addColumn tableName="ReceiptAllocationDetail">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="14">
+		<comment>WaivedGST columns added for GST Waivers</comment>
+		<addColumn tableName="ReceiptAllocationDetail_Temp">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="15" author="Kesav">
+	 	<comment> WaivedGST column added for GST Waivers</comment>
+		<createView viewName="ReceiptAllocationDetail_Aview" replaceIfExists="true">
+			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
+						T1.paidgst, T1.WaivedGST
+			FROM 		ReceiptAllocationDetail T1
+			LEFT JOIN   finfeedetail T2 ON T1.allocationto = T2.feeid AND T1.allocationtype = 'FEE'
+			LEFT JOIN   feetypes T3 ON T2.feetypeid = T3.feetypeid
+			LEFT JOIN   manualadvise T4 ON T1.allocationto = T4.adviseid AND T1.allocationtype = 'MANADV'
+			LEFT JOIN   feetypes T5 ON T4.feetypeid = T5.feetypeid			
+     	</createView>
+	</changeSet>
+	
+	 <changeSet id="16" author="Kesav">
+	 	<comment> WaivedGST column added for GST Waivers</comment>
+		<createView viewName="ReceiptAllocationDetail_View" replaceIfExists="true">
+			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
+						T1.paidgst, T1.waivedreqamount, T1.waiveraccepted, T1.totaldue, T1.WaivedGST
+			FROM 		ReceiptAllocationDetail_Temp T1
+			LEFT JOIN 	finfeedetail_temp T2 ON T1.allocationto = T2.feeid AND T1.allocationtype = 'FEE'
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid
+			LEFT JOIN 	manualadvise T4 ON T1.allocationto = T4.adviseid AND T1.allocationtype = 'MANADV'
+			LEFT JOIN 	feetypes T5 ON T4.feetypeid = T5.feetypeid
+			
+			UNION ALL
+			
+			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
+						T1.paidgst, T1.waivedreqamount, T1.waiveraccepted, T1.totaldue, T1.WaivedGST
+			FROM 		ReceiptAllocationDetail T1
+			LEFT JOIN 	finfeedetail T2 ON T1.allocationto = T2.feeid AND T1.allocationtype = 'FEE'
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid
+			LEFT JOIN 	manualadvise T4 ON T1.allocationto = T4.adviseid AND T1.allocationtype = 'MANADV'
+			LEFT JOIN 	feetypes T5 ON T4.feetypeid = T5.feetypeid
+			
+			WHERE NOT (EXISTS ( SELECT 1 FROM ReceiptAllocationDetail_temp WHERE ReceiptAllocationDetail_temp.receiptid = T1.receiptid))			
+     	</createView>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="17">
+		<comment>WaivedCGST, Waived1SGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<addColumn tableName="ManualAdvise_Temp">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="18">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<addColumn tableName="ManualAdvise">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="19">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<addColumn tableName="ManualAdviseMovements_Temp">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="20">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<addColumn tableName="ManualAdviseMovements">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	 <changeSet id="21_pre" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'manualadvise_aview');
+					select deps_save_and_drop_dependencies ('plf', 'manualadvise_lview');
+					select deps_save_and_drop_dependencies ('plf', 'manualadvise_tview');
+					select deps_save_and_drop_dependencies ('plf', 'manualadvise_view');
+					select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_aview');
+					select deps_save_and_drop_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvise_AView" replaceIfExists="true">
+			SELECT  	T1.adviseid, T1.advisetype, T1.finreference, T1.feetypeid, T1.sequence, T1.adviseamount, T1.paidamount, T1.waivedamount, T1.remarks, T1.valuedate, T1.postdate, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypedesc, T2.feetypecode, T1.bounceid, T1.receiptid, T3.bouncecode, T1.reservedamt, T1.balanceamt, 
+						T3.reason AS bouncecodedesc, COALESCE(T2.taxapplicable, 0) AS taxapplicable, T2.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst,
+						T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvise T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			LEFT JOIN 	bouncereasons T3 ON T1.bounceid = T3.bounceid			
+     	</createView>
+	</changeSet>
+	 <changeSet id="22" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvise_LView" replaceIfExists="true">
+			SELECT 		T1.adviseid, T1.advisetype, T1.finreference, T1.feetypeid, T1.sequence, T1.adviseamount, T1.paidamount, T1.waivedamount, T1.remarks, T1.valuedate, T1.postdate, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypedesc, T2.feetypecode, T1.bounceid, T1.receiptid, T3.bouncecode, T1.reservedamt, T1.balanceamt, T3.reason AS bouncecodedesc, COALESCE(T2.taxapplicable, 0) AS taxapplicable, 
+						T2.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvise T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			LEFT JOIN 	bouncereasons T3 ON T1.bounceid = T3.bounceid			
+     	</createView>
+	</changeSet>
+	
+	 <changeSet id="23" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvise_TView" replaceIfExists="true">
+			SELECT 		T1.adviseid, T1.advisetype, T1.finreference, T1.feetypeid, T1.sequence, T1.adviseamount, T1.paidamount, T1.waivedamount, T1.remarks, T1.valuedate, T1.postdate, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, T2.feetypedesc, T2.feetypecode, 
+						T1.bounceid, T1.receiptid, T3.bouncecode, T1.reservedamt, T1.balanceamt, T3.reason AS bouncecodedesc, COALESCE(T2.taxapplicable, 0) AS taxapplicable, T2.taxcomponent, 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvise_temp T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			LEFT JOIN 	bouncereasons T3 ON T1.bounceid = T3.bounceid			
+     	</createView>
+	</changeSet>
+	 <changeSet id="24" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvise_View" replaceIfExists="true">
+			SELECT  	T1.adviseid, T1.advisetype, T1.finreference, T1.feetypeid, T1.sequence, T1.adviseamount, T1.paidamount, T1.waivedamount, T1.remarks, T1.valuedate, T1.postdate, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, T2.feetypedesc, T2.feetypecode, 
+						T1.bounceid, T1.receiptid, T3.bouncecode, T1.reservedamt, T1.balanceamt, T3.reason AS bouncecodedesc, COALESCE(T2.taxapplicable, 0) AS taxapplicable, T2.taxcomponent, 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvise_temp T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			LEFT JOIN 	bouncereasons T3 ON T1.bounceid = T3.bounceid
+			
+			UNION ALL
+			
+			SELECT  	T1.adviseid, T1.advisetype, T1.finreference, T1.feetypeid, T1.sequence, T1.adviseamount, T1.paidamount, T1.waivedamount, T1.remarks, T1.valuedate, T1.postdate, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, T2.feetypedesc, T2.feetypecode, 
+						T1.bounceid, T1.receiptid, T3.bouncecode, T1.reservedamt, T1.balanceamt, T3.reason AS bouncecodedesc, COALESCE(T2.taxapplicable, 0) AS taxapplicable, T2.taxcomponent, 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvise T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			LEFT JOIN 	bouncereasons T3 ON T1.bounceid = T3.bounceid
+			WHERE NOT (EXISTS ( SELECT 1 FROM ManualAdvise_temp WHERE ManualAdvise_temp.adviseid = T1.adviseid))			
+     	</createView>
+	</changeSet>
+	
+	 <changeSet id="25" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvisemovements_AView" replaceIfExists="true">
+			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
+						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvisemovements T1
+			JOIN 		ManualAdvise T2 ON T1.adviseid = T2.adviseid
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="26" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<createView viewName="ManualAdvisemovements_TView" replaceIfExists="true">
+			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
+						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
+						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
+			FROM 		ManualAdvisemovements_temp T1
+			JOIN 		ManualAdvise T2 ON T1.adviseid = T2.adviseid
+			LEFT JOIN 	feetypes T3 ON T2.feetypeid = T3.feetypeid			
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="21_post" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'manualadvise_aview');
+					select deps_restore_dependencies ('plf', 'manualadvise_lview');
+					select deps_restore_dependencies ('plf', 'manualadvise_tview');
+					select deps_restore_dependencies ('plf', 'manualadvise_view');
+					select deps_restore_dependencies ('plf', 'manualadvisemovements_aview');
+					select deps_restore_dependencies ('plf', 'manualadvisemovements_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="27" author="Kesav">
+		<comment>LPP Waiver GST accounting Configuration parameters</comment>
+		<sql>
+			insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_CGST_W','Penalty charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_SGST_W','Penalty charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_IGST_W','Penalty charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_UGST_W','Penalty charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="Kesav">
+		<comment>Bounce Waiver GST accounting Configuration parameters</comment>
+		<sql>
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			
+			insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="29">
+		<comment>waivedGST column added for GST Waivers</comment>
+		<addColumn tableName="FinFeeDetail">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="30">
+		<comment>waivedGST column added for GST Waivers</comment>
+		<addColumn tableName="FinFeeDetail_Temp">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="31">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST columns added for GST Waivers</comment>
+		<addColumn tableName="FinTaxDetails">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedTGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="32">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST columns added for GST Waivers</comment>
+		<addColumn tableName="FinTaxDetails_Temp">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedTGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="33">
+		<comment>waivedGST column added for GST Waivers</comment>
+		<addColumn tableName="WIFFinFeeDetail">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="34">
+		<comment>waivedGST column added for GST Waivers</comment>
+		<addColumn tableName="WIFFinFeeDetail_Temp">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="35_pre" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_aview');
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_tview');
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_view');
+					select deps_save_and_drop_dependencies ('plf', 'fintaxdetails_aview');
+					select deps_save_and_drop_dependencies ('plf', 'fintaxdetails_tview');
+					select deps_save_and_drop_dependencies ('plf', 'fintaxdetails_view');
+					select deps_save_and_drop_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="35" author="Kesav">
+	 	<comment>WaivedGST column added for GST Waivers</comment>
+		<createView viewName="FinFeeDetail_Aview" replaceIfExists="true">
+			SELECT  	t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, t1.netamountgst, 
+						t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.status, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST
+			FROM 		finfeedetail t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="36" author="Kesav">
+	 	<comment>WaivedGST column added for GST Waivers</comment>
+		<createView viewName="finfeedetail_tview" replaceIfExists="true">
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, t1.feeschedulemethod,
+						t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, t1.alwmodifyfee, 
+						t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, t1.netamountgst, t1.netamount, 
+						t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST
+			FROM 		finfeedetail_temp t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="37" author="Kesav">
+	 	<comment>WaivedGST column added for GST Waivers</comment>
+		<createView viewName="finfeedetail_view" replaceIfExists="true">
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, 
+						t1.netamountgst, t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST
+			FROM 		finfeedetail_temp t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid
+			
+			UNION ALL
+			
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, 
+						t1.netamountgst, t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST
+			FROM 		finfeedetail t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid
+			
+			WHERE NOT (EXISTS ( SELECT 1 FROM finfeedetail_temp WHERE finfeedetail_temp.feeid = t1.feeid))				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="38" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST columns added for GST Waivers</comment>
+		<createView viewName="fintaxdetails_aview" replaceIfExists="true">
+			SELECT 		T1.fintaxid, T1.feeid, T1.paidcgst, T1.paidigst, T1.paidugst, T1.paidsgst, T1.paidtgst, T1.netcgst, T1.netigst, T1.netugst, T1.netsgst, T1.nettgst, T1.remfeecgst, T1.remfeeigst,T1.remfeeugst, T1.remfeesgst, T1.remfeetgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T1.actualcgst, T1.actualigst, T1.actualugst, T1.actualsgst, T1.actualtgst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedTGST
+			FROM 		fintaxdetails T1
+			LEFT JOIN 	finfeedetail T2 ON T1.feeid = T2.feeid			
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="39" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST columns added for GST Waivers</comment>
+		<createView viewName="fintaxdetails_tview" replaceIfExists="true">
+			SELECT 		T1.fintaxid, T1.feeid, T1.paidcgst, T1.paidigst, T1.paidugst, T1.paidsgst, T1.paidtgst, T1.netcgst, T1.netigst, T1.netugst, T1.netsgst, T1.nettgst, T1.remfeecgst, T1.remfeeigst, T1.remfeeugst, T1.remfeesgst, T1.remfeetgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T1.actualcgst, T1.actualigst, T1.actualugst, T1.actualsgst, T1.actualtgst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedTGST
+			FROM 		fintaxdetails_temp T1
+			LEFT JOIN 	finfeedetail T2 ON T1.feeid = T2.feeid			
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="40" author="Kesav">
+	 	<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST columns added for GST Waivers</comment>
+		<createView viewName="fintaxdetails_view" replaceIfExists="true">
+			SELECT 		T1.fintaxid, T1.feeid, T1.paidcgst, T1.paidigst, T1.paidugst, T1.paidsgst, T1.paidtgst, T1.netcgst, T1.netigst, T1.netugst, T1.netsgst, T1.nettgst, T1.remfeecgst, T1.remfeeigst, T1.remfeeugst, T1.remfeesgst, T1.remfeetgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T1.actualcgst, T1.actualigst, T1.actualugst, T1.actualsgst, T1.actualtgst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedTGST
+			FROM 		fintaxdetails_temp T1
+			LEFT JOIN 	finfeedetail T2 ON T1.feeid = T2.feeid
+			
+			UNION ALL
+			
+			SELECT 		T1.fintaxid, T1.feeid, T1.paidcgst, T1.paidigst, T1.paidugst, T1.paidsgst, T1.paidtgst, T1.netcgst, T1.netigst, T1.netugst, T1.netsgst, T1.nettgst, T1.remfeecgst, T1.remfeeigst, T1.remfeeugst, T1.remfeesgst, T1.remfeetgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T1.actualcgst, T1.actualigst, T1.actualugst, T1.actualsgst, T1.actualtgst, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST, T1.WaivedTGST
+			FROM 		fintaxdetails T1
+			LEFT JOIN 	finfeedetail T2 ON T1.feeid = T2.feeid
+			WHERE NOT (EXISTS ( SELECT 1 FROM fintaxdetails_temp WHERE fintaxdetails_temp.feeid = T1.feeid AND fintaxdetails_temp.fintaxid = T1.fintaxid))				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="41" author="Kesav">
+	 	<comment>WaivedGST column added for GST Waivers</comment>
+		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
+						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
+						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
+						T1.netamountgst, T1.netamount, T1.remainingfeeoriginal, T1.remainingfeegst, T1.actualamountoriginal, T1.actualamountgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypecode, T2.feetypedesc, T1.refundable, T1.instructionuid, T1.WaivedGST
+			FROM 		wiffinfeedetail_temp T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			
+			UNION ALL
+			 
+			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
+						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
+						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
+						T1.netamountgst, T1.netamount, T1.remainingfeeoriginal, T1.remainingfeegst, T1.actualamountoriginal, T1.actualamountgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypecode, T2.feetypedesc, T1.refundable, T1.instructionuid, T1.WaivedGST
+			FROM 		wiffinfeedetail T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			
+			WHERE NOT (EXISTS ( SELECT 1 FROM wiffinfeedetail_temp WHERE wiffinfeedetail_temp.finreference = T1.finreference AND wiffinfeedetail_temp.originationfee = T1.originationfee AND wiffinfeedetail_temp.finevent = T1.finevent AND wiffinfeedetail_temp.feetypeid = T1.feetypeid))				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="35_post" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finfeedetail_aview');
+					select deps_restore_dependencies ('plf', 'finfeedetail_tview');
+					select deps_restore_dependencies ('plf', 'finfeedetail_view');
+					select deps_restore_dependencies ('plf', 'fintaxdetails_aview');
+					select deps_restore_dependencies ('plf', 'fintaxdetails_tview');
+					select deps_restore_dependencies ('plf', 'fintaxdetails_view');
+					select deps_restore_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="42">
+		<comment>ReferenceId column added for Receipt Fees</comment>
+		<addColumn tableName="FinFeeDetail">
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="43">
+		<comment>ReferenceId column added for Receipt Fees</comment>
+		<addColumn tableName="FinFeeDetail_Temp">
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="44">
+		<comment>ReferenceId column added for Receipt Fees</comment>
+		<addColumn tableName="WIFFinFeeDetail">
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="45">
+		<comment>ReferenceId column added for Receipt Fees</comment>
+		<addColumn tableName="WIFFinFeeDetail_Temp">
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="46_pre" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_aview');
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_tview');
+					select deps_save_and_drop_dependencies ('plf', 'finfeedetail_view');
+					select deps_save_and_drop_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="Kesav">
+	 	<comment>ReferenceId column added for Receipt Fees</comment>
+		<createView viewName="FinFeeDetail_Aview" replaceIfExists="true">
+			SELECT  	t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, t1.netamountgst, 
+						t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.status, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST, T1.ReferenceId
+			FROM 		finfeedetail t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="47" author="Kesav">
+	 	<comment>ReferenceId column added for Receipt Fees</comment>
+		<createView viewName="finfeedetail_tview" replaceIfExists="true">
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, t1.feeschedulemethod,
+						t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, t1.alwmodifyfee, 
+						t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, t1.netamountgst, t1.netamount, 
+						t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST, T1.ReferenceId
+			FROM 		finfeedetail_temp t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="48" author="Kesav">
+	 	<comment>ReferenceId column added for Receipt Fees</comment>
+		<createView viewName="finfeedetail_view" replaceIfExists="true">
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, 
+						t1.netamountgst, t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST, T1.ReferenceId
+			FROM 		finfeedetail_temp t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid
+			
+			UNION ALL
+			
+			SELECT 		t1.feeid, t1.finreference, t1.originationfee, t1.finevent, t1.feetypeid, t1.feeseq, t1.feeorder, t1.calculatedamount, t1.actualamount, t1.waivedamount, t1.paidamount, 
+						t1.feeschedulemethod, t1.terms, t1.remainingfee, t1.paymentref, t1.calculationtype, t1.rulecode, t1.fixedamount, t1.percentage, t1.calculateon, t1.alwdeviation, t1.maxwaiverperc, 
+						t1.alwmodifyfee, t1.alwmodifyfeeschdmthd, t1.vasreference, t1.status, t1.taxapplicable, t1.taxcomponent, t1.paidamountoriginal, t1.paidamountgst, t1.netamountoriginal, 
+						t1.netamountgst, t1.netamount, t1.remainingfeeoriginal, t1.remainingfeegst, t1.actualamountoriginal, t1.actualamountgst, t1.feeamz, 
+						t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.transactionid, t1.workflowid, 
+						t2.feetypecode, t2.feetypedesc, t1.refundable, t1.instructionuid, t1.actpercentage, T1.WaivedGST, T1.ReferenceId
+			FROM 		finfeedetail t1
+			LEFT JOIN 	feetypes t2 ON t1.feetypeid = t2.feetypeid
+			
+			WHERE NOT (EXISTS ( SELECT 1 FROM finfeedetail_temp WHERE finfeedetail_temp.feeid = t1.feeid))				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="49" author="Kesav">
+	 	<comment>ReferenceId column added for Receipt Fees</comment>
+		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
+						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
+						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
+						T1.netamountgst, T1.netamount, T1.remainingfeeoriginal, T1.remainingfeegst, T1.actualamountoriginal, T1.actualamountgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypecode, T2.feetypedesc, T1.refundable, T1.instructionuid, T1.WaivedGST, T1.ReferenceId
+			FROM 		wiffinfeedetail_temp T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			
+			UNION ALL
+			 
+			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
+						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
+						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
+						T1.netamountgst, T1.netamount, T1.remainingfeeoriginal, T1.remainingfeegst, T1.actualamountoriginal, T1.actualamountgst, 
+						T1.version, T1.lastmntby, T1.lastmnton, T1.recordstatus, T1.rolecode, T1.nextrolecode, T1.taskid, T1.nexttaskid, T1.recordtype, T1.workflowid, 
+						T2.feetypecode, T2.feetypedesc, T1.refundable, T1.instructionuid, T1.WaivedGST, T1.ReferenceId
+			FROM 		wiffinfeedetail T1
+			LEFT JOIN 	feetypes T2 ON T1.feetypeid = T2.feetypeid
+			
+			WHERE NOT (EXISTS ( SELECT 1 FROM wiffinfeedetail_temp WHERE wiffinfeedetail_temp.finreference = T1.finreference AND wiffinfeedetail_temp.originationfee = T1.originationfee AND wiffinfeedetail_temp.finevent = T1.finevent AND wiffinfeedetail_temp.feetypeid = T1.feetypeid))				
+     	</createView>
+	</changeSet>
+	
+	<changeSet id="46_post" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finfeedetail_aview');
+					select deps_restore_dependencies ('plf', 'finfeedetail_tview');
+					select deps_restore_dependencies ('plf', 'finfeedetail_view');
+					select deps_restore_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="50" author="Kesav">
+		<sql>
+		 	<![CDATA[
+				INSERT INTO SMTPARAMETERS Values('ALW_PROFIT_SCHD_INVOICE','Allow Profit Schedule Invoice','String', 0, 'N', 1, 0, NULL, NULL,'Allow Profit Schedule Invoice',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<!-- GST Waiver Changes END -->
+	
+	
 </databaseChangeLog>

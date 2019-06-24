@@ -62,6 +62,13 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 	private BigDecimal remFeeSGST = BigDecimal.ZERO;
 	private BigDecimal remFeeTGST = BigDecimal.ZERO;
 
+	//Waived Fee GST
+	private BigDecimal waivedCGST = BigDecimal.ZERO;
+	private BigDecimal waivedIGST = BigDecimal.ZERO;
+	private BigDecimal waivedUGST = BigDecimal.ZERO;
+	private BigDecimal waivedSGST = BigDecimal.ZERO;
+	private BigDecimal waivedTGST = BigDecimal.ZERO;
+
 	private boolean newRecord;
 
 	public Set<String> getExcludeFields() {
@@ -295,5 +302,45 @@ public class FinTaxDetails extends AbstractWorkflowEntity {
 
 	public void setGstType(String gstType) {
 		this.gstType = gstType;
+	}
+
+	public BigDecimal getWaivedCGST() {
+		return waivedCGST;
+	}
+
+	public void setWaivedCGST(BigDecimal waivedCGST) {
+		this.waivedCGST = waivedCGST;
+	}
+
+	public BigDecimal getWaivedIGST() {
+		return waivedIGST;
+	}
+
+	public void setWaivedIGST(BigDecimal waivedIGST) {
+		this.waivedIGST = waivedIGST;
+	}
+
+	public BigDecimal getWaivedUGST() {
+		return waivedUGST;
+	}
+
+	public void setWaivedUGST(BigDecimal waivedUGST) {
+		this.waivedUGST = waivedUGST;
+	}
+
+	public BigDecimal getWaivedSGST() {
+		return waivedSGST;
+	}
+
+	public void setWaivedSGST(BigDecimal waivedSGST) {
+		this.waivedSGST = waivedSGST;
+	}
+
+	public BigDecimal getWaivedTGST() {
+		return waivedTGST;
+	}
+
+	public void setWaivedTGST(BigDecimal waivedTGST) {
+		this.waivedTGST = waivedTGST;
 	}
 }

@@ -4735,6 +4735,9 @@
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="repaymentPostingsUtil" ref="repayPostingUtil" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -5401,6 +5404,8 @@
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -7876,9 +7881,6 @@
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="latePayPenaltyService" ref="latePayPenaltyService" />
 		<property name="latePayInterestService" ref="latePayInterestService" />
-		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
 		<property name="feeTypeDAO" ref="feeTypeDAO" />
@@ -9529,9 +9531,7 @@
 		<property name="provinceService" ref="provinceService" />
 		<!-- GST Invoice Changes -->
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerService" ref="customerService" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />

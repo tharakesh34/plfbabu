@@ -34,7 +34,6 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,16 +49,14 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
-import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -75,15 +72,13 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.rulefactory.AEEvent;
-import com.pennant.backend.model.rulefactory.Rule;
-import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
-import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayMarkingService extends ServiceHelper {
@@ -94,9 +89,6 @@ public class LatePayMarkingService extends ServiceHelper {
 	private LatePayPenaltyService latePayPenaltyService;
 	private LatePayInterestService latePayInterestService;
 
-	private RuleExecutionUtil ruleExecutionUtil;
-	private FinFeeDetailService finFeeDetailService;
-	private RuleDAO ruleDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private FeeTypeDAO feeTypeDAO;
@@ -552,9 +544,6 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal penaltyDue = fod.getTotPenaltyBal();
 		BigDecimal penaltyDueGst = BigDecimal.ZERO;
 
-		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
 		//Prepare Finance Detail
 		FinanceDetail detail = new FinanceDetail();
 		detail.getFinScheduleData().setFinanceMain(main);
@@ -590,29 +579,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		aeEvent.getAeAmountCodes().setdLPPAmz(penaltyDue);
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 
-		// GST parameters for State wise Account Number building
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-
-		if (detail.getCustomerDetails() != null) {
-			custDftBranch = detail.getCustomerDetails().getCustomer().getCustDftBranch();
-			List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
-			}
-		}
-
-		Map<String, Object> gstExecutionMap = finFeeDetailService.prepareGstMappingDetails(main.getFinBranch(),
-				custDftBranch, highPriorityState, highPriorityCountry, detail.getFinanceTaxDetail(),
-				main.getFinBranch());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(main.getFinReference());
 
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
@@ -625,11 +592,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		// IF GST Calculation Required for LPI or LPP 
 		if (gstCalReq) {
 
-			taxPercmap = getTaxPercentages(gstExecutionMap, main.getFinCcy());
+			taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
 
 			// Calculate LPP GST Amount
-			penaltyDueGst = getTotalTaxAmount(taxPercmap, penaltyDue, lppFeeType.getTaxComponent(), taxRoundMode,
-					taxRoundingTarget);
+			penaltyDueGst = getTotalTaxAmount(taxPercmap, penaltyDue, lppFeeType.getTaxComponent());
 		}
 
 		// LPI GST Amount for Postings
@@ -640,11 +606,10 @@ public class LatePayMarkingService extends ServiceHelper {
 		if (penaltyDue.compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null && lppFeeType.isTaxApplicable()) {
 
 			if (taxPercmap == null) {
-				taxPercmap = getTaxPercentages(gstExecutionMap, main.getFinCcy());
+				taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
 			}
 
-			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, penaltyDueGst, lppFeeType.getTaxComponent(),
-					taxRoundMode, taxRoundingTarget);
+			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, penaltyDueGst, lppFeeType.getTaxComponent());
 			taxDetail.setFinReference(finPftDetail.getFinReference());
 			taxDetail.setTaxFor("LPP");
 			taxDetail.setAmount(penaltyDue);
@@ -719,7 +684,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, taxPercmap, calGstMap, penaltyDue);
 				if (CollectionUtils.isNotEmpty(feesList)) {
 					this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), detail, feesList, null,
-							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, main.getFinReference(), false);
+							PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false, false);
 				}
 			}
 		}
@@ -761,146 +726,30 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	/**
-	 * Method for Preparing all GST fee amounts based on configurations
-	 * 
-	 * @param manAdvList
-	 * @param financeDetail
-	 * @return
-	 */
-	public Map<String, BigDecimal> getTaxPercentages(Map<String, Object> dataMap, String finCcy) {
-
-		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
-
-		BigDecimal totalTaxPerc = BigDecimal.ZERO;
-		Map<String, BigDecimal> taxPercMap = new HashMap<>();
-		taxPercMap.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
-		taxPercMap.put(RuleConstants.CODE_IGST, BigDecimal.ZERO);
-		taxPercMap.put(RuleConstants.CODE_SGST, BigDecimal.ZERO);
-		taxPercMap.put(RuleConstants.CODE_UGST, BigDecimal.ZERO);
-
-		for (Rule rule : rules) {
-			BigDecimal taxPerc = BigDecimal.ZERO;
-			if (StringUtils.equals(RuleConstants.CODE_CGST, rule.getRuleCode())) {
-				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-				totalTaxPerc = totalTaxPerc.add(taxPerc);
-				taxPercMap.put(RuleConstants.CODE_CGST, taxPerc);
-			} else if (StringUtils.equals(RuleConstants.CODE_IGST, rule.getRuleCode())) {
-				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-				totalTaxPerc = totalTaxPerc.add(taxPerc);
-				taxPercMap.put(RuleConstants.CODE_IGST, taxPerc);
-			} else if (StringUtils.equals(RuleConstants.CODE_SGST, rule.getRuleCode())) {
-				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-				totalTaxPerc = totalTaxPerc.add(taxPerc);
-				taxPercMap.put(RuleConstants.CODE_SGST, taxPerc);
-			} else if (StringUtils.equals(RuleConstants.CODE_UGST, rule.getRuleCode())) {
-				taxPerc = getRuleResult(rule.getSQLRule(), dataMap, finCcy);
-				totalTaxPerc = totalTaxPerc.add(taxPerc);
-				taxPercMap.put(RuleConstants.CODE_UGST, taxPerc);
-			}
-		}
-		taxPercMap.put("TOTALGST", totalTaxPerc);
-
-		return taxPercMap;
-	}
-
-	/**
-	 * Method for Processing of SQL Rule and get Executed Result
-	 * 
-	 * @return
-	 */
-	private BigDecimal getRuleResult(String sqlRule, Map<String, Object> executionMap, String finCcy) {
-		logger.debug("Entering");
-
-		BigDecimal result = BigDecimal.ZERO;
-		try {
-			Object exereslut = ruleExecutionUtil.executeRule(sqlRule, executionMap, finCcy, RuleReturnType.DECIMAL);
-			if (exereslut == null || StringUtils.isEmpty(exereslut.toString())) {
-				result = BigDecimal.ZERO;
-			} else {
-				result = new BigDecimal(exereslut.toString());
-			}
-		} catch (Exception e) {
-			logger.debug(e);
-		}
-
-		logger.debug("Leaving");
-		return result;
-	}
-
-	/**
 	 * Method for Calculating Total GST Amount with the Requested Amount
 	 */
-	private BigDecimal getTotalTaxAmount(Map<String, BigDecimal> taxPercmap, BigDecimal amount, String taxType,
-			String roundingMode, int roundingTarget) {
+	private BigDecimal getTotalTaxAmount(Map<String, BigDecimal> taxPercmap, BigDecimal amount, String taxType) {
+		logger.debug(Literal.ENTERING);
 
-		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
-		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
-		BigDecimal ugstPerc = taxPercmap.get(RuleConstants.CODE_UGST);
-		BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
-		BigDecimal totalGSTPerc = cgstPerc.add(sgstPerc).add(ugstPerc).add(igstPerc);
-
+		TaxAmountSplit taxSplit = null;
 		BigDecimal gstAmount = BigDecimal.ZERO;
-		if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 
-			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal cgst = (amount.multiply(cgstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(cgst);
-			}
-			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal sgst = (amount.multiply(sgstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(sgst);
-			}
-			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal ugst = (amount.multiply(ugstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(ugst);
-			}
-			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal igst = (amount.multiply(igstPerc)).divide(BigDecimal.valueOf(100), 9,
-						RoundingMode.HALF_DOWN);
-				igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(igst);
-			}
-
-		} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-
-			BigDecimal percentage = (totalGSTPerc.add(new BigDecimal(100))).divide(BigDecimal.valueOf(100), 9,
-					RoundingMode.HALF_DOWN);
-			BigDecimal actualAmt = amount.divide(percentage, 9, RoundingMode.HALF_DOWN);
-			actualAmt = CalculationUtil.roundAmount(actualAmt, roundingMode, roundingTarget);
-			BigDecimal actTaxAmount = amount.subtract(actualAmt);
-
-			if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-				cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(cgst);
-			}
-			if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-				sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(sgst);
-			}
-			if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-				ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(ugst);
-			}
-			if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
-				BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-				igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
-				gstAmount = gstAmount.add(igst);
-			}
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+			taxSplit = GSTCalculator.getExclusiveGST(amount, taxPercmap);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
+			taxSplit = GSTCalculator.getInclusiveGST(amount, taxPercmap);
 		}
+
+		if (taxSplit != null) {
+			gstAmount = taxSplit.gettGST();
+		}
+
+		logger.debug(Literal.LEAVING);
+
 		return gstAmount;
 	}
-
-	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType,
-			String roundingMode, int roundingTarget) {
+	
+	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType) {
 
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
@@ -913,31 +762,31 @@ public class LatePayMarkingService extends ServiceHelper {
 		BigDecimal totalGST = BigDecimal.ZERO;
 
 		if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal cgst = (actTaxAmount.multiply(cgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-			cgst = CalculationUtil.roundAmount(cgst, roundingMode, roundingTarget);
-			taxDetail.setCGST(cgst);
-			totalGST = totalGST.add(cgst);
+			BigDecimal cgstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, cgstPerc, totalGSTPerc);
+			taxDetail.setCGST(cgstAmount);
+			totalGST = totalGST.add(cgstAmount);
 		}
+
 		if (sgstPerc.compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal sgst = (actTaxAmount.multiply(sgstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-			sgst = CalculationUtil.roundAmount(sgst, roundingMode, roundingTarget);
-			taxDetail.setSGST(sgst);
-			totalGST = totalGST.add(sgst);
+			BigDecimal sgstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, sgstPerc, totalGSTPerc);
+			taxDetail.setSGST(sgstAmount);
+			totalGST = totalGST.add(sgstAmount);
 		}
+		
 		if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal ugst = (actTaxAmount.multiply(ugstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-			ugst = CalculationUtil.roundAmount(ugst, roundingMode, roundingTarget);
-			taxDetail.setUGST(ugst);
-			totalGST = totalGST.add(ugst);
+			BigDecimal ugstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, ugstPerc, totalGSTPerc);
+			taxDetail.setUGST(ugstAmount);
+			totalGST = totalGST.add(ugstAmount);
 		}
+	
 		if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
-			BigDecimal igst = (actTaxAmount.multiply(igstPerc)).divide(totalGSTPerc, 9, RoundingMode.HALF_DOWN);
-			igst = CalculationUtil.roundAmount(igst, roundingMode, roundingTarget);
-			taxDetail.setIGST(igst);
-			totalGST = totalGST.add(igst);
+			BigDecimal igstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, igstPerc, totalGSTPerc);
+			taxDetail.setIGST(igstAmount);
+			totalGST = totalGST.add(igstAmount);
 		}
 
 		taxDetail.setTotalGST(totalGST);
+		
 		return taxDetail;
 	}
 
@@ -1013,18 +862,6 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
 		this.latePayInterestService = latePayInterestService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public void setRuleExecutionUtil(RuleExecutionUtil ruleExecutionUtil) {
-		this.ruleExecutionUtil = ruleExecutionUtil;
-	}
-
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
 	}
 
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {

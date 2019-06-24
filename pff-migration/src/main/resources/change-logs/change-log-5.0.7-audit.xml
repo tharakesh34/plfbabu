@@ -45,6 +45,45 @@
 			<column name="AccountUnLockedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
+	
+	<!-- GST Waiver Changes Start -->
+	
+	<changeSet author="Kesav" id="3">
+		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
+		<addColumn tableName="AdtManualAdvise">
+			<column name="WaivedCGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedSGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedIGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="WaivedUGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="4">
+		<comment>waivedGST column added for GST Waivers</comment>
+		<addColumn tableName="AdtFinFeeDetail">
+			<column name="WaivedGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="5">
+		<comment>ReferenceId column added for Receipt Fees</comment>
+		<addColumn tableName="AdtFinFeeDetail">
+			<column name="ReferenceId" type="bigint" defaultValue="0" >
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 
+	<!-- GST Waiver Changes END -->
 
 </databaseChangeLog>

@@ -145,9 +145,9 @@ public class FeeCalculator implements Serializable {
 		return receiptData;
 	}
 
-	private FinReceiptData calculateFeeDetail(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+	public FinReceiptData calculateFeeDetail(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
 		logger.debug("Entering");
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
 		// Calculate Fee Rules
@@ -325,7 +325,7 @@ public class FeeCalculator implements Serializable {
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
 
-		if (finFeeDetailList == null || finFeeDetailList.isEmpty()) {
+		if (CollectionUtils.isEmpty(finFeeDetailList)) {
 			logger.debug("Leaving");
 			return;
 		}

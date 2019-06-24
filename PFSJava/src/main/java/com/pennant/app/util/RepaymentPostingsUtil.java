@@ -85,6 +85,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.financemanagement.OverdueChargeRecoveryDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueueHeader;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
@@ -95,7 +96,9 @@ import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinStatusDetail;
+import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -104,6 +107,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -137,6 +141,8 @@ public class RepaymentPostingsUtil implements Serializable {
 	private AssignmentDAO assignmentDAO;
 	private AssignmentDealDAO assignmentDealDAO;
 	private FeeTypeDAO feeTypeDAO;
+	protected GSTInvoiceTxnService gstInvoiceTxnService;
+	protected FinanceTypeDAO financeTypeDAO;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -315,7 +321,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 
 			if (feeType == null) {
-				feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+				feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 			}
 
 			if (movement == null) {
@@ -333,19 +339,25 @@ public class RepaymentPostingsUtil implements Serializable {
 			}
 
 			// GST Values
+			//Paid GST Values
 			movement.setPaidCGST(movement.getPaidCGST().add(repayQueue.getPaidPenaltyCGST()));
 			movement.setPaidSGST(movement.getPaidSGST().add(repayQueue.getPaidPenaltySGST()));
 			movement.setPaidUGST(movement.getPaidUGST().add(repayQueue.getPaidPenaltyUGST()));
 			movement.setPaidIGST(movement.getPaidIGST().add(repayQueue.getPaidPenaltyIGST()));
+			
+			//Waived GST Values
+			movement.setWaivedCGST(movement.getWaivedCGST().add(repayQueue.getPenaltyWaiverCGST()));
+			movement.setWaivedSGST(movement.getWaivedSGST().add(repayQueue.getPenaltyWaiverSGST()));
+			movement.setWaivedUGST(movement.getWaivedUGST().add(repayQueue.getPenaltyWaiverUGST()));
+			movement.setWaivedIGST(movement.getWaivedIGST().add(repayQueue.getPenaltyWaiverIGST()));
 
 			// Paid and Waived Amounts 
 			movement.setMovementAmount(movement.getMovementAmount().add(repayQueue.getPenaltyPayNow()));
 			movement.setPaidAmount(movement.getPaidAmount().add(repayQueue.getPenaltyPayNow()));
 			movement.setWaivedAmount(movement.getWaivedAmount().add(repayQueue.getWaivedAmount()));
-
 		}
 
-		// GST Invoice Preparation for Penalty (Debt Note)
+		// GST Invoice Preparation for Penalty (Debit Note)
 		FinTaxIncomeDetail taxIncome = null;
 
 		if (movement != null) {
@@ -377,7 +389,6 @@ public class RepaymentPostingsUtil implements Serializable {
 				detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
 				detail.setTotWaived(repayQueue.getWaivedAmount());
 				getFinODDetailsDAO().updateTotals(detail);
-
 			}
 		}
 
@@ -727,7 +738,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Check Receivable Advises paid Fully or not
 		if (fullyPaid) {
-			BigDecimal adviseBal = getManualAdviseDAO().getBalanceAmt(finReference);
+			BigDecimal adviseBal = manualAdviseDAO.getBalanceAmt(finReference);
 			// Penalty Not fully Paid
 			if (adviseBal != null && adviseBal.compareTo(BigDecimal.ZERO) > 0) {
 				fullyPaid = false;
@@ -1145,10 +1156,10 @@ public class RepaymentPostingsUtil implements Serializable {
 		//Assignment Percentage
 		Set<String> excludeFees = null;
 		if (financeMain.getAssignmentId() != null && financeMain.getAssignmentId() > 0) {
-			Assignment assignment = getAssignmentDAO().getAssignment(financeMain.getAssignmentId(), "");
+			Assignment assignment = assignmentDAO.getAssignment(financeMain.getAssignmentId(), "");
 			if (assignment != null) {
 				amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-				List<AssignmentDealExcludedFee> excludeFeesList = getAssignmentDealDAO()
+				List<AssignmentDealExcludedFee> excludeFeesList = assignmentDealDAO
 						.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
 				if (CollectionUtils.isNotEmpty(excludeFeesList)) {
 					excludeFees = new HashSet<String>();
@@ -1194,6 +1205,21 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (overdueEvent != null) {
 			overdueEvent.setTransOrder(aeEvent.getTransOrder());
 		}
+		
+		
+		//GST Invoice Preparation for Exempted waiver case
+		BigDecimal pftDueWaived = amountCodes.getPftDueWaived();
+		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0 && pftDueWaived != null
+				&& pftDueWaived.compareTo(BigDecimal.ZERO) > 0) {
+			FinanceDetail financeDetail = new FinanceDetail();
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			financeDetail.getFinScheduleData()
+					.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(financeMain.getFinType()));
+			financeDetail.setCustomerDetails(null);
+			financeDetail.setFinanceTaxDetail(null);
+			gstInvoiceTxnService.createProfitScheduleInovice(aeEvent.getLinkedTranId(), financeDetail, pftDueWaived,
+					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
+		}
 
 		//Overdue Details Updation for Paid Penalty
 		/*
@@ -1232,9 +1258,18 @@ public class RepaymentPostingsUtil implements Serializable {
 				if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)) {
 					continue;
 				}
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				
+				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
+				String feeTypeCode = finFeeDetail.getFeeTypeCode();
+				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
+				
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+				} else {
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());					
+				}
+				
+				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
 
 				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
 					payType = "EX_";
@@ -1245,25 +1280,31 @@ public class RepaymentPostingsUtil implements Serializable {
 				} else {
 					payType = "PB_";
 				}
-				dataMap.put(payType + finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmount());
+				dataMap.put(payType + feeTypeCode + "_P", finFeeDetail.getPaidAmount());
 
 				//Calculated Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+				dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
+				dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
+				dataMap.put(feeTypeCode + "_IGST_C", finTaxDetails.getActualIGST());
+				dataMap.put(feeTypeCode + "_UGST_C", finTaxDetails.getActualUGST());
 
 				//Paid Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+				dataMap.put(feeTypeCode + "_CGST_P", finTaxDetails.getPaidCGST());
+				dataMap.put(feeTypeCode + "_SGST_P", finTaxDetails.getPaidSGST());
+				dataMap.put(feeTypeCode + "_IGST_P", finTaxDetails.getPaidIGST());
+				dataMap.put(feeTypeCode + "_UGST_P", finTaxDetails.getPaidUGST());
 
 				//Net Amount 
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
-				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
+				dataMap.put(feeTypeCode + "_CGST_N", finTaxDetails.getNetCGST());
+				dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
+				dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
+				dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
+				
+				//Waiver GST Amounts 
+				dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
+				dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
+				dataMap.put(feeTypeCode + "_IGST_W", finTaxDetails.getWaivedIGST());
+				dataMap.put(feeTypeCode + "_UGST_W", finTaxDetails.getWaivedUGST());
 			}
 		}
 
@@ -1938,35 +1979,27 @@ public class RepaymentPostingsUtil implements Serializable {
 		this.latePayBucketService = latePayBucketService;
 	}
 
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
 	}
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
 
-	public AssignmentDAO getAssignmentDAO() {
-		return assignmentDAO;
-	}
-
 	public void setAssignmentDAO(AssignmentDAO assignmentDAO) {
 		this.assignmentDAO = assignmentDAO;
 	}
 
-	public AssignmentDealDAO getAssignmentDealDAO() {
-		return assignmentDealDAO;
-	}
-
 	public void setAssignmentDealDAO(AssignmentDealDAO assignmentDealDAO) {
 		this.assignmentDealDAO = assignmentDealDAO;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 }

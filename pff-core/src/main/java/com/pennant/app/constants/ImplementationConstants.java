@@ -154,7 +154,7 @@ public class ImplementationConstants {
 	public static final boolean ALW_APPROVED_MANDATE_IN_ORG = false;
 
 	//Allow profit schedule invoice
-	public static final boolean ALW_PROFIT_SCHD_INVOICE = false;
+	public static final boolean ALW_PROFIT_SCHD_INVOICE = true;
 
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean NEGATE_SIGN_TB = false;

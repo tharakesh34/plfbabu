@@ -147,7 +147,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType");
 		sql.append(", T1.VasReference, T1.Status, T1.RuleCode, T1.FixedAmount, T1.Percentage");
 		sql.append(", T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee");
-		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage,");
+		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage, T1.WaivedGST, T1.ReferenceId");
 		sql.append(" From FinFeeDetail T1 ");
 		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -179,6 +179,26 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		logger.debug("Leaving");
 
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+	}
+	
+	@Override
+	public List<FinFeeDetail> getFinFeeDetailByReferenceId(long referenceId, String finEvent, String type) {
+		logger.debug("Entering");
+		
+		FinFeeDetail finFeeDetail = new FinFeeDetail();
+		finFeeDetail.setReferenceId(referenceId);
+		finFeeDetail.setFinEvent(finEvent);
+		
+		StringBuilder sql = getSelectQuery(false, type);
+		sql.append(" Where ReferenceId = :ReferenceId And FinEvent = :FinEvent");
+		logger.trace(Literal.SQL + sql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
+		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
+		
+		logger.debug("Leaving");
+		
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -223,7 +243,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
-		sql.append(", VasReference, Status, Refundable, ActPercentage");
+		sql.append(", VasReference, Status, Refundable, ActPercentage, WaivedGST, ReferenceId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
@@ -340,6 +360,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}
+		sql.append(", WaivedGST, ReferenceId");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values (:FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder");
@@ -353,6 +374,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", :ActPercentage");
 		}
+		sql.append(", :WaivedGST, :ReferenceId");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -430,6 +452,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (isWIF) {
 			sql.append(", ActPercentage = :ActPercentage");
 		}
+		sql.append(", WaivedGST = :WaivedGST");
+		sql.append(", ReferenceId = :ReferenceId");
 		sql.append(", Version = :Version");
 		sql.append(", LastMntBy = :LastMntBy");
 		sql.append(", LastMntOn = :LastMntOn");
@@ -484,7 +508,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			updateSql.append("Update FinFeeDetail");
 		}
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append("  Set Status=:Status Where FeeID = :FeeID ");
+		updateSql.append("  Set Status = :Status Where FeeID = :FeeID ");
 
 		logger.debug("updateSql: " + updateSql.toString());
 
@@ -618,7 +642,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		StringBuilder sql = new StringBuilder("Update FinFeeDetail");
 		sql.append("  Set TaxPercent = :TaxPercent");
-		sql.append(" Where FinReference =:FinReference And FeeTypeId = :FeeTypeId ");
+		sql.append(" Where FinReference = :FinReference And FeeTypeId = :FeeTypeId ");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -639,7 +663,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT feeTypeID From FinFeeDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode and FinReference =:FinReference and FinEvent != :FinEvent");
+		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode and FinReference = :FinReference and FinEvent != :FinEvent");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -663,7 +687,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = getSelectQuery(false, tableType);
-		sql.append("where TransactionId=:ExtReference and FeeTypeID=:FeeTypeID ");
+		sql.append("where TransactionId = :ExtReference and FeeTypeID = :FeeTypeID ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -758,6 +782,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}
+		sql.append(", WaivedGST, ReferenceId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc");
