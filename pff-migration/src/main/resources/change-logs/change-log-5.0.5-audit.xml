@@ -90,11 +90,11 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="16.1" author="Varaprasad.K">
+	  <changeSet id="16.1" author="Varaprasad.K">
 		<addColumn tableName="AdtFinMaintainInstructions">
 			<column name="TdsLimit" type="number(18, 0)" />
 		</addColumn>
-	</changeSet>
+	</changeSet>  
 
 	<changeSet id="16.1.1" author="Varaprasad.K">
 		<modifyDataType tableName="AdtFinMaintainInstructions" columnName="TdsLimit" newDataType="decimal(18,0)" />
@@ -220,7 +220,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="31.0" author="Varaprasad.K" dbms="mssql">
+	 <changeSet id="31.0" author="Varaprasad.K" dbms="mssql">
 		<sql>
 		<![CDATA[		 
 					Alter table ADTVERIFICATION_PD drop constraint DF_VERFCTIONS_PD_OWNER;
@@ -234,7 +234,7 @@
 		
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="31" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[		 
@@ -292,5 +292,35 @@
 		 ]]>
 		</sql>
 		</changeSet>
+		
+	<changeSet id="93" author="Kesava">
+		<modifyDataType tableName="adtfeetypes" columnName="amortzreq"
+			newDataType="boolean" />
+	</changeSet> 
+	
+	
+	<changeSet id="94" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE adtfeetypes Set amortzreq = 0;				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="95" author="murthy.y">
+		<modifyDataType tableName="AdtPaymentDetails" columnName="AmountType" newDataType="varchar(8)" />
+	</changeSet>
+	
+	 <changeSet id="95" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE adtfeetypes ADD CONSTRAINT DF_adtfeetypes_amortzreq DEFAULT 0 FOR amortzreq;				
+			]]>
+		</sql>
+	</changeSet> 
+
+	<changeSet id="96" author="Varaprasad.K" dbms="postgresql, oracle">
+		<addDefaultValue columnName="amortzreq" tableName="adtfeetypes" defaultValue="0" />		
+	</changeSet>
 			
 </databaseChangeLog>
