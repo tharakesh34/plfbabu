@@ -318,12 +318,17 @@ public class RepaymentPostingsUtil implements Serializable {
 				feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 			}
 
-			if (movement == null) {
-				movement = new ManualAdviseMovements();
-				movement.setFeeTypeCode(feeType.getFeeTypeCode());
-				movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
-				movement.setTaxApplicable(feeType.isTaxApplicable());
-				movement.setTaxComponent(feeType.getTaxComponent());
+			if (feeType != null) {
+				if (movement == null) {
+					movement = new ManualAdviseMovements();
+					movement.setFeeTypeCode(feeType.getFeeTypeCode());
+					movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+					movement.setTaxApplicable(feeType.isTaxApplicable());
+					movement.setTaxComponent(feeType.getTaxComponent());
+				}
+			} else {
+				logger.warn(
+						String.format("%s Fee code not configured in fee type master", PennantConstants.FEETYPE_ODC));
 			}
 
 			// GST Values
@@ -1296,20 +1301,17 @@ public class RepaymentPostingsUtil implements Serializable {
 			getFinODDetailsDAO().updateLatePftTotals(finRepayQueue.getFinReference(), finRepayQueue.getRpyDate(),
 					finRepayQueue.getLatePayPftPayNow(), finRepayQueue.getLatePayPftWaivedNow());
 		}
-		
+
 		//FIXME Temporarly we are commented the below code for avoiding 2 time update on FinOdDetails
-		/*if (finRepayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0
-				|| finRepayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
-			FinODDetails detail = new FinODDetails();
-			detail.setFinReference(finRepayQueue.getFinReference());
-			detail.setFinODSchdDate(finRepayQueue.getRpyDate());
-			detail.setFinODFor(finRepayQueue.getFinRpyFor());
-			detail.setTotPenaltyAmt(BigDecimal.ZERO);
-			detail.setTotPenaltyPaid(finRepayQueue.getPenaltyPayNow());
-			detail.setTotPenaltyBal((finRepayQueue.getPenaltyPayNow().add(finRepayQueue.getWaivedAmount())).negate());
-			detail.setTotWaived(finRepayQueue.getWaivedAmount());
-			getFinODDetailsDAO().updateTotals(detail);
-		}*/
+		/*
+		 * if (finRepayQueue.getPenaltyPayNow().compareTo(BigDecimal.ZERO) > 0 ||
+		 * finRepayQueue.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) { FinODDetails detail = new FinODDetails();
+		 * detail.setFinReference(finRepayQueue.getFinReference()); detail.setFinODSchdDate(finRepayQueue.getRpyDate());
+		 * detail.setFinODFor(finRepayQueue.getFinRpyFor()); detail.setTotPenaltyAmt(BigDecimal.ZERO);
+		 * detail.setTotPenaltyPaid(finRepayQueue.getPenaltyPayNow());
+		 * detail.setTotPenaltyBal((finRepayQueue.getPenaltyPayNow().add(finRepayQueue.getWaivedAmount())).negate());
+		 * detail.setTotWaived(finRepayQueue.getWaivedAmount()); getFinODDetailsDAO().updateTotals(detail); }
+		 */
 
 		// Finance Repayments Details
 		FinanceRepayments repayment = prepareRepayDetailData(finRepayQueue, dateValueDate, postDate, linkedTranId,
@@ -1503,7 +1505,7 @@ public class RepaymentPostingsUtil implements Serializable {
 
 		// Schedule Principal and Profit payments
 		BigDecimal totRpyAmt = totalsMap.get("totRpyTot");
-		if (totRpyAmt.compareTo(BigDecimal.ZERO) > 0) {
+		if (totRpyAmt != null && totRpyAmt.compareTo(BigDecimal.ZERO) > 0) {
 			actReturnList = doSchedulePostings(null, valueDate, valueDate, financeMain, scheduleDetails, null,
 					financeProfitDetail, eventCode, null);
 		} else {
@@ -1652,7 +1654,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		boolean isPenaltyAvail = false;
 		for (FinRepayQueue repayQueue : finRepayQueueList) {
 
-			if (rpyTotal.compareTo(
+			if (rpyTotal != null && rpyTotal.compareTo(
 					BigDecimal.ZERO) > 0) {/*
 											 * 
 											 * FinanceScheduleDetail scheduleDetail = null; if (scheduleMap.containsKey
