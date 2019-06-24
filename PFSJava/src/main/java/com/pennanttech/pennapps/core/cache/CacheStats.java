@@ -11,13 +11,16 @@
  */
 package com.pennanttech.pennapps.core.cache;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class CacheStats {
+public class CacheStats implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
 	private String clusterName;
 	private int clusterSize = 0;
 	private String clusterNode;
@@ -170,46 +173,47 @@ public class CacheStats {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("Cluster Name   : ");
-		buffer.append(getClusterName());
+		StringBuilder builder = new StringBuilder("Cluster Name   : ");
+		builder.append(getClusterName());
 
-		buffer.append("\n");
-		buffer.append("Current Node   : ");
-		buffer.append(getClusterNode());
+		builder.append("\n");
+		builder.append("Current Node   : ");
+		builder.append(getClusterNode());
 
-		buffer.append("\n");
-		buffer.append("Cluster IP     : ");
-		buffer.append(getClusterIp());
+		builder.append("\n");
+		builder.append("Cluster IP     : ");
+		builder.append(getClusterIp());
 
-		buffer.append("\n");
-		buffer.append("Cluster Size   : ");
-		buffer.append(getClusterSize());
+		builder.append("\n");
+		builder.append("Cluster Size   : ");
+		builder.append(getClusterSize());
 
-		buffer.append("\n");
-		buffer.append("Cluster Members: ");
-		buffer.append(getClusterMembers());
+		builder.append("\n");
+		builder.append("Cluster Members: ");
+		builder.append(getClusterMembers());
 
-		buffer.append("Manager Cache Status    : ");
-		buffer.append(getManagerCacheStatus());
-		buffer.append("\n");
+		builder.append("Manager Cache Status    : ");
+		builder.append(getManagerCacheStatus());
+		builder.append("\n");
 
-		buffer.append("\n");
-		buffer.append("Cache Count    : ");
-		buffer.append(getCacheCount());
+		builder.append("\n");
+		builder.append("Cache Count    : ");
+		builder.append(getCacheCount());
 
 		for (String cacheName : cacheNames) {
-			buffer.append("\n");
-			buffer.append("Cache Name     : ");
-			buffer.append(cacheName);
+			builder.append("\n");
+			builder.append("Cache Name     : ");
+			builder.append(cacheName);
 		}
-		buffer.append("\n");
-		buffer.append("Enabled    : ");
-		buffer.append(isEnabled());
-		buffer.append("\n");
-		buffer.append("Active    : ");
-		buffer.append(isActive());
 
-		return buffer.toString();
+		builder.append("\n");
+		builder.append("Enabled    : ");
+		builder.append(isEnabled());
+		builder.append("\n");
+		builder.append("Active    : ");
+		builder.append(isActive());
+
+		return builder.toString();
 	}
 
 	public String getCurrentNode() {

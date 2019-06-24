@@ -11,6 +11,8 @@
  */
 package com.pennanttech.pennapps.core.cache;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -35,7 +38,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CacheAdmin {
-	private static final Logger log = LogManager.getLogger(Cache.class);
+	private static final Logger log = LogManager.getLogger(CacheAdmin.class);
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -45,31 +48,26 @@ public class CacheAdmin {
 	}
 
 	public List<CacheStats> getCacheList() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
 		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		sql.append(" select cluster_name, current_node, cluster_ip, cluster_size, cluster_members,");
-		sql.append(
-				" cache_count, cache_names, manager_cache_status, enabled, active,node_count, last_mnt_on, last_mnt_by");
-		sql.append(" from cache_stats");
 
 		RowMapper<CacheStats> romapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
 
-		log.trace(Literal.SQL + sql.toString());
-		log.trace(Literal.LEAVING);
+		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
+
 		try {
-			return this.jdbcTemplate.query(sql.toString(), source, romapper);
+			return this.jdbcTemplate.query(CacheQueries.SELECT_CACHE_STATUS_LIST, source, romapper);
 		} catch (Exception e) {
 			log.error(Literal.EXCEPTION, e);
 		}
 
+		log.trace(Literal.LEAVING);
 		return null;
 	}
 
 	public void delete(String clusterName, String IP, String currentNode) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 		int recordCount = 0;
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
@@ -77,14 +75,10 @@ public class CacheAdmin {
 		paramMap.addValue("ClusterIp", "%" + IP + "%");
 		paramMap.addValue("CurrentNode", "%" + StringUtils.substringBefore(currentNode, "-") + "%");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("delete from cache_stats");
-		sql.append(" where cluster_name =:ClusterName");
-		sql.append(" and cluster_ip like :ClusterIp and current_node like :CurrentNode");
-		log.trace(Literal.SQL + sql.toString());
+		log.trace(Literal.SQL + CacheQueries.DELETE_CACHE_STATUS);
 
 		try {
-			recordCount = this.jdbcTemplate.update(sql.toString(), paramMap);
+			recordCount = this.jdbcTemplate.update(CacheQueries.DELETE_CACHE_STATUS, paramMap);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
@@ -98,35 +92,29 @@ public class CacheAdmin {
 	}
 
 	public int getNodeCount() {
-		log.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append("select node_count from cache_stats where id=(select max(id) from cache_stats)");
-		log.trace(Literal.SQL + sql.toString());
-		log.debug(Literal.LEAVING);
-		return this.jdbcTemplate.queryForObject(sql.toString(), new MapSqlParameterSource(), Integer.class);
+		log.trace(Literal.ENTERING);
 
+		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_NODE_COUNT);
+
+		log.trace(Literal.LEAVING);
+
+		return this.jdbcTemplate.queryForObject(CacheQueries.SELECT_CACHE_STATUS_NODE_COUNT,
+				new MapSqlParameterSource(), Integer.class);
 	}
 
 	public void insert(CacheStats cacheStats) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("insert into cache_stats");
-		sql.append("(cluster_name, current_node, cluster_ip, cluster_size, cluster_members, cache_count, cache_names,");
-		sql.append(" manager_cache_status, enabled, active, node_count, last_mnt_by, last_mnt_on)");
-		sql.append(
-				" values(:ClusterName, :ClusterNode, :ClusterIp, :ClusterSize, :ClusterMembers, :CacheCount, :CacheNamesDet,");
-		sql.append(" :ManagerCacheStatus, :Enabled, :Active, :NodeCount, :LastMntBy, :LastMntOn)");
+		log.trace(Literal.SQL + CacheQueries.INSERT_CACHE_STATUS);
 
-		log.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
 		try {
-			this.jdbcTemplate.update(sql.toString(), beanParameters);
+			this.jdbcTemplate.update(CacheQueries.INSERT_CACHE_STATUS, beanParameters);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		log.debug(Literal.LEAVING);
+		log.trace(Literal.LEAVING);
 
 	}
 
@@ -135,89 +123,81 @@ public class CacheAdmin {
 	}
 
 	public CacheStats getCacheStats(String clusterName, String currentNode) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" select cluster_name, current_node, cluster_ip,cluster_size,cluster_members, cache_count,");
-		sql.append(" cache_names, manager_cache_status, enabled,active,node_count,last_mnt_on, last_mnt_by");
-		sql.append(" from  cache_stats");
-		sql.append(" where cluster_name =:ClusterName and current_node=:ClusterNode ");
-
 		paramMap.addValue("ClusterName", clusterName);
 		paramMap.addValue("ClusterNode", currentNode);
+
 		RowMapper<CacheStats> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CacheStats.class);
 
+		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_STATUS_LIST);
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(CacheQueries.SELECT_CACHE_STATUS_LIST, paramMap, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			log.error(Literal.EXCEPTION, e);
 		}
 
-		log.debug(Literal.LEAVING);
+		log.trace(Literal.LEAVING);
 		return null;
 	}
 
 	public void update(CacheStats cacheStats) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
 		int recordCount = 0;
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" update cache_stats ");
-		sql.append(" set cluster_ip  =:ClusterIp, cluster_size  =:ClusterSize, cluster_members =:ClusterMembers,");
-		sql.append(
-				" cache_count =:CacheCount, cache_names =:CacheNamesDet, manager_cache_status =:ManagerCacheStatus,");
-		sql.append(" enabled =:Enabled, active =:Active,  node_count  =:NodeCount,");
-		sql.append(" last_mnt_by =:LastMntBy, last_mnt_on=:LastMntOn");
-		sql.append(" where cluster_name =:ClusterName and current_node =:ClusterNode ");
-
-		log.trace(Literal.SQL + sql.toString());
+		log.trace(Literal.SQL + CacheQueries.UPDATE_CACHE_STATUS);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(CacheQueries.UPDATE_CACHE_STATUS, beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
-		log.debug(Literal.LEAVING);
+		log.trace(Literal.LEAVING);
 	}
 
 	public Map<String, Object> getParameters() {
-		log.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select node_count, cache_verify_sleep, cache_update_sleep");
-		sql.append(" from cache_parameters ");
+		log.trace(Literal.ENTERING);
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		log.trace(Literal.SQL + CacheQueries.SELECT_CACHE_PARAMETER);
+
 		try {
-			map = this.jdbcTemplate.queryForMap(sql.toString(), map);
+			this.jdbcTemplate.query(CacheQueries.SELECT_CACHE_PARAMETER, new RowCallbackHandler() {
+
+				@Override
+				public void processRow(ResultSet rs) throws SQLException {
+					map.put(Cache.NODE_COUNT, rs.getInt(1));
+					map.put(Cache.CACHE_UPDATE_SLEEP, rs.getLong(2));
+					map.put(Cache.CACHE_VERIFY_SLEEP, rs.getLong(3));
+				}
+			});
 		} catch (Exception e) {
 			log.error(Literal.EXCEPTION, e);
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 		return map;
 	}
 
 	public void updateParameters(CacheStats cacheStats) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
 		int recordCount = 0;
-		StringBuilder sql = new StringBuilder("update cache_parameters ");
-		sql.append(
-				" Set NODE_COUNT  =:NodeCount, CACHE_VERIFY_SLEEP  =:VerifySleepTime, CACHE_UPDATE_SLEEP =:UpdateSleepTime,");
-		sql.append(" Last_Mnt_By =:LastMntBy, Last_Mnt_On =:LastMntOn ");
 
-		log.trace(Literal.SQL + sql.toString());
+		log.trace(Literal.SQL + CacheQueries.UPDATE_CACHE_PARAM);
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(cacheStats);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		recordCount = this.jdbcTemplate.update(CacheQueries.UPDATE_CACHE_PARAM, beanParameters);
 
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 	}
 }

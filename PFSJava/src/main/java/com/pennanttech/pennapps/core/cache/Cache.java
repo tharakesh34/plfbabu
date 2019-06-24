@@ -24,7 +24,13 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class Cache<K, V> {
 	private static final Logger log = LogManager.getLogger(Cache.class);
+
 	private static final String DEFAULT_ERROR_MESSAGE = "898: Unable to process the request due to issues with cache manager. Please try again later or contact the system administrator.";
+	
+	protected static final String NODE_COUNT = "NODE_COUNT";
+	protected static final String CACHE_UPDATE_SLEEP = "CACHE_UPDATE_SLEEP";
+	protected static final String CACHE_VERIFY_SLEEP = "CACHE_VERIFY_SLEEP";
+
 	private org.infinispan.Cache<K, V> cache = null;
 	private String name;
 
@@ -37,7 +43,8 @@ public class Cache<K, V> {
 	}
 
 	public void setEntity(K key, V value) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+
 		if (CacheManager.isActivated()) {
 			try {
 				getCache().put(key, value);
@@ -46,11 +53,13 @@ public class Cache<K, V> {
 				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 	}
 
 	public V getEntity(K key) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+
 		if (CacheManager.isActivated()) {
 			try {
 				return getCache().get(key);
@@ -59,12 +68,14 @@ public class Cache<K, V> {
 				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 		return null;
 	}
 
 	public void invalidateEntity(K key) {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+
 		if (CacheManager.isActivated()) {
 			try {
 				getCache().remove(key);
@@ -73,21 +84,24 @@ public class Cache<K, V> {
 				throw new AppException(DEFAULT_ERROR_MESSAGE, e);
 			}
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 	}
 
 	private org.infinispan.Cache<K, V> getCache() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+
 		if (!CacheManager.isRegisterd(name)) {
 			cache = CacheManager.getCacheManager().getCache(name);
 			CacheManager.register(name);
-			log.debug(String.format("Cache registerd from %s for the module %s",
+			log.info(String.format("Cache registerd from %s for the module %s",
 					CacheManager.getCacheManager().getNodeAddress(), name));
 		} else if (cache == null) {
-			log.info(" Cache Null Creating Cache" + name);
+			log.info("Cache Null Creating Cache" + name);
 			cache = CacheManager.getCacheManager().getCache(name);
 		}
-		log.debug(Literal.LEAVING);
+
+		log.trace(Literal.LEAVING);
 		return cache;
 	}
 
@@ -97,7 +111,7 @@ public class Cache<K, V> {
 		public void entryCreated(CacheEntryCreatedEvent<K, V> event) {
 			// We are only interested in the post event
 			if (!event.isPre()) {
-				log.debug(String.format("Entity with the key %s added into the cache for the module %s",
+				log.info(String.format("Entity with the key %s added into the cache for the module %s",
 						event.getKey().toString(), name));
 
 			}

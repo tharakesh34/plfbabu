@@ -318,14 +318,15 @@ public class RepaymentPostingsUtil implements Serializable {
 				feeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 			}
 
+			if (movement == null) {
+				movement = new ManualAdviseMovements();
+			}
+
 			if (feeType != null) {
-				if (movement == null) {
-					movement = new ManualAdviseMovements();
-					movement.setFeeTypeCode(feeType.getFeeTypeCode());
-					movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
-					movement.setTaxApplicable(feeType.isTaxApplicable());
-					movement.setTaxComponent(feeType.getTaxComponent());
-				}
+				movement.setFeeTypeCode(feeType.getFeeTypeCode());
+				movement.setFeeTypeDesc(feeType.getFeeTypeDesc());
+				movement.setTaxApplicable(feeType.isTaxApplicable());
+				movement.setTaxComponent(feeType.getTaxComponent());
 			} else {
 				logger.warn(
 						String.format("%s Fee code not configured in fee type master", PennantConstants.FEETYPE_ODC));

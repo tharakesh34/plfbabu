@@ -60,13 +60,13 @@ public class CacheMonitor implements Runnable {
 
 	@Override
 	public void run() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
 		CacheStats stats = CacheManager.getNodeDetails();
 
 		// delete old status data from DB based on the clustered Name , Node
 		try {
-			log.debug(String.format("Deleting the old status of %s Cluster, %s  IP, %s Node", stats.getClusterName(),
+			log.info(String.format("Deleting the old status of %s Cluster, %s  IP, %s Node", stats.getClusterName(),
 					stats.getClusterIp(), stats.getClusterNode()));
 			this.cacheAdmin.delete(stats.getClusterName(), stats.getClusterIp(), stats.getClusterNode());
 		} catch (Exception e) {

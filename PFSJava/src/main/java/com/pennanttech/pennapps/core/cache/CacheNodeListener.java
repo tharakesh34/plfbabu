@@ -30,7 +30,7 @@ public class CacheNodeListener implements Runnable {
 
 	@Override
 	public void run() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 		Map<String, Object> parameters = this.cacheAdmin.getParameters();
 
 		int nodeCount = 0;
@@ -38,9 +38,9 @@ public class CacheNodeListener implements Runnable {
 		long monitorSleepTime = 3000;
 
 		if (parameters != null && parameters.isEmpty()) {
-			nodeCount = ((Integer) parameters.get("NODE_COUNT")).intValue();
-			nodeListenerSleepTime = ((Long) parameters.get("CACHE_UPDATE_SLEEP")).longValue();
-			monitorSleepTime = ((Long) parameters.get("CACHE_VERIFY_SLEEP")).longValue();
+			nodeCount = ((Integer) parameters.get(Cache.NODE_COUNT)).intValue();
+			nodeListenerSleepTime = ((Long) parameters.get(Cache.CACHE_UPDATE_SLEEP)).longValue();
+			monitorSleepTime = ((Long) parameters.get(Cache.CACHE_VERIFY_SLEEP)).longValue();
 		}
 
 		CacheManager.setSleepTime(monitorSleepTime);
@@ -59,8 +59,8 @@ public class CacheNodeListener implements Runnable {
 
 			parameters = this.cacheAdmin.getParameters();
 			if (parameters != null && !parameters.isEmpty()) {
-				nodeCount = ((Integer) parameters.get("NODE_COUNT")).intValue();
-				nodeListenerSleepTime = ((Long) parameters.get("CACHE_UPDATE_SLEEP")).longValue();
+				nodeCount = ((Integer) parameters.get(Cache.NODE_COUNT)).intValue();
+				nodeListenerSleepTime = ((Long) parameters.get(Cache.CACHE_UPDATE_SLEEP)).longValue();
 			}
 		}
 	}

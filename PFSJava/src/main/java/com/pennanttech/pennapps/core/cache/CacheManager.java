@@ -49,7 +49,7 @@ public class CacheManager {
 	}
 
 	public void start() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
 
 		if (!cacheEnable) {
 			log.warn("Cache not enabled, if you want to enable the cache please set the prperty cache.enable to true.");
@@ -87,18 +87,21 @@ public class CacheManager {
 		} else {
 			throw new FactoryException("CacheManager", new Exception("Cache manager already started"));
 		}
-		log.debug(Literal.LEAVING);
+		
+		log.trace(Literal.LEAVING);
 	}
 
 	public void stop() {
-		log.debug(Literal.ENTERING);
+		log.trace(Literal.ENTERING);
+		
 		if (enabled) {
 			cacheManager.stop();
 			enabled = false;
 			caches.clear();
 			cacheManager = null;
 		}
-		log.debug(Literal.LEAVING);
+		
+		log.trace(Literal.LEAVING);
 	}
 
 	public static boolean isActivated() {
@@ -125,62 +128,68 @@ public class CacheManager {
 	}
 
 	public static void verifyCache() {
-		log.debug(Literal.ENTERING);
-		if (enabled) {
-			if (cacheManager.getClusterSize() == nodes) {
-				if (!activated) {
-					Set<String> cacheSet = cacheManager.getCacheNames();
+		log.trace(Literal.ENTERING);
+		
+		if (!enabled) {
+			activated = false;
+			return;
+		}
+		
 
-					for (String string : cacheSet) {
-						Cache<Object, Object> cache = cacheManager.getCache(string);
-						cache.clearAsync();
-					}
-					log.info(String.format("Cache activaded for in %d nodes", cacheManager.getClusterSize()));
+		if (cacheManager.getClusterSize() == nodes) {
+			if (!activated) {
+				Set<String> cacheSet = cacheManager.getCacheNames();
+
+				for (String string : cacheSet) {
+					Cache<Object, Object> cache = cacheManager.getCache(string);
+					cache.clearAsync();
 				}
-				activated = true;
-			} else {
-				if (enabled) {
-					log.info(String.format("Cache deactivated %d/%d:", cacheManager.getClusterSize(), nodes));
-				}
-				activated = false;
+				log.info(String.format("Cache activaded for in %d nodes", cacheManager.getClusterSize()));
 			}
-
+			activated = true;
 		} else {
+			if (enabled) {
+				log.info(String.format("Cache deactivated %d/%d:", cacheManager.getClusterSize(), nodes));
+			}
 			activated = false;
 		}
-		log.debug(Literal.LEAVING);
+
+	
+		log.trace(Literal.LEAVING);
 	}
 
 	public static CacheStats getNodeDetails() {
 		CacheStats stats = new CacheStats();
 		stats.setAppNode(true);
 
-		if (cacheManager != null) {
-			stats.setClusterName(cacheManager.getClusterName());
-			stats.setClusterNode(cacheManager.getNodeAddress());
-			stats.setClusterIp(cacheManager.getPhysicalAddresses());
-			stats.setClusterSize(cacheManager.getClusterSize());
-			stats.setClusterMembers(cacheManager.getClusterMembers());
-
-			for (String cacheName : cacheManager.getCacheNames()) {
-				if (!"DefaultCache".equals(cacheName)) {
-					stats.setCacheNames(cacheName);
-				}
-			}
-
-			stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));
-			stats.setCacheCount(stats.getCacheNames().size());
-			stats.setManagerCacheStatus(cacheManager.getCacheManagerStatus());
-			stats.setActive(isActivated());
-			stats.setEnabled(isEnabled());
-			stats.setNodeCount(nodes);
-			stats.setLastMntBy(1000);
-			stats.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-
-			log.debug(stats.toString());
-		} else {
+		if (cacheManager == null) {
 			stats.setManagerCacheStatus("STOPPED");
+			return stats;
 		}
+
+		stats.setClusterName(cacheManager.getClusterName());
+		stats.setClusterNode(cacheManager.getNodeAddress());
+		stats.setClusterIp(cacheManager.getPhysicalAddresses());
+		stats.setClusterSize(cacheManager.getClusterSize());
+		stats.setClusterMembers(cacheManager.getClusterMembers());
+
+		for (String cacheName : cacheManager.getCacheNames()) {
+			if (!"DefaultCache".equals(cacheName)) {
+				stats.setCacheNames(cacheName);
+			}
+		}
+
+		stats.setCacheNamesDet(String.join(",", stats.getCacheNames()));
+		stats.setCacheCount(stats.getCacheNames().size());
+		stats.setManagerCacheStatus(cacheManager.getCacheManagerStatus());
+		stats.setActive(isActivated());
+		stats.setEnabled(isEnabled());
+		stats.setNodeCount(nodes);
+		stats.setLastMntBy(1000);
+		stats.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+
+		log.trace(stats.toString());
+
 		return stats;
 	}
 
@@ -200,7 +209,7 @@ public class CacheManager {
 		CacheManager.sleepTime = sleepTime;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public static void setEnabled(boolean enabled) {
 		CacheManager.enabled = enabled;
 	}
 
