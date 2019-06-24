@@ -20,6 +20,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
@@ -223,7 +224,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 	private void generateFile(String configName, List<Long> idList, String paymentType, String partnerbankCode,
 			String finType, long userId, String fileNamePrefix) throws Exception {
 		DataEngineStatus status = null;
-		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+		DataEngineExport export = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+				SysParamUtil.getAppValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("ID", idList);
@@ -241,7 +243,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				parameterMap.put("SEQ_LPAD_VALUE", "0");
 			}
 
-			export.setValueDate(getValueDate());
+			export.setValueDate(SysParamUtil.getAppValueDate());
 			export.setFilterMap(filterMap);
 			export.setParameterMap(parameterMap);
 			status = export.exportData(configName, false);
@@ -263,7 +265,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 	private void sendIMPSRequest(String configName, List<Long> dibursements, long userId) {
 		DisbursemenIMPSRequestProcess impsRequest = new DisbursemenIMPSRequestProcess(dataSource, userId,
-				getValueDate(), getAppDate());
+				SysParamUtil.getAppValueDate(), SysParamUtil.getAppDate());
 
 		impsRequest.setDisbursments(dibursements);
 		try {
@@ -331,7 +333,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 
-		final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
+		final String DISB_FI_EMAIL = SysParamUtil.getValueAsString("DISB_FI_EMAIL");
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
 			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {

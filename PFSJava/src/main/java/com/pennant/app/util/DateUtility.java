@@ -63,9 +63,11 @@ public final class DateUtility extends DateUtil {
 	 * Returns a {@link java.util.Date} object that represents the application date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the application date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
 	 */
 	public static java.util.Date getAppDate() {
-		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_DATE.getCode());
+		return SysParamUtil.getAppDate();
 	}
 
 	/**
@@ -74,9 +76,11 @@ public final class DateUtility extends DateUtil {
 	 * @param dateFormat
 	 *            The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
 	 */
 	public static String getAppDate(DateFormat dateFormat) {
-		return format(getAppDate(), dateFormat);
+		return SysParamUtil.getAppDate(dateFormat);
 	}
 
 	/**
@@ -85,20 +89,32 @@ public final class DateUtility extends DateUtil {
 	 * @param dateFormat
 	 *            The format describing the date and time pattern.
 	 * @return The formatted date string of the application date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
 	 */
 	public static String getAppDate(String dateFormat) {
-		return format(getAppDate(), dateFormat);
+		return SysParamUtil.getAppDate(dateFormat);
 	}
 
 	/**
 	 * Returns a {@link java.util.Date} object that represents the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the value date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
+	 * 
 	 */
 	public static java.util.Date getAppValueDate() {
 		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode());
 	}
 
+	/**
+	 * 
+	 * @param dateFormat
+	 * @return
+	 * 
+	 * @deprecated use {@link SysParamUtil#getAppDate} instead.
+	 */
 	public static String getAppValueDate(DateFormat dateFormat) {
 		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), dateFormat);
 	}
@@ -107,18 +123,22 @@ public final class DateUtility extends DateUtil {
 	 * Returns a {@link java.util.Date} object that represents the Next business date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getNextBusinessdate} instead.
 	 */
 	public static java.util.Date getNextBusinessdate() {
-		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
+		return SysParamUtil.getNextBusinessdate();
 	}
 
 	/**
 	 * Returns a {@link java.util.Date} object that represents the Next business date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getLastBusinessdate} instead.
 	 */
 	public static java.util.Date getLastBusinessdate() {
-		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST);
+		return SysParamUtil.getLastBusinessdate();
 	}
 
 	/**
@@ -127,6 +147,8 @@ public final class DateUtility extends DateUtil {
 	 * @param pattern
 	 *            The pattern describing the date and time format.
 	 * @return The formatted date string of the value date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the Next business date.
 	 */
 	public static String getValueDate(String pattern) {
 		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);

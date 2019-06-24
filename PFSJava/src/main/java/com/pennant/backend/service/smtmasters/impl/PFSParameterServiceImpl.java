@@ -411,12 +411,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	@Override
 	public void update(String code, String value, String type) {
 		pFSParameterDAO.update(code, value, type);
-		setEntity(code, getEntity(code));
-	}
-
-	@Override
-	public PFSParameter getParameterByCode(String code) {
-		return getCachedEntity(code);
+		invalidateEntity(code);
 	}
 
 	@Override
@@ -427,6 +422,11 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	@Override
 	protected PFSParameter getEntity(String code) {
 		return pFSParameterDAO.getPFSParameterById(code, "_AView");
+	}
+
+	@Override
+	public PFSParameter getParameter(String code) {
+		return getCachedEntity(code);
 	}
 
 }

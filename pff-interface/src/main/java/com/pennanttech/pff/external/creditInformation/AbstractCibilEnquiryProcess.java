@@ -43,6 +43,7 @@ import org.zkoss.json.JSONArray;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -58,11 +59,11 @@ import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pff.InterfaceConstants;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.dao.CreditInterfaceDAO;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.CreditInformation;
@@ -118,7 +119,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	public AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String cibilReq = (String) getSMTParameter("CBIL_PROCESS_REQ", String.class);
+		String cibilReq = SysParamUtil.getValueAsString("CBIL_PROCESS_REQ");
 
 		if ("N".equals(cibilReq)) {
 			return auditHeader;
@@ -172,7 +173,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		try {
 
-			String cibilReq = (String) getSMTParameter("CBIL_PROCESS_REQ", String.class);
+			String cibilReq = SysParamUtil.getValueAsString("CBIL_PROCESS_REQ");
 
 			if ("N".equals(cibilReq)) {
 				customerDetails.setCibilExecuted(false);
@@ -500,7 +501,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		memberDetails = (CibilMemberDetail) searchProcessor.getResults(search);
 
-		this.CBIL_ENQUIRY_SCORE_TYPE = (String) getSMTParameter("CBIL_ENQUIRY_SCORE_TYPE", String.class);
+		this.CBIL_ENQUIRY_SCORE_TYPE = SysParamUtil.getValueAsString("CBIL_ENQUIRY_SCORE_TYPE");
 	}
 
 	private void loadAccountTypes() {
@@ -651,7 +652,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 			builder.append("00");
 		}
 
-		int currencyEditField = (int) getSMTParameter("APP_DFT_CURR_EDIT_FIELD", Integer.class);
+		int currencyEditField = SysParamUtil.getValueAsInt("APP_DFT_CURR_EDIT_FIELD");
 
 		BigDecimal finAmount = BigDecimal.ONE;
 		if (financeMain != null) {
@@ -1063,9 +1064,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 
 		StringBuilder builder = new StringBuilder();
 
-		String socketIp = (String) getSMTParameter("CIBIL_SOCKET_IP", String.class);
-		int port = (int) getSMTParameter("CIBIL_SOCKET_PORT", Integer.class);
-		int timeout = (int) getSMTParameter("CIBIL_SOCKET_TIMEOUT", Integer.class);
+		String socketIp = SysParamUtil.getValueAsString("CIBIL_SOCKET_IP");
+		int port = SysParamUtil.getValueAsInt("CIBIL_SOCKET_PORT");
+		int timeout = SysParamUtil.getValueAsInt("CIBIL_SOCKET_TIMEOUT");
+
 		try {
 			SocketAddress sockaddr = new InetSocketAddress(socketIp, port);
 			Socket socket = new Socket();
@@ -1176,7 +1178,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		} else {
 			iLogDetail.setServiceName("CIBIL");
 		}
-		iLogDetail.setEndPoint((String) getSMTParameter("CIBIL_SOCKET_IP", String.class));
+		iLogDetail.setEndPoint(SysParamUtil.getValueAsString("CIBIL_SOCKET_IP"));
 		iLogDetail.setRequest(requets);
 		iLogDetail.setReqSentOn(reqSentOn);
 

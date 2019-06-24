@@ -19,6 +19,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
@@ -88,8 +89,8 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					}
 					updatePresentmentDetails(idList, "A", RepayConstants.PEXC_EMIINCLUDE);
 
-					String alwPresentmentDwnld = (String) getSMTParameter(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD,
-							String.class);
+					String alwPresentmentDwnld = SysParamUtil
+							.getValueAsString(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD);
 					if ("Y".equalsIgnoreCase(alwPresentmentDwnld)) {
 						prepareRequestFile(presentmentId);
 					}
@@ -117,16 +118,17 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			String paymentMode = getPaymenyMode(presentmentId);
 			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
 			paymentModeConfigName = paymentModeConfigName.concat(paymentMode);
-			Object smtPaymentModeConfig = getSMTParameter(paymentModeConfigName, Object.class);
+			String smtPaymentModeConfig = SysParamUtil.getValueAsString("PRESENTMENT_REQUEST_");
 
 			DataEngineExport dataEngine = null;
-			dataEngine = new DataEngineExport(dataSource, 1000, App.DATABASE.name(), true, getValueDate());
+			dataEngine = new DataEngineExport(dataSource, 1000, App.DATABASE.name(), true,
+					SysParamUtil.getAppValueDate());
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
 
 			if (smtPaymentModeConfig != null) {
-				dataEngine.exportData(smtPaymentModeConfig.toString());
+				dataEngine.exportData(smtPaymentModeConfig);
 			} else {
 				dataEngine.exportData("PRESENTMENT_REQUEST");
 			}

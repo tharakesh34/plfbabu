@@ -1,6 +1,5 @@
 package com.pennanttech.pff.process.collection;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,12 +15,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.model.CollectionCustomerDetail;
 
 /**
@@ -69,7 +67,7 @@ public class CollectionDataDownloadProcess {
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
-		parameterSource.addValue("AppDate", getAppDate());
+		parameterSource.addValue("AppDate", SysParamUtil.getAppDate());
 
 		int count = 0;
 		StringBuilder sql = new StringBuilder(" INSERT INTO collection_financedetails  ");
@@ -342,22 +340,5 @@ public class CollectionDataDownloadProcess {
 
 	public void setDataSource(DataSource dataSource) {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-	}
-
-	public Date getAppDate() {
-		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
-		sql.append("SELECT SYSPARMVALUE FROM SMTPARAMETERS where SYSPARMCODE = :SYSPARMCODE");
-		paramMap.addValue("SYSPARMCODE", "APP_DATE");
-
-		String strDate = null;
-		try {
-			strDate = jdbcTemplate.queryForObject(sql.toString(), paramMap, String.class);
-		} catch (Exception e) {
-			return null;
-		}
-
-		return DateUtil.parse(strDate, PennantConstants.DBDateFormat);
 	}
 }

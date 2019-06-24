@@ -44,22 +44,24 @@ package com.pennant.app.util;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennant.backend.service.smtmasters.PFSParameterService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.service.SysParamService;
 
 /**
  * A suite of utilities surrounding the use of the system parameters that contain information about the environment for
  * the system.
  */
 public class SysParamUtil {
-	private static PFSParameterService systemParameterService;
+	private static SysParamService systemParameterService;
 	private static List<GlobalVariable> globalVariablesList = null;
 
 	/**
@@ -77,6 +79,52 @@ public class SysParamUtil {
 		public String getCode() {
 			return code;
 		}
+	}
+
+	/**
+	 * Returns a {@link java.util.Date} object that represents the application date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the application date.
+	 */
+	public static Date getAppDate() {
+		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_DATE.getCode());
+	}
+
+	/**
+	 * Returns the string representation with the specified date format pattern of the application date.
+	 * 
+	 * @param dateFormat
+	 *            The format describing the date and time pattern.
+	 * @return The formatted date string of the application date.
+	 */
+	public static String getAppDate(DateFormat dateFormat) {
+		return DateUtil.format(getAppDate(), dateFormat);
+	}
+
+	/**
+	 * Returns the string representation with the specified date format pattern of the application date.
+	 * 
+	 * @param dateFormat
+	 *            The format describing the date and time pattern.
+	 * @return The formatted date string of the application date.
+	 */
+	public static String getAppDate(String dateFormat) {
+		return DateUtil.format(getAppDate(), dateFormat);
+	}
+
+	/**
+	 * Returns a {@link java.util.Date} object that represents the value date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the value date.
+	 * 
+	 * 
+	 */
+	public static java.util.Date getAppValueDate() {
+		return SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode());
+	}
+
+	public static String getAppValueDate(DateFormat dateFormat) {
+		return DateUtil.format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), dateFormat);
 	}
 
 	/**
@@ -132,11 +180,7 @@ public class SysParamUtil {
 			return false;
 		}
 
-		if (PennantConstants.YES.equalsIgnoreCase(valueAsString)) {
-			return true;
-		} else {
-			return false;
-		}
+		return PennantConstants.YES.equalsIgnoreCase(valueAsString);
 	}
 
 	/**
@@ -154,6 +198,24 @@ public class SysParamUtil {
 		}
 
 		return (Date) getSystemParameterValue(getParamByID(code));
+	}
+
+	/**
+	 * Returns a {@link java.util.Date} object that represents the Next business date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the Next business date.
+	 */
+	public static java.util.Date getNextBusinessdate() {
+		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT);
+	}
+
+	/**
+	 * Returns a {@link java.util.Date} object that represents the Next business date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the Next business date.
+	 */
+	public static java.util.Date getLastBusinessdate() {
+		return SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_LAST);
 	}
 
 	/**
@@ -180,7 +242,7 @@ public class SysParamUtil {
 		systemParameterService.update(code, value, "");
 	}
 
-	private static HashMap<String, PFSParameter> parmDetails = null;
+	private static Map<String, PFSParameter> parmDetails = null;
 
 	public static void setParmDetails(String code, String value) {
 		if (parmDetails != null) {
@@ -230,7 +292,7 @@ public class SysParamUtil {
 			String strValue = parameter.getSysParmValue();
 
 			if ("Date".equalsIgnoreCase(parmType)) {
-				object = DateUtility.getDBDate(strValue);
+				object = DateUtil.getSqlDate(DateUtil.parse(strValue, DateFormat.FULL_DATE));
 			} else if ("Double".equalsIgnoreCase(parmType)) {
 				BigDecimal doubleValue = new BigDecimal(strValue);
 				object = doubleValue.divide(BigDecimal.valueOf(Math.pow(10, parameter.getSysParmDec())));
@@ -242,10 +304,10 @@ public class SysParamUtil {
 	}
 
 	private static PFSParameter getParamByID(String code) {
-		return systemParameterService.getParameterByCode(StringUtils.trimToEmpty(code));
+		return systemParameterService.getParameter(StringUtils.trimToEmpty(code));
 	}
 
-	public static void setSystemParameterService(PFSParameterService systemParameterService) {
+	public static void setSystemParameterService(SysParamService systemParameterService) {
 		SysParamUtil.systemParameterService = systemParameterService;
 	}
 }

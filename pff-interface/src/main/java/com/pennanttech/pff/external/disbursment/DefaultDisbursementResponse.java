@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
@@ -87,10 +88,11 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		status.setRemarks("initiated disbursement response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
+				status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(getValueDate());
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);

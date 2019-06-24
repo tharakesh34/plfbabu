@@ -43,17 +43,15 @@
 
 package com.pennant.backend.service.smtmasters;
 
-import java.util.List;
-
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.smtmasters.PFSParameter;
-import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.service.SysParamService;
 
 /**
  * Service declaration for methods that depends on <b>PFSParameter</b>.<br>
  * 
  */
-public interface PFSParameterService {
+public interface PFSParameterService extends SysParamService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
@@ -68,9 +66,5 @@ public interface PFSParameterService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	void update(String sysParmCode, String sysParmValue, String type);
-
-	PFSParameter getParameterByCode(String code);
-
-	List<GlobalVariable> getGlobaVariables();
 
 }

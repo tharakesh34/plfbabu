@@ -69,6 +69,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.TransactionStatus;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -130,7 +131,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		addCustomParameter(parameterMap);
 
 		DataEngineExport dataEngine = null;
-		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true, getValueDate());
+		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
+				SysParamUtil.getAppValueDate());
 
 		genetare(dataEngine, userName, filterMap, parameterMap);
 	}
@@ -147,7 +149,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setUserName(userName);
-		dataEngine.setValueDate(getValueDate());
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 		return dataEngine.exportData("MANDATES_EXPORT");
 	}
 
@@ -170,10 +172,11 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		status.setRemarks("initiated Mandate response file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine;
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, getValueDate(), status);
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
+				status);
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
-		dataEngine.setValueDate(getValueDate());
+		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 		dataEngine.importData(configName);
 
 		do {
@@ -354,7 +357,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 					rowMap.put("BATCH_ID", 0);
 					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
-					rowMap.put("EXTRACTION_DATE", getAppDate());
+					rowMap.put("EXTRACTION_DATE", SysParamUtil.getAppDate());
 
 					String frequency = null;
 
@@ -479,7 +482,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		sql.append(" Where EXTRACTION_DATE =:EXTRACTION_DATE");
 		sql.append(" GROUP BY BANK_CODE");
 
-		paramMap.addValue("EXTRACTION_DATE", getValueDate());
+		paramMap.addValue("EXTRACTION_DATE", SysParamUtil.getAppValueDate());
 
 		try {
 			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
@@ -513,7 +516,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		paramMap.addValue("STATUS", "AC");
 		paramMap.addValue("REASON", null);
-		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("changeDate", SysParamUtil.getAppDate());
 		paramMap.addValue("fileID", requestId);
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
@@ -673,7 +676,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 
 		paramMap.addValue("REASON", respmandate.getReason());
-		paramMap.addValue("changeDate", getAppDate());
+		paramMap.addValue("changeDate", SysParamUtil.getAppDate());
 		paramMap.addValue("fileID", requestId);
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
