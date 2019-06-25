@@ -252,6 +252,7 @@ public class FeeCalculator implements Serializable {
 				if (financeMain != null && financeMain.getFinStartDate() != null) {
 					int finAge = DateUtility.getMonthsBetween(DateUtility.getAppDate(), financeMain.getFinStartDate());
 					executionMap.put("finAgetilldate", finAge);
+					executionMap.put("completedTenure", finAge);
 				}
 				if (financeMain != null && StringUtils.isNotBlank(financeMain.getFinReference())
 						&& StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {

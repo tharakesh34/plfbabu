@@ -452,9 +452,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						PennantApplicationUtil.formateAmount(soaTransactionReport.getDebitAmount(), ccyEditField));
 				soaTransactionReport.setCreditAmount(
 						PennantApplicationUtil.formateAmount(soaTransactionReport.getCreditAmount(), ccyEditField));
-
+				finalSOATransactionReports.add(soaTransactionReport);
 			}
-			finalSOATransactionReports.add(soaTransactionReport);
+
 		}
 		//Get the Selected Loan Types are Adding ValueDate and balance for the SOA Report.
 		List<String> soaFinTypes = getSOAFinTypes();
@@ -1076,6 +1076,30 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				BigDecimal repayAmount = finSchdDetail.getRepayAmount();
 
 				if (StringUtils.isBlank(closingStatus) || !StringUtils.equalsIgnoreCase(closingStatus, "C")) {
+
+					// Add disbursement
+					if (finSchdDetail.isDisbOnSchDate()) {
+
+						BigDecimal transactionAmount = BigDecimal.ZERO;
+
+						if (finSchdDetail.getDisbAmount() != null) {
+							transactionAmount = finSchdDetail.getDisbAmount();
+						}
+
+						if (DateUtility.compare(finSchdDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
+							transactionAmount = transactionAmount.add(finMain.getFeeChargeAmt());
+						}
+
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(finSchedulePayable + finRef);
+						soaTranReport.setTransactionDate(finSchdDetail.getSchDate());
+						soaTranReport.setValueDate(finMain.getFinStartDate());
+						soaTranReport.setCreditAmount(transactionAmount);
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(1);
+
+						soaTransactionReports.add(soaTranReport);
+					}
 
 					//Broken Period Interest Receivable- Due
 					if (StringUtils.equalsIgnoreCase("B", bpiOrHoliday) && repayAmount != null

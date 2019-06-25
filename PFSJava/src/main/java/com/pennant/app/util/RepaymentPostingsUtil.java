@@ -344,7 +344,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			movement.setPaidSGST(movement.getPaidSGST().add(repayQueue.getPaidPenaltySGST()));
 			movement.setPaidUGST(movement.getPaidUGST().add(repayQueue.getPaidPenaltyUGST()));
 			movement.setPaidIGST(movement.getPaidIGST().add(repayQueue.getPaidPenaltyIGST()));
-			
+
 			//Waived GST Values
 			movement.setWaivedCGST(movement.getWaivedCGST().add(repayQueue.getPenaltyWaiverCGST()));
 			movement.setWaivedSGST(movement.getWaivedSGST().add(repayQueue.getPenaltyWaiverSGST()));
@@ -1205,8 +1205,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		if (overdueEvent != null) {
 			overdueEvent.setTransOrder(aeEvent.getTransOrder());
 		}
-		
-		
+
 		//GST Invoice Preparation for Exempted waiver case
 		BigDecimal pftDueWaived = amountCodes.getPftDueWaived();
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && aeEvent.getLinkedTranId() > 0 && pftDueWaived != null
@@ -1258,17 +1257,18 @@ public class RepaymentPostingsUtil implements Serializable {
 				if (StringUtils.startsWith(finFeeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_ADDDBS)) {
 					continue;
 				}
-				
+
 				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
 				String feeTypeCode = finFeeDetail.getFeeTypeCode();
 				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
-				
+
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+					dataMap.put(feeTypeCode + "_W",
+							finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
 				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());					
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 				}
-				
+
 				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
 
 				if (StringUtils.equals(payType, RepayConstants.RECEIPTMODE_EXCESS)) {
@@ -1299,7 +1299,7 @@ public class RepaymentPostingsUtil implements Serializable {
 				dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
 				dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
 				dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
-				
+
 				//Waiver GST Amounts 
 				dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
 				dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
