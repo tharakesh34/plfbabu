@@ -159,12 +159,17 @@ public class ReceiptPaymentService extends ServiceHelper {
 		String repayHeirarchy = finEODEvent.getFinType().getRpyHierarchy();
 
 		FinReceiptDetail receiptDetail = null;
-		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
+		/*
+		 * we are storing excessID in case of EMIAdvance case only and in advance Amount Other Advance amounts also
+		 * included like ADVINT,ADVEMI
+		 */
+		long excessID = presentmentDetail.getExcessID();
+		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0 && excessID != 0) {
 			receiptDetail = new FinReceiptDetail();
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
+			receiptDetail.setPayAgainstID(excessID);
 			receiptDetail.setAmount(advanceAmt);
 			receiptDetail.setDueAmount(advanceAmt);
 			XcessPayables xcessPayable = new XcessPayables();
@@ -186,7 +191,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
+			receiptDetail.setPayAgainstID(excessID);
 			receiptDetail.setAmount(presentmentAmt);
 			receiptDetail.setDueAmount(presentmentAmt);
 			receiptDetail.setValueDate(schDate);

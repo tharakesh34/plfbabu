@@ -147,7 +147,8 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			BigDecimal excessBal = BigDecimal.ZERO;
 			if (excessAmount != null) {
-				excessBal = excessAmount.getBalanceAmt();
+				//we are considering reserved amount science it is the place where we are utilize the reserve amount.
+				excessBal = excessAmount.getBalanceAmt().add(excessAmount.getReservedAmt());
 				if (excessBal == null || excessBal.compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
@@ -318,7 +319,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			excess.setUtilisedAmt(excess.getUtilisedAmt().add(adjAmount));
-			excess.setBalanceAmt(excess.getAmount().subtract((excess.getReservedAmt().add(excess.getUtilisedAmt()))));
+			excess.setBalanceAmt(excess.getAmount().subtract(excess.getReservedAmt()).subtract(excess.getUtilisedAmt()));
 			finExcessAmountDAO.updateReserveUtilization(excess);
 
 			//movement

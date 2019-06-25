@@ -504,8 +504,12 @@ public class RepaymentProcessUtil {
 
 		List<Object> returnList = null;
 		if (adjustedToReceipt.compareTo(BigDecimal.ZERO) > 0) {
+			/*
+			 * At the time of EOD postDate should not be APP date we need to consider value date hence parameterized the
+			 * postDate
+			 */
 
-			returnList = doRepayPostings(financeDetail, rch, extDataMap);
+			returnList = doRepayPostings(financeDetail, rch, extDataMap,postDate);
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -1575,7 +1579,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
-			Map<String, BigDecimal> extDataMap)
+			Map<String, BigDecimal> extDataMap,Date postDate)
 			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1730,10 +1734,10 @@ public class RepaymentProcessUtil {
 			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinFeeDetails();
 			FinanceProfitDetail profitDetail = fsd.getFinPftDeatil();
 			String eventCode = getEventCode(rch.getReceiptPurpose());
-			Date appDate = DateUtility.getAppDate();
+			
 
 			returnList = getRepayPostingUtil().postingProcess(financeMain, scheduleDetails, finFeeDetailList,
-					profitDetail, rpyQueueHeader, eventCode, rch.getValueDate(), appDate);
+					profitDetail, rpyQueueHeader, eventCode, rch.getValueDate(), postDate);
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
