@@ -1677,9 +1677,9 @@ public class ReceiptCalculator implements Serializable {
 
 		// Advise apportionment
 		if (isAdjSchedule) {
-			for (int i = 0; i < allocationsList.size(); i++) {
+			
 				receiptData = eventFeeAndAdviseApportion(receiptData, false);
-			}
+			
 		} else {
 			if (rch.getBalAmount().compareTo(BigDecimal.ZERO) > 0) {
 				receiptData = eventFeeAndAdviseApportion(receiptData, false);
@@ -1932,9 +1932,7 @@ public class ReceiptCalculator implements Serializable {
 			}
 
 			if (isAdjSchedule) {
-				if (rch.getBalAmount().compareTo(allocate.getPaidAvailable()) > 0) {
 					balAmount = allocate.getPaidAvailable();
-				}
 			}
 			balDue = allocate.getBalance();
 
@@ -1983,10 +1981,6 @@ public class ReceiptCalculator implements Serializable {
 						updateFinFeeDetails(receiptData, allocate);
 					}
 				}
-			}
-
-			if (balAmount.compareTo(BigDecimal.ZERO) <= 0) {
-				break;
 			}
 		}
 

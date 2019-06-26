@@ -1174,11 +1174,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 			return setReturnStatus(financeDetail);
 		}
 
-		receiptData = receiptService.setReceiptData(receiptData);
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			financeDetail = setReturnStatus(financeDetail);
-		}
-
+		receiptService.setReceiptData(receiptData);
 		financeDetail = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
 
 		if (financeDetail.getFinScheduleData().getErrorDetails() != null

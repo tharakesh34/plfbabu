@@ -1288,7 +1288,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		map.put("buttonId", buttonId);
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/BounceDetailsList.zul", null,
+			Executions.createComponents("/WEB-INF/pages/FinanceManagement/PaymentMode/BounceDetailsDialog.zul", null,
 					map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);

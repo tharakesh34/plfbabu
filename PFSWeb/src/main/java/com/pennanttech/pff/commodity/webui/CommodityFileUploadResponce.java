@@ -24,7 +24,7 @@ import com.pennanttech.dataengine.model.DataEngineAttributes;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.dataengine.model.Table;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.commodity.dao.CommoditiesDAO;
@@ -116,8 +116,9 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 				strCurrentValue = objCurrentValue.toString();
 			}
 
-			if (StringUtils.isNumeric(strCurrentValue)) {
-				currentValue = new BigDecimal(strCurrentValue);
+			//FIXME need Consider Currency
+			if (StringUtils.isNotBlank(strCurrentValue)) {
+				currentValue = (new BigDecimal(strCurrentValue)).multiply(new BigDecimal(100));
 			}
 
 			commodity.setCurrentValue(currentValue);
@@ -138,7 +139,8 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 					AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
 					commoditiesService.doApprove(auditHeader);
 				} else {
-					throw new ConcurrencyException();
+					throw new AppException(
+							"The Commodity Type Code " + commodityType + " not exists in Commodity master.");
 				}
 			} else {
 				commodity.setId(Oldcommodity.getId());

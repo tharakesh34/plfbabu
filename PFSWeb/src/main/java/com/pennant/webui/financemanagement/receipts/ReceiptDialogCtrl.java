@@ -276,6 +276,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Combobox receiptPurpose;
 	protected Combobox receiptMode;
 	protected Label receiptTypeLabel;
+	protected Label label_ReceiptDialog_PartnerBankCode;
+	protected Label label_ReceiptDialog_CollectionAgentId;
 	protected Combobox receiptChannel;
 	protected Combobox subReceiptMode;
 	protected Datebox receiptDate;
@@ -795,6 +797,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.collectionAgentId.setDescColumn("Code");
 		this.collectionAgentId.setDisplayStyle(2);
 		this.collectionAgentId.setValidateColumns(new String[] { "Id" });
+		this.collectionAgentId.setVisible(false);
+		this.label_ReceiptDialog_CollectionAgentId.setVisible(false);
 
 		// Post Branch
 		this.postBranch.setModuleName("Branch");
@@ -814,11 +818,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finDivision.setDescColumn("DivisionCodeDesc");
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
 
-		if (DisbursementConstants.PAYMENT_TYPE_MOB
-				.equals(receiptData.getReceiptHeader().getReceiptChannel().toString())) {
-			this.collectionAgentId.setMandatoryStyle(true);
-		}
-
+		
 		appendScheduleMethod(receiptData.getReceiptHeader());
 		BigDecimal recAmount = PennantApplicationUtil.formateAmount(receiptData.getReceiptHeader().getReceiptAmount(),
 				formatter);
@@ -1457,6 +1457,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						&& !StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)))) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
+		 if (isForeClosure || isKnockOff){
+			 this.label_ReceiptDialog_PartnerBankCode.setVisible(false);
+			 this.fundingAccount.setVisible(false); 
+		 }
 
 		// Due to changes in Receipt Amount, call Auto Allocations
 		if (isUserAction) {

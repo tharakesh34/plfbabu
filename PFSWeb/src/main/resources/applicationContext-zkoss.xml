@@ -5126,7 +5126,11 @@
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-
+	
+	<bean id="bounceDetailsListCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsListCtrl"
+		parent="basisListCtrl" scope="prototype">
+	</bean>
+	
 	<bean id="bounceDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
