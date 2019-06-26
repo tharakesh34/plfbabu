@@ -1,7 +1,7 @@
 package com.pennanttech.pff.commodity.dao;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -152,7 +152,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.ENTERING);
 
 		String sql;
-		String whereClause = "CommodityType = :CommodityType And Code = :code ";
+		String whereClause = "HSNCode = :HSNCode And Code = :Code ";
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("Commodities", whereClause);
@@ -166,8 +166,8 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		}
 		logger.trace(Literal.SQL + sql);
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CommodityType", commodity.getCommodityType());
-		paramSource.addValue("code", commodity.getCode());
+		paramSource.addValue("HSNCode", commodity.getHSNCode());
+		paramSource.addValue("Code", commodity.getCode());
 
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
@@ -197,37 +197,19 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		logger.debug(Literal.LEAVING);
 	}
 
-	public Commodity getQueryOperation(Commodity record) {
-		logger.debug(Literal.ENTERING);
-
+	@Override
+	public Commodity getCommodity(Commodity commodity) {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CommodityType", record.getCommodityType());
-		paramSource.addValue("Code", record.getCode());
-		paramSource.addValue("HSNCode", record.getHSNCode());
+		paramSource.addValue("Code", commodity.getCode());
+		paramSource.addValue("HSNCode", commodity.getCode());
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from COMMODITIES Where");
-		StringBuilder condition = new StringBuilder();
-		if (StringUtils.isNotBlank(record.getHSNCode())) {
-			if (condition.length() > 0) {
-				condition.append(" and");
-			}
-			condition.append(" HSNCode = :HSNCode");
-		}
-		if (StringUtils.isNotBlank(record.getCode())) {
-			if (condition.length() > 0) {
-				condition.append(" and");
-			}
-			condition.append(" Code = :Code");
-		}
-		if ((record.getCommodityType() != Long.MIN_VALUE) && record.getCommodityType() != 0) {
-			if (condition.length() > 0) {
-				condition.append(" and");
-			}
-			condition.append(" CommodityType = :CommodityType");
-		}
+		sql.append(" Code = :Code");
+		sql.append(" and HSNCode = :HSNCode");
 
-		sql.append(condition.toString());
+		logger.trace(Literal.SQL + sql.toString());
+
 		RowMapper<Commodity> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Commodity.class);
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -235,9 +217,39 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 			// TODO: handle exception
 		}
 
-		logger.debug(Literal.LEAVING);
-
 		return null;
+	}
+
+	@Override
+	public boolean isDuplicateCode(Commodity commodity, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		String sql;
+		String whereClause = "Code = :Code";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("Commodities", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("Commodities_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "Commodities_Temp", "Commodities" }, whereClause);
+			break;
+		}
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Code", commodity.getCode());
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 
 	@Override
@@ -291,5 +303,4 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 
 		logger.debug(Literal.LEAVING);
 	}
-
 }

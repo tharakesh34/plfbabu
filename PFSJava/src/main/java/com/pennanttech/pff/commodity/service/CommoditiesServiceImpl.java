@@ -171,19 +171,35 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 		String hsnCode = commodity.getHSNCode();
 
 		// Check the unique keys.
-		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
-				.isDuplicateKey(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityType.value");
-			parameters[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ": " + code;
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
-		}
 
-		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType()) && commoditiesDAO
-				.isDuplicateHSNCode(commodity, commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-			String[] parameters = new String[1];
-			parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ": " + hsnCode;
-			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		if (commodity.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(commodity.getRecordType())) {
+			if (commoditiesDAO.isDuplicateKey(commodity,
+					commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+				parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value");
+				parameters[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value");
+
+				String[] value = new String[2];
+				value[0] = code;
+				value[1] = hsnCode;
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
+			} else if (commoditiesDAO.isDuplicateCode(commodity,
+					commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value");
+
+				String[] value = new String[1];
+				value[0] = code;
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
+			} else if (commoditiesDAO.isDuplicateHSNCode(commodity,
+					commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[1];
+				parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value");
+
+				String[] value = new String[1];
+				value[0] = hsnCode;
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

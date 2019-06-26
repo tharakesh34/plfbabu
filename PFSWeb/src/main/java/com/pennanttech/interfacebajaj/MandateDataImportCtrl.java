@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -286,21 +287,34 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * @throws Exception
 	 */
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
-		fileName.setText("");
-		media = event.getMedia();
+		// Clear the file name.
+		this.fileName.setText("");
 
-		if (!(StringUtils.endsWith(media.getName().toUpperCase(), ".XLS"))) {// FIXME
-																					// this
-																				// should
-																				// not
-																				// be
-																				// hardcoded
-			MessageUtil.showError("Invalid file format.");
+		// Get the media of the selected file.
+		media = event.getMedia();
+		String mediaName = media.getName();
+
+		// Get the selected configuration details.
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
+
+		// Validate the file extension.
+		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
 			media = null;
 			return;
 		}
 
-		fileName.setText(media.getName());
+		// Validate the file prefix.
+		if (!(StringUtils.startsWith(mediaName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			media = null;
+			return;
+		}
+
+		this.fileName.setText(mediaName);
 	}
 
 	public void onChange$serverFileName(Event event) throws Exception {

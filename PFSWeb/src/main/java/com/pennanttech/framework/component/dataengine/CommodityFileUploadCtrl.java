@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
+import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
@@ -40,18 +41,21 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 	protected Rows panelRows;
 	protected Button btnImport;
 
-	private Media media = null;
+	private transient Media media = null;
 	private File file = null;
 
 	protected Timer timer;
 
-	protected DataEngineConfig dataEngineConfig;
+	protected transient DataEngineConfig dataEngineConfig;
 	private long userId;
-	private DataEngineStatus COLLETARAL_VALUE_UPDATE_STATUS = new DataEngineStatus(
-			PennantConstants.COLLATERAL_VALUE_UPDATE);
+	private Configuration config;
+
+	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.COLLATERAL_VALUE_UPDATE);
+	
+	private static final String COLLETARAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
 
 	@Autowired(required = false)
-	private CommodityFileUploadResponce commodityFileUploadResponce;
+	private transient CommodityFileUploadResponce commodityFileUploadResponce;
 
 	public CommodityFileUploadCtrl() {
 		super();
@@ -64,7 +68,7 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		this.userId = getUserWorkspace().getLoggedInUser().getUserId();
 		getUserWorkspace().allocateAuthorities(super.pageRightName);
 
-		getConfigData();
+		loadConfig();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -91,7 +95,7 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		} else {
 			Hbox hbox = null;
 			List<Hbox> item = rows.getChildren();
-			hbox = (Hbox) item.get(0);
+			hbox = item.get(0);
 			if (hbox.getChildren().size() == 2) {
 				rows = new Row();
 				rows.setStyle("overflow: visible !important");
@@ -115,7 +119,7 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 
 		try {
 			try {
-				Thread thread = new Thread(new ProcessData(this.userId, COLLETARAL_VALUE_UPDATE_STATUS));
+				Thread thread = new Thread(new ProcessData(this.userId, dataEngineStatus));
 				thread.start();
 			} catch (Exception e) {
 				MessageUtil.showError(e);
@@ -148,36 +152,48 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 		}
 	}
 
-	public void getConfigData() throws Exception {
-		ValueLabel valueLabel = null;
-		List<ValueLabel> menuList = new ArrayList<ValueLabel>();
-		List<Configuration> configList = dataEngineConfig.getMenuList(true);
-
-		for (Configuration config : configList) {
-			String configName = config.getName();
-			if ("COLLETARAL_VALUE_UPDATE".equals(configName)) {
-				COLLETARAL_VALUE_UPDATE_STATUS = dataEngineConfig.getLatestExecution("COLLETARAL_VALUE_UPDATE");
-				valueLabel = new ValueLabel(configName, "Colletaral Value Update");
-				doFillPanel(config, COLLETARAL_VALUE_UPDATE_STATUS);
-				menuList.add(valueLabel);
-			}
+	private void loadConfig() throws Exception {
+		if (config == null) {
+			List<ValueLabel> menuList = new ArrayList<>();
+			this.config = dataEngineConfig.getConfigurationByName(COLLETARAL_VALUE_UPDATE);
+			dataEngineStatus = dataEngineConfig.getLatestExecution(COLLETARAL_VALUE_UPDATE);
+			ValueLabel valueLabel = new ValueLabel(COLLETARAL_VALUE_UPDATE, "Colletaral Value Update");
+			menuList.add(valueLabel);
 		}
+		
+		doFillPanel(config, dataEngineStatus);
+		
 	}
 
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
-		fileName.setText("");
+		// Clear the file name.
+		this.fileName.setText("");
+
+		// Get the media of the selected file.
 		media = event.getMedia();
+		String mediaName = media.getName();
 
-		String fileExt = media.getName().toUpperCase();
+		// Get the selected configuration details.
+		String prefix = config.getFilePrefixName();
+		String extension = config.getFileExtension();
 
-		if (!(StringUtils.endsWith(fileExt, ".XLS") || StringUtils.endsWith(fileExt, ".XLSX"))) {
-			MessageUtil.showError("Invalid file format.");
+		// Validate the file extension.
+		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+
 			media = null;
 			return;
 		}
 
-		fileName.setText(media.getName());
-		this.btnImport.setDisabled(false);
+		// Validate the file prefix.
+		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
+			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
+
+			media = null;
+			return;
+		}
+
+		this.fileName.setText(mediaName);
 	}
 
 	public void onTimer$timer(Event event) {
@@ -189,7 +205,7 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 				for (ProcessExecution pe : list) {
 					String status = pe.getProcess().getStatus();
 
-					if ("COLLETARAL_VALUE_UPDATE".equals(pe.getProcess().getName())) {
+					if (COLLETARAL_VALUE_UPDATE.equals(pe.getProcess().getName())) {
 						if (ExecutionStatus.I.name().equals(status)) {
 							this.btnImport.setDisabled(true);
 							this.btnFileUpload.setDisabled(true);
