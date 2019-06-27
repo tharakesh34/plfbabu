@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.accounts.AccountsDAO;
 import com.pennant.backend.dao.accounts.AccountsHistoryDAO;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 public class AccountProcessUtil implements Serializable {
 
 	private static final long serialVersionUID = -1200799666995440280L;
+	private static Logger logger = Logger.getLogger(AccountProcessUtil.class);
 
 	private AccountsDAO accountsDAO;
 	private AccountsHistoryDAO accountsHistoryDAO;
@@ -88,6 +90,9 @@ public class AccountProcessUtil implements Serializable {
 
 			if (!accountTypeMap.containsKey(acTypeKey)) {
 				accountType = accountTypeDAO.getAccountTypeById(acTypeKey, "");
+				if (accountType == null) {
+					logger.debug("AccountType Conguration Missing For: " + acTypeKey);
+				}
 				accountTypeMap.put(acTypeKey, accountType);
 			} else {
 				accountType = accountTypeMap.get(acTypeKey);

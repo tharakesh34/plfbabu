@@ -88,7 +88,13 @@
 	<bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
 		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
-
+	
+	<bean id="presentmentDetailExtract" class="com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="presentmentDetailService" />
+		<constructor-arg ref="notificationService" />
+	</bean>
+	
 	<!-- ============================================================ -->
 	<!-- Required configuration to use SMS Engine -->
 	<!-- ============================================================== -->

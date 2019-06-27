@@ -125,10 +125,10 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -2367,7 +2367,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					return;
 				}
 			}
-		} else if (StringUtils.equals(reportMenuCode, "menu_Item_BillingReport")) {
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_BillingReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_ACHPResentations")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCPResentation")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCExhaustReport")) {
 			String userDate = null;
 
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,

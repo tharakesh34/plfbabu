@@ -307,7 +307,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 
 		// Validate the file prefix.
-		if (!(StringUtils.startsWith(mediaName, prefix))) {
+		if (prefix != null && !(StringUtils.startsWith(mediaName, prefix))) {
 			MessageUtil.showError(Labels.getLabel("invalid_file_prefix", new String[] { prefix }));
 
 			media = null;

@@ -80,13 +80,11 @@ import eu.bitwalker.useragentutils.UserAgent;
 
 /**
  * This class is called from spring AOP as an aspect and is for logging.
+ * 
+ * Supports DAO, LDAP, and External authentication.
  */
 public class AuthenticationManager implements AuthenticationProvider {
 	private static final Logger logger = Logger.getLogger(Authentication.class);
-
-	private static final String AUTH_TYPE_DAO = "DAO";
-	private static final String AUTH_TYPE_LDAP = "LDAP";
-	private static final String AUTH_TYPE_EXTERNAL = "EXTERNAL";
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -126,28 +124,35 @@ public class AuthenticationManager implements AuthenticationProvider {
 		Authentication result = null;
 
 		try {
-			boolean defaultIsActiveDirectory = false;
-			if (ldapAuthentication && daoAuthentication) {
-				if (AUTH_TYPE_LDAP.equals(defaultAuthType)) {
-					defaultIsActiveDirectory = true;
-				}
+			// Get the user details.
+			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
+			String authType = user.getSecurityUser().getAuthType();
 
-				result = authenticateDefault(authentication);
-
-				if (result == null) {
-					if (defaultIsActiveDirectory) {
-						result = authenticate(authentication, AUTH_TYPE_DAO);
-					} else {
-						result = authenticate(authentication, AUTH_TYPE_LDAP);
-					}
-				}
-
-			} else if (ldapAuthentication) {
-				result = authenticate(authentication, AUTH_TYPE_LDAP);
-			} else if (daoAuthentication) {
-				result = authenticate(authentication, AUTH_TYPE_DAO);
+			if ("DAO".equals(authType)) {
+				// DAO.
+				result = daoAuthenticationProvider.authenticate(authentication);
 			} else {
-				result = authenticate(authentication, AUTH_TYPE_EXTERNAL);
+				if (externalAuthenticationProvider != null) {
+					// External.
+					String username = authentication.getPrincipal().toString();
+					Object credentials = authentication.getCredentials();
+					String password = credentials == null ? null : credentials.toString();
+
+					externalAuthenticationProvider.authenticate(username, password);
+					result = authentication;
+				} else {
+					// LDAP.
+					result = ldapAuthenticationProvider.authenticate(authentication);
+				}
+
+				if (result != null) {
+					AbstractAuthenticationToken token = null;
+					token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(),
+							user.getAuthorities());
+					token.setDetails(result.getDetails());
+
+					result = token;
+				}
 			}
 		} catch (Exception e) {
 			logAttempt(authentication, e.getMessage());
@@ -157,55 +162,15 @@ public class AuthenticationManager implements AuthenticationProvider {
 			logAttempt(result, null);
 		}
 
-		return result;
-	}
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		securityContext.setAuthentication(result);
 
-	private Authentication authenticateDefault(Authentication authentication) {
-		Authentication result = null;
-		try {
-			result = authenticate(authentication, defaultAuthType);
-		} catch (Exception e) {
-			logger.warn(String.format("Login attempt with default authentication [ %s ] failed.", defaultAuthType));
-		}
 		return result;
 	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return true;
-	}
-
-	private Authentication authenticate(Authentication authentication, String authType) {
-		Authentication result = null;
-
-		User user = null;
-		if (AUTH_TYPE_LDAP.equals(authType) || AUTH_TYPE_EXTERNAL.equals(authType)) {
-			user = (User) userDetailsService.loadUserByUsername(authentication.getName());
-		}
-
-		if (AUTH_TYPE_LDAP.equals(authType)) {
-			result = ldapAuthenticationProvider.authenticate(authentication);
-		} else if (AUTH_TYPE_DAO.equals(authType)) {
-			result = daoAuthenticationProvider.authenticate(authentication);
-		} else if (AUTH_TYPE_EXTERNAL.equals(authType) && externalAuthenticationProvider != null) {
-			String username = authentication.getPrincipal().toString();
-			Object credentials = authentication.getCredentials();
-			String password = credentials == null ? null : credentials.toString();
-			externalAuthenticationProvider.authenticate(username, password);
-			result = authentication;
-		}
-
-		if (result != null && (AUTH_TYPE_LDAP.equals(authType) || AUTH_TYPE_EXTERNAL.equals(authType))) {
-			AbstractAuthenticationToken token = null;
-			token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(), user.getAuthorities());
-			token.setDetails(result.getDetails());
-			result = token;
-		}
-
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		securityContext.setAuthentication(result);
-
-		return result;
 	}
 
 	/**

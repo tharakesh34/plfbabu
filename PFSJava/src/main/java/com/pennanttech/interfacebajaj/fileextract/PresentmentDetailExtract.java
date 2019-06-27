@@ -84,6 +84,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
 			NotificationService notificationService) {
 		super(datsSource);
+		this.dataSource = datsSource;
 		this.presentmentDetailService = presentmentDetailService;
 		this.notificationService = notificationService;
 	}
