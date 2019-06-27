@@ -60,6 +60,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -375,6 +376,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setPostRefId(receiptHeader.getReceiptID());
 
 		aeEvent.getAcSetIDList().add(accountingSetID);
+		prepareFeeRulesMap(receiptHeader.getPaidFeeList(), aeEvent.getDataMap());
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 
 		// Receipt Header Updation
@@ -603,6 +605,42 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		logger.debug("Leaving");
 
 		return codeExist;
+	}
+
+	private void prepareFeeRulesMap(List<FinFeeDetail> finFeeDetailList, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
+
+		if (finFeeDetailList != null) {
+
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_C", finFeeDetail.getActualAmountOriginal());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_W", finFeeDetail.getWaivedAmount());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_P", finFeeDetail.getPaidAmountOriginal());
+
+				// GST
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_N", finFeeDetail.getNetAmount());
+
+				// Calculated Amount
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_C", finFeeDetail.getFinTaxDetails().getActualCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_C", finFeeDetail.getFinTaxDetails().getActualSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_C", finFeeDetail.getFinTaxDetails().getActualIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_C", finFeeDetail.getFinTaxDetails().getActualUGST());
+
+				// Paid Amount
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_P", finFeeDetail.getFinTaxDetails().getPaidCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_P", finFeeDetail.getFinTaxDetails().getPaidSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_P", finFeeDetail.getFinTaxDetails().getPaidIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_P", finFeeDetail.getFinTaxDetails().getPaidUGST());
+
+				// Net Amount
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_CGST_N", finFeeDetail.getFinTaxDetails().getNetCGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_SGST_N", finFeeDetail.getFinTaxDetails().getNetSGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_IGST_N", finFeeDetail.getFinTaxDetails().getNetIGST());
+				dataMap.put(finFeeDetail.getFeeTypeCode() + "_UGST_N", finFeeDetail.getFinTaxDetails().getNetUGST());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
