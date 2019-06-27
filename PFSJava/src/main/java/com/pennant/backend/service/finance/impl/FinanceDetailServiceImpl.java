@@ -4868,7 +4868,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (FinanceConstants.FINSER_EVENT_ORG.equals(moduleDefiner)
 						|| FinanceConstants.FINSER_EVENT_ADDDISB.equals(moduleDefiner)) {
 					processAdvancePayment(finFeeDetails, finScheduleData);
-				} else if (ImplementationConstants.ALW_ADV_INTEMI_EXCESS_MOVEMENT) {
+				} else if (ImplementationConstants.ALW_ADV_INTEMI_ADVICE_CREATION) {
 					if (FinanceConstants.FINSER_EVENT_RATECHG.equals(moduleDefiner)
 							|| FinanceConstants.BULK_RATE_CHG.equals(moduleDefiner)
 							|| FinanceConstants.FINSER_EVENT_ADDTERM.equals(moduleDefiner)

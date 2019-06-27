@@ -187,7 +187,7 @@ public class ImplementationConstants {
 	 * created advice (Payable /Receivable) will be depended on this flag.
 	 * Defaulted to true, Since it is the default behavior
 	 */
-	public static final boolean ALW_ADV_INTEMI_EXCESS_MOVEMENT = true;
+	public static final boolean ALW_ADV_INTEMI_ADVICE_CREATION = true;
 
 	//Covenant tab visible
 	public static final boolean COVENANT_REQUIRED = false;
