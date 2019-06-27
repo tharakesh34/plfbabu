@@ -141,5 +141,7 @@ public class InterfaceConstants {
 
 	public static final String PANNUMBER = "PANNUMBER";
 	public static final String ALLOW_PRESENTMENT_DOWNLOAD = "ALLOW_PRESENTMENT_DOWNLOAD";
-
+	
+	public static final String CustCtgCode_I = "I";
+	public static final String CustCtgCode_C = "C";
 }

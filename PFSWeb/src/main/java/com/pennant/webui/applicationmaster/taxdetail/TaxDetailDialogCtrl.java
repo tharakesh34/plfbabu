@@ -65,10 +65,12 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.financetaxdetail.GSTINInfo;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.applicationmaster.TaxDetailService;
+import com.pennant.backend.service.gstn.validation.GSTNValidationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -76,13 +78,15 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.systemmasters.province.ProvinceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/applicationmaster/TaxDetail/taxDetailDialog.zul file. <br>
+ * This is the controller class for the
+ * /WEB-INF/pages/applicationmaster/TaxDetail/taxDetailDialog.zul file. <br>
  */
 public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
@@ -90,8 +94,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	private static final Logger logger = Logger.getLogger(TaxDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
-	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the zul-file are getting by our 'extends
+	 * GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_TaxDetailDialog;
 	protected ExtendedCombobox country;
@@ -122,6 +127,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	private String old_state = "";
 	private String old_city = "";
 
+	private GSTNValidationService gstnValidationService;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -142,7 +149,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -580,7 +588,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -594,7 +603,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -729,14 +739,14 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Country
+		// Country
 		try {
 			aTaxDetail.setCountry(this.country.getValidatedValue());
 			aTaxDetail.setCountryName(this.country.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//State Code
+		// State Code
 		String stateCodeValue = null;
 		String entityCodeValue = null;
 		try {
@@ -746,7 +756,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Entity Code
+		// Entity Code
 		try {
 			entityCodeValue = this.entityCode.getValidatedValue();
 			aTaxDetail.setEntityCode(entityCodeValue);
@@ -754,7 +764,7 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Tax Code
+		// Tax Code
 		try {
 			String taxCodeValue = this.taxCode.getValue();
 
@@ -776,37 +786,37 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Address Line 1
+		// Address Line 1
 		try {
 			aTaxDetail.setAddressLine1(this.addressLine1.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Address Line 2
+		// Address Line 2
 		try {
 			aTaxDetail.setAddressLine2(this.addressLine2.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Address Line 3
+		// Address Line 3
 		try {
 			aTaxDetail.setAddressLine3(this.addressLine3.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Address Line 4
+		// Address Line 4
 		try {
 			aTaxDetail.setAddressLine4(this.addressLine4.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Pin Code
+		// Pin Code
 		try {
 			aTaxDetail.setPinCode(this.pinCode.getValidatedValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//City Code
+		// City Code
 		try {
 			aTaxDetail.setCityCode(this.cityCode.getValidatedValue());
 			aTaxDetail.setCityName(this.cityCode.getDescription());
@@ -1001,7 +1011,8 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1116,7 +1127,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		readOnlyComponent(isReadOnly("TaxDetailDialog_AddressLine4"), this.addressLine4);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_PinCode"), this.pinCode);
 		readOnlyComponent(isReadOnly("TaxDetailDialog_CityCode"), this.cityCode);
-		readOnlyComponent(isReadOnly("TaxDetailDialog_CityCode"), this.hSNNumber); //TODO create rights
+		readOnlyComponent(isReadOnly("TaxDetailDialog_CityCode"), this.hSNNumber); // TODO
+																					// create
+																					// rights
 		readOnlyComponent(isReadOnly("TaxDetailDialog_CityCode"), this.natureService);
 
 		if (isWorkFlowEnabled()) {
@@ -1205,6 +1218,24 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aTaxDetail);
 
+		// GSTIN Validation
+		String gstnNumber = aTaxDetail.getTaxCode();
+		if (!this.taxCode.isReadonly() && (!StringUtils.equals(gstnNumber, aTaxDetail.getBefImage().getTaxCode()))) {
+			try {
+				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+				if (null != gstinInfo) {
+					String msg = gstinInfo.getStatusCode() + "_" + gstinInfo.getStatusDesc();
+					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+						return;
+					}
+				}
+			} catch (InterfaceException e) {
+				if (MessageUtil.confirm(e.getErrorCode() + " - " + e.getErrorMessage(),
+						MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+					return;
+				}
+			}
+		}
 		isNew = aTaxDetail.isNew();
 		String tranType = "";
 
@@ -1289,7 +1320,13 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 				TaxDetail taxDetail = getProvinceDialogCtrl().getTaxDetailList().get(i);
 
 				if (aTaxDetail.getStateCode().equals(taxDetail.getStateCode())
-						&& aTaxDetail.getEntityCode().equals(taxDetail.getEntityCode())) { // Both Current and Existing list addresses same
+						&& aTaxDetail.getEntityCode().equals(taxDetail.getEntityCode())) { // Both
+																							// Current
+																							// and
+																							// Existing
+																							// list
+																							// addresses
+																							// same
 
 					if (aTaxDetail.isNewRecord() && !PennantConstants.TRAN_DEL.equals(tranType)) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
@@ -1558,4 +1595,9 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 	public void setProvinceDialogCtrl(ProvinceDialogCtrl provinceDialogCtrl) {
 		this.provinceDialogCtrl = provinceDialogCtrl;
 	}
+
+	public void setGstnValidationService(GSTNValidationService gstnValidationService) {
+		this.gstnValidationService = gstnValidationService;
+	}
+
 }

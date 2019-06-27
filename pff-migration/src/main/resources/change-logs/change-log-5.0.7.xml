@@ -1701,5 +1701,12 @@
 	
 	<!-- GST Waiver Changes END -->
 	
+	<changeSet id="51" author="Durga Prasad G">
+		<sql>
+		 	<![CDATA[
+				Update ERRORDETAILS set MESSAGE= '{0} Creation rejected, Reason: {1} ' Where Code ='99014';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

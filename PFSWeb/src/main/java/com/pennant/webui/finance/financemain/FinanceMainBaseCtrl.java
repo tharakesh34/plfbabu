@@ -6568,7 +6568,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Extended Field validations
 		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
-			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(recSave));
 		}
 
 		//Save Contributor List Details

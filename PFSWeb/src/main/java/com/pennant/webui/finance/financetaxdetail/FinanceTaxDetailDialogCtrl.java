@@ -82,10 +82,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.financetaxdetail.GSTINInfo;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
+import com.pennant.backend.service.gstn.validation.GSTNValidationService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -95,6 +97,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.JointAccountDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -158,7 +161,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	private String old_state = "";
 	private String old_city = "";
 	private boolean isTaxMand = false;
-
+	
+	private GSTNValidationService gstnValidationService;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -1487,6 +1492,27 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		doSetValidation();
 		doWriteComponentsToBean(aFinanceTaxDetail);
 
+
+		// GSTIN Validation
+		String gstnNumber = this.financeTaxDetail.getTaxNumber();
+		if ((StringUtils.trimToNull(gstnNumber) != null) && !this.taxNumber.isReadonly()
+				&& (!StringUtils.equals(gstnNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
+			try {
+				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+				if (null != gstinInfo) {
+					String msg = gstinInfo.getStatusCode() + "_" + gstinInfo.getStatusDesc();
+					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+						return;
+					}
+				}
+			} catch (InterfaceException e) {
+				if (MessageUtil.confirm(e.getErrorCode() + " - " + e.getErrorMessage(),
+						MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+					return;
+				}
+			}
+		}
+		
 		isNew = aFinanceTaxDetail.isNew();
 		String tranType = "";
 
@@ -1561,6 +1587,26 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
+		} else { 
+			// GSTIN Validation
+			String gstnNumber = this.financeTaxDetail.getTaxNumber();
+			if ((StringUtils.trimToNull(gstnNumber) != null) && !this.taxNumber.isReadonly() && (!StringUtils.equals(gstnNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
+				try {
+					parenttab.setSelected(true);
+					GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+					if (null != gstinInfo) {
+						String msg = gstinInfo.getStatusCode() + "_" + gstinInfo.getStatusDesc();
+						if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+							return;
+						}
+					}
+				} catch (InterfaceException e) {
+					if (MessageUtil.confirm(e.getErrorCode() + " - " + e.getErrorMessage(),
+							MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+						return;
+					}
+				}
+			}
 		}
 
 		showErrorDetails(wve);
@@ -1823,4 +1869,13 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	public void setJointAccountDetailList(List<JointAccountDetail> jointAccountDetailList) {
 		this.jointAccountDetailList = jointAccountDetailList;
 	}
+	
+	public GSTNValidationService getGstnValidationService() {
+		return gstnValidationService;
+	}
+
+	public void setGstnValidationService(GSTNValidationService gstnValidationService) {
+		this.gstnValidationService = gstnValidationService;
+	}
+
 }

@@ -10973,5 +10973,8 @@
 		<property name="gstRateDAO" ref="gstRateDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
+	
+	<!-- GSTNValidationService -->
+	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl"/>
 
 </beans>

@@ -20,6 +20,8 @@
 									autodisable="btnNewCustomer,btnExistingCustomer,btnHelp,btnClose" sclass="z-toolbarbutton" />
 								<button id="btnExistingCustomer" label="${c:l('label_GoldExistingCustomer')}" tooltiptext="${c:l('btnExistingCustomer.tooltiptext')}"
 									autodisable="btnNewCustomer,btnExistingCustomer,btnHelp,btnClose" sclass="z-toolbarbutton" />
+								<button id="btnProceed" label="Proceed" tooltiptext="Proceed"
+									autodisable="btnNewCustomer,btnExistingCustomer,btnHelp,btnClose,btnProceed" sclass="z-toolbarbutton" />
 
 							</toolbar>
 
@@ -68,6 +70,7 @@
 							<listhead sizable="true">
 								<listheader id="listHeader_Radio_Check" label="${c:l('listheader_Select.label')}" hflex="min" />
 								<listheader id="listheader_CustCIF" label="${c:l('listheader_CustCIF.label')}" hflex="min" />
+								<listheader id="listheader_CustCoreBankId" label="${c:l('listheader_CustCoreBankId.label')}" hflex="min" />
 								<listheader id="listheader_CustName" label="${c:l('listheader_CustName.label')}" hflex="min" />
 								<listheader id="listheader_MobileNumber" label="${c:l('listheader_MobileNumber.label')}" hflex="min" />
 								<listheader id="listheader_AadhaarNo" label="${c:l('listheader_AadhaarNo.label')}" hflex="min" />

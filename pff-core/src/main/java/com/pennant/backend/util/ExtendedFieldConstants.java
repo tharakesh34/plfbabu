@@ -26,7 +26,8 @@ public class ExtendedFieldConstants {
 		BASERATE,
 		ADDRESS,
 		PHONE,
-		LISTFIELD
+		LISTFIELD,
+		LISTBOX
 	}
 
 	// Unique ID for Module Generation

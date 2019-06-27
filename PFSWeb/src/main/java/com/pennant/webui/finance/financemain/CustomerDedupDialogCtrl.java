@@ -47,6 +47,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.customermasters.customer.CoreCustomerSelectCtrl;
+import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.customermasters.customer.CustomerListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
@@ -66,6 +67,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Window window_CustomerDedupDialog;
 	protected Grid searchGrid;
 	protected Button btnNewCustomer;
+	protected Button btnProceed;
 	protected Button btnExistingCustomer;
 	protected Textbox custName;
 	protected Textbox mobileNo;
@@ -101,7 +103,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Window parentWindow;
 	protected SelectFinanceTypeDialogCtrl selectFinanceTypeDialogCtrl;
 	protected CoreCustomerSelectCtrl coreCustomerSelectCtrl;
-
+	protected CustomerDialogCtrl customerDialogCtrl;
 	protected CustomerListCtrl customerListCtrl;
 
 	@Autowired(required = false)
@@ -109,9 +111,11 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	private String custCIF = "";
 	private String custCtgCode = "";
+	private String custCoreBankId = "";
 	private Boolean isFromCustomer = false;
 	private Boolean isFromLoan = false;
 	private Boolean isInternalDedupLoan = false;
+	private Boolean customerDedupFromDialog = false;
 
 	/**
 	 * default constructor.<br>
@@ -166,6 +170,13 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setSelectFinanceTypeDialogCtrl(null);
 
 		}
+		if (arguments.containsKey("CustomerDialogCtrl")) {
+			customerDialogCtrl = (CustomerDialogCtrl) arguments.get("CustomerDialogCtrl");
+			setCustomerDialogCtrl(customerDialogCtrl);
+			customerDedupFromDialog= true;
+		} else {
+			setCustomerDialogCtrl(null);
+		}
 
 		if (arguments.containsKey("CoreCustomerSelectCtrl")) {
 			coreCustomerSelectCtrl = (CoreCustomerSelectCtrl) arguments.get("CoreCustomerSelectCtrl");
@@ -185,6 +196,15 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		this.btnNewCustomer.setLabel("PROCEED AS NEW CUSTOMER");
 		this.btnExistingCustomer.setLabel("PROCEED AS EXISTING CUSTOMER");
+		if(customerDedupFromDialog){
+			this.btnProceed.setVisible(true);
+			this.btnNewCustomer.setVisible(false);
+			this.btnExistingCustomer.setVisible(false);
+		} else {
+			this.btnProceed.setVisible(false);
+			this.btnNewCustomer.setVisible(true);
+			this.btnExistingCustomer.setVisible(true);
+		}
 		int dialogHeight = searchGrid.getRows().getVisibleItemCount() * 20 + 200;
 		int listboxHeight = borderLayoutHeight - dialogHeight;
 		listBoxCustomerDedup.setHeight(listboxHeight + "px");
@@ -240,6 +260,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			String[] array = checkBox.getValue().toString().split(",");
 			custCIF = array[0];
 			custCtgCode = array[1];
+			custCoreBankId = array[2];
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -313,6 +334,23 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		}
 		closeDialog();
+	}
+
+	public void onClick$btnProceed(Event event) throws Exception {
+		
+		Clients.clearWrongValue(this.btnProceed);
+		
+		if (StringUtils.isBlank(custCIF)) {
+			throw new WrongValueException(this.btnProceed,
+					"Please select Customer CIF to proceed.");
+		} 
+
+		closeDialog();
+		if (this.customerDialogCtrl != null) {
+			this.customerDetails.setCustCoreBank(custCoreBankId);
+			this.customerDialogCtrl.setCustCoreBankid(custCoreBankId);
+		}
+
 	}
 
 	public void onClick$btnExistingCustomer(Event event) throws Exception {
@@ -427,7 +465,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Listcell lc = new Listcell();
 			if (StringUtils.isNotEmpty(customerDedup.getCustCIF())) {
 				Radio list_radioButton = new Radio();
-				list_radioButton.setValue(customerDedup.getCustCIF() + "," + customerDedup.getCustCtgCode());
+				list_radioButton.setValue(customerDedup.getCustCIF() + "," + customerDedup.getCustCtgCode()+","+customerDedup.getCustCoreBank());
 				list_radioButton.addForward("onCheck", self, "onCheck_listCellRadioBtn");
 				list_radioButton.setParent(radioButtonGroup);
 				lc.appendChild(list_radioButton);
@@ -435,6 +473,9 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc.setParent(item);
 
 			lc = new Listcell(customerDedup.getCustCIF());
+			lc.setParent(item);
+			
+			lc = new Listcell(customerDedup.getCustCoreBank());
 			lc.setParent(item);
 
 			lc = new Listcell(customerDedup.getCustFName());
@@ -569,6 +610,14 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
+	}
+	
+	public CustomerDialogCtrl getCustomerDialogCtrl() {
+		return customerDialogCtrl;
+	}
+
+	public void setCustomerDialogCtrl(CustomerDialogCtrl customerDialogCtrl) {
+		this.customerDialogCtrl = customerDialogCtrl;
 	}
 
 }

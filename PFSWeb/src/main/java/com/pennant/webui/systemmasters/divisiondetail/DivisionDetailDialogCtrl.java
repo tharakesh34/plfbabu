@@ -632,7 +632,7 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 		if (!this.divisionCode.isReadonly()) {
 			this.divisionCode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_DivisionDetailDialog_DivisionCode.value"),
-							PennantRegularExpressions.REGEX_UPPERCASENAME, true));
+							PennantRegularExpressions.REGEX_ACCOUNT, true));
 		}
 		//Division Code Desc
 		if (!this.divisionCodeDesc.isReadonly()) {

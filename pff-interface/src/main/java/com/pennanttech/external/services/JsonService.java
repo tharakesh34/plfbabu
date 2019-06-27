@@ -74,17 +74,17 @@ public abstract class JsonService<T> {
 
 	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
-		
-		if(serviceDetail.isXmlRequest()){
+
+		if (serviceDetail.isXmlRequest()) {
 			serviceDetail.setRequestString(getObjectToXML(serviceDetail));
-		}else{
+		} else {
 			serviceDetail.setRequestString(getObjectToJson(serviceDetail));
 		}
-		
+
 		Timestamp reqSentOn = null;
 
 		String url = App.getProperty(serviceDetail.getServiceUrl());
-			
+
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
 			if (MapUtils.isNotEmpty(serviceDetail.getPathParams())) {
@@ -171,10 +171,10 @@ public abstract class JsonService<T> {
 		logger.debug(Literal.ENTERING);
 		processMessage(serviceDetail);
 		logger.debug(Literal.LEAVING);
-		if(serviceDetail.isXmlRequest()){
+		if (serviceDetail.isXmlRequest()) {
 			return getXMLResponse(serviceDetail.getResponseString(), valueType);
-		}else{
-			return getResponse(serviceDetail.getResponseString(), valueType);	
+		} else {
+			return getResponse(serviceDetail.getResponseString(), valueType);
 		}
 	}
 
@@ -195,7 +195,7 @@ public abstract class JsonService<T> {
 			JAXBContext jaxbContext = JAXBContext.newInstance(jsonServiceDetail.getRequestData().getClass());
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(jsonServiceDetail.getRequestData(),sw);
+			marshaller.marshal(jsonServiceDetail.getRequestData(), sw);
 		} catch (Exception e) {
 			throw new InterfaceException("8902", "RequesrGeneration Expection", e);
 		}
@@ -215,25 +215,22 @@ public abstract class JsonService<T> {
 		return getHttpHeader(headers, false);
 	}
 
-	
-	protected HttpHeaders getHttpHeader(HttpHeaders headers,boolean xmlRequest) {
+	protected HttpHeaders getHttpHeader(HttpHeaders headers, boolean xmlRequest) {
 		if (headers == null) {
 			headers = new HttpHeaders();
 		}
-		
-		if(xmlRequest){
+
+		if (xmlRequest) {
 			headers.setContentType(MediaType.APPLICATION_XML);
 			headers.add("Accept", MediaType.APPLICATION_XML_VALUE);
-		}else{
+		} else {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 		}
-		
+
 		return headers;
 	}
 
-	
-	
 	public T getResponse(String content, Class<T> valueType) {
 		T resp = null;
 		try {
@@ -253,8 +250,6 @@ public abstract class JsonService<T> {
 			JAXBContext jaxbContext = JAXBContext.newInstance(valueType);
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			resp = (T) unmarshaller.unmarshal(sr);
-			
-					
 		} catch (Exception e) {
 			throw new InterfaceException("8903", "Response Generation Expection", e);
 		}

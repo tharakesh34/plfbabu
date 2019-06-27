@@ -90,8 +90,8 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.external.CustomerDedupService;
 
@@ -184,11 +184,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table DedupParams/DedupParams_Temp by
-	 * using DedupParmDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using DedupParmDAO's update method 3) Audit the record in to AuditHeader and AdtDedupParams by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business
+	 * validation by using businessValidation(auditHeader) method if there is
+	 * any error or warning message then return the auditHeader. 2) Do Add or
+	 * Update the Record a) Add new Record for the new record in the DB table
+	 * DedupParams/DedupParams_Temp by using DedupParmDAO's save method b)
+	 * Update the Record in the table. based on the module workFlow
+	 * Configuration. by using DedupParmDAO's update method 3) Audit the record
+	 * in to AuditHeader and AdtDedupParams by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -223,10 +226,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * DedupParams by using DedupParmDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) delete Record for the DB
+	 * table DedupParams by using DedupParmDAO's delete method with type as
+	 * Blank 3) Audit the record in to AuditHeader and AdtDedupParams by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -251,7 +256,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * getDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method.
+	 * getDedupParmById fetch the details by using DedupParmDAO's
+	 * getDedupParmById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -265,8 +271,9 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * getApprovedDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method . with parameter id
-	 * and type as blank. it fetches the approved records from the DedupParams.
+	 * getApprovedDedupParmById fetch the details by using DedupParmDAO's
+	 * getDedupParmById method . with parameter id and type as blank. it fetches
+	 * the approved records from the DedupParams.
 	 * 
 	 * @param id
 	 *            (String)
@@ -285,7 +292,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		List<CustomerDedup> overridedCustDedupList = new ArrayList<CustomerDedup>();
 		boolean newUser = false;
 
-		//Fetch List of Query Details Existing to check Finance Dedupe based on Finance Type & Stage
+		// Fetch List of Query Details Existing to check Finance Dedupe based on
+		// Finance Type & Stage
 		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
 		referenceDetail.setMandInputInStage(userRole + ",");
 		referenceDetail.setFinType(finType);
@@ -294,11 +302,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		if (queryCodeList != null) {
 
 			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
-			//Fetch Builded SQL Query based on Query Code  
+			// Fetch Builded SQL Query based on Query Code
 
 			for (FinanceReferenceDetail queryCode : queryCodeList) {
 
-				//get override Customers Dedup
+				// get override Customers Dedup
 				List<CustomerDedup> custDedupList = getCustomerDedupDAO().fetchOverrideCustDedupData(
 						customerDedup.getFinReference(), queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_FINANCE);
 
@@ -318,8 +326,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				dedupParm = null;
 			}
 
-			//Using Queries Fetch dedup Customer Data either from Interface or 
-			//Existing Black Listed Table(Daily Download) Data
+			// Using Queries Fetch dedup Customer Data either from Interface or
+			// Existing Black Listed Table(Daily Download) Data
 			if (!dedupParmList.isEmpty()) {
 				customerDedupList.addAll(getCustomerDedup(customerDedup, dedupParmList));
 				if (!customerDedupList.isEmpty()) {
@@ -344,7 +352,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		// Grouping Black List Customer which are having same result of Data
 		customerDedupList = doSetCustomerDeDupGrouping(customerDedupList);
 
-		// Checking for duplicate records in overrideBlacklistCustomers and currentBlacklistCustomers
+		// Checking for duplicate records in overrideBlacklistCustomers and
+		// currentBlacklistCustomers
 		try {
 			if (!overridedCustDedupList.isEmpty() && !customerDedupList.isEmpty()) {
 
@@ -358,7 +367,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 							} else {
 								currentDedup.setOverrideUser(previousDedup.getOverrideUser() + "," + curLoginUser);
 							}
-							//Checking for New Rule
+							// Checking for New Rule
 							if (isRuleChanged(previousDedup.getDedupRule(), currentDedup.getDedupRule())) {
 								currentDedup.setNewRule(true);
 								if (previousDedup.getCustCIF().equals(currentDedup.getCustCIF())) {
@@ -393,13 +402,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			List<FinanceReferenceDetail> queryCodeList) {
 		logger.debug("Entering");
 
-		//Check Override Condition based on Rule definitions on Process Editor
+		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
 
-		//Reset Override COndition based on Query Code Executions
+		// Reset Override COndition based on Query Code Executions
 		for (CustomerDedup custDedup : customerDedupList) {
 			if (custDedup.getDedupRule() != null) {
 				String[] dedupRuleList = custDedup.getDedupRule().split(",");
@@ -464,7 +473,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			List<String> fieldNameList = getDedupParmDAO()
 					.getRuleFieldNames(customerDedup.getCustCtgCode() + FinanceConstants.DEDUP_CUSTOMER);
 
-			//To Check duplicate customer in core banking
+			// To Check duplicate customer in core banking
 			List<CustomerDedup> coreCustDedupList = getCustomerInterfaceService()
 					.fetchCustomerDedupDetails(customerDedup);
 
@@ -472,7 +481,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				customerDedupList.addAll(coreCustDedupList);
 			}
 
-			//TO Check duplicate customer  in Local database
+			// TO Check duplicate customer in Local database
 			for (DedupParm dedupParm : dedupParmList) {
 				List<CustomerDedup> list = getCustomerDedupDAO().fetchCustomerDedupDetails(customerDedup,
 						dedupParm.getSQLQuery());
@@ -506,7 +515,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 			if (StringUtils.isNotEmpty(replaceString)) {
 				StringBuilder rule = new StringBuilder();
-				//CustDocType = :CustDocType AND CustDocTitle = :CustDocTitle
+				// CustDocType = :CustDocType AND CustDocTitle = :CustDocTitle
 				if (aCustomerDetails.getCustomerDocumentsList() != null
 						&& aCustomerDetails.getCustomerDocumentsList().size() > 0) {
 					for (CustomerDocument customerDocument : aCustomerDetails.getCustomerDocumentsList()) {
@@ -544,7 +553,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		DedupParm dedupParm = null;
 		List<FinanceDedup> newFinDedupList = new ArrayList<FinanceDedup>();
 
-		//Fetch List of Query Details Existing to check Finance De-dupe based on Finance Type & Stage
+		// Fetch List of Query Details Existing to check Finance De-dupe based
+		// on Finance Type & Stage
 		FinanceReferenceDetail referenceDetail = new FinanceReferenceDetail();
 		referenceDetail.setMandInputInStage(userRole + ",");
 		referenceDetail.setFinType(finType);
@@ -557,12 +567,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			return newFinDedupList;
 		}
 
-		// Fetch Rule parameters for Rebuilding Data 
+		// Fetch Rule parameters for Rebuilding Data
 		List<FinanceDedup> excdFinDedupList = new ArrayList<FinanceDedup>();
 		List<String> fieldNameList = getDedupParmDAO().getRuleFieldNames(FinanceConstants.DEDUP_FINANCE);
 		for (FinanceReferenceDetail queryCode : queryCodeList) {
 
-			//First to fetch  Overridden/executed list 
+			// First to fetch Overridden/executed list
 			List<FinanceDedup> tempExcdFinDedupList = getFinanceDedupeDAO()
 					.fetchOverrideDedupData(aFinanceDedup.getFinReference(), queryCode.getLovDescNamelov());
 
@@ -596,7 +606,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 		}
 
-		//Checking for New Rule 
+		// Checking for New Rule
 		doSetIsNewRecord(excdFinDedupList, newFinDedupList);
 		excdFinDedupList = doSetFinDeDupGrouping(excdFinDedupList, newFinDedupList);
 		dosetOverrideOrNot(excdFinDedupList, queryCodeList);
@@ -620,13 +630,14 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			List<FinanceReferenceDetail> queryCodeList) {
 		logger.debug("Entering");
 
-		//Check Override Condition based on Rule definitions on Process Editor
+		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		HashMap<String, String> overrideRuleDesc = new HashMap<String, String>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
-		//To check which rule not allow Override Condition based on Query Code Executions.
+		// To check which rule not allow Override Condition based on Query Code
+		// Executions.
 		HashMap<String, Boolean> matchedOverMap = new HashMap<String, Boolean>();
 		for (FinanceDedup financeDedup : newFinDedupList) {
 			String[] rulesList = financeDedup.getDedupeRule().split(",");
@@ -654,7 +665,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * This doSetIsNewrecord is used to set new record or not if is new record insert otherwise updated.
+	 * This doSetIsNewrecord is used to set new record or not if is new record
+	 * insert otherwise updated.
 	 */
 	private void doSetIsNewRecord(List<FinanceDedup> excdFinDedupList, List<FinanceDedup> newFinDedupList) {
 
@@ -704,7 +716,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			}
 		}
 
-		// Do set Grouping New Dedup List with Existing Data 
+		// Do set Grouping New Dedup List with Existing Data
 		for (FinanceDedup newDedup : groupFinDedupList) {
 			if (excdDedupMap.containsKey(newDedup.getDupReference())) {
 
@@ -731,15 +743,19 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getDedupParmDAO().delete with
-	 * parameters dedupParm,"" b) NEW Add new record in to main table by using getDedupParmDAO().save with parameters
-	 * dedupParm,"" c) EDIT Update record in the main table by using getDedupParmDAO().update with parameters
-	 * dedupParm,"" 3) Delete the record from the workFlow table by using getDedupParmDAO().delete with parameters
-	 * dedupParm,"_Temp" 4) Audit the record in to AuditHeader and AdtDedupParams by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupParams by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) based on the Record type
+	 * do following actions a) DELETE Delete the record from the main table by
+	 * using getDedupParmDAO().delete with parameters dedupParm,"" b) NEW Add
+	 * new record in to main table by using getDedupParmDAO().save with
+	 * parameters dedupParm,"" c) EDIT Update record in the main table by using
+	 * getDedupParmDAO().update with parameters dedupParm,"" 3) Delete the
+	 * record from the workFlow table by using getDedupParmDAO().delete with
+	 * parameters dedupParm,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtDedupParams by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -796,10 +812,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getDedupParmDAO().delete with parameters dedupParm,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by
+	 * using businessValidation(auditHeader) method if there is any error or
+	 * warning message then return the auditHeader. 2) Delete the record from
+	 * the workFlow table by using getDedupParmDAO().delete with parameters
+	 * dedupParm,"_Temp" 3) Audit the record in to AuditHeader and
+	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -826,10 +845,12 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getDedupParmDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation. 5) for any mismatch conditions Fetch the error details from
+	 * getDedupParmDAO().getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -875,9 +896,15 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
-				if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+				if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																							// records
+																							// type
 					// is new
-					if (befDedupParm != null || tempDedupParm != null) { // if records already exists in
+					if (befDedupParm != null || tempDedupParm != null) { // if
+																			// records
+																			// already
+																			// exists
+																			// in
 						// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
@@ -910,7 +937,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			} else {
 
-				if (tempDedupParm == null) { // if records not exists in the Work flow table
+				if (tempDedupParm == null) { // if records not exists in the
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -951,11 +979,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 			List<DedupParm> dedupParmList = new ArrayList<DedupParm>();
 
-			//Fetch Builded SQL Query based on Query Code  
+			// Fetch Builded SQL Query based on Query Code
 			DedupParm dedupParm = null;
 			for (FinanceReferenceDetail queryCode : queryCodeList) {
 
-				//get override Blacklist Customers
+				// get override Blacklist Customers
 				List<FinBlacklistCustomer> exeBlackList = getBlacklistCustomerDAO()
 						.fetchOverrideBlackListData(blCustData.getFinReference(), queryCode.getLovDescNamelov());
 				dedupParm = getApprovedDedupParmById(queryCode.getLovDescNamelov(), FinanceConstants.DEDUP_BLACKLIST,
@@ -973,8 +1001,9 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				dedupParm = null;
 			}
 
-			//Using Queries Fetch Black Listed Customer Data either from Interface or 
-			//Existing Black Listed Table(Daily Download) Data
+			// Using Queries Fetch Black Listed Customer Data either from
+			// Interface or
+			// Existing Black Listed Table(Daily Download) Data
 			if (!dedupParmList.isEmpty()) {
 				blackListCustomers.addAll(getBlackListCustomer(blCustData, dedupParmList));
 				if (!blackListCustomers.isEmpty()) {
@@ -999,7 +1028,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 		// Grouping Black List Customer which are having same result of Data
 		blackListCustomers = doSetDeDupGrouping(blackListCustomers);
 
-		// Checking for duplicate records in overrideBlacklistCustomers and currentBlacklistCustomers
+		// Checking for duplicate records in overrideBlacklistCustomers and
+		// currentBlacklistCustomers
 		try {
 			if (!overrideBlackList.isEmpty() && !blackListCustomers.isEmpty()) {
 				for (FinBlacklistCustomer previousBlacklist : overrideBlackList) {
@@ -1016,7 +1046,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 											.setOverrideUser(previousBlacklist.getOverrideUser() + "," + curUser);
 								}
 
-								//Checking for New Rule
+								// Checking for New Rule
 								if (isRuleChanged(previousBlacklist.getWatchListRule(),
 										currentBlacklist.getWatchListRule())) {
 									currentBlacklist.setNewRule(true);
@@ -1074,8 +1104,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Preparation of BlackList Customers Data from Already overridden Data in case of rules Deletion from
-	 * Process editor
+	 * Method for Preparation of BlackList Customers Data from Already
+	 * overridden Data in case of rules Deletion from Process editor
 	 * 
 	 * @param overrideBlackList
 	 * @return
@@ -1240,13 +1270,13 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			List<FinanceReferenceDetail> queryCodeList) {
 		logger.debug("Entering");
 
-		//Check Override Condition based on Rule definitions on Process Editor
+		// Check Override Condition based on Rule definitions on Process Editor
 		HashMap<String, Boolean> queryOverrideMap = new HashMap<String, Boolean>();
 		for (FinanceReferenceDetail referenceDetail : queryCodeList) {
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
 
-		//Reset Override COndition based on Query Code Executions
+		// Reset Override COndition based on Query Code Executions
 		for (BlackListCustomers blackListCust : blackListCustomers) {
 			String[] watchList = blackListCust.getWatchListRule().split(",");
 			for (int i = 0; i < watchList.length; i++) {
@@ -1313,8 +1343,9 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				dedupParm = null;
 			}
 
-			//Using Queries Fetch PoliceCase Listed Customer Data either from Interface or 
-			//Existing PoliceCase Listed Table(Daily Download) Data
+			// Using Queries Fetch PoliceCase Listed Customer Data either from
+			// Interface or
+			// Existing PoliceCase Listed Table(Daily Download) Data
 			if (!dedupParmList.isEmpty()) {
 				policeCase.addAll(getPoliceCaseListCustomer(policeCaseData, dedupParmList));
 				if (!policeCase.isEmpty()) {
@@ -1337,9 +1368,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			return policeCase;
 		}
 
-		// Grouping PoliceCase List Customer which are having same result of Data
+		// Grouping PoliceCase List Customer which are having same result of
+		// Data
 		policeCase = dosetPoliceCaseGrouping(policeCase);
-		// Checking for duplicate records in overridePoliceCaseCustomers and currentPoliceCaseCustomers
+		// Checking for duplicate records in overridePoliceCaseCustomers and
+		// currentPoliceCaseCustomers
 
 		try {
 			if (!overridePoliceCaseList.isEmpty() && !policeCase.isEmpty()) {
@@ -1389,8 +1422,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Preparation of PoliceCase Customers Data from Already overridden Data in case of rules Deletion from
-	 * Process editor
+	 * Method for Preparation of PoliceCase Customers Data from Already
+	 * overridden Data in case of rules Deletion from Process editor
 	 * 
 	 * @param overridePoliceCaseList
 	 * @return
@@ -1477,7 +1510,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Resetting Override condition based on Process Editor Configuration
+	 * Method for Resetting Override condition based on Process Editor
+	 * Configuration
 	 * 
 	 * @param policeCase
 	 * @param queryCodeList
@@ -1490,7 +1524,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			queryOverrideMap.put(referenceDetail.getLovDescNamelov(), referenceDetail.isOverRide());
 		}
 
-		//Reset Override COndition based on Query Code Executions
+		// Reset Override COndition based on Query Code Executions
 		for (PoliceCaseDetail policeCaseList : policeCase) {
 			String[] policecaserule = policeCaseList.getPoliceCaseRule().split(",");
 			for (int i = 0; i < policecaserule.length; i++) {
@@ -1533,7 +1567,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
 			} else {
 				throw new InterfaceException("9999", e.getMessage());
-			}
+			}	
 		}
 
 		List<CustomerDedup> customerDedup = getDedupData(response, details);
@@ -1582,7 +1616,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 				custDedupList.add(customerDedup);
 				// Add appScore
-				//if(StringUtils.equals(response.getC, str2))
+				// if(StringUtils.equals(response.getC, str2))
 			}
 		}
 		return custDedupList;

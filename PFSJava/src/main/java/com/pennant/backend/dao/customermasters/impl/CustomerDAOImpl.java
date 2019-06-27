@@ -604,7 +604,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		Customer customer = new Customer();
 		customer.setCustCIF(cif);
 
-		StringBuilder selectSql = new StringBuilder("SELECT CustID");
+		StringBuilder selectSql = new StringBuilder("SELECT CustID, CustCIF");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where CustCIF=:CustCIF");

@@ -1049,6 +1049,7 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
 		<property name="externalDocumentManager" ref="externalDocumentManager" />
+		<property name="dedupParmService" ref="dedupParmService" />
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl" class="com.pennant.webui.customermasters.customer.ProspectCustomerDialogCtrl"
@@ -4311,6 +4312,7 @@
 	<bean id="taxDetailDialogCtrl" class="com.pennant.webui.applicationmaster.taxdetail.TaxDetailDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="taxDetailService" ref="taxDetailService" />
+		<property name="gstnValidationService" ref="gstnValidationService" />
 	</bean>
 
 	<!-- Finance Tax Detail -->
@@ -4321,6 +4323,7 @@
 	<bean id="financeTaxDetailDialogCtrl" class="com.pennant.webui.finance.financetaxdetail.FinanceTaxDetailDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
+		<property name="gstnValidationService" ref="gstnValidationService" />
 	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl" parent="basisListCtrl"
