@@ -83,7 +83,7 @@ public abstract class JsonService<T> {
 		
 		Timestamp reqSentOn = null;
 
-		String url = App.getProperty(serviceDetail.getServiceName());
+		String url = App.getProperty(serviceDetail.getServiceUrl());
 			
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
