@@ -243,14 +243,15 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append("(UsrID, UsrLogin, UsrPwd, UserStaffID, UsrFName, UsrMName, UsrLName, UsrMobile, UsrEmail");
 		sql.append(", UsrEnabled, UsrCanSignonFrom, UsrCanSignonTo, UsrCanOverrideLimits, UsrAcExp, UsrAcLocked");
 		sql.append(", UsrLanguage, UsrDftAppId, UsrDftAppCode, UsrBranchCode, UsrDeptCode, UsrToken");
-		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType, PwdExpDt");
+		sql.append(", UsrIsMultiBranch, UsrInvldLoginTries, UsrAcExpDt, UsrDesg, AuthType");
+		sql.append(", PwdExpDt, AccountUnLockedOn");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId,businessvertical)");
 		sql.append(" Values(:UsrID, :UsrLogin, :UsrPwd, :UserStaffID, :UsrFName, :UsrMName, :UsrLName, :UsrMobile");
 		sql.append(", :UsrEmail, :UsrEnabled, :UsrCanSignonFrom, :UsrCanSignonTo, :UsrCanOverrideLimits, :UsrAcExp");
 		sql.append(", :UsrAcLocked, :UsrLanguage, :UsrDftAppId, :UsrDftAppCode, :UsrBranchCode, :UsrDeptCode");
 		sql.append(", :UsrToken, :UsrIsMultiBranch, :UsrInvldLoginTries, :UsrAcExpDt, :UsrDesg, :AuthType");
-		sql.append(", :PwdExpDt");
+		sql.append(", :PwdExpDt, :AccountUnLockedOn");
 		sql.append(", :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId, :businessVertical)");
 
@@ -723,15 +724,17 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	@Override
 	public void lockUserAccounts() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select UsrID, LastLoginOn, AccountUnLockedOn from SecUsers where UsrAcLocked = 0");
+		sql.append("select UsrID, LastLoginOn, AccountUnLockedOn from SecUsers");
+		sql.append(" where UsrAcLocked = 0 and UserType = :UserType");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UserType", "USER");
 
 		int days = SysParamUtil.getValueAsInt(SMTParameterConstants.USR_ACCT_LOCK_DAYS);
 
-		Date appDate = DateUtility.getAppDate();
+		Date sysDate = DateUtility.getSysDate();
 		List<SecurityUser> userAccounts = new ArrayList<>();
 		this.jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
 
@@ -750,10 +753,10 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 					startDate = accountUnlockedOn;
 				}
 
-				if (DateUtil.getDaysBetween(appDate, startDate) > days) {
+				if (DateUtil.getDaysBetween(sysDate, startDate) > days) {
 					secUsersData.setUsrID(userId);
 					secUsersData.setUsrAcLocked(true);
-					secUsersData.setAccountLockedOn(DateUtility.getAppDate());
+					secUsersData.setAccountLockedOn(DateUtil.getSysDate());
 					userAccounts.add(secUsersData);
 				}
 

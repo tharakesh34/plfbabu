@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.QueueAssignmentDAO;
@@ -294,16 +293,17 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			if (securityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				securityUser.setRecordType("");
+				securityUser.setAccountUnLockedOn(DateUtil.getSysDate());
 				securityUsersDAO.save(securityUser, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				securityUser.setRecordType("");
 				if (befSecurityUser != null) {
 					if (befSecurityUser.isUsrAcLocked() == true && securityUser.isUsrAcLocked() == false) {
-						securityUser.setAccountUnLockedOn(DateUtility.getAppDate());
+						securityUser.setAccountUnLockedOn(DateUtil.getSysDate());
 						securityUser.setAccountLockedOn(null);
 					} else if (befSecurityUser.isUsrAcLocked() == false && securityUser.isUsrAcLocked() == true) {
-						securityUser.setAccountLockedOn(DateUtility.getAppDate());
+						securityUser.setAccountLockedOn(DateUtil.getSysDate());
 						securityUser.setAccountUnLockedOn(null);
 					}
 				}
