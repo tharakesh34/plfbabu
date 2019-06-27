@@ -93,7 +93,7 @@ public class AdvancePaymentUtil {
 	}
 
 	public enum AdvanceStage {
-		FE("FE", "Front End"), RE("RE", "Rear End"), AD("AD", "Deposit");
+		FE("FE", "Front End (POS Reduction)"), RE("RE", "Rear End"), RT("RT", "Repaymnet Terms");
 
 		private final String code;
 		private final String value;
@@ -138,7 +138,7 @@ public class AdvancePaymentUtil {
 		}
 
 		public static boolean hasDeposit(String stage) {
-			return AdvanceStage.getStage(stage) == AdvanceStage.AD;
+			return AdvanceStage.getStage(stage) == AdvanceStage.RT;
 		}
 
 		public static boolean hasFrontEnd(String stage) {
@@ -198,7 +198,7 @@ public class AdvancePaymentUtil {
 			BigDecimal instNow = calculateAdvanseInterest(finScheduleData);
 			amount = (oldAmount.subtract(instNow)).abs();
 		} else if (advanceRule == AdvanceRuleCode.ADVEMI && advanceType == AdvanceType.AE
-				&& advanceStage == AdvanceStage.AD) {
+				&& advanceStage == AdvanceStage.RT) {
 			BigDecimal instNow = calculateAdvanseEMI(finScheduleData);
 			amount = oldAmount.subtract(instNow).abs();
 		}
