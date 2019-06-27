@@ -42,11 +42,9 @@
 */
 package com.pennant.backend.service.applicationmaster.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -72,7 +70,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	private CurrencyDAO currencyDAO;
 
 	public CurrencyServiceImpl() {
-		super();
+		super(true, Currency.class.getSimpleName());
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
@@ -128,11 +126,11 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 			getCurrencyDAO().update(currency, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		if (StringUtils.isEmpty("")) {
-			CurrencyUtil.register(currency, PennantConstants.TRAN_UPD);
+		if (!currency.isWorkflow()) {
+			invalidateEntity(currency.getId());
 		}
+
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving ");
 		return auditHeader;
@@ -164,8 +162,6 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		CurrencyUtil.register(currency, PennantConstants.TRAN_DEL);
-
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
@@ -193,7 +189,8 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	 * @return Currency
 	 */
 	public Currency getApprovedCurrencyById(String id) {
-		return getCurrencyDAO().getCurrencyById(id, "_AView");
+		//return getCurrencyDAO().getCurrencyById(id, "_AView");
+		return getCachedEntity(id);
 	}
 
 	/**
@@ -260,7 +257,7 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 		auditHeader.getAuditDetail().setModelData(currency);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		CurrencyUtil.register(currency, tranType);
+		invalidateEntity(currency.getId());
 
 		logger.debug("Leaving ");
 		return auditHeader;
@@ -367,5 +364,10 @@ public class CurrencyServiceImpl extends GenericService<Currency> implements Cur
 	@Override
 	public Currency getCurrencyForCode(String code) {
 		return currencyDAO.getCurrencyByCode(code);
+	}
+
+	@Override
+	protected Currency getEntity(String code) {
+		return currencyDAO.getCurrencyById(code, "_AView");
 	}
 }

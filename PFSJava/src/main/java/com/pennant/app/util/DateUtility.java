@@ -149,9 +149,11 @@ public final class DateUtility extends DateUtil {
 	 * @return The formatted date string of the value date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.
+	 * 
+	 * @deprecated use {@link SysParamUtil#getValueDate} instead.
 	 */
 	public static String getValueDate(String pattern) {
-		return format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);
+		return SysParamUtil.getValueDate(pattern);
 	}
 
 	/**
@@ -622,12 +624,12 @@ public final class DateUtility extends DateUtil {
 
 	public static java.util.Date getPostDate() {
 		String setPostingDateTo = SysParamUtil.getValueAsString(PennantConstants.SET_POSTDATE_TO);
-		java.util.Date postingDate = getAppDate();
+		java.util.Date postingDate = SysParamUtil.getAppDate();
 
 		if (!StringUtils.equals(setPostingDateTo, SysParamUtil.Param.APP_DATE.getCode())) {
-			postingDate = getAppDate();
+			postingDate = SysParamUtil.getAppDate();
 		} else {
-			postingDate = getAppValueDate();
+			postingDate = SysParamUtil.getAppValueDate();
 		}
 
 		return postingDate;

@@ -201,6 +201,19 @@ public class SysParamUtil {
 	}
 
 	/**
+	 * Returns the string representation with the specified pattern of the value date.
+	 * 
+	 * @param pattern
+	 *            The pattern describing the date and time format.
+	 * @return The formatted date string of the value date.
+	 * 
+	 * @return A {@link java.util.Date} that represents the Next business date.
+	 */
+	public static String getValueDate(String pattern) {
+		return DateUtil.format(SysParamUtil.getValueAsDate(SysParamUtil.Param.APP_VALUEDATE.getCode()), pattern);
+	}
+
+	/**
 	 * Returns a {@link java.util.Date} object that represents the Next business date.
 	 * 
 	 * @return A {@link java.util.Date} that represents the Next business date.

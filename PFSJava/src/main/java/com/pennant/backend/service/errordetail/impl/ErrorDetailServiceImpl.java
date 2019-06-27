@@ -67,7 +67,7 @@ public class ErrorDetailServiceImpl extends GenericService<ErrorDetail> implemen
 	private ErrorDetailDAO errorDetailDAO;
 
 	public ErrorDetailServiceImpl() {
-		super(true);
+		super(true, "ErrorDetail");
 	}
 
 	/**

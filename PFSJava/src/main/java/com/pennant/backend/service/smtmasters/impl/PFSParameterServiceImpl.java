@@ -73,7 +73,7 @@ public class PFSParameterServiceImpl extends GenericService<PFSParameter> implem
 	private PFSParameterDAO pFSParameterDAO;
 
 	public PFSParameterServiceImpl() {
-		super(true);
+		super(true, "SMTParameters");
 	}
 
 	// ******************************************************//

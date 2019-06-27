@@ -7,8 +7,8 @@
 
 	<import resource="classpath:applicationContext-jdbc.xml" />
 
-	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil" init-method="init" lazy-init="false">
-		<property name="currencyDAO" ref="currencyDAO" />
+	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
+		<property name="currencyService" ref="currencyService" />
 	</bean>
 
 	<!-- payment Helper -->

@@ -21,14 +21,14 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="01" author="Irfan">
+
+	<changeSet id="01" author="Irfan">
 		<createTable tableName="FinTaxReceivable">
 			<column name="FinReference" type="VARCHAR(20)">
 				<constraints nullable="false" />
@@ -42,9 +42,9 @@
 			<column name="UGST" type="NUMBER(18,0)" />
 			<column name="IGST" type="NUMBER(18,0)" />
 		</createTable>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="02" author="Irfan">
+	<changeSet id="02" author="Irfan">
 		<addPrimaryKey tableName="FinTaxReceivable" columnNames="FinReference, TaxFor" />
 	</changeSet>
 
@@ -100,15 +100,15 @@
 				INSERT INTO BMTAMOUNTCODES (allowedevent,allowedria ,amountcode ,amountcodedesc ,amountcodeisactive ,version ,lastmntby ,lastmnton ,recordstatus ,rolecode ,nextrolecode ,taskid ,nexttaskid ,recordtype ,workflowid ) VALUES('AMZ',	 0, 'ae_penaltyRcv','Penalty Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="04" author="Irfan">
+	<changeSet id="04" author="Irfan">
 		<sql>
 			<![CDATA[
 				Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('GST_INV_ON_DUE','GST Invoice on Due.','String',1,'Y',8,0,null,null,'GST Invoice on Due.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="05" author="Irfan">
 		<sql>
@@ -126,7 +126,7 @@
 		</sql>
 	</changeSet>
 
- <changeSet id="06" author="Siva">
+	<changeSet id="06" author="Siva">
 		<createTable tableName="FinTaxIncomeDetail">
 			<column name="RepayID" type="bigint" />
 			<column name="TaxFor" type="VARCHAR(8)" />
@@ -143,9 +143,9 @@
 		<addNotNullConstraint tableName="FinTaxIncomeDetail" columnName="TaxFor" columnDataType="VARCHAR(8)" />
 	</changeSet>
 
-	 <changeSet id="07" author="Irfan">
+	<changeSet id="07" author="Irfan">
 		<addPrimaryKey tableName="FinTaxIncomeDetail" columnNames="RepayID, TaxFor" />
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="07_01_ALTER_datatype" author="Irfan" dbms="mssql">
 		<sql>
@@ -179,11 +179,11 @@
 	</changeSet>
 
 
-	 <changeSet id="08" author="Irfan">
+	<changeSet id="08" author="Irfan">
 		<addColumn tableName="FinODAmzTaxDetail">
 			<column name="PostDate" type="datetime" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="09" author="Irfan">
 		<sql>
@@ -193,19 +193,19 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="10" author="Saikiran.v">
+	<changeSet id="10" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="TDSAllowToModify" type="boolean" />
 			<column name="TDSApplicableTo" type="varchar(50)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
- <changeSet id="11" author="Saikiran.v">
+	<changeSet id="11" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_Temp">
 			<column name="TDSAllowToModify" type="boolean" />
 			<column name="TDSApplicableTo" type="varchar(50)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="12" author="Irfan">
 		<sql>
@@ -236,7 +236,7 @@
 			columnDataType="boolean" />
 	</changeSet>
 
-	 <changeSet id="16_pre" author="ADARSH" dbms="postgresql">
+	<changeSet id="16_pre" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -244,9 +244,9 @@
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypesorg_view');
 			]]>
 		</sql>
-	</changeSet>  
+	</changeSet>
 
-	 <changeSet id="16" author="Saikiran.v">
+	<changeSet id="16" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
 			t1.fincategory,
@@ -482,7 +482,7 @@
 			LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
 			LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="17" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
@@ -1155,7 +1155,7 @@
 		</createView>
 	</changeSet>
 
-	  <changeSet id="16_post" author="ADARSH" dbms="postgresql">
+	<changeSet id="16_post" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -1163,25 +1163,25 @@
 					select deps_restore_dependencies ('plf', 'rmtfinancetypesorg_view');
 			]]>
 		</sql>
-	</changeSet>  
+	</changeSet>
 
-	 <changeSet id="19" author="Saikiran.v">
+	<changeSet id="19" author="Saikiran.v">
 		<addColumn tableName="Financemain_temp">
 			<column name="TDSPercentage" type="decimal(18,2)" />
 			<column name="TDSStartDate" type="datetime" />
 			<column name="TDSEndDate" type="datetime" />
 			<column name="TDSLimitAmt" type="decimal(18,2)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="20" author="Saikiran.v">
+	<changeSet id="20" author="Saikiran.v">
 		<addColumn tableName="Financemain">
 			<column name="TDSPercentage" type="decimal(18,2)" />
 			<column name="TDSStartDate" type="datetime" />
 			<column name="TDSEndDate" type="datetime" />
 			<column name="TDSLimitAmt" type="decimal(18,2)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="21" author="Saikiran.v">
 		<createView viewName="financemain_tview" replaceIfExists="true">
@@ -2330,7 +2330,7 @@
 		</createView>
 
 	</changeSet>
-	 <changeSet id="24" author="Saikiran.v">
+	<changeSet id="24" author="Saikiran.v">
 		<sql>
 		   <![CDATA[
 			  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -2349,17 +2349,17 @@
 			  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="25" author="Saikiran.v">
+	<changeSet id="25" author="Saikiran.v">
 		<sql>
             <![CDATA[
                  INSERT INTO SMTPARAMETERS VALUES ('ALLOW_LOWER_TAX_DED_REQ', 'Lower Tax Deduction required or not', 'String', 0, 'N', 1, 0, NULL, NULL,'Lower Tax Deduction required or not', 1,  1000,                           CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
             ]]>
 		</sql>
-	</changeSet> 
-	
-	 <changeSet id="26" author="Varaprasad.K">
+	</changeSet>
+
+	<changeSet id="26" author="Varaprasad.K">
 		<addColumn tableName="FinMaintainInstructions">
 			<column name="TDSApplicable" type="boolean" />
 			<column name="TDSPercentage" type="decimal(5, 2)" />
@@ -2375,7 +2375,7 @@
 			<column name="TDSStartDate" type="datetime" />
 			<column name="TDSEndDate" type="datetime" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="28" author="Varaprasad.K">
 		<sql>
@@ -2407,7 +2407,7 @@
 			columnDataType="boolean" />
 	</changeSet>
 
-	 <changeSet id="30" author="Varaprasad.K">
+	<changeSet id="30" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
 			     Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
@@ -2429,7 +2429,7 @@
                  Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
              ]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="31" author="Varaprasad.K">
 		<comment>Loan Managment new menu item Change TDS Changes</comment>
@@ -2525,7 +2525,7 @@
 		</createView>
 	</changeSet>
 
-	 <changeSet id="42" author="Varaprasad.K">
+	<changeSet id="42" author="Varaprasad.K">
 		<sql>
 		<![CDATA[
 		    update SecRights set rolecode=null,nextrolecode=null,taskid=null,nexttaskid=null,recordtype=null where rightname='ChangeTDSDialog_TDSPercentage';
@@ -2547,7 +2547,7 @@
 			INSERT INTO SecRights SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),2,'button_FinChangeTDSDialog_btnSave','ChangeTDSDialog',0,1000,CURRENT_TIMESTAMP,'Approved','NULL','NULL','NULL','NULL ','NULL',0 FROM SeqSecRights WHERE 0=0;
 		]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="44" author="Ganesh.p">
 		<sql>
@@ -2557,16 +2557,16 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="45" author="Varaprasad.K">
+	<changeSet id="45" author="Varaprasad.K">
 		<sql>
             <![CDATA[
                 INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'button_FinChangeTDSDialog_tDSApplicable', 'ChangeTDSDialog',1,1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0 FROM SEQSECRIGHTS WHERE 0=0;
                 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='ChangeTDS_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinChangeTDSDialog_tDSApplicable'), 1, 0, 1000,CURRENT_TIMESTAMP,'NULL','NULL','NULL','NULL','NULL','NULL',0);
             ]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="46.0" author="Varaprasad.K">
+	<changeSet id="46.0" author="Varaprasad.K">
 		<addColumn tableName="finmaintaininstructions">
 			<column name="TdsLimit" type="decimal(18,2)" />
 		</addColumn>
@@ -2575,7 +2575,7 @@
 	<changeSet id="46.1" author="Varaprasad.K">
 		<addColumn tableName="finmaintaininstructions_temp">
 			<column name="TdsLimit" type="decimal(18,2)" />
-		</addColumn> 
+		</addColumn>
 	</changeSet>
 
 	<changeSet id="46_pre" author="Sai" dbms="postgresql">
@@ -2695,12 +2695,12 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="49" author="Saikiran.v">
+	<changeSet id="49" author="Saikiran.v">
 		<createSequence sequenceName="SEQGST_RATES" incrementBy="1" startValue="1" minValue="1"
 			maxValue="999999999999999999" />
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="50" author="Saikiran.v">
+	<changeSet id="50" author="Saikiran.v">
 		<createTable tableName="GST_RATES">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -2754,7 +2754,7 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="52" author="Saikiran.v" dbms="mssql">
 		<sql>
@@ -2796,7 +2796,7 @@
        </createView>
 	</changeSet>
 
-	 <changeSet id="57" author="saikiran.v">
+	<changeSet id="57" author="saikiran.v">
 		<sql>
 			<![CDATA[
 				update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
@@ -2848,7 +2848,7 @@
 				update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
 				]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="58" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
@@ -3043,7 +3043,7 @@
       </createView>
 	</changeSet>
 
-	 <changeSet id="61" author="Varaprasad.K" dbms="postgresql,oracle">
+	<changeSet id="61" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
 			<![CDATA[
 					Alter table verification_pd drop column OwnershipStatus;
@@ -3058,7 +3058,7 @@
 					Alter table verification_pd drop column ObservationRemarks;
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="62" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
@@ -3075,7 +3075,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="64.0" author="Varaprasad.K" dbms="mssql">
 		<sql>
 		<![CDATA[		 
@@ -3122,7 +3122,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="67" author="Varaprasad.K" dbms="postgresql,oracle">
+	<changeSet id="67" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
 			<![CDATA[
 					Alter table verification_pd_temp drop column OwnershipStatus;
@@ -3137,7 +3137,7 @@
 					Alter table verification_pd_temp drop column ObservationRemarks;
 				]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="68" author="Varaprasad.K" dbms="postgresql,oracle">
 		<sql>
@@ -3167,7 +3167,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="70" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[	 
@@ -3193,13 +3193,13 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="72" author="Saikiran.v">
+	<changeSet id="72" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				INSERT INTO SecGroupRights VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTRATE_MAKER'), (select RightID from SecRights WHERE RightName='GSTRateDialog_Amount'),1,0,10000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="73" author="Saikiran.v">
 		<createView viewName="GST_RATES_AView" replaceIfExists="true">
@@ -3716,7 +3716,7 @@
 	</changeSet>
 
 	<!-- <changeSet id="85" author="vijaya.a"> <dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS_TEMP" constraintName="FK_COVENANT_DOCUMENTS_TEMP_CID" 
-		/> </changeSet> --> 
+		/> </changeSet> -->
 
 	<changeSet id="83" author="Varaprasad.K">
 		<sql>
@@ -3978,7 +3978,7 @@
 		TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'W' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode 
 		is not null and TaxStateCode != ' '; Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode 
 		GstStateCode, 'B' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' 
-		'; ]]> </sql> </changeSet>  -->
+		'; ]]> </sql> </changeSet> -->
 
 	<changeSet id="93" author="murthy.y">
 		<sql>
@@ -4519,8 +4519,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="119_pre" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4529,7 +4529,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="119_0" author="RANGABABU" dbms="MSSQL">
 		<sql>
 			<![CDATA[
@@ -4537,12 +4537,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="119" author="Kesava">
-		<modifyDataType tableName="feetypes" columnName="amortzreq"
-			newDataType="boolean" />
+
+	<changeSet id="119" author="Kesava">
+		<modifyDataType tableName="feetypes" columnName="amortzreq" newDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="120_0" author="RANGABABU" dbms="MSSQL">
 		<sql>
 			<![CDATA[
@@ -4550,13 +4549,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="120" author="Kesava">
-		<modifyDataType tableName="feetypes_temp" columnName="amortzreq"
-			newDataType="boolean" />
-	</changeSet> 
-	
-	
+		<modifyDataType tableName="feetypes_temp" columnName="amortzreq" newDataType="boolean" />
+	</changeSet>
+
+
 	<changeSet id="119_post" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4565,8 +4563,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="121" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -4576,17 +4574,17 @@
 		</sql>
 	</changeSet>
 
-	
-	 <changeSet id="122" author="Varaprasad.K" dbms="mssql">
+
+	<changeSet id="122" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE feetypes ADD CONSTRAINT DF_feetypes_amortzreq DEFAULT 0 FOR amortzreq;
 				ALTER TABLE feetypes_temp ADD CONSTRAINT DF_feetypes_temp_amortzreq DEFAULT 0 FOR amortzreq;
 			]]>
 		</sql>
-	</changeSet> 
-	
-	
+	</changeSet>
+
+
 	<changeSet id="123" author="Varaprasad.K" dbms="postgresql, oracle">
 		<addDefaultValue columnName="amortzreq" tableName="feetypes" defaultValue="0" />
 		<addDefaultValue columnName="amortzreq" tableName="feetypes_temp" defaultValue="0" />
@@ -4629,7 +4627,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="126" author="aditya.a">
 		<dropTable tableName="FinODDetails_Snapshot" />
 	</changeSet>
@@ -4687,5 +4685,26 @@
 		<addPrimaryKey tableName="FinODDetails_Snapshot" constraintName="pk_finODDetails_Snapshot"
 			columnNames="APPDATE,FINREFERENCE,FINODSCHDDATE,FINODFOR" />
 	</changeSet>
-	
+
+	<changeSet id="127" author="murthy">
+		<sql>
+			<![CDATA[
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE='STGRULE' AND  RBEVENT='0' AND  RBFLDNAME='AE_BPITDS';
+				DELETE FROM BMTAMOUNTCODES WHERE ALLOWEDEVENT='ADDDBSP' AND ALLOWEDRIA='0' AND AMOUNTCODE='AE_BPITDS';
+
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='BPI_PAID_ON_INSTDATE';
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='BPI_TDS_DEDUCT_ON_ORG';
+				
+				update BMTAEEVENTS set active=0 where AEEVENTCODE='RECIP';
+				
+				Insert Into SMTparameters Values ('BPI_PAID_ON_INSTDATE', 'BPI Payment on Installment Due Date','String', '1', 'Y', '1', '0', 'NULL', 'NULL','BPI Payment on Installment Due Date', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', '0');
+				Insert Into SMTparameters Values ('BPI_TDS_DEDUCT_ON_ORG', 'BPI TDS Deduct on Origination','String', '1', 'Y', '1', '0','NULL', 'NULL','BPI TDS Deduct on Origination', '1', '1000', CURRENT_TIMESTAMP, 'Approved', '', '', '', '','', '0');
+
+
+				Insert into BMTAmountCodes Values ('ADDDBSP','0','ae_bpiTds', 'BPI TDS Amount', '1', 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0 );
+				Insert into RBFieldDetails Values ('STGRULE','STGRULE','ae_bpiToAdvInt','BPI to Advance Interest','nchar',1,'1','1',' ','static',' ');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

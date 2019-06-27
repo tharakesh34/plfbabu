@@ -19,9 +19,9 @@ public abstract class GenericService<T> {
 		super();
 	}
 
-	public GenericService(boolean cacheRequired) {
+	public GenericService(boolean cacheRequired, String moduleName) {
 		super();
-		cache = new Cache<String, T>(this.getClass().getSimpleName());
+		cache = new Cache<String, T>(moduleName);
 	}
 
 	/**

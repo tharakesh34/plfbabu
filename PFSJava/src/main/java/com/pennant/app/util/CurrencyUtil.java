@@ -43,50 +43,18 @@
 package com.pennant.app.util;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
-import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennant.backend.service.applicationmaster.CurrencyService;
 
 /**
  * A suite of utilities surrounding the use of the Currency that contain information about the environment for the
  * system.
  */
 public class CurrencyUtil {
-	private static final Logger logger = Logger.getLogger(CurrencyUtil.class);
-
-	private static CurrencyDAO currencyDAO;
-	private static HashMap<String, Currency> currencies = new HashMap<>();
-
-	/**
-	 * Initialize the currency map with the list of currencies that are available in the system.
-	 */
-	public static void init() {
-		logger.info(Literal.ENTERING);
-
-		for (Currency currency : currencyDAO.getCurrencyList()) {
-			currencies.put(currency.getCcyCode(), currency);
-		}
-
-		logger.info(Literal.LEAVING);
-	}
-
-	public static void register(Currency currency, String type) {
-		logger.debug("Entering");
-
-		if (PennantConstants.TRAN_DEL.equals(type)) {
-			currencies.remove(currency.getCcyCode());
-		} else {
-			currencies.put(currency.getCcyCode(), currency);
-		}
-
-		logger.debug("Leaving");
-	}
+	private static CurrencyService currencyService;
 
 	/**
 	 * Method for get the Record Data of Currency
@@ -164,14 +132,19 @@ public class CurrencyUtil {
 		return BigDecimal.ZERO;
 	}
 
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		CurrencyUtil.currencyDAO = currencyDAO;
-	}
-
 	public static Currency getCurrency(String ccy) {
 		if (StringUtils.isEmpty(ccy)) {
 			ccy = SysParamUtil.getAppCurrency();
 		}
-		return currencyDAO.getCurrency(ccy);
+		return currencyService.getApprovedCurrencyById(ccy);
 	}
+
+	public CurrencyService getCurrencyService() {
+		return currencyService;
+	}
+
+	public void setCurrencyService(CurrencyService currencyService) {
+		CurrencyUtil.currencyService = currencyService;
+	}
+
 }

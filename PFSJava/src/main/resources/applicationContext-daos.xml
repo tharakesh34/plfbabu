@@ -3185,9 +3185,11 @@
 	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
-	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil" init-method="init">
-		<property name="currencyDAO" ref="currencyDAO" />
+	
+	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
+		<property name="currencyService" ref="currencyService" />
 	</bean>
+	
 	<bean id="FinanceWorkflowRoleUtil" class="com.pennant.app.util.FinanceWorkflowRoleUtil">
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 	</bean>
