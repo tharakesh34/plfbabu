@@ -93,7 +93,7 @@ public class AdvancePaymentUtil {
 	}
 
 	public enum AdvanceStage {
-		FE("FE", "Front End (POS Reduction)"), RE("RE", "Rear End"), RT("RT", "Repaymnet Terms");
+		FE("FE", "Front End (POS Reduction)"), RE("RE", "Rear End"), RT("RT", "Repayment Terms");
 
 		private final String code;
 		private final String value;
