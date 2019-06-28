@@ -1708,5 +1708,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+	<!-- 5.0.7 is Under QC please use 5.0.5 -->
 </databaseChangeLog>

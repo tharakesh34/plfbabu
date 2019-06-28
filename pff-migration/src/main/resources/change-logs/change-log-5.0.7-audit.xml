@@ -45,9 +45,9 @@
 			<column name="AccountUnLockedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
-	
+
 	<!-- GST Waiver Changes Start -->
-	
+
 	<changeSet author="Kesav" id="3">
 		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
 		<addColumn tableName="AdtManualAdvise">
@@ -65,7 +65,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="4">
 		<comment>waivedGST column added for GST Waivers</comment>
 		<addColumn tableName="AdtFinFeeDetail">
@@ -74,16 +74,16 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="5">
 		<comment>ReferenceId column added for Receipt Fees</comment>
 		<addColumn tableName="AdtFinFeeDetail">
-			<column name="ReferenceId" type="bigint" defaultValue="0" >
+			<column name="ReferenceId" type="bigint" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>
 
 	<!-- GST Waiver Changes END -->
-
+	<!-- 5.0.6 is Under QC please use 5.0.7 -->
 </databaseChangeLog>
