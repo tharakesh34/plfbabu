@@ -3066,14 +3066,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save FI Initiation details
 		// =======================================
-		if (financeDetail.isFiInitTab()) {
+		if (financeDetail.isFiInitTab() && financeDetail.getFiVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, true));
 		}
 
 		// save FI Approval details
 		// =======================================
-		if (financeDetail.isFiApprovalTab()) {
+		if (financeDetail.isFiApprovalTab() && financeDetail.getFiVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.FI, auditTranType, false));
 		}
@@ -3159,20 +3159,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	private void setVerificationWorkflowDetails(Verification verification, FinanceMain financeMain) {
-		verification.setLastMntBy(financeMain.getLastMntBy());
-		verification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		verification.setRecordType(financeMain.getRecordType());
-		verification.setVersion(financeMain.getVersion());
-		verification.setWorkflowId(financeMain.getWorkflowId());
-		verification.setRoleCode(financeMain.getRoleCode());
-		verification.setNextRoleCode(financeMain.getNextRoleCode());
-		verification.setTaskId(financeMain.getTaskId());
-		verification.setNextTaskId(financeMain.getNextTaskId());
-		verification.setRecordStatus(financeMain.getRecordStatus());
-		if (PennantConstants.RECORD_TYPE_DEL.equals(financeMain.getRecordType())) {
-			if (StringUtils.trimToNull(verification.getRecordType()) == null) {
-				verification.setRecordType(financeMain.getRecordType());
-				verification.setNewRecord(true);
+		if (verification != null) {
+			verification.setLastMntBy(financeMain.getLastMntBy());
+			verification.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			verification.setRecordType(financeMain.getRecordType());
+			verification.setVersion(financeMain.getVersion());
+			verification.setWorkflowId(financeMain.getWorkflowId());
+			verification.setRoleCode(financeMain.getRoleCode());
+			verification.setNextRoleCode(financeMain.getNextRoleCode());
+			verification.setTaskId(financeMain.getTaskId());
+			verification.setNextTaskId(financeMain.getNextTaskId());
+			verification.setRecordStatus(financeMain.getRecordStatus());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(financeMain.getRecordType())) {
+				if (StringUtils.trimToNull(verification.getRecordType()) == null) {
+					verification.setRecordType(financeMain.getRecordType());
+					verification.setNewRecord(true);
+				}
 			}
 		}
 	}

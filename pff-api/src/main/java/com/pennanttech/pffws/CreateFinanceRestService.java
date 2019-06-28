@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 
 @Produces("application/json")
@@ -61,4 +62,8 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/reinitiateLoan")
 	FinanceDetail reInitiateFinance(FinanceDetail financeDetail) throws ServiceException;
+	
+	@POST
+	@Path("/finance/moveLoanStage")
+	WSReturnStatus moveLoanStage(MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;
 }

@@ -3,10 +3,12 @@ package com.pennanttech.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -896,6 +899,75 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 	}
 
+	@Override
+	public WSReturnStatus moveLoanStage(MoveLoanStageRequest moveLoanStageRequest) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		// for logging purpose
+		APIErrorHandlerService.logReference(moveLoanStageRequest.getFinReference());
+		FinanceDetail findetail = null;
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		if (StringUtils.isBlank(moveLoanStageRequest.getFinReference())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		if (StringUtils.isBlank(moveLoanStageRequest.getCurrentStage())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "CurrentStage";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		if (StringUtils.isBlank(moveLoanStageRequest.getAction())) {
+
+			String[] valueParm = new String[1];
+			valueParm[0] = "Action";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+
+		FinanceMain finMain = financeMainDAO.getFinanceMainById(moveLoanStageRequest.getFinReference(), "_Temp", false);
+		if (finMain == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = moveLoanStageRequest.getFinReference();
+			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		} else {
+			if (!StringUtils.equals(moveLoanStageRequest.getCurrentStage(), finMain.getNextRoleCode())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CurrentStage: " + moveLoanStageRequest.getCurrentStage();
+				valueParm[1] = finMain.getNextRoleCode();
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+			}
+		}
+		Map<String, String> userActions = createFinanceController.getUserActions(finMain);
+		if (userActions != null) {
+			if (!userActions.containsKey(moveLoanStageRequest.getAction())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Action: " + moveLoanStageRequest.getAction();
+				valueParm[1] = userActions.keySet().toString();
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+			} else {
+				FinanceDetail finDetail = createFinanceController
+						.getFinanceDetails(moveLoanStageRequest.getFinReference());
+				FinanceMain financeMain = finDetail.getFinScheduleData().getFinanceMain();
+
+				FinanceMain beffinanceMain = new FinanceMain();
+				BeanUtils.copyProperties(financeMain, beffinanceMain);
+				financeMain.setBefImage(beffinanceMain);
+
+				financeMain.setRecordStatus(userActions.get(moveLoanStageRequest.getAction()));
+				// financeMain.setVersion(financeMain.getVersion()+1);
+				// financeMain.setNewRecord(false);
+				WSReturnStatus response = createFinanceController.doMoveLoanStage(finDetail, moveLoanStageRequest);
+				logger.debug(Literal.LEAVING);
+				return response;
+
+			}
+		}else {
+			
+		}
+		return returnStatus;
+
+	}
 	private WSReturnStatus validateOldFinReference(FinanceDetail financeDetail, boolean active) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 

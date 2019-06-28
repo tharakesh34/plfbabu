@@ -7,6 +7,7 @@ import javax.jws.WebService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 
 @WebService
@@ -45,5 +46,8 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
 	FinanceDetail reInitiateFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+
+	@WebResult(name = "finance")
+	WSReturnStatus moveLoanStage(@WebParam(name = "finance") MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;
 
 }

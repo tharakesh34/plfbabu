@@ -49,7 +49,7 @@ public class RemarksWebServiceImpl implements RemarksSoapService, RemarksRestSer
 		return returnStatus;
 	}
 
-	private WSReturnStatus validateRemarks(List<Notes> remarks) {
+	public WSReturnStatus validateRemarks(List<Notes> remarks) {
 
 		logger.debug(Literal.ENTERING);
 
