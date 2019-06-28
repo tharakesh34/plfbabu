@@ -52,6 +52,7 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
@@ -65,6 +66,7 @@ import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -100,6 +102,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	private PinCodeDAO pinCodeDAO;
 	private CountryDAO countryDAO;
 	private CityDAO cityDAO;
+	private CustomerAddresDAO customerAddresDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -742,6 +745,12 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	public boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif) {
 		return this.financeMainDAO.isFinReferenceExitsinLQ(finReference, tempTab, wif);
 	}
+	
+	
+	@Override
+	public CustomerAddres getHighPriorityCustAddr(final long id) {
+		return customerAddresDAO.getHighPriorityCustAddr(id, "_AView");
+	}
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -816,5 +825,12 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+	public CustomerAddresDAO getCustomerAddresDAO() {
+		return customerAddresDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
+	}	
 
 }

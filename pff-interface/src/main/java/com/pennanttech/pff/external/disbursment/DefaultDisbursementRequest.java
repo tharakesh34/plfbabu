@@ -22,7 +22,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -333,7 +332,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		paramMap = new MapSqlParameterSource();
 		paramMap.addValue("PAYMENTID", Arrays.asList(disbursments));
 
-		final String DISB_FI_EMAIL = SysParamUtil.getValueAsString("DISB_FI_EMAIL");
+		// It should come from Data engine default value 
+		//final String DISB_FI_EMAIL = (String) getSMTParameter("DISB_FI_EMAIL", String.class);
 		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
 		try {
 			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
@@ -341,7 +341,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
 					rowMap.put("BATCH_ID", 0);
-					rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
+					//rowMap.put("PAYMENT_DETAIL1", DISB_FI_EMAIL);
 					rowMap.put("RESP_BATCH_ID", 0);
 					rowMap.put("TRANSACTIONREF", null);
 					rowMap.put("CHEQUE_NUMBER", null);
@@ -349,8 +349,8 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
 
-					String disbAmount = amountFormate((BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT"),
-							PennantConstants.defaultCCYDecPos);
+					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
+					disbAmount = disbAmount.divide(new BigDecimal(100));
 					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {

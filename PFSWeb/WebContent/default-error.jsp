@@ -1,6 +1,6 @@
 <html>
 <head>
-<link rel="shortcut icon" href="./images/icons/Favicon.png" />
+<?link rel="shortcut icon" type="image/x-icon" href="/images/icons/Favicon.png" cacheable="false" language="xul/html" zscriptLanguage="Java"?>
 <title>pennApps Product Suite</title>
 <style>
 p, li, a {

@@ -3843,7 +3843,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_OverDraftFinanceTypeDialog_LPPRULE.value"), null, true, true));
 		}
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ) && this.tDSApplicable.isChecked() && !this.tdsApplicableTo.isDisabled()) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LOWER_TAX_DED_REQ) && this.tDSApplicable.isChecked()
+				&& !this.tdsApplicableTo.isDisabled()) {
 			this.tdsApplicableTo.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinanceTypeDialog_tdsApplicableTo.value"), null, true));
 		}
@@ -4290,8 +4291,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.endDate.setDisabled(true);
 		}
 
-		this.label_FinanceTypeDialog_EqualRepayment.setVisible(false);
-		this.equalRepayment.setVisible(false);
 		readOnlyComponent(isCompReadonly, this.profitCenter);
 
 		if (isWorkFlowEnabled()) {

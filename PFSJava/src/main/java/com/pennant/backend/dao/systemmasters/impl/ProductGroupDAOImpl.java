@@ -34,13 +34,13 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into ProductGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(" (productGroupId, modelId, productCategoryId, active, channel, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" (productGroupId, modelId, productCategoryId, active, channel ");
+		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(" , RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :productGroupId, :modelId, :productCategoryId, :active, :channel, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :productGroupId, :modelId, :productCategoryId, :active, :channel,");
+		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId");
+		sql.append(" , :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (productGroup.getId() <= 0) {
@@ -68,11 +68,10 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update ProductGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"  set modelId = :modelId, channel = :channel, active = :active, productCategoryId=:productCategoryId, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set modelId = :modelId, channel = :channel, active = :active");
+		sql.append(" , productCategoryId=:productCategoryId, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus");
+		sql.append(" , RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId");
+		sql.append(" , NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where productGroupId = :productGroupId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -127,10 +126,9 @@ public class ProductGroupDAOImpl extends SequenceDao<ProductGroup> implements Pr
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" productGroupId, modelId, channel, productcategoryid, active,");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" productGroupId, modelId, channel, productcategoryid, active");
+		sql.append(" , Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(" , RecordType, WorkflowId");
 		sql.append(" From ProductGroup");
 		sql.append(type);
 		if (type.contains("View")) {

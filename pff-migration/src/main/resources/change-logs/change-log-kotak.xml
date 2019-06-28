@@ -82,4 +82,29 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="6" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='VALIDATION_REQ_NEXT_REPAYMENT_DATE';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="7" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='RESET_FREQUENCY_DATES_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='FRQ_DATE_VALIDATION_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

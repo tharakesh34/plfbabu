@@ -34,13 +34,13 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into CD_DealerGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(" (dealerGroupId, dealerCode, dealerCategoryId, active, channel, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" (dealerGroupId, dealerCode, dealerCategoryId, active, channel");
+		sql.append(" , Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(" , RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :dealerGroupId, :dealerCode, :dealerCategoryId, :active, :channel, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" :dealerGroupId, :dealerCode, :dealerCategoryId, :active, :channel");
+		sql.append(" , :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
+		sql.append(" , :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (dealerGroup.getId() <= 0) {
@@ -68,11 +68,10 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update CD_DealerGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"  set dealerCode = :dealerCode, channel = :channel, active = :active, dealerCategoryId=:dealerCategoryId, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append("  set dealerCode = :dealerCode, channel = :channel, active = :active");
+		sql.append(" , dealerCategoryId=:dealerCategoryId, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus");
+		sql.append(" , RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		sql.append(" , RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where dealerGroupId = :dealerGroupId ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 

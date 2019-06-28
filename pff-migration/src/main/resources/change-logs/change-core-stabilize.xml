@@ -211,19 +211,19 @@
 			select deps_restore_dependencies('plf','income_details');
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8.2_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			select deps_save_and_drop_dependencies('plf','income_details');
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8.2" author="murthy.y" dbms="postgresql">
 		<modifyDataType tableName="income_details" columnName="incomeType" newDataType="citext" />
 		<modifyDataType tableName="income_details" columnName="incomeExpense" newDataType="citext" />
 		<modifyDataType tableName="income_details" columnName="category" newDataType="citext" />
 	</changeSet>
-	
+
 	<changeSet id="8.2_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			select deps_restore_dependencies('plf','income_details');

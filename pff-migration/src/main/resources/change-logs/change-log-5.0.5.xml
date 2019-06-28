@@ -4707,4 +4707,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet author="Sai krishna.P" id="128">
+		<sql>
+			<![CDATA[
+				update RBFieldDetails set RBModule = 'SUBHEAD', RBEvent = 'SUBHEAD' where RBModule = 'STGRULE' and RBEvent = 'STGRULE' and rbfldname = 'ae_bpiToAdvInt';
+	        ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

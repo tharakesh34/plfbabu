@@ -42,12 +42,13 @@ public interface CreateFinanceSoapService {
 	FinanceInquiry getPendingFinanceWithCustomer(@WebParam(name = "cif") String custCif) throws ServiceException;
 
 	@WebResult(name = "finance")
-	WSReturnStatus cancelFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
+	FinanceDetail cancelFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finance")
 	FinanceDetail reInitiateFinance(@WebParam(name = "finance") FinanceDetail financeDetail) throws ServiceException;
 
 	@WebResult(name = "finance")
-	WSReturnStatus moveLoanStage(@WebParam(name = "finance") MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;
+	WSReturnStatus moveLoanStage(@WebParam(name = "finance") MoveLoanStageRequest moveLoanStageRequest)
+			throws ServiceException;
 
 }

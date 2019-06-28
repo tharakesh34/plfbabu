@@ -65,6 +65,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
@@ -242,7 +243,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.referenceId.setMandatoryStyle(true);
 		this.referenceId.setDescColumn("BalanceAmt");
 		this.referenceId.setValue("", "");
-
+		this.referenceId.setValueType(DataType.LONG);
 		Filter filter[] = new Filter[2];
 		filter[0] = new Filter("FinReference", this.finReference.getValue(), Filter.OP_EQUAL);
 		filter[1] = new Filter("BalanceAmt", BigDecimal.ZERO, Filter.OP_GREATER_THAN);
@@ -290,6 +291,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.tranBranch.setMandatoryStyle(true);
 		this.tranBranch.setTextBoxWidth(155);
 		this.tranBranch.setReadonly(false);
+		this.referenceId.setValueType(DataType.LONG);
 		this.tranBranch.setModuleName("Branch");
 		this.tranBranch.setValueColumn("BranchCode");
 		this.tranBranch.setDescColumn("BranchDesc");
@@ -363,9 +365,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		
+
 		//if (isForeClosure) {
-			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
+		this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
 		//}
 
 	}
@@ -469,7 +471,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 						.getErrorDetail(receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().get(0)));
 				return;
 			}
-			
+
 			doShowDialog();
 		}
 		logger.debug("Leaving " + event.toString());
@@ -501,13 +503,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				.subtract(receiptData.getExcessAvailable());
 
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
-		
+
 		this.receiptDues.setDisabled(true);
 		this.btnProceed.setDisabled(false);
 		this.btnValidate.setDisabled(true);
 		this.receiptAmount.setProperties(true, PennantConstants.defaultCCYDecPos);
 	}
-
 
 	public Customer fetchCustomerDataByCIF() {
 
@@ -870,10 +871,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" })));
 				}
-				
+
 				if ("EarlySettlement".equals(this.receiptPurpose.getSelectedItem().getValue())) {
 					if (this.receiptDues.getValidateValue().compareTo(this.receiptAmount.getValidateValue()) > 0) {
-						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(), "Receipt Amount should greater than or equal to Receipt Dues."));
+						wve.add(new WrongValueException(this.receiptAmount.getCcyTextBox(),
+								"Receipt Amount should greater than or equal to Receipt Dues."));
 					}
 				}
 
@@ -881,8 +883,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
-		
+
 		validateBasicReceiptDate();
 
 		doRemoveValidation();
@@ -941,7 +942,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
 			MessageUtil.showError(Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Receipt Amount" }));
 		}
-		
+
 		if (isKnockOff) {
 			BigDecimal availableAmount = BigDecimal.ZERO;
 

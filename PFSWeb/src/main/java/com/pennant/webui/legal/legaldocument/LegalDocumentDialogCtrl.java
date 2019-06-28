@@ -433,17 +433,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			if (aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_WORD)
 					|| aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
-				Html ageementLink = new Html();
-				ageementLink.setStyle("padding:10px;");
-				ageementLink.setContent(
-						"<a href='' style = 'font-weight:bold'>" + aLegalDocument.getDocumentName() + "</a> ");
-
-				List<Object> list = new ArrayList<Object>();
-				list.add(aLegalDocument.getUploadDocumentType());
-				list.add(aLegalDocument.getDocImage());
-
-				ageementLink.addForward("onClick", window_LegalDocumentDialog, "onDocumentClicked", list);
-				this.docDiv.appendChild(ageementLink);
+				this.docDiv.appendChild(
+						getDocumentLink(aLegalDocument.getDocumentName(), aLegalDocument.getUploadDocumentType(),
+								this.documentName.getValue(), aLegalDocument.getDocImage()));
 			} else {
 				amedia = new AMedia(aLegalDocument.getDocumentName(), null, null, aLegalDocument.getDocImage());
 			}
@@ -972,15 +964,7 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
 					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
-				Html ageementLink = new Html();
-				ageementLink.setStyle("padding:10px;");
-				ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
-
-				List<Object> list = new ArrayList<Object>();
-				list.add(docType);
-				list.add(ddaImageData);
-				ageementLink.addForward("onClick", window_LegalDocumentDialog, "onDocumentClicked", list);
-				this.docDiv.appendChild(ageementLink);
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
 			}
 
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
@@ -1012,19 +996,6 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 			logger.error("Exception: ", ex);
 		}
 		logger.debug("Leaving");
-	}
-
-	public void onDocumentClicked(Event event) throws Exception {
-		@SuppressWarnings("unchecked")
-		List<Object> list = (List<Object>) event.getData();
-		String docType = (String) list.get(0);
-		byte[] ddaImageData = (byte[]) list.get(1);
-
-		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(ddaImageData, "application/msword", this.documentName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documentName.getValue());
-		}
 	}
 
 	/**

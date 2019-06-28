@@ -6814,12 +6814,14 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							new String[] {}));
 				}
 
-				if (this.nextRepayPftDate_two.getValue() != null) {
-					if (this.nextRepayCpzDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
-						errorList.add(new ErrorDetail("nextRepayCpzDate_two", "30528",
-								new String[] { PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
-										PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
-								new String[] {}));
+				if (SysParamUtil.isAllowed("VALIDATION_REQ_NEXT_REPAYMENT_DATE")) {
+					if (this.nextRepayPftDate_two.getValue() != null) {
+						if (this.nextRepayCpzDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
+							errorList.add(new ErrorDetail("nextRepayCpzDate_two", "30528",
+									new String[] { PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
+											PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
+									new String[] {}));
+						}
 					}
 				}
 			}
@@ -6890,7 +6892,9 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (this.finRepayPftOnFrq.isChecked()) {
+			boolean isFrqDateValReq = SysParamUtil.isAllowed("FRQ_DATE_VALIDATION_REQ");
+
+			if (this.finRepayPftOnFrq.isChecked() && isFrqDateValReq) {
 				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(),
 						this.repayFrq.getValue());
 				if (StringUtils.isNotBlank(errorCode)) {

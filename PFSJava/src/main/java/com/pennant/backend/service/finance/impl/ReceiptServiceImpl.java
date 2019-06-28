@@ -2356,8 +2356,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		
-		
+		// Validation For Received Date except Reject Case
+		// PSD : 137382 
+		/*
+		 * if (!StringUtils.equals(method, PennantConstants.method_doReject)) { boolean isPresentment = false;
+		 * List<FinReceiptDetail> ReceiptDetailList = repayData.getReceiptHeader().getReceiptDetails(); Date
+		 * receivedDate = DateUtility.getAppDate(); for (FinReceiptDetail receiptDetail : ReceiptDetailList) { if
+		 * (StringUtils.equals(repayData.getReceiptHeader().getReceiptMode(), receiptDetail.getPaymentType())) { if
+		 * (RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptDetail.getPaymentType())) { isPresentment = true; }
+		 * receivedDate = receiptDetail.getReceivedDate(); } }
+		 * 
+		 * if (!isPresentment) { Date prvMaxReceivedDate = getMaxReceiptDate(finReceiptHeader.getReference()); if
+		 * (prvMaxReceivedDate != null && receivedDate != null) { if (DateUtility.compare(prvMaxReceivedDate,
+		 * receivedDate) > 0) { valueParm[0] = DateUtil.formatToLongDate(prvMaxReceivedDate); errParm[0] = valueParm[0];
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "60211",
+		 * errParm, valueParm), usrLanguage)); } } } }
+		 */
+
 		// Validation For Received Date except Reject Case
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)) {
 			List<FinReceiptDetail> receiptDetailList = repayData.getReceiptHeader().getReceiptDetails();

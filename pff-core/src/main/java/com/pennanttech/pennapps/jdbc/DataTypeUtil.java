@@ -11,6 +11,9 @@
  */
 package com.pennanttech.pennapps.jdbc;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -55,5 +58,31 @@ public final class DataTypeUtil {
 		} else {
 			return value;
 		}
+	}
+
+	public static Object getValueAsObject(String fieldName, String value, Class<?> clazz) {
+		value = StringUtils.trimToNull(value);
+
+		if (value == null) {
+			return null;
+		}
+
+		Field[] fields = clazz.getDeclaredFields();
+
+		for (Field field : fields) {
+			if (StringUtils.equalsIgnoreCase(fieldName, field.getName())) {
+				String fieldType = field.getType().getSimpleName();
+				if (DataType.valueOf(fieldType.toUpperCase()) == DataType.BIGDECIMAL && StringUtils.isNumeric(value)) {
+					return new BigDecimal(value);
+				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.LONG && StringUtils.isNumeric(value)) {
+					return Long.parseLong(value);
+				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.INT && StringUtils.isNumeric(value)) {
+					return Integer.parseInt(value);
+				}
+				break;
+			}
+		}
+
+		return null;
 	}
 }

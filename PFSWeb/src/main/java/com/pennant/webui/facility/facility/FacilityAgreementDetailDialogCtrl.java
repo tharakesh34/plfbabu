@@ -284,8 +284,8 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 		listCell.setParent(item);
 		listCell = new Listcell();
 		Html ageementLink = new Html();
-		ageementLink.setContent(
-				"<a href='' style = 'font-weight:bold'>" + financeReferenceDetail.getLovDescAggReportName() + "</a> ");
+		ageementLink.setContent("<a href='javascript:;' style = 'font-weight:bold'>"
+				+ financeReferenceDetail.getLovDescAggReportName() + "</a> ");
 		listCell.appendChild(ageementLink);
 		listCell.setParent(item);
 		listbox.appendChild(item);

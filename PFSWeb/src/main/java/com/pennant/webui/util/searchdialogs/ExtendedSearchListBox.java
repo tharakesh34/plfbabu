@@ -841,8 +841,11 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 				} else {
 					searchFilters.add(getSearchFilter(field, value, DataType.STRING));
 				}
-
 				valueColumnAdded = true;
+				break;
+
+			} else if (valueType == DataType.LONG) {
+				searchFilters.add(getSearchFilter(field, value, valueType));
 			} else {
 				searchFilters.add(getSearchFilter(field, value, DataType.STRING));
 			}
@@ -875,8 +878,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		if (type == DataType.STRING) {
 			return new Filter(field, "%" + value + "%", Filter.OP_LIKE);
 		} else {
-			return new Filter(field, DataTypeUtil.getValueAsObject(value, type), Filter.OP_EQUAL);
+			return new Filter(field, getValueAsObject(field, value, type), Filter.OP_EQUAL);
 		}
+	}
+
+	private Object getValueAsObject(String field, String value, DataType type) {
+		return DataTypeUtil.getValueAsObject(field, value, getModuleMapping().getModuleClass());
 	}
 
 	private Object invokeMethod(String methodName, Object object) {

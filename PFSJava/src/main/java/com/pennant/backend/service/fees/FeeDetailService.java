@@ -323,7 +323,6 @@ public class FeeDetailService {
 			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
 				disbursement.setDeductFromDisb(deductFromDisbursement);
 			}
-			 
 
 			//disbursement.setDeductFromDisb(deductFromDisbursement);
 		}

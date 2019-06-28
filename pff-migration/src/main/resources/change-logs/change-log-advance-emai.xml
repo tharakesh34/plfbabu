@@ -191,18 +191,25 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq"
+			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms"
+			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms"
+			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms"
+			columnDataType="int" />
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq"
+			columnDataType="boolean" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" columnDataType="int" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms"
+			columnDataType="int" />
 
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq"
+			columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
@@ -3531,7 +3538,7 @@
 			<column name="SchDate" type="datetime"></column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="23" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -3546,5 +3553,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>

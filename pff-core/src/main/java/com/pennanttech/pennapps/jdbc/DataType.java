@@ -15,5 +15,5 @@ package com.pennanttech.pennapps.jdbc;
  * Enumerates the types that were used in the application.
  */
 public enum DataType {
-	LONG, STRING;
+	LONG, STRING, BIGDECIMAL, INT;
 }

@@ -90,6 +90,8 @@ public class MailTemplate extends AbstractWorkflowEntity {
 	private List<String> emailIds = new ArrayList<>();
 	private List<String> mobileNumbers = new ArrayList<>();
 	private Map<String, byte[]> attchments = new HashMap<>();
+	
+	private String notificationData;
 
 	public MailTemplate() {
 		super();
@@ -111,6 +113,7 @@ public class MailTemplate extends AbstractWorkflowEntity {
 		excludeFields.add("mobileNumbers");
 		excludeFields.add("attchments");
 		excludeFields.add("emailFormatName");
+		excludeFields.add("notificationData");
 
 		return excludeFields;
 	}
@@ -349,5 +352,13 @@ public class MailTemplate extends AbstractWorkflowEntity {
 
 	public void setEvent(String event) {
 		this.event = event;
+	}
+
+	public String getNotificationData() {
+		return notificationData;
+	}
+
+	public void setNotificationData(String notificationData) {
+		this.notificationData = notificationData;
 	}
 }

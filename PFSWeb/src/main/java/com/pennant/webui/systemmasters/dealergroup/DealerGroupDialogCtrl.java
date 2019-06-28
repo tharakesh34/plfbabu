@@ -184,7 +184,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		logger.debug(Literal.ENTERING);
 
 		this.txtchannel.setMaxlength(20);
-
+		this.dealerCode.setMaxlength(8);
 		this.dealerCategory.setModuleName("Category");
 		this.dealerCategory.setMandatoryStyle(true);
 
@@ -195,7 +195,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 	public void onFulfill$dealerCategory(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
-
+		onfullfillDealerCategory();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -267,10 +267,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
-		LovFieldDetail lovFieldDetail = new LovFieldDetail();
-		lovFieldDetail.setFieldCodeId(Long.valueOf(aDealerGroup.getDealerCategoryId()));
-		this.dealerCategory.setObject(lovFieldDetail);
-		this.dealerCategory.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()), lovFieldDetail.getValueDesc());
+		if (aDealerGroup.getDealerCategoryId() != null) {
+			LovFieldDetail lovFieldDetail = new LovFieldDetail();
+			lovFieldDetail.setFieldCodeId(Long.valueOf(aDealerGroup.getDealerCategoryId()));
+			this.dealerCategory.setObject(lovFieldDetail);
+			this.dealerCategory.setValue(String.valueOf(lovFieldDetail.getFieldCodeId()),
+					lovFieldDetail.getValueDesc());
+		}
 		this.recordStatus.setValue(aDealerGroup.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -288,7 +291,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
-		//Code
+		// Code
 		try {
 			if (!this.dealerCode.getValue().equals("")) {
 				aDealerGroup.setDealerCode(this.dealerCode.getValue());
@@ -296,13 +299,13 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//Chaneel
+		// Chaneel
 		try {
 			aDealerGroup.setChannel(this.txtchannel.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//dealer category
+		// dealer category
 		try {
 			this.dealerCategory.getValidatedValue();
 			aDealerGroup.setDealerCategoryId(this.dealerCategory.getValue());
@@ -310,7 +313,7 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 			wve.add(we);
 		}
 
-		//cative
+		// cative
 		try {
 			aDealerGroup.setActive(this.active.isChecked());
 		} catch (WrongValueException we) {
@@ -382,9 +385,9 @@ public class DealerGroupDialogCtrl extends GFCBaseCtrl<DealerGroup> {
 	private void doSetLOVValidation() {
 		logger.debug(Literal.LEAVING);
 
-		//id
-		//Name
-		//Segmentation
+		// id
+		// Name
+		// Segmentation
 
 		logger.debug(Literal.LEAVING);
 	}

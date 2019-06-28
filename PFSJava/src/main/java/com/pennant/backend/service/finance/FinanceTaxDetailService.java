@@ -47,6 +47,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -85,4 +86,7 @@ public interface FinanceTaxDetailService {
 	List<ErrorDetail> verifyCoApplicantDetails(FinanceTaxDetail financeTaxDetail);
 
 	int getFinanceTaxDetailsByCount(String finReference);
+
+	CustomerAddres getHighPriorityCustAddr(long id);
+
 }

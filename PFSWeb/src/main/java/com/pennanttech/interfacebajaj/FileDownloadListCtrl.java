@@ -98,6 +98,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	protected Button btnRefresh;
 	protected Listheader listheader_FirstHeader;
 	private Button downlaod;
+	protected Listheader listheader_ProcessedDate;
 
 	@Autowired
 	protected DataEngineConfig dataEngineConfig;

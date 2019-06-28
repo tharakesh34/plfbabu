@@ -272,8 +272,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		amountCodes.setPriAdjusted(curSchd.getSchdPriPaid());
 		amountCodes.setIntAdjusted(curSchd.getSchdPftPaid());
 		amountCodes.setIntTdsAdjusted(curSchd.getTDSPaid());
-		if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
-				&& StringUtils.equals(fm.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)) {
+		if (FinanceConstants.FLAG_BPI.equals(curSchd.getBpiOrHoliday())
+				&& FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment())) {
 			if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
 				amountCodes.setIntTdsAdjusted(BigDecimal.ZERO);
 			}
@@ -823,14 +823,19 @@ public class AdvancePaymentService extends ServiceHelper {
 	/**
 	 * Method for Creating Excess Amount record for the BPI processing Amount Movement.
 	 * 
-	 * @param finReference
-	 * @param tdsApplicable
-	 * @param pftSchd
-	 * @param tdsAmount
+	 * @param finScheduleData
+	 * @param curSchd
 	 */
-	public void processBpiAmount(String finReference, boolean tdsApplicable, BigDecimal pftSchd, BigDecimal tdsAmount) {
-		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
-				RepayConstants.EXAMOUNTTYPE_ADVINT);
+	public void processBpiAmount(FinScheduleData finScheduleData, FinanceScheduleDetail curSchd) {
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+		String finReference = financeMain.getFinReference();
+		boolean tdsApplicable = financeMain.isTDSApplicable();
+		BigDecimal pftSchd = curSchd.getProfitSchd();
+		BigDecimal tdsAmount = curSchd.getTDSAmount();
+		String amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
+
+		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
 
 		BigDecimal bpiAmt = pftSchd;
 		if (tdsApplicable && !SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {

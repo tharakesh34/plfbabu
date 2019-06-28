@@ -317,7 +317,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrPwd.setMaxlength(pwdMaxLenght);
 		this.usrPwd.addEventListener("onChanging", new OnChanging());
 		this.usrConfirmPwd.setMaxlength(pwdMaxLenght);
-		this.userStaffID.setMaxlength(8);
+		this.userStaffID.setMaxlength(9);
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
 		this.usrLName.setMaxlength(50);

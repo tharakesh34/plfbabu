@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -51,6 +52,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -65,6 +67,7 @@ import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -997,6 +1000,15 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		}
 
 		// Document Details Saving
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.FI_DOCUMENT_MANDATORY)
+				&& this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("submit")) {
+			if (documentDetailDialogCtrl != null
+					&& CollectionUtils.sizeIsEmpty(documentDetailDialogCtrl.getDocumentDetailsList())) {
+				MessageUtil.showError(Labels.getLabel("FI_DOCUMENT_MANDATORY"));
+				return;
+			}
+		}
 
 		if (documentDetailDialogCtrl != null) {
 			fi.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());

@@ -51,7 +51,7 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 	private Configuration config;
 
 	private DataEngineStatus dataEngineStatus = new DataEngineStatus(PennantConstants.COLLATERAL_VALUE_UPDATE);
-	
+
 	private static final String COLLETARAL_VALUE_UPDATE = "COLLETARAL_VALUE_UPDATE";
 
 	@Autowired(required = false)
@@ -160,9 +160,9 @@ public class CommodityFileUploadCtrl extends GFCBaseCtrl<Configuration> {
 			ValueLabel valueLabel = new ValueLabel(COLLETARAL_VALUE_UPDATE, "Colletaral Value Update");
 			menuList.add(valueLabel);
 		}
-		
+
 		doFillPanel(config, dataEngineStatus);
-		
+
 	}
 
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {

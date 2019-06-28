@@ -149,19 +149,23 @@ public class SummaryDetailService {
 			// calculate OD Details
 			BigDecimal overDuePrincipal = BigDecimal.ZERO;
 			BigDecimal overDueProfit = BigDecimal.ZERO;
+			BigDecimal overDueCharges = BigDecimal.ZERO;
 			int odInst = 0;
 			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
 			if (finODDetailsList != null) {
 				for (FinODDetails odDetail : finODDetailsList) {
 					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
 					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+					overDueCharges = overDueCharges.add(odDetail.getTotPenaltyAmt());
 					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
 						odInst++;
 					}
 				}
 				summary.setOverDuePrincipal(overDuePrincipal);
 				summary.setOverDueProfit(overDueProfit);
+				summary.setOverDueCharges(overDueCharges);
 				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
+				summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getOverDueCharges()));
 				summary.setFinODDetail(finODDetailsList);
 				summary.setOverDueInstlments(odInst);
 

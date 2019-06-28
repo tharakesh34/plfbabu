@@ -8,8 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.backend.dao.administration.SecurityUserDAO;
@@ -77,20 +75,21 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 	private void updateCollateralValues(List<? extends CollateralRevaluation> items) {
 		for (CollateralRevaluation collateralDetail : items) {
-
-			StringBuilder sql = new StringBuilder();
-			sql.append(" update ");
-			sql.append(collateralDetail.getTableName());
-			sql.append(" set UnitPrice =:MarketValue where Reference =:CollateralRef");
-
-			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(collateralDetail);
-			try {
-				jdbcTemplate.update(sql.toString(), paramSource);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
+			updateUnitPriceData(collateralDetail.getCollHSNData(), collateralDetail.getTableName());
 		}
+	}
 
+	private void updateUnitPriceData(List<? extends CollateralRevaluation> hsnData, String tableName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" update ");
+		sql.append(tableName);
+		sql.append(" set UnitPrice = :unitPrice where Reference = :collateralRef And HSNCode = :hsnCode");
+
+		try {
+			jdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(hsnData.toArray()));
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 	}
 
 	private void updateCollateralSetup(List<? extends CollateralRevaluation> items) {
@@ -109,59 +108,62 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 	}
 
 	private void sendAlert(CollateralRevaluation collateral) {
-		FinanceDetail financeDetail = new FinanceDetail();
-		CustomerDetails customerDetails = new CustomerDetails();
+		for (CollateralRevaluation hsnData : collateral.getCollHSNData()) {
+			FinanceDetail financeDetail = new FinanceDetail();
+			CustomerDetails customerDetails = new CustomerDetails();
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(collateral.getFinReference(), "_aview", false);
-		financeMain.setUserDetails(new LoggedInUser());
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(collateral.getFinReference(), "_aview", false);
+			financeMain.setUserDetails(new LoggedInUser());
 
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-		financeDetail.setCollateralRevaluation(collateral);
-		financeDetail.setCustomerDetails(customerDetails);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			financeDetail.setCollateralRevaluation(collateral);
+			financeDetail.setCustomerDetails(customerDetails);
 
-		customerDetails.setCustID(financeMain.getCustID());
-		customerDetailsService.setCustomerBasicDetails(customerDetails);
+			customerDetails.setCustID(financeMain.getCustID());
+			customerDetailsService.setCustomerBasicDetails(customerDetails);
 
-		if (collateral.getCustomerTemplateCode() != null) {
-			Notification notification = new Notification();
-			notification.setKeyReference(collateral.getFinReference());
-			notification.setModule("LOAN");
-			notification.setSubModule("Collateral");
-			notification.setTemplateCode(collateral.getUserTemplateCode());
+			if (hsnData.getCustomerTemplateCode() != null) {
+				Notification notification = new Notification();
+				notification.setKeyReference(collateral.getFinReference());
+				notification.setModule("LOAN");
+				notification.setSubModule("Collateral");
+				notification.setTemplateCode(hsnData.getUserTemplateCode());
 
-			List<String> emails = new ArrayList<>();
+				List<String> emails = new ArrayList<>();
 
-			for (CustomerEMail customerEmail : customerDetails.getCustomerEMailList()) {
-				if (customerEmail.getCustEMailPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					if (StringUtils.isNotEmpty(customerEmail.getCustEMail())) {
-						emails.add(customerEmail.getCustEMail());
+				for (CustomerEMail customerEmail : customerDetails.getCustomerEMailList()) {
+					if (customerEmail.getCustEMailPriority() == Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						if (StringUtils.isNotEmpty(customerEmail.getCustEMail())) {
+							emails.add(customerEmail.getCustEMail());
+						}
 					}
 				}
-			}
 
-			notification.setEmails(emails);
-			sendNotification(financeDetail, notification);
+				notification.setEmails(emails);
+				sendNotification(financeDetail, notification);
 
-		} else if (collateral.getUserTemplateCode() != null && collateral.getAlertToRoles() != null) {
-			Notification notification = new Notification();
-			notification.setKeyReference(collateral.getFinReference());
-			notification.setModule("LOAN");
-			notification.setSubModule("Collateral");
-			notification.setTemplateCode(collateral.getUserTemplateCode());
+			} else if (hsnData.getUserTemplateCode() != null && hsnData.getAlertToRoles() != null) {
+				Notification notification = new Notification();
+				notification.setKeyReference(collateral.getFinReference());
+				notification.setModule("LOAN");
+				notification.setSubModule("Collateral");
+				notification.setTemplateCode(hsnData.getUserTemplateCode());
 
-			List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(collateral.getAlertToRoles().split(","));
+				List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(hsnData.getAlertToRoles().split(","));
 
-			List<String> emails = new ArrayList<>();
-			for (SecurityUser securityUser : secUsers) {
-				if (StringUtils.isNotEmpty(securityUser.getUsrEmail())) {
-					emails.add(securityUser.getUsrEmail());
+				List<String> emails = new ArrayList<>();
+				for (SecurityUser securityUser : secUsers) {
+					if (StringUtils.isNotEmpty(securityUser.getUsrEmail())) {
+						emails.add(securityUser.getUsrEmail());
+					}
 				}
+
+				notification.setEmails(emails);
+
+				sendNotification(financeDetail, notification);
+
 			}
-
-			notification.setEmails(emails);
-
-			sendNotification(financeDetail, notification);
-
 		}
 	}
 

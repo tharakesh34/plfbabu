@@ -3943,12 +3943,14 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							new String[] {}));
 				}
 
-				if (this.nextRepayPftDate_two.getValue() != null) {
-					if (this.nextRepayCpzDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
-						errorList.add(new ErrorDetail("nextRepayCpzDate_two", "30528",
-								new String[] { PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
-										PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
-								new String[] {}));
+				if (SysParamUtil.isAllowed("VALIDATION_REQ_NEXT_REPAYMENT_DATE")) {
+					if (this.nextRepayPftDate_two.getValue() != null) {
+						if (this.nextRepayCpzDate_two.getValue().before(this.nextRepayPftDate_two.getValue())) {
+							errorList.add(new ErrorDetail("nextRepayCpzDate_two", "30528",
+									new String[] { PennantAppUtil.formateDate(this.nextRepayCpzDate_two.getValue(), ""),
+											PennantAppUtil.formateDate(this.nextRepayPftDate_two.getValue(), "") },
+									new String[] {}));
+						}
 					}
 				}
 			}
@@ -4079,7 +4081,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			if (this.finRepayPftOnFrq.isChecked()) {
+			boolean isFrqDateValReq = SysParamUtil.isAllowed("FRQ_DATE_VALIDATION_REQ");
+			if (this.finRepayPftOnFrq.isChecked() && isFrqDateValReq) {
+
 				String errorCode = FrequencyUtil.validateFrequencies(this.repayPftFrq.getValue(),
 						this.repayFrq.getValue());
 				if (StringUtils.isNotBlank(errorCode)) {
@@ -4188,6 +4192,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
+
+		boolean isFrqDateValReq = SysParamUtil.isAllowed("FRQ_DATE_VALIDATION_REQ");
 
 		//FinanceMain Detail Tab ---> 1. Basic Details
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
@@ -4681,7 +4687,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 								DateUtility.format(this.nextGrcPftDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
-					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcPftDate.getValue() != null
+					if (isFrqDateValReq && this.nextGrcPftDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.gracePftFrq.getValue(), this.nextGrcPftDate.getValue())) {
 						throw new WrongValueException(this.nextGrcPftDate,
 								Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -4712,9 +4718,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 								.format(this.nextGrcPftRvwDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
-					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcPftRvwDate.getValue() != null
-							&& !FrequencyUtil.isFrqDate(this.gracePftRvwFrq.getValue(),
-									this.nextGrcPftRvwDate.getValue())) {
+					if (isFrqDateValReq && this.nextGrcPftRvwDate.getValue() != null && !FrequencyUtil
+							.isFrqDate(this.gracePftRvwFrq.getValue(), this.nextGrcPftRvwDate.getValue())) {
 						throw new WrongValueException(this.nextGrcPftRvwDate,
 								Labels.getLabel("FRQ_DATE_MISMATCH",
 										new String[] {
@@ -4748,7 +4753,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 								DateUtility.format(this.nextGrcCpzDate_two.getValue(), PennantConstants.dateFormat)));
 					}
 					//Validation Against the Repay Frequency and the next Frequency Date
-					if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextGrcCpzDate.getValue() != null
+					if (isFrqDateValReq && this.nextGrcCpzDate.getValue() != null
 							&& !FrequencyUtil.isFrqDate(this.graceCpzFrq.getValue(), this.nextGrcCpzDate.getValue())) {
 						throw new WrongValueException(this.nextGrcCpzDate,
 								Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -4950,7 +4955,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							DateUtility.format(this.nextRepayPftDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
-				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayPftDate.getValue() != null
+				if (isFrqDateValReq && this.nextRepayPftDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayPftFrq.getValue(), this.nextRepayPftDate.getValue())) {
 					throw new WrongValueException(this.nextRepayPftDate,
 							Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -4987,7 +4992,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							DateUtility.format(this.nextRepayRvwDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
-				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayRvwDate.getValue() != null
+				if (isFrqDateValReq && this.nextRepayRvwDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayRvwFrq.getValue(), this.nextRepayRvwDate.getValue())) {
 					throw new WrongValueException(this.nextRepayRvwDate,
 							Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -5018,7 +5023,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							DateUtility.format(this.nextRepayCpzDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
-				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayCpzDate.getValue() != null
+				if (isFrqDateValReq && this.nextRepayCpzDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayCpzFrq.getValue(), this.nextRepayCpzDate.getValue())) {
 					throw new WrongValueException(this.nextRepayCpzDate,
 							Labels.getLabel("FRQ_DATE_MISMATCH",
@@ -5065,7 +5070,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 							DateUtility.format(this.nextRepayDate_two.getValue(), PennantConstants.dateFormat)));
 				}
 				//Validation Against the Repay Frequency and the next Frequency Date
-				if (ImplementationConstants.FRQ_DATE_VALIDATION && this.nextRepayDate.getValue() != null
+				if (isFrqDateValReq && this.nextRepayDate.getValue() != null
 						&& !FrequencyUtil.isFrqDate(this.repayFrq.getValue(), this.nextRepayDate.getValue())) {
 					throw new WrongValueException(this.nextRepayDate,
 							Labels.getLabel("FRQ_DATE_MISMATCH",

@@ -3086,7 +3086,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="40" author="Vidhya">
+	<changeSet id="40" author="Vidhya">
 		<createView viewName="SECUSERS_VIEW" replaceIfExists="true">
 	 		SELECT T1.USRID,
 			  T1.USRLOGIN,
@@ -3203,7 +3203,7 @@
 			  ( SELECT 1 FROM SECUSERS_TEMP WHERE (SECUSERS_TEMP.USRID = T1.USRID)
 			  )))
 	  	</createView>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="41" author="Vidhya">
 		<createView viewName="SECUSERS_AVIEW" replaceIfExists="true">
@@ -4319,8 +4319,8 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="54.2" author="satyanarayana.g"> <addForeignKeyConstraint constraintName="FK_FEM_RID_FRH_RID" referencedTableName="FINRECEIPTHEADER" 
-		baseColumnNames="ReceiptID" baseTableName="FinExcessMovement" referencedColumnNames="ReceiptID"/> </changeSet> 
+	<!-- <changeSet id="54.2" author="satyanarayana.g"> <addForeignKeyConstraint constraintName="FK_FEM_RID_FRH_RID" referencedTableName="FINRECEIPTHEADER" 
+		baseColumnNames="ReceiptID" baseTableName="FinExcessMovement" referencedColumnNames="ReceiptID"/> </changeSet> -->
 
 	<changeSet id="55" author="satyanarayana.g">
 		<sql>
@@ -4454,7 +4454,7 @@
 		</createView>
 	</changeSet>
 
-	 <changeSet id="59" author="satyanarayana.g">
+	<changeSet id="59" author="satyanarayana.g">
 		<createTable tableName="InstrumentwiseLimit">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" />
@@ -4481,9 +4481,9 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet>  
+	</changeSet>
 
-	 <changeSet id="59.1" author="satyanarayana.g">
+	<changeSet id="59.1" author="satyanarayana.g">
 		<createTable tableName="InstrumentwiseLimit_Temp">
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="PK_IWL_T_Id" nullable="false" />
@@ -4510,13 +4510,13 @@
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="59.2" author="satyanarayana.g">
+	<changeSet id="59.2" author="satyanarayana.g">
 		<createTable tableName="SeqInstrumentwiseLimit">
 			<column name="SeqNo" type="bigint" />
 		</createTable>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="59.3" author="satyanarayana.g">
 		<sql>
@@ -4595,7 +4595,7 @@
 		</createView>
 	</changeSet>
 
-	 <changeSet id="62" author="satyanarayana.g">
+	<changeSet id="62" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 	     	Insert into BMTREJECTCODES Values ('C1','Cancel on Request By Customer',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
@@ -4604,7 +4604,7 @@
 			Insert into BMTREJECTCODES Values ('C4','Customer not interested',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'Payment');
 	     	]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="63" author="satyanarayana.g">
 		<comment>PSD # 135348 - column is to maintain the loan status at the time of receipt approval</comment>
@@ -4615,7 +4615,7 @@
 		<addColumn tableName="FINRECEIPTHEADER_TEMP">
 			<column name="ActFinReceipt" type="NUMBER(1)" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="63.1" author="satyanarayana.g">
 		<sql>
@@ -4626,20 +4626,20 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="63.2" author="satyanarayana.g">
+	<changeSet id="63.2" author="satyanarayana.g">
 		<addNotNullConstraint tableName="FINRECEIPTHEADER" columnName="ACTFINRECEIPT" columnDataType="NUMBER(1)" />
 		<addNotNullConstraint tableName="FINRECEIPTHEADER_TEMP" columnName="ACTFINRECEIPT"
 			columnDataType="NUMBER(1)" />
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="63.3" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="63.3" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINRECEIPTHEADER ADD CONSTRAINT DF_FINRECEIPTHEADER_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
 				ALTER TABLE FINRECEIPTHEADER_TEMP ADD CONSTRAINT DF_FINREPAYHEADER_TEMP_ACTFINRECEIPT DEFAULT 1 FOR ACTFINRECEIPT;
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="63.4" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ACTFINRECEIPT" tableName="FINRECEIPTHEADER" defaultValue="1" />
@@ -5368,7 +5368,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="72" author="satyanarayana.g">
+	<changeSet id="72" author="satyanarayana.g">
 		<addColumn tableName="FinFeeDetail">
 			<column name="ActPercentage" type="smallint" />
 		</addColumn>
@@ -5376,7 +5376,7 @@
 		<addColumn tableName="FinFeeDetail_temp">
 			<column name="ActPercentage" type="smallint" />
 		</addColumn>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="72.1" author="satyanarayana.g">
 		<sql>
@@ -5387,14 +5387,14 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="72.2" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="72.2" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINFEEDETAIL ADD CONSTRAINT DF_FINFEEDETAIL_ACTPERCENTAGE DEFAULT 0 FOR ACTPERCENTAGE;
 				ALTER TABLE FINFEEDETAIL_TEMP ADD CONSTRAINT DF_FINFEEDETAIL_TEMP_ACTPERCENTAGE DEFAULT 0 FOR ACTPERCENTAGE;
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="72.3" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="ACTPERCENTAGE" tableName="FINFEEDETAIL" defaultValue="0" />
@@ -5647,7 +5647,7 @@
       	</createView>
 	</changeSet>
 
-	 <changeSet id="76" author="satyanarayana.g">
+	<changeSet id="76" author="satyanarayana.g">
 		<createTable tableName="FinReceiptQueueLog">
 			<column name="UploadId" type="bigint" />
 			<column name="ReceiptId" type="bigint" />
@@ -5659,19 +5659,19 @@
 			<column name="EndTime" type="varchar(20)" />
 			<column name="ErrorLog" type="varchar(1000)" />
 		</createTable>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="76.1" author="satyanarayana.g">
+	<changeSet id="76.1" author="satyanarayana.g">
 		<addPrimaryKey columnNames="BatchId, ReceiptId" constraintName="pk_MultiReceiptApproval" tableName="MultiReceiptApproval" />
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="77" author="satyanarayana.g">
+	<changeSet id="77" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 			   Insert into SMTPARAMETERS values ('MULTI_REC_THREAD_COUNT','Number Of Threads For MultiReceipt','int',0,'10',2,0,null,null,'Number Of Threads For MultiReceipt',1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0)
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="78_pre" author="satyanarayana.g" dbms="mssql">
 		<sql>
@@ -6853,15 +6853,14 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="40.2" author="Vidhya">
+	<changeSet id="40.1" author="Vidhya">
 		<comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
 		<sql>
 		  	 <![CDATA[
+		  	 	DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_MAKER');
 		  		DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_MAKER');
 	     	 	DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_APPROVER');
 		  		
-				DELETE FROM SECGROUPRIGHTS WHERE rightid IN (SELECT rightid FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptKnockOff');
-				
 		  		DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_MAKER');
 	      		DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_APPROVER');
 	      		
@@ -6874,7 +6873,7 @@
 	      		DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptKnockOff';
 	      	 ]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="41" author="vijaya.a">
 		<comment>Deletion of secgrouprights for receipts</comment>
@@ -6891,7 +6890,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="42_pre" author="Vidhya">
+	<changeSet id="42_pre" author="Vidhya">
 		<comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
 		<sql>
 		  	 <![CDATA[
@@ -6910,9 +6909,9 @@
 	      		DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptKnockOff';
 	      	 ]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
-	 <changeSet id="42" author="Vidhya">
+	<changeSet id="42" author="Vidhya">
 		<comment>Creation of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
 		<sql>
 		  	 <![CDATA[
@@ -6973,8 +6972,8 @@
 				UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS_VIEW);
 			 ]]>
 		</sql>
-	</changeSet>  
-	
+	</changeSet>
+
 	<changeSet id="44" author="murthy.y">
 		<createView viewName="FINRECEIPTHEADER_FVIEW" replaceIfExists="true">
 			SELECT T1.RECEIPTID,

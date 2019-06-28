@@ -4068,8 +4068,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 							// Update Amount on FinExcessAmount as Amount Type : "ADVANCE INTEREST"
 							if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
-								this.advancePaymentService.processBpiAmount(financeMain.getFinReference(),
-										financeMain.isTDSApplicable(), curSchd.getProfitSchd(), curSchd.getTDSAmount());
+								this.advancePaymentService.processBpiAmount(finScheduleData, curSchd);
 							} else {
 								// Default to PAID
 								curSchd.setSchdPftPaid(curSchd.getProfitSchd());

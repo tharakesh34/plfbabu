@@ -305,6 +305,8 @@ public class GSTCalculator {
 
 		String toStateCode = "";
 		String toCountryCode = "";
+		boolean sezCustomer = false;
+
 
 		if (taxDetail != null && StringUtils.isNotBlank(taxDetail.getApplicableFor())
 				&& !PennantConstants.List_Select.equals(taxDetail.getApplicableFor())
@@ -312,6 +314,9 @@ public class GSTCalculator {
 			toStateCode = taxDetail.getProvince();
 			toCountryCode = taxDetail.getCountry();
 			gstExempted = taxDetail.isTaxExempted();
+			if(StringUtils.isNotBlank(taxDetail.getSezCertificateNo())){
+				sezCustomer = true;
+			}
 		} else {
 			toStateCode = custState;
 			toCountryCode = custCountry;
@@ -336,6 +341,7 @@ public class GSTCalculator {
 		}
 
 		gstExecutionMap.put("gstExempted", gstExempted);
+		gstExecutionMap.put("sezCertificateNo", sezCustomer);
 
 		return gstExecutionMap;
 	}

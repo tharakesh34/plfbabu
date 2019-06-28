@@ -7145,6 +7145,7 @@
 		<property name="customerDAO" ref="customerDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
 	</bean>
 
 	<!-- CollateralStructure -->

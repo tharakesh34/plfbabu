@@ -5473,9 +5473,11 @@ public class ScheduleCalculator {
 		}
 
 		// Interest Rate Per Period
-		if (idb.equals(CalculationConstants.IDB_ACT_ISDA) || idb.equals(CalculationConstants.IDB_ACT_365FIXED)
-				|| idb.equals(CalculationConstants.IDB_ACT_365LEAPS)
-				|| idb.equals(CalculationConstants.IDB_ACT_365LEAP)) {
+		//PMT calculation Changes 19-06-2019
+		if (finMain.isEqualRepay()
+				&& (idb.equals(CalculationConstants.IDB_ACT_ISDA) || idb.equals(CalculationConstants.IDB_ACT_365FIXED)
+						|| idb.equals(CalculationConstants.IDB_ACT_365LEAPS)
+						|| idb.equals(CalculationConstants.IDB_ACT_365LEAP))) {
 			intRate = intRate.multiply(days365.divide(periods, 13, RoundingMode.HALF_DOWN));
 		} else {
 			intRate = intRate.multiply(days360.divide(periods, 13, RoundingMode.HALF_DOWN));

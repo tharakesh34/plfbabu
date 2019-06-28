@@ -6,7 +6,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Radiogroup;
@@ -54,7 +57,9 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		/* create the Button Controller. Disable not used buttons during working */
+		/*
+		 * create the Button Controller. Disable not used buttons during working
+		 */
 		this.btnCtrl = new ButtonStatusCtrl(getUserWorkspace(), "button_" + pageRightName + "_", true, this.btnNew,
 				this.btnEdit, this.btnDelete, this.btnSave, this.btnCancel, this.btnClose, this.btnNotes);
 
@@ -316,5 +321,23 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	protected A getDocumentLink(String label, final String docType, final String documentName, final byte[] content) {
+		A agreementLink = new A();
+		agreementLink.setStyle("padding:10px; font-weight:bold;");
+		agreementLink.setLabel(label);
+		agreementLink.addEventListener(Events.ON_CLICK, event -> downloadFile(docType, content, documentName));
+		return agreementLink;
+	}
+
+	public void downloadFile(String docType, byte[] content, String fileName) {
+		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
+			Filedownload.save(content, "application/msword", fileName);
+		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+			Filedownload.save(content, "application/octet-stream", fileName);
+		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+			Filedownload.save(content, "application/octet-stream", fileName);
+		}
 	}
 }

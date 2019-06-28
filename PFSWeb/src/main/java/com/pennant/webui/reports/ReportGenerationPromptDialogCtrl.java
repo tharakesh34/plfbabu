@@ -2333,18 +2333,23 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								PennantConstants.DBDateFormat);
 						toDate = DateUtility.format(DateUtility.getDate(fromDateArray[1]),
 								PennantConstants.DBDateFormat);
-					} else if (template.getFieldID() == 5) { // Invoice Type
+					} else if (template.getFieldID() == 5) {
+						// Invoice Type
 						if (StringUtils.isNotBlank(template.getFieldValue())) {
 							if (StringUtils.equals(Labels.getLabel("Invoice_Type_Credit"), template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT;
-							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Debit"), template.getFieldValue())) {
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Debit"),
+									template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT;
-							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted"), template.getFieldValue())) {
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted"),
+									template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED;
-							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted_Credit"), template.getFieldValue())) {
+							} else if (StringUtils.equals(Labels.getLabel("Invoice_Type_Exempted_Credit"),
+									template.getFieldValue())) {
 								invoiceType = PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT;
 							}
 						}
+
 					}
 				}
 			}

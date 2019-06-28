@@ -144,6 +144,12 @@ public class SMTParameterConstants {
 	public static final String CALCULATE_GST_ON_GSTRATE_MASTER = "CALCULATE_GST_ON_GSTRATE_MASTER";
 
 	public static final String VAN_REQUIRED = "VAN_REQUIRED";
+	/**
+	 * Atleast One Document is Mandatory For Field Investigation
+	 */
+	public static final String FI_DOCUMENT_MANDATORY = "FI_DOCUMENT_MANDATORY";
+
+	public static final String VERIFICATION_RCU_EYEBALLED_VALUE = "VERIFICATION_RCU_EYEBALLED_VALUE";
 
 	/**
 	 * Parameter code to specify the number of days to lock the user account, when the user is not logging into the

@@ -1170,12 +1170,13 @@ public class ScheduleGenerator {
 				return getErrorDetail("Schedule", "30101", errorParm2, new String[] { "" });
 			}
 
-			if (financeMain.getNextRepayCpzDate().before(financeMain.getNextRepayPftDate())) {
-				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayCpzDate());
-				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextRepayPftDate());
-				return getErrorDetail("Schedule", "30528", errorParm2, errorParm2);
+			if (SysParamUtil.isAllowed("VALIDATION_REQ_NEXT_REPAYMENT_DATE")) {
+				if (financeMain.getNextRepayCpzDate().before(financeMain.getNextRepayPftDate())) {
+					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextRepayCpzDate());
+					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextRepayPftDate());
+					return getErrorDetail("Schedule", "30528", errorParm2, errorParm2);
+				}
 			}
-
 		}
 
 		logger.debug("Leaving");

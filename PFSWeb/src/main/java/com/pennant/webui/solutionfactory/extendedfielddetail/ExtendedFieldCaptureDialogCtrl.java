@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -49,6 +50,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> {
@@ -680,6 +682,43 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	}
 
 	/**
+	 * Extended fields button
+	 */
+	public void onClickExtbtnOPENURLBUTTON() {
+		logger.debug(Literal.ENTERING);
+		try {
+			if (generator == null) {
+				return;
+			}
+			if (generator.getWindow() == null) {
+				return;
+			}
+
+			Component component = null;
+
+			component = generator.getWindow().getFellowIfAny("ad_KRAMANURL");
+			if (component == null) {
+				return;
+			}
+
+			Textbox url = (Textbox) component;
+			String urlVal = url.getValue();
+
+			Executions.getCurrent().sendRedirect(urlVal, "_blank");
+
+		} catch (Exception e) {
+			{
+				if (e.getLocalizedMessage() != null) {
+					MessageUtil.showError(e.getLocalizedMessage());
+				} else {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
@@ -752,5 +791,4 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldHea
 	public void setDedupParmService(DedupParmService dedupParmService) {
 		this.dedupParmService = dedupParmService;
 	}
-
 }

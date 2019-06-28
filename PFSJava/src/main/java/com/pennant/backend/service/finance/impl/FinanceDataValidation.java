@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
@@ -342,10 +343,12 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (finMain.getFinAssetValue().compareTo(financeType.getFinMaxAmount()) > 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), ccyFormat);
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
+		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
+			if (finMain.getFinAssetValue().compareTo(financeType.getFinMaxAmount()) > 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), ccyFormat);
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
+			}
 		}
 
 		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
@@ -5273,15 +5276,19 @@ public class FinanceDataValidation {
 	 */
 	private boolean validateAlwFrqDays(String frquency, String allowedFrqDays) {
 		if (StringUtils.isNotBlank(allowedFrqDays)) {
-			String[] alwFrqDay = allowedFrqDays.split(PennantConstants.DELIMITER_COMMA);
-			boolean isValid = false;
-			for (String frqDay : alwFrqDay) {
-				if (StringUtils.contains(frquency.substring(3, 5), frqDay)) {
-					isValid = true;
-					break;
+			if (!StringUtils.startsWith(frquency, FrequencyCodeTypes.FRQ_DAILY)) {
+
+				String[] alwFrqDay = allowedFrqDays.split(PennantConstants.DELIMITER_COMMA);
+				boolean isValid = false;
+				for (String frqDay : alwFrqDay) {
+					if (StringUtils.contains(frquency.substring(3, 5), frqDay)) {
+						isValid = true;
+						break;
+					}
 				}
+
+				return isValid;
 			}
-			return isValid;
 		}
 		return true;
 	}

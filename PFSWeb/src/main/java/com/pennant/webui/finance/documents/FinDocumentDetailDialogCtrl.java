@@ -69,7 +69,6 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Filedownload;
-import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
@@ -121,7 +120,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	protected Space space_documentName;
 	protected Space space_docReceivedDt;
 	protected Space space_docBarcode;
-	//protected Space space_docBarcode;
+	// protected Space space_docBarcode;
 
 	protected Div finDocumentDiv; // autowired
 
@@ -149,7 +148,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private boolean isDocAllowedForInput = false;
 	protected Button btnUploadDoc;
 	protected Iframe finDocumentPdfView;
-	//private List<ValueLabel>	documentTypes	      = PennantAppUtil.getDocumentTypes();
+	// private List<ValueLabel> documentTypes =
+	// PennantAppUtil.getDocumentTypes();
 	private Map<String, List<Listitem>> checkListDocTypeMap = null;
 	protected Div docDiv;
 
@@ -287,7 +287,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.docCategory.setMaxlength(50);
 		this.docCategory.setTextBoxWidth(160);
 		this.docCategory.setMandatoryStyle(true);
@@ -301,13 +301,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			this.space_documentName.setSclass("");
 		}
-		
-		if(this.docOriginal.isChecked()){
+
+		if (this.docOriginal.isChecked()) {
 			this.space_docBarcode.setSclass("mandatory");
-		}else{
+		} else {
 			this.space_docBarcode.setSclass("");
 		}
-		
 
 		if (this.docOriginal.isChecked()) {
 			this.space_docBarcode.setSclass("mandatory");
@@ -444,9 +443,11 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
-				amedia = new AMedia(docName, "docx", "application/pdf", data);
+				amedia = new AMedia(docName, "docx",
+						"application/vnd.openxmlformats-officedocument.wordprocessingml.document", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
-				amedia = new AMedia(docName, "xlsx", "application/pdf", data);
+				amedia = new AMedia(docName, "xlsx",
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
 			}
 			Filedownload.save(amedia);
 		}
@@ -496,28 +497,25 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 		AMedia amedia = null;
 		if (aDocumentDetails.getDocImage() != null) {
-			//			final InputStream data = new ByteArrayInputStream(aDocumentDetails.getDocImage());
-			//			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF)) {
-			//				amedia = new AMedia("document.pdf", "pdf", "application/pdf", data);
-			//			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE)) {
-			//				amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
-			//			}else
+			// final InputStream data = new
+			// ByteArrayInputStream(aDocumentDetails.getDocImage());
+			// if
+			// (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_PDF))
+			// {
+			// amedia = new AMedia("document.pdf", "pdf", "application/pdf",
+			// data);
+			// } else if
+			// (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_IMAGE))
+			// {
+			// amedia = new AMedia("document.jpg", "jpeg", "image/jpeg", data);
+			// }else
 
 			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)
 					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				this.docDiv.getChildren().clear();
-				Html ageementLink = new Html();
-				ageementLink.setStyle("padding:10px;");
-				ageementLink
-						.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName() + "</a> ");
-
-				List<Object> list = new ArrayList<Object>();
-				list.add(aDocumentDetails.getDoctype());
-				list.add(aDocumentDetails.getDocImage());
-
-				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
-				this.docDiv.appendChild(ageementLink);
+				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
+						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
 			} else {
 				amedia = new AMedia(aDocumentDetails.getDocName(), null, null, aDocumentDetails.getDocImage());
 			}
@@ -536,13 +534,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		this.documnetName.setReadonly(true);
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setReadonly(false);
-			//this.documnetName.setValue("");
+			// this.documnetName.setValue("");
 			this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
 		} else {
 			this.docReceivedDt.setDisabled(true);
-			//this.documnetName.setReadonly(false);
-			//	this.space_documentName.setSclass("mandatory");
+			// this.documnetName.setReadonly(false);
+			// this.space_documentName.setSclass("mandatory");
 			this.btnUploadDoc.setVisible(true);
 		}
 
@@ -709,7 +707,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			doCheckEnquiry();
 			/*
-			 * if (SysParamUtil.isAllowed(SMTParameterConstants.DOC_OWNER_VALIDATION)) { doCheckDocumentOwner(); }
+			 * if (SysParamUtil.isAllowed(SMTParameterConstants. DOC_OWNER_VALIDATION)) { doCheckDocumentOwner(); }
 			 */
 			if (isNewDocument()) {
 				this.window_FinDocumentDetailDialog.setHeight("85%");
@@ -1088,7 +1086,13 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			for (int i = 0; i < getDocumentDetailDialogCtrl().getDocumentDetailsList().size(); i++) {
 				DocumentDetails documentDetails = getDocumentDetailDialogCtrl().getDocumentDetailsList().get(i);
 
-				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both Current and Existing list rating same
+				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both
+																										// Current
+																									// and
+																									// Existing
+																									// list
+																									// rating
+																									// same
 
 					if (isNewRecord()) {
 						if (!StringUtils.equals(documentDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
@@ -1114,10 +1118,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						} else if (PennantConstants.RECORD_TYPE_CAN.equals(aDocumentDetails.getRecordType())) {
 							recordAdded = true;
 							/*
-							 * for (int j = 0; j <
-							 * getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().
-							 * getContributorDetailList().size(); j++) { DocumentDetails detail =
-							 * getFinanceMainDialogCtrl().getFinanceDetail().getFinContributorHeader().
+							 * for (int j = 0; j < getFinanceMainDialogCtrl().getFinanceDetail().
+							 * getFinContributorHeader(). getContributorDetailList().size(); j++) { DocumentDetails
+							 * detail = getFinanceMainDialogCtrl().getFinanceDetail(). getFinContributorHeader().
 							 * getContributorDetailList().get(j); if(detail.getCustID() ==
 							 * aDocumentDetails.getCustID()){ contributorDetails.add(detail); } }
 							 */
@@ -1201,7 +1204,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (this.docReceived.isChecked()) {
 			this.docReceivedDt.setDisabled(false);
 			this.space_docReceivedDt.setSclass("mandatory");
-			//this.documnetName.setReadonly(true);
+			// this.documnetName.setReadonly(true);
 			this.documnetName.setValue("");
 			this.space_documentName.setSclass("");
 			this.btnUploadDoc.setVisible(false);
@@ -1215,11 +1218,12 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		} else {
 			this.docReceivedDt.setReadonly(true);
 			this.space_docReceivedDt.setSclass("");
-			//this.documnetName.setReadonly(false);
+			// this.documnetName.setReadonly(false);
 			this.btnUploadDoc.setVisible(true);
 			this.docReceivedDt.setValue(null);
 		}
 	}
+
 	/**
 	 * Get the window for entering Notes
 	 * 
@@ -1327,7 +1331,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			if (isSupported) {
 				String fileName = media.getName();
-				byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
+				final byte[] ddaImageData = IOUtils.toByteArray(media.getStreamData());
 				// Data Fill by QR Bar Code Reader
 				if (docType.equals(PennantConstants.DOC_TYPE_PDF)) {
 					this.finDocumentPdfView
@@ -1339,16 +1343,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
 						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.getChildren().clear();
-					Html ageementLink = new Html();
-					ageementLink.setStyle("padding:10px;");
-					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
-
-					List<Object> list = new ArrayList<Object>();
-					list.add(docType);
-					list.add(ddaImageData);
-
-					ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
-					this.docDiv.appendChild(ageementLink);
+					this.docDiv.appendChild(
+							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
@@ -1377,22 +1373,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		logger.debug("Leaving");
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onDocumentClicked(Event event) throws Exception {
-		List<Object> list = (List<Object>) event.getData();
-
-		String docType = (String) list.get(0);
-		byte[] ddaImageData = (byte[]) list.get(1);
-
-		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
-		}
 	}
 
 	/*

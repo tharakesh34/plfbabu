@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
 		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
 		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
-		"finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
+		"overDueCharges","totalOverDueIncCharges","finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -127,7 +127,11 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal overDueProfit = BigDecimal.ZERO;
 	@XmlElement(name = "overdueTotal")
 	private BigDecimal totalOverDue = BigDecimal.ZERO;
-
+	@XmlElement
+	private BigDecimal overDueCharges = BigDecimal.ZERO;
+	@XmlElement(name = "overdueTotalIncludeCharges")
+	private BigDecimal totalOverDueIncCharges = BigDecimal.ZERO;
+	
 	private BigDecimal earnedPrincipal = BigDecimal.ZERO;
 	private BigDecimal earnedProfit = BigDecimal.ZERO;
 	private BigDecimal totalEarned = BigDecimal.ZERO;
@@ -902,5 +906,21 @@ public class FinanceSummary implements Serializable {
 
 	public void setAvailableAmt(BigDecimal availableAmt) {
 		this.availableAmt = availableAmt;
+	}
+
+	public BigDecimal getTotalOverDueIncCharges() {
+		return totalOverDueIncCharges;
+	}
+
+	public void setTotalOverDueIncCharges(BigDecimal totalOverDueIncCharges) {
+		this.totalOverDueIncCharges = totalOverDueIncCharges;
+	}
+
+	public BigDecimal getOverDueCharges() {
+		return overDueCharges;
+	}
+
+	public void setOverDueCharges(BigDecimal overDueCharges) {
+		this.overDueCharges = overDueCharges;
 	}
 }

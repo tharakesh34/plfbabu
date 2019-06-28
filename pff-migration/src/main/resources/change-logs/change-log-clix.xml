@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -23,14 +23,13 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-<changeSet id="1" author="satyanarayana.g">
+
+	<changeSet id="1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_LOWER_TAX_DED_REQ';
@@ -83,7 +82,7 @@
 
 
 	<changeSet id="3" author="Manoj">
-	<sql>
+		<sql>
 			<![CDATA[
 				DELETE FROM plf.DATA_ENGINE_COLUMN  where TABLEID IN (select ID from plf.DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from plf.DATA_ENGINE_CONFIG where Name = 'DISB_HDFC_IMPORT'));
 				Delete from plf.DATA_ENGINE_TABLE where configid = (select id from plf.DATA_ENGINE_CONFIG where name = 'DISB_HDFC_IMPORT');
@@ -109,9 +108,9 @@
 				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'REJECT_REASON',               0,'N',NULL,NULL,   NULL,     NULL,'12',NULL,NULL,NULL,NULL,'O');
 				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'IFSC_CODE',                   0,'N',NULL,NULL,   NULL,     NULL,'13',NULL,NULL,NULL,NULL,'O');
  			]]>
- 			</sql>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="4" author="Manoj">
 		<sql>
 			<![CDATA[
@@ -119,7 +118,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="5" author="Saikiran.V">
 		<createTable tableName="Clix_NatureOfBusiness">
 			<column name="key" type="varchar(20)">
@@ -155,13 +154,12 @@
 			<column name="parent" type="varchar(500)"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="8.1" author="Manoj.P">
-		<modifyDataType tableName="Clix_Product" columnName="value"
-			newDataType="varchar(500)" />
+		<modifyDataType tableName="Clix_Product" columnName="value" newDataType="varchar(500)" />
 	</changeSet>
-	
-	
+
+
 	<changeSet id="9" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -1552,8 +1550,8 @@
 		insert into Clix_Product (parent,key,Value) values((select key from Clix_Segment where Value='Tractors For Trading'),					 																								 	1030,'Wholesale of tractors');
 		insert into Clix_Product (parent,key,Value) values((select key from Clix_Segment where Value='Cement and Asbestos Products For Trading'),																								 	1031,'Retail sale of watches and clocks');
      ]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
 	<changeSet id="11" author="dheerendra.d">
 		<dropColumn tableName="ogl_download" columnName="currencycode" />
@@ -1570,6 +1568,61 @@
 			update data_engine_config set uploadpath ='/opt/clix_8090/PFF/BASE/OGL' where name ='OGL_DOWNLOAD';
 		]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="Manoj.P">
+		<sql>
+	<![CDATA[
+		UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='VAN_REQUIRED';
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="15" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				update plf.data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI' where   name = 'DISB_EXPORT_DEFAULT';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="16" author="Manoj.P">
+		<sql>
+			<![CDATA[
+                update plf.data_engine_column set derivedfrom = null where name = 'DISBURSEMENT_DATE' 
+                and tableid in(select id from plf.data_engine_table where configid in (select id from plf.data_engine_config where name = 'DISB_EXPORT_DEFAULT' ))
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="17" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='FI_DOCUMENT_MANDATORY';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='VERIFICATION_RCU_EYEBALLED_VALUE';
+			]]>
+		</sql>
+
+	</changeSet>
+
+	<changeSet id="18" author="Manoj.P">
+		<createView viewName="DE_FILE_CONTROL_VIEW" replaceIfExists="true">
+			SELECT DS.ID,
+		 	DC.NAME,
+		    DC.UPLOADPATH FILELOCATION,
+		  	DS.FILENAME,
+		  	DS.ENDTIME,
+		  	DS.STATUS,
+		  	DC.id AS CONFIGID,
+		  	DC.POSTEVENT,
+		  	DS.VALUEDATE,
+            DS.USERID,
+            TH.STARTDATE,
+            TH.ENDDATE
+		FROM plf.DATA_ENGINE_CONFIG DC
+		INNER JOIN plf.DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME
+        LEFT join plf.TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME ORDER BY DS.ID DESC
+		</createView>
 	</changeSet>
 </databaseChangeLog>
 

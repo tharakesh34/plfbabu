@@ -29,13 +29,11 @@ public class LoadCollateralRevaluationDataTasklet extends BasicDao<CollateralRev
 		sql.append(", Collateralccy, MarketValue, CollateralValue, BankLTV, BankValuation");
 		sql.append(", ThresholdLTV, POS, CommodityId, ValueDate)");
 		sql.append(" select :BatchId, fm.FinReference, cs.CollateralType, ca.CollateralRef");
-		sql.append(", cs.Collateralccy, c.Currentvalue, cs.CollateralValue, cs.BankLTV, cs.BankValuation");
-		sql.append(", ce.thresholdLtvPercentage, fpt.TotalPriBal, c.id, :ValueDate");
+		sql.append(", cs.Collateralccy, 0 , cs.CollateralValue, cs.BankLTV, cs.BankValuation");
+		sql.append(", ce.thresholdLtvPercentage, fpt.TotalPriBal, null , :ValueDate");
 		sql.append(" from collateralassignment ca");
 		sql.append(" inner join collateralsetup cs on cs.collateralref = ca.collateralref");
-		sql.append(" inner join CollateralStructure ce on ce.CollateralType = cs.CollateralType");
-		sql.append(" inner join commodities c on c.id = ce.commodityId");
-		sql.append(" left  join commodity_types ct on ct.id = c.commodityType");
+		sql.append(" inner join CollateralStructure ce on ce.CollateralType = cs.CollateralType And ce.marketablesecurities = 1");
 		sql.append(" inner join financemain fm on fm.finreference = ca.reference");
 		sql.append(" inner join finpftdetails fpt on fpt.finreference = ca.reference");
 		sql.append(" where fm.finisactive = 1");

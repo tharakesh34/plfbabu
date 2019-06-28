@@ -239,6 +239,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				container = processContainer(containerElement, this.tabpanel, isReadOnly);
 				if (!isReadOnly && getUserWorkspace() != null) {
 					doCheckContainerRights(container, containerElement);
+				} else if (isReadOnly) {
+					if (container instanceof Button) {
+						Button openUrl = (Button) container;
+						if ("OPENURLBUTTON".equals(openUrl.getId())) {
+							openUrl.setDisabled(false);
+						}
+					}
 				}
 			} else {
 				Component existting = this.tabpanel.getFellowIfAny(parentTag);

@@ -9,11 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -110,6 +113,7 @@ public class NotificationService {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private EmailEngine emailEngine;
 	private SmsEngine smsEngine;
+	Map<String, Object> notificationDataMap = new HashMap<String, Object>();
 
 	public NotificationService() {
 		super();
@@ -424,6 +428,8 @@ public class NotificationService {
 		attribute.setValue(emailMessage.getStage());
 		emailMessage.getAttributes().add(attribute);
 
+		emailMessage.setNotificationData(template.getNotificationData());
+
 		return emailMessage;
 	}
 
@@ -439,15 +445,29 @@ public class NotificationService {
 
 		String subject = "";
 		String result = "";
-
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("vo", templateData);
 
+		Map<String, Object> tempMap = (Map<String, Object>) model.get("vo");
+
+		Map<String, Object> notificationDataMap = new HashMap<String, Object>();
 		StringTemplateLoader loader = new StringTemplateLoader();
 		loader.putTemplate("mailTemplate",
 				new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
 		freemarkerMailConfiguration.setTemplateLoader(loader);
 		Template template = freemarkerMailConfiguration.getTemplate("mailTemplate");
+
+		try {
+			Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+			Matcher matchPattern = pattern.matcher(template.toString());
+			while (matchPattern.find()) {
+				String[] array = matchPattern.group(1).split("\\.");
+				String key = array[1];
+				notificationDataMap.put(matchPattern.group(1), tempMap.get(key));
+			}
+		} catch (Exception e) {
+			throw new Exception("Error While Preparing NotificationData", e);
+		}
 
 		try {
 			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
@@ -456,10 +476,24 @@ public class NotificationService {
 		} catch (TemplateException e) {
 			throw new Exception("Problem initializing freemarker or rendering template ", e);
 		}
+
 		StringTemplateLoader subloader = new StringTemplateLoader();
 		subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
 		freemarkerMailConfiguration.setTemplateLoader(subloader);
 		Template templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
+
+		try {
+			Pattern subPattern = Pattern.compile("\\{(.*?)\\}");
+			Matcher subMatchPattern = subPattern.matcher(templateSubject.toString());
+			while (subMatchPattern.find()) {
+				String[] array = subMatchPattern.group(1).split("\\.");
+				String key = array[1];
+				notificationDataMap.put(subMatchPattern.group(1), tempMap.get(key));
+			}
+		} catch (Exception e) {
+			throw new Exception("Error While Preparing NotificationData", e);
+
+		}
 
 		try {
 			subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
@@ -479,6 +513,18 @@ public class NotificationService {
 			template = freemarkerMailConfiguration.getTemplate("smsTemplate");
 
 			try {
+				Pattern smsPattern = Pattern.compile("\\{(.*?)\\}");
+				Matcher smsMatchPattern = smsPattern.matcher(templateSubject.toString());
+				while (smsMatchPattern.find()) {
+					String[] array = smsMatchPattern.group(1).split("\\.");
+					String key = array[1];
+					notificationDataMap.put(smsMatchPattern.group(1), tempMap.get(key));
+				}
+			} catch (Exception e) {
+				throw new Exception("Error While Preparing NotificationData", e);
+			}
+
+			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 				mailTemplate.setSmsMessage(result);
 			} catch (IOException e) {
@@ -489,6 +535,9 @@ public class NotificationService {
 				throw new Exception("Problem initializing freemarker or rendering template ", e);
 			}
 		}
+
+		String json = new ObjectMapper().writeValueAsString(notificationDataMap);
+		mailTemplate.setNotificationData(json);
 
 		logger.debug("Leaving");
 	}

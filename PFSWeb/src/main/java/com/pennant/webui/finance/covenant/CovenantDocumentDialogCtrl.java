@@ -64,8 +64,6 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Filedownload;
-import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -439,17 +437,8 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)
 					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				this.docDiv.getChildren().clear();
-				Html ageementLink = new Html();
-				ageementLink.setStyle("padding:10px;");
-				ageementLink
-						.setContent("<a href='' style = 'font-weight:bold'>" + documentDetails.getDocName() + "</a> ");
-
-				List<Object> list = new ArrayList<Object>();
-				list.add(documentDetails.getDoctype());
-				list.add(documentDetails.getDocImage());
-
-				ageementLink.addForward("onClick", window_CovenantDocumentDialog, "onDocumentClicked", list);
-				this.docDiv.appendChild(ageementLink);
+				this.docDiv.appendChild(getDocumentLink(documentDetails.getDocName(), documentDetails.getDoctype(),
+						this.documentName.getValue(), documentDetails.getDocImage()));
 			} else {
 				amedia = new AMedia(documentDetails.getDocName(), null, null, documentDetails.getDocImage());
 			}
@@ -645,16 +634,8 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)
 						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 					this.docDiv.getChildren().clear();
-					Html ageementLink = new Html();
-					ageementLink.setStyle("padding:10px;");
-					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
-
-					List<Object> list = new ArrayList<Object>();
-					list.add(docType);
-					list.add(ddaImageData);
-
-					ageementLink.addForward("onClick", window_CovenantDocumentDialog, "onDocumentClicked", list);
-					this.docDiv.appendChild(ageementLink);
+					this.docDiv.appendChild(
+							getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
@@ -684,22 +665,6 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onDocumentClicked(Event event) throws Exception {
-		List<Object> list = (List<Object>) event.getData();
-
-		String docType = (String) list.get(0);
-		byte[] ddaImageData = (byte[]) list.get(1);
-
-		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(ddaImageData, "application/msword", this.documentName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documentName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documentName.getValue());
-		}
 	}
 
 	// CRUD operations

@@ -57,12 +57,12 @@ public interface CreateFinanceRestService {
 
 	@POST
 	@Path("/finance/cancelLoan")
-	WSReturnStatus cancelFinance(FinanceDetail financeDetail) throws ServiceException;
-	
+	FinanceDetail cancelFinance(FinanceDetail financeDetail) throws ServiceException;
+
 	@POST
 	@Path("/finance/reinitiateLoan")
 	FinanceDetail reInitiateFinance(FinanceDetail financeDetail) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/moveLoanStage")
 	WSReturnStatus moveLoanStage(MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;

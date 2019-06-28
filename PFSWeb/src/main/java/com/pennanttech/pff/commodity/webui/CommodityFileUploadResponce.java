@@ -136,20 +136,20 @@ public class CommodityFileUploadResponce extends BasicDao<Commodity> implements 
 			} else {
 				commodity.setCommodityType(mapCommodityTypes.get(commodityType));
 			}
-			
+
 			Commodity oldcommodity = commoditiesDAO.getCommodity(commodity);
-			
+
 			if (oldcommodity == null) {
 				commodity.setVersion(1);
 				commodity.setNewRecord(true);
 				commodity.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				AuditHeader auditHeader = getAuditHeader(commodity, PennantConstants.TRAN_WF);
 				commoditiesService.doApprove(auditHeader);
-				
-				if(auditHeader.getErrorMessage() != null) {
+
+				if (auditHeader.getErrorMessage() != null) {
 					throw new AppException(auditHeader.getErrorMessage().get(0).getError());
 				}
-				
+
 			} else {
 				commodity.setId(oldcommodity.getId());
 				commodity.setVersion(oldcommodity.getVersion() + 1);

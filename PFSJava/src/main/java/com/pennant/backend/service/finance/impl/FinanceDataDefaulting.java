@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -823,9 +824,13 @@ public class FinanceDataDefaulting {
 		//Repay Profit Review Frequency & Date
 		if (finMain.isAllowRepayRvw()) {
 			if (StringUtils.isBlank(finMain.getRepayRvwFrq()) && isValidRpyFrq) {
-				String frq = new StringBuilder(5).append(financeType.getFinRvwFrq().substring(0, 3))
-						.append(finMain.getRepayFrq().substring(3, 5)).toString();
-				finMain.setRepayRvwFrq(frq);
+				if (!StringUtils.startsWith(financeType.getFinRvwFrq(), FrequencyCodeTypes.FRQ_DAILY)) {
+					String frq = new StringBuilder(5).append(financeType.getFinRvwFrq().substring(0, 3))
+							.append(finMain.getRepayFrq().substring(3, 5)).toString();
+					finMain.setRepayRvwFrq(frq);
+				} else {
+					finMain.setRepayRvwFrq(financeType.getFinRvwFrq());
+				}
 			}
 
 			tempError = FrequencyUtil.validateFrequency(finMain.getRepayRvwFrq());
@@ -957,12 +962,15 @@ public class FinanceDataDefaulting {
 	private String getDftFrequency(String frq, String alwdFrqDays) {
 
 		if (StringUtils.isNotBlank(frq)) {
-			// Making into List
-			List<String> alwdDays = Arrays.asList(alwdFrqDays.split(","));
+			if (!StringUtils.startsWith(frq, FrequencyCodeTypes.FRQ_DAILY)) {
 
-			//Sorting available list
-			Collections.sort(alwdDays);
-			return frq.substring(0, 3).concat(StringUtils.leftPad(alwdDays.get(0), 2, "0"));
+				// Making into List
+				List<String> alwdDays = Arrays.asList(alwdFrqDays.split(","));
+
+				//Sorting available list
+				Collections.sort(alwdDays);
+				return frq.substring(0, 3).concat(StringUtils.leftPad(alwdDays.get(0), 2, "0"));
+			}
 		}
 
 		return frq;
@@ -976,9 +984,11 @@ public class FinanceDataDefaulting {
 	private String getDftFrequency(String frq, Date frqDate) {
 
 		if (StringUtils.isNotBlank(frq)) {
-			String frqDay = String.valueOf(DateUtility.getDay(frqDate));
-			frqDay = StringUtils.leftPad(frqDay, 2, "0");
-			frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
+			if (!StringUtils.startsWith(frq, FrequencyCodeTypes.FRQ_DAILY)) {
+				String frqDay = String.valueOf(DateUtility.getDay(frqDate));
+				frqDay = StringUtils.leftPad(frqDay, 2, "0");
+				frq = new StringBuilder(5).append(frq.substring(0, 3)).append(frqDay).toString();
+			}
 		}
 
 		return frq;

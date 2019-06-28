@@ -3411,7 +3411,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.tDSPercentage.setReadonly(true);
 			this.tDSPercentage.setValue(SysParamUtil.getValueAsString(CalculationConstants.TDS_PERCENTAGE));
 		}
-		
+
 		doSetTdsDetails();
 
 		if (aFinanceMain.isNew()) {
@@ -3487,7 +3487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finContractDate.setValue(aFinanceMain.getFinStartDate());
 		}
-		
+
 		//Van details
 		if (financeType.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
 			this.row_Van.setVisible(true);
@@ -13676,7 +13676,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//GST Waiver Changes
 				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
 				String feeTypeCode = finFeeDetail.getFeeTypeCode();
-			
+
 				feeRule.setFeeCode(feeTypeCode);
 				feeRule.setFeeAmount(finFeeDetail.getActualAmount());
 				feeRule.setWaiverAmount(finFeeDetail.getWaivedAmount());
@@ -13685,19 +13685,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				feeRule.setFeeMethod(finFeeDetail.getFeeScheduleMethod());
 
 				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmountOriginal());
-				
+
 				//GST Waiver Changes
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+					dataMap.put(feeTypeCode + "_W",
+							finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
 				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());					
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 				}
-				
+
 				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmountOriginal());
 
 				//GST 
 				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
-				
+
 				//Calculated Amount 
 				dataMap.put(feeTypeCode + "_CGST_C", finTaxDetails.getActualCGST());
 				dataMap.put(feeTypeCode + "_SGST_C", finTaxDetails.getActualSGST());
@@ -13715,7 +13716,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
 				dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
 				dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
-				
+
 				//Waiver GST Amounts  (GST Waiver Changes)
 				dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
 				dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
@@ -13727,14 +13728,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
 					dataMap.put(feeTypeCode + "_SCH", finFeeDetail.getRemainingFeeOriginal());
 					//GST
-					dataMap.put(feeTypeCode + "_CGST_SCH",
-							finTaxDetails.getRemFeeCGST());
-					dataMap.put(feeTypeCode + "_SGST_SCH",
-							finTaxDetails.getRemFeeSGST());
-					dataMap.put(feeTypeCode + "_IGST_SCH",
-							finTaxDetails.getRemFeeIGST());
-					dataMap.put(feeTypeCode + "_UGST_SCH",
-							finTaxDetails.getRemFeeUGST());
+					dataMap.put(feeTypeCode + "_CGST_SCH", finTaxDetails.getRemFeeCGST());
+					dataMap.put(feeTypeCode + "_SGST_SCH", finTaxDetails.getRemFeeSGST());
+					dataMap.put(feeTypeCode + "_IGST_SCH", finTaxDetails.getRemFeeIGST());
+					dataMap.put(feeTypeCode + "_UGST_SCH", finTaxDetails.getRemFeeUGST());
 				} else {
 					dataMap.put(feeTypeCode + "_SCH", 0);
 					//GST
@@ -13747,14 +13744,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(feeRule.getFeeToFinance(), RuleConstants.DFT_FEE_FINANCE)) {
 					dataMap.put(feeTypeCode + "_AF", finFeeDetail.getRemainingFeeOriginal());
 					//GST
-					dataMap.put(feeTypeCode + "_CGST_AF",
-							finTaxDetails.getRemFeeCGST());
-					dataMap.put(feeTypeCode + "_SGST_AF",
-							finTaxDetails.getRemFeeSGST());
-					dataMap.put(feeTypeCode + "_IGST_AF",
-							finTaxDetails.getRemFeeIGST());
-					dataMap.put(feeTypeCode + "_UGST_AF",
-							finTaxDetails.getRemFeeUGST());
+					dataMap.put(feeTypeCode + "_CGST_AF", finTaxDetails.getRemFeeCGST());
+					dataMap.put(feeTypeCode + "_SGST_AF", finTaxDetails.getRemFeeSGST());
+					dataMap.put(feeTypeCode + "_IGST_AF", finTaxDetails.getRemFeeIGST());
+					dataMap.put(feeTypeCode + "_UGST_AF", finTaxDetails.getRemFeeUGST());
 				} else {
 					dataMap.put(feeTypeCode + "_AF", 0);
 					//GST
@@ -14415,6 +14408,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.nextRepayDate_two.setValue(
 								FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
 										HolidayHandlerTypes.MOVE_NONE, day == frqDay).getNextFrequencyDate());
+						// Dialy frequency loan no of terms mismatching.
+						if(StringUtils.startsWith(this.repayFrq.getValue(), FrequencyCodeTypes.FRQ_DAILY)){
+							this.nextRepayDate_two.setValue(this.nextRepayPftDate.getValue());
+						}
+						
 					} else {
 						this.nextRepayDate_two.setValue(FrequencyUtil
 								.getNextDate(this.repayFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),

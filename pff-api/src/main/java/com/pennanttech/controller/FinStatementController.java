@@ -374,6 +374,12 @@ public class FinStatementController extends SummaryDetailService {
 		financeDetail.getFinScheduleData().setFinFeeDetailList(null);
 		if (!StringUtils.equals(APIConstants.STMT_FORECLOSURE, servicName)) {
 			financeDetail.getFinScheduleData().setFinODDetails(null);
+		} else {
+			// #BUG Fix related to 134031
+			for (ForeClosure detail : financeDetail.getForeClosureDetails()) {
+				detail.getForeCloseAmount().subtract(summary.getAdvPaymentAmount());
+				detail.setForeCloseAmount(detail.getForeCloseAmount().subtract(summary.getAdvPaymentAmount()));
+			}
 		}
 		financeDetail.getFinScheduleData().setFinODPenaltyRate(null);
 

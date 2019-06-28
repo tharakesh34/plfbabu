@@ -49,6 +49,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -60,6 +61,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1414,6 +1416,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			Comboitem comboitem = new Comboitem();
 			comboitem.setValue(valueLabel.getValue());
 			comboitem.setLabel(valueLabel.getLabel());
+			if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_RCU_EYEBALLED_VALUE)
+					&& String.valueOf(RCUDocVerificationType.EYEBALLED.getKey()).equals(valueLabel.getValue())) {
+				continue;
+			}
 			combobox.appendChild(comboitem);
 			if (Integer.parseInt(valueLabel.getValue()) == value) {
 				combobox.setSelectedItem(comboitem);

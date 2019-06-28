@@ -64,8 +64,6 @@ import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Div;
-import org.zkoss.zul.Filedownload;
-import org.zkoss.zul.Html;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
@@ -394,17 +392,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
-				Html ageementLink = new Html();
-				ageementLink.setStyle("padding:10px;");
-				ageementLink
-						.setContent("<a href='' style = 'font-weight:bold'>" + aDocumentDetails.getDocName() + "</a> ");
-
-				List<Object> list = new ArrayList<Object>();
-				list.add(aDocumentDetails.getDoctype());
-				list.add(aDocumentDetails.getDocImage());
-
-				ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
-				this.docDiv.appendChild(ageementLink);
+				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
+						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
@@ -423,7 +412,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-		// aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);//### TODO ###
+		// aDocumentDetails.setDocModule(FinanceConstants.MODULE_NAME);//###
+		// TODO ###
 		try {
 			if (this.docCategory.getSelectedItem() == null
 					|| this.docCategory.getSelectedItem().getValue().toString().equals(PennantConstants.List_Select)) {
@@ -855,9 +845,12 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			for (int i = 0; i < getManagerChequeDialogCtrl().getDocumentDetailsList().size(); i++) {
 				DocumentDetails documentDetails = getManagerChequeDialogCtrl().getDocumentDetailsList().get(i);
 
-				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both Current
-																										// and Existing
-																									// list rating
+				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both
+																										// Current
+																									// and
+																									// Existing
+																									// list
+																									// rating
 																									// same
 
 					if (isNewRecord()) {
@@ -1045,16 +1038,8 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				} else if (docType.equals(PennantConstants.DOC_TYPE_WORD)
 						|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 					this.docDiv.getChildren().clear();
-					Html ageementLink = new Html();
-					ageementLink.setStyle("padding:10px;");
-					ageementLink.setContent("<a href='' style = 'font-weight:bold'>" + fileName + "</a> ");
-
-					List<Object> list = new ArrayList<Object>();
-					list.add(docType);
-					list.add(ddaImageData);
-
-					ageementLink.addForward("onClick", window_FinDocumentDetailDialog, "onDocumentClicked", list);
-					this.docDiv.appendChild(ageementLink);
+					this.docDiv.appendChild(
+							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
@@ -1081,20 +1066,6 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			ex.printStackTrace();
 		}
 		logger.debug("Leaving");
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onDocumentClicked(Event event) throws Exception {
-		List<Object> list = (List<Object>) event.getData();
-
-		String docType = (String) list.get(0);
-		byte[] ddaImageData = (byte[]) list.get(1);
-
-		if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {
-			Filedownload.save(ddaImageData, "application/msword", this.documnetName.getValue());
-		} else if (docType.equals(PennantConstants.DOC_TYPE_MSG)) {
-			Filedownload.save(ddaImageData, "application/octet-stream", this.documnetName.getValue());
-		}
 	}
 
 	public ManagerChequeDialogCtrl getManagerChequeDialogCtrl() {
