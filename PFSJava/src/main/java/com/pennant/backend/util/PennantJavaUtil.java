@@ -456,6 +456,7 @@ import com.pennanttech.pff.mmfl.cd.model.TransactionMapping;
 import com.pennanttech.pff.organization.model.IncomeExpenseDetail;
 import com.pennanttech.pff.organization.model.IncomeExpenseHeader;
 import com.pennanttech.pff.organization.model.Organization;
+import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
 public class PennantJavaUtil {
 	@Autowired(required = false)
@@ -3301,7 +3302,12 @@ public class PennantJavaUtil {
 				new ModuleMapping("GSTRate", GSTRate.class, new String[] { "GST_RATES", "GST_RATES_AView" }, masterWF,
 						new String[] { "FromState", "ToState", "TaxType", "Amount", "Percentage", "CalcOn", "Active" },
 						null, 600));
-
+		
+		ModuleUtil.register("SettlementProcess",
+				new ModuleMapping("SettlementProcess", SettlementProcess.class,
+						new String[] { "SETTLEMENT_REQUEST", "SETTLEMENT_REQUEST" }, masterWF,
+						new String[] { "Id", "SettlementRef" }, null, 600));
+		
 		registerCustomModules();
 	}
 

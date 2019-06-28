@@ -5317,9 +5317,30 @@
 		scope="prototype">
 		<property name="gstRateService" ref="gstRateService" />
 	</bean>
+	
 	<bean id="gstRateDialogCtrl" class="com.pennant.webui.rmtmasters.gstrate.GSTRateDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="gstRateService" ref="gstRateService" />
 	</bean>
+	
+	 <bean id="settlementProcessUploadDialogueCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessUploadDialogueCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="settlementProcessUploadResponce" ref="settlementProcessUploadResponce" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean> 
 
+	 <bean id="settlementProcessDAO" class="com.pennanttech.pff.settlement.dao.SettlementProcessDAOImpl" parent="sequenceDao" />	
+
+	<bean name="settlementProcessUploadResponce" class="com.pennanttech.pff.settlementprocess.webui.SettlementProcessUploadResponce">
+		<property name="dataSource" ref="dataSource" />
+		<property name="settlementProcessDAO" ref="settlementProcessDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+	</bean> 
+
+	<bean id="settlementProcessDownloadListCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessDownloadListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="settlementProcessUploadResponce" ref="settlementProcessUploadResponce" />
+		<property name="dataEngineConfig" ref="dataEngineConfig" />
+	</bean>
 </beans>

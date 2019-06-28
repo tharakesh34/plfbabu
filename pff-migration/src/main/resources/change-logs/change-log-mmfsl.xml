@@ -21,13 +21,13 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="vijaya.a" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_MANUFACTURERS" />
 	</changeSet>
@@ -38,7 +38,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="1.2" author="vijaya.a">
 		<createTable tableName="CD_Manufacturers">
 			<column name="ManufacturerId" type="int">
@@ -66,7 +66,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="1.3" author="vijaya.a">
 		<createTable tableName="CD_Manufacturers_Temp">
 			<column name="ManufacturerId" type="int">
@@ -156,7 +156,7 @@
    			  FROM CD_Manufacturers t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="1.6" author="vijaya.a">
 		<createView viewName="CD_Manufacturers_TVIEW" replaceIfExists="true">
 			  SELECT t1.manufacturerId,
@@ -177,7 +177,7 @@
    			  FROM CD_Manufacturers_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="2" author="vijaya.a" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_PRODUCTS" />
 	</changeSet>
@@ -188,7 +188,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="2.2" author="vijaya.a">
 		<createTable tableName="CD_Products">
 			<column name="ProductId" type="int">
@@ -226,7 +226,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="2.3" author="vijaya.a">
 		<createTable tableName="CD_Products_Temp">
 			<column name="ProductId" type="int">
@@ -264,7 +264,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="2.5" author="vijaya.a">
 		<createView viewName="CD_Products_VIEW" replaceIfExists="true">
 			  SELECT t1.productId,
@@ -341,7 +341,7 @@
    			  FROM CD_Products t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="2.7" author="vijaya.a">
 		<createView viewName="CD_Products_TVIEW" replaceIfExists="true">
 			  SELECT t1.productId,
@@ -367,7 +367,7 @@
    			  FROM CD_Products_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="3" author="vijaya.a" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_MERCHANTS" />
 	</changeSet>
@@ -378,7 +378,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="3.2" author="vijaya.a">
 		<createTable tableName="CD_Merchants">
 			<column name="MerchantId" type="int">
@@ -410,7 +410,7 @@
 			</column>
 			<column name="POSID" type="int">
 			</column>
-			<column name="AvgTranPerMnth" type="decimal(18,0)" >
+			<column name="AvgTranPerMnth" type="decimal(18,0)">
 			</column>
 			<column name="AvgTranAmtPerMnth" type="decimal(18,0)">
 			</column>
@@ -440,7 +440,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="3.3" author="vijaya.a">
 		<createTable tableName="CD_Merchants_Temp">
 			<column name="MerchantId" type="int">
@@ -472,7 +472,7 @@
 			</column>
 			<column name="POSID" type="int">
 			</column>
-			<column name="AvgTranPerMnth" type="decimal(18,0)" >
+			<column name="AvgTranPerMnth" type="decimal(18,0)">
 			</column>
 			<column name="AvgTranAmtPerMnth" type="decimal(18,0)">
 			</column>
@@ -502,13 +502,12 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="3.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_MERCHANTS" columnNames="StoreId"
-			constraintName="UK_CD_MERCHANTS_STOREID" />
+		<addUniqueConstraint tableName="CD_MERCHANTS" columnNames="StoreId" constraintName="UK_CD_MERCHANTS_STOREID" />
 		<addUniqueConstraint tableName="CD_MERCHANTS_TEMP" columnNames="StoreId" constraintName="UK_CD_MERCHANTS_TEMP_STOREID" />
 	</changeSet>
-	
+
 	<changeSet id="3.4" author="vijaya.a">
 		<createView viewName="CD_Merchants_VIEW" replaceIfExists="true">
 			  SELECT t1.merchantId,
@@ -621,7 +620,7 @@
    			FROM CD_Merchants t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="3.6" author="vijaya.a">
 		<createView viewName="CD_Merchants_TVIEW" replaceIfExists="true">
 			  SELECT t1.merchantId,
@@ -659,7 +658,7 @@
    			FROM CD_Merchants_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="4" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -721,7 +720,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="5" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -793,7 +792,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6" author="Nageswar.p">
 		<sql>
 			<![CDATA[
@@ -881,7 +880,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6.1" author="Nageswar.p">
 		<sql>
 			<![CDATA[
@@ -941,7 +940,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="7" author="Nageswar.p" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_DEALERMAPPING" />
 	</changeSet>
@@ -952,7 +951,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="7.2" author="Nageswar.p">
 		<createTable tableName="CD_DealerMapping">
 			<column name="DealerMapId" type="int">
@@ -964,7 +963,7 @@
 			</column>
 			<column name="DealerCode" type="int">
 			</column>
-			<column name="Active" type="boolean"/>
+			<column name="Active" type="boolean" />
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
@@ -979,7 +978,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="7.3" author="Nageswar.p">
 		<createTable tableName="CD_DealerMapping_Temp">
 			<column name="DealerMapId" type="int">
@@ -994,7 +993,7 @@
 			<column name="Version" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="Active" type="boolean"/>
+			<column name="Active" type="boolean" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
 			<column name="RecordStatus" type="varchar(50)" />
@@ -1006,7 +1005,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="7.4" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
 			  SELECT t1.dealerMapId,
@@ -1068,7 +1067,7 @@
    			FROM CD_DealerMapping t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="7.6" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_TVIEW" replaceIfExists="true">
 			  SELECT t1.dealerMapId,
@@ -1089,7 +1088,7 @@
    			FROM CD_DealerMapping_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="7.7" author="Nageswar.p">
 		<sql>
 		<![CDATA[
@@ -1103,7 +1102,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="Shahbaj.b" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_DEALERGROUP" />
 	</changeSet>
@@ -1113,12 +1112,12 @@
 			<column name="SeqNo" type="bigint" autoIncrement="true" />
 			<column name="Value" type="int"></column>
 		</createTable>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="8.2" author="Shahbaj.b">
 		<createTable tableName="CD_DealerGroup">
 			<column name="DealerGroupId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerCode" type="varchar(8)">
 			</column>
@@ -1126,7 +1125,7 @@
 			</column>
 			<column name="Channel" type="varchar(8)">
 			</column>
-			<column name="Active" type = "boolean">
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -1142,11 +1141,11 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="8.3" author="Shahbaj.b">
 		<createTable tableName="CD_DealerGroup_Temp">
 			<column name="DealerGroupId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerCode" type="varchar(8)">
 			</column>
@@ -1154,7 +1153,7 @@
 			</column>
 			<column name="Channel" type="varchar(8)">
 			</column>
-			<column name="Active" type = "boolean">
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -1170,7 +1169,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="8.4" author="Shahbaj.b">
 		<createView viewName="CD_DealerGroup_VIEW" replaceIfExists="true">
 			  SELECT t1.dealerGroupId,
@@ -1232,7 +1231,7 @@
    			FROM CD_DealerGroup t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="8.6" author="Shahbaj.b">
 		<createView viewName="CD_DealerGroup_TVIEW" replaceIfExists="true">
 			 SELECT t1.dealerGroupId,
@@ -1253,7 +1252,7 @@
    			FROM CD_DealerGroup_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="8.7" author="Shahbaj.b">
 		<sql>
 			<![CDATA[
@@ -1315,12 +1314,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="Nageswar.p">
-		<createSequence sequenceName="SEQCD_DEALERMAPPING_Code" 
-		incrementBy="1" maxValue="999999999999999" startValue="1"/>
+		<createSequence sequenceName="SEQCD_DEALERMAPPING_Code" incrementBy="1" maxValue="999999999999999"
+			startValue="1" />
 	</changeSet>
-	
+
 	<changeSet id="9" author="Shahbaj.b" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQPRODUCTGROUP" />
 	</changeSet>
@@ -1331,11 +1330,11 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="9.2" author="Shahbaj.b">
 		<createTable tableName="ProductGroup">
 			<column name="ProductGroupId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="ModelId" type="varchar(8)">
 			</column>
@@ -1343,7 +1342,7 @@
 			</column>
 			<column name="Channel" type="int">
 			</column>
-			<column name="Active" type = "boolean">
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -1359,11 +1358,11 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="9.3" author="Shahbaj.b">
 		<createTable tableName="ProductGroup_Temp">
 			<column name="ProductGroupId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="ModelId" type="varchar(8)">
 			</column>
@@ -1371,7 +1370,7 @@
 			</column>
 			<column name="Channel" type="int">
 			</column>
-			<column name="Active" type = "boolean">
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -1387,7 +1386,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="9.4" author="Shahbaj.b">
 		<createView viewName="ProductGroup_VIEW" replaceIfExists="true">
 			 SELECT t1.productGroupId,
@@ -1449,7 +1448,7 @@
    			FROM ProductGroup t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="9.6" author="Shahbaj.b">
 		<createView viewName="ProductGroup_TVIEW" replaceIfExists="true">
 			 SELECT t1.productGroupId,
@@ -1470,7 +1469,7 @@
    			FROM ProductGroup_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="9.7" author="Shahbaj.b">
 		<sql>
 			<![CDATA[
@@ -1531,9 +1530,9 @@
 				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
 			]]>
 		</sql>
-	</changeSet>	
-	
-	<changeSet id="10" author="vijaya.a" dbms="postgresql, oracle">
+	</changeSet>
+
+	 <changeSet id="10" author="vijaya.a" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_Scheme_DealerGroup" />
 	</changeSet>
 
@@ -1543,7 +1542,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="10.2" author="vijaya.a">
 		<createTable tableName="CD_Scheme_DealerGroup">
 			<column name="SchemeDealerGroupId" type="int">
@@ -1569,7 +1568,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="10.3" author="vijaya.a">
 		<createTable tableName="CD_Scheme_DealerGroup_Temp">
 			<column name="SchemeDealerGroupId" type="int">
@@ -1595,14 +1594,14 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="10.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP_TEMP" columnNames="DealerGroupCode" 
+		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP_TEMP" columnNames="DealerGroupCode"
 			constraintName="UK_CDSCHM_DLRGRP_TEMP_CODE" />
 		<addUniqueConstraint tableName="CD_SCHEME_DEALERGROUP" columnNames="DealerGroupCode"
 			constraintName="UK_CD_SCHEME_DEALERGROUP_CODE" />
 	</changeSet>
-	
+
 	<changeSet id="10.4" author="vijaya.a">
 		<createView viewName="CD_Scheme_DealerGroup_VIEW" replaceIfExists="true">
 			SELECT t1.schemeDealerGroupId, 
@@ -1661,7 +1660,7 @@
    			FROM CD_Scheme_DealerGroup t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="10.6" author="vijaya.a">
 		<createView viewName="CD_Scheme_DealerGroup_TVIEW" replaceIfExists="true">
 			  SELECT t1.schemeDealerGroupId, 
@@ -1681,7 +1680,7 @@
    			FROM CD_Scheme_DealerGroup_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="10.7" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -1740,8 +1739,8 @@
 				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
 			]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="10.1" author="Nageswar.p">
 		<createView viewName="CD_DealerMapping_VIEW" replaceIfExists="true">
  			SELECT t1.dealerMapId,
@@ -1792,7 +1791,7 @@
             WHERE CD_DealerMapping_Temp.dealerMapId = t1.dealerMapId))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11" author="vijaya.a" dbms="postgresql, oracle">
 		<createSequence sequenceName="SEQCD_Scheme_ProductGroup" />
 	</changeSet>
@@ -1803,7 +1802,7 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.2" author="vijaya.a">
 		<createTable tableName="CD_Scheme_ProductGroup">
 			<column name="SchemeProductGroupId" type="int">
@@ -1831,7 +1830,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.3" author="vijaya.a">
 		<createTable tableName="CD_Scheme_ProductGroup_Temp">
 			<column name="SchemeProductGroupId" type="int">
@@ -1859,14 +1858,14 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.3_post" author="vijaya.a">
-		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP_TEMP" columnNames="ProductGroupCode" 
+		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP_TEMP" columnNames="ProductGroupCode"
 			constraintName="UK_CDSCHM_PRDCTGRP_TEMP_CODE" />
 		<addUniqueConstraint tableName="CD_SCHEME_PRODUCTGROUP" columnNames="ProductGroupCode"
 			constraintName="UK_CD_SCHEME_PRDCTGRP_CODE" />
 	</changeSet>
-	
+
 	<changeSet id="11.4" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_VIEW" replaceIfExists="true">
 			SELECT t1.schemeProductGroupId,
@@ -1928,7 +1927,7 @@
    			FROM CD_Scheme_ProductGroup t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11.6" author="vijaya.a">
 		<createView viewName="CD_Scheme_ProductGroup_TVIEW" replaceIfExists="true">
 			  SELECT t1.schemeProductGroupId,
@@ -1949,7 +1948,7 @@
    			FROM CD_Scheme_ProductGroup_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11.7" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -2022,25 +2021,25 @@
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.2.1" author="Nageswar.p">
 		<createTable tableName="TransactionMapping">
 			<column name="Id" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_PK_ID"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_PK_ID" />
 			</column>
 			<column name="POSId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerCode" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerName" type="varchar2(100)">
 			</column>
 			<column name="MID" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="TID" type="number(6)"/>
-			<column name="Active" type = "boolean">
+			<column name="TID" type="number(6)" />
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -2056,25 +2055,25 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.3.1" author="Nageswar.p">
 		<createTable tableName="TransactionMapping_Temp">
 			<column name="Id" type="int">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_Temp_PK_ID"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="TransactionMapping_Temp_PK_ID" />
 			</column>
 			<column name="POSId" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerCode" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="DealerName" type="varchar2(100)">
 			</column>
 			<column name="MID" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
-			<column name="TID" type="number(6)"/>
-			<column name="Active" type = "boolean">
+			<column name="TID" type="number(6)" />
+			<column name="Active" type="boolean">
 			</column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -2090,7 +2089,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="11.4" author="Nageswar.p">
 		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
 			 SELECT t1.Id,
@@ -2158,7 +2157,7 @@
    			FROM TransactionMapping t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11.6" author="Nageswar.p">
 		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
 			 SELECT t1.Id,
@@ -2245,10 +2244,10 @@
 				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
 			]]>
 		</sql>
-		</changeSet>
-		
-		<changeSet id="11.8" author="Nageswar.p">
-			<sql>
+	</changeSet>
+
+	<changeSet id="11.8" author="Nageswar.p">
+		<sql>
 			<![CDATA[ 
 				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_DealerCode',
 				'TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
@@ -2257,18 +2256,171 @@
 				 GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_DealerCode'), 
 				 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
-			</sql>
-		</changeSet>
-		
-		<changeSet id="12" author="Vijaya.a">
-			<sql>
+		</sql>
+	</changeSet>
+
+	<changeSet id="12" author="Vijaya.a">
+		<sql>
 			<![CDATA[ 
 				alter table ProductGroup modify (channel Varchar(20));
 				alter table ProductGroup_Temp modify (channel Varchar(20));
 				alter table DealerGroupId modify (channel Varchar(20));
 				alter table DealerGroupId_Temp modify (channel Varchar(20));
 			]]>
-			</sql>
-		</changeSet>
-		
+		</sql>
+	</changeSet> 
+
+	<changeSet id="13" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_UPLOAD');
+				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_UPLOAD');
+				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_UPLOAD';
+
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_UPLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_UPLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_UPLOAD';
+
+				INSERT INTO DATA_ENGINE_CONFIG VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG), 'SETTLEMENT_REQUEST_UPLOAD', 'Settlement process upload', 12, 'SettlementProcess', NULL, NULL, NULL , 0, 0, NULL, 'SettlementRef, CustomerRef, EMIOffer, SubPayByManfacturer, SubvensionAmount, CustName, CustMobile, CustAddress, CustEmail, StoreName, StoreAddress, StoreCity, StoreState, Issuer, Category, Description, Serial, Manufacturer, TransactionAmount, Acquirer, ManufactureId, TerminalId, SettlementBatch, BankInvoice, AuthCode, HostReference, TransactionDateTime, SettlementDateTime, BillingInvoice, TransactionStatus, Reason, ProductCategory, ProductSubCategory1, ProductSubCategory2, ModelName, MaxValueOfProduct, MerchantName', '', 'A', '/opt/PFF/SettlementProcess', 'Settlement_', '.xls', 0, NULL, '${ddMMYYYYHms}', NULL, 0, NULL, 1, 1); 
+				INSERT INTO DATA_ENGINE_TABLE  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE), (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD'), 'SETTLEMENT_UPLOAD',  0, 'EMIId', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'SettlementRef', 0, 'N', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'M');
+  				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'CustomerRef', 0, 'N', NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 'M');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'EMIOffer', 0, 'N', NULL, NULL, NULL, NULL, 2, NULL, NULL, NULL, NULL, 'O');	
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'SubPayByManfacturer', 0, 'N', NULL, NULL, NULL, NULL, 3, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'SubvensionAmount', 0, 'N', NULL, NULL, NULL, NULL, 4, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'CustName', 0, 'N', NULL, NULL, NULL, NULL, 5, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'CustMobile', 0, 'N', NULL, NULL, NULL, NULL, 6, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'CustAddress', 0, 'N', NULL, NULL, NULL, NULL, 7, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'CustEmail', 0, 'N', NULL, NULL, NULL, NULL, 8, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'StoreName', 0, 'N', NULL, NULL, NULL, NULL, 9, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'StoreAddress', 0, 'N', NULL, NULL, NULL, NULL, 10, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'StoreCity', 0, 'N', NULL, NULL, NULL, NULL, 11, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'StoreState', 0, 'N', NULL, NULL, NULL, NULL, 12, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Issuer', 0, 'N', NULL, NULL, NULL, NULL, 13, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Category', 0, 'N', NULL, NULL, NULL, NULL, 14, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Description', 0, 'N', NULL, NULL, NULL, NULL, 15, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Serial', 0, 'N', NULL, NULL, NULL, NULL, 16, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Manufacturer', 0, 'N', NULL, NULL, NULL, NULL, 17, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'TransactionAmount', 0, 'N', NULL, NULL, NULL, NULL, 18, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Acquirer', 0, 'N', NULL, NULL, NULL, NULL, 19, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'ManufactureId', 0, 'N', NULL, NULL, NULL, NULL, 20, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'TerminalId', 0, 'N', NULL, NULL, NULL, NULL, 21, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'SettlementBatch', 0, 'N', NULL, NULL, NULL, NULL, 22, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'BankInvoice', 0, 'N', NULL, NULL, NULL, NULL, 23, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'AuthCode', 0, 'N', NULL, NULL, NULL, NULL, 24, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'HostReference', 0, 'N', NULL, NULL, NULL, NULL, 25, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'TransactionDateTime', 0, 'N', NULL, NULL, NULL, NULL, 26, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'SettlementDateTime', 0, 'N', NULL, NULL, NULL, NULL, 27, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'BillingInvoice', 0, 'N', NULL, NULL, NULL, NULL, 28, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'TransactionStatus', 0, 'N', NULL, NULL, NULL, NULL, 29, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'Reason', 0, 'N', NULL, NULL, NULL, NULL, 30, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'ProductCategory', 0, 'N', NULL, NULL, NULL, NULL, 31, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'ProductSubCategory1', 0, 'N', NULL, NULL, NULL, NULL, 32, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'ProductSubCategory2', 0, 'N', NULL, NULL, NULL, NULL, 33, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'ModelName', 0, 'N', NULL, NULL, NULL, NULL, 34, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'MaxValueOfProduct', 0, 'N', NULL, NULL, NULL, NULL, 35, NULL, NULL, NULL, NULL, 'O');
+				INSERT INTO DATA_ENGINE_COLUMN VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_UPLOAD' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_UPLOAD')), 'MerchantName', 0, 'N', NULL, NULL, NULL, NULL, 36, NULL, NULL, NULL, NULL, 'O');
+				
+				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
+				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
+				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="14" author="vijaya.a">
+		<createTable tableName="Settlement_Request">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_settlement_request" />
+			</column>
+			<column name="RequestBatchId" type="bigint"/>
+			<column name="SettlementRef" type="varchar(50)">
+				<constraints nullable="false" unique="true" uniqueConstraintName="uk_settlement_request_ref" />
+			</column>
+			<column name="CustomerRef" type="varchar(50)" />
+			<column name="EMIOffer" type="varchar(50)" />
+			<column name="SubPayByManfacturer" type="decimal(5, 2)" />
+			<column name="SubvensionAmount" type="decimal(18, 0)" />
+			<column name="CustName" type="varchar(100)" />
+			<column name="CustAddress" type="varchar(100)" />
+			<column name="CustMobile" type="varchar(20)" />
+			<column name="CustEmail" type="varchar(50)" />
+			<column name="StoreName" type="varchar(100)" />
+			<column name="StoreAddress" type="varchar(100)" />
+			<column name="StoreCountry" type="varchar(50)" />
+			<column name="StoreState" type="varchar(50)" />
+			<column name="StoreCity" type="varchar(50)" />
+			<column name="Issuer" type="varchar(50)" />
+			<column name="Category" type="varchar(50)" />
+			<column name="Description" type="varchar(200)" />
+			<column name="Serial" type="varchar(100)" />
+			<column name="Manufacturer" type="varchar(50)" />
+			<column name="TransactionAmount" type="decimal(18, 0)" />
+			<column name="Acquirer" type="varchar(100)" />
+			<column name="ManuFactureId" type="bigint" />
+			<column name="TerminalId" type="varchar(20)" />
+			<column name="SettlementBatch" type="varchar(50)" />
+			<column name="BankInvoice" type="varchar(50)" />
+			<column name="AuthCode" type="varchar(10)" />
+			<column name="HostReference" type="varchar(20)" />
+			<column name="TransactionDateTime" type="datetime" />
+			<column name="SettlementDateTime" type="datetime" />
+			<column name="BillingInvoice" type="varchar(50)" />
+			<column name="TransactionStatus" type="varchar(50)" />
+			<column name="Reason" type="varchar(50)" />
+			<column name="ProductCategory" type="varchar2(100)" />
+			<column name="ProductSubCategory1" type="varchar(100)" />
+			<column name="ProductSubCategory2" type="varchar(100)" />
+			<column name="ModelName" type="varchar2(50)" />
+			<column name="MaxValueOfProduct" type="decimal(18,0)" />
+			<column name="MerchantName" type="varchar(50)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="15" author="vijaya.a">
+		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT DISTINCT(DS.ID), 
+				DC.NAME, 
+			  	DC.UPLOADPATH FILELOCATION, 
+			  	DS.FILENAME, 
+			  	DS.ENDTIME, 
+			  	DS.STATUS, 
+			  	DC.Id As ConfigId,
+			  	DC.PostEvent,
+				SR.HOSTREFERENCE, 
+				SR.CUSTOMERREF, 
+				SR.TRANSACTIONAMOUNT,
+				SR.TRANSACTIONDATETIME, 
+				SR.MERCHANTNAME, 
+				SR.TERMINALID, 
+				SR.MANUFACTUREID,
+				SR.REQUESTBATCHID, 
+				SR.ID As SettlementId
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+			WHERE NOT EXISTS (SELECT ID FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID = DS.ID) 
+		</createView>
+	</changeSet>
+
+	<changeSet id="16" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Insert into  DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_CONFIG),'SETTLEMENT_REQUEST_DOWNLOAD','Settlement Process Download',3,null,null,null,',',0,0, null, 'ROW:{HOSTREFERENCE,CUSTOMERREF,TRANSACTIONAMOUNT,TRANSACTIONDATETIME,MERCHANTNAME,TERMINALID,MANUFACTUREID}',null,'A','/opt/PFF/SettlementProcess','${SETTLEMENT_PROCESS}','.xlsx','7',to_date('28-06-19','DD-MM-RR'),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
+				
+				Delete from  DATA_ENGINE_TABLE where configid = (select id from  DATA_ENGINE_CONFIG where name = 'SETTLEMENT_REQUEST_DOWNLOAD');
+				Insert into  DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_TABLE),(Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD'),'SETTLEMENT_REQUEST',0,'ID','REQUESTBATCHID IN (:REQUESTBATCHID)','',null,null,null,null,null,0,0,0);
+
+				DELETE FROM  DATA_ENGINE_COLUMN  where TABLEID IN (select ID from  DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from  DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_DOWNLOAD'));
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')), 'HOSTREFERENCE', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')),  'CUSTOMERREF', 0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')),  'TRANSACTIONAMOUNT', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')), 'TRANSACTIONDATETIME', 0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')),  'MERCHANTNAME', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')), 'TERMINALID', 0,'N',null,null,  null,null,'0',null,null,null,null,'O');
+				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')), 'MANUFACTUREID', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	

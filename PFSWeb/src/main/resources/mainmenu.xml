@@ -700,6 +700,10 @@
 				rightname="menuItem_Collateral_Values_Upload" />
 			<menuItem id="menu_Item_ExternalUplaods" zulNavigation="/WEB-INF/pages/ExternalUploads/ExternalUploadList.zul"
 				rightName="menu_Item_ExternalUpload" />
+			<menuItem id="menu_Item_DataEngine_SettlementProcessUpload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessUpload.zul"
+				/>	<!-- rightname="menuItem_Settlement_Process_Upload"  -->
+			<menuItem id="menu_Item_DataEngine_SettlementProcessDownload" zulNavigation="/WEB-INF/pages/DataEngine/SettlementProcessDownload.zul"
+				/>	<!-- rightname="menuItem_Settlement_Process_Upload"  -->	
 		</menu>
 		<menuItem id="menu_Item_LenderUpload" zulNavigation="/WEB-INF/pages/LenderUpload/LenderDataUpload.zul"
 			rightName="menuItem_LenderUpload" />
