@@ -8521,7 +8521,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getFinanceScheduleDetails();
 					for (FinanceScheduleDetail finSchdDetail : schdList) {
 						if (DateUtility.compare(emiDate, finSchdDetail.getSchDate()) == 0) {
-							BigDecimal repayAmount = schdList.get(1).getRepayAmount();
+							BigDecimal repayAmount = finSchdDetail.getRepayAmount();
 							emiAmount.setFormat(PennantApplicationUtil.getAmountFormate(2));
 							emiAmount.setScale(2);
 							emiAmount.setValue(PennantAppUtil.formateAmount(repayAmount, 2));

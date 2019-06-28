@@ -186,7 +186,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
@@ -3873,6 +3872,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 		rch.setUserDetails(userDetails);
 		rch.setReceiptDate(rcd.getReceivedDate());
+		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
 		rch.setValueDate(rcd.getReceivedDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);

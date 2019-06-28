@@ -2375,13 +2375,17 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_BillingReport")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_ACHPResentations")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCPResentation")
-				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCExhaustReport")) {
+				|| StringUtils.equals(reportMenuCode, "menu_Item_PDCExhaustReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport")) {
 			String userDate = null;
 
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
-			if (filters != null && filters.size() == 2) {
+			if (!StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport") && filters != null
+					&& filters.size() == 2) {
 				userDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			} else if (filters != null && filters.size() == 1) {
+				userDate = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
 			}
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
