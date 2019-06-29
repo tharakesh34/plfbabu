@@ -474,6 +474,8 @@
 			rightName="menuItem_Reassignment" />
 		<menuItem id="menu_Item_ReleaseLock" zulNavigation="/WEB-INF/pages/Finance/QueueAssignment/ReleaseLockList.zul"
 			rightName="menuItem_ReleaseLock" />
+			<menuItem id="menu_Item_LedgerDownloadProcess"
+			zulNavigation="/WEB-INF/pages/CustomerMasters/LedgerDownload/LedgerDownload.zul" />
 	</menu>
 
 	<!-- Verification -->
