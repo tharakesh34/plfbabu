@@ -1,14 +1,9 @@
-
 package com.pennant.webui.applicationmaster.download;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Radio;
-import org.zkoss.zul.Radiogroup;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
@@ -20,9 +15,6 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	private static final Logger logger = Logger.getLogger(LedgerDownloadProcessCtrl.class);
 
 	protected Window window_Download; // autoWired
-	protected Textbox fileName;
-	protected Radio radioDownload; // autoWired
-	protected Radio radioUpload;
 	protected Button btnStartLedgerFile;
 	private LedgerDownloadServiceImpl ledgerDownloadService;
 
