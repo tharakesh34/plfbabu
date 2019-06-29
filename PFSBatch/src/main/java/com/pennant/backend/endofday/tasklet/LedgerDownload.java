@@ -22,7 +22,7 @@ public class LedgerDownload implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (ledgerDownloadService != null) {
-			ledgerDownloadService.processDownload(DateUtility.getAppDate());
+			ledgerDownloadService.processDownload(DateUtility.getAppDate(),null,true);
 		} else {
 			logger.debug("LedgerDownloadService Not Configured");
 		}
