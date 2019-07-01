@@ -7076,4 +7076,42 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="45" author="Manoj.P">
+		<comment>create table for receipt process in thread</comment>
+		<createTable tableName="ReceiptUploadQueuing_log">
+			<column name="UploadHeaderId" type="bigint" />
+			<column name="UploadDetailId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Finreference" type="varchar(20)" />
+			<column name="JSONOBJECT" type="clob" />
+			<column name="EODDate" type="datetime" />
+			<column name="THREADID" type="int" />
+			<column name="PROGRESS" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ERRORLOG" type="varchar2(2000)" />
+			<column name="EODProcess" type="boolean" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="46" author="Manoj.P">
+		<comment> create table for receipt process in thread</comment>
+		<createTable tableName="ReceiptUploadQueuing">
+			<column name="UploadHeaderId" type="bigint" />
+			<column name="UploadDetailId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Finreference" type="varchar(20)" />
+			<column name="JSONOBJECT" type="clob" />
+			<column name="EODDate" type="datetime" />
+			<column name="THREADID" type="int" />
+			<column name="PROGRESS" type="int" />
+			<column name="StartTime" type="datetime" />
+			<column name="EndTime" type="datetime" />
+			<column name="ERRORLOG" type="varchar2(2000)" />
+			<column name="EODProcess" type="boolean" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
