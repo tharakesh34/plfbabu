@@ -195,7 +195,7 @@
 	</changeSet>
 
 	<changeSet id="9" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="10" author="Satya">
@@ -225,7 +225,7 @@
 	</changeSet>
 
 	<changeSet id="12" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="13" author="Satya">
@@ -264,7 +264,7 @@
 	</changeSet>
 
 	<changeSet id="15" author="Satya">
-		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="16" author="Satya">
@@ -298,7 +298,7 @@
 	</changeSet>
 
 	<changeSet id="18" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="19" author="Satya">
@@ -382,7 +382,7 @@
 	</changeSet>
 
 	<changeSet id="26" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="27" author="Satya">
@@ -491,7 +491,7 @@
 
 	<changeSet id="40" author="Satya">
 		<dropDefaultValue tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
-		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean"/>
+		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="41" author="Satya">
@@ -527,6 +527,38 @@
 				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights_View);
 				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights_View);
 				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups_View);
+	       ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="42" author="satyanarayana.g">
+		<sql>
+	       <![CDATA[
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+				
+				Delete from SecGroupRights where GrpID In (Select GrpID from SecGroups where GrpCode = 'INCOMEAMORTIZATION_MAKER');
+				Delete from SecRoleGroups where GrpID IN (Select GrpId from SecGroups WHERE GrpCode = 'INCOMEAMORTIZATION_MAKER') And RoleID IN (Select RoleID from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER');
+				Delete from SecGroups where GrpCode = 'INCOMEAMORTIZATION_MAKER';
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'INCOMEAMORTIZATION_MAKER','WF Maker for IncomeAmortization', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL,0);
+				
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuCat_Amortization');
+				Delete from SecRights where RightName = 'menuCat_Amortization';
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuCat_Amortization', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INCOMEAMORTIZATION_MAKER'), (Select RightID from SecRights where RightName = 'menuCat_Amortization'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select MAX(GrpId) from SecGroups WHERE GrpCode = 'INCOMEAMORTIZATION_MAKER'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'menuItem_Amortization_IncomeAmortization');
+				Delete from SecRights where RightName = 'menuItem_Amortization_IncomeAmortization';
+				Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menuItem_Amortization_IncomeAmortization', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INCOMEAMORTIZATION_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_Amortization_IncomeAmortization'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 	       ]]>
 		</sql>
 	</changeSet>
