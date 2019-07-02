@@ -4714,5 +4714,16 @@
 	        ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet author="vijaya.a" id="129">
+		<sql>
+			<![CDATA[
+				alter table REJECTFINANCEMAIN add QuickDisbTemp smallint;
+				Update REJECTFINANCEMAIN set QuickDisbTemp = cast (QuickDisb As smallint);
+				alter table REJECTFINANCEMAIN drop QuickDisb;
+				alter table REJECTFINANCEMAIN rename column QuickDisbTemp To QuickDisb;
+	        ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
