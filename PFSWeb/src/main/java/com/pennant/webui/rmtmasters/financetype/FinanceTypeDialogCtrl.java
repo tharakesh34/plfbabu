@@ -230,6 +230,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox droplineOD;
 	protected Combobox droppingMethod;
 	protected Checkbox manualSchedule;
+	protected Checkbox allowDrawingPower;
 	protected Row row_Commitment;
 	protected Checkbox developerFinance; // autoWired
 	protected Row row_EligibilityMethod;
@@ -1197,6 +1198,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				"");
 		doSetDropline();
 		this.manualSchedule.setChecked(aFinanceType.isManualSchedule());
+		this.allowDrawingPower.setChecked(aFinanceType.isAllowDrawingPower());
 
 		this.rollOverFrq.setValue(aFinanceType.getRollOverFrq());
 		this.tDSApplicable.setChecked(aFinanceType.isTdsApplicable());
@@ -2153,6 +2155,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		try {
 			aFinanceType.setManualSchedule(this.manualSchedule.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setAllowDrawingPower(this.allowDrawingPower.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
