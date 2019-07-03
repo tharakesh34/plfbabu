@@ -123,7 +123,6 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Iframe;
-import org.zkoss.zul.Image;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
@@ -201,7 +200,6 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
-import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -846,16 +844,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected transient int oldVar_odMnthlyTerms;
 
 	// Split screen components start
-	protected Groupbox gb_DocumentPdf;
-	protected Groupbox gb_SplitScreen_Documents;
-	protected Groupbox gb_iframeriskPropertyPdf;
+	protected Groupbox gb_split_Document;
+	protected Groupbox gb_splitScreen_Documents;
+	protected Groupbox gb_splitScreen_Iframe;
 	protected Groupbox gb_basicDetails;
-
-	protected Button btnDocPdfClose;
-	protected East btnDocPdfEast;
-	protected Image btnDocPdf;
-
-	protected Iframe iframeriskPropertyPdf;
+	protected Button btnSplitDocClose;
+	protected East btnSplitDoc;
+	protected Iframe splitScreen_Iframe;
 	// Split screen components End
 
 	//Sub Window Child Details Dialog Controllers
@@ -4860,7 +4855,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			String docSplitScreenReq = SysParamUtil.getValueAsString(SMTParameterConstants.DOC_SPLIT_SCREEN_REQ);
 
 			if (StringUtils.equals(docSplitScreenReq, PennantConstants.YES)) {
-				this.btnDocPdfEast.setVisible(true);
+				this.btnSplitDoc.setVisible(true);
 			}
 
 			setDialog(DialogType.EMBEDDED);
@@ -20140,82 +20135,82 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	//Split screen start
-	public void onClick$btnDocPdf(Event event) throws Exception {
+	// Split screen start
+	public void onOpen$btnSplitDoc(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		List<DocumentDetails> detailsList = documentDetailDialogCtrl.getDocumentDetailsList();
+		if (this.btnSplitDoc.isOpen()) {
 
-		List<CustomerDocument> customerDocuments = financeDetail.getCustomerDetails().getCustomerDocumentsList();
+			List<DocumentDetails> detailsList = documentDetailDialogCtrl.getDocumentDetailsList();
 
-		boolean available = false;
+			boolean available = false;
 
-		if (CollectionUtils.isNotEmpty(customerDocuments)) {
-			for (CustomerDocument customerDocument : customerDocuments) {
-				if (PennantConstants.DOC_TYPE_PDF.equals(customerDocument.getCustDocType())) {
+			if (CollectionUtils.isNotEmpty(detailsList) && !available) {
+				for (DocumentDetails details : detailsList) {
+					if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
+							|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())) {
+						byte[] docImage = details.getDocImage();
+						if (docImage == null) {
+							docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
+						}
+						if (docImage != null) {
+							available = true;
+							continue;
+						}
 
-					byte[] docImage = customerDocument.getCustDocImage();
-					if (docImage == null) {
-						docImage = PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId());
 					}
-					if (docImage != null) {
-						available = true;
-						break;
 					}
 				}
+
+			if (!available) {
+				MessageUtil.showMessage("Documents are not available.");
+				return;
 			}
+			renderSplitDocuments(detailsList);
+
+		} else {
+			this.gb_split_Document.setVisible(false);
+			this.btnSplitDocClose.setVisible(false);
+			this.gb_splitScreen_Iframe.setParent(gb_split_Document);
+			this.gb_splitScreen_Documents.getChildren().clear();
+			}
+		logger.debug(Literal.LEAVING);
 		}
 
-		if (CollectionUtils.isNotEmpty(detailsList) && !available) {
+	// Documents Rendering Rendering For The Split Screen Purpose.
+	private void renderSplitDocuments(List<DocumentDetails> detailsList) {
 			for (DocumentDetails details : detailsList) {
-				if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())) {
+			if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_WORD.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_DOC.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_DOCX.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_IMAGE.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_JPG.equals(details.getDoctype())
+					|| PennantConstants.DOC_TYPE_EXCEL.equals(details.getDoctype())) {
 
 					byte[] docImage = details.getDocImage();
 					if (docImage == null) {
 						docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
 					}
 					if (docImage != null) {
-						available = true;
-						break;
-					}
-
-				}
-			}
-		}
-
-		if (!available) {
-			MessageUtil.showMessage("Documents are not available.");
-			return;
-		}
-		renderSplitDocuments(detailsList);
-		renderSplitCustDocuments(customerDocuments);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	//Documents Rendering Rendering For The Split Screen Purpose.
-	private void renderSplitDocuments(List<DocumentDetails> detailsList) {
-		for (DocumentDetails details : detailsList) {
-			if (PennantConstants.DOC_TYPE_PDF.equals(details.getDoctype())) {
-
-				byte[] docImage = details.getDocImage();
-				if (docImage == null) {
-					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
-				}
-				if (docImage != null) {
 					details.setDocImage(docImage);
 				} else {
 					continue;
-				}
+					}
 
 				Groupbox groupbox = new Groupbox();
 				groupbox.setStyle("GridLayoutNoBorder");
-				this.gb_SplitScreen_Documents.appendChild(groupbox);
+				this.gb_splitScreen_Documents.appendChild(groupbox);
 
 				Grid grid = new Grid();
 				grid.setSclass("GridLayoutNoBorder");
 				grid.setStyle("border:0px");
-				grid.setHeight("80px");
+				grid.setVflex("1");
 				groupbox.appendChild(grid);
 
 				Columns columns = new Columns();
@@ -20252,169 +20247,46 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				row3.appendChild(label3);
 
 			}
-		}
-		this.gb_SplitScreen_Documents.setWidth("490px");
-		this.gb_SplitScreen_Documents.setHeight("500px");
-		this.btnDocPdfClose.setVisible(true);
-		this.gb_DocumentPdf.setVisible(true);
-		this.gb_DocumentPdf.setWidth("490px");
-		this.gb_DocumentPdf.setHeight("500px");
-		this.gb_DocumentPdf.setStyle("padding-top: 11px;");
-
-		this.gb_SplitScreen_Documents.setVisible(true);
-		this.gb_iframeriskPropertyPdf.setVisible(false);
-		this.gb_basicDetails.setWidth("1060px");
-		Hbox hbox = new Hbox();
-		this.gb_basicDetails.setParent(hbox);
-		this.gb_DocumentPdf.setParent(hbox);
-
-		if (defaultComponentList.isEmpty()) {
-			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
-		}
-		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
-		hbox.setParent(basicDetailTabDiv);
-		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
-		btnDocPdf.setVisible(false);
-
-	}
-
-	//Customer Documents Rendering For The Split Screen Purpose.
-	private void renderSplitCustDocuments(List<CustomerDocument> detailsList) {
-		for (CustomerDocument details : detailsList) {
-			if (PennantConstants.DOC_TYPE_PDF.equals(details.getCustDocType())) {
-
-				byte[] docImage = details.getCustDocImage();
-				if (docImage == null) {
-					docImage = PennantApplicationUtil.getDocumentImage(details.getDocRefId());
-				}
-				if (docImage != null) {
-					details.setCustDocImage(docImage);
-				} else {
-					continue;
-				}
-
-				Groupbox groupbox = new Groupbox();
-				groupbox.setStyle("GridLayoutNoBorder");
-				this.gb_SplitScreen_Documents.appendChild(groupbox);
-
-				Grid grid = new Grid();
-				grid.setSclass("GridLayoutNoBorder");
-				grid.setStyle("border:0px");
-				grid.setHeight("80px");
-				groupbox.appendChild(grid);
-
-				Columns columns = new Columns();
-				Column column = new Column();
-
-				columns.appendChild(column);
-				grid.appendChild(columns);
-
-				Rows rows = new Rows();
-				grid.appendChild(rows);
-
-				Row row1 = new Row();
-				rows.appendChild(row1);
-
-				Label label = new Label(details.getCustDocCategory() + " - " + details.getLovDescCustDocCategory());
-				row1.appendChild(label);
-
-				Row row2 = new Row();
-				rows.appendChild(row2);
-
-				Hbox hbox2 = new Hbox();
-				row2.appendChild(hbox2);
-
-				DocumentDetails documentDetails = new DocumentDetails();
-				documentDetails.setDocImage(docImage);
-				documentDetails.setDocName(details.getCustDocName());
-
-				A href = new A();
-				href.setAttribute("Object", documentDetails);
-				href.addForward("onClick", this.window, "onClicked");
-				href.setLabel(details.getCustDocName());
-				hbox2.appendChild(href);
-
-				Row row3 = new Row();
-				rows.appendChild(row3);
-
-				Label label3 = new Label(DateUtility.formatToLongDate(details.getLastMntOn()));
-				row3.appendChild(label3);
-
 			}
+		this.gb_split_Document.setVisible(true);
+		this.gb_splitScreen_Documents.setVisible(true);
+		this.gb_splitScreen_Iframe.setVisible(false);
+
 		}
-		this.gb_SplitScreen_Documents.setWidth("490px");
-		this.gb_SplitScreen_Documents.setHeight("500px");
-		this.btnDocPdfClose.setVisible(true);
-		this.gb_DocumentPdf.setVisible(true);
-		this.gb_DocumentPdf.setWidth("490px");
-		this.gb_DocumentPdf.setHeight("500px");
-		this.gb_DocumentPdf.setStyle("padding-top: 11px;");
 
-		this.gb_SplitScreen_Documents.setVisible(true);
-		this.gb_iframeriskPropertyPdf.setVisible(false);
-		this.gb_basicDetails.setWidth("1060px");
-		Hbox hbox = new Hbox();
-		this.gb_basicDetails.setParent(hbox);
-		this.gb_DocumentPdf.setParent(hbox);
+	public void onClick$btnSplitDocClose(Event event) {
+		logger.debug(Literal.ENTERING);
 
-		if (defaultComponentList.isEmpty()) {
-			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
-		}
-		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
-		hbox.setParent(basicDetailTabDiv);
-		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
-		btnDocPdf.setVisible(false);
+		this.gb_splitScreen_Documents.setVisible(true);
+		this.gb_splitScreen_Iframe.setVisible(false);
+		this.btnSplitDocClose.setVisible(false);
 
-	}
-
-	public void onClick$btnDocPdfClose(Event event) {
-		logger.debug("Entering" + event.toString());
-
-		this.gb_DocumentPdf.setVisible(false);
-		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
-		this.gb_basicDetails.setParent(basicDetailTabDiv);
-		this.gb_iframeriskPropertyPdf.setParent(gb_DocumentPdf);
-		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
-		this.gb_basicDetails.setWidth(getDesktopWidth() - 80 + "px");
-		btnDocPdf.setVisible(true);
-		this.gb_SplitScreen_Documents.getChildren().clear();
-
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClicked(ForwardEvent event) throws Exception {
-		logger.debug("Entering" + event.toString());
 
 		A href = (A) event.getOrigin().getTarget();
 		DocumentDetails details = (DocumentDetails) href.getAttribute("Object");
 
-		this.gb_DocumentPdf.setVisible(true);
-		this.gb_SplitScreen_Documents.setVisible(false);
-		this.gb_iframeriskPropertyPdf.setVisible(true);
-		this.gb_iframeriskPropertyPdf.setWidth("480px");
-		this.gb_iframeriskPropertyPdf.setHeight("500px");
-		this.iframeriskPropertyPdf.setVisible(true);
-		this.iframeriskPropertyPdf.setHeight("435px");
-		this.iframeriskPropertyPdf.setWidth("455px");
-		this.gb_basicDetails.setWidth("1060px");
+		this.gb_split_Document.setVisible(true);
+		if (details.getDocName().endsWith(".docx") || details.getDocName().endsWith(".doc")
+				|| details.getDocName().endsWith(".xls") || details.getDocName().endsWith(".xlsx")) {
+			this.gb_splitScreen_Documents.setVisible(true);
+			this.gb_splitScreen_Iframe.setVisible(false);
+			this.splitScreen_Iframe.setVisible(false);
+			downloadFile(details.getDoctype(), details.getDocImage(), details.getDocName());
+		} else {
+			this.gb_splitScreen_Documents.setVisible(false);
+			this.gb_split_Document.setVisible(true);
+			this.btnSplitDocClose.setVisible(true);
+			this.gb_splitScreen_Iframe.setVisible(true);
+			this.splitScreen_Iframe.setVisible(true);
+			this.splitScreen_Iframe.setContent(
+					new AMedia(details.getDocName(), null, null, new ByteArrayInputStream(details.getDocImage())));
+			}
 
-		Hbox hbox = new Hbox();
-		this.gb_basicDetails.setParent(hbox);
-		this.gb_DocumentPdf.setParent(hbox);
-
-		if (defaultComponentList.isEmpty()) {
-			defaultComponentList.addAll(basicDetailTabDiv.getChildren());
 		}
-		basicDetailTabDiv.getChildren().removeAll(basicDetailTabDiv.getChildren());
-		hbox.setParent(basicDetailTabDiv);
-		basicDetailTabDiv.getChildren().addAll(defaultComponentList);
-		btnDocPdf.setVisible(false);
-
-		this.iframeriskPropertyPdf.setContent(
-				new AMedia(details.getDocName(), null, null, new ByteArrayInputStream(details.getDocImage())));
-
-		logger.debug("Leaving" + event.toString());
-	}
 
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
