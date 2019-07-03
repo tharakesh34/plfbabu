@@ -4714,7 +4714,7 @@
 	        ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="vijaya.a" id="129">
 		<sql>
 			<![CDATA[

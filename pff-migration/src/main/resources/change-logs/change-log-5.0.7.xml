@@ -60,7 +60,15 @@
 		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
-
+<changeSet id="5_pre" author="Saikiran.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="5" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 		SELECT t1.fintype,
@@ -302,6 +310,24 @@
 </createView>
 	</changeSet>
 
+	<changeSet id="5_post" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="6_pre" author="Saikiran.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
+					
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="6" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_orgview " replaceIfExists="true">	 
@@ -502,7 +528,24 @@
 </createView>
 	</changeSet>
 
+		<changeSet id="6_post" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
+					
+			]]>
+		</sql>
+	</changeSet>
 
+	
+		<changeSet id="7_pre" author="Saikiran.v" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
+					
+			]]>
+		</sql>
+	</changeSet>
 	<changeSet id="7" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_view " replaceIfExists="true">	 	 
 	
@@ -985,6 +1028,16 @@
 		  </createView>
 	</changeSet>
 
+	
+	<changeSet id="7_post" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="8.0" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -1713,6 +1766,7 @@
 	<changeSet id="50" author="Kesav">
 		<sql>
 		 	<![CDATA[
+			    delete from plf.SMTPARAMETERS where sysparmcode='ALW_PROFIT_SCHD_INVOICE';
 				INSERT INTO SMTPARAMETERS Values('ALW_PROFIT_SCHD_INVOICE','Allow Profit Schedule Invoice','String', 0, 'N', 1, 0, NULL, NULL,'Allow Profit Schedule Invoice',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
