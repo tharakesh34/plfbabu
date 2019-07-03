@@ -7114,15 +7114,25 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="47" author="Manoj.P">
+	<changeSet id="47" author="Manoj.P" dbms="postgresql,mssql">
 	<sql>
 		<![CDATA[
 					
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='RU_THREAD_COUNT';
-     			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RU_THREAD_COUNT','Number of Threads for Receipt Upload.','int',1,'10',6,0,null,null,'Number of Threads for Receipt Upload.',1,1000,cast('02-11-18' as datetime),'Approved',null,null,null,null,null,0);
-		
+     			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RU_THREAD_COUNT','Number of Threads for Receipt Upload.','int',1,'10',6,0,null,null,'Number of Threads for Receipt Upload.',1,1000,'2018-02-11 00:00:00','Approved',null,null,null,null,null,0);
 			]]>
 	</sql>
 </changeSet>
+
+<changeSet id="47" author="Manoj.P" dbms="oracle" >
+	<sql>
+		<![CDATA[
+					
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='RU_THREAD_COUNT';                                                           
+     			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RU_THREAD_COUNT','Number of Threads for Receipt Upload.','int',1,'10',6,0,null,null,'Number of Threads for Receipt Upload.',1,1000,to_date('2018-02-11','YYYY-MM-DD'),'Approved',null,null,null,null,null,0);
+			]]>
+	</sql>
+</changeSet>
+
 
 </databaseChangeLog>
