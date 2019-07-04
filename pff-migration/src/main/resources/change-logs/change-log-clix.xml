@@ -1624,5 +1624,212 @@
         LEFT join plf.TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME ORDER BY DS.ID DESC
 		</createView>
 	</changeSet>
+	
+	<changeSet id="19" author="amanullah">
+		<createView viewName="ogl_view" replaceIfExists="true">
+			SELECT a.postdate AS acctDate,
+			a.acccy AS ccyCode,
+			md.key_code as jecode,
+			'PENNANT' AS jeSrcName,
+			m.Key_code as sgmt1Ble,
+			COALESCE(ma.Key_code,'160') as prodCatCode,
+			'00' as programcode,
+			rb.branchswiftbrncde as branchcode,
+			ac.hostaccount,
+			pb.AccountNo as acctNo,
+			'000000' AS sgmt5,
+			a.finevent AS event,
+			a.finreference AS lan,
+			CASE
+			WHEN a.drorcr = 'D' THEN a.postamount
+			WHEN a.drorcr = 'C' THEN 0
+			ELSE NULL
+			END AS debit,
+			CASE
+			WHEN a.drorcr = 'D' THEN 0
+			WHEN a.drorcr = 'C' THEN a.postamount
+			ELSE NULL
+			END AS credit,
+			a.valuedate AS transactiondate,
+			b.fintype AS loantype,
+			f.custshrtname AS customername,
+			f.custid AS customerid,
+			c.findivision AS divisioncode,
+			fd.favournumber as chequenumber,
+			a.entitycode,
+			a.linkedtranid
+			FROM postings a
+			LEFT JOIN financemain b ON a.finreference = b.finreference
+			LEFT JOIN rmtfinancetypes c ON c.fintype = b.fintype
+			LEFT JOIN entitiy_segment_mapping es ON es.entitycode = a.entitycode
+			LEFT JOIN partnerbanks pb ON pb.actype = a.accounttype
+			LEFT JOIN customers f ON f.custid = b.custid
+			LEFT JOIN master_def md ON md.key_type = a.finevent
+			LEFT JOIN master_def m ON m.key_type = a.entitycode
+			LEFT JOIN master_def ma ON ma.key_type = c.fincategory
+			LEFT JOIN accountmapping ac ON ac.account = a.account
+			LEFT JOIN rmtbranches rb ON rb.branchcode = a.userbranch
+			LEFT JOIN finreceiptheader fh ON fh.reference = a.finreference
+			LEFT JOIN finreceiptdetail fd ON fd.receiptid = fh.receiptid;
+		</createView>
+	</changeSet>
+
+	<changeSet id="20" author="amanullah">
+		<sql>
+                    <![CDATA[
+		            insert into master_def values ('OGL','C2B','C-PACRV');
+                    insert into master_def values ('OGL','ADDDBSP','ADDDBSP');
+                    insert into master_def values ('OGL','ADDDBSF','C-PAJRL');
+                    insert into master_def values ('OGL','DEFRPY','C-PAJRL');
+                    insert into master_def values ('OGL','NOCISU','C-PAJRL');
+                    insert into master_def values ('OGL','EMIDAY','C-PAJRL');
+                    insert into master_def values ('OGL','FEEAMZ','C-PAJRL');
+                    insert into master_def values ('OGL','JVPOST','C-PAJRL');
+                    insert into master_def values ('OGL','MANFEE','C-PAJRL');
+                    insert into master_def values ('OGL','RATCHG','C-PAJRL');
+                    insert into master_def values ('OGL','REAGING','C-PAJRL');
+                    insert into master_def values ('OGL','SCDCHG','C-PAJRL');
+                    insert into master_def values ('OGL','VASACRUL','C-PAJRL');
+                    insert into master_def values ('OGL','VASFEE','C-PAJRL');
+                    insert into master_def values ('OGL','WRITEOFF','C-PAJRL');
+                    insert into master_def values ('OGL','FEEPAY','C-PAJRL');
+                    insert into master_def values ('OGL','INSTDATE','C-PAJRL');
+                    insert into master_def values ('OGL','ADDDBSN','C-PABPV');
+                    insert into master_def values ('OGL','EARLYSTL','C-PABRV');
+                    insert into master_def values ('OGL','CHQ2B','C-PABRV');
+                    insert into master_def values ('OGL','CHQ2BR','C-PABRV');
+                    insert into master_def values ('OGL','B2C','C-PACRV');
+                    insert into master_def values ('OGL','REPAY','C-PABRV');
+                    insert into master_def values ('OGL','DISBINS','C-PABPV');
+                    insert into master_def values ('OGL','PAYMTINS','C-PABPV');
+                    insert into master_def values ('OGL','EARLYPAY','C-PABRV');
+                    insert into master_def values ('OGL','AMZ','C-PAJRL');
+                    insert into master_def values ('OGL','LATEPAY','C-PAJRL');
+                    insert into master_def values ('OGL','RECIP','C-PABRV');
+                    insert into master_def values ('OGL','CLIX','SINCIN8W8A');
+                    insert into master_def values ('OGL','CLIXCAP','SINCIN8W6P');
+                    insert into master_def values ('OGL','BUSINESS','160');
+                    insert into master_def values ('OGL','PERSONAL','201');
+                    insert into master_def values ('OGL','LACR','164');
+                    ]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="21" author="amanullah">
+		<createView viewName="ogl_view" replaceIfExists="true">
+			SELECT
+			a.postdate AS acctDate,
+			a.acccy AS ccyCode,
+			md.key_code as jecode,
+			'PENNANT' AS jeSrcName,
+			m.Key_code as sgmt1Ble,
+			COALESCE(ma.Key_code,'160') as prodCatCode,
+			b.eligibilityMethod as
+			programcode,
+			rb.branchswiftbrncde as branchcode,
+			ac.hostaccount,
+			pb.AccountNo as acctNo,
+			'000000' AS sgmt5,
+			a.finevent AS event,
+			a.finreference AS lan,
+			CASE
+			WHEN a.drorcr = 'D' THEN a.postamount
+			WHEN
+			a.drorcr = 'C' THEN 0
+			ELSE NULL
+			END AS debit,
+			CASE
+			WHEN a.drorcr = 'D'
+			THEN 0
+			WHEN a.drorcr = 'C' THEN a.postamount
+			ELSE NULL
+			END AS credit,
+			a.valuedate AS transactiondate,
+			b.fintype AS loantype,
+			f.custshrtname
+			AS customername,
+			f.custid AS customerid,
+			c.findivision AS divisioncode,
+			fd.favournumber as chequenumber,
+			a.entitycode,
+			a.linkedtranid,
+			fd.paymenttype
+			FROM
+			postings a
+			LEFT JOIN financemain b ON a.finreference = b.finreference
+			LEFT JOIN rmtfinancetypes c ON c.fintype = b.fintype
+			LEFT JOIN
+			entitiy_segment_mapping es ON es.entitycode = a.entitycode
+			LEFT JOIN
+			partnerbanks pb ON pb.actype = a.accounttype
+			LEFT JOIN customers f ON
+			f.custid = b.custid
+			LEFT JOIN master_def md ON md.key_type =
+			a.finevent
+			LEFT JOIN master_def m ON m.key_type = a.entitycode
+			LEFT
+			JOIN master_def ma ON ma.key_type = c.fincategory
+			LEFT JOIN
+			accountmapping ac ON ac.account = a.account
+			LEFT JOIN rmtbranches rb
+			ON rb.branchcode = a.userbranch
+			LEFT JOIN finreceiptheader fh ON
+			fh.reference = a.finreference
+			LEFT JOIN finreceiptdetail fd ON
+			fd.receiptid = fh.receiptid;
+		</createView>
+	</changeSet>
+
+	<changeSet id="22" author="amanullah">
+		<sql>
+              <![CDATA[
+					insert into data_engine_event_properties values ((select id from data_engine_config where name = 'OGL_DOWNLOAD'),
+					'SFTP',null,'sftpdata/Pennant/UAT/Oracle', 'ENC(gT2XBn7OaAe4PvW/0jn5Mg==)', 'ENC(Cp/4fu0jetgL1gheGV65Yr+wHC1ooOgW)',null,null,'10.108.1.4',22,null,
+					(select max(id)+1 from data_engine_event_properties));
+   				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="23" author="amanullah">
+		<sql>
+               <![CDATA[
+					update data_engine_config set postevent = 'MOVE_TO_S3_BUCKET,COPY_TO_SFTP', uploadpath='/opt/PFF/OGL' where name = 'OGL_DOWNLOAD';	
+					]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="24" author="Manoj.P">
+		<sql>
+			update plf.reportconfiguration set schedulereq = 1 where menuitemcode='menu_Item_WelcomeLetter'; 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="25" author="Manoj.P">
+	<sql>
+		  <![CDATA[
+				Insert into plf.REPORTFILTERFIELDS 
+				values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_WelcomeLetter'),1,'Loan Reference','LOVSEARCH','Loan Reference','T.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		]]>
+	</sql>
+</changeSet>
+
+<changeSet id="26" author="Manoj.P">
+	<sql>
+		  <![CDATA[
+				update plf.reportfilterfields set fielddbname='fm.finreference'
+				where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_NoObjectionCertificate');
+		]]>
+	</sql>
+</changeSet>
+	
+	
+<changeSet id="27" author="Manoj.P">
+	<sql>
+		  <![CDATA[
+		  	update plf.data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI_CLRBI' where name = 'DISB_EXPORT_DEFAULT';
+		  ]]>
+	</sql>
+</changeSet>
+	
 </databaseChangeLog>
 
