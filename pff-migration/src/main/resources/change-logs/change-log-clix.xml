@@ -1661,7 +1661,6 @@
 			FROM postings a
 			LEFT JOIN financemain b ON a.finreference = b.finreference
 			LEFT JOIN rmtfinancetypes c ON c.fintype = b.fintype
-			LEFT JOIN entitiy_segment_mapping es ON es.entitycode = a.entitycode
 			LEFT JOIN partnerbanks pb ON pb.actype = a.accounttype
 			LEFT JOIN customers f ON f.custid = b.custid
 			LEFT JOIN master_def md ON md.key_type = a.finevent
@@ -1760,8 +1759,6 @@
 			LEFT JOIN financemain b ON a.finreference = b.finreference
 			LEFT JOIN rmtfinancetypes c ON c.fintype = b.fintype
 			LEFT JOIN
-			entitiy_segment_mapping es ON es.entitycode = a.entitycode
-			LEFT JOIN
 			partnerbanks pb ON pb.actype = a.accounttype
 			LEFT JOIN customers f ON
 			f.custid = b.custid
@@ -1830,6 +1827,31 @@
 		  ]]>
 	</sql>
 </changeSet>
+
+<changeSet id="28" author="amanullah">
+	<dropTable tableName="ogl_download" />
+</changeSet>
+
+	<changeSet id="29" author="dheerendra.d">
+		<createTable tableName="ogl_download">
+			<column name="accountingdate" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="currencycode" type="varchar(3)" />
+			<column name="userjecatname" type="varchar(25)" />
+			<column name="userjesrcname" type="varchar(25)" />
+			<column name="segmeno1_ble" type="varchar(10)" />
+			<column name="segment2_center" type="varchar(20)" />
+			<column name="segment3_account" type="varchar(20)" />
+			<column name="segment4_analysis" type="varchar(11)" />
+			<column name="segment5_other" type="varchar(6)" />
+			<column name="entereddr" type="bigint" />
+			<column name="enteredcr" type="bigint" />
+			<column name="reference_batchname" type="varchar(70)" />
+			<column name="reference4_journalname" type="varchar(50)" />
+			<column name="attribute6_chequenumber" type="varchar(150)" />
+			<column name="attribute7_valuedate" type="varchar(150)" />
+			<column name="REF10_JOURLINEDESCORNARRATION" type="varchar(240)" />
+		</createTable>
+	</changeSet>
 	
 </databaseChangeLog>
 
