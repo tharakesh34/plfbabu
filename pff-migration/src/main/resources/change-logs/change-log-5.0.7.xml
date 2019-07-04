@@ -1767,7 +1767,7 @@
 	<changeSet id="50" author="Kesav">
 		<sql>
 		 	<![CDATA[
-			    delete from plf.SMTPARAMETERS where sysparmcode='ALW_PROFIT_SCHD_INVOICE';
+			    delete from SMTPARAMETERS where sysparmcode='ALW_PROFIT_SCHD_INVOICE';
 				INSERT INTO SMTPARAMETERS Values('ALW_PROFIT_SCHD_INVOICE','Allow Profit Schedule Invoice','String', 0, 'N', 1, 0, NULL, NULL,'Allow Profit Schedule Invoice',1,  1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
