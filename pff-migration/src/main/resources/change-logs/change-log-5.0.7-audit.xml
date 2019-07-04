@@ -85,5 +85,5 @@
 	</changeSet>
 
 	<!-- GST Waiver Changes END -->
-	<!-- 5.0.6 is Under QC please use 5.0.7 -->
+	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 </databaseChangeLog>
