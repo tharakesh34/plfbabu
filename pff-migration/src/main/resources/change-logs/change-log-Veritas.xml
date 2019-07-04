@@ -6229,5 +6229,94 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-
+	
+<changeSet id="96" author="aditya.a">
+		<sql>
+		<![CDATA[
+			update DATA_ENGINE_CONFIG set header = 'Row:{${COMPANY_NAME}}Row:{Trial Balance Report - ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}}Row:{S.No,PLF LEDGER,NATURAL AC,DESCRIPTION,OPENING BALANCE,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE}' where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+			update DATA_ENGINE_CONFIG set header = 'Row:{${COMPANY_NAME}}Row:{Trial Balance Report - ${TRANSACTION_DURATION}}Row:{Currency: ${CURRENCY}}Row:{S.No,STATE,PLF LEDGER,NATURAL AC,DESCRIPTION,OPENING BALANCE,DEBIT AMOUNT,CREDIT AMOUNT,CLOSING BALANCE}' where name = 'TRIAL_BALANCE_EXPORT_STATE'; 
+            
+            update DATA_ENGINE_TABLE set name = 'VERITAS_TRIAL_BAL_CON_VIEW' where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE');
+            update DATA_ENGINE_TABLE set name = 'VERITAS_TRIAL_BAL_RPT_VIEW' where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE');
+            
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="97" author="aditya.a">
+		<sql>
+		<![CDATA[
+            delete from DATA_ENGINE_COLUMN where tableid = (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE'));
+            delete from DATA_ENGINE_COLUMN where tableid = (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE'));
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="aditya.a">
+		<sql>
+		<![CDATA[
+            insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'ID', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+            insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'ACCOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'HOSTACCOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'DESCRIPTION', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'OPENINGBAL', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'DEBITAMOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'CREDITAMOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_CONSOLIDATE')), 'CLOSINGBAL', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'ID', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'STATE', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+            insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'ACCOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'HOSTACCOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'DESCRIPTION', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'OPENINGBAL', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'DEBITAMOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'CREDITAMOUNT', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+			insert into DATA_ENGINE_COLUMN values ((select max(id) + 1 from DATA_ENGINE_COLUMN), (select id from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'TRIAL_BALANCE_EXPORT_STATE')), 'CLOSINGBAL', 0, 'N', null, null, null, null, 0, null, null, null, null, 'O');
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="99" author="aditya.a">
+		<createView viewName="VERITAS_TRIAL_BAL_CON_VIEW" replaceIfExists="true">
+		  SELECT case when TBRF.ACCOUNT is null then 'Total' else cast(ID as varchar(20)) end ID,
+		         ACTYPEGRPID,
+		         TBRF.ACCOUNT,
+		         TBRF.HOSTACCOUNT,
+				 DESCRIPTION,
+				 case OPENINGBALTYPE when 'DR' then cast(OPENINGBAL as decimal(36,2)) else cast(OPENINGBAL as decimal(36,2)) * -1
+		         end OPENINGBAL,
+		         OPENINGBALTYPE,
+		         cast(DEBITAMOUNT as decimal(36,2)) DEBITAMOUNT,
+		         cast(CREDITAMOUNT as decimal(36,2)) CREDITAMOUNT,
+		         case CLOSINGBALTYPE when 'DR' then cast(CLOSINGBAL as decimal(36,2)) else cast(CLOSINGBAL as decimal(36,2)) * -1
+		         end CLOSINGBAL,
+		         CLOSINGBALTYPE,
+		         FINTYPE
+          FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+		</createView>
+	</changeSet>
+	
+	<changeSet id="100" author="aditya.a">
+		<createView viewName="VERITAS_TRIAL_BAL_RPT_VIEW" replaceIfExists="true">
+		  SELECT case when TBRF.ACCOUNT is null then 'Total' else cast(ID as varchar(20)) end ID,
+		   		 PROVINCE,
+		         CPPROVINCENAME AS STATE,
+		         ACTYPEGRPID,
+		         TBRF.ACCOUNT,
+		         TBRF.HOSTACCOUNT,
+				 DESCRIPTION,
+				 case OPENINGBALTYPE when 'DR' then cast(OPENINGBAL as decimal(36,2)) else cast(OPENINGBAL as decimal(36,2)) * -1
+		         end OPENINGBAL,
+		         OPENINGBALTYPE,
+		         cast(DEBITAMOUNT as decimal(36,2)) DEBITAMOUNT,
+		         cast(CREDITAMOUNT as decimal(36,2)) CREDITAMOUNT,
+		         case CLOSINGBALTYPE when 'DR' then cast(CLOSINGBAL as decimal(36,2)) else cast(CLOSINGBAL as decimal(36,2)) * -1
+		         end CLOSINGBAL,
+		         CLOSINGBALTYPE,
+		         FINTYPE
+          FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
+		</createView>
+	</changeSet>
+		
 </databaseChangeLog>
