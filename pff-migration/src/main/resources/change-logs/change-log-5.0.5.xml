@@ -4726,4 +4726,30 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="129.1" author="vijaya.a" dbms="oracle,mssql">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="QuickDisbTemp" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet author="vijaya.a" id="129.2" dbms="oracle,mssql">
+		<sql>
+			<![CDATA[
+				Update REJECTFINANCEMAIN set QuickDisbTemp = QuickDisb ;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="129.3" author="vijaya.a" dbms="oracle,mssql">
+		<dropDefaultValue tableName="REJECTFINANCEMAIN" columnName="QuickDisb" columnDataType="char" />
+	</changeSet>
+
+	<changeSet id="129.4" author="vijaya.a" dbms="oracle,mssql">
+		<dropColumn columnName="QuickDisb" tableName="REJECTFINANCEMAIN" />
+	</changeSet>
+
+	<changeSet id="129.5" author="vijaya.a" dbms="oracle,mssql">
+		<renameColumn tableName="REJECTFINANCEMAIN" oldColumnName="QuickDisbTemp" newColumnName="QuickDisb" />
+	</changeSet>
+
 </databaseChangeLog>

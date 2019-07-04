@@ -20,7 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	 <changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -60,7 +60,7 @@
 		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
-<changeSet id="5_pre" author="Saikiran.v" dbms="postgresql">
+	<changeSet id="5_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -68,7 +68,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="5" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 		SELECT t1.fintype,
@@ -318,8 +318,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="6_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -528,7 +528,7 @@
 </createView>
 	</changeSet>
 
-		<changeSet id="6_post" author="ADARSH" dbms="postgresql">
+	<changeSet id="6_post" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -537,8 +537,8 @@
 		</sql>
 	</changeSet>
 
-	
-		<changeSet id="7_pre" author="Saikiran.v" dbms="postgresql">
+
+	<changeSet id="7_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
@@ -1028,7 +1028,7 @@
 		  </createView>
 	</changeSet>
 
-	
+
 	<changeSet id="7_post" author="ADARSH" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1037,7 +1037,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8.0" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -1379,7 +1379,8 @@
 			values('REPAY',0,'bounceCharge_UGST_W','Bounce charge UGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 
-			insert into BMTAMOUNTCODES values('EARLYSTL',0,'bounceCharge_CGST_W','Bounce charge CGST
+			insert into BMTAMOUNTCODES
+			values('EARLYSTL',0,'bounceCharge_CGST_W','Bounce charge CGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES
 			values('EARLYSTL',0,'bounceCharge_SGST_W','Bounce charge SGST
@@ -1780,7 +1781,7 @@
 				Update ERRORDETAILS set MESSAGE= '{0} Creation rejected, Reason: {1} ' Where Code ='99014';
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="52" author="Manoj.P">
 		<addColumn tableName="ReportConfiguration">
@@ -1795,5 +1796,64 @@
                     ]]>
 		</sql>
 	</changeSet>
-	<!-- 5.0.7 is Under QC please use 5.0.5 -->
+
+
+	<changeSet id="54" author="Saikiran.v">
+		<createTable tableName="Taxtype">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(20)" />
+			<column name="description" type="varchar(50)" />
+			<column name="active" type="boolean" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="55" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				UPDATE Taxtype Set active = 0;		
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="56" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Taxtype ADD CONSTRAINT DF_Taxtype_active DEFAULT 0 FOR active;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="57" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="active" tableName="Taxtype" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="58" author="Saikiran.v">
+		<createIndex tableName="Taxtype" indexName="IX_Taxtype_Name" unique="true">
+			<column name="Name" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="59" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				INSERT INTO TAXTYPE VALUES(1,'CGST','CGST',1);
+				INSERT INTO TAXTYPE VALUES(2,'SGST','SGST',1);
+				INSERT INTO TAXTYPE VALUES(3,'IGST','IGST',1);
+				INSERT INTO TAXTYPE VALUES(4,'UGST','UGST',1);
+				INSERT INTO TAXTYPE VALUES(5,'CESS','CESS',1);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="60" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				INSERT INTO ErrorDetails VALUES('65039','EN','E','To Calculate CESS on {0}, {1}, {2} and {3} combination Must be Exist.','','Approved','','','','','',0,current_timestamp,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 </databaseChangeLog>
