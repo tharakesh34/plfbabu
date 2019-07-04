@@ -190,6 +190,11 @@ public abstract class JsonService<T> {
 	}
 
 	public String getObjectToXML(JsonServiceDetail jsonServiceDetail) {
+	
+		if(StringUtils.trimToNull(jsonServiceDetail.getRequestString())!=null){
+			return jsonServiceDetail.getRequestString();
+		}
+			
 		StringWriter sw = new StringWriter();
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(jsonServiceDetail.getRequestData().getClass());
