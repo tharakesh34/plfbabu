@@ -1624,7 +1624,7 @@
         LEFT join plf.TRIAL_BALANCE_HEADER TH on TH.FILENAME=DS.FILENAME ORDER BY DS.ID DESC
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="19" author="amanullah">
 		<createView viewName="ogl_view" replaceIfExists="true">
 			SELECT a.postdate AS acctDate,
@@ -1713,8 +1713,8 @@
                     ]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="21" author="amanullah">
 		<createView viewName="ogl_view" replaceIfExists="true">
 			SELECT
@@ -1794,43 +1794,43 @@
 					]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="24" author="Manoj.P">
 		<sql>
-			update plf.reportconfiguration set schedulereq = 1 where menuitemcode='menu_Item_WelcomeLetter'; 
+			update plf.reportconfiguration set schedulereq = 1 where menuitemcode='menu_Item_WelcomeLetter';
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="25" author="Manoj.P">
-	<sql>
+		<sql>
 		  <![CDATA[
 				Insert into plf.REPORTFILTERFIELDS 
 				values ((select reportid from plf.reportconfiguration where menuitemcode='menu_Item_WelcomeLetter'),1,'Loan Reference','LOVSEARCH','Loan Reference','T.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="26" author="Manoj.P">
-	<sql>
+	<changeSet id="26" author="Manoj.P">
+		<sql>
 		  <![CDATA[
 				update plf.reportfilterfields set fielddbname='fm.finreference'
 				where reportid in (select reportid from plf.reportconfiguration where menuitemcode='menu_Item_NoObjectionCertificate');
 		]]>
-	</sql>
-</changeSet>
-	
-	
-<changeSet id="27" author="Manoj.P">
-	<sql>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="27" author="Manoj.P">
+		<sql>
 		  <![CDATA[
 		  	update plf.data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI_CLRBI' where name = 'DISB_EXPORT_DEFAULT';
 		  ]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="28" author="amanullah">
-	<dropTable tableName="ogl_download" />
-</changeSet>
+	<changeSet id="28" author="amanullah">
+		<dropTable tableName="ogl_download" />
+	</changeSet>
 
 	<changeSet id="29" author="dheerendra.d">
 		<createTable tableName="ogl_download">
@@ -1852,6 +1852,25 @@
 			<column name="REF10_JOURLINEDESCORNARRATION" type="varchar(240)" />
 		</createTable>
 	</changeSet>
-	
+
+	<changeSet id="30" author="amanullah">
+		<sql>
+			<![CDATA[
+    
+				update data_engine_column set format= 'DATE:ddMMyyyy' where name='accountingdate'; 
+
+				update data_engine_column set format= 'DATE:ddMMyyyy' where name='attribute7_valuedate'; 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="31" author="amanullah">
+		<sql>
+			<![CDATA[
+				update plf.data_engine_column set name= 'REF10_JOURLINEDESCORNARRATION' where name='reference10_journallinedescornarration';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
 
