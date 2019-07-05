@@ -1,14 +1,14 @@
 package com.pennant.webui.applicationmaster.download;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.external.clix.services.impl.LedgerDownloadServiceImpl;
+import com.pennanttech.pff.external.LedgerDownloadService;
 
 public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	private static final long serialVersionUID = 223801324705386693L;
@@ -16,7 +16,12 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 
 	protected Window window_Download; // autoWired
 	protected Button btnStartLedgerFile;
-	private LedgerDownloadServiceImpl ledgerDownloadService;
+	@Autowired(required = false)
+	private LedgerDownloadService ledgerDownloadService;
+
+	public void setLedgerDownloadService(LedgerDownloadService ledgerDownloadService) {
+		this.ledgerDownloadService = ledgerDownloadService;
+	}
 
 	public LedgerDownloadProcessCtrl() {
 		super();
@@ -28,12 +33,12 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void setLedgerDownloadService(LedgerDownloadServiceImpl ledgerDownloadService) {
-		this.ledgerDownloadService = ledgerDownloadService;
-	}
+	
 
 	public void onClick$btnStartLedgerFile(ForwardEvent event) throws Exception {
-		ledgerDownloadService.processDownload(DateUtility.getAppDate());
+		if (ledgerDownloadService != null) {
+		ledgerDownloadService.downloadLedgerData();	
+		}
 	}
 
 }
