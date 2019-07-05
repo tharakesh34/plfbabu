@@ -14827,7 +14827,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanReq"), this.vanReq);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanCode"), this.vanCode);
 
-		//Allow Drawing power, Allow Revolving //FIXME for the rights
+		//Allow Drawing power, Allow Revolving
+		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowDrawingPower"), this.allowDrawingPower);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));
