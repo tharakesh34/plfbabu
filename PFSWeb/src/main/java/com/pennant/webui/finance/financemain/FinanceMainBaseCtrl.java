@@ -439,6 +439,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinanceMainDialog_TDSLimitAmt;
 
 	protected Label label_FinanceMainDialog_TDSApplicable;
+
+	//UD_LOANS START
+	protected Row row_Revolving_DP;
+
+	protected Checkbox allowDrawingPower;
+	protected Label label_FinanceTypeDialog_AlwDP;
+	protected Hbox hbox_AlwDP;
+
+	protected Checkbox allowRevolving;
+	protected Label label_FinanceTypeDialog_AllowRevolving;
+	protected Hbox hbox_AlwRevolving;
+
+	//UD_LOANS END
+
 	//Facility Details
 	protected Row rowFacilityAmounts;
 	protected Row rowFacilityDateRate;
@@ -3397,6 +3411,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_FinanceMainDialog_DepriFrq.setVisible(false);
 			this.depreciationFrq.setMandatoryStyle(false);
 			this.depreciationFrq.setDisabled(true);
+		}
+
+		//Allow Drawing power
+		if ((aFinanceMain.isNewRecord() && financeType.isAllowDrawingPower()) || aFinanceMain.isAllowDrawingPower()) {
+			this.row_Revolving_DP.setVisible(true);
+			this.label_FinanceTypeDialog_AlwDP.setVisible(true);
+			this.hbox_AlwDP.setVisible(true);
+		}
+
+		//Allow Revolving
+		if ((aFinanceMain.isNewRecord() && financeType.isAllowRevolving()) || aFinanceMain.isAllowRevolving()) {
+			this.row_Revolving_DP.setVisible(true);
+			this.label_FinanceTypeDialog_AllowRevolving.setVisible(true);
+			this.hbox_AlwRevolving.setVisible(true);
+		}
+
+		//Allow Drawing power, Allow Revolving
+		if (aFinanceMain.isNewRecord()) {
+			this.allowDrawingPower.setChecked(financeType.isAllowDrawingPower());
+			this.allowRevolving.setChecked(financeType.isAllowRevolving());
+		} else {
+			this.allowDrawingPower.setChecked(aFinanceMain.isAllowDrawingPower());
+			this.allowRevolving.setChecked(aFinanceMain.isAllowRevolving());
 		}
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
@@ -13092,6 +13129,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceSchData = doWriteSchData(aFinanceSchData, isIstisnaProduct);
 		}
 
+		//Allow Drawing power, Allow Revolving
+		aFinanceMain.setAllowDrawingPower(this.allowDrawingPower.isChecked());
+		aFinanceMain.setAllowRevolving(this.allowRevolving.isChecked());
+
 		//Lower tax deduction Details setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
 
@@ -14785,6 +14826,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanReq"), this.vanReq);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_VanCode"), this.vanCode);
+
+		//Allow Drawing power, Allow Revolving //FIXME for the rights
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));

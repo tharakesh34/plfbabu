@@ -231,6 +231,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox droppingMethod;
 	protected Checkbox manualSchedule;
 	protected Checkbox allowDrawingPower;
+	protected Checkbox allowRevolving;
 	protected Row row_Commitment;
 	protected Checkbox developerFinance; // autoWired
 	protected Row row_EligibilityMethod;
@@ -1199,6 +1200,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		doSetDropline();
 		this.manualSchedule.setChecked(aFinanceType.isManualSchedule());
 		this.allowDrawingPower.setChecked(aFinanceType.isAllowDrawingPower());
+		this.allowRevolving.setChecked(aFinanceType.isAllowRevolving());
 
 		this.rollOverFrq.setValue(aFinanceType.getRollOverFrq());
 		this.tDSApplicable.setChecked(aFinanceType.isTdsApplicable());
@@ -2158,8 +2160,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		try {
 			aFinanceType.setAllowDrawingPower(this.allowDrawingPower.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceType.setAllowRevolving(this.allowRevolving.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4436,6 +4445,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cpzAtReAge.setDisabled(isTrue);
 		this.fddLockPeriod.setReadonly(isTrue);
 		this.manualSchedule.setDisabled(isTrue);
+		this.allowRevolving.setDisabled(isTrue);
+		this.allowDrawingPower.setDisabled(isTrue);
 		this.roundingMode.setDisabled(isTrue);
 		this.roundingTarget.setDisabled(isTrue);
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
@@ -4756,6 +4767,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.rpyPricingMethod.setValue("0");
 		this.rpyPricingMethod.setDescription("");
 		this.manualSchedule.setChecked(false);
+		this.allowRevolving.setChecked(false);
+		this.allowDrawingPower.setChecked(false);
 		this.taxNoMand.setChecked(false);
 		if (isOverdraft) {
 			this.lPPRule.setValue("");

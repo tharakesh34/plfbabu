@@ -277,6 +277,20 @@
 															sclass="z-toolbarbutton" />
 													</hbox>
 												</row>
+												<row id="row_Revolving_DP" visible="false">
+													<label id="label_FinanceTypeDialog_AllowRevolving"
+														value="${c:l('label_FinanceTypeDialog_AllowRevolving.value')}" visible="false"/>
+													<hbox id="hbox_AlwRevolving" visible="false">
+														<space spacing="2px" />
+														<checkbox id="allowRevolving" checked="false" />
+													</hbox>
+													<label id="label_FinanceTypeDialog_AlwDP"
+														value="${c:l('label_FinanceTypeDialog_allowDrawingPower.value')}" visible="false"/>
+													<hbox id="hbox_AlwDP" visible="false">
+														<space spacing="2px" />
+														<checkbox id="allowDrawingPower" checked="false" />
+													</hbox>
+												</row>
 												<row id="row_tDSPercentage" visible="false">
 													<label id="label_tDSPercentage"
 														value="${c:l('label_FinanceMainDialog_tDSPercentage.value')}" />
