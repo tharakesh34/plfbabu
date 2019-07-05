@@ -33,7 +33,7 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	}
 
 	public void onClick$btnStartLedgerFile(ForwardEvent event) throws Exception {
-		ledgerDownloadService.processDownload(DateUtility.getAppDate(),DateUtility.getLastBusinessdate(),false);
+		ledgerDownloadService.processDownload(DateUtility.getAppDate());
 	}
 
 }
