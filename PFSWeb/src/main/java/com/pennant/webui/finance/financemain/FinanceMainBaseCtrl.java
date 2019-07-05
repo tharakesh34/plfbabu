@@ -17806,8 +17806,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.oDIncGrcDays.setChecked(penaltyRate.isODIncGrcDays());
 				fillComboBox(this.oDChargeType, penaltyRate.getODChargeType(), PennantStaticListUtil.getODCChargeType(),
 						"");
-				fillComboBox(this.oDChargeCalOn, penaltyRate.getODChargeCalOn(),
-						PennantStaticListUtil.getODCCalculatedOn(), "");
+				onchangeODCharges(penaltyRate.getODChargeCalOn());
+
 				this.oDGraceDays.setValue(penaltyRate.getODGraceDays());
 				this.oDChargeAmtOrPerc
 						.setValue(PennantAppUtil.formateAmount(penaltyRate.getODChargeAmtOrPerc(), format));
@@ -17854,6 +17854,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 		onChangeODChargeType(true);
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onchangeODCharges(String val) {
+		if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)) {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), "");
+		} else {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(),
+					"," + FinanceConstants.ODCALON_PIPD + ",");
+		}
 	}
 
 	private void onChangeODChargeType(boolean changeAction) {
@@ -17915,6 +17924,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
 		}
+		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -6436,6 +6436,15 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onchangeODCharges(String val) {
+		if (getComboboxValue(this.oDChargeType).equals(FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)) {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(), "");
+		} else {
+			fillComboBox(this.oDChargeCalOn, val, PennantStaticListUtil.getODCCalculatedOn(),
+					"," + FinanceConstants.ODCALON_PIPD + ",");
+		}
+	}
+
 	private void onChangeODChargeType(boolean changeAction) {
 
 		if (changeAction) {
@@ -6499,6 +6508,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.lPPRule.setValue("");
 			this.lPPRule.setDescription("");
 		}
+		onchangeODCharges(getComboboxValue(this.oDChargeCalOn));
 	}
 
 	public void onCheck$oDAllowWaiver(Event event) {

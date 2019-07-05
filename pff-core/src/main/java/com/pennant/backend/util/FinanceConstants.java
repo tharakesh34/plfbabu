@@ -108,6 +108,7 @@ public class FinanceConstants {
 	public static final String ODCALON_SPRI = "SPRI";
 	public static final String ODCALON_SPFT = "SPFT";
 	public static final String ODCALON_STOT = "STOT";
+	public static final String ODCALON_PIPD = "PIPD";
 
 	// Schedule Apportionment Types
 	public static final String PAY_APPORTIONMENT_SPRI = "SPRI";

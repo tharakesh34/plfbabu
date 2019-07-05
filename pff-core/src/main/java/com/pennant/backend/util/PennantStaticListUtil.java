@@ -1146,6 +1146,8 @@ public class PennantStaticListUtil {
 					new ValueLabel(FinanceConstants.ODCALON_SPRI, Labels.getLabel("label_SchedulePrincipalBalance")));
 			overDueCalOnList
 					.add(new ValueLabel(FinanceConstants.ODCALON_SPFT, Labels.getLabel("label_SchduleProfitBalance")));
+			overDueCalOnList.add(new ValueLabel(FinanceConstants.ODCALON_PIPD,
+					Labels.getLabel("label_SchdulePrincipalInterestPastDue")));
 		}
 		return overDueCalOnList;
 	}
@@ -4993,7 +4995,7 @@ public class PennantStaticListUtil {
 
 	public static ArrayList<ValueLabel> getCalcOnList() {
 		if (calcOnList == null) {
-			calcOnList = new ArrayList<ValueLabel>(2);
+			calcOnList = new ArrayList<ValueLabel>(7);
 			calcOnList.add(new ValueLabel(RuleConstants.CALCON_TRANSACTION_AMOUNT,
 					Labels.getLabel("label_CalcOnList_Transaction_Amount")));
 			calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,

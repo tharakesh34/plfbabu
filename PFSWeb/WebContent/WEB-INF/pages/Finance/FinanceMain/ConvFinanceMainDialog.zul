@@ -1196,7 +1196,7 @@
 														value="${c:l('label_FinanceMainDialog_ODChargeType.value')}" />
 													<hbox>
 														<space id="space_oDChargeType" spacing="2px" sclass="mandatory" />
-														<combobox id="oDChargeType" width="200px" readonly="true" />
+														<combobox id="oDChargeType" width="250px" readonly="true" />
 													</hbox>
 													<label id="label_FinanceMainDialog_GraceDays"
 														value="${c:l('label_FinanceMainDialog_ODGraceDays.value')}" />
@@ -1211,7 +1211,7 @@
 													<hbox>
 														<space id="space_oDChargeCalOn" spacing="2px"
 															sclass="mandatory" />
-														<combobox id="oDChargeCalOn" width="200px" readonly="true" />
+														<combobox id="oDChargeCalOn" width="250px" readonly="true" />
 													</hbox>
 													<hbox>
 														<label id="label_FinanceMainDialog_ODChargeAmtOrPerc"
