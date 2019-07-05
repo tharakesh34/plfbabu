@@ -195,7 +195,7 @@
 	</changeSet>
 
 	<changeSet id="9" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean" />
+		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="10" author="Satya">
@@ -225,7 +225,7 @@
 	</changeSet>
 
 	<changeSet id="12" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean" />
+		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="13" author="Satya">
@@ -264,7 +264,7 @@
 	</changeSet>
 
 	<changeSet id="15" author="Satya">
-		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean" />
+		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="16" author="Satya">
@@ -298,7 +298,7 @@
 	</changeSet>
 
 	<changeSet id="18" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="19" author="Satya">
@@ -382,7 +382,7 @@
 	</changeSet>
 
 	<changeSet id="26" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="27" author="Satya">
@@ -491,7 +491,7 @@
 
 	<changeSet id="40" author="Satya">
 		<dropDefaultValue tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
-		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean" />
+		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean"/>
 	</changeSet>
 
 	<changeSet id="41" author="Satya">
@@ -530,7 +530,7 @@
 	       ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="42" author="satyanarayana.g">
 		<sql>
 	       <![CDATA[
