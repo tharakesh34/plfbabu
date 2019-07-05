@@ -268,6 +268,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwVan;
 	private String vanAllocationMethod;
 	private boolean allowDrawingPower;
+	private boolean allowRevolving;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -2471,6 +2472,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAllowDrawingPower(boolean allowDrawingPower) {
 		this.allowDrawingPower = allowDrawingPower;
+	}
+
+	public boolean isAllowRevolving() {
+		return allowRevolving;
+	}
+
+	public void setAllowRevolving(boolean allowRevolving) {
+		this.allowRevolving = allowRevolving;
 	}
 
 }

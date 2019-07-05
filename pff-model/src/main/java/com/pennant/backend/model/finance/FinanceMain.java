@@ -232,6 +232,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String swiftBranchCode;
 	private String finBranchContact;
 
+	private boolean allowDrawingPower;
+	private boolean allowRevolving;
+
 	// ===========================================
 	// ==========Grace Period Details=============
 	// ===========================================
@@ -4369,4 +4372,21 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setVanReq(boolean vanReq) {
 		this.vanReq = vanReq;
 	}
+
+	public boolean isAllowDrawingPower() {
+		return allowDrawingPower;
+	}
+
+	public void setAllowDrawingPower(boolean allowDrawingPower) {
+		this.allowDrawingPower = allowDrawingPower;
+	}
+
+	public boolean isAllowRevolving() {
+		return allowRevolving;
+	}
+
+	public void setAllowRevolving(boolean allowRevolving) {
+		this.allowRevolving = allowRevolving;
+	}
+
 }

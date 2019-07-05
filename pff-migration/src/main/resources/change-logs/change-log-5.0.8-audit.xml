@@ -33,5 +33,28 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 
-	 
+	 <changeSet id="1" author="satyanarayana.g">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="AllowRevolving" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="2" author="satyanarayana.g">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="AllowDrawingPower" type="boolean" />
+			<column name="AllowRevolving" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="3" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTFinanceTypes Set AllowRevolving = 0;
+				UPDATE ADTRMTFinanceTypes Set AllowDrawingPower = 0;
+				UPDATE ADTFINANCEMAIN Set AllowRevolving = 0;
+				UPDATE ADTFINANCEMAIN Set AllowDrawingPower = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
