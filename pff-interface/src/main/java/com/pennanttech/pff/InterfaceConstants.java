@@ -5,8 +5,10 @@ import com.pennanttech.pennapps.core.App;
 public class InterfaceConstants {
 	public static final String SUCCESS_CODE = "0000";
 	public static final String ERROR_CODE = "9999";
+	public static final String STATUS_PROGRESS = "PROGRESS";
 	public static final String STATUS_FAILED = "FAILED";
 	public static final String STATUS_SUCCESS = "SUCCESS";
+	
 	public static final String INTFACE_ERROR_CD = "99999";
 	public static final boolean INDIAN_IMPLEMENTATION = true;
 	public static final boolean NIYOGIN = false;

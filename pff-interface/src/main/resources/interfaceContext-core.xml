@@ -48,5 +48,7 @@
 	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcess">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	
+	<bean id="idbInterfaceLoggingDao" class="com.pennanttech.kotak.dao.impl.IDBInterfaceLoggingDaoImpl" parent="sequenceDao" >
+	 </bean>
 </beans>
