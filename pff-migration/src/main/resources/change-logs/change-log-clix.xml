@@ -1871,6 +1871,110 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="32" author="amanullah">
+		<createView viewName="ogl_view" replaceIfExists="true">
+			SELECT
+			a.postdate AS acctDate,
+			a.acccy AS ccyCode,
+			CASE
+			WHEN a.Finevent = 'DISBINS' OR a.AccountType ='BANK' Then 'C-PABPV'
+			when a.finevent = 'RECIP' THEN 'C-PABRV'
+			when a.finevent IN ('B2C','C2B') THEN 'C-PACRV'
+			ELSE 'C-PAJRL'
+			END AS jecode,
+			'PENNANT' AS jeSrcName,
+			m.Key_code as sgmt1Ble,
+			ma.Key_code as prodCatCode,
+			b.eligibilitymethod as programcode,
+			rb.branchswiftbrncde as branchcode,
+			ac.hostaccount,
+			COALESCE(pb.AccountNo,'0') acctNo,
+			'000000' sgmt5,
+			CASE
+			WHEN a.Finevent = 'DISBINS' Then 'Disbursement'
+			when a.finevent = 'RECIP' THEN 'Receipt'
+			ELSE 'Other'
+			END AS event,
+			a.finreference AS lan,
+			CASE
+			WHEN a.drorcr = 'D' THEN a.postamount
+			WHEN a.drorcr = 'C' THEN 0
+			ELSE 0
+			END AS debit,
+			CASE
+			WHEN a.drorcr = 'D' THEN 0
+			WHEN a.drorcr = 'C' THEN a.postamount
+			ELSE 0
+			END AS credit,
+			a.valuedate transactiondate,
+			b.fintype AS loantype,
+			f.custshrtname AS customername,
+			f.custid AS customerid,
+			c.findivision AS divisioncode,
+			fd.favournumber as chequenumber,
+			COALESCE(fd.transactionref,'0') transactionId,
+			a.entitycode,
+			fd.paymenttype,
+			COALESCE(pb.partnerbankname,'') patnerbankname
+			FROM plf.postings a
+			LEFT JOIN plf.financemain b ON a.finreference = b.finreference
+			LEFT JOIN plf.rmtfinancetypes c ON c.fintype = b.fintype
+			LEFT JOIN plf.partnerbanks pb ON pb.actype = a.accounttype
+			LEFT JOIN plf.customers f ON f.custid = b.custid
+			LEFT JOIN plf.master_def md ON md.key_type = a.finevent
+			LEFT JOIN plf.master_def m ON m.key_type = a.entitycode
+			LEFT JOIN plf.master_def ma ON ma.key_type = c.fincategory
+			LEFT JOIN plf.accountmapping ac ON ac.account = a.account
+			LEFT JOIN plf.rmtbranches rb ON rb.branchcode = a.userbranch
+			LEFT JOIN plf.finreceiptheader fh ON fh.reference = a.finreference
+			LEFT JOIN plf.finreceiptdetail fd ON fd.receiptid = fh.receiptid
+			where a.postamount > 0;
+		</createView>
+	</changeSet>
+	<changeSet id="33" author="amanullah">
+	 <sql>
+	 <![CDATA[
+	 	Delete from plf.master_def where master_type='OGL';
+	 	insert into plf.master_def values ('OGL','CLIX','SINCIN8W6P');
+		insert into plf.master_def values ('OGL','CLIXCAP','SINCIN8W8A');
+		insert into plf.master_def values ('OGL','BUSINESS','160');
+		insert into plf.master_def values ('OGL','PO','201');
+		insert into plf.master_def values ('OGL','LAEP','164');
+		
+		]]>
+	</sql>
+	</changeSet>
+	
+	
+	<changeSet id="34" author="amanullah">
+		<sql>
+			<![CDATA[
+
+			
+				Delete from plf.data_engine_column where tableid=(select id from plf.data_engine_table where name ='OGL_DOWNLOAD');
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex, format)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'accountingdate', 0, 'N', 0, 'yyyy-MM-dd HH:mm:ss');
+				update plf.data_engine_column set format= 'DATE:ddMMyyyy' where name='accountingdate' ;
+          		INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'currencycode', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'userjecatname', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'userjesrcname',0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'segmeno1_ble', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'segment2_center', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'segment3_account', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'segment4_analysis', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'segment5_other', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'entereddr', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'enteredcr', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'reference_batchname', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'reference4_journalname', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'attribute6_chequenumber', 0, 'N', 0);
+				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'attribute7_valuedate', 0, 'N', 0);
+				update plf.data_engine_column set format= 'DATE:ddMMyyyy' where name='attribute7_valuedate'	;
+                INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'ref10_jourlinedescornarration', 0, 'N', 0);
+
+	]]>
+		</sql>
+	
 
 </databaseChangeLog>
 
