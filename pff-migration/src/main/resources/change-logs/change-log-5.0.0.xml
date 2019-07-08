@@ -57,7 +57,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="2" author="vijaya.a">
+	 <changeSet id="2" author="vijaya.a">
 		<addUniqueConstraint columnNames="HSNCode" constraintName="UK_HSNCode" deferrable="true"
 			initiallyDeferred="true" tableName="Commodities" />
 	</changeSet>
@@ -85,7 +85,7 @@
 	<changeSet id="2.5" author="vijaya.a" dbms="mssql">
 		<addUniqueConstraint columnNames="CommodityType, Code, HSNCode" constraintName="UK_Comm_Temp_Comm_CT_Cd_HSNC"
 			deferrable="true" disabled="true" initiallyDeferred="true" tableName="Commodities_Temp" />
-	</changeSet>
+	</changeSet> 
 
 	<changeSet id="1.1" author="vijaya.a">
 		<dropDefaultValue columnName="Active" tableName="Commodities" />
