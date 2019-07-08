@@ -2464,4 +2464,27 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="37" author="Prasadraju.B">
+		<comment> Update statement for pincodes table "Prasadraju.B" </comment>
+		<sql>
+			<![CDATA[
+			    UPDATE pincodes SET serviceable=1 WHERE serviceable is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="38" author="Prasadraju.B" dbms="mssql">
+		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
+		<sql>
+			<![CDATA[
+				ALTER TABLE pincodes ADD CONSTRAINT DF_PINCODES_SERVICEABLE default 1 for serviceable;	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="39" author="Prasadraju.B" dbms="postgresql, oracle">
+		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
+		<addDefaultValue columnName="serviceable" tableName="pincodes" defaultValue="1" />
+	</changeSet>
 </databaseChangeLog>
