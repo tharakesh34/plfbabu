@@ -4752,16 +4752,27 @@
 		<renameColumn tableName="REJECTFINANCEMAIN" oldColumnName="QuickDisbTemp" newColumnName="QuickDisb" />
 	</changeSet>
 
+	<changeSet id="130_pre" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'trial_balance_report_file');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="130" author="aditya.a">
-		<addColumn tableName="trial_balance_report_file">
-			<column name="debitamount" type="decimal(18,4)" />
-		</addColumn>
+		<modifyDataType tableName="trial_balance_report_file" columnName="debitamount" newDataType="decimal(18,4)" />
 	</changeSet>
 
 	<changeSet id="131" author="aditya.a">
-		<addColumn tableName="trial_balance_report_file">
-			<column name="creditamount" type="decimal(18,4)" />
-		</addColumn>
+		<modifyDataType tableName="trial_balance_report_file" columnName="creditamount" newDataType="decimal(18,4)" />
 	</changeSet>
 
+	<changeSet id="130_post" author="ADARSH" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'trial_balance_report_file');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
