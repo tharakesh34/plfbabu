@@ -1060,6 +1060,13 @@
 			<column name="AccountUnLockedOn" type="datetime" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="8.2.1" author="meena.a">
+		<addColumn tableName="SecUsers_Rtemp">
+			<column name="AccountLockedOn" type="datetime" />
+			<column name="AccountUnLockedOn" type="datetime" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="8.3" author="meena.a">
 		<sql>
