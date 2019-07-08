@@ -4751,16 +4751,17 @@
 	<changeSet id="129.5" author="vijaya.a" dbms="oracle,mssql">
 		<renameColumn tableName="REJECTFINANCEMAIN" oldColumnName="QuickDisbTemp" newColumnName="QuickDisb" />
 	</changeSet>
-	
+
 	<changeSet id="130" author="aditya.a">
-		<sql>
-			<![CDATA[
-				alter table trial_balance_report_file alter column debitamount decimal(18,4);
-				alter table trial_balance_report_file alter column creditamount decimal(18,4);
-	        ]]>
-		</sql>
+		<addColumn tableName="trial_balance_report_file">
+			<column name="debitamount" type="decimal(18,4)" />
+		</addColumn>
 	</changeSet>
-	
-	
+
+	<changeSet id="131" author="aditya.a">
+		<addColumn tableName="trial_balance_report_file">
+			<column name="creditamount" type="decimal(18,4)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
