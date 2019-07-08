@@ -71,7 +71,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="07" author="satyanarayana.g">
+	<changeSet id="06" author="satyanarayana.g">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
@@ -313,7 +313,7 @@
 	</changeSet>
 
 
-	<changeSet id="8_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="6_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -321,7 +321,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="9_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="7_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview');
@@ -329,7 +329,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="10" author="satyanarayana.g">
+	<changeSet id="7" author="satyanarayana.g">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW " replaceIfExists="true">	 
 			SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
@@ -529,7 +529,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="60_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="7_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
@@ -538,7 +538,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="11_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="8_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view');
@@ -546,7 +546,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="11" author="satyanarayana.g">
+	<changeSet id="8" author="satyanarayana.g">
 		<createView viewName="RMTFINANCETYPES_VIEW " replaceIfExists="true">	 	 
 	
 			SELECT T1.FINTYPE,
@@ -1028,7 +1028,7 @@
 		  </createView>
 	</changeSet>
 
-	<changeSet id="11_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="8_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
@@ -1036,21 +1036,32 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="12" author="satyanarayana.g">
+	<changeSet id="9" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="10" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN">
+			<column name="AllowRevolving" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="11" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN_TEMP">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="12" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="13" author="satyanarayana.g">
-		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="AllowDrawingPower" type="boolean" />
-			<column name="AllowRevolving" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="14" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE FINANCEMAIN Set AllowDrawingPower = 0;
@@ -1061,7 +1072,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="15" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="14" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FINANCEMAIN_ALWDP DEFAULT 0 FOR ALLOWDRAWINGPOWER;
@@ -1072,16 +1083,21 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="16" author="satyanarayana.g" dbms="postgresql, oracle">
+	<changeSet id="15" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN_Temp" defaultValue="0" />
 		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="17" author="satyanarayana.g">
+	<changeSet id="16" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN_PA">
 			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="17" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN_PA">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
 	</changeSet>
@@ -1112,11 +1128,17 @@
 	<changeSet id="21" author="satyanarayana.g">
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="22" author="satyanarayana.g">
+		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="22" author="satyanarayana.g">
+	<changeSet id="23" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE REJECTFINANCEMAIN Set AllowDrawingPower = 0;
@@ -1125,7 +1147,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="23" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="24" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE REJECTFINANCEMAIN ADD CONSTRAINT DF_REJECTFINANCEMAIN_ALWDP DEFAULT 0 FOR ALLOWDRAWINGPOWER;
@@ -1134,12 +1156,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="24" author="satyanarayana.g" dbms="postgresql, oracle">
+	<changeSet id="25" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AllowDrawingPower" tableName="REJECTFINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="AllowRevolving" tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="25_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="26_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'financemain_view');
@@ -1147,7 +1169,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="25" author="satyanarayana.g">
+	<changeSet id="26" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 					T1.INVESTMENTREF,
@@ -1726,7 +1748,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="25_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="26_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'financemain_view');
@@ -1734,7 +1756,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="26_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="27_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'financemain_tview');
@@ -1742,7 +1764,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="26" author="satyanarayana.g">
+	<changeSet id="27" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 					T1.INVESTMENTREF,
@@ -2033,7 +2055,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="26_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="27_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'financemain_tview');
@@ -2041,7 +2063,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="27_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="28_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'financemain_aview');
@@ -2049,7 +2071,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="27" author="satyanarayana.g">
+	<changeSet id="28" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 					T1.INVESTMENTREF,
@@ -2340,7 +2362,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="27_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="28_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'financemain_aview');
@@ -2348,7 +2370,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="28_pre" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="29_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
@@ -2356,7 +2378,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="28" author="satyanarayana.g">
+	<changeSet id="29" author="satyanarayana.g">
 		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
@@ -2383,7 +2405,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="28_post" author="satyanarayana.g" dbms="postgresql">
+	<changeSet id="29_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
@@ -2391,44 +2413,44 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="29" author="Saikiran.v">
-		<createTable tableName="Taxtype">
-			<column name="id" type="bigint">
+	<changeSet id="30" author="Saikiran.v">
+		<createTable tableName="TaxType">
+			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="name" type="varchar(20)" />
-			<column name="description" type="varchar(50)" />
-			<column name="active" type="boolean" />
+			<column name="Name" type="varchar(20)" />
+			<column name="Description" type="varchar(50)" />
+			<column name="Active" type="boolean" />
 		</createTable>
 	</changeSet>
 
-	<changeSet id="30" author="Saikiran.v">
+	<changeSet id="31" author="Saikiran.v">
 		<sql>
 			<![CDATA[
-				UPDATE Taxtype Set active = 0;		
+				UPDATE TaxType Set active = 0;		
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="31" author="Saikiran.v" dbms="mssql">
+	<changeSet id="32" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE Taxtype ADD CONSTRAINT DF_Taxtype_active DEFAULT 0 FOR active;
+				ALTER TABLE TaxType ADD CONSTRAINT DF_TaxType_active DEFAULT 0 FOR active;
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="32" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="active" tableName="Taxtype" defaultValue="0" />
+	<changeSet id="33" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="active" tableName="TaxType" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="33" author="Saikiran.v">
-		<createIndex tableName="Taxtype" indexName="IX_Taxtype_Name" unique="true">
+	<changeSet id="34" author="Saikiran.v">
+		<createIndex tableName="TaxType" indexName="IX_TaxType_Name" unique="true">
 			<column name="Name" />
 		</createIndex>
 	</changeSet>
 
-	<changeSet id="34" author="Saikiran.v">
+	<changeSet id="35" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				INSERT INTO TAXTYPE VALUES(1,'CGST','CGST',1);
@@ -2440,14 +2462,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="35" author="Saikiran.v">
+	<changeSet id="36" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				INSERT INTO ErrorDetails VALUES('65039','EN','E','To Calculate CESS on {0}, {1}, {2} and {3} combination Must be Exist.','','Approved','','','','','',0,current_timestamp,1000,0);
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="36" author="Saikiran.v">
+
+	<changeSet id="37" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -2465,7 +2488,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="37" author="Prasadraju.B">
+	<changeSet id="38" author="Prasadraju.B">
 		<comment> Update statement for pincodes table "Prasadraju.B" </comment>
 		<sql>
 			<![CDATA[
@@ -2474,7 +2497,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="38" author="Prasadraju.B" dbms="mssql">
+	<changeSet id="39" author="Prasadraju.B" dbms="mssql">
 		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
 		<sql>
 			<![CDATA[
@@ -2483,15 +2506,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="39" author="Prasadraju.B" dbms="postgresql, oracle">
+	<changeSet id="40" author="Prasadraju.B" dbms="postgresql, oracle">
 		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
 		<addDefaultValue columnName="serviceable" tableName="pincodes" defaultValue="1" />
 	</changeSet>
 
-	<changeSet id="37" author="vijaya.a">
+	<changeSet id="41" author="vijaya.a">
 		<createTable tableName="FINANCEMAIN_EXTENSION">
-			<column name="Id" type="bigint" autoIncrement="true"/>
-			<column name="FinId" type="bigint"/>
+			<column name="Id" type="bigint" autoIncrement="true" />
+			<column name="FinId" type="bigint" />
 			<column name="FINREFERENCE" type="VARCHAR(20)" />
 			<column name="HOSTREFERENCE" type="VARCHAR(20)" />
 			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
