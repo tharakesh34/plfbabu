@@ -2487,4 +2487,14 @@
 		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
 		<addDefaultValue columnName="serviceable" tableName="pincodes" defaultValue="1" />
 	</changeSet>
+
+	<changeSet id="37" author="vijaya.a">
+		<createTable tableName="FINANCEMAIN_EXTENSION">
+			<column name="Id" type="bigint" autoIncrement="true"/>
+			<column name="FinId" type="bigint"/>
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="HOSTREFERENCE" type="VARCHAR(20)" />
+			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

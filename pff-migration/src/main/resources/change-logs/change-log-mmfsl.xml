@@ -2498,16 +2498,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="21" author="vijaya.a">
-		<createTable tableName="FINANCEMAIN_EXTENSION">
-			<column name="Id" type="bigint" autoIncrement="true"/>
-			<column name="FinId" type="bigint"/>
-			<column name="FINREFERENCE" type="VARCHAR(20)" />
-			<column name="HOSTREFERENCE" type="VARCHAR(20)" />
-			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
-		</createTable>
-	</changeSet>
-	
 	<changeSet id="22" author="vijaya.a">
 		<sql>
 			<![CDATA[
