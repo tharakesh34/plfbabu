@@ -1264,8 +1264,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
 			finFeeDetail.setNetAmount(taxableAmount);
-			finFeeDetail.setNetAmountOriginal(totalGST);
-			finFeeDetail.setNetAmountGST(taxableAmount.subtract(totalGST));
+			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
+			finFeeDetail.setNetAmountGST(totalGST);
 			finFeeDetail.setActualAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
 
 			finFeeDetail.setActualAmountGST(totalGST);
@@ -1310,8 +1310,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
 			finFeeDetail.setNetAmount(taxableAmount);
-			finFeeDetail.setNetAmountOriginal(totalGST);
-			finFeeDetail.setNetAmountGST(taxableAmount.subtract(totalGST));
+			finFeeDetail.setNetAmountGST(totalGST);
+			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
 			finFeeDetail.setActualAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
 
 			finFeeDetail.setActualAmountGST(totalGST);
