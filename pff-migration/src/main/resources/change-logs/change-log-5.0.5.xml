@@ -4715,7 +4715,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet author="vijaya.a" id="129">
+	<changeSet author="vijaya.a" id="129" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				alter table REJECTFINANCEMAIN add QuickDisbTemp smallint;
