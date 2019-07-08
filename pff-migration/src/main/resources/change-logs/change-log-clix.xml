@@ -1945,13 +1945,11 @@
 		]]>
 	</sql>
 	</changeSet>
-	
-	
+		
 	<changeSet id="34" author="amanullah">
 		<sql>
 			<![CDATA[
 
-			
 				Delete from plf.data_engine_column where tableid=(select id from plf.data_engine_table where name ='OGL_DOWNLOAD');
 				INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex, format)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'accountingdate', 0, 'N', 0, 'yyyy-MM-dd HH:mm:ss');
 				update plf.data_engine_column set format= 'DATE:ddMMyyyy' where name='accountingdate' ;
@@ -1972,9 +1970,8 @@
 				update plf.data_engine_column set format= 'DATE:ddMMyyyy' where name='attribute7_valuedate'	;
                 INSERT INTO plf.data_engine_column(id, tableid, name, skip, seqtype, startindex)VALUES ((select max(id)+1 from plf.data_engine_column), (select id from plf.data_engine_table where name = 'OGL_DOWNLOAD'), 'ref10_jourlinedescornarration', 0, 'N', 0);
 
-	]]>
+			]]>
 		</sql>
-	
-
+	</changeSet>
 </databaseChangeLog>
 
