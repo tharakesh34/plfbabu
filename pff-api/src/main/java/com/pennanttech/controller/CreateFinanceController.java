@@ -3182,6 +3182,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			finDetail.getFinScheduleData().getFinanceMain().setFinReference(finReference);
 			finDetail.getFinScheduleData().getFinanceMain()
 					.setOldFinReference(financeDetail.getFinScheduleData().getOldFinReference());
+			financeMain.setExtReference(financeDetail.getFinScheduleData().getExternalReference());
 			finDetail.getFinScheduleData().getFinanceMain().setFinIsActive(true);
 			finDetail.getFinScheduleData().getFinanceMain().setClosingStatus("");
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());

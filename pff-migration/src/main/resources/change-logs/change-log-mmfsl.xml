@@ -2268,9 +2268,9 @@
 				alter table DealerGroupId_Temp modify (channel Varchar(20));
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>  
 
-	<changeSet id="13" author="vijaya.a">
+	 <changeSet id="13" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_UPLOAD');
@@ -2327,7 +2327,7 @@
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
 			]]>
 		</sql>
-	</changeSet>
+	</changeSet> 
 
 	<changeSet id="14" author="vijaya.a">
 		<createTable tableName="Settlement_Request">
@@ -2406,12 +2406,17 @@
 	<changeSet id="16" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				Insert into  DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_CONFIG),'SETTLEMENT_REQUEST_DOWNLOAD','Settlement Process Download',3,null,null,null,',',0,0, null, 'ROW:{HOSTREFERENCE,CUSTOMERREF,TRANSACTIONAMOUNT,TRANSACTIONDATETIME,MERCHANTNAME,TERMINALID,MANUFACTUREID}',null,'A','/opt/PFF/SettlementProcess','${SETTLEMENT_PROCESS}','.xlsx','7',to_date('28-06-19','DD-MM-RR'),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
-				
-				Delete from  DATA_ENGINE_TABLE where configid = (select id from  DATA_ENGINE_CONFIG where name = 'SETTLEMENT_REQUEST_DOWNLOAD');
-				Insert into  DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_TABLE),(Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD'),'SETTLEMENT_REQUEST',0,'ID','REQUESTBATCHID IN (:REQUESTBATCHID)','',null,null,null,null,null,0,0,0);
+				DELETE FROM DATA_ENGINE_LOG WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_DOWNLOAD_HISTORY WHERE ID IN (SELECT ID FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_STATUS WHERE NAME ='SETTLEMENT_REQUEST_DOWNLOAD';
 
-				DELETE FROM  DATA_ENGINE_COLUMN  where TABLEID IN (select ID from  DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from  DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_COLUMN where TABLEID IN (select ID from DATA_ENGINE_TABLE WHERE CONFIGID = (select ID from DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_DOWNLOAD'));
+				DELETE FROM DATA_ENGINE_TABLE where CONFIGID IN (select ID from DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_DOWNLOAD');
+				DELETE FROM DATA_ENGINE_CONFIG where Name = 'SETTLEMENT_REQUEST_DOWNLOAD';
+			
+				Insert into  DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_CONFIG),'SETTLEMENT_REQUEST_DOWNLOAD','Settlement Process Download',3,null,null,null,',',0,0, null, 'ROW:{HOSTREFERENCE,CUSTOMERREF,TRANSACTIONAMOUNT,TRANSACTIONDATETIME,MERCHANTNAME,TERMINALID,MANUFACTUREID}',null,'A','/opt/PFF/SettlementProcess','${SETTLEMENT_PROCESS}','.xlsx','7',to_date('28-06-19','DD-MM-RR'),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
+				Insert into  DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_TABLE),(Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD'),'SETTLEMENT_REQUEST',0,'ID','REQUESTBATCHID IN (:REQUESTBATCHID)','',null,null,null,null,null,0,0,0);
+				
 				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')), 'HOSTREFERENCE', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
 				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')),  'CUSTOMERREF', 0,'N',null,null,  null,null,'0',null,null,null,null,'O');
 				Insert into  DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM  DATA_ENGINE_COLUMN), (Select Id FROM  DATA_ENGINE_TABLE WHERE Name = 'SETTLEMENT_REQUEST' and CONFIGID = (Select Id FROM  DATA_ENGINE_CONFIG WHERE Name = 'SETTLEMENT_REQUEST_DOWNLOAD')),  'TRANSACTIONAMOUNT', 0,'N',null,'',  null,null,'0',null,null,null,null,'O');
@@ -2476,4 +2481,39 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	 <changeSet id="19" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update DATA_ENGINE_CONFIG set UploadLocation = 'C' Where name = 'SETTLEMENT_REQUEST_UPLOAD';
+			]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="20" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update SMTPARAMETERS set SYSPARMVALUE='Y' Where SYSPARMCODE='HOLD_DISB_INST_POST';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="21" author="vijaya.a">
+		<createTable tableName="FINANCEMAIN_EXTENSION">
+			<column name="Id" type="bigint" autoIncrement="true"/>
+			<column name="FinId" type="bigint"/>
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="HOSTREFERENCE" type="VARCHAR(20)" />
+			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="22" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Update DATA_ENGINE_CONFIG set SKIPHEADERROW = 1 Where Name = 'SETTLEMENT_REQUEST_UPLOAD';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>	

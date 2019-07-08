@@ -180,6 +180,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
@@ -4055,6 +4056,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
 				}
 				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, isWIF);
+				if (financeMain.getOldFinReference() != null && auditHeader.getApiHeader()!=null
+						&& StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
+					FinanceMainExtension finExtension = new FinanceMainExtension();
+					finExtension.setFinreference(financeMain.getFinReference());
+					finExtension.setHostreference(financeMain.getOldFinReference());
+					finExtension.setOldhostreference(financeMain.getExtReference());
+					getFinanceMainDAO().saveHostRef(finExtension);
+				}
 
 				// Setting BPI Paid amount to Schedule details
 				// =======================================

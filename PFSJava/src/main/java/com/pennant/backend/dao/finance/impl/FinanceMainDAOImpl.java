@@ -77,6 +77,7 @@ import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailCommitment;
@@ -681,7 +682,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" DsaCode, DroplineFrq,FirstDroplineDate,PftServicingODLimit, ReferralId,EmployeeName, DmaCode, SalesDepartment, QuickDisb, WifReference,");
 			sql.append(
-					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes,OldFinReference ");
+					" UnPlanEMIHLockPeriod , UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi, MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, ReAgeBucket, DueBucket, EligibilityMethod,samplingRequired,legalRequired,connector,ProcessAttributes ");
 			sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt , VanReq, VanCode");
 
 		}
@@ -732,7 +733,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" :DsaCode,:DroplineFrq,:FirstDroplineDate,:PftServicingODLimit, :ReferralId,:EmployeeName, :DmaCode, :SalesDepartment, :QuickDisb, :WifReference,");
 			sql.append(
-					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes, :OldFinReference");
+					" :UnPlanEMIHLockPeriod , :UnPlanEMICpz, :ReAgeCpz, :MaxUnplannedEmi, :MaxReAgeHolidays, :AvailedUnPlanEmi, :AvailedReAgeH, :ReAgeBucket, :DueBucket, :EligibilityMethod,:samplingRequired,:legalRequired,:connector, :ProcessAttributes");
 			sql.append(", :PromotionCode, :TdsPercentage, :TdsStartDate, :TdsEndDate, :TdsLimitAmt, :VanReq, :VanCode");
 		}
 		sql.append(", :Version ,:LastMntBy,:LastMntOn,:RecordStatus,:RoleCode,:NextRoleCode,:TaskId,");
@@ -4736,20 +4737,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public int getCountByOldFinReference(String oldFinReference) {
+	public int getCountByOldFinReference(String hostReference) {
 
 		logger.debug("Entering");
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setOldFinReference(oldFinReference);
+		FinanceMainExtension financeMainExtension = new FinanceMainExtension();
+		financeMainExtension.setHostreference(hostReference);
 		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
 
-		selectSql.append(" From FinanceMain");
+		selectSql.append(" From Financemain_Extension");
 
-		selectSql.append(" Where OldFinReference =:OldFinReference");
+		selectSql.append(" Where Hostreference =:Hostreference");
 
 		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMainExtension);
 
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
@@ -4757,6 +4758,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			logger.debug("Exception: ", dae);
 			return 0;
 		}
+
 
 	}
 
@@ -4803,4 +4805,105 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+	
+	@Override
+	public long saveHostRef(FinanceMainExtension financeMainExtension) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("insert into ");
+			sql.append("FINANCEMAIN_EXTENSION");
+		sql.append(" (FinId, Finreference, Hostreference, Oldhostreference)");
+		sql.append(" values (:finId, :finreference, :hostreference, :oldhostreference)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMainExtension);
+
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return financeMainExtension.getId();
+	}
+	
+	@Override
+	public FinanceMain getFinanceMainByHostReference(String oldFinReference, boolean active) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		StringBuilder selectSql = new StringBuilder("SELECT  FinReference, PlanDeferCount, ");
+		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
+		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory");
+		selectSql.append(" From FinanceMain");
+		selectSql.append(" Where FinReference = (Select FinReference from Financemain_Extension Where HostReference = :OldFinReference)");
+		selectSql.append(" AND FinIsActive = :FinIsActive");
+
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source.addValue("OldFinReference", oldFinReference);
+		source.addValue("FinIsActive", active);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+		}
+		logger.debug("Leaving");
+		return null;
+	}
+	
+	@Override
+	public int getCountByExternalReference(String oldHostReference) {
+
+		logger.debug("Entering");
+
+		FinanceMainExtension financeMain = new FinanceMainExtension();
+		financeMain.setOldhostreference(oldHostReference);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+
+		selectSql.append(" From Financemain_Extension");
+
+		selectSql.append(" Where OldHostreference =:Oldhostreference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+
+
+	}
+	
+	@Override
+	public int getCountByOldHostReference(String oldHostReference) {
+
+		logger.debug("Entering");
+
+		FinanceMainExtension financeMain = new FinanceMainExtension();
+		financeMain.setOldhostreference(oldHostReference);
+		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) ");
+		selectSql.append(" From Financemain Where Finreference = (Select Finreference From FinanceMain_Extension");
+		selectSql.append(" Where OldHostReference = :Oldhostreference)  AND FinIsActive = 0");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+
+		try {
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.debug("Exception: ", dae);
+			return 0;
+		}
+	}
+	
 }

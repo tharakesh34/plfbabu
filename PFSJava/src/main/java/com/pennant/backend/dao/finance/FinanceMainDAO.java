@@ -56,6 +56,7 @@ import com.pennant.backend.model.finance.BulkDefermentChange;
 import com.pennant.backend.model.finance.BulkProcessDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.RolledoverFinanceDetail;
 import com.pennant.backend.model.reports.AvailFinance;
@@ -382,5 +383,14 @@ public interface FinanceMainDAO {
 	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
 
 	String getLovDescEntityCode(String finReference, String string);
+	
+	long saveHostRef(FinanceMainExtension financeMainExtension);
+	
+	FinanceMain getFinanceMainByHostReference(String oldFinReference, boolean active);
+	
+	int getCountByExternalReference(String oldFinReference);
+	
+	int getCountByOldHostReference(String oldFinReference);
+	
 
 }

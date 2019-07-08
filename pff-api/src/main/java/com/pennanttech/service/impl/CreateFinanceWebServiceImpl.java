@@ -913,6 +913,19 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return findetail;
 				}
 			}
+			if(StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
+				int count = financeMainDAO
+						.getCountByExternalReference(financeDetail.getFinScheduleData().getExternalReference());
+				if (count > 0) {
+					findetail = new FinanceDetail();
+					String[] valueParm = new String[2];
+					valueParm[0] = "Host Reference";
+					valueParm[1] = financeDetail.getFinScheduleData().getOldFinReference();
+					returnStatus = APIErrorHandlerService.getFailedStatus("30506", valueParm);
+					findetail.setReturnStatus(returnStatus);
+					return findetail;
+				}
+			}
 			findetail = createFinanceController.doReInitiateFinance(financeDetail);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -1000,7 +1013,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// check records in origination
 		FinanceMain finMain = financeMainDAO
-				.getFinanceMainByOldFinReference(financeDetail.getFinScheduleData().getExternalReference(), active);
+				.getFinanceMainByHostReference(financeDetail.getFinScheduleData().getExternalReference(), active);
 		if (finMain == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeDetail.getFinScheduleData().getExternalReference();

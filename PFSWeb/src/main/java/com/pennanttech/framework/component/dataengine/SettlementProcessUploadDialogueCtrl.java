@@ -31,7 +31,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.settlementprocess.webui.SettlementProcessUploadResponce;
 
 public class SettlementProcessUploadDialogueCtrl extends GFCBaseCtrl<Configuration> {
-	private static final Logger logger = Logger.getLogger(CommodityFileUploadCtrl.class);
+	private static final Logger logger = Logger.getLogger(SettlementProcessUploadDialogueCtrl.class);
 	private static final long serialVersionUID = 1297405999029019920L;
 
 	protected Window window_SettlementProcessUploadDialogueCtrl;

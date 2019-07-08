@@ -748,6 +748,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Date tdsEndDate;
 	private BigDecimal tdsLimitAmt;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
+	private String extReference;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -938,6 +939,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("strtprdCpzMethod");
 		excludeFields.add("coreBankId");
 		excludeFields.add("intTdsAdjusted");
+		excludeFields.add("extReference");
 
 		return excludeFields;
 	}
@@ -4371,6 +4373,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setVanReq(boolean vanReq) {
 		this.vanReq = vanReq;
+	}
+
+	public String getExtReference() {
+		return extReference;
+	}
+
+	public void setExtReference(String extReference) {
+		this.extReference = extReference;
 	}
 
 	public boolean isAllowDrawingPower() {
