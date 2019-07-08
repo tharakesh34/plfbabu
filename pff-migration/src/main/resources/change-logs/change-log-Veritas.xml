@@ -6318,5 +6318,14 @@ UNION ALL
           FROM   TRIAL_BALANCE_REPORT_FILE TBRF LEFT JOIN RMTCOUNTRYVSPROVINCE RMT ON RMT.CPPROVINCE = TBRF.PROVINCE
 		</createView>
 	</changeSet>
+	
+	<changeSet id="101" author="aditya.a">
+		<sql>
+		<![CDATA[
+            delete from reportfilterfields where reportid in  (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzLoanTypeReport') and fieldid=3;
+            delete from reportfilterfields where reportid in  (select reportid from reportconfiguration where menuitemcode='menu_Item_FeeAmzReferenceReport') and fieldid=3;
+		]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
