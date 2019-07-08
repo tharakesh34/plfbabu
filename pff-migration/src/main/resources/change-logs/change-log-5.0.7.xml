@@ -1796,7 +1796,46 @@
                     ]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="54" author="prathap" dbms="oracle">
+		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays"
+			newDataType="Number(5,0)" />
+	</changeSet>
+	
+	<changeSet id="55" author="prathap" dbms="oracle">
+		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays"
+			newDataType="Number(5,0)" />
+	</changeSet>
+	
+	<changeSet id="56" author="prathap" dbms="oracle">
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="Number(5,0)" />
+	</changeSet>
+	
+	<changeSet id="57" author="prathap" dbms="oracle">
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="Number(5,0)" />
+	</changeSet>
+	
+	<changeSet id="54" author="prathap" dbms="mssql">
+		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays"
+			newDataType="smallint" />
+	</changeSet>
+	
+	<changeSet id="55" author="prathap" dbms="mssql">
+		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays"
+			newDataType="smallint" />
+	</changeSet>
+	
+	<changeSet id="56" author="prathap" dbms="mssql">
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="smallint" />
+	</changeSet>
+	
+	<changeSet id="57" author="prathap" dbms="mssql">
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="smallint" />
+	</changeSet>
 
 	<changeSet id="54" author="Saikiran.v">
 		<createTable tableName="Taxtype">
