@@ -1856,4 +1856,75 @@
 	</changeSet>
 
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
+
+	<changeSet id="61" author="lakshmi.n">
+		<createTable tableName="BATCH_STAGE_PROCESS_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessName" type="varchar(30)" />
+			<column name="InitiatedBy" type="bigint" />
+			<column name="InitiatedOn" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="61.1" author="lakshmi.n">
+		<createTable tableName="BATCH_STAGE_PROCESS_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProcessId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="KeyId" type="bigint" />
+			<column name="KeyReference" type="varchar(20)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="61.2" author="lakshmi.n">
+		<addPrimaryKey tableName="BATCH_STAGE_PROCESS_HEADER" columnNames="Id" constraintName="BATCH_STAGE_HEADER_ID" />
+		<addPrimaryKey tableName="BATCH_STAGE_PROCESS_DETAILS" columnNames="Id" constraintName="BATCH_STAGE_PROCESS_DETAIL_ID" />
+		<addForeignKeyConstraint constraintName="BATCH_STAGE_DETAIL_PROCESSID" referencedTableName="BATCH_STAGE_PROCESS_HEADER"
+			baseColumnNames="ProcessId" baseTableName="BATCH_STAGE_PROCESS_DETAILS" referencedColumnNames="Id" />
+	</changeSet>
+
+
+	<changeSet id="61.3" author="lakshmi.n">
+		<addColumn tableName="MANDATE_REQUESTS">
+			<column name="ProcessId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="61.4" author="lakshmi.n">
+		<sql>
+		<![CDATA[
+			update MANDATE_REQUESTS set ProcessId = BATCH_ID;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="61.5" author="lakshmi.n">
+		<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="ProcessId" />
+	</changeSet>
+
+	<changeSet id="61.6" author="lakshmi.n">
+		<createIndex tableName="MANDATE_REQUESTS" indexName="IDX_MANDATE_REQUESTS_PROCESSID">
+			<column name="ProcessId" />
+		</createIndex>
+		<createIndex tableName="BATCH_STAGE_PROCESS_HEADER" indexName="IDX_BATCH_SPH_PROCESSID">
+			<column name="ProcessId"></column>
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="61.7" author="lakshmi.n">
+		<sql>
+		<![CDATA[
+			update data_engine_table set filter = 'ProcessId = :ProcessId'  where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT')
+			 
+			update data_engine_table set statusupdate = 'UPDATE MANDATE_REQUESTS SET BATCH_ID = :FILEID, 
+			STATUS = ''AC'' WHERE ProcessId = :ProcessId QUERY:UPDATE MANDATES SET STATUS =  ''AC'' WHERE MANDATEID IN (SELECT MANDATEID FROM MANDATE_REQUESTS WHERE ProcessId = :ProcessId AND STATUS =  ''AC'')' 
+			where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT')
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
