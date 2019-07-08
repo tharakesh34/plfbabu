@@ -1888,7 +1888,6 @@
 			baseColumnNames="ProcessId" baseTableName="BATCH_STAGE_PROCESS_DETAILS" referencedColumnNames="Id" />
 	</changeSet>
 
-
 	<changeSet id="61.3" author="lakshmi.n">
 		<addColumn tableName="MANDATE_REQUESTS">
 			<column name="ProcessId" type="bigint" />
@@ -1903,27 +1902,34 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="61.5" author="lakshmi.n">
+	<changeSet id="61.5" author="lakshmi.n" dbms="oracle,postgres">
 		<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="ProcessId" />
+	</changeSet>
+
+	<changeSet id="61.5" author="lakshmi.n" dbms="mssql">
+		<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="ProcessId" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="61.6" author="lakshmi.n">
 		<createIndex tableName="MANDATE_REQUESTS" indexName="IDX_MANDATE_REQUESTS_PROCESSID">
 			<column name="ProcessId" />
 		</createIndex>
-		<createIndex tableName="BATCH_STAGE_PROCESS_HEADER" indexName="IDX_BATCH_SPH_PROCESSID">
-			<column name="ProcessId"></column>
-		</createIndex>
 	</changeSet>
 
 	<changeSet id="61.7" author="lakshmi.n">
+		<createIndex tableName="BATCH_STAGE_PROCESS_DETAILS" indexName="IDX_BATCH_SPH_PROCESSID">
+			<column name="ProcessId" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="61.8" author="lakshmi.n">
 		<sql>
 		<![CDATA[
-			update data_engine_table set filter = 'ProcessId = :ProcessId'  where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT')
+			update data_engine_table set filter = 'ProcessId = :ProcessId'  where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT');
 			 
 			update data_engine_table set statusupdate = 'UPDATE MANDATE_REQUESTS SET BATCH_ID = :FILEID, 
 			STATUS = ''AC'' WHERE ProcessId = :ProcessId QUERY:UPDATE MANDATES SET STATUS =  ''AC'' WHERE MANDATEID IN (SELECT MANDATEID FROM MANDATE_REQUESTS WHERE ProcessId = :ProcessId AND STATUS =  ''AC'')' 
-			where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT')
+			where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT');
 		]]>
 		</sql>
 	</changeSet>
