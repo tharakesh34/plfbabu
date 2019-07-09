@@ -1095,7 +1095,6 @@
 			<column name="AllowDrawingPower" type="boolean" />
 		</addColumn>
 	</changeSet>
-
 	<changeSet id="17" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN_PA">
 			<column name="AllowRevolving" type="boolean" />
