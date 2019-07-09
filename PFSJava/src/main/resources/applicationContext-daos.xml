@@ -10985,5 +10985,29 @@
 	
 	<!-- GSTNValidationService -->
 	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl"/>
+	
+	<!--============ CKYC Process ============== -->
+	<bean id="ckycDAO" class="com.pennant.backend.dao.ckyc.impl.CKYCDAOImpl"
+		parent="sequenceDao" />
+	<bean id="ckycService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="ckycServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="ckycServiceTarget" class="com.pennant.backend.service.ckyc.impl.CKYCServiceImpl">
+		<property name="ckycDAO" ref="ckycDAO" />
+	</bean>
 
 </beans>

@@ -5354,5 +5354,14 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
+	<!--============ CKYC Download/ Upload ============== -->
+	
+	<bean id="ckycCtrl"
+		class="com.pennant.webui.applicationmaster.download.CKYCProcessCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="ckycService" ref="ckycService"></property>
+
+	</bean>
+	
 	
 </beans>
