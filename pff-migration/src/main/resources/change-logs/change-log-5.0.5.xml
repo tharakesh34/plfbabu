@@ -4775,4 +4775,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="132" author="aditya.a">
+		<sql>
+			<![CDATA[
+                INSERT INTO ErrorDetails VALUES('90503','EN','E','{0} Cannot be "A" for the given ExcessAdjustTo','','Approved','','','','','',0,current_timestamp,1000,0);
+                INSERT INTO ErrorDetails VALUES('90504','EN','E','{0} Cannot be "E" for the given ExcessAdjustTo','','Approved','','','','','',0,current_timestamp,1000,0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
