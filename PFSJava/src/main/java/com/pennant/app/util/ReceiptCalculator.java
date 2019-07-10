@@ -3315,16 +3315,10 @@ public class ReceiptCalculator implements Serializable {
 		logger.debug(Literal.ENTERING);
 
 		if (StringUtils.isNotBlank(allocation.getTaxType())) {
-
 			//Set the GST Paid to allocations
-			if (paidNow.compareTo(BigDecimal.ZERO) > 0) {
-				calAllocationPaidGST(financeDetail, paidNow, allocation, taxType);
-			}
-
+			calAllocationPaidGST(financeDetail, paidNow, allocation, taxType);
 			//Set the GST Waiver to allocations
-			if (allocation.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
-				calAllocationWaiverGST(financeDetail, allocation.getWaivedAmount(), allocation);
-			}
+			calAllocationWaiverGST(financeDetail, allocation.getWaivedAmount(), allocation);
 		}
 
 		logger.debug(Literal.LEAVING);

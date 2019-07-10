@@ -103,11 +103,11 @@ public class GSTCalculator {
 
 	public static TaxAmountSplit getExclusiveGST(BigDecimal taxableAmount, Map<String, BigDecimal> taxPercentages) {
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
-		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CGST)));
-		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_SGST)));
-		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
-		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
-		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
+		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_CGST))); //CGST Amount
+		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_SGST))); //SGST Amount
+		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_UGST))); //UGST Amount
+		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercentages.get(RuleConstants.CODE_IGST))); //IGST Amount
+		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));  //Total Amount
 		taxSplit.setNetAmount(taxableAmount.add(taxSplit.gettGST()));
 		return taxSplit;
 	}
@@ -118,17 +118,20 @@ public class GSTCalculator {
 
 	public static TaxAmountSplit getInclusiveGST(BigDecimal taxableAmount, BigDecimal waivedAmount,
 			Map<String, BigDecimal> taxPercentages) {
+
 		TaxAmountSplit taxSplit = new TaxAmountSplit();
 
 		BigDecimal netAmount = getInclusiveAmount(taxableAmount.subtract(waivedAmount),
-				taxPercentages.get(RuleConstants.CODE_TOTAL_GST));
-		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST)));
-		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST)));
-		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST)));
-		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST)));
-		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST()));
-		//taxSplit.setNetAmount(taxableAmount.subtract(taxSplit.gettGST()));
-		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST()));
+				taxPercentages.get(RuleConstants.CODE_TOTAL_GST));//Fee factor
+
+		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_CGST))); //CGST Amount
+		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_SGST))); //SGST Amount
+		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_UGST))); //UGST Amount
+		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercentages.get(RuleConstants.CODE_IGST))); //IGST Amount
+		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST())); //Total GST Amount
+
+		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST())); //FeeFactor + GST Factor
+
 		return taxSplit;
 	}
 

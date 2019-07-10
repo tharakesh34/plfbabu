@@ -1519,7 +1519,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setPaidSGST(taxSplit.getsGST());
 				finTaxDetails.setPaidUGST(taxSplit.getuGST());
 
-				finFeeDetail.setPaidAmountOriginal(taxSplit.getNetAmount());
+				finFeeDetail.setPaidAmountOriginal(taxSplit.getNetAmount().subtract(taxSplit.gettGST()));
 				finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
 				finTaxDetails.setPaidTGST(taxSplit.gettGST());
 
@@ -1533,7 +1533,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetails.setRemFeeSGST(taxSplit.getsGST());
 				finTaxDetails.setRemFeeUGST(taxSplit.getuGST());
 
-				finFeeDetail.setRemainingFeeOriginal(taxSplit.getNetAmount());
+				finFeeDetail.setRemainingFeeOriginal(taxSplit.getNetAmount().subtract(taxSplit.gettGST()));
 				finFeeDetail.setRemainingFee(totalRemainingFee);
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
