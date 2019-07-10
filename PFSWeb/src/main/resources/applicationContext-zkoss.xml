@@ -5350,10 +5350,6 @@
 		<property name="ledgerDownloadService" ref="ledgerDownloadService"/>
 	</bean>
 	
-	<bean id ="ledgerDownloadService" class ="com.pennanttech.external.clix.services.impl.LedgerDownloadServiceImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
 	<!--============ CKYC Download/ Upload ============== -->
 	
 	<bean id="ckycCtrl"
