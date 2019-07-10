@@ -2519,4 +2519,10 @@
 			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet author="Kesav" id="42">
+		<comment>data type modified from varchar(150) to varchar(200)</comment>
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
+	</changeSet> 
+	
 </databaseChangeLog>
