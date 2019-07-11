@@ -31,58 +31,61 @@
 
 	<changeSet id="1" author="Durgaprasad.g">
 		<sql>
-			Insert into RMTLOVFIELDDETAIL  values ((select max(fieldcodeid)+1 from RMTLOVFIELDDETAIL),'CAT_COAPP','Corporate','Corporate','1',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'0');
+			Insert into RMTLOVFIELDDETAIL values ((select max(fieldcodeid)+1 from
+			RMTLOVFIELDDETAIL),'CAT_COAPP','Corporate','Corporate','1',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'0');
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADD_DISB_DUES_WARNG';
 			 ]]>
 		</sql>
-    </changeSet>
-    
-    <changeSet id="2" author="DurgaPrasad.G">
+	</changeSet>
+
+	<changeSet id="2" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 			UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
 			]]>
 		</sql>
-    </changeSet>
+	</changeSet>
 	<changeSet id="2" author="saikiran.v">
 		<sql>
 			Insert into TEMPLATES
-			(TEMPLATEID,TEMPLATEFOR,MODULE,TEMPLATECODE,TEMPLATEDESC,SMSTEMPLATE,SMSCONTENT,EMAILTEMPLATE,EMAILCONTENT,EMAILFORMAT,EMAILSUBJECT,EMAILSENDTO,TURNAROUNDTIME,REPEAT,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EVENT) values 
-			((Select MAX(Seqno)+1 from SeqMailTemplate),'CN','FIN','ADD_RATE_CHANGE_NOTIFICATION','Add rate change notification.',0,null,1,null,'H','${vo.LAN}',null,0,0,1,1,1000,sysdate,'Approved',null,null,null,null,null,0,'AddRateChange');
-			
+			(TEMPLATEID,TEMPLATEFOR,MODULE,TEMPLATECODE,TEMPLATEDESC,SMSTEMPLATE,SMSCONTENT,EMAILTEMPLATE,EMAILCONTENT,EMAILFORMAT,EMAILSUBJECT,EMAILSENDTO,TURNAROUNDTIME,REPEAT,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EVENT)
+			values
+			((Select MAX(Seqno)+1 from SeqMailTemplate),'CN','FIN','ADD_RATE_CHANGE_NOTIFICATION','Add rate change
+			notification.',0,null,1,null,'H','${vo.LAN}',null,0,0,1,1,1000,sysdate,'Approved',null,null,null,null,null,0,'AddRateChange');
+
 			Update SeqMailTemplate set seqno = (Select max(TEMPLATEID) from TEMPLATES_VIEW);
-		  </sql> 
-  </changeSet>
-  <changeSet id="3" author="saikiran.v">
+		</sql>
+	</changeSet>
+	<changeSet id="3" author="saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='LMS_SERVICE_LOG_REQ';
 			 ]]>
 		</sql>
-    </changeSet>
-    
-     <changeSet id="4" author="DurgaPrasad.G">
+	</changeSet>
+
+	<changeSet id="4" author="DurgaPrasad.G">
 		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='ALLOW_AMT_FLD_INTEGRAL_PART_DEF_VAL_ZERO';
 			]]>
 		</sql>
-    </changeSet>
-    
-    <changeSet id="5" author="DurgaPrasad.G">
+	</changeSet>
+
+	<changeSet id="5" author="DurgaPrasad.G">
 		<sql>
 		 	<![CDATA[
 		 		UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_COMMITMENTS';
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="6" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -90,7 +93,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="7" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -98,7 +101,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="8" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -106,5 +109,155 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="9" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALW_CONST_PRINCIPLE_SCHD_METHOD';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="Durga Prasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='FRQ_DATE_VALIDATION_REQ';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="9" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="OGL_TRANSACTION">
+			<column name="POSTDATE" type="DATETIME" />
+			<column name="LINKEDTRANID" type="BIGINT" />
+			<column name="FINREFERENCE" type="VARCHAR(20)" />
+			<column name="FINBRANCH" type="VARCHAR(12)" />
+			<column name="FINTYPE" type="VARCHAR(8)" />
+			<column name="FINDIVISION" type="VARCHAR(8)" />
+			<column name="ENTITYCODE" type="VARCHAR(8)" />
+			<column name="GLACCOUNT" type="VARCHAR(50)" />
+			<column name="DRORCR" type="VARCHAR(1)" />
+			<column name="ACCCY" type="VARCHAR(3)" />
+			<column name="POSTAMOUNT" type="decimal(18,2)" />
+			<column name="REFNO" type="BIGINT" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="10" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="IDB_INTERFACES_LOG">
+			<column name="INTERFACE_NAME" type="VARCHAR(100)" />
+			<column name="REF_NUM" type="VARCHAR(100)" />
+			<column name="START_DATE" type="VARCHAR(30)" />
+			<column name="END_DATE" type="VARCHAR(30)" />
+			<column name="RECORDS_PROCESSED" type="BIGINT" />
+			<column name="STATUS" type="VARCHAR(10)" />
+			<column name="STATUS_DESC" type="VARCHAR(100)" />
+			<column name="INTERFACE_INFO" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="11" author="Durgaprasad G" dbms="oracle">
+		<createSequence sequenceName="SEQ_EXTERANAL_IDBINTERFACE" />
+	</changeSet>
+
+	<changeSet id="12" author="Durgaprasad G" dbms="oracle">
+		<createView viewName="OGL_VIEW" replaceIfExists="true">
+			SELECT P.POSTDATE ,P.LinkedTranId, P.FINREFERENCE,FM.FINBRANCH,FT.FinType,FinDivision,D.ENTITYCODE,P.Account glaccount,P.DrOrCr,P.AcCcy ,
+			CASE
+			WHEN P.drorcr = 'D' THEN (P.POSTAMOUNT/CCYMINORCCYUNITS )*-1
+					ELSE P.POSTAMOUNT/CCYMINORCCYUNITS 
+					END postAmount
+			from postings P
+			inner join financemain FM on  P.FINREFERENCE = FM.FINREFERENCE
+			inner join RMTFINANCETYPES FT ON FT.FinType = FM.FinType
+			inner  JOIN SMTDivisionDetail D ON FT.FinDivision = D.DivisionCode
+			inner join RMTCurrencies CCY on P.AcCcy = CCY.ccycode
+			WHERE P.POSTAMOUNT >0 ORDER BY FINDIVISION,FINBRANCH,ACCOUNT,AcCcy
+		</createView>
+	</changeSet>
+
+	<changeSet id="13" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="AP_GL_TO_ORACLE_GL_TRANS">
+			<column name="APPLICATION_ID" type="VARCHAR(10)" />
+			<column name="AP_REF_NO" type="VARCHAR(20)" />
+			<column name="AP_JV_NO" type="VARCHAR(10)" />
+			<column name="AP_JV_DATE" type="DATETIME" />
+			<column name="AP_SOURCE" type="VARCHAR(25)" />
+			<column name="AP_CATEGORY" type="VARCHAR(25)" />
+			<column name="AP_REMARKS" type="VARCHAR(255)" />
+			<column name="CURRENCY_CD" type="VARCHAR(10)" />
+			<column name="CONVERSION_RATE" type="DECIMAL(7,3)" />
+			<column name="CONVERSION_DATE" type="DATETIME" />
+			<column name="CONVERSION_TYPE" type="VARCHAR(10)" />
+			<column name="AP_IMMEDIATE_PROCESS_FLAG" type="CHAR(1)" />
+			<column name="PROCESSED_FLAG" type="CHAR(1)" />
+			<column name="GL_PROCESSED_DATE" type="DATETIME" />
+			<column name="GL_PROC_REMARKS" type="VARCHAR(255)" />
+			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_DATE" type="DATETIME" />
+			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_DATE" type="DATETIME" />
+			<column name="SET_OF_BOOKS_ID" type="DECIMAL(15,0)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="14" author="Durgaprasad G" dbms="oracle">
+		<createTable tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL">
+			<column name="APPLICATION_ID" type="VARCHAR(10)" />
+			<column name="AP_REF_NO" type="VARCHAR(20)" />
+			<column name="AP_LINE_DESCR" type="VARCHAR(255)" />
+			<column name="AP_COMPANY" type="VARCHAR(10)" />
+			<column name="AP_LOB" type="VARCHAR(25)" />
+			<column name="AP_LOCATION" type="VARCHAR(10)" />
+			<column name="AP_CC" type="VARCHAR(25)" />
+			<column name="AP_NATURAL_AC" type="VARCHAR(25)" />
+			<column name="AP_IC" type="VARCHAR(25)" />
+			<column name="AP_FUTURE1" type="VARCHAR(25)" />
+			<column name="AP_APAC" type="VARCHAR(16)" />
+			<column name="AP_PARTY" type="VARCHAR(9) " />
+			<column name="AP_TRANS_TYPE" type="VARCHAR(10)" />
+			<column name="GL_COMPANY" type="VARCHAR(25)" />
+			<column name="GL_LOB" type="VARCHAR(25)" />
+			<column name="GL_LOC" type="VARCHAR(10)" />
+			<column name="GL_CC" type="VARCHAR(25)" />
+			<column name="GL_NATURAL_AC" type="VARCHAR(25)" />
+			<column name="GL_IC" type="VARCHAR(25)" />
+			<column name="GL_FUTURE1" type="VARCHAR(25)" />
+			<column name="AP_DRCR_FLAG" type="CHAR(1)" />
+			<column name="AP_AMOUNT" type="DECIMAL(19,4)" />
+			<column name="CREATED_BY" type="VARCHAR(10)" />
+			<column name="CREATED_DATETIME" type="DATETIME" />
+			<column name="MODIFIED_BY" type="VARCHAR(10)" />
+			<column name="MODIFIED_DATETIME" type="DATETIME" />
+			<column name="AP_APPL" type="VARCHAR(5)" />
+			<column name="AP_PARTY_NAME" type="VARCHAR(100)" />
+			<column name="AP_GROUP_COMPANY" type="VARCHAR(25)" />
+			<column name="AP_PRODUCT" type="VARCHAR(25)" />
+			<column name="GL_GROUP_COMPANY" type="VARCHAR(25)" />
+			<column name="GL_PRODUCT" type="VARCHAR(25)" />
+			<column name="AP_CHANNEL" type="VARCHAR(30)" />
+			<column name="GL_CHANNEL" type="VARCHAR(30)" />
+			<column name="AP_FUTURE2" type="VARCHAR(30)" />
+			<column name="GL_FUTURE2" type="VARCHAR(2) " />
+			<column name="AP_FUTURE3" type="VARCHAR(30)" />
+			<column name="GL_FUTURE3" type="VARCHAR(3) " />
+			<column name="AP_FUTURE4" type="VARCHAR(30)" />
+			<column name="GL_FUTURE4" type="VARCHAR(4) " />
+			<column name="AP_FUTURE5" type="VARCHAR(30)" />
+			<column name="GL_FUTURE5" type="VARCHAR(5) " />
+			<column name="CURRENCY_CD" type="VARCHAR(10)" />
+			<column name="CONVERSION_RATE" type="DECIMAL(17,3)" />
+			<column name="CONVERSION_DATETIME" type="DATETIME" />
+			<column name="CONVERSION_TYPE" type="VARCHAR(10)" />
+			<column name="AP_TXN_CURRENCY_AMOUNT" type="DECIMAL(17,2)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="15" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='PUTCALL_DEFAULT_ALERTDAYS_REQUIRED';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

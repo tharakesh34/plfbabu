@@ -1840,6 +1840,24 @@
 	<changeSet id="57" author="prathap" dbms="mssql">
 		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays" newDataType="smallint" />
 	</changeSet>
+	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 
+	<changeSet id="58" author="Saikiran.V">
+		<sql>
+	        <![CDATA[
+	              Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('PUTCALL_DEFAULT_ALERTDAYS_REQUIRED','Put-call Default value need or not.','String',1,'N',8,0,null,null,'Put-call Default value need or not',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+	         ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="59" author="satyanarayana.g">
+		<comment>HoldDisbursement</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='HoldDisbursement';
+				INSERT INTO ReportList VALUES ('HoldDisbursement', 'HoldDisbursement', 'listheader_FinReference.label,listheader_Hold.label',  'FinReference,Hold', 'String,boolean', ' ', 'ReportList02', 'HoldDisbursement',  'Loan Management', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 </databaseChangeLog>
