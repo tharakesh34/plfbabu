@@ -1872,7 +1872,7 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="62" author="vijaya.a">
+	<changeSet id="62" author="vijaya.a" >
 		<createView viewName="Vasprovideraccdetail_view" replaceIfExists="true">
 			SELECT t1.id,
     			t1.providerid,
@@ -1904,9 +1904,9 @@
 			    t1.recordtype,
 			    t1.workflowid
 			  FROM vasprovideraccdetail_temp t1
-			  JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+			  JOIN entity t2 ON t2.entitycode = t1.entitycode
 		      JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
-			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode = t3.bankcode
 			  JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
 			  JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
 			  UNION ALL
@@ -1940,9 +1940,9 @@
 			    t1.recordtype,
 			    t1.workflowid
 			 FROM vasprovideraccdetail t1
-			 JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+			 JOIN entity t2 ON t2.entitycode = t1.entitycode
 			 JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
-			 LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			 LEFT JOIN bmtbankdetail t4 ON t4.bankcode = t3.bankcode
 			 JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
 			 JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
 			 WHERE NOT (EXISTS ( SELECT 1
@@ -1950,8 +1950,8 @@
 			 WHERE vasprovideraccdetail_temp.id = t1.id))
 			 </createView>
 	</changeSet>
-
-	<changeSet id="63" author="vijaya.a">
+	
+	<changeSet id="63" author="vijaya.a" >
 		<createView viewName="Vasprovideraccdetail_aview" replaceIfExists="true">
 			SELECT t1.id,
 			    t1.providerid,
@@ -1983,9 +1983,9 @@
 			    t1.recordtype,
 			    t1.workflowid
 			  FROM vasprovideraccdetail t1
-			  JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+			  JOIN entity t2 ON t2.entitycode = t1.entitycode
 			  JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
-			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode = t3.bankcode
 			  JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
 			  JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
 			  </createView>
