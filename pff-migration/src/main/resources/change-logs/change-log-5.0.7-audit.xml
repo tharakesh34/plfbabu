@@ -83,6 +83,12 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="6" author="vijaya.a" >
+		<addColumn tableName="adtVasprovideraccdetail">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
 
 	<!-- GST Waiver Changes END -->
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
