@@ -1859,5 +1859,143 @@
 			]]>
 		</sql>
 	</changeSet>
-	<!-- 5.0.7 is Under QC please use 5.0.8 -->
+	
+	<changeSet id="60" author="vijaya.a" >
+		<addColumn tableName="vasprovideraccdetail">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="61" author="vijaya.a" >
+		<addColumn tableName="vasprovideraccdetail_temp">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="62" author="vijaya.a" >
+		<createView viewName="Vasprovideraccdetail_view" replaceIfExists="true">
+			SELECT t1.id,
+    			t1.providerid,
+    			t5.dealername AS providerdesc,
+    			t1.entitycode,
+    			t2.entitydesc,
+    			t1.paymentmode,
+    			t3.bankcode,
+    			t4.bankname,
+    			t1.bankbranchid,
+			    t3.branchdesc,
+			    t1.accountnumber,
+			    t3.micr AS micrcode,
+			    t3.ifsc AS ifsccode,
+			    t1.receivableadjustment,
+			    t1.reconciliationamount,
+			    t1.active,
+			    t1.partnerBankId,
+			    pb.partnerBankCode,
+    			pb.partnerBankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			  FROM vasprovideraccdetail_temp t1
+			  JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+		      JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
+			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			  JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
+			  JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
+			  UNION ALL
+			SELECT t1.id,
+			    t1.providerid,
+			    t5.dealername AS providerdesc,
+			    t1.entitycode,
+			    t2.entitydesc,
+			    t1.paymentmode,
+			    t3.bankcode,
+			    t4.bankname,
+			    t1.bankbranchid,
+			    t3.branchdesc,
+			    t1.accountnumber,
+			    t3.micr AS micrcode,
+			    t3.ifsc AS ifsccode,
+			    t1.receivableadjustment,
+			    t1.reconciliationamount,
+			    t1.active,
+			    t1.partnerBankId,
+			    pb.partnerBankCode,
+    			pb.partnerBankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			 FROM vasprovideraccdetail t1
+			 JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+			 JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
+			 LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			 JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
+			 JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
+			 WHERE NOT (EXISTS ( SELECT 1
+			 FROM vasprovideraccdetail_temp
+			 WHERE vasprovideraccdetail_temp.id = t1.id))
+	</changeSet>
+	
+	<changeSet id="63" author="vijaya.a" >
+		<createView viewName="Vasprovideraccdetail_aview" replaceIfExists="true">
+			SELECT t1.id,
+			    t1.providerid,
+			    t5.dealername AS providerdesc,
+			    t1.entitycode,
+			    t2.entitydesc,
+			    t1.paymentmode,
+			    t3.bankcode,
+			    t4.bankname,
+			    t1.bankbranchid,
+			    t3.branchdesc,
+			    t1.accountnumber,
+			    t3.micr AS micrcode,
+			    t3.ifsc AS ifsccode,
+			    t1.receivableadjustment,
+			    t1.reconciliationamount,
+			    t1.active,
+			    t1.partnerBankId,
+			    pb.partnerBankCode,
+    			pb.partnerBankName,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			  FROM vasprovideraccdetail t1
+			  JOIN entity t2 ON t2.entitycode::text OPERATOR(pg_catalog.=) t1.entitycode::text
+			  JOIN bankbranches t3 ON t3.bankbranchid = t1.bankbranchid
+			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
+			  JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
+			  JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
+	</changeSet>
+	
+	<changeSet id="64" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='INSURANCE_INST_ON_DISB';
+			   	INSERT INTO SMTPARAMETERS VALUES ('INSURANCE_INST_ON_DISB', 'Insurance Product Req', 'String', 1, 'N', 1, 0, NULL, NULL,'Insurance Product Req', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
