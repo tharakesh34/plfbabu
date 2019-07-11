@@ -1859,20 +1859,20 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="60" author="vijaya.a" >
+
+	<changeSet id="60" author="vijaya.a">
 		<addColumn tableName="vasprovideraccdetail">
 			<column name="PartnerBankId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="61" author="vijaya.a" >
+
+	<changeSet id="61" author="vijaya.a">
 		<addColumn tableName="vasprovideraccdetail_temp">
 			<column name="PartnerBankId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="62" author="vijaya.a" >
+
+	<changeSet id="62" author="vijaya.a">
 		<createView viewName="Vasprovideraccdetail_view" replaceIfExists="true">
 			SELECT t1.id,
     			t1.providerid,
@@ -1948,9 +1948,10 @@
 			 WHERE NOT (EXISTS ( SELECT 1
 			 FROM vasprovideraccdetail_temp
 			 WHERE vasprovideraccdetail_temp.id = t1.id))
+			 </createView>
 	</changeSet>
-	
-	<changeSet id="63" author="vijaya.a" >
+
+	<changeSet id="63" author="vijaya.a">
 		<createView viewName="Vasprovideraccdetail_aview" replaceIfExists="true">
 			SELECT t1.id,
 			    t1.providerid,
@@ -1987,8 +1988,9 @@
 			  LEFT JOIN bmtbankdetail t4 ON t4.bankcode::text OPERATOR(pg_catalog.=) t3.bankcode::text
 			  JOIN amtvehicledealer t5 ON t5.dealerid = t1.providerid
 			  JOIN PartnerBanks PB ON pb.partnerBankId = t1.partnerbankId
+			  </createView>
 	</changeSet>
-	
+
 	<changeSet id="64" author="vijaya.a">
 		<sql>
 			<![CDATA[
