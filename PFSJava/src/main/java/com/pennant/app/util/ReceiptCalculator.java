@@ -3296,7 +3296,13 @@ public class ReceiptCalculator implements Serializable {
 						FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 
 				paidForAdjustment = BigDecimal.ZERO;
-				break;
+				/*
+				 * In case of Multiple allocation with same feeTypeCode, if user create a receipt manual allocation
+				 * method with partial amount, then after allocating the amount remaining allocation need to reset so
+				 * 'break' is commented here.
+				 */
+				//break;
+				
 			}
 		}
 
