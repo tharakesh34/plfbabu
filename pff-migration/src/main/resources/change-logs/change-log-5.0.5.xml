@@ -4810,4 +4810,12 @@
     	</createView>
 	</changeSet>
 	
+	<changeSet id="134" author="aditya.a">
+		<sql>
+			<![CDATA[
+			    INSERT INTO SMTparameters  VALUES ('SOA_SHOW_CANCEL_RECEIPT', 'Show cancel receipt in soa', 'String', '0', 'N', 1, 0, NULL, NULL,'Show cancel receipt in soa', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
