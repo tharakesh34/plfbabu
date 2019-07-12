@@ -4818,4 +4818,25 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="135" author="murthy.y">
+		<comment>Adding missing Right</comment>
+		<sql>
+			<![CDATA[
+				DELETE FROM SECGROUPRIGHTS WHERE RightId IN (SELECT RightId FROM SECRIGHTS WHERE RightName = 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary');
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary'
+				
+			    UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);
+ 				Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
+ 				
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary','FinAdvancePaymentsDialog',1,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FinAdvancePayments_Maker') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinAdvancePaymentsDialog_btnGetCustBeneficiary'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+				
+				Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	
 </databaseChangeLog>
