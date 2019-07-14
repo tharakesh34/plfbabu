@@ -493,6 +493,7 @@
 				ALTER TABLE FINRECEIPTHEADER ADD CONSTRAINT DF_FINRECEIPTHEADER_COLLECTIONAGENTID DEFAULT 0 FOR COLLECTIONAGENTID;
 				ALTER TABLE FINRECEIPTHEADER_TEMP ADD CONSTRAINT DF_FINRECEIPTHEADER_TEMP_COLLECTIONAGENTID DEFAULT 0 FOR COLLECTIONAGENTID;
 			]]>
+
 		</sql>
 	</changeSet>
 
@@ -4454,35 +4455,16 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="59" author="satyanarayana.g">
-		<createTable tableName="InstrumentwiseLimit">
-			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" />
-			</column>
-			<column name="InstrumentMode" type="varchar(8)">
-				<constraints unique="true" uniqueConstraintName="UK_IWL_InstrumentMode" />
-			</column>
-			<column name="PaymentMinAmtperTrans" type="decimal(18,0)" />
-			<column name="PaymentMaxAmtperTran" type="decimal(18,0)" />
-			<column name="PaymentMaxAmtperDay" type="decimal(18,0)" />
-			<column name="ReceiptMinAmtperTran" type="decimal(18,0)" />
-			<column name="ReceiptMaxAmtperTran" type="decimal(18,0)" />
-			<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" />
-			<column name="Version" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="LastMntBy" type="bigint" />
-			<column name="LastMntOn" type="datetime" />
-			<column name="RecordStatus" type="varchar(50)" />
-			<column name="RoleCode" type="varchar(100)" />
-			<column name="NextRoleCode" type="varchar(200)" />
-			<column name="TaskId" type="varchar(50)" />
-			<column name="NextTaskId" type="varchar(200)" />
-			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkflowId" type="bigint" />
-		</createTable>
-	</changeSet>
-
+	<!-- <changeSet id="59" author="satyanarayana.g"> <createTable tableName="InstrumentwiseLimit"> <column name="Id" type="bigint"> 
+		<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" /> </column> <column name="InstrumentMode" type="varchar(8)"> 
+		<constraints unique="true" uniqueConstraintName="UK_IWL_InstrumentMode" /> </column> <column name="PaymentMinAmtperTrans" 
+		type="decimal(18,0)" /> <column name="PaymentMaxAmtperTran" type="decimal(18,0)" /> <column name="PaymentMaxAmtperDay" type="decimal(18,0)" 
+		/> <column name="ReceiptMinAmtperTran" type="decimal(18,0)" /> <column name="ReceiptMaxAmtperTran" type="decimal(18,0)" /> 
+		<column name="ReceiptMaxAmtperDay" type="decimal(18,0)" /> <column name="Version" type="int"> <constraints nullable="false" 
+		/> </column> <column name="LastMntBy" type="bigint" /> <column name="LastMntOn" type="datetime" /> <column name="RecordStatus" 
+		type="varchar(50)" /> <column name="RoleCode" type="varchar(100)" /> <column name="NextRoleCode" type="varchar(200)" /> <column 
+		name="TaskId" type="varchar(50)" /> <column name="NextTaskId" type="varchar(200)" /> <column name="RecordType" type="varchar(50)" 
+		/> <column name="WorkflowId" type="bigint" /> </createTable> </changeSet> -->
 	<changeSet id="59.1" author="satyanarayana.g">
 		<createTable tableName="InstrumentwiseLimit_Temp">
 			<column name="Id" type="bigint">
@@ -4512,11 +4494,8 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="59.2" author="satyanarayana.g">
-		<createTable tableName="SeqInstrumentwiseLimit">
-			<column name="SeqNo" type="bigint" />
-		</createTable>
-	</changeSet>
+	<!-- <changeSet id="59.2" author="satyanarayana.g"> <createTable tableName="SeqInstrumentwiseLimit"> <column name="SeqNo" 
+		type="bigint" /> </createTable> </changeSet> -->
 
 	<changeSet id="59.3" author="satyanarayana.g">
 		<sql>
@@ -5518,6 +5497,7 @@
 					FROM FINFEEDETAIL T1
 					LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
 					WHERE NOT (EXISTS
+
 					( SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FINFEEDETAIL_TEMP.FEEID = T1.FEEID
 					))
       	</createView>
@@ -6853,42 +6833,23 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="40.1" author="Vidhya">
-		<comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
-		<sql>
-		  	 <![CDATA[
-		  	 	DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_MAKER');
-		  		DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_MAKER');
-	     	 	DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_APPROVER');
-		  		
-		  		DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_MAKER');
-	      		DELETE FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_APPROVER');
-	      		
-	      		DELETE FROM SECROLES WHERE ROLECD='RECEIPTKNOCKOFF_MAKER';
-	      		DELETE FROM SECROLES WHERE ROLECD='RECEIPTKNOCKOFF_APPROVER';
-	      		
-	      		DELETE FROM SECGROUPS WHERE GRPCODE='KNOCKOFF_RECEIPT_MAKER';
-	      		DELETE FROM SECGROUPS WHERE GRPCODE='KNOCKOFF_RECEIPT_APPROVER';
-	      		
-	      		DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptKnockOff';
-	      	 ]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="40.1" author="Vidhya"> <comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt 
+		knock off.</comment> <sql> <![CDATA[ DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE 
+		= 'KNOCKOFF_RECEIPT_MAKER'); DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_MAKER'); 
+		DELETE FROM SECGROUPRIGHTS WHERE GRPID IN (SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'KNOCKOFF_RECEIPT_APPROVER'); DELETE 
+		FROM SECROLEGROUPS WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_MAKER'); DELETE FROM SECROLEGROUPS 
+		WHERE ROLEID IN (SELECT ROLEID FROM SECROLES WHERE rolecd='RECEIPTKNOCKOFF_APPROVER'); DELETE FROM SECROLES WHERE ROLECD='RECEIPTKNOCKOFF_MAKER'; 
+		DELETE FROM SECROLES WHERE ROLECD='RECEIPTKNOCKOFF_APPROVER'; DELETE FROM SECGROUPS WHERE GRPCODE='KNOCKOFF_RECEIPT_MAKER'; 
+		DELETE FROM SECGROUPS WHERE GRPCODE='KNOCKOFF_RECEIPT_APPROVER'; DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_ReceiptKnockOff'; 
+		]]> </sql> </changeSet> -->
 
-	<changeSet id="41" author="vijaya.a">
-		<comment>Deletion of secgrouprights for receipts</comment>
-		<sql>
-			<![CDATA[				
-				DELETE from SECGROUPRIGHTS where RightID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_receiptModeStatus') and GrpID = (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER');
-				
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);  
-				
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_receiptModeStatus'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-								
-				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);				 
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="41" author="vijaya.a"> <comment>Deletion of secgrouprights for receipts</comment> <sql> <![CDATA[ DELETE 
+		from SECGROUPRIGHTS where RightID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_receiptModeStatus') and 
+		GrpID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER'); UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) 
+		FROM SECGROUPRIGHTS_VIEW); INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID 
+		FROM SECGROUPS WHERE GRPCODE='REALIZATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='ReceiptDialog_receiptModeStatus'), 
+		1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0); UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) 
+		FROM SECGROUPRIGHTS_VIEW); ]]> </sql> </changeSet> -->
 
 	<changeSet id="42_pre" author="Vidhya">
 		<comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
@@ -7114,15 +7075,10 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="47" author="Manoj.P" dbms="postgresql,mssql">
-		<sql>
-		<![CDATA[
-					
-				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='RU_THREAD_COUNT';
-     			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RU_THREAD_COUNT','Number of Threads for Receipt Upload.','int',1,'10',6,0,null,null,'Number of Threads for Receipt Upload.',1,1000,'2018-02-11 00:00:00','Approved',null,null,null,null,null,0);
-			]]>
-		</sql>
-	</changeSet>
+	<!-- <changeSet id="47" author="Manoj.P" dbms="postgresql,mssql"> <sql> <![CDATA[ DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='RU_THREAD_COUNT'; 
+		Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+		values ('RU_THREAD_COUNT','Number of Threads for Receipt Upload.','int',1,'10',6,0,null,null,'Number of Threads for Receipt 
+		Upload.',1,1000,'2018-02-11 00:00:00','Approved',null,null,null,null,null,0); ]]> </sql> </changeSet> -->
 
 	<changeSet id="47" author="Manoj.P" dbms="oracle">
 		<sql>
@@ -7133,7 +7089,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="48_pre" author="murthy.y">
 		<comment>Deletion of Group Rights/Role Groups/Roles/Groups/Rights for receipt knock off.</comment>
 		<sql>
@@ -7152,7 +7108,9 @@
 									      		
 				DELETE FROM SECGROUPS WHERE GRPCODE='RECEIPTKNOCKOFF_MAKER';
 				DELETE FROM SECGROUPS WHERE GRPCODE='RECEIPTKNOCKOFF_APPROVER';
-									      		
+
+              delete from secgrouprights where rightid in(select  RIGHTID from SECRIGHTS WHERE RIGHTNAME='menuItem_Receipts_KnockoffApprover');				
+				
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Receipts_KnockoffMaker';
 				DELETE FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Receipts_KnockoffApprover';
 	      	 ]]>
