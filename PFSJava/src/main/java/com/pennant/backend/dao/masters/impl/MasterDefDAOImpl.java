@@ -92,14 +92,15 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
 
+		String code = "";
 		try {
-			this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
-		} catch (EmptyResultDataAccessException e) {
+			code = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			return "";
 		}
-		logger.debug("Leaving");
-		return "";
+		 return code;
+
 	}
 
 	/**
