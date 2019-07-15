@@ -1999,5 +1999,18 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="65" author="Varaprasad.k">
+        <sql>
+                <![CDATA[   
+                    Delete from SecRights where RightName = 'menuItem_Verification_PersonalDiscussiont_Enquiry';
+                    INSERT INTO SecRights VALUES ((Select MAX(RightID)+1 From SecRights), 0, 'menuItem_Verification_PersonalDiscussiont_Enquiry', 'MENU',  1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+                    Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='PersonalDiscussion_MAKER'),(select RightId from secRights where      RightName='menuItem_Verification_PersonalDiscussiont_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+                    Insert Into secGrouprights values((select MAX(GrpRightID)+1 From secGrouprights),(select GrpId from SecGroups where Grpcode='PersonalDiscussion_APPROVER'),(select RightId from secRights where RightName='menuItem_Verification_PersonalDiscussiont_Enquiry'),1,0,1000,current_timestamp, 'Approved','','','','','',0);
+                   
+                ]]>
+        </sql>
+</changeSet>
 
 </databaseChangeLog>
