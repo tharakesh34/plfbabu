@@ -6335,5 +6335,13 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="103" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    update SMTparameters set sysparmvalue = 'Y' where sysparmcode = 'SOA_SHOW_CANCEL_RECEIPT';
+		]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
