@@ -2169,17 +2169,18 @@
 	<changeSet id="38" author="Manoj">
 		<sql>
 			<![CDATA[
-				delete from plf.smtparameters where sysparmcode = 'LOAN_REF_FORMAT'
+				delete from plf.smtparameters where sysparmcode = 'LOAN_REF_FORMAT';
 				INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec,
                            SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus,
                            RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) 
-                           VALUES ('LOAN_REF_FORMAT', 'LOAN_REF_FORMAT', 'String', '0', 'BB_PPPP_SSSSSSSSS', 2, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0)
+                           VALUES ('LOAN_REF_FORMAT', 'LOAN_REF_FORMAT', 'String', '0', 'BB_PPPP_SSSSSSSSS', 2, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
                            
-                 delete from plf.smtparameters where sysparmcode = 'LOAN_REF_FORMAT'
+                 
+				 delete from plf.smtparameters where sysparmcode = 'LOAN_REF_PREFIX';
                  INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec,
                            SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus,
                            RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) 
-                           VALUES ('LOAN_REF_PREFIX', 'LOAN_REF_PREFIX', 'String', '0', 'S', 2, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0)
+                           VALUES ('LOAN_REF_PREFIX', 'LOAN_REF_PREFIX', 'String', '0', 'S', 2, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
                            
 			]]>
 		</sql>
