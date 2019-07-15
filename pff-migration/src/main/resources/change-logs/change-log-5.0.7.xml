@@ -2013,4 +2013,47 @@
         </sql>
 </changeSet>
 
+
+<changeSet id="66" author="meena.a">
+	<addColumn tableName="MANDATE_REQUESTS">
+		<column name="PROCESS_ID" type="bigint" />
+	</addColumn>
+</changeSet>
+
+<changeSet id="67" author="meena.a">
+	<sql>
+	<![CDATA[
+		update MANDATE_REQUESTS set PROCESS_ID = BATCH_ID;
+	]]>
+	</sql>
+</changeSet>
+
+<changeSet id="68" author="meena.a" >
+	<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="PROCESS_ID" columnDataType="bigint"/>
+</changeSet>
+
+<changeSet id="69" author="meena.a">
+	<createIndex tableName="MANDATE_REQUESTS" indexName="IDX_MANDATE_REQUESTS_PROCESS_ID">
+		<column name="PROCESS_ID" />
+	</createIndex>
+</changeSet>
+
+
+<changeSet id="70" author="meena.a">
+	<sql>
+	<![CDATA[
+		update data_engine_table set filter = 'PROCESS_ID = :PROCESS_ID'  where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT');
+
+		update data_engine_table set statusupdate = 'UPDATE MANDATE_REQUESTS SET BATCH_ID = :FILEID, 
+		STATUS = ''AC'' WHERE PROCESS_ID = :PROCESS_ID QUERY:UPDATE MANDATES SET STATUS =  ''AC'' WHERE MANDATEID IN (SELECT MANDATEID FROM MANDATE_REQUESTS WHERE PROCESS_ID = :PROCESS_ID AND STATUS =  ''AC'')' 
+		where configid in (select id from data_engine_config where name = 'MANDATES_EXPORT');
+	]]>
+	</sql>
+</changeSet>
+
+<changeSet id="71" author="meena.a">
+	<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
+		constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
+</changeSet>
+
 </databaseChangeLog>
