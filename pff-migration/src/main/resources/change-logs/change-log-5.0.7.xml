@@ -2051,7 +2051,6 @@
             newDataType="varchar(8)" />
     </changeSet>
     
-    
 <!-- <changeSet id="69" author="meena.a">
 	<addColumn tableName="MANDATE_REQUESTS">
 		<column name="PROCESS_ID" type="bigint" />
@@ -2094,5 +2093,4 @@
 		constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
 </changeSet> -->
     
-
 </databaseChangeLog>
