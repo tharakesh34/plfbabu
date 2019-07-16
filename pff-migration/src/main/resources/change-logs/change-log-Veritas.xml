@@ -6343,5 +6343,13 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="104" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    update SMTparameters set sysparmvalue = 'N' where sysparmcode = 'RECEIPT_CASH_PAN_MANDATORY';
+		]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>

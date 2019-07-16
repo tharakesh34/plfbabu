@@ -4837,6 +4837,13 @@
 		</sql>
 	</changeSet>
 	
-	
+	<changeSet id="136" author="aditya.a">
+		<sql>
+			<![CDATA[
+			    INSERT INTO SMTparameters  VALUES ('RECEIPT_CASH_PAN_MANDATORY', 'Pan number mandatory check', 'String', '0', 'Y', 1, 0, NULL, NULL,'Pan number mandatory check', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+			    update SMTparameters set sysparmcode = 'RECEIPT_CASH_PAN_LIMIT' where sysparmcode = 'RECEIPTCASHPAN';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
