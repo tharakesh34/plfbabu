@@ -2052,7 +2052,7 @@
     </changeSet>
     
     
-<changeSet id="69" author="meena.a">
+<!-- <changeSet id="69" author="meena.a">
 	<addColumn tableName="MANDATE_REQUESTS">
 		<column name="PROCESS_ID" type="bigint" />
 	</addColumn>
@@ -2092,7 +2092,7 @@
 <changeSet id="74" author="meena.a">
 	<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
 		constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
-</changeSet>
+</changeSet> -->
     
 
 </databaseChangeLog>
