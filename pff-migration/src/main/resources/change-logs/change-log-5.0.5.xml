@@ -4830,7 +4830,7 @@
 		<sql>
 			<![CDATA[
 				DELETE FROM SECGROUPRIGHTS WHERE RightId IN (SELECT RightId FROM SECRIGHTS WHERE RightName = 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary');
-				DELETE FROM SECRIGHTS WHERE RightName = 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary'
+				DELETE FROM SECRIGHTS WHERE RightName = 'button_FinAdvancePaymentsDialog_btnGetCustBeneficiary';
 				
 			    UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);
  				Update SeqSecRights set SeqNo = (select MAX(RightID) from SecRights);
