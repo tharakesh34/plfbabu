@@ -4775,7 +4775,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="132" author="aditya.a">
 		<sql>
 			<![CDATA[
@@ -4784,7 +4784,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="133" author="aditya.a">
 		<createView viewName="SMTDivisionDetail_AView" replaceIfExists="true">
 	         SELECT T1.DivisionCode,
@@ -4809,7 +4809,7 @@
             		Entity T2 ON T1.EntityCode= T2.EntityCode
     	</createView>
 	</changeSet>
-	
+
 	<changeSet id="134" author="aditya.a">
 		<sql>
 			<![CDATA[
@@ -4817,7 +4817,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="135" author="murthy.y">
 		<comment>Adding missing Right</comment>
 		<sql>
@@ -4836,7 +4836,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="136" author="aditya.a">
 		<sql>
 			<![CDATA[
@@ -4845,5 +4845,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
