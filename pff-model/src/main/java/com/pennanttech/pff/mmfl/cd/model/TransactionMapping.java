@@ -12,13 +12,13 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 	private static final long serialVersionUID = 221505141217792488L;
 
 	private long id = Long.MIN_VALUE;
-	private String posId;
+	private int posId;
 	private long dealerCode = Long.MIN_VALUE;
 	private String dealerName;
 	private long mid = Long.MIN_VALUE;
 	private long tid = Long.MIN_VALUE;
 	private String storeName;
-	private String storeId;
+	private int storeId;
 	private boolean newRecord;
 	private String lovValue;
 	private TransactionMapping befImage;
@@ -35,11 +35,11 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 		return excludeFields;
 	}
 
-	public String getPosId() {
+	public int getPosId() {
 		return posId;
 	}
 
-	public void setPosId(String posId) {
+	public void setPosId(int posId) {
 		this.posId = posId;
 	}
 
@@ -91,11 +91,11 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 		this.lovValue = lovValue;
 	}
 
-	public String getStoreId() {
+	public int getStoreId() {
 		return storeId;
 	}
 
-	public void setStoreId(String storeId) {
+	public void setStoreId(int storeId) {
 		this.storeId = storeId;
 	}
 

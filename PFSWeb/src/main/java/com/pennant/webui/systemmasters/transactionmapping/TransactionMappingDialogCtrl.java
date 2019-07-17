@@ -285,12 +285,12 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	public void doWriteBeanToComponents(TransactionMapping mapping) {
 		logger.debug(Literal.ENTERING);
 
-		if (StringUtils.isBlank(mapping.getPosId())) {
+		if (mapping.getPosId() == 0) {
 			this.posId.setDescription("");
 			this.posId.setValue("");
 		} else {
 			this.posId.setDescription(mapping.getStoreName());
-			this.posId.setValue(mapping.getPosId());
+			this.posId.setValue(String.valueOf(mapping.getPosId()));
 		}
 
 		if (mapping.getDealerCode() == Long.MIN_VALUE) {
@@ -344,7 +344,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			aTransactionMapping.setPosId(this.posId.getValue());
+			aTransactionMapping.setPosId(Integer.parseInt(this.posId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
