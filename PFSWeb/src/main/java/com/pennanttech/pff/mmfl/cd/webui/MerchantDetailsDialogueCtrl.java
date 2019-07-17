@@ -74,6 +74,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	protected ExtendedCombobox state;
 	protected ExtendedCombobox pincode;
 	protected Checkbox active;
+	protected Intbox posId;
 
 	protected MerchantDetails merchantDetails;
 
@@ -345,7 +346,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		this.state.setDescription(merchantDetails.getStateName());
 		this.country.setValue(merchantDetails.getStoreCountry());
 		this.country.setDescription(merchantDetails.getCountryName());
-		this.pincode.setValue(merchantDetails.getPOSId());
+		this.pincode.setValue(merchantDetails.getPincode());
+		this.posId.setValue(merchantDetails.getPOSId());
 
 		this.recordStatus.setValue(merchantDetails.getRecordStatus());
 
@@ -421,11 +423,17 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		try {
-			merchantDetails.setPOSId(this.pincode.getValidatedValue());
+			merchantDetails.setPOSId(this.posId.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
+		try {
+			merchantDetails.setPincode(this.pincode.getValidatedValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		
 		try {
 			merchantDetails.setChannel(this.txtchannel.getValue());
 		} catch (WrongValueException we) {
@@ -638,6 +646,12 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 			this.pincode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MerchantDetails_Pincode.value"), null, true, true));
 		}
+		
+		if (!this.posId.isReadonly()) {
+			this.posId.setConstraint(
+					new PTNumberValidator(Labels.getLabel("label_MerchantDetails_POSId.value"), true, false));
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -757,6 +771,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		readOnlyComponent(isReadOnly("MerchantDialogue_TransactionPerDay"), this.peakTransPerDay);
 		readOnlyComponent(isReadOnly("MerchantDialogue_RefundAllowed"), this.refundAllowed);
 		readOnlyComponent(isReadOnly("MerchantDialogue_Channel"), this.btnChannel);
+		readOnlyComponent(isReadOnly("MerchantDialogue_POSId"), this.posId);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
