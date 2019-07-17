@@ -2506,4 +2506,321 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="23" author="vijaya.a">
+		<addColumn tableName="CD_Merchants_Temp">
+			<column name="Pincode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="24" author="vijaya.a">
+		<addColumn tableName="CD_Merchants">
+			<column name="Pincode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="25" author="vijaya.a">
+		<addColumn tableName="TransactionMapping_Temp">
+			<column name="MobileNumber1" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="TransactionMapping_Temp">
+			<column name="MobileNumber2" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="TransactionMapping_Temp">
+			<column name="MobileNumber3" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="26" author="vijaya.a">
+		<addColumn tableName="TransactionMapping">
+			<column name="MobileNumber1" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="TransactionMapping">
+			<column name="MobileNumber2" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="TransactionMapping">
+			<column name="MobileNumber3" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="27" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'MerchantDialogue_POSId','MerchantDialogue',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_MERCHANT_MAKER'), (Select RightID from SecRights where RightName = 'MerchantDialogue_POSId'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_MobileNumber1','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_MobileNumber1'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_MobileNumber2','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_MobileNumber2'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'TransactionMappingDialog_MobileNumber3','TransactionMappingDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'TRANSACTIONMAPPING_MAKER'), (Select RightID from SecRights where RightName = 'TransactionMappingDialog_MobileNumber3'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="29" author="vijaya.a">
+		<createView viewName="TransactionMapping_VIEW" replaceIfExists="true">
+			 SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.MobileNumber1,
+    			t1.MobileNumber2,
+    			t1.MobileNumber3,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping_Temp t1
+			UNION ALL
+ 			SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.MobileNumber1,
+    			t1.MobileNumber2,
+    			t1.MobileNumber3,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM TransactionMapping_Temp
+            WHERE TransactionMapping_Temp.Id = t1.Id))
+		</createView>
+	</changeSet>
+
+	<changeSet id="30" author="vijaya.a">
+		<createView viewName="TransactionMapping_AVIEW" replaceIfExists="true">
+			  SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.MobileNumber1,
+    			t1.MobileNumber2,
+    			t1.MobileNumber3,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="31" author="vijaya.a">
+		<createView viewName="TransactionMapping_TVIEW" replaceIfExists="true">
+			 SELECT t1.Id,
+    			t1.POSId,
+   				t1.DealerCode,
+    			t1.DealerName,
+    			t1.MID,
+    			t1.TID,
+    			t1.MobileNumber1,
+    			t1.MobileNumber2,
+    			t1.MobileNumber3,
+    			t1.active,     
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM TransactionMapping_Temp t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="32" author="vijaya.a">
+		<createView viewName="CD_Merchants_VIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+         		t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.Pincode,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants_Temp t1
+			UNION ALL
+ 			SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.Pincode,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants t1
+  			WHERE NOT (EXISTS ( SELECT 1
+            FROM CD_Merchants_Temp
+            WHERE CD_Merchants_Temp.merchantId = t1.merchantId))
+		</createView>
+	</changeSet>
+
+	<changeSet id="33" author="vijaya.a">
+		<createView viewName="CD_Merchants_AVIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.storeCountry,
+         		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.Pincode,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="34" author="vijaya.a">
+		<createView viewName="CD_Merchants_TVIEW" replaceIfExists="true">
+			  SELECT t1.merchantId,
+    			t1.merchantName,
+   				t1.storeId,
+    			t1.storeName,     
+    			t1.storeAddressLine1,
+    			t1.storeAddressLine2,
+    			t1.storeAddressLine3,
+    			t1.storeCity,
+    			t1.storeState,
+    			t1.storeCountry,
+          		t1.cityName,
+          		t1.stateName,
+          		t1.countryName,
+    			t1.pOSID,
+    			t1.avgTranPerMnth,
+    			t1.avgTranAmtPerMnth,
+    			t1.tranAmtPerTran,
+    			t1.tranAmtPerDay,
+    			t1.allowRefund,
+    			t1.peakTransPerDay,
+    			t1.channel,
+    			t1.active,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+   				t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			FROM CD_Merchants_Temp t1
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>	

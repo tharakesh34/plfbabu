@@ -24,6 +24,9 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 	private TransactionMapping befImage;
 	private LoggedInUser userDetails;
 	private boolean active;
+	private String mobileNumber1;
+	private String mobileNumber2;
+	private String mobileNumber3;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -141,6 +144,30 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
+	}
+
+	public String getMobileNumber1() {
+		return mobileNumber1;
+	}
+
+	public String getMobileNumber2() {
+		return mobileNumber2;
+	}
+
+	public String getMobileNumber3() {
+		return mobileNumber3;
+	}
+
+	public void setMobileNumber1(String mobileNumber1) {
+		this.mobileNumber1 = mobileNumber1;
+	}
+
+	public void setMobileNumber2(String mobileNumber2) {
+		this.mobileNumber2 = mobileNumber2;
+	}
+
+	public void setMobileNumber3(String mobileNumber3) {
+		this.mobileNumber3 = mobileNumber3;
 	}
 
 }

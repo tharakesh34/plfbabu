@@ -151,6 +151,13 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_MerchantDetails_POSId.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory"/>
+										<intbox id="posId" width="100px" maxlength="18"/>
+									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_MerchantDetails_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />

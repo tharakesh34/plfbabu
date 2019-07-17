@@ -32,12 +32,12 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 		try {
 			StringBuilder sql = new StringBuilder("insert into TransactionMapping");
 			sql.append(tableType.getSuffix());
-			sql.append("(Id, POSId, DealerCode, DealerName, MID, TID,");
-			sql.append(" Active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+			sql.append("(Id, POSId, DealerCode, DealerName, MID, TID, MobileNumber1, MobileNumber2, MobileNumber3");
+			sql.append(", Active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
 			sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 			sql.append(" values");
-			sql.append("(:Id, :posId, :DealerCode, :DealerName, :mid, :tid,");
-			sql.append(" :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
+			sql.append("(:Id, :posId, :DealerCode, :DealerName, :mid, :tid, :MobileNumber1, :MobileNumber2, :MobileNumber3");
+			sql.append(", :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 			sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 			if (mapping.getId() == Long.MIN_VALUE) {
@@ -65,10 +65,10 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 		StringBuilder sql = new StringBuilder("Update TransactionMapping");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set POSId= :posId, DealerCode= :DealerCode, DealerName= :DealerName,");
-		sql.append(" MID= :mid, TID= :tid, Active = :Active");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" MID= :mid, TID= :tid, MobileNumber1 = :MobileNumber1, MobileNumber2 = :MobileNumber2");
+		sql.append(", MobileNumber3 = :MobileNumber3, Active = :Active, LastMntOn = :LastMntOn");
+		sql.append(", RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
+		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :Id ");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -116,9 +116,9 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 		mapping.setId(id);
 
 		try {
-			StringBuilder sql = new StringBuilder("Select Id,");
-			sql.append("POSId, DealerCode, DealerName, MID, TID, Active, Version , LastMntBy, LastMntOn,");
-			sql.append("RecordStatus,RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+			StringBuilder sql = new StringBuilder("Select Id");
+			sql.append(", POSId, DealerCode, DealerName, MID, TID, MobileNumber1, MobileNumber2, MobileNumber3, Active");
+			sql.append(", Version, LastMntBy, LastMntOn,RecordStatus,RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 			sql.append(" from  TransactionMapping");
 			sql.append(type);
 			sql.append(" where Id=:id");

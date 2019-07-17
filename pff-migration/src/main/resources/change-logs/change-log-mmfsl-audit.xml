@@ -444,4 +444,23 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet> 
+	
+	<changeSet id="9" author="vijaya.a">
+		<addColumn tableName="AdtCD_Merchants">
+			<column name="Pincode" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="10" author="vijaya.a">
+		<addColumn tableName="AdtTransactionMapping">
+			<column name="MobileNumber1" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="AdtTransactionMapping">
+			<column name="MobileNumber2" type="varchar(20)" />
+		</addColumn>
+		<addColumn tableName="AdtTransactionMapping">
+			<column name="MobileNumber3" type="varchar(20)" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>	

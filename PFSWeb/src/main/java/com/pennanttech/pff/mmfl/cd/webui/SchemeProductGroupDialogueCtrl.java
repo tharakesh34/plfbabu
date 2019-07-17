@@ -379,10 +379,12 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 					Labels.getLabel("label_SchemeProductGroupList_ProductGroupCode.value"), true, false));
 		}
 
-		if (!this.posVendor.isReadonly()) {
-			if (!this.posVendor.getText().equals("0") && !this.posVendor.getText().equals("1")) {
-				throw new WrongValueException(this.posVendor,
-						Labels.getLabel("label_SchemeProductDeatislDialoguePOSVendorAlert.value"));
+		if (!this.schemeId.getText().equals("")) {
+			if (!this.posVendor.isReadonly()) {
+				if (!this.posVendor.getText().equals("0") && !this.posVendor.getText().equals("1")) {
+					throw new WrongValueException(this.posVendor,
+							Labels.getLabel("label_SchemeProductDeatislDialoguePOSVendorAlert.value"));
+				}
 			}
 		}
 		logger.debug(Literal.LEAVING);

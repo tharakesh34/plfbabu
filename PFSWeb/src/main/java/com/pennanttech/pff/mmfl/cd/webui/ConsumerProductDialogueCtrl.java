@@ -434,12 +434,14 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 							PennantRegularExpressions.REGEX_DESCRIPTION, true, 1, 20));
 		}
 
-		if (!this.btnNames.isDisabled()) {
-			this.txtNames
-					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_ManufacturerName.value"),
-							PennantRegularExpressions.REGEX_DESCRIPTION, true));
+		if (!this.txtNames.getText().equals("")) {
+			if (!this.btnNames.isDisabled()) {
+				this.txtNames.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_ProductList_ManufacturerName.value"),
+								PennantRegularExpressions.REGEX_DESCRIPTION, true));
+			}
 		}
-
+		
 		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),

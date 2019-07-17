@@ -24,6 +24,7 @@ import com.pennant.backend.service.transactionmapping.TransactionMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
@@ -48,6 +49,9 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 	protected Textbox dealerName;
 	protected Intbox tid;
 	protected Checkbox active;
+	protected Textbox mobileNumber1;
+	protected Textbox mobileNumber2;
+	protected Textbox mobileNumber3;
 
 	private transient TransactionMappingListCtrl transactionMappingListCtrl;
 	private transient TransactionMappingService transactionMappingService;
@@ -140,6 +144,10 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		this.mid.setValidateColumns(new String[] { "StoreId" });
 
 		this.tid.setMaxlength(6);
+
+		this.mobileNumber1.setMaxlength(20);
+		this.mobileNumber2.setMaxlength(20);
+		this.mobileNumber3.setMaxlength(20);
 
 		setStatusDetails();
 		logger.debug(Literal.LEAVING);
@@ -316,6 +324,10 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
 		}
+
+		this.mobileNumber1.setText(mapping.getMobileNumber1());
+		this.mobileNumber2.setText(mapping.getMobileNumber2());
+		this.mobileNumber3.setText(mapping.getMobileNumber3());
 		this.recordStatus.setValue(mapping.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -363,6 +375,24 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 
 		try {
 			aTransactionMapping.setActive(this.active.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aTransactionMapping.setMobileNumber1(this.mobileNumber1.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aTransactionMapping.setMobileNumber2(this.mobileNumber2.getText());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aTransactionMapping.setMobileNumber3(this.mobileNumber3.getText());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -453,6 +483,20 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
+		if(!this.mobileNumber1.isReadonly()) {
+			this.mobileNumber1.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber1.value"), true));
+		}
+		
+		if(!this.mobileNumber2.isReadonly()) {
+			this.mobileNumber2.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber2.value"), true));
+		}
+		
+		if(!this.mobileNumber3.isReadonly()) {
+			this.mobileNumber3.setConstraint(
+					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber3.value"), true));
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -552,6 +596,10 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_MID"), this.mid);
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_TID"), this.tid);
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_Active"), this.active);
+		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber1"), this.mobileNumber1);
+		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber2"), this.mobileNumber2);
+		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber3"), this.mobileNumber3);
+		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

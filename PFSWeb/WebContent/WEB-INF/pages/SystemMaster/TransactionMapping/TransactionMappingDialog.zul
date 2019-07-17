@@ -85,6 +85,27 @@
 									</hbox>
 								</row>
 								<row>
+									<label value="${c:l('label_TransactionMapping_MobileNumber1.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="mobileNumber1" width="150px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_TransactionMapping_MobileNumber2.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="mobileNumber2" width="150px" />
+									</hbox>
+								</row>
+								<row>
+									<label value="${c:l('label_TransactionMapping_MobileNumber3.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory"/>
+										<textbox id="mobileNumber3" width="150px" />
+									</hbox>
+								</row>
+								<row>
 									<label value="${c:l('label_TransactionMapping_Active.value')}" />
 									<hbox>
 										<space spacing="2px" />

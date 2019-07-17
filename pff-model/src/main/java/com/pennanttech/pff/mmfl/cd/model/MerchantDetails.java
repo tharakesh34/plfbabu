@@ -18,7 +18,7 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	private String storeAddressLine3;
 	private String storeCity;
 	private String storeState;
-	private String POSId;
+	private int POSId = 0;
 	private BigDecimal avgTranPerMnth;
 	private BigDecimal avgTranAmtPerMnth;
 	private BigDecimal tranAmtPerTran;
@@ -35,6 +35,7 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 	private String storeCountry;
 	private String countryName;
 	private int peakTransPerDay;
+	private String pincode;
 
 	public long getMerchantId() {
 		return merchantId;
@@ -84,11 +85,11 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 		this.storeState = storeState;
 	}
 
-	public String getPOSId() {
+	public int getPOSId() {
 		return POSId;
 	}
 
-	public void setPOSId(String pOSId) {
+	public void setPOSId(int pOSId) {
 		POSId = pOSId;
 	}
 
@@ -250,6 +251,14 @@ public class MerchantDetails extends AbstractWorkflowEntity {
 
 	public void setPeakTransPerDay(int peakTransPerDay) {
 		this.peakTransPerDay = peakTransPerDay;
+	}
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
 	}
 
 }

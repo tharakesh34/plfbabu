@@ -36,8 +36,8 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		}
 		sql.append(", StoreAddressLine3, StoreCity, StoreState, StoreCountry, CityName, StateName, CountryName, POSId");
 		sql.append(", AvgTranPerMnth, AvgTranAmtPerMnth, TranAmtPerTran, TranAmtPerDay, AllowRefund, PeakTransPerDay");
-		sql.append(", Channel, Active, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
+		sql.append(", Channel, PinCode, Active, Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From CD_MERCHANTS");
 		sql.append(type);
 		sql.append(" Where MerchantId = :merchantId");
@@ -67,7 +67,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		sql.append("(MerchantId, MerchantName, StoreId, StoreName, StoreAddressLine1, StoreAddressLine2");
 		sql.append(", StoreAddressLine3, StoreCity, StoreState, StoreCountry, CityName, StateName, CountryName, POSId");
 		sql.append(", AvgTranPerMnth, AvgTranAmtPerMnth, TranAmtPerTran, TranAmtPerDay, AllowRefund, PeakTransPerDay");
-		sql.append(", Channel, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", Channel, PinCode, Active, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append("(:merchantId, :merchantName, :storeId, :storeName, :storeAddressLine1, :storeAddressLine2");
@@ -75,7 +75,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 				", :storeAddressLine3, :storeCity, :storeState, :storeCountry, :cityName, :stateName, :countryName, :POSId");
 		sql.append(
 				", :avgTranPerMnth, :avgTranAmtPerMnth, :tranAmtPerTran, :tranAmtPerDay, :allowRefund, :peakTransPerDay");
-		sql.append(", :channel, :active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
+		sql.append(", :channel, :pincode, :active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 		sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (merchantDetails.getMerchantId() == Long.MIN_VALUE) {
@@ -109,7 +109,7 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		sql.append(", AvgTranPerMnth = :avgTranPerMnth, AvgTranAmtPerMnth = :avgTranAmtPerMnth");
 		sql.append(", TranAmtPerTran = :tranAmtPerTran, TranAmtPerDay = :tranAmtPerDay, AllowRefund = :allowRefund");
 		sql.append(
-				", PeakTransPerDay = :peakTransPerDay, Channel = :channel, Active = :active, LastMntOn = :LastMntOn");
+				", PeakTransPerDay = :peakTransPerDay, Channel = :channel, PinCode = :pincode, Active = :active, LastMntOn = :LastMntOn");
 		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordStatus = :RecordStatus, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where MerchantId = :merchantId ");
