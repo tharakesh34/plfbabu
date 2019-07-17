@@ -14,10 +14,12 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
@@ -364,4 +366,57 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			return new ArrayList<>();
 		}
 	}
+
+	@Override
+	public void save(List<ExtLiabilityPaymentdetails> installmentDetails, String type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Insert Into EXTERNAL_LIABILITIES_PD");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (LiabilityId, EmiType, InstallmentCleared, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(" , RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(:LiabilityId, :EMIType, :InstallmentCleared, :Version, :LastMntBy");
+		sql.append(" , :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType");
+		sql.append(" , :WorkflowId)");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(installmentDetails.toArray());
+		this.jdbcTemplate.batchUpdate(sql.toString(), params);
+	}
+
+	@Override
+	public void delete(List<ExtLiabilityPaymentdetails> installmentDetails, String type) {
+		StringBuilder sql = new StringBuilder(" Delete From EXTERNAL_LIABILITIES_PD");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LiabilityId =:LiabilityId ");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(installmentDetails.toArray());
+		this.jdbcTemplate.batchUpdate(sql.toString(), params);
+	}
+
+	@Override
+	public List<ExtLiabilityPaymentdetails> getExtLiabilitySubDetailById(long custId, String type) {
+		logger.debug("Entering");
+		ExtLiabilityPaymentdetails extLiabilitiesPaymentdetails = new ExtLiabilityPaymentdetails();
+		extLiabilitiesPaymentdetails.setLiabilityId(custId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
+		selectSql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" FROM  EXTERNAL_LIABILITIES_PD");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where LiabilityId = :LiabilityId ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extLiabilitiesPaymentdetails);
+		RowMapper<ExtLiabilityPaymentdetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(ExtLiabilityPaymentdetails.class);
+
+		List<ExtLiabilityPaymentdetails> liabilitiesPaymentdetails = this.jdbcTemplate.query(selectSql.toString(),
+				beanParameters, typeRowMapper);
+
+		logger.debug("Leaving");
+		return liabilitiesPaymentdetails;
+	}
+
 }

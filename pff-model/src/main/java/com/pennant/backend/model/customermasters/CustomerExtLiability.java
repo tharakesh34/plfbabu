@@ -1,8 +1,10 @@
 package com.pennant.backend.model.customermasters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -73,6 +75,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String sourceId;
 	private String inputSource;
 	private int custType = 1;
+	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -101,6 +104,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		excludeFields.add("inputSource");
 		excludeFields.add("custType");
+		excludeFields.add("extLiabilitiesPayments");
 		return excludeFields;
 	}
 
@@ -395,6 +399,14 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 
 	public void setOtherFinInstitute(String otherFinInstitute) {
 		this.otherFinInstitute = otherFinInstitute;
+	}
+
+	public List<ExtLiabilityPaymentdetails> getExtLiabilitiesPayments() {
+		return extLiabilitiesPayments;
+	}
+
+	public void setExtLiabilitiesPayments(List<ExtLiabilityPaymentdetails> extLiabilitiesPayments) {
+		this.extLiabilitiesPayments = extLiabilitiesPayments;
 	}
 
 }

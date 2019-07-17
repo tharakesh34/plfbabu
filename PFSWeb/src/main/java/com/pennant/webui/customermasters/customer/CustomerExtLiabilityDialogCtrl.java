@@ -67,6 +67,9 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -85,6 +88,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -102,6 +106,8 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.rits.cloning.Cloner;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
@@ -172,6 +178,10 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 	Date appStartDate = SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE);
 	private String inputSource = "customer";
 	private Set<String> coApplicants;
+
+	protected Intbox noOfInstallmentMonths;
+	private Listbox listBoxInstallmentDetails;
+	private List<ExtLiabilityPaymentdetails> extLiabilitiesPaymentdetails = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -381,6 +391,8 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		this.repayFrom.setValueColumn("BankCode");
 		this.repayFrom.setDescColumn("BankName");
 		this.repayFrom.setValidateColumns(new String[] { "BankCode" });
+
+		this.noOfInstallmentMonths.setValue(0);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -625,6 +637,21 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		fillComboBox(this.source, String.valueOf(liability.getSource()), sourceInfoList, "");
 		fillComboBox(this.checkedBy, String.valueOf(liability.getCheckedBy()), trackCheckList, "");
 
+		if (liability.getExtLiabilitiesPayments().size() > 0) {
+			Cloner cloner = new Cloner();
+			CustomerExtLiability detail = (CustomerExtLiability) cloner.deepClone(liability);
+			List<ExtLiabilityPaymentdetails> extPaymentsData = detail.getExtLiabilitiesPayments();
+			for (int i = 0; i < extPaymentsData.size(); i++) {
+				if (extPaymentsData.get(i).getKeyValue() == 0) {
+					extPaymentsData.get(i).setKeyValue(i + 1);
+				}
+			}
+			setExtLiabilitiesPaymentdetails(extPaymentsData);
+			doFillInstallmentDetails();
+		} else {
+			onChangeInstallmentList();
+		}
+		
 		this.recordStatus.setValue(liability.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -1347,6 +1374,10 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		// get the selected branch object from the listBox
 		// Do data level validations here
 
+		if (!saveInstallmentInfoList(aCustomerExtLiability)) {
+			return;
+		}
+
 		isNew = aCustomerExtLiability.isNew();
 		String tranType = "";
 
@@ -1649,6 +1680,179 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 
 	public void setSamplingDialogCtrl(SamplingDialogCtrl samplingDialogCtrl) {
 		this.samplingDialogCtrl = samplingDialogCtrl;
+	}
+
+	public void onChange$totalTenure(Event event) {
+		logger.debug(Literal.ENTERING);
+		onChangeInstallmentList();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$finDate(Event event) {
+		logger.debug(Literal.ENTERING);
+		onChangeInstallmentList();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChange$noOfInstallmentMonths(Event event) {
+		logger.debug(Literal.ENTERING);
+		onChangeInstallmentList();
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onChangeInstallmentList() {
+		try {
+			if ((this.finDate.getValue() != null && !this.finDate.getValue().equals(""))) {
+				listBoxInstallmentDetails.getItems().clear();
+				int noOfmonths = 0;
+				if(this.noOfInstallmentMonths.getValue() != null) {
+					noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
+							: this.noOfInstallmentMonths.getValue();
+				}
+				String date = DateUtility.format(this.finDate.getValue(), PennantConstants.DBDateFormat);
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
+						noOfmonths);
+
+				ExtLiabilityPaymentdetails installmentDetails = new ExtLiabilityPaymentdetails();
+				installmentDetails.setNewRecord(true);
+
+				if (paymentDetails.size() > 0) {
+					List<ExtLiabilityPaymentdetails> extPaymentsData = paymentDetails;
+					for (int i = 0; i < extPaymentsData.size(); i++) {
+						extPaymentsData.get(i).setKeyValue(i + 1);
+					}
+					setExtLiabilitiesPaymentdetails(extPaymentsData);
+					doFillInstallmentDetails();
+				}
+
+			}
+		} catch(Exception e) {
+			logger.error("Exception: ", e);
+		}
+	}
+
+	public void doFillInstallmentDetails() {
+		listBoxInstallmentDetails.getItems().clear();
+		List<ExtLiabilityPaymentdetails> paymentDetails = getExtLiabilitiesPaymentdetails();
+		for (ExtLiabilityPaymentdetails installmentDetails : paymentDetails) {
+			Listitem listitem = new Listitem();
+			listitem.setAttribute("data", installmentDetails);
+			Listcell listcell;
+
+			listcell = new Listcell(installmentDetails.getEMIType());
+			listcell.setParent(listitem);
+
+			Checkbox accTypecmbbox = new Checkbox();
+			accTypecmbbox.setChecked(installmentDetails.isInstallmentCleared());
+			listcell = new Listcell();
+			listcell.setId("installmentCheck".concat(String.valueOf(installmentDetails.getKeyValue())));
+			listcell.appendChild(accTypecmbbox);
+			listcell.setParent(listitem);
+			listBoxInstallmentDetails.appendChild(listitem);
+		}
+		this.noOfInstallmentMonths.setText(String.valueOf(paymentDetails.size()));
+	}
+
+	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
+		Date dtStartDate = DateUtility.addMonths(startDate, 1);
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
+		return months;
+	}
+
+	private List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate, int noOfMonths) {
+		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
+		if (startDate == null || endDate == null) {
+			return list;
+		}
+
+		Date tempStartDate = (Date) startDate.clone();
+		Date tempEndDate = (Date) endDate.clone();
+
+		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
+			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
+			temp.setEMIType(key);
+			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			list.add(temp);
+		}
+
+		return list;
+	}
+
+	public boolean saveInstallmentInfoList(CustomerExtLiability customerExtLiabilityData) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		List<ExtLiabilityPaymentdetails> data = new ArrayList<>();
+		for (Listitem listitem : listBoxInstallmentDetails.getItems()) {
+
+			ExtLiabilityPaymentdetails installmentDetails = (ExtLiabilityPaymentdetails) listitem
+					.getAttribute("data");
+
+			Checkbox installmentCleared = (Checkbox) getComponent(listitem, "installmentCheck");
+			installmentDetails.setInstallmentCleared(installmentCleared.isChecked());
+
+			boolean isNew = false;
+			isNew = installmentDetails.isNew();
+			String tranType = "";
+
+			if (installmentDetails.isNewRecord()) {
+				installmentDetails.setVersion(1);
+				installmentDetails.setRecordType(PennantConstants.RCD_ADD);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+			}
+
+			if (StringUtils.isBlank(installmentDetails.getRecordType())) {
+				installmentDetails.setVersion(installmentDetails.getVersion() + 1);
+				installmentDetails.setRecordType(PennantConstants.RCD_UPD);
+			}
+
+			if (installmentDetails.getRecordType().equals(PennantConstants.RCD_ADD)
+					&& installmentDetails.isNewRecord()) {
+				tranType = PennantConstants.TRAN_ADD;
+			} else if (installmentDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				tranType = PennantConstants.TRAN_UPD;
+			} else {
+				installmentDetails.setVersion(installmentDetails.getVersion() + 1);
+				if (isNew) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else {
+					tranType = PennantConstants.TRAN_UPD;
+				}
+			}
+			data.add(installmentDetails);
+		}
+
+		customerExtLiabilityData.setExtLiabilitiesPayments(data);
+		logger.debug(Literal.LEAVING);
+		return true;
+	}
+
+	private Component getComponent(Listitem listitem, String listcellId) {
+		List<Listcell> listcels = listitem.getChildren();
+
+		for (Listcell listcell : listcels) {
+			String id = StringUtils.trimToNull(listcell.getId());
+
+			if (id == null) {
+				continue;
+			}
+
+			id = id.replaceAll("\\d", "");
+			if (StringUtils.equals(id, listcellId)) {
+				return listcell.getFirstChild();
+			}
+		}
+		return null;
+	}
+
+	public List<ExtLiabilityPaymentdetails> getExtLiabilitiesPaymentdetails() {
+		return extLiabilitiesPaymentdetails;
+	}
+
+	public void setExtLiabilitiesPaymentdetails(List<ExtLiabilityPaymentdetails> extLiabilitiesPaymentdetails) {
+		this.extLiabilitiesPaymentdetails = extLiabilitiesPaymentdetails;
 	}
 
 }

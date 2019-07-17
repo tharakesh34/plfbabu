@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 
 public interface CustomerExtLiabilityDAO {
 
@@ -31,4 +32,10 @@ public interface CustomerExtLiabilityDAO {
 	List<CustomerExtLiability> getLiabilityBySamplingId(long samplingLinkId);
 
 	long getLinkId(long custId);
+
+	void delete(List<ExtLiabilityPaymentdetails> extLiabilitiesPaymentdetails, String type);
+
+	void save(List<ExtLiabilityPaymentdetails> installmentDetails, String type);
+
+	List<ExtLiabilityPaymentdetails> getExtLiabilitySubDetailById(long custId, String type);
 }

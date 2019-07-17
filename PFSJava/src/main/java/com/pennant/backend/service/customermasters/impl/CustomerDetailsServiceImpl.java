@@ -137,6 +137,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -677,7 +678,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(id); //F
-		customerDetails.setCustomerExtLiabilityList(externalLiabilityDAO.getLiabilities(liability.getCustId(), type));
+
+		List<CustomerExtLiability> extLiabilities = externalLiabilityDAO.getLiabilities(liability.getCustId(), type);
+		customerDetails.setCustomerExtLiabilityList(extLiabilities);
+
+		if (CollectionUtils.isNotEmpty(extLiabilities)) {
+			for (CustomerExtLiability extLiability : extLiabilities) {
+				extLiability.setExtLiabilitiesPayments(
+						customerExtLiabilityDAO.getExtLiabilitySubDetailById(extLiability.getId(), type));
+			}
+		}
 		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
 
 		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id, ""));
@@ -4450,10 +4460,36 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerExtLiability.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(customerExtLiability);
+			processingExtLiabilittySubDetailList(customerExtLiability, type, customerExtLiability.getId());
+
 		}
 
 		return auditDetails;
 
+	}
+
+	private void processingExtLiabilittySubDetailList(CustomerExtLiability customerExtLiability, String type,
+			long liabilityId) {
+		for (ExtLiabilityPaymentdetails installmentDetails : customerExtLiability.getExtLiabilitiesPayments()) {
+			installmentDetails.setLiabilityId(liabilityId);
+			installmentDetails.setEMIType(installmentDetails.getEMIType());
+			installmentDetails.setVersion(installmentDetails.getVersion());
+			installmentDetails.setWorkflowId(installmentDetails.getWorkflowId());
+			installmentDetails.setInstallmentCleared(installmentDetails.isInstallmentCleared());
+		}
+		if (type.isEmpty()) {
+			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "_Temp");
+		} else {
+			if (!customerExtLiability.isNewRecord()) {
+				customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), type);
+			}
+		}
+		if (!StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
+				&& !StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), type);
+			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "");
+			customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), type);
+		}
 	}
 
 	/**
