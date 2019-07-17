@@ -2287,6 +2287,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
+				auditDetail=validateBankInfoDetail(custBankInfo,auditDetail);
 			}
 		}
 
@@ -2362,6 +2363,108 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
+	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
+
+		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
+				if (detail.getMonthYear() == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:MonthYear";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getDebitAmt() == null ||detail.getDebitAmt().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:DebitAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getDebitNo() <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:DebitNo";
+					valueParm[0] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getCreditAmt()== null || detail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:CreditAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getCreditNo() <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:CreditNo";
+					valueParm[0] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getBounceIn()==null || detail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BounceIn";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getBounceOut()== null ||detail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BounceOut";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (CollectionUtils.isEmpty(detail.getBankInfoSubDetails())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BankInfoSubDetails";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				} else {
+					if (detail.getBankInfoSubDetails().size() != SysParamUtil.getValueAsInt("BANKINFO_DAYS")) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "BankInfoSubDetails";
+						valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+
+					} else {
+						for (BankInfoSubDetail subDetail : detail.getBankInfoSubDetails()) {
+							if (subDetail.getDay() <= 0) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "BankInfoSubDetails:Day";
+								valueParm[0] = "Zero";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+							if (subDetail.getBalance()==null ||subDetail.getBalance().compareTo(BigDecimal.ZERO) <=0) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "BankInfoSubDetails:Balance";
+								valueParm[1] = "Zero";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						}
+					}
+				}
+
+			}
+		}
+		return auditDetail;
+	}
+
 	private ErrorDetail validateDatesWithDefaults(Date date, String label) {
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (date != null) {
@@ -2403,16 +2506,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				String[] valueParm = new String[1];
 				valueParm[0] = "salutation";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
 			}
 			if (StringUtils.isBlank(customer.getCustGenderCode())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "gender";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
 			}
 			if (StringUtils.isBlank(customer.getCustMaritalSts())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "maritalStatus";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
 			}
 
 			auditDetail.setErrorDetail(validateMasterCode("Salutation", customer.getCustSalutationCode()));

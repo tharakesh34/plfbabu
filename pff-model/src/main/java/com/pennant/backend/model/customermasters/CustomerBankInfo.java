@@ -53,6 +53,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
@@ -119,8 +120,11 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private String repaymentFrom;
 	private int noOfMonthsBanking;
 	private String lwowRatio;
+	@XmlElement
 	private String ccLimit;
 	private String typeOfBanks;
+	@XmlElementWrapper(name = "bankInfoDetails")
+	@XmlElement(name = "bankInfoDetail")
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();

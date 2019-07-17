@@ -47,6 +47,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -54,12 +58,16 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BankInfoSubDetail table</b>.<br>
  * 
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class BankInfoSubDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long bankId;
+	@XmlElement
 	private Date monthYear;
+	@XmlElement
 	private int day;
+	@XmlElement
 	private BigDecimal balance;
 
 	private boolean newRecord = false;

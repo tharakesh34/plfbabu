@@ -30,6 +30,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -477,6 +478,14 @@ public class CustomerController {
 					curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustBankInfo.setVersion(1);
+					if(CollectionUtils.isNotEmpty(curCustBankInfo.getBankInfoDetails())){
+						for (BankInfoDetail bankInfoDetail : curCustBankInfo.getBankInfoDetails()) {
+							bankInfoDetail.setNewRecord(true);
+							bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							bankInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							bankInfoDetail.setVersion(1);
+						}
+					}
 				} else {
 					List<CustomerBankInfo> prvCustomerBankInfoList = prvCustomerDetails.getCustomerBankInfoList();
 					if (prvCustomerBankInfoList != null) {

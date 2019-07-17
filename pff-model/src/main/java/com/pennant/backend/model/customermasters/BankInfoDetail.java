@@ -49,6 +49,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -56,19 +61,28 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>BankInfoDetail table</b>.<br>
  * 
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public class BankInfoDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3217987429162088120L;
 
 	private long bankId;
+	@XmlElement
 	private Date monthYear;
 	private BigDecimal balance = BigDecimal.ZERO;
+	@XmlElement
 	private int debitNo;
+	@XmlElement
 	private BigDecimal debitAmt = BigDecimal.ZERO;
+	@XmlElement
 	private int creditNo;
+	@XmlElement
 	private BigDecimal creditAmt = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal bounceIn = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal bounceOut = BigDecimal.ZERO;
 	private BigDecimal closingBal = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal oDCCLimit = BigDecimal.ZERO;
 
 	private int keyValue = 0;
@@ -77,6 +91,8 @@ public class BankInfoDetail extends AbstractWorkflowEntity {
 	private String lovValue;
 	private BankInfoDetail befImage;
 	private LoggedInUser userDetails;
+	@XmlElementWrapper(name = "bankInfoSubDetails")
+	@XmlElement(name = "bankInfoSubDetail")
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 
 	// ******************************************************//
