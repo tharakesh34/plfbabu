@@ -260,4 +260,23 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="16" author="Dheerendra.d">
+		<sql>
+			<![CDATA[
+				INSERT INTO Smtparameters
+				(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmdescription, version, lastmntby, lastmnton, recordstatus,  workflowid)
+				VALUES ('NLADS_INTERFACE', 'NLADS_EXECUTION', 'long', '1', '0', '10', '0', 'UPDATE DATE INTO STATING TABLE', 1, 1000,CURRENT_TIMESTAMP, 'Approved', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="17" author="Dheerendra.d">
+		<createTable tableName="NLADS_BALANCE">
+			<column name="FINREFERNECE" type="varchar(16)" />
+			<column name="BALANCE" type="bigint" />
+			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+		</createTable>
+	</changeSet>
+	
 </databaseChangeLog>
