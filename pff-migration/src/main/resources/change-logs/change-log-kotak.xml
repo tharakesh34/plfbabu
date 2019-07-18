@@ -279,4 +279,13 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="18" author="Durgaprasad.g" dbms="oracle">
+		<sql>
+			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'Grace', 'Moratorium');
+			UPDATE ERRORDETAILS_TEMP E SET Message = REPLACE(E.Message, 'Grace', 'Moratorium');
+	
+			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'grace', 'moratorium');
+			UPDATE ERRORDETAILS_TEMP E SET Message = REPLACE(E.Message, 'grace', 'moratorium');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
