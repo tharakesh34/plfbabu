@@ -2119,57 +2119,57 @@
 	<changeSet id="76" author="MURTHY">
 		<createView viewName="rpt_soa_loan_view" replaceIfExists="true">
 		
-		SELECT fm.finreference,
-        CASE
-            WHEN rf.productcategory::text = 'ODFCLITY'::character varying(500)::text THEN fm.finassetvalue
-            ELSE fp.totalprischd
-        END AS loanamount,
-    	fm.repaybaserate AS plrrate,
-    	fm.repaymargin AS variance,
-    	fm.effectiverateofreturn AS irr,
-    	fp.curreducingrate AS roi,
-    	fp.noinst AS tenure,
-		FM.REPAYFRQ,
-    	fp.totalpripaid AS emireceivedpri,
-    	fp.totalpftpaid AS emireceivedpft,
-    	0.00 AS preferredcardlimit,
-    	fp.prvrpyschpri AS previnstamtpri,
-    	fp.prvrpyschpft AS previnstamtpft,
-        CASE
-            WHEN fm.rvwrateapplfor IS NULL OR fm.rvwrateapplfor::text = '#'::character varying(500)::text THEN 'Fixed'::text
-            ELSE 'Floating'::text
-        END AS intratetype,
-	    fp.latestdisbdate AS lastdisbursaldate,
-    	fp.firstrepaydate AS firstduedate,
-    	fm.maturitydate AS endinstallmentdate,
-    	'0.00/ 0'::text AS advinstamt,
-    	fm.finisactive,
-    	fm.closingstatus,
-    	fp.futureinst AS futureinstno,
-    	fp.totalprischd AS futurepri1,
-    	fp.tdschdpri AS futurepri2,
-    	fp.totalpftschd AS futurerpypft1,
-    	fp.tdschdpft AS futurerpypft2,
-    	fp.totchargespaid AS charge_coll_cust,
-    	fp.upfrontfee AS upfront_int_cust,
-    	0 AS int_paid_dealer_upfront,
-    	0 AS pre_emi_int_paid,
-    	''::text AS repo_status,
-    	''::text AS repo_date,
-    	''::text AS sale_date,
-    	''::text AS release_date,
-    	fp.latestrpydate,
-    	c.ccyminorccyunits,
-    	c.ccyeditfield,
-		COALESCE(fp.totalpftcpz, 0::numeric) AS totalpftcpz
-   FROM plf.financemain fm
-     JOIN plf.finpftdetails fp ON fp.finreference::text = fm.finreference::text
-     JOIN plf.rmtfinancetypes rf ON rf.fintype::text = fm.fintype::text
-     JOIN plf.rmtcurrencies c ON c.ccycode = fp.finccy
+		SELECT 	fm.finreference,
+        		CASE
+            	WHEN rf.productcategory = 'ODFCLITY' THEN fm.finassetvalue
+            	ELSE fp.totalprischd 
+            	END AS loanamount,
+    			fm.repaybaserate AS plrrate,
+    			fm.repaymargin AS variance,
+    			fm.effectiverateofreturn AS irr,
+    			fp.curreducingrate AS roi,
+    			fp.noinst AS tenure,
+				FM.REPAYFRQ,
+    			fp.totalpripaid AS emireceivedpri,
+    			fp.totalpftpaid AS emireceivedpft,
+    			0.00 AS preferredcardlimit,
+    			fp.prvrpyschpri AS previnstamtpri,
+    			fp.prvrpyschpft AS previnstamtpft,
+        		CASE
+            	WHEN fm.rvwrateapplfor IS NULL OR fm.rvwrateapplfor = '#' THEN 'Fixed'
+            	ELSE 'Floating'
+        		END AS intratetype,
+	    		fp.latestdisbdate AS lastdisbursaldate,
+    			fp.firstrepaydate AS firstduedate,
+    			fm.maturitydate AS endinstallmentdate,
+ 			   	'0.00/ 0' AS advinstamt,
+    			fm.finisactive,
+    			fm.closingstatus,
+    			fp.futureinst AS futureinstno,
+    			fp.totalprischd AS futurepri1,
+    			fp.tdschdpri AS futurepri2,
+    			fp.totalpftschd AS futurerpypft1,
+    			fp.tdschdpft AS futurerpypft2,
+    			fp.totchargespaid AS charge_coll_cust,
+    			fp.upfrontfee AS upfront_int_cust,
+    			0 AS int_paid_dealer_upfront,
+    			0 AS pre_emi_int_paid,
+    			'' AS repo_status,
+    			'' AS repo_date,
+    			'' AS sale_date,
+    			'' AS release_date,
+    	   		fp.latestrpydate,
+    			c.ccyminorccyunits,
+    			c.ccyeditfield,
+				COALESCE(fp.totalpftcpz, 0) AS totalpftcpz
+   		FROM financemain fm
+    	JOIN finpftdetails fp ON fp.finreference = fm.finreference
+    	JOIN rmtfinancetypes rf ON rf.fintype = fm.fintype
+    	JOIN rmtcurrencies c ON c.ccycode = fp.finccy
+	
 			
 		</createView>
 	</changeSet>
-		
 	
-
+	
 </databaseChangeLog>
