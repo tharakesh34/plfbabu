@@ -83,6 +83,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	<!-- GST Waiver Changes END -->
 	
 	<changeSet id="6" author="vijaya.a" >
 		<addColumn tableName="adtVasprovideraccdetail">
@@ -90,10 +91,13 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="7" author="Durgaprasad.G">
+		<modifyDataType tableName="ADTERRORDETAILS" columnName="Message" newDataType="Varchar(200)"/>	
+	</changeSet>
+	
 	<changeSet id="7.0" author="satyanarayana.g">
 		<modifyDataType tableName="ADTQUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
 	</changeSet>
 
-	<!-- GST Waiver Changes END -->
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 </databaseChangeLog>

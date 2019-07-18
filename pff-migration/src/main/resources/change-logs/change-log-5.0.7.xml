@@ -2218,4 +2218,9 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="80" author="Durgaprasad.G">
+		<modifyDataType tableName="ERRORDETAILS" columnName="Message" newDataType="Varchar(200)"/>	
+		<modifyDataType tableName="ERRORDETAILS_TEMP" columnName="Message" newDataType="Varchar(200)"/>	
+	</changeSet>
+	
 </databaseChangeLog>
