@@ -89,6 +89,10 @@
 			<column name="PartnerBankId" type="bigint" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="7.0" author="satyanarayana.g">
+		<modifyDataType tableName="ADTQUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
+	</changeSet>
 
 	<!-- GST Waiver Changes END -->
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->

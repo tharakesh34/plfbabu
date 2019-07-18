@@ -2171,5 +2171,51 @@
 		</createView>
 	</changeSet>
 	
+	<changeSet id="77_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'querydetail');
+					select deps_save_and_drop_dependencies ('plf', 'querydetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="77" author="satyanarayana.g">
+		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
+		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="FINREFERENCE" newDataType="varchar(20)" />
+	</changeSet>
+	
+	<changeSet id="77_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'querydetail');
+					select deps_restore_dependencies ('plf', 'querydetail_temp');
+					
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="78" author="satyanarayana.g">
+		<comment>Receipt Maker</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='FinReceiptHeader';
+				INSERT INTO ReportList VALUES ('FinReceiptHeader', 'FinReceiptHeader', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptMode.label,listheader_ReceiptPurpose.label,listheader_CustomerCIF.label,listheader_FinType.label,listheader_FinReference.label,listheader_PayTypeRef.label,listheader_ReceiptAmount.label,listheader_PartnerBank.label',
+				'ReceiptID,ReceiptDate,ReceiptMode,ReceiptPurpose,CustCIF,FinType,Reference,TransactionRef,ReceiptAmount,partnerBankCode',
+				'Long,Date,String,String,String,String,String,String,BigDecimal,String', ' ', 'ReportList10', 'FinReceiptHeader',  'Loan Management', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="79" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'Corporate','Corporate',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'Trust','Trust',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'LLP','LLP',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
+				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'Others','Others',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);	
+			]]>									  
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
