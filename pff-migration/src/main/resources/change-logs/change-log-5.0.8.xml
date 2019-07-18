@@ -2525,6 +2525,368 @@
 		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
 	</changeSet> 
 	
+	<changeSet id="43" author="saikiran.v">
+		<createTable tableName="tax_details">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxType" type="varchar(8)">
+			  <constraints nullable="false" />
+			</column>
+			<column name="TaxPerc" type="Decimal(5,2)"/>
+			<column name="TaxAmount" type="Decimal(18,0)"/>
+			<column name="actualTax" type="Decimal(18,0)"/>
+			<column name="paidTax" type="Decimal(18,0)"/>
+			<column name="netTax" type="Decimal(18,0)"/>
+			<column name="remFeeTax" type="Decimal(18,0)"/>
+			<column name="WaivedTax" type="Decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	<changeSet id="44" author="saikiran.v">
+		<createTable tableName="tax_details_temp">
+			<column name="id" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ReferenceId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxType" type="varchar(8)">
+			  <constraints nullable="false" />
+			</column>
+			<column name="TaxPerc" type="Decimal(5,2)"/>
+			<column name="TaxAmount" type="Decimal(18,0)"/>
+			<column name="actualTax" type="Decimal(18,0)"/>
+			<column name="paidTax" type="Decimal(18,0)"/>
+			<column name="netTax" type="Decimal(18,0)"/>
+			<column name="remFeeTax" type="Decimal(18,0)"/>
+			<column name="WaivedTax" type="Decimal(18,0)"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="45" author="saikiran.v">
+		<createView viewName="tax_details_aview">
+			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details t1		
+		</createView>
+	</changeSet>
+	<changeSet id="46" author="saikiran.v">
+		<createView viewName="tax_details_tview">
+			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details_temp t1		
+		</createView>
+	</changeSet>
+	<changeSet id="47" author="saikiran.v">
+		<createView viewName="tax_details_view">
+			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax
+   			 FROM tax_details_temp t1
+			UNION ALL
+			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax
+  			 FROM tax_details t1
+ 			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_details_temp  WHERE tax_details_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	<changeSet id="48" author="saikiran.v">
+		<createTable tableName="Tax_Header">
+			<column name="headerId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="49" author="saikiran.v">
+		<createTable tableName="Tax_Header_temp">
+			<column name="headerId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="50" author="saikiran.v">
+		<createSequence sequenceName="SeqTax_Details" />
+		<createSequence sequenceName="SeqTax_Header" />
+	</changeSet>
+
+	<changeSet author="saikiran.v" id="51">
+		<addColumn tableName="FinFeeDetail">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="52">
+		<addColumn tableName="FinFeeDetail_Temp">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="53" author="saikiran.v">
+		<createView viewName="finfeedetail_aview" replaceIfExists="true">
+				 SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,
+				 t1.actualamount,t1.waivedamount,t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,
+				 t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,
+				 t1.vasreference,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,t1.paidamountgst,t1.netamountoriginal,t1.netamountgst,
+				 t1.netamount,t1.remainingfeeoriginal,t1.remainingfeegst,t1.actualamountoriginal,t1.actualamountgst,t1.feeamz,t1.version,
+				 t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.transactionid,
+				 t1.workflowid,t2.feetypecode,t2.feetypedesc,t1.status,t1.refundable,t1.instructionuid,t1.actpercentage,t1.waivedgst,t1.referenceid,t1.taxheaderid
+  				 FROM finfeedetail t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		</createView>
+	</changeSet>
+	<changeSet id="54" author="saikiran.v">
+		<createView viewName="finfeedetail_tview" replaceIfExists="true">
+				SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,
+				t1.actualamount,t1.waivedamount,t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,
+				t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,
+				t1.vasreference,t1.status,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,t1.paidamountgst,t1.netamountoriginal,
+				t1.netamountgst,t1.netamount,t1.remainingfeeoriginal,t1.remainingfeegst,t1.actualamountoriginal,t1.actualamountgst,t1.feeamz,
+				t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,
+				t1.transactionid,t1.workflowid,t2.feetypecode,t2.feetypedesc,t1.refundable,t1.instructionuid,t1.actpercentage,
+				t1.waivedgst,t1.referenceid,t1.taxheaderid
+   				FROM finfeedetail_temp t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		</createView>
+	</changeSet>
+	<changeSet id="55" author="saikiran.v">
+		<createView viewName="finfeedetail_view" replaceIfExists="true">
+				SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,t1.actualamount,
+				t1.waivedamount,t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,t1.rulecode,t1.fixedamount,
+				t1.percentage,t1.calculateon,t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,t1.vasreference,t1.status,
+				t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,t1.paidamountgst,t1.netamountoriginal,t1.netamountgst,t1.netamount,t1.remainingfeeoriginal,
+				t1.remainingfeegst,t1.actualamountoriginal,t1.actualamountgst,t1.feeamz,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,
+				t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.transactionid,t1.workflowid,t2.feetypecode,t2.feetypedesc,t1.refundable,t1.instructionuid,
+				t1.actpercentage,t1.waivedgst,t1.referenceid,t1.taxheaderid
+   				FROM finfeedetail_temp t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+				UNION ALL
+ 				SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,t1.actualamount,t1.waivedamount,
+				t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,
+ 				t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,t1.vasreference,t1.status,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,
+ 				t1.paidamountgst,t1.netamountoriginal,t1.netamountgst,t1.netamount,t1.remainingfeeoriginal,t1.remainingfeegst,t1.actualamountoriginal,
+ 				t1.actualamountgst,t1.feeamz,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,
+ 				t1.transactionid,t1.workflowid,t2.feetypecode,t2.feetypedesc,t1.refundable,t1.instructionuid,t1.actpercentage,t1.waivedgst,t1.referenceid,t1.taxheaderid
+   				FROM finfeedetail t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+ 				WHERE NOT (EXISTS ( SELECT 1       FROM finfeedetail_temp      WHERE finfeedetail_temp.feeid = t1.feeid))
+		</createView>
+	</changeSet>
+	<changeSet author="saikiran.v" id="56">
+		<addColumn tableName="wiffinfeedetail">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="57">
+		<addColumn tableName="wiffinfeedetail_temp">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="58" author="saikiran.v">
+		<createView viewName="wiffinfeedetail_view" replaceIfExists="true">
+			SELECT t1.feeid,t1.finreference,t1.feeseq,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeorder,t1.calculatedamount,t1.actualamount,t1.waivedamount,
+			t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,
+			t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,t1.vasreference,t1.status,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,
+			t1.paidamountgst,t1.netamountoriginal,t1.netamountgst,t1.netamount,t1.remainingfeeoriginal,t1.remainingfeegst,t1.actualamountoriginal,t1.actualamountgst,
+			t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypecode,
+			t2.feetypedesc,t1.refundable,t1.instructionuid,t1.waivedgst,t1.referenceid,t1.taxheaderid
+  			FROM wiffinfeedetail_temp t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			UNION ALL
+ 			SELECT t1.feeid,t1.finreference,t1.feeseq,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeorder,t1.calculatedamount,t1.actualamount,t1.waivedamount,
+ 			t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,
+ 			t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,t1.vasreference,t1.status,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,
+ 			t1.paidamountgst,t1.netamountoriginal,t1.netamountgst,t1.netamount,t1.remainingfeeoriginal,t1.remainingfeegst,t1.actualamountoriginal,t1.actualamountgst,
+ 			t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypecode,
+ 			t2.feetypedesc,t1.refundable,t1.instructionuid,t1.waivedgst,t1.referenceid,t1.taxheaderid
+   			FROM wiffinfeedetail t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+  			WHERE NOT (EXISTS
+  			 ( SELECT 1       FROM wiffinfeedetail_temp      WHERE wiffinfeedetail_temp.finreference = t1.finreference AND 
+  			 wiffinfeedetail_temp.originationfee = t1.originationfee AND wiffinfeedetail_temp.finevent = t1.finevent AND wiffinfeedetail_temp.feetypeid = t1.feetypeid))
+		</createView>
+	</changeSet>
+	
+	
+	
+	<changeSet author="saikiran.v" id="59">
+		<addColumn tableName="ReceiptAllocationDetail">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="60">
+		<addColumn tableName="ReceiptAllocationDetail_temp">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="61" author="saikiran.v">
+		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
+			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
+			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedgst,t1.taxheaderid
+   			FROM receiptallocationdetail t1
+   			LEFT JOIN finfeedetail t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE' 
+   			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid 
+   			LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV' 
+   			LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+		</createView>
+	</changeSet>
+	<changeSet id="62" author="saikiran.v">
+		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
+			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedreqamount,t1.waiveraccepted,t1.totaldue,t1.waivedgst,t1.taxheaderid
+   			FROM receiptallocationdetail_temp t1 
+   			LEFT JOIN finfeedetail_temp t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE'
+   			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid 
+   			LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV' 
+   			LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+			UNION ALL
+ 			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
+ 			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedreqamount,t1.waiveraccepted,t1.totaldue,t1.waivedgst,t1.taxheaderid
+   			FROM receiptallocationdetail t1
+   			LEFT JOIN finfeedetail t2 ON t1.allocationto = t2.feeid AND t1.allocationtype = 'FEE' 
+   			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid 
+   			LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV'
+   			 LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+  			WHERE NOT (EXISTS ( SELECT 1 FROM receiptallocationdetail_temp WHERE receiptallocationdetail_temp.receiptid = t1.receiptid))
+		</createView>
+	</changeSet>
+	<changeSet author="saikiran.v" id="63">
+		<addColumn tableName="ManualAdviseMovements">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="64">
+		<addColumn tableName="ManualAdviseMovements_temp">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="65" author="saikiran.v">
+		<createView viewName="manualadvisemovements_aview" replaceIfExists="true">
+			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,
+    		t1.status, t1.receiptid, t1.receiptseqid, t1.paidcgst, t1.paidsgst, t1.paidigst,t1.paidugst,
+    		t2.advisetype, t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,t3.taxcomponent,
+    		t3.feetypedesc,t1.waivedcgst,t1.waivedsgst, t1.waivedugst, t1.waivedigst,t1.taxheaderid
+			FROM manualadvisemovements t1
+    		JOIN manualadvise t2 ON t1.adviseid = t2.adviseid
+    		LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
+		</createView>
+	</changeSet>
+	<changeSet id="66" author="saikiran.v">
+		<createView viewName="manualadvisemovements_tview" replaceIfExists="true">
+			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,t1.status,t1.receiptid,t1.receiptseqid,
+			t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t2.advisetype,t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,
+			t3.taxcomponent,t3.feetypedesc,t1.waivedcgst,t1.waivedsgst,t1.waivedugst,t1.waivedigst,t1.taxheaderid
+  			FROM manualadvisemovements_temp t1 
+  			JOIN manualadvise t2 ON t1.adviseid = t2.adviseid 
+  			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
+		</createView>
+	</changeSet>
+	<changeSet author="saikiran.v" id="67">
+		<addColumn tableName="ManualAdvise">
+			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
+			<column name="paidCess" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="68">
+		<addColumn tableName="ManualAdvise_Temp">
+			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
+			<column name="paidCess" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="69" author="saikiran.v">
+	 <createView viewName="Manualadvise_Aview" replaceIfExists="true">
+	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,
+	 	  t1.waivedamount,t1.remarks,t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,
+	 	  t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,
+	 	  t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,COALESCE(t2.taxapplicable, 0) AS 
+	 	  taxapplicable,t2.taxcomponent,t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t1.waivedcgst,t1.waivedsgst,t1.waivedugst,t1.waivedigst,t1.waivedcess,t1.paidcess
+  		  FROM manualadvise t1
+  		  LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+  		  LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+	 </createView>
+	</changeSet>
+	<changeSet id="70" author="saikiran.v">
+	 <createView viewName="Manualadvise_Tview" replaceIfExists="true">
+	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,t1.remarks,
+	 	  t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,
+	 	  t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,
+	 	  COALESCE(t2.taxapplicable, 0) AS taxapplicable,t2.taxcomponent,t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t1.waivedcgst,t1.waivedsgst,
+	 	  t1.waivedugst,t1.waivedigst,t1.waivedcess,t1.paidcess
+  		  FROM manualadvise_temp t1 
+  		  LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+  		  LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+	 </createView>
+	</changeSet>
+	<changeSet id="71" author="saikiran.v">
+	 <createView viewName="Manualadvise_lview" replaceIfExists="true">
+	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,t1.remarks,t1.valuedate,t1.postdate,
+	 	  t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,
+	 	  t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,COALESCE(t2.taxapplicable, 0) AS taxapplicable,t2.taxcomponent,
+	 	  t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t1.waivedcgst,t1.waivedsgst,t1.waivedugst,t1.waivedigst
+  		  FROM manualadvise t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+	 </createView>
+	</changeSet>
+	<changeSet id="72" author="saikiran.v">
+	 <createView viewName="Manualadvise_view" replaceIfExists="true">
+	 	 SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,
+	 	 t1.remarks,t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
+	 	 t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,
+	 	 COALESCE(t2.taxapplicable, 0) AS taxapplicable,t2.taxcomponent,t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t1.waivedcgst,t1.waivedsgst,
+	 	 t1.waivedugst,t1.waivedigst,t1.waivedcess,t1.paidcess
+  		 FROM manualadvise_temp t1
+  		 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid 
+  		 LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+		 UNION ALL
+		 SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,t1.remarks,t1.valuedate,
+		 t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,
+		 t2.feetypedesc,t2.feetypecode,t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,
+		 COALESCE(t2.taxapplicable, 0) AS taxapplicable,t2.taxcomponent,t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t1.waivedcgst,
+		 t1.waivedsgst,t1.waivedugst,t1.waivedigst,t1.waivedcess,t1.paidcess
+   		 FROM manualadvise t1 
+   		 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid 
+   		 LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
+ 		 WHERE NOT (EXISTS ( SELECT 1 FROM manualadvise_temp WHERE manualadvise_temp.adviseid = t1.adviseid))
+	 </createView>
+	</changeSet>
+		
+	<changeSet author="saikiran.v" id="73">
+		<addColumn tableName="FinRepayScheduleDetail">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="saikiran.v" id="74">
+		<addColumn tableName="FinRepayScheduleDetail_temp">
+			<column name="taxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="saikiran.v" id="73_pre">
+	<sql>
+	update FinRepayScheduleDetail set taxHeaderId=0 where taxHeaderId is null;
+	update FinRepayScheduleDetail_temp set taxHeaderId=0 where taxHeaderId is null;
+	update ManualAdviseMovements set taxHeaderId=0 where taxHeaderId is null;
+	update ManualAdviseMovements_temp set taxHeaderId=0 where taxHeaderId is null;
+	update ReceiptAllocationDetail set taxHeaderId=0 where taxHeaderId is null;
+	update ReceiptAllocationDetail_temp set taxHeaderId=0 where taxHeaderId is null;
+	update wiffinfeedetail set taxHeaderId=0 where taxHeaderId is null;
+	update wiffinfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
+	update finfeedetail set taxHeaderId=0 where taxHeaderId is null;
+	update finfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
+	
+	
+		</sql>
+	</changeSet>
 	<changeSet id="44" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createTable tableName="EXTERNAL_LIABILITIES_PD">
