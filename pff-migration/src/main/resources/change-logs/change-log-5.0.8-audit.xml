@@ -99,6 +99,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="5">
 		<addColumn tableName="AdtFinFeeDetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -106,10 +107,17 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="6">
 		<addColumn tableName="AdtManualAdvise">
 			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="saikiran.v" id="7">
+		<addColumn tableName="AdtManualAdvise">
 			<column name="paidCess" type="decimal(18,0)"  defaultValue="0"/>
 		</addColumn>
 	</changeSet>
+	
 </databaseChangeLog>

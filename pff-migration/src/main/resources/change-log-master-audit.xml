@@ -32,11 +32,11 @@
 	<include file="change-logs/change-log-put-call-1.1-audit.xml" />
 	<include file="change-logs/change-log-advance-emai-audit.xml"/>
 	<include file="change-logs/change-log-4.14.0-audit.xml" /> -->
-	<include file="change-logs/change-log-receipts-new-audit-1.0.xml" />
+	 <include file="change-logs/change-log-receipts-new-audit-1.0.xml" />
 	<include file="change-logs/change-log-5.0.0-audit.xml" />
 	<include file="change-logs/change-log-5.0.5-audit.xml" /> 
 	<include file="change-logs/change-log-indas_amz-audit.xml" />
 	<include file="change-logs/change-log-5.0.6-audit.xml" /> 
-	<include file="change-logs/change-log-5.0.7-audit.xml" />
+	<include file="change-logs/change-log-5.0.7-audit.xml" /> 
 	<include file="change-logs/change-log-5.0.8-audit.xml" />
 </databaseChangeLog>
