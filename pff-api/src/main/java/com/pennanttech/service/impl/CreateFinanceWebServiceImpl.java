@@ -919,9 +919,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				if (count > 0) {
 					findetail = new FinanceDetail();
 					String[] valueParm = new String[2];
-					valueParm[0] = "Host Reference";
-					valueParm[1] = financeDetail.getFinScheduleData().getOldFinReference();
-					returnStatus = APIErrorHandlerService.getFailedStatus("30506", valueParm);
+					valueParm[0] = "ReInitiate";
+					returnStatus = APIErrorHandlerService.getFailedStatus("90273", valueParm);
 					findetail.setReturnStatus(returnStatus);
 					return findetail;
 				}

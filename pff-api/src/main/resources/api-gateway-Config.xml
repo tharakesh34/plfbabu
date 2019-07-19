@@ -632,4 +632,31 @@
 	<!-- Document Soap Container -->
 	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap"
 		publish="false" />
+		
+		<bean id="wsTransactionMappingService" class="com.pennanttech.service.impl.TransactionMappingWebServiceImpl" />
+
+	<!-- TransactionMapping Rest Container -->
+	<jaxrs:server id="transactionMappingRestService" address="/transactionMappingRest" publish="true">
+		<jaxrs:serviceBeans>
+			<ref bean="wsTransactionMappingService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+			<ref bean="faultHandler" />
+			<ref bean="invalidPropertyExceptionHandler" />
+			<ref bean="unknownPropertyExceptionHandler" />
+			<ref bean="parseExceptionHandler" />
+			<bean class="com.pennant.ws.exception.ExceptionHandler" />
+		</jaxrs:providers>
+		<jaxrs:inInterceptors>
+			<ref bean="restInHeaderInterceptor" />
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<ref bean="restOutHeaderInterceptor" />
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+
+	<!-- TransactionMapping Soap Container -->
+	<jaxws:endpoint id="transactionMappingSoapService" implementor="#wsTransactionMappingService" address="/transactionMappingSoap"
+		publish="false" />	
 </beans>

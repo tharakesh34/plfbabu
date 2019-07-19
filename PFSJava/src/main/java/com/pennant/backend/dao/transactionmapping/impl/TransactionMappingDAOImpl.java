@@ -202,4 +202,64 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 		return recordCount;
 	}
 
+	@Override
+	public int getCountByPhoneAndStroeId(String mobileNumber, int storeId, int posId) {
+
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("MID", storeId);
+		mapSqlParameterSource.addValue("PosId", posId);
+		mapSqlParameterSource.addValue("MOBILENUMBER1", mobileNumber);
+		mapSqlParameterSource.addValue("MOBILENUMBER2", mobileNumber);
+		mapSqlParameterSource.addValue("MOBILENUMBER3", mobileNumber);
+
+		StringBuilder selectSql = new StringBuilder();
+		
+		selectSql.append("SELECT COUNT(*) FROM TransactionMapping");
+		selectSql.append(" WHERE( (MID = :MID AND PosId = :PosId) AND");
+		selectSql.append(
+				"( MOBILENUMBER1 = :MOBILENUMBER1 OR MOBILENUMBER2 = :MOBILENUMBER2 OR MOBILENUMBER3 = :MOBILENUMBER3))");
+
+		logger.debug("SelectSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		return recordCount;
+
+	}
+
+	@Override
+	public int getCountByPhoneNumber(String mobileNumber) {
+
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("MOBILENUMBER1", mobileNumber);
+		mapSqlParameterSource.addValue("MOBILENUMBER2", mobileNumber);
+		mapSqlParameterSource.addValue("MOBILENUMBER3", mobileNumber);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append("SELECT COUNT(*) FROM TransactionMapping");
+		selectSql.append(
+				" WHERE ( MOBILENUMBER1 = :MOBILENUMBER1 OR MOBILENUMBER2 = :MOBILENUMBER2 OR MOBILENUMBER3 = :MOBILENUMBER3)");
+
+		logger.debug("SelectSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		return recordCount;
+
+	}
+
 }

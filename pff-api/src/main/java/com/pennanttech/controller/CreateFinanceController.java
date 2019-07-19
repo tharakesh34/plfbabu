@@ -215,8 +215,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					for (ErrorDetail errorDetail : errors) {
 						FinanceDetail response = new FinanceDetail();
 						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode()));
 						return response;
 					}
 				}
