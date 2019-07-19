@@ -1094,7 +1094,7 @@
 	<changeSet id="20" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="22" author="satyanarayana.g">
 		<addColumn tableName="REJECTFINANCEMAIN">
 			<column name="AllowRevolving" type="boolean" />
@@ -2480,13 +2480,13 @@
 			<column name="OLDHOSTREFERENCE" type="VARCHAR(20)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="42">
 		<comment>data type modified from varchar(150) to varchar(200)</comment>
 		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
-	</changeSet> 
-	
-	 <changeSet id="43" author="saikiran.v">
+	</changeSet>
+
+	<changeSet id="43" author="saikiran.v">
 		<createTable tableName="tax_details">
 			<column name="id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
@@ -2495,15 +2495,15 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="TaxType" type="varchar(8)">
-			  <constraints nullable="false" />
+				<constraints nullable="false" />
 			</column>
-			<column name="TaxPerc" type="Decimal(5,2)"/>
-			<column name="TaxAmount" type="Decimal(18,0)"/>
-			<column name="actualTax" type="Decimal(18,0)"/>
-			<column name="paidTax" type="Decimal(18,0)"/>
-			<column name="netTax" type="Decimal(18,0)"/>
-			<column name="remFeeTax" type="Decimal(18,0)"/>
-			<column name="WaivedTax" type="Decimal(18,0)"/>
+			<column name="TaxPerc" type="Decimal(5,2)" />
+			<column name="TaxAmount" type="Decimal(18,0)" />
+			<column name="actualTax" type="Decimal(18,0)" />
+			<column name="paidTax" type="Decimal(18,0)" />
+			<column name="netTax" type="Decimal(18,0)" />
+			<column name="remFeeTax" type="Decimal(18,0)" />
+			<column name="WaivedTax" type="Decimal(18,0)" />
 		</createTable>
 	</changeSet>
 	<changeSet id="44" author="saikiran.v">
@@ -2515,18 +2515,18 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="TaxType" type="varchar(8)">
-			  <constraints nullable="false" />
+				<constraints nullable="false" />
 			</column>
-			<column name="TaxPerc" type="Decimal(5,2)"/>
-			<column name="TaxAmount" type="Decimal(18,0)"/>
-			<column name="actualTax" type="Decimal(18,0)"/>
-			<column name="paidTax" type="Decimal(18,0)"/>
-			<column name="netTax" type="Decimal(18,0)"/>
-			<column name="remFeeTax" type="Decimal(18,0)"/>
-			<column name="WaivedTax" type="Decimal(18,0)"/>
+			<column name="TaxPerc" type="Decimal(5,2)" />
+			<column name="TaxAmount" type="Decimal(18,0)" />
+			<column name="actualTax" type="Decimal(18,0)" />
+			<column name="paidTax" type="Decimal(18,0)" />
+			<column name="netTax" type="Decimal(18,0)" />
+			<column name="remFeeTax" type="Decimal(18,0)" />
+			<column name="WaivedTax" type="Decimal(18,0)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="45" author="saikiran.v">
 		<createView viewName="tax_details_aview">
 			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details t1		
@@ -2580,7 +2580,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="53" author="saikiran.v">
 		<createView viewName="finfeedetail_aview" replaceIfExists="true">
 				 SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,
@@ -2663,9 +2663,9 @@
   			 wiffinfeedetail_temp.originationfee = t1.originationfee AND wiffinfeedetail_temp.finevent = t1.finevent AND wiffinfeedetail_temp.feetypeid = t1.feetypeid))
 		</createView>
 	</changeSet>
-	
-	
-	
+
+
+
 	<changeSet author="saikiran.v" id="59">
 		<addColumn tableName="ReceiptAllocationDetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2680,7 +2680,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="61" author="saikiran.v">
 		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
 			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
@@ -2726,7 +2726,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="65" author="saikiran.v">
 		<createView viewName="manualadvisemovements_aview" replaceIfExists="true">
 			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,
@@ -2750,19 +2750,19 @@
 	</changeSet>
 	<changeSet author="saikiran.v" id="67">
 		<addColumn tableName="ManualAdvise">
-			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
-			<column name="paidCess" type="decimal(18,0)" defaultValue="0"/>
+			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
+			<column name="paidCess" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
 	<changeSet author="saikiran.v" id="68">
 		<addColumn tableName="ManualAdvise_Temp">
-			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
-			<column name="paidCess" type="decimal(18,0)" defaultValue="0"/>
+			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
+			<column name="paidCess" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="69" author="saikiran.v">
-	 <createView viewName="Manualadvise_Aview" replaceIfExists="true">
+		<createView viewName="Manualadvise_Aview" replaceIfExists="true">
 	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,
 	 	  t1.waivedamount,t1.remarks,t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,
 	 	  t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,
@@ -2774,7 +2774,7 @@
 	 </createView>
 	</changeSet>
 	<changeSet id="70" author="saikiran.v">
-	 <createView viewName="Manualadvise_Tview" replaceIfExists="true">
+		<createView viewName="Manualadvise_Tview" replaceIfExists="true">
 	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,t1.remarks,
 	 	  t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,
 	 	  t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,
@@ -2786,7 +2786,7 @@
 	 </createView>
 	</changeSet>
 	<changeSet id="71" author="saikiran.v">
-	 <createView viewName="Manualadvise_lview" replaceIfExists="true">
+		<createView viewName="Manualadvise_lview" replaceIfExists="true">
 	 	  SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,t1.remarks,t1.valuedate,t1.postdate,
 	 	  t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,
 	 	  t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,COALESCE(t2.taxapplicable, 0) AS taxapplicable,t2.taxcomponent,
@@ -2795,7 +2795,7 @@
 	 </createView>
 	</changeSet>
 	<changeSet id="72" author="saikiran.v">
-	 <createView viewName="Manualadvise_view" replaceIfExists="true">
+		<createView viewName="Manualadvise_view" replaceIfExists="true">
 	 	 SELECT t1.adviseid,t1.advisetype,t1.finreference,t1.feetypeid,t1.sequence,t1.adviseamount,t1.paidamount,t1.waivedamount,
 	 	 t1.remarks,t1.valuedate,t1.postdate,t1.version,t1.lastmntby,t1.lastmnton,t1.recordstatus,t1.rolecode,t1.nextrolecode,t1.taskid,t1.nexttaskid,
 	 	 t1.recordtype,t1.workflowid,t2.feetypedesc,t2.feetypecode,t1.bounceid,t1.receiptid,t3.bouncecode,t1.reservedamt,t1.balanceamt,t3.reason AS bouncecodedesc,
@@ -2816,7 +2816,7 @@
  		 WHERE NOT (EXISTS ( SELECT 1 FROM manualadvise_temp WHERE manualadvise_temp.adviseid = t1.adviseid))
 	 </createView>
 	</changeSet>
-		
+
 	<changeSet author="saikiran.v" id="73">
 		<addColumn tableName="FinRepayScheduleDetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2831,28 +2831,28 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="saikiran.v" id="73_pre">
-	<sql>
-	update FinRepayScheduleDetail set taxHeaderId=0 where taxHeaderId is null;
-	update FinRepayScheduleDetail_temp set taxHeaderId=0 where taxHeaderId is null;
-	update ManualAdviseMovements set taxHeaderId=0 where taxHeaderId is null;
-	update ManualAdviseMovements_temp set taxHeaderId=0 where taxHeaderId is null;
-	update ReceiptAllocationDetail set taxHeaderId=0 where taxHeaderId is null;
-	update ReceiptAllocationDetail_temp set taxHeaderId=0 where taxHeaderId is null;
-	update wiffinfeedetail set taxHeaderId=0 where taxHeaderId is null;
-	update wiffinfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
-	update finfeedetail set taxHeaderId=0 where taxHeaderId is null;
-	update finfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
-	
-	
+		<sql>
+			update FinRepayScheduleDetail set taxHeaderId=0 where taxHeaderId is null;
+			update FinRepayScheduleDetail_temp set taxHeaderId=0 where taxHeaderId is null;
+			update ManualAdviseMovements set taxHeaderId=0 where taxHeaderId is null;
+			update ManualAdviseMovements_temp set taxHeaderId=0 where taxHeaderId is null;
+			update ReceiptAllocationDetail set taxHeaderId=0 where taxHeaderId is null;
+			update ReceiptAllocationDetail_temp set taxHeaderId=0 where taxHeaderId is null;
+			update wiffinfeedetail set taxHeaderId=0 where taxHeaderId is null;
+			update wiffinfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
+			update finfeedetail set taxHeaderId=0 where taxHeaderId is null;
+			update finfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
+
+
 		</sql>
 	</changeSet>
 	<changeSet id="44" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createTable tableName="EXTERNAL_LIABILITIES_PD">
 			<column name="Id" type="bigint" autoIncrement="true">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="LiabilityId" type="bigint">
 				<constraints nullable="false" />
@@ -2877,12 +2877,12 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="45" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createTable tableName="EXTERNAL_LIABILITIES_PD_TEMP">
 			<column name="Id" type="bigint" autoIncrement="true">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="LiabilityId" type="bigint">
 				<constraints nullable="false" />
@@ -2907,7 +2907,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="47" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW" replaceIfExists="true">
@@ -2944,18 +2944,22 @@
    			FROM EXTERNAL_LIABILITIES_PD t1
 		</createView>
 	</changeSet>
-	 
+
 	<changeSet id="48" author="satyanarayana.g">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
 		<addColumn tableName="INSTRUMENTWISELIMIT_TEMP">
 			<column name="MAXAMTPERINSTRUCTION" type="decimal(18,0)" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet id="49" author="satyanarayana.g">
+		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
 		<addColumn tableName="INSTRUMENTWISELIMIT">
 			<column name="MAXAMTPERINSTRUCTION" type="decimal(18,0)" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="48.1" author="satyanarayana.g" dbms="mssql">
+	<changeSet id="50" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE INSTRUMENTWISELIMIT ADD CONSTRAINT DF_INWSLT_MAXAMTPERINSTION DEFAULT 0 FOR MAXAMTPERINSTRUCTION;
@@ -2964,12 +2968,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="48.1" author="satyanarayana.g" dbms="postgresql, oracle">
+	<changeSet id="50" author="satyanarayana.g" dbms="postgresql, oracle">
 		<addDefaultValue columnName="MAXAMTPERINSTRUCTION" tableName="INSTRUMENTWISELIMIT" defaultValue="0" />
 		<addDefaultValue columnName="MAXAMTPERINSTRUCTION" tableName="INSTRUMENTWISELIMIT_TEMP" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="48.2" author="satyanarayana.g">
+	<changeSet id="51" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE INSTRUMENTWISELIMIT set MAXAMTPERINSTRUCTION = 0 where MAXAMTPERINSTRUCTION is null;
@@ -2978,12 +2982,14 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="48.3" author="satyanarayana.g">
-		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT" columnName="MAXAMTPERINSTRUCTION" columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT_TEMP" columnName="MAXAMTPERINSTRUCTION" columnDataType="decimal(18,0)" />
+	<changeSet id="52" author="satyanarayana.g">
+		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT" columnName="MAXAMTPERINSTRUCTION"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT_TEMP" columnName="MAXAMTPERINSTRUCTION"
+			columnDataType="decimal(18,0)" />
 	</changeSet>
-	
-	<changeSet id="49" author="satyanarayana.g">
+
+	<changeSet id="53" author="satyanarayana.g">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
 		<createView viewName="INSTRUMENTWISELIMIT_VIEW" replaceIfExists="true">
 			SELECT T1.ID,
@@ -3032,8 +3038,8 @@
 					) 		
 			</createView>
 	</changeSet>
-	
-	<changeSet id="50" author="satyanarayana.g">
+
+	<changeSet id="54" author="satyanarayana.g">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
 		<createView viewName="INSTRUMENTWISELIMIT_AVIEW" replaceIfExists="true">
 			   SELECT T1.ID,
@@ -3058,5 +3064,5 @@
 					FROM INSTRUMENTWISELIMIT T1  		
 		</createView>
 	</changeSet>
-	
+
 </databaseChangeLog>
