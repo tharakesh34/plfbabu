@@ -2506,14 +2506,13 @@
 			<column name="WaivedTax" type="Decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	
 	<changeSet id="44" author="saikiran.v">
 		<createTable tableName="tax_details_temp">
 			<column name="id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="ReferenceId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
+			<column name="ReferenceId" type="bigint" />
 			<column name="TaxType" type="varchar(8)">
 				<constraints nullable="false" />
 			</column>
@@ -2526,17 +2525,31 @@
 			<column name="WaivedTax" type="Decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="44.1" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE tax_details_temp ADD CONSTRAINT DF_tax_details_temp_ReferenceId DEFAULT 0 FOR ReferenceId;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44.1" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ReferenceId" tableName="tax_details_temp" defaultValue="0" />
+	</changeSet>
 
 	<changeSet id="45" author="saikiran.v">
 		<createView viewName="tax_details_aview">
 			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details t1		
 		</createView>
 	</changeSet>
+	
 	<changeSet id="46" author="saikiran.v">
 		<createView viewName="tax_details_tview">
 			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details_temp t1		
 		</createView>
 	</changeSet>
+	
 	<changeSet id="47" author="saikiran.v">
 		<createView viewName="tax_details_view">
 			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax
@@ -2547,6 +2560,7 @@
  			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_details_temp  WHERE tax_details_temp.id = t1.id))
 		</createView>
 	</changeSet>
+	
 	<changeSet id="48" author="saikiran.v">
 		<createTable tableName="Tax_Header">
 			<column name="headerId" type="bigint">
@@ -2554,6 +2568,7 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
 	<changeSet id="49" author="saikiran.v">
 		<createTable tableName="Tax_Header_temp">
 			<column name="headerId" type="bigint">
@@ -2561,6 +2576,7 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
 	<changeSet id="50" author="saikiran.v">
 		<createSequence sequenceName="SeqTax_Details" />
 		<createSequence sequenceName="SeqTax_Header" />
@@ -2573,6 +2589,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="52">
 		<addColumn tableName="FinFeeDetail_Temp">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2593,6 +2610,7 @@
   				 FROM finfeedetail t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
 		</createView>
 	</changeSet>
+	
 	<changeSet id="54" author="saikiran.v">
 		<createView viewName="finfeedetail_tview" replaceIfExists="true">
 				SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,
@@ -2606,6 +2624,7 @@
    				FROM finfeedetail_temp t1 LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
 		</createView>
 	</changeSet>
+	
 	<changeSet id="55" author="saikiran.v">
 		<createView viewName="finfeedetail_view" replaceIfExists="true">
 				SELECT t1.feeid,t1.finreference,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeseq,t1.feeorder,t1.calculatedamount,t1.actualamount,
@@ -2627,6 +2646,7 @@
  				WHERE NOT (EXISTS ( SELECT 1       FROM finfeedetail_temp      WHERE finfeedetail_temp.feeid = t1.feeid))
 		</createView>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="56">
 		<addColumn tableName="wiffinfeedetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2634,6 +2654,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="57">
 		<addColumn tableName="wiffinfeedetail_temp">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2641,6 +2662,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="58" author="saikiran.v">
 		<createView viewName="wiffinfeedetail_view" replaceIfExists="true">
 			SELECT t1.feeid,t1.finreference,t1.feeseq,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeorder,t1.calculatedamount,t1.actualamount,t1.waivedamount,
@@ -2664,8 +2686,6 @@
 		</createView>
 	</changeSet>
 
-
-
 	<changeSet author="saikiran.v" id="59">
 		<addColumn tableName="ReceiptAllocationDetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2673,6 +2693,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="60">
 		<addColumn tableName="ReceiptAllocationDetail_temp">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2719,6 +2740,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="64">
 		<addColumn tableName="ManualAdviseMovements_temp">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -2738,6 +2760,7 @@
     		LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
 		</createView>
 	</changeSet>
+	
 	<changeSet id="66" author="saikiran.v">
 		<createView viewName="manualadvisemovements_tview" replaceIfExists="true">
 			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,t1.status,t1.receiptid,t1.receiptseqid,
@@ -2748,12 +2771,14 @@
   			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
 		</createView>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="67">
 		<addColumn tableName="ManualAdvise">
 			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
 			<column name="paidCess" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
 	<changeSet author="saikiran.v" id="68">
 		<addColumn tableName="ManualAdvise_Temp">
 			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
@@ -2834,6 +2859,7 @@
 
 	<changeSet author="saikiran.v" id="73_pre">
 		<sql>
+		<![CDATA[
 			update FinRepayScheduleDetail set taxHeaderId=0 where taxHeaderId is null;
 			update FinRepayScheduleDetail_temp set taxHeaderId=0 where taxHeaderId is null;
 			update ManualAdviseMovements set taxHeaderId=0 where taxHeaderId is null;
@@ -2844,8 +2870,7 @@
 			update wiffinfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
 			update finfeedetail set taxHeaderId=0 where taxHeaderId is null;
 			update finfeedetail_temp set taxHeaderId=0 where taxHeaderId is null;
-
-
+			]]>
 		</sql>
 	</changeSet>
 	<changeSet id="44" author="vijaya.a">
