@@ -2115,7 +2115,7 @@
 			NULL);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="76" author="MURTHY">
 		<createView viewName="rpt_soa_loan_view" replaceIfExists="true">
 		
@@ -2170,7 +2170,7 @@
 			
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="77_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2179,12 +2179,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="77" author="satyanarayana.g">
 		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
 		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="FINREFERENCE" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="77_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2194,7 +2194,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="78" author="satyanarayana.g">
 		<comment>Receipt Maker</comment>
 		<sql>
@@ -2206,8 +2206,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="80_pre" author="Durgaprasad.G" dbms="postgresql">
+
+	<changeSet id="80_pre" author="Durgaprasad.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'errordetails');
@@ -2215,12 +2215,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="80" author="Durgaprasad.G">
-		<modifyDataType tableName="ERRORDETAILS" columnName="Message" newDataType="Varchar(200)"/>	
-		<modifyDataType tableName="ERRORDETAILS_TEMP" columnName="Message" newDataType="Varchar(200)"/>	
+		<modifyDataType tableName="ERRORDETAILS" columnName="Message" newDataType="Varchar(200)" />
+		<modifyDataType tableName="ERRORDETAILS_TEMP" columnName="Message" newDataType="Varchar(200)" />
 	</changeSet>
-	
+
 	<changeSet id="80_post" author="Durgaprasad.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2229,13 +2229,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="81" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="AllowDrawingPower" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="82" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="AllowDrawingPower" type="boolean" />
@@ -3563,8 +3563,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="100" author="satyanarayana.g">
+
+	<changeSet id="100" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -3582,4 +3582,23 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="101" author="murthy">
+		<comment>New RBFields Added for Limit Rule</comment>
+		<sql>
+            <![CDATA[ 
+				Delete from BMTAMOUNTCODES Where ALLOWEDEVENT = 'ADDDBSN' ANd AMOUNTCODE = 'ae_deductFeeDisb';
+				Insert into BMTAMOUNTCODES values ('ADDDBSN', 0, 'ae_deductFeeDisb', 'Deduct Fee From Disbursement', '1', 1, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+    	     ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="102" author="murthy">
+		<comment>New RBFields Added for Limit Rule</comment>
+		<sql>
+            <![CDATA[ 
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_lovDescAccountsOfficer', 'Sourcing Type', 'varchar', 100, 0, 0, '', 'dbvalue', 'SourceOfficer');
+               	Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_lovDescAccountsOfficer', 'Sourcing Type', 'varchar', 100, 0, 0, '', 'dbvalue', 'SourceOfficer');
+    	     ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
