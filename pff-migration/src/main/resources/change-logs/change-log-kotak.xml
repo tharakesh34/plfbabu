@@ -301,4 +301,17 @@
 			]]>									  
 		</sql>
 	</changeSet>
+	
+		
+	<changeSet id="20" author="durgaprasad.g">
+		<dropTable tableName="NLADS_BALANCE"/>
+	</changeSet>
+	
+	<changeSet id="21" author="durgaprasad.g">
+		<createTable tableName="NLADS_BALANCE">
+			<column name="FINREFERENCE" type="varchar(16)" />
+			<column name="BALANCE" type="bigint" />
+			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
