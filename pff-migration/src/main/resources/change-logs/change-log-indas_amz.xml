@@ -195,7 +195,7 @@
 	</changeSet>
 
 	<changeSet id="9" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="AmortizationQueuing" columnName="EodProcess" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="10" author="Satya">
@@ -225,7 +225,7 @@
 	</changeSet>
 
 	<changeSet id="12" author="Satya">
-		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="AmortizationQueuing_Log" columnName="EodProcess" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="13" author="Satya">
@@ -264,7 +264,7 @@
 	</changeSet>
 
 	<changeSet id="15" author="Satya">
-		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="IncomeAmortization" columnName="Active" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="16" author="Satya">
@@ -298,7 +298,7 @@
 	</changeSet>
 
 	<changeSet id="18" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ProjectedAccruals" columnName="MonthEnd" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="19" author="Satya">
@@ -382,7 +382,7 @@
 	</changeSet>
 
 	<changeSet id="26" author="Satya">
-		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean"/>
+		<addNotNullConstraint tableName="ProjectedAccruals_WORK" columnName="MonthEnd" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="27" author="Satya">
@@ -491,7 +491,7 @@
 
 	<changeSet id="40" author="Satya">
 		<dropDefaultValue tableName="PROJECTEDACCRUALS" columnName="MONTHEND" />
-		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean"/>
+		<dropNotNullConstraint tableName="PROJECTEDACCRUALS" columnName="MONTHEND" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="41" author="Satya">
@@ -530,7 +530,7 @@
 	       ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="42" author="satyanarayana.g">
 		<sql>
 	       <![CDATA[
@@ -562,4 +562,97 @@
 	       ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="43" author="Satya">
+		<sql>
+			<![CDATA[
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'fm_finType';
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'fm_productCategory';
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'ft_finIntRate';
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'ft_finRateType';
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'ft_product';
+				Delete from RBFieldDetails where RBModule = 'AMZMTH' and RBEvent ='AMZMTH' and RBFldName = 'fpt_totalPftSchd';
+
+				Delete from Rules where RULEMODULE='AMZMTH' AND RULECODE = 'AMZMTH' AND RULEEVENT = 'AMZMTH';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="44" author="Satya">
+		<sql>
+			<![CDATA[
+				Insert into RBFieldDetails Values ('AMZMTH', 'AMZMTH', 'fm_productCategory', 'Product Category', 'nvarchar',8,'0','1',' ', 'static,global',' ');
+				Insert into RBFieldDetails Values ('AMZMTH', 'AMZMTH', 'fpt_totalPftSchd', 'Total Interest', 'decimal',18,0,0, ' ', 'static,global,calvalue', ' ');
+			]]>
+		</sql>
+	</sql>
+	</changeSet>
+
+	<changeSet id="45" author="Satya">
+		<insert tableName="Rules">
+			<column name="RULEID" valueComputed="(select Max(Ruleid)+1 from rules)" />
+			<column name="RULEMODULE">AMZMTH</column>
+			<column name="RULEEVENT">AMZMTH</column>
+			<column name="RULECODE">AMZMTH</column>
+			<column name="RULECODEDESC">Amortization Method Rule</column>
+			<column name="WAIVERDECIDER">null</column>
+			<column name="WAIVER">0</column>
+			<column name="WAIVERPERC">null</column>
+			<column name="SQLRULE" type="NCLOB">
+				<![CDATA[  
+					if (fpt_totalPftSchd == 0) {
+							Result = 'P' ; return;  
+					 } else if (fm_productCategory == 'ODFCLITY') {
+							Result = 'S' ; return;  
+					 } else {
+							Result = 'I' ; return;  
+					 }
+				]]>
+			</column>
+			<column name="ACTUALBLOCK"><![CDATA[(|if|FIELDLIST|fpt_totalPftSchd| |==|CALCVALUE|0| |1|0|1|1|0|P| |~)|~(|else if|FIELDLIST|fm_productCategory| |==|STATICTEXT|ODFCLITY| |1|0|1|1|0|S| |~)|~(|else|0|0|0|1|0|I| |~)|]]></column>
+			<column name="SEQORDER">0</column>
+			<column name="RETURNTYPE">S</column>
+			<column name="GROUPID">0</column>
+			<column name="VERSION">1</column>
+			<column name="LASTMNTBY">1000</column>
+			<column name="LASTMNTON" valueDate="current_timestamp" />
+			<column name="RECORDSTATUS">Approved</column>
+			<column name="ROLECODE">null</column>
+			<column name="NEXTROLECODE">null</column>
+			<column name="TASKID">null</column>
+			<column name="NEXTTASKID">null</column>
+			<column name="RECORDTYPE">null</column>
+			<column name="WORKFLOWID">0</column>
+			<column name="ALLOWDEVIATION">0</column>
+			<column name="DEVIATIONTYPE">#</column>
+			<column name="CALFEEMODIFY">0</column>
+			<column name="FEETOFINANCE">null</column>
+			<column name="REVOLVING">1</column>
+			<column name="FIXEDORVARIABLELIMIT">F</column>
+			<column name="ACTIVE">1</column>
+			<column name="FIELDS">fpt_totalPftSchd,fm_productCategory</column>
+			<column name="FEETYPEID">null</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="46" author="Satya">
+		<update tableName="Rules">
+			<column name="SQLRULE" type="NCLOB">
+				<![CDATA[ 
+					if (fpt_totalPftSchd == 0) {
+							Result = 'P' ; return;  
+					 } else if (fm_productCategory == 'ODFCLITY') {
+							Result = 'S' ; return;  
+					 } else {
+							Result = 'I' ; return;  
+					 }			
+				]]>
+			</column>
+			<column name="ACTUALBLOCK" type="NCLOB">
+				<![CDATA[
+					(|if|FIELDLIST|fpt_totalPftSchd| |==|CALCVALUE|0| |1|0|1|1|0|P| |~)|~(|else if|FIELDLIST|fm_productCategory| |==|STATICTEXT|ODFCLITY| |1|0|1|1|0|S| |~)|~(|else|0|0|0|1|0|I| |~)|
+				]]>
+			</column>
+			<where> RULEMODULE = 'AMZMTH' and RULECODE = 'AMZMTH' AND ACTIVE = 1</where>
+		</update>
+	</changeSet>
+
 </databaseChangeLog>
