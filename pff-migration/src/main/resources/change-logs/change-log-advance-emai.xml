@@ -3553,5 +3553,17 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="24" author="murthy.y">
+		<sql>
+			<![CDATA[
+				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_INT', 'Allow Advance Interest ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance Interest ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI', 'Allow Advance EMI ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance EMI ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_FRONT_END', 'Allow Front End (POS Reduction) ?','String', 1, 'N', 1, 0, null, null, 'Allow Front End (POS Reduction) ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REARE_END', 'Rear End ?','String', 1, 'Y', 1, 0, null, null, 'Allow Rear End ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS', 'Repayment Terms ?','String', 1, 'Y', 1, 0, null, null, 'Repayment Terms ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+            ]]> 
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

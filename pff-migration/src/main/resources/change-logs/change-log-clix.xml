@@ -1871,7 +1871,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="32" author="amanullah">
 		<createView viewName="ogl_view" replaceIfExists="true">
 			SELECT
@@ -1933,7 +1933,7 @@
 		</createView>
 	</changeSet>
 	<changeSet id="33" author="amanullah">
-	 <sql>
+		<sql>
 	 <![CDATA[
 	 	Delete from plf.master_def where master_type='OGL';
 	 	insert into plf.master_def values ('OGL','CLIX','SINCIN8W6P');
@@ -1943,9 +1943,9 @@
 		insert into plf.master_def values ('OGL','LAEP','164');
 		
 		]]>
-	</sql>
+		</sql>
 	</changeSet>
-		
+
 	<changeSet id="34" author="amanullah">
 		<sql>
 			<![CDATA[
@@ -1973,7 +1973,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="35" author="Manoj">
 		<sql>
 		<![CDATA[
@@ -2087,12 +2087,12 @@
 			INSERT INTO plf.DATA_ENGINE_COLUMN  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'MANDATE_RESPONSE' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')), 'RESP_BATCH_ID', 0, 'N', NULL, NULL, '${FILE_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'O');
 		
 		]]>
-		
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="36" author="Manoj">
-	<sql>
+		<sql>
 			<![CDATA[
 				delete from plf.smtparameters where sysparmcode = 'MANDATE_CUSTOM_STATUS';
 				INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, 
@@ -2100,10 +2100,10 @@
  				VALUES ('MANDATE_CUSTOM_STATUS', 'Mandate Acknowledgement', 'String', '0', 'ACK', 8, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="37" author="Manoj.P">
+	<changeSet id="37" author="Manoj.P">
 		<createView viewName="int_mandate_request_view" replaceIfExists="true">
 		
 	SELECT M.MANDATEID,
@@ -2165,7 +2165,7 @@
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM plf.MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="38" author="Manoj">
 		<sql>
 			<![CDATA[
@@ -2185,7 +2185,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="39" author="Manoj">
 		<createView viewName="int_mandate_request_view" replaceIfExists="true">
 			SELECT M.MANDATEID,
@@ -2247,7 +2247,7 @@
 			WHERE M.STATUS = 'NEW' AND M.MANDATEID NOT IN  (select MANDATEID FROM plf.MANDATE_REQUESTS where (status = 'AC' OR status = 'NEW'))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="40" author="Manoj">
 		<sql>
 		<![CDATA[
@@ -2361,10 +2361,10 @@
 			INSERT INTO plf.DATA_ENGINE_COLUMN  VALUES ((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'MANDATE_RESPONSE' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'MANDATES_IMPORT')), 'RESP_BATCH_ID', 0, 'N', NULL, NULL, '${FILE_ID}', NULL, '0', NULL, NULL, NULL, NULL, 'O');
 		
 			]]>
-		
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="41" author="Manoj.p">
 		<createView viewName="int_disbursement_request_view" replaceIfExists="true">
 			SELECT fa.paymentid,
@@ -2663,19 +2663,31 @@ UNION ALL
            FROM plf.disbursement_requests where channel='I'))
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="42" author="Manoj.P">
 		<sql>
 		<![CDATA[
 		       
-update plf.data_engine_table set statusupdate = 'UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)
+		update plf.data_engine_table set statusupdate = 'UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)
            QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC'' WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')
            QUERY:UPDATE PAYMENTINSTRUCTIONS SET STATUS =''AC'' WHERE PAYMENTINSTRUCTIONID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS =''AC'')
            QUERY:UPDATE INSURANCEPAYMENTINSTRUCTIONS SET STATUS = ''AC'' WHERE ID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS =''AC'')' where configid in (select id from data_engine_config where name = 'DISB_EXPORT_DEFAULT');
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="43" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='ADVANCE_PAYMENT_INT';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADVANCE_PAYMENT_EMI';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADVANCE_PAYMENT_EMI_STAGE_FRONT_END';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ADVANCE_PAYMENT_EMI_STAGE_REARE_END';
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='N' WHERE SYSPARMCODE='ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
 
