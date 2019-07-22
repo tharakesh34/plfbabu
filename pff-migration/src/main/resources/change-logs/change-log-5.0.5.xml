@@ -4725,9 +4725,9 @@
 	<changeSet author="vijaya.a" id="129" dbms="postgresql">
 		<sql>
 			<![CDATA[
-				alter table REJECTFINANCEMAIN add QuickDisbTemp smallint;
+				alter table REJECTFINANCEMAIN add column QuickDisbTemp smallint;
 				Update REJECTFINANCEMAIN set QuickDisbTemp = cast (QuickDisb As smallint);
-				alter table REJECTFINANCEMAIN drop QuickDisb;
+				alter table REJECTFINANCEMAIN drop column QuickDisb;
 				alter table REJECTFINANCEMAIN rename column QuickDisbTemp To QuickDisb;
 	        ]]>
 		</sql>
