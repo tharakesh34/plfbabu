@@ -7223,18 +7223,18 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="49" author="Manoj.P">
+
+<changeSet id="49" author="Manoj.P">
 	<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 				   T1.FINTYPE,
 				   T2.CUSTCIF LOVDESCCUSTCIF,
 				   T1.CUSTID,
                    T1.closingstatus
-				   FROM plf.FINANCEMAIN T1
-				   INNER JOIN plf.CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
-				   INNER JOIN plf.RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE where t1.closingstatus IS  NULL OR T1.ClosingStatus <> 'C';
+				   FROM FINANCEMAIN T1
+				   INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				   INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE 
+				   where T1.closingstatus IS  NULL OR T1.ClosingStatus != 'C'
 		</createView>
 </changeSet>
-
-
 </databaseChangeLog>
