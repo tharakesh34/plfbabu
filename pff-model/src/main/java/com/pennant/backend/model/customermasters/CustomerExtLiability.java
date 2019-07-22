@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -75,6 +76,9 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String sourceId;
 	private String inputSource;
 	private int custType = 1;
+	
+	@XmlElementWrapper(name = "extLiabilitiesPayments")
+	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();
 
 	public boolean isNew() {

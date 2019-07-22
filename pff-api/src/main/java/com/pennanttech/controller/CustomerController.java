@@ -43,6 +43,7 @@ import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedField;
@@ -540,6 +541,14 @@ public class CustomerController {
 					curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustomerExtLiability.setVersion(1);
+					if (CollectionUtils.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
+						for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability.getExtLiabilitiesPayments()) {
+							detail.setNewRecord(true);
+							detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							detail.setVersion(1);
+						}
+					}
 				} else {
 					List<CustomerExtLiability> prvCustomerExtLiabilityList = prvCustomerDetails
 							.getCustomerExtLiabilityList();
@@ -550,6 +559,16 @@ public class CustomerController {
 								curCustomerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustomerExtLiability.setVersion(prvCustomerExtLiability.getVersion() + 1);
 								curCustomerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								curCustomerExtLiability.setBefImage(prvCustomerExtLiability);
+								if (CollectionUtils.isNotEmpty(curCustomerExtLiability.getExtLiabilitiesPayments())) {
+									for (ExtLiabilityPaymentdetails detail : curCustomerExtLiability
+											.getExtLiabilitiesPayments()) {
+										detail.setNewRecord(false);
+										detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+										detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										//detail.setVersion(prvCustomerExtLiability.getVersion() + 1);
+									}
+								}
 								// copy properties
 								BeanUtils.copyProperties(curCustomerExtLiability, prvCustomerExtLiability);
 							}

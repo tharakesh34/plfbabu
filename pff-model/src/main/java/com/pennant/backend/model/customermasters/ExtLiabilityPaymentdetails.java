@@ -3,6 +3,8 @@ package com.pennant.backend.model.customermasters;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -11,7 +13,9 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long liabilityId;
+	@XmlElement
 	private String EMIType;
+	@XmlElement
 	private boolean installmentCleared;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;

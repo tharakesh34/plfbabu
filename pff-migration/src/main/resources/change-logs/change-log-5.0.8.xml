@@ -3090,4 +3090,42 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="51" author="vijaya.a">
+		<comment>Clix Installment clearence changes</comment>
+		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW" replaceIfExists="true">
+			SELECT t1.id,
+    			t1.LiabilityId,
+    			t1.EmiType,
+			    t1.InstallmentCleared,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+   		    FROM EXTERNAL_LIABILITIES_PD_temp t1
+			UNION ALL
+ 			SELECT t1.id,
+    			t1.LiabilityId,
+    			t1.EmiType,
+			    t1.InstallmentCleared,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+   			FROM EXTERNAL_LIABILITIES_PD t1
+   			WHERE NOT (EXISTS (SELECT 1 FROM EXTERNAL_LIABILITIES_PD_temp WHERE EXTERNAL_LIABILITIES_PD_temp.LiabilityId = T1.LiabilityId))	
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>

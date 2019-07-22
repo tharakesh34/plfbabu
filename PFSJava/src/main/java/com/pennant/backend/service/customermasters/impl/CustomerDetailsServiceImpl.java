@@ -189,6 +189,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -2367,12 +2369,77 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", liability.getLoanBank()));
 				auditDetail.setErrorDetail(validateMasterCode("OtherBankFinanceType", liability.getFinType()));
 				auditDetail.setErrorDetail(validateMasterCode("CustomerStatusCode", liability.getFinStatus()));
+				if (CollectionUtils.isNotEmpty(liability.getExtLiabilitiesPayments())) {
+					auditDetail.setErrorDetail(validateExtLiabilitiesPayments(liability));
+				}
 			}
 		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
 
+	private ErrorDetail validateExtLiabilitiesPayments(CustomerExtLiability liability) {
+		logger.debug(Literal.ENTERING);
+		//List grater than tenure
+		ErrorDetail errorDetail = new ErrorDetail();
+		if(liability.getExtLiabilitiesPayments().size() > liability.getTenure()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "No of instalment Details ";
+			valueParm[1] = "Tenure";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
+			return errorDetail;
+		}
+		//EMIType invalidate validation
+		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
+		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
+				liability.getTenure()); 
+		if(CollectionUtils.isNotEmpty(paymentDetails)) {
+			for(int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
+				int emiCount = 0;
+				for(int j = 0; j < paymentDetails.size(); j++) {
+					if(liability.getExtLiabilitiesPayments().get(i).getEMIType().equals((paymentDetails.get(j).getEMIType()))) {
+						emiCount ++;
+					}
+				}
+				if(emiCount == 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Emi Type";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm));
+					return errorDetail;
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetail;
+	}
+
+	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
+		Date dtStartDate = DateUtility.addMonths(startDate, 1);
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
+		return months;
+	}
+	
+	private List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate, int noOfMonths) {
+		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
+		if (startDate == null || endDate == null) {
+			return list;
+		}
+
+		Date tempStartDate = (Date) startDate.clone();
+		Date tempEndDate = (Date) endDate.clone();
+
+		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
+			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
+			temp.setEMIType(key);
+			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			list.add(temp);
+		}
+
+		return list;
+	}
+	
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
 
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
@@ -4487,7 +4554,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (!StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
 				&& !StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), type);
-			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "");
 			customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), type);
 		}
 	}
