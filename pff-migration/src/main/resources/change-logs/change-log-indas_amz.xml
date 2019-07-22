@@ -583,7 +583,6 @@
 				Insert into RBFieldDetails Values ('AMZMTH', 'AMZMTH', 'fpt_totalPftSchd', 'Total Interest', 'decimal',18,0,0, ' ', 'static,global,calvalue', ' ');
 			]]>
 		</sql>
-	</sql>
 	</changeSet>
 
 	<changeSet id="45" author="Satya">
