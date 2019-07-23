@@ -7247,9 +7247,9 @@
                    T1.closingstatus,
                    T1.Finisactive,
                    T1.MaturityDate
-				   FROM plf.FINANCEMAIN T1
-				   INNER JOIN plf.CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
-				   INNER JOIN plf.RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE where t1.closingstatus IS  NULL OR T1.ClosingStatus != 'C';
+				   FROM FINANCEMAIN T1
+				   INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				   INNER JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE where t1.closingstatus IS  NULL OR T1.ClosingStatus != 'C'
 		</createView>
 </changeSet>
 </databaseChangeLog>
