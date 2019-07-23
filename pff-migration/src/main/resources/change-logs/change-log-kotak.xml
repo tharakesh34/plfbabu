@@ -314,4 +314,11 @@
 			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
+	<changeSet id="22" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CALCULATE_GST_ON_GSTRATE_MASTER';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
