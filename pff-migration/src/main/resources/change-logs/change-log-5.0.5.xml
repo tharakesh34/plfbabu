@@ -4852,5 +4852,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="137" author="aditya.a">	
+		<sql>
+			<![CDATA[
+				delete from ErrorDetails where Code = '60408';
+				insert into ErrorDetails values ('60408', 'EN', 'E','Loan cannot be cancelled since there are disbursement instructions with status Awaiting Confirmation',null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
