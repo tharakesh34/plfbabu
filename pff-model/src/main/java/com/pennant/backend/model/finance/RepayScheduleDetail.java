@@ -119,6 +119,8 @@ public class RepayScheduleDetail implements Serializable {
 	private int repaySchID = 0;
 
 	private Date valueDate;
+	private long taxHeaderId = 0;
+	private TaxHeader taxHeader;
 
 	public RepayScheduleDetail() {
 
@@ -650,6 +652,22 @@ public class RepayScheduleDetail implements Serializable {
 
 	public void setPenaltyWaiverIGST(BigDecimal penaltyWaiverIGST) {
 		this.penaltyWaiverIGST = penaltyWaiverIGST;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
+
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
 	}
 
 }

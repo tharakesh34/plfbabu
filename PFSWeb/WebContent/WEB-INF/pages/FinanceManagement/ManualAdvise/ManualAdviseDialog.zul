@@ -189,6 +189,12 @@
 											style="border:none; background-color:white; font-weight:bold;" />
 									</row>
 									<row>
+										<label
+											id="label_ManualAdviseDialog_CESS" value="${c:l('label_ManualAdviseDialog_CESS.value')}" />
+										<decimalbox id="cess" maxlength="18" readonly="true"
+											style="border:none; background-color:white; font-weight:bold;" />
+									</row>
+									<row>
 										<label id="label_ManualAdviseDialog_TotalGST" value="${c:l('label_ManualAdviseDialog_TotalGST.value')}" />
 										<decimalbox id="totalGST" maxlength="18" readonly="true"
 											style="border:none; background-color:white; font-weight:bold;" />

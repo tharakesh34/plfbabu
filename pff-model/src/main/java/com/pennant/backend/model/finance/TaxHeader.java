@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  GSTRateDAO.java                                                   * 	  
+ * FileName    		:  TaxHeader.java                                                   		* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  20-05-2019    														*
+ * Creation Date    :  
  *                                                                  						*
- * Modified Date    :  20-05-2019    														*
+ * Modified Date    :      																	*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 20-05-2019       PENNANT	                 0.1                                            * 
+ * 23-07-2019       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,47 +39,57 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.rmtmasters;
+ */
+package com.pennant.backend.model.finance;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.rmtmasters.GSTRate;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.model.Entity;
 
-public interface GSTRateDAO extends BasicCrudDao<GSTRate> {
+public class TaxHeader implements Entity {
 
-	/**
-	 * Fetch the Record GSTRate by key field
-	 * 
-	 * @param id
-	 *            id of the GSTRate.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return GSTRate
-	 */
-	GSTRate getGSTRate(long id, String type);
+	private long headerId = Long.MIN_VALUE;
+	private List<Taxes> taxDetails = new ArrayList<Taxes>();
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param id
-	 *            id of the GSTRate.
-	 * @param fromState
-	 *            fromState of the GSTRate.
-	 * @param toState
-	 *            toState of the GSTRate.
-	 * @param taxType
-	 *            taxType of the GSTRate.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long id, String fromState, String toState, String taxType, TableType tableType);
+	public TaxHeader() {
 
-	boolean isGSTExist(String fromState, String toState, String calOn);
+	}
 
-	List<GSTRate> getGSTRateByStates(String fromState, String toState, String tableType);
+	public TaxHeader(long headerId) {
+		this.headerId = headerId;
+	}
+	
+	public long getHeaderId() {
+		return headerId;
+	}
+
+	public void setHeaderId(long headerId) {
+		this.headerId = headerId;
+	}
+
+	@Override
+	public boolean isNew() {
+		return false;
+	}
+
+	@Override
+	public long getId() {
+		return headerId;
+	}
+
+	@Override
+	public void setId(long id) {
+		this.headerId = id;
+
+	}
+
+	public List<Taxes> getTaxDetails() {
+		return taxDetails;
+	}
+
+	public void setTaxDetails(List<Taxes> taxDetails) {
+		this.taxDetails = taxDetails;
+	}
 
 }

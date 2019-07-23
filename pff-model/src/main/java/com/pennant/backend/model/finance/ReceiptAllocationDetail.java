@@ -54,6 +54,8 @@ public class ReceiptAllocationDetail implements Serializable {
 	private String taxType = "";
 	private String feeTypeCode = "";
 	private long feeId;
+	private long taxHeaderId = 0;
+	private TaxHeader taxHeader;
 
 	//Applicable only for allocation summary in receipt header
 	private boolean isSubListAvailable = false;
@@ -367,6 +369,22 @@ public class ReceiptAllocationDetail implements Serializable {
 
 	public void setWaivedUGST(BigDecimal waivedUGST) {
 		this.waivedUGST = waivedUGST;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
+
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
 	}
 
 }

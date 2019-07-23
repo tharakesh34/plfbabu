@@ -360,7 +360,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}
-		sql.append(", WaivedGST, ReferenceId");
+		sql.append(", WaivedGST, ReferenceId, TaxHeaderId");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values (:FeeID, :FinReference, :OriginationFee , :FinEvent, :FeeTypeID, :FeeSeq, :FeeOrder");
@@ -374,7 +374,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", :ActPercentage");
 		}
-		sql.append(", :WaivedGST, :ReferenceId");
+		sql.append(", :WaivedGST, :ReferenceId, :TaxHeaderId");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -454,6 +454,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		}
 		sql.append(", WaivedGST = :WaivedGST");
 		sql.append(", ReferenceId = :ReferenceId");
+		sql.append(", TaxHeaderId = :TaxHeaderId");
 		sql.append(", Version = :Version");
 		sql.append(", LastMntBy = :LastMntBy");
 		sql.append(", LastMntOn = :LastMntOn");
@@ -782,7 +783,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		if (!isWIF) {
 			sql.append(", ActPercentage");
 		}
-		sql.append(", WaivedGST, ReferenceId");
+		sql.append(", WaivedGST, ReferenceId, TaxHeaderId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc");

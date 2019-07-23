@@ -4403,6 +4403,7 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->
@@ -4621,6 +4622,7 @@
 		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
 		<property name="subventionDetailDAO" ref="subventionDetailDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -4746,6 +4748,7 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -5442,6 +5445,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="assignmentDAO" ref="assignmentDAO" />
 		<property name="assignmentDealDAO" ref="assignmentDealDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 
 	<!--============ Finance Repayment Details ============== -->
@@ -5516,6 +5520,7 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="gstRateDAO" ref="gstRateDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->
@@ -10585,6 +10590,7 @@
 		<constructor-arg ref="financeMainDAO" />
 		<constructor-arg ref="financeTaxDetailDAO" />
 		<constructor-arg ref="ruleExecutionUtil" />
+		<constructor-arg ref="gstRateDAO" />
 	</bean>
 
 	<!-- Manufacturer -->
@@ -11010,4 +11016,5 @@
 		<property name="ckycDAO" ref="ckycDAO" />
 	</bean>
 
+	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
 </beans>

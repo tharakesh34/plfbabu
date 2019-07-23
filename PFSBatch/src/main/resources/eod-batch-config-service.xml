@@ -509,5 +509,7 @@
 		<property name="projectedAmortizationDAO" ref="projectedAmortizationDAO" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 	</bean>
+	
+	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
 
 </beans>

@@ -38,6 +38,7 @@ import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
+import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -77,6 +78,8 @@ import com.pennant.backend.model.finance.ManualAdviseReserve;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -87,6 +90,7 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -122,6 +126,7 @@ public class RepaymentProcessUtil {
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
 	private ReceiptCalculator receiptCalculator;
+	private TaxHeaderDetailsDAO taxHeaderDetailsDAO; //CESS related changes
 
 	//GST Invoice Report changes
 	private GSTInvoiceTxnService gstInvoiceTxnService;
@@ -1104,6 +1109,21 @@ public class RepaymentProcessUtil {
 										advise.setWaivedSGST(advise.getWaivedSGST().add(movement.getWaivedSGST()));
 										advise.setWaivedIGST(advise.getWaivedIGST().add(movement.getWaivedIGST()));
 										advise.setWaivedUGST(advise.getWaivedUGST().add(movement.getWaivedUGST()));
+
+										TaxHeader taxHeader = movement.getTaxHeader();
+										if (taxHeader != null) {
+											List<Taxes> taxDetails = taxHeader.getTaxDetails();
+											if (CollectionUtils.isNotEmpty(taxDetails)) {
+												for (Taxes taxes : taxDetails) {
+													if (RuleConstants.CODE_CESS.equals(taxes.getTaxType())) {
+														advise.setPaidCESS(
+																advise.getPaidCESS().add(taxes.getPaidTax()));
+														advise.setWaivedCESS(
+																advise.getWaivedCESS().add(taxes.getWaivedTax()));
+													}
+												}
+											}
+										}
 									}
 								}
 							}
@@ -1145,11 +1165,42 @@ public class RepaymentProcessUtil {
 										advise.setWaivedIGST(movement.getWaivedIGST());
 										advise.setWaivedUGST(movement.getWaivedUGST());
 
+										TaxHeader taxHeader = movement.getTaxHeader();
+										if (taxHeader != null) {
+											List<Taxes> taxDetails = taxHeader.getTaxDetails();
+											if (CollectionUtils.isNotEmpty(taxDetails)) {
+												for (Taxes taxes : taxDetails) {
+													if (RuleConstants.CODE_CESS.equals(taxes.getTaxType())) {
+														advise.setPaidCESS(
+																taxes.getPaidTax());
+														advise.setWaivedCESS(
+																taxes.getWaivedTax());
+													}
+												}
+											}
+										}
 										getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
 									}
 								}
 							}
 
+						}
+					}
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(rch.getAllocations())) {
+				for (ReceiptAllocationDetail allocation : rch.getAllocations()) {
+					if (StringUtils.isNotBlank(allocation.getTaxType()) && allocation.getTaxHeader() != null) {
+						List<Taxes> taxDetails = allocation.getTaxHeader().getTaxDetails();
+						if (CollectionUtils.isNotEmpty(taxDetails)) {
+							long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(),
+									TableType.MAIN_TAB.getSuffix());
+							for (Taxes taxes : taxDetails) {
+								taxes.setReferenceId(headerId);
+							}
+							getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.MAIN_TAB.getSuffix());
+							allocation.setTaxHeaderId(headerId);
 						}
 					}
 				}
@@ -1278,6 +1329,17 @@ public class RepaymentProcessUtil {
 			// Manual Advise Movements
 			if (isApproval) {
 				for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
+					if (movement.getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(movement.getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = movement.getTaxHeader().getTaxDetails();
+						long headerId = getTaxHeaderDetailsDAO().save(movement.getTaxHeader(),
+								TableType.MAIN_TAB.getSuffix());
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.MAIN_TAB.getSuffix());
+						movement.setTaxHeaderId(headerId);
+					}
 					movement.setReceiptID(receiptID);
 					movement.setReceiptSeqID(receiptSeqID);
 					getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
@@ -1324,7 +1386,7 @@ public class RepaymentProcessUtil {
 			long repayID = getFinanceRepaymentsDAO().saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 			List<RepayScheduleDetail> rpySchdList = rph.getRepayScheduleDetails();
-			if (rpySchdList != null && !rpySchdList.isEmpty()) {
+			if (CollectionUtils.isNotEmpty(rpySchdList)) {
 				for (int i = 0; i < rpySchdList.size(); i++) {
 
 					RepayScheduleDetail rpySchd = rpySchdList.get(i);
@@ -1332,6 +1394,19 @@ public class RepaymentProcessUtil {
 					rpySchd.setRepayID(repayID);
 					rpySchd.setRepaySchID(i + 1);
 					rpySchd.setLinkedTranId(rph.getLinkedTranId());
+
+					if (rpySchd.getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(rpySchd.getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = rpySchd.getTaxHeader().getTaxDetails();
+						long headerId = getTaxHeaderDetailsDAO().save(rpySchd.getTaxHeader(),
+								TableType.MAIN_TAB.getSuffix());
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.MAIN_TAB.getSuffix());
+						rpySchd.setTaxHeaderId(headerId);
+					}
 
 					if (isApproval) {
 						// update fee schedule details
@@ -2250,6 +2325,14 @@ public class RepaymentProcessUtil {
 	@Autowired
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {
+		return taxHeaderDetailsDAO;
+	}
+
+	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
+		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
 
 }

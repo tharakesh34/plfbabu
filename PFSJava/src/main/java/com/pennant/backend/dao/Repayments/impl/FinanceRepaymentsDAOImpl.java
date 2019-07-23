@@ -507,7 +507,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(
 				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow,");
 		insertSql.append(" PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST,");
-		insertSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST) ");
+		insertSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId) ");
 		insertSql.append(
 				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
 		insertSql.append(
@@ -523,7 +523,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(
 				" :PriSchdWaivedNow, :SchdFeeWaivedNow, :SchdInsWaivedNow, :SchdSuplRentWaivedNow, :SchdIncrCostWaivedNow,");
 		insertSql.append(" :PaidPenaltyCGST, :PaidPenaltySGST, :PaidPenaltyUGST, :PaidPenaltyIGST,");
-		insertSql.append(" :PenaltyWaiverCGST, :PenaltyWaiverSGST, :PenaltyWaiverUGST, :PenaltyWaiverIGST) ");
+		insertSql.append(
+				" :PenaltyWaiverCGST, :PenaltyWaiverSGST, :PenaltyWaiverUGST, :PenaltyWaiverIGST, :TaxHeaderId) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(repaySchdList.toArray());
@@ -752,7 +753,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		selectSql.append(
 				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow,");
 		selectSql.append(" PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST,");
-		selectSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST");
+		selectSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId");
 		selectSql.append(" From FinRepayScheduleDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where RepayID=:RepayID ");

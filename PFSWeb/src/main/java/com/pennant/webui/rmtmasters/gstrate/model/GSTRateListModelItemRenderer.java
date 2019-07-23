@@ -51,12 +51,14 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 
 /**
  * Item renderer for listitems in the listbox.
@@ -66,7 +68,7 @@ public class GSTRateListModelItemRenderer implements ListitemRenderer<GSTRate>, 
 
 	private static final long serialVersionUID = 1L;
 
-	private List<ValueLabel> listTaxType = PennantStaticListUtil.getTaxtTypeList();
+	private List<Property> listTaxType = PennantAppUtil.getTaxtTypeList();
 	private List<ValueLabel> listCalcOn = PennantStaticListUtil.getCalcOnList();
 
 	public GSTRateListModelItemRenderer() {
@@ -81,7 +83,7 @@ public class GSTRateListModelItemRenderer implements ListitemRenderer<GSTRate>, 
 		lc.setParent(item);
 		lc = new Listcell(gSTRate.getToState() + " - " + gSTRate.getToStateName());
 		lc.setParent(item);
-		lc = new Listcell(PennantStaticListUtil.getlabelDesc(gSTRate.getTaxType(), listTaxType));
+		lc = new Listcell(PennantStaticListUtil.getPropertyValue(listTaxType, gSTRate.getTaxType()));
 		lc.setParent(item);
 		lc = new Listcell(String
 				.valueOf(PennantApplicationUtil.amountFormate(gSTRate.getAmount(), PennantConstants.defaultCCYDecPos)));

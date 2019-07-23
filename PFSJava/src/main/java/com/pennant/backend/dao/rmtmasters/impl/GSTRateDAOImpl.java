@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.rmtmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -240,4 +242,59 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	public boolean isGSTExist(String fromState, String toState, String calcOn) {
+		logger.debug(Literal.ENTERING);
+
+		// Prepare the SQL.
+		String sql;
+		String whereClause = " FromState = :FromState AND ToState = :ToState AND TaxType = :CalcOn";
+
+		sql = QueryUtil.getCountQuery("GST_RATES_AVIEW", whereClause);
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("FromState", fromState);
+		paramSource.addValue("ToState", toState);
+		paramSource.addValue("CalcOn", calcOn);
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		
+		return exists;
+	}
+
+	@Override
+	public List<GSTRate> getGSTRateByStates(String fromState, String toState, String tableType) {
+		logger.debug(Literal.ENTERING);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("fromState", fromState);
+		source.addValue("toState", toState);
+		source.addValue("active", true);
+
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("SELECT ");
+		sql.append(" id, fromState, toState, taxType, calcType, amount,");
+		sql.append(" percentage, calcOn, active, ");
+		if (StringUtils.trimToEmpty(tableType).contains("View")) {
+			sql.append(" fromStateName , toStateName,");
+		}
+		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId From GST_RATES");
+		sql.append(tableType);
+		sql.append(" Where fromState = :fromState and toState = :toState and active = :active");
+
+		logger.debug("selectSql : " + sql.toString());
+		RowMapper<GSTRate> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(GSTRate.class);
+
+		logger.debug(Literal.LEAVING);
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+	}
 }

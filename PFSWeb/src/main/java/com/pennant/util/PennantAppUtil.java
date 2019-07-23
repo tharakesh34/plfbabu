@@ -2282,6 +2282,26 @@ public class PennantAppUtil {
 		return configNames;
 	}
 
+	public static List<Property> getTaxtTypeList() {
+		List<Property> configNames = new ArrayList<>();
+
+		Search search = new Search();
+		search.setSearchClass(Configuration.class);
+		search.addTabelName("Taxtype");
+		search.addField("Name");
+		search.addFilterEqual("Active", true);
+
+		List<Configuration> list = SEARCH_PROCESSOR.getResults(search);
+
+		Property property;
+		for (Configuration role : list) {
+			property = new Property(role.getName(), role.getName());
+			configNames.add(property);
+		}
+
+		return configNames;
+	}
+
 	public static SearchProcessor getSearchProcessor() {
 		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 	}

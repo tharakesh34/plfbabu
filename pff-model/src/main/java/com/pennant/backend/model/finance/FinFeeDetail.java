@@ -152,6 +152,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private FinTaxDetails finTaxDetails = new FinTaxDetails();
 	@XmlElement
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>(1);
+	private long taxHeaderId = 0;
+	private TaxHeader taxHeader;
 
 	public FinFeeDetail() {
 		super();
@@ -188,6 +190,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("alwPreIncomization");
 		excludeFields.add("finFeeReceipts");
 		excludeFields.add("calculatedOn");
+		excludeFields.add("taxHeader");
 
 		return excludeFields;
 	}
@@ -740,4 +743,19 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.waivedGST = waivedGST;
 	}
 
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
 }

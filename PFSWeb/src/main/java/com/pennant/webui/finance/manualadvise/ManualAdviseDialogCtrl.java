@@ -85,6 +85,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -94,6 +95,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -169,6 +171,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	protected Decimalbox igst;
 	protected Decimalbox ugst;
 	protected Decimalbox totalGST;
+	protected Decimalbox cess;
 	protected Decimalbox total;
 
 	private FinanceMain financeMain;
@@ -518,36 +521,49 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 				this.feeAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 				this.feeAmount.setScale(formatter);
-				this.feeAmount.setValue(PennantAppUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
+				this.feeAmount
+						.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getNetAmountOriginal(), formatter));
 				readOnlyComponent(true, this.feeAmount);
 
 				if (finFeeDetail.getFinTaxDetails() != null) {
 					FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
 
 					this.cgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.cgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetCGST(), formatter));
+					this.cgst.setValue(PennantApplicationUtil.formateAmount(finTaxDetails.getNetCGST(), formatter));
 
 					this.sgst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.sgst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetSGST(), formatter));
+					this.sgst.setValue(PennantApplicationUtil.formateAmount(finTaxDetails.getNetSGST(), formatter));
 
 					this.igst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.igst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetIGST(), formatter));
+					this.igst.setValue(PennantApplicationUtil.formateAmount(finTaxDetails.getNetIGST(), formatter));
 
 					this.ugst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.ugst.setValue(PennantAppUtil.formateAmount(finTaxDetails.getNetUGST(), formatter));
+					this.ugst.setValue(PennantApplicationUtil.formateAmount(finTaxDetails.getNetUGST(), formatter));
+					
+					List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
+					BigDecimal cessAmount = BigDecimal.ZERO;
+					for (Taxes taxes : taxDetails) {
+						if (StringUtils.isNotBlank(taxes.getTaxType())
+								&& StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CESS)) {
+							cessAmount = cessAmount.add(taxes.getNetTax());
+						}
+					}
+					this.cess.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
+					this.cess.setValue(PennantApplicationUtil.formateAmount(cessAmount, formatter));
+
 
 					BigDecimal totalGstAmount = BigDecimal.ZERO;
 					totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
-							.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
+							.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST().add(cessAmount));
 
 					BigDecimal totalAmount = BigDecimal.ZERO;
 					totalAmount = finFeeDetail.getNetAmountOriginal().add(totalGstAmount);
 
 					this.totalGST.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.totalGST.setValue(PennantAppUtil.formateAmount(totalGstAmount, formatter));
+					this.totalGST.setValue(PennantApplicationUtil.formateAmount(totalGstAmount, formatter));
 
 					this.total.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-					this.total.setValue(PennantAppUtil.formateAmount(totalAmount, formatter));
+					this.total.setValue(PennantApplicationUtil.formateAmount(totalAmount, formatter));
 				}
 			}
 		} else {

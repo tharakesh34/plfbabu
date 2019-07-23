@@ -65,6 +65,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,6 +76,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -116,7 +118,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 	private transient GSTRateListCtrl gstRateListCtrl;
 	private transient GSTRateService gstRateService;
 
-	private List<ValueLabel> listTaxType = PennantStaticListUtil.getTaxtTypeList();
+	private List<Property> listTaxType = PennantAppUtil.getTaxtTypeList();
 	private List<ValueLabel> listCalcType = PennantStaticListUtil.getCalcTypeList();
 	private List<ValueLabel> listCalcOn = PennantStaticListUtil.getCalcOnList();
 
@@ -345,7 +347,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		this.fromState.setDescription(aGSTRate.getFromStateName());
 		this.toState.setValue(aGSTRate.getToState());
 		this.toState.setDescription(aGSTRate.getToStateName());
-		fillComboBox(this.taxType, aGSTRate.getTaxType(), listTaxType, "");
+		fillList(this.taxType, listTaxType, aGSTRate.getTaxType());
 		fillComboBox(this.calcType, aGSTRate.getCalcType(), listCalcType, "");
 		this.amount.setValue(
 				PennantApplicationUtil.formateAmount(aGSTRate.getAmount(), PennantConstants.defaultCCYDecPos));
@@ -354,14 +356,17 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 		this.active.setChecked(aGSTRate.isActive());
 
 		this.recordStatus.setValue(aGSTRate.getRecordStatus());
-		onchangeCalcType();
-		onchangetaxType(aGSTRate.getCalcOn());
 
 		if (aGSTRate.isNew() || (aGSTRate.getRecordType() != null ? aGSTRate.getRecordType() : "")
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			fillComboBox(this.calcType, RuleConstants.CALCTYPE_PERCENTAGE, listCalcType, "");
 			this.active.setChecked(true);
 			this.active.setDisabled(true);
+			onchangetaxType(RuleConstants.CALCON_TRANSACTION_AMOUNT);
+		} else {
+			onchangetaxType(aGSTRate.getCalcOn());
 		}
+		onchangeCalcType();
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -481,7 +486,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 
 	private void onchangetaxType(String calcValue) {
 		String calcTypeVal = getComboboxValue(this.taxType);
-		if (!StringUtils.equals(RuleConstants.CODE_CESST, calcTypeVal)) {
+		if (!StringUtils.equals(RuleConstants.CODE_CESS, calcTypeVal)) {
 			String exlcudeFeilds = "," + RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST + "," + RuleConstants.CODE_CGST
 					+ "," + RuleConstants.CODE_SGST + "," + RuleConstants.CODE_IGST + "," + RuleConstants.CODE_UGST
 					+ "," + RuleConstants.CODE_TOTAL_GST + ",";
@@ -489,7 +494,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 					listCalcOn, exlcudeFeilds);
 		} else {
 			fillComboBox(this.calcOn, StringUtils.isNotBlank(calcValue) ? calcValue : PennantConstants.List_Select,
-					listCalcOn, "," + RuleConstants.CODE_TOTAL_GST + ",");
+					listCalcOn, "");
 		}
 	}
 

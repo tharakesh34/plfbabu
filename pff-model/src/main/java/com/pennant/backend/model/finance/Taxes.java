@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  GSTRateDAO.java                                                   * 	  
+ * FileName    		:  Taxes.java                                                   		* 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  20-05-2019    														*
+ * Creation Date    :  
  *                                                                  						*
- * Modified Date    :  20-05-2019    														*
+ * Modified Date    :      																	*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 20-05-2019       PENNANT	                 0.1                                            * 
+ * 23-07-2019       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -39,47 +39,102 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
-package com.pennant.backend.dao.rmtmasters;
+ */
+package com.pennant.backend.model.finance;
 
-import java.util.List;
+import java.math.BigDecimal;
 
-import com.pennant.backend.dao.impl.BasicCrudDao;
-import com.pennant.backend.model.rmtmasters.GSTRate;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.model.Entity;
 
-public interface GSTRateDAO extends BasicCrudDao<GSTRate> {
+public class Taxes implements Entity {
+	
+	private long id = Long.MIN_VALUE;
+	private long referenceId = Long.MIN_VALUE;
+	private String taxType;
+	private BigDecimal taxPerc = BigDecimal.ZERO;
 
-	/**
-	 * Fetch the Record GSTRate by key field
-	 * 
-	 * @param id
-	 *            id of the GSTRate.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return GSTRate
-	 */
-	GSTRate getGSTRate(long id, String type);
+	private BigDecimal actualTax = BigDecimal.ZERO;
+	private BigDecimal paidTax = BigDecimal.ZERO;
+	private BigDecimal netTax = BigDecimal.ZERO;
+	private BigDecimal remFeeTax = BigDecimal.ZERO;
+	private BigDecimal waivedTax = BigDecimal.ZERO;
 
-	/**
-	 * Checks whether another record exists with the key attributes in the specified table type.
-	 * 
-	 * @param id
-	 *            id of the GSTRate.
-	 * @param fromState
-	 *            fromState of the GSTRate.
-	 * @param toState
-	 *            toState of the GSTRate.
-	 * @param taxType
-	 *            taxType of the GSTRate.
-	 * @param tableType
-	 *            The type of the table.
-	 * @return true if the record exists.
-	 */
-	boolean isDuplicateKey(long id, String fromState, String toState, String taxType, TableType tableType);
+	@Override
+	public boolean isNew() {
+		return false;
+	}
 
-	boolean isGSTExist(String fromState, String toState, String calOn);
+	@Override
+	public long getId() {
+		return id;
+	}
 
-	List<GSTRate> getGSTRateByStates(String fromState, String toState, String tableType);
+	@Override
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(long referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public String getTaxType() {
+		return taxType;
+	}
+
+	public void setTaxType(String taxType) {
+		this.taxType = taxType;
+	}
+
+	public BigDecimal getTaxPerc() {
+		return taxPerc;
+	}
+
+	public void setTaxPerc(BigDecimal taxPerc) {
+		this.taxPerc = taxPerc;
+	}
+
+	public BigDecimal getActualTax() {
+		return actualTax;
+	}
+
+	public BigDecimal getPaidTax() {
+		return paidTax;
+	}
+
+	public BigDecimal getNetTax() {
+		return netTax;
+	}
+
+	public void setActualTax(BigDecimal actualTax) {
+		this.actualTax = actualTax;
+	}
+
+	public void setPaidTax(BigDecimal paidTax) {
+		this.paidTax = paidTax;
+	}
+
+	public void setNetTax(BigDecimal netTax) {
+		this.netTax = netTax;
+	}
+
+	public BigDecimal getRemFeeTax() {
+		return remFeeTax;
+	}
+	public void setRemFeeTax(BigDecimal remFeeTax) {
+		this.remFeeTax = remFeeTax;
+	}
+
+	public void setWaivedTax(BigDecimal waivedTax) {
+		this.waivedTax = waivedTax;
+	}
+
+	public BigDecimal getWaivedTax() {
+		return waivedTax;
+	}
 
 }

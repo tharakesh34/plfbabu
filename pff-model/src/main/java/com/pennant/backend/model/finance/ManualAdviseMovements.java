@@ -41,6 +41,9 @@ public class ManualAdviseMovements implements Serializable {
 	private Date valueDate;
 	private long waiverID = Long.MIN_VALUE;
 
+	private long taxHeaderId = 0;
+	private TaxHeader taxHeader;
+
 	// Getters and Setters
 
 	public long getMovementID() {
@@ -241,6 +244,22 @@ public class ManualAdviseMovements implements Serializable {
 
 	public void setWaivedIGST(BigDecimal waivedIGST) {
 		this.waivedIGST = waivedIGST;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
+
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
 	}
 
 }

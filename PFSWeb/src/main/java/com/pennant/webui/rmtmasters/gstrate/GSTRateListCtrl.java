@@ -61,11 +61,13 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.service.rmtmasters.GSTRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.rmtmasters.gstrate.model.GSTRateListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -114,7 +116,7 @@ public class GSTRateListCtrl extends GFCBaseListCtrl<GSTRate> {
 
 	private transient GSTRateService gstRateService;
 
-	private List<ValueLabel> listTaxType = PennantStaticListUtil.getTaxtTypeList();
+	private List<Property> listTaxType = PennantAppUtil.getTaxtTypeList();
 	private List<ValueLabel> listCalcOn = PennantStaticListUtil.getCalcOnList();
 
 	/**
@@ -161,7 +163,7 @@ public class GSTRateListCtrl extends GFCBaseListCtrl<GSTRate> {
 		registerField("calcOn", listheader_CalcOn, SortOrder.NONE, calcOn, sortOperator_CalcOn, Operators.STRING);
 		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_Active, Operators.BOOLEAN);
 
-		fillComboBox(this.taxType, PennantConstants.List_Select, listTaxType, "");
+		fillList(this.taxType, listTaxType, PennantConstants.List_Select);
 		fillComboBox(this.calcOn, PennantConstants.List_Select, listCalcOn, "");
 
 		// Render the page and display the data.

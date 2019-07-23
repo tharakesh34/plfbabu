@@ -393,6 +393,7 @@
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 	<bean id="repayPostingUtil" class="com.pennant.app.util.RepaymentPostingsUtil" scope="prototype">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
@@ -832,9 +833,13 @@
 		<constructor-arg ref="financeMainDAO" />
 		<constructor-arg ref="financeTaxDetailDAO" />
 		<constructor-arg ref="ruleExecutionUtil" />
+		<constructor-arg ref="gstRateDAO" />
 	</bean>
 	
 	<!-- GST FinTaxDetails -->
 	<bean id="finTaxDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinTaxDetailsDAOImpl" parent="sequenceDao" />
+	
+	<!-- GSTRate -->
+	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl" parent="sequenceDao" />
 
 </beans>

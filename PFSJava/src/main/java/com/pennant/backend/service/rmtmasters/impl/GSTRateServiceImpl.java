@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.service.rmtmasters.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -55,6 +56,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.rmtmasters.GSTRateService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -340,6 +342,58 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
 		}
 
+		if (StringUtils.equals(gSTRate.getTaxType(), RuleConstants.CODE_CESS)
+				&& !(RuleConstants.CALCON_TRANSACTION_AMOUNT.equals(gSTRate.getCalcOn()))) {
+
+			String gstOrInclGst = RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST + "," + RuleConstants.CODE_TOTAL_GST;
+			if (gstOrInclGst.contains(gSTRate.getCalcOn())) {
+				boolean cgst = !gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(),
+						RuleConstants.CODE_CGST);
+				boolean sgst = !gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(),
+						RuleConstants.CODE_SGST);
+				boolean igst = !gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(),
+						RuleConstants.CODE_IGST);
+				boolean ugst = !gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(),
+						RuleConstants.CODE_UGST);
+
+				String[] parameters = new String[4];
+
+				StringBuilder calcOnMsg = new StringBuilder();
+				if (cgst) {
+					calcOnMsg.append(RuleConstants.CODE_CGST + " ,");
+				}
+				if (sgst) {
+					calcOnMsg.append(RuleConstants.CODE_SGST + " ,");
+				}
+				if (igst) {
+					calcOnMsg.append(RuleConstants.CODE_IGST + " ,");
+				}
+				if (ugst) {
+					calcOnMsg.append(RuleConstants.CODE_UGST + " ,");
+				}
+
+				if (calcOnMsg.length() > 0) {
+					parameters[0] = gSTRate.getCalcOn();
+					parameters[1] = PennantJavaUtil.getLabel("label_FromState") + ": " + gSTRate.getFromState();
+					parameters[2] = PennantJavaUtil.getLabel("label_ToState") + ": " + gSTRate.getToState();
+					parameters[3] = PennantJavaUtil.getLabel("label_TaxType") + ": " + calcOnMsg.toString();
+
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65039", parameters, null));
+				}
+			} else {
+				if (!gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(), gSTRate.getCalcOn())) {
+					String[] parameters = new String[4];
+					
+					parameters[0] = gSTRate.getCalcOn();
+					parameters[1] = PennantJavaUtil.getLabel("label_FromState") + ": " + gSTRate.getFromState();
+					parameters[2] = PennantJavaUtil.getLabel("label_ToState") + ": " + gSTRate.getToState();
+					parameters[3] = PennantJavaUtil.getLabel("label_TaxType") + ": " + gSTRate.getCalcOn();
+
+					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65039", parameters, null));
+				}
+			}
+
+		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);

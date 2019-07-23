@@ -91,12 +91,14 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal paidSGST = BigDecimal.ZERO;
 	private BigDecimal paidUGST = BigDecimal.ZERO;
 	private BigDecimal paidIGST = BigDecimal.ZERO;
+	private BigDecimal paidCESS = BigDecimal.ZERO;
 
 	// GST Waived Fields
 	private BigDecimal waivedCGST = BigDecimal.ZERO;
 	private BigDecimal waivedSGST = BigDecimal.ZERO;
 	private BigDecimal waivedUGST = BigDecimal.ZERO;
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
+	private BigDecimal waivedCESS = BigDecimal.ZERO;
 
 	@XmlElement
 	private String remarks;
@@ -462,6 +464,22 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 
 	public void setWaivedIGST(BigDecimal waivedIGST) {
 		this.waivedIGST = waivedIGST;
+	}
+
+	public BigDecimal getPaidCESS() {
+		return paidCESS;
+	}
+
+	public void setPaidCESS(BigDecimal paidCESS) {
+		this.paidCESS = paidCESS;
+	}
+
+	public BigDecimal getWaivedCESS() {
+		return waivedCESS;
+	}
+
+	public void setWaivedCESS(BigDecimal waivedCESS) {
+		this.waivedCESS = waivedCESS;
 	}
 
 }

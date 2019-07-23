@@ -79,7 +79,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		source.addValue("ReceiptID", receiptID);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST");
+				" Select ReceiptAllocationid, ReceiptID , AllocationID , AllocationType , AllocationTo , PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" ,TypeDesc ");
 		}
@@ -127,9 +127,9 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append("Insert Into ReceiptAllocationDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
-		sql.append(", PaidAmount , WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST)");
+		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId)");
 		sql.append(" Values(:ReceiptAllocationid, :ReceiptID, :AllocationID, :AllocationType, :AllocationTo");
-		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST)");
+		sql.append(", :PaidAmount, :WaivedAmount, :WaiverAccepted, :PaidGST, :TotalDue, :WaivedGST, :TaxHeaderId)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

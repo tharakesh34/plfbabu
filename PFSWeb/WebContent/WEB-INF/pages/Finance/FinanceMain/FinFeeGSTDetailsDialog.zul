@@ -84,6 +84,11 @@
 									style="border:none; background-color:white; font-weight:bold;" />
 							</row>
 							<row>
+								<label id="label_FinFeeGSTDetailsDialog_CESS" value="${c:l('label_FinFeeGSTDetailsDialog_CESS.value')}" />
+								<decimalbox id="cess" maxlength="18" readonly="true"
+									style="border:none; background-color:white; font-weight:bold;" />
+							</row>
+							<row>
 								<label id="label_FinFeeGSTDetailsDialog_Total" value="${c:l('label_FinFeeGSTDetailsDialog_Total.value')}" />
 								<decimalbox id="total" maxlength="18" readonly="true"
 									style="border:none; background-color:white; font-weight:bold;" />

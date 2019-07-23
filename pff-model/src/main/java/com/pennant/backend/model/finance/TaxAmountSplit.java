@@ -12,12 +12,14 @@ public class TaxAmountSplit implements Serializable {
 	private BigDecimal uGST = BigDecimal.ZERO;
 	private BigDecimal iGST = BigDecimal.ZERO;
 	private BigDecimal tGST = BigDecimal.ZERO;
+	private BigDecimal cess = BigDecimal.ZERO;
 	private BigDecimal netAmount = BigDecimal.ZERO;
 	private BigDecimal waivedAmount = BigDecimal.ZERO;
 	private BigDecimal totRecv = BigDecimal.ZERO;
 	private BigDecimal inProcAmount = BigDecimal.ZERO;
 	private String taxType = null;
-
+	private Taxes taxes;
+	
 	public TaxAmountSplit() {
 		super();
 	}
@@ -108,6 +110,22 @@ public class TaxAmountSplit implements Serializable {
 
 	public void setTotRecv(BigDecimal totRecv) {
 		this.totRecv = totRecv;
+	}
+
+	public Taxes getTaxes() {
+		return taxes;
+	}
+
+	public void setTaxes(Taxes taxes) {
+		this.taxes = taxes;
+	}
+
+	public BigDecimal getCess() {
+		return cess;
+	}
+
+	public void setCess(BigDecimal cess) {
+		this.cess = cess;
 	}
 
 }
