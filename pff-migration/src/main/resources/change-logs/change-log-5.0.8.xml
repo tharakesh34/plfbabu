@@ -3150,5 +3150,10 @@
    			WHERE NOT (EXISTS (SELECT 1 FROM EXTERNAL_LIABILITIES_PD_temp WHERE EXTERNAL_LIABILITIES_PD_temp.LiabilityId = T1.LiabilityId))	
 		</createView>
 	</changeSet>
-	
+	<changeSet id="75" author="saikiran.v">
+		<dropColumn tableName="tax_details_temp" columnName="TaxAmount" />
+	</changeSet>
+	<changeSet id="76" author="saikiran.v">
+			<dropColumn tableName="tax_details" columnName="TaxAmount" />
+	</changeSet>	
 </databaseChangeLog>
