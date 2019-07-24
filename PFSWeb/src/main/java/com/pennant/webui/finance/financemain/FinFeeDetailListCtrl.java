@@ -455,6 +455,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							finFee.setFeeModified(true);
 						}
 					}
+					//Preparing Before Image
+					FinFeeDetail befImage = new FinFeeDetail();
+					BeanUtils.copyProperties(finFee, befImage);
+					finFee.setBefImage(befImage);
 				}
 			}
 		}
@@ -1601,12 +1605,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
-				}
-
-				if (!finFeeDetail.isNewRecord()) {
-					FinFeeDetail befImage = new FinFeeDetail();
-					BeanUtils.copyProperties(finFeeDetail, befImage);
-					finFeeDetail.setBefImage(befImage);
 				}
 
 				FinTaxDetails finTaxDetail = finFeeDetail.getFinTaxDetails();
