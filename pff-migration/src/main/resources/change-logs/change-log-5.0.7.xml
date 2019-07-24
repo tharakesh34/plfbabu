@@ -3581,7 +3581,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="101" author="murthy">
 		<comment>New RBFields Added for Limit Rule</comment>
 		<sql>
@@ -3591,7 +3591,7 @@
     	     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="102" author="murthy">
 		<comment>New RBFields Added for Limit Rule</comment>
 		<sql>
@@ -3601,7 +3601,7 @@
     	     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="103" author="Manoj">
 		<sql> 
 	  <![CDATA[ 
@@ -3609,5 +3609,9 @@
 		 INSERT INTO SMTPARAMETERS VALUES ('HOLD_INS_INST_POST','Insurance Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1, 1000,CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0); 
 	 ]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="104" author="murthy.y">
+		<dropColumn columnName="ID" tableName="CustomerQueuing_Log" />
 	</changeSet>
 </databaseChangeLog>
