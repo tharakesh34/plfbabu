@@ -3601,4 +3601,13 @@
     	     ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="103" author="Manoj">
+		<sql> 
+	  <![CDATA[ 
+	  	 DELETE FROM SMTPARAMETERS where sysparmcode = 'HOLD_INS_INST_POST';
+		 INSERT INTO SMTPARAMETERS VALUES ('HOLD_INS_INST_POST','Insurance Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1, 1000,CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0); 
+	 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
