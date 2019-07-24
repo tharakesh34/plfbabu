@@ -2689,5 +2689,48 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	
+	<changeSet id="44" author="Manoj.P">
+		<sql>
+			<![CDATA[
+			 INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'ae_penaltyRcv','Penalty
+			Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
+			 ]]>
+			
+		</sql>
+	</changeSet>
+	
+	<changeSet id="45" author="Varaprasad.K">
+	<sql>
+			<![CDATA[
+				update plf.smtparameters set sysparmvalue='N' where SysParmCode = 'RECEIPT_CASH_PAN_MANDATORY';
+			]]>
+	</sql>
+</changeSet>
+
+
+	<changeSet id="46" author="Manoj.p">
+		<sql>
+		<![CDATA[
+				delete from reportfilterfields where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_Postings')
+
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),1,'Branch Code','LOVSEARCH','Branch Code','T.FinBranch',null,'Branch','getBranchCode','getBranchDesc',1,0,0,0,1,1,null,' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),2,'Value Date','DATERANGE','Value Date','T.ValueDate',null,'---Select----',null,null,0,0,0,0,5,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),3,'Account Number','TXT','Account Number','T.Account',null,null,null,null,0,20,0,0,6,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),5,'Finance Type','LOVSEARCH','Loan Type','T.FinType',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,3,1,null,' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),6,'Event Code','LOVSEARCH','Event Code','T.FinEvent',null,'AccountEngineEvent','getAEEventCode','getAEEventCodeDesc',1,0,0,0,4,0,null,' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),7,'Posting Status','STATICLIST','Posting Status','T.PostStatus','getPostingStatusList',null,null,null,0,0,0,0,8,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),8,'Reference Number','TXT','Reference Number','T.FinReference',null,null,null,null,0,20,0,0,7,0,null,null,null,null,250,1,'%',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),9,'Finance Status','STATICLIST','Loan Status','T.FinIsActive','getFinanceStatusList',null,null,null,0,0,0,0,9,0,null,null,null,null,250,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),10,'Division Code','LOVSEARCH','Division Code','T.FinDivision',null,'DivisionDetail','getDivisionCode','getDivisionCodeDesc',1,0,0,0,1,1,null,' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_Postings'),11,'Posted Date','DATE','Posted Date','T.PostDate',null,'---Select----',null,null,0,0,0,0,10,0,null,null,null,null,150,0,'=',2,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+
+
+
+	
 </databaseChangeLog>
 
