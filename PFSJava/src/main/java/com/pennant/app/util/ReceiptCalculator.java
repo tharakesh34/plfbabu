@@ -2650,9 +2650,15 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 
-		//always we are taking the inclusive type here because we are doing reverse calculation here
-		calAllocationPaidGST(receiptData.getFinanceDetail(), allocate.getTotalPaid(), allocate,
-				FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		/*
+		 * BUG FIX 138534, In Receipt Screen Penalty is showing GST Amount if there no GST configuration for Penalty. In
+		 * case of Penalty checking configuration, if there is TaxApplicable then only calculating GST
+		 */
+		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
+			//always we are taking the inclusive type here because we are doing reverse calculation here
+			calAllocationPaidGST(receiptData.getFinanceDetail(), allocate.getTotalPaid(), allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		}
 
 		return receiptData;
 	}
