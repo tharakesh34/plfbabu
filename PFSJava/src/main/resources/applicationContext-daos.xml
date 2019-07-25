@@ -11015,6 +11015,28 @@
 	<bean name="ckycServiceTarget" class="com.pennant.backend.service.ckyc.impl.CKYCServiceImpl">
 		<property name="ckycDAO" ref="ckycDAO" />
 	</bean>
-
+	
+	<!-- Tax Header Details -->
 	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
+	
+	<bean id="taxHeaderDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="taxHeaderDetailsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="taxHeaderDetailsServiceTarget" class="com.pennant.backend.service.finance.impl.TaxHeaderDetailsServiceImpl">
+		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+	</bean>
+	
 </beans>

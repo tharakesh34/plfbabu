@@ -210,4 +210,24 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		return this.jdbcTemplate.queryForList(selectSql.toString(), mapSqlParameterSource, Long.class);
 	}
+
+	@Override
+	public void update(TaxHeader taxHeader, String type) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL, ensure primary key will not be updated.
+		StringBuilder sql = new StringBuilder(" Update TAX_Header");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set HeaderId = :HeaderId");
+		sql.append(" Where HeaderId = :HeaderId");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(taxHeader);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
 }

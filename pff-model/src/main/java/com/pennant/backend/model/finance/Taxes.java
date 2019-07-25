@@ -43,15 +43,26 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class Taxes implements Entity {
-	
+public class Taxes extends AbstractWorkflowEntity implements Entity {
+
+	private static final long serialVersionUID = 1L;
 	private long id = Long.MIN_VALUE;
 	private long referenceId = Long.MIN_VALUE;
 	private String taxType;
 	private BigDecimal taxPerc = BigDecimal.ZERO;
+	private boolean newRecord;
+	private TaxHeader befImage;
+	@XmlTransient
+	private LoggedInUser userDetails;
 
 	private BigDecimal actualTax = BigDecimal.ZERO;
 	private BigDecimal paidTax = BigDecimal.ZERO;
@@ -125,6 +136,7 @@ public class Taxes implements Entity {
 	public BigDecimal getRemFeeTax() {
 		return remFeeTax;
 	}
+
 	public void setRemFeeTax(BigDecimal remFeeTax) {
 		this.remFeeTax = remFeeTax;
 	}
@@ -135,6 +147,36 @@ public class Taxes implements Entity {
 
 	public BigDecimal getWaivedTax() {
 		return waivedTax;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public TaxHeader getBefImage() {
+		return befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public void setBefImage(TaxHeader befImage) {
+		this.befImage = befImage;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+
+		return excludeFields;
 	}
 
 }

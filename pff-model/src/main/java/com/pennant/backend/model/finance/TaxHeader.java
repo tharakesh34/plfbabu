@@ -43,14 +43,25 @@
 package com.pennant.backend.model.finance;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.Entity;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
-public class TaxHeader implements Entity {
+public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 
+	private static final long serialVersionUID = 1L;
 	private long headerId = Long.MIN_VALUE;
 	private List<Taxes> taxDetails = new ArrayList<Taxes>();
+	private boolean newRecord;
+	private TaxHeader befImage;
+	@XmlTransient
+	private LoggedInUser userDetails;
 
 	public TaxHeader() {
 
@@ -90,6 +101,36 @@ public class TaxHeader implements Entity {
 
 	public void setTaxDetails(List<Taxes> taxDetails) {
 		this.taxDetails = taxDetails;
+	}
+
+	public boolean isNewRecord() {
+		return newRecord;
+	}
+
+	public TaxHeader getBefImage() {
+		return befImage;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setNewRecord(boolean newRecord) {
+		this.newRecord = newRecord;
+	}
+
+	public void setBefImage(TaxHeader befImage) {
+		this.befImage = befImage;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+
+		return excludeFields;
 	}
 
 }

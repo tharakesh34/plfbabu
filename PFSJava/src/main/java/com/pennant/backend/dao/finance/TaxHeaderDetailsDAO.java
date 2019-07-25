@@ -11,6 +11,8 @@ public interface TaxHeaderDetailsDAO {
 
 	void update(Taxes taxes, String type);
 
+	void update(TaxHeader taxHeader, String type);
+
 	void delete(long headerId, String type);
 
 	long save(Taxes taxes, String type);
