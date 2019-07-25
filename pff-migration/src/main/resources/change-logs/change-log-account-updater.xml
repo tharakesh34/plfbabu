@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.0" author="naga.g">
+		<createSequence sequenceName="SeqAccounts" startValue="1" incrementBy="1" />
+		<createSequence sequenceName="SeqAccounts_History" startValue="1" incrementBy="1" />
+		<createSequence sequenceName="SeqAccounts_History_Details" startValue="1" incrementBy="1" />
+		<createSequence sequenceName="SeqAccounts_By_FinReferences" startValue="1" incrementBy="1" />
+	</changeSet>
+
+	<changeSet id="1" author="naga.g">
+		<dropView viewName="Accounts_view" />
+		<dropView viewName="Accounts_aview" />
+
+		<!-- <dropTable tableName="AccountsByReference" /> <dropTable tableName="AccountHistoryDetails" /> <dropTable tableName="AccountsHistory" 
+			/> -->
+		<dropTable tableName="Accounts" />
+	</changeSet>
+
+
+	<changeSet id="2" author="naga.g">
+		<createTable tableName="Accounts">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_id" />
+			</column>
+			<column name="AcNumber" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcCcy" type="char(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcType" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcBranch" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcOpenDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2.1" author="naga.g">
+		<addUniqueConstraint columnNames="AcNumber" constraintName="uk_accounts_acnumber" tableName="Accounts" />
+	</changeSet>
+
+	<changeSet id="2.2" author="naga.g">
+		<addForeignKeyConstraint constraintName="fk_accounts_actype" referencedTableName="RMTAccountTypes"
+			baseColumnNames="AcType" baseTableName="Accounts" referencedColumnNames="AcType" />
+	</changeSet>
+
+	<changeSet id="2.3" author="naga.g" dbms="oracle postgresql">
+		<addDefaultValue columnName="AcBalance" tableName="Accounts" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="2.3" author="naga.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS ADD CONSTRAINT DF_ACCOUNTS_ACBALANCE DEFAULT 0 FOR ACBALANCE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="3" author="naga.g">
+		<createTable tableName="Accounts_History">
+			<column name="Id" type="bigint">
+				>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_history_id" />
+			</column>
+			<column name="AccountId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayDebits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayCredits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayNet" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="3.1" author="naga.g">
+		<addUniqueConstraint columnNames="AccountId, PostDate" constraintName="uk_accounts_history_acid_pdate"
+			tableName="Accounts_History" />
+	</changeSet>
+
+	<changeSet id="3.2" author="naga.g">
+		<addForeignKeyConstraint constraintName="fk_accounts_history_accountId" referencedTableName="Accounts"
+			baseColumnNames="AccountId" baseTableName="Accounts_History" referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="3.3" author="naga.g" dbms="oracle postgresql">
+		<addDefaultValue columnName="TodayDebits" tableName="Accounts_History" defaultValue="0" />
+		<addDefaultValue columnName="TodayCredits" tableName="Accounts_History" defaultValue="0" />
+		<addDefaultValue columnName="TodayNet" tableName="Accounts_History" defaultValue="0" />
+		<addDefaultValue columnName="AcBalance" tableName="Accounts_History" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="3.3" author="naga.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS_HISTORY ADD CONSTRAINT DF_ACCOUNTS_HISTORY_TODAYDEBITS DEFAULT 0 FOR TODAYDEBITS;
+				ALTER TABLE ACCOUNTS_HISTORY ADD CONSTRAINT DF_ACCOUNTS_HISTORY_TODAYCREDITS DEFAULT 0 FOR TODAYCREDITS;
+				ALTER TABLE ACCOUNTS_HISTORY ADD CONSTRAINT DF_ACCOUNTS_HISTORY_TODAYNET DEFAULT 0 FOR TODAYNET;
+				ALTER TABLE ACCOUNTS_HISTORY ADD CONSTRAINT DF_ACCOUNTS_HISTORY_ACBALANCE DEFAULT 0 FOR ACBALANCE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="4" author="naga.g">
+		<createTable tableName="Accounts_History_Details">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_history_dtl_id" />
+			</column>
+			<column name="AccountId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="EntityCode" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostBranch" type="varchar(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="BranchProvince" type="varchar(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PostDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayDebits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayCredits" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TodayNet" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="AcBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="OpeningBal" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="4.1" author="naga.g">
+		<addUniqueConstraint tableName="Accounts_History_Details" columnNames="AccountId, EntityCode, PostBranch, BranchProvince, PostDate"
+			constraintName="uk_ahd_achid_pd_ec_pb_bp" />
+	</changeSet>
+
+	<changeSet id="4.2" author="naga.g">
+		<addForeignKeyConstraint constraintName="fk_accounts_history_dtls_aid" referencedTableName="Accounts"
+			baseColumnNames="AccountId" baseTableName="Accounts_History_Details" referencedColumnNames="Id" />
+	</changeSet>
+
+	<changeSet id="4.4" author="naga.g" dbms="oracle postgresql">
+		<addDefaultValue columnName="TodayDebits" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="TodayCredits" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="TodayNet" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="AcBalance" tableName="Accounts_History_Details" defaultValue="0" />
+		<addDefaultValue columnName="OpeningBal" tableName="Accounts_History_Details" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="4.4" author="naga.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYDEBITS DEFAULT 0 FOR TODAYDEBITS;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYCREDITS DEFAULT 0 FOR TODAYCREDITS;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_TODAYNET DEFAULT 0 FOR TODAYNET;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_ACBALANCE DEFAULT 0 FOR ACBALANCE;
+				ALTER TABLE ACCOUNTS_HISTORY_DETAILS ADD CONSTRAINT DF_ACCOUNTS_HISTORY_DETAILS_OPENINGBAL DEFAULT 0 FOR OPENINGBAL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="5" author="naga.g">
+		<createTable tableName="Accounts_By_FinReferences">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_Accounts_By_FinReferences" />
+			</column>
+			<column name="AccountId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinId" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="KeyReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ModCategory" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="GLBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="GlReconBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProductBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DiffBalance" type="decimal(18, 0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReconFreeZe" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntDate" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="5.1" author="naga.g">
+		<addUniqueConstraint tableName="Accounts_By_FinReferences" columnNames="AccountId, FinReference"
+			constraintName="uk_accounts_by_ref_aid_fr" />
+	</changeSet>
+
+	<changeSet id="5.2" author="naga.g">
+		<addForeignKeyConstraint constraintName="fk_accounts_by_ref_accountid" referencedTableName="Accounts"
+			baseColumnNames="AccountId" baseTableName="Accounts_By_FinReferences" referencedColumnNames="Id" />
+	</changeSet>
+	<changeSet id="5.4" author="naga.g" dbms="oracle postgresql">
+		<addDefaultValue columnName="GLBalance" tableName="Accounts_By_FinReferences" defaultValue="0" />
+		<addDefaultValue columnName="GlReconBalance" tableName="Accounts_By_FinReferences" defaultValue="0" />
+		<addDefaultValue columnName="ProductBalance" tableName="Accounts_By_FinReferences" defaultValue="0" />
+		<addDefaultValue columnName="DiffBalance" tableName="Accounts_By_FinReferences" defaultValue="0" />
+		<addDefaultValue columnName="ReconFreeZe" tableName="Accounts_By_FinReferences" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="5.4" author="naga.g" dbms="oracle postgresql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE Accounts_By_FinReferences ADD CONSTRAINT DF_Accounts_By_FinReferences_GLBALANCE DEFAULT 0 FOR GLBALANCE;
+				ALTER TABLE Accounts_By_FinReferences ADD CONSTRAINT DF_Accounts_By_FinReferences_GlReconBalanceDEFAULT 0 FOR GlReconBalance;
+				ALTER TABLE Accounts_By_FinReferences ADD CONSTRAINT DF_Accounts_By_FinReferences_PRODUCTBALANCE DEFAULT 0 FOR PRODUCTBALANCE;
+				ALTER TABLE Accounts_By_FinReferences ADD CONSTRAINT DF_Accounts_By_FinReferences_DIFFBALANCE DEFAULT 0 FOR DIFFBALANCE;
+				ALTER TABLE Accounts_By_FinReferences ADD CONSTRAINT DF_Accounts_By_FinReferences_RECONFREEZE DEFAULT 0 FOR RECONFREEZE;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="6" author="naga.g">
+		<createTable tableName="Postings_Stage">
+			<column name="LinkedTranId" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_Postings_Stage" />
+			</column>
+			<column name="StageFlag" type="smallint" defaultValue="0" />
+			<column name="FailureReason" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="7" author="naga.g">
+		<sql>
+			<![CDATA[
+				insert into Postings_Stage select distinct LinkedTranId, 0, NULL from postings;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="8" author="naga.g">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'ACCOUNT_UPDATER_ENGINE', 		'Role for account updater Engine',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'ACCOUNT_UPDATER_ENGINE',			'Group for account updater Engine', 	1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL,NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),0, 'menuItem_AccountUpdater_Engine','MENU',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'ACCOUNT_UPDATER_ENGINE'), (Select RightID from SecRights where RightName = 'menuItem_AccountUpdater_Engine'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='ACCOUNT_UPDATER_ENGINE'),(select RoleID from secRoles where RoleCd='ACCOUNT_UPDATER_ENGINE'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId)  from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId)  from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+</databaseChangeLog>
+
