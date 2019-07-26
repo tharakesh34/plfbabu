@@ -219,22 +219,24 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		logger.debug(Literal.LEAVING);
 		return finFeeDetails;
 	}
-	
+
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type) {
 		logger.debug(Literal.ENTERING);
-		
-		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getFinFeeDetailByReferenceId(referenceId, eventCodeRef, type);
+
+		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getFinFeeDetailByReferenceId(referenceId, eventCodeRef,
+				type);
 		// Finance Fee Schedule Details and Fin Tax Details
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				finFeeDetail.setFinFeeScheduleDetailList(finFeeScheduleDetailDAO.getFeeScheduleByFeeID(finFeeDetail.getFeeID(), false, type));
+				finFeeDetail.setFinFeeScheduleDetailList(
+						finFeeScheduleDetailDAO.getFeeScheduleByFeeID(finFeeDetail.getFeeID(), false, type));
 				finFeeDetail.setFinTaxDetails(finTaxDetailsDAO.getFinTaxByFeeID(finFeeDetail.getFeeID(), type));
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return finFeeDetails;
 	}
 
@@ -1432,14 +1434,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(waivedAmount);
 		BigDecimal paidAmountOriginal = finFeeDetail.getPaidAmountOriginal();
 
-		
 		FinTaxDetails finTaxDetails = null;
 		if (finFeeDetail.getFinTaxDetails() == null) {
 			finTaxDetails = new FinTaxDetails();
 		} else {
 			finTaxDetails = finFeeDetail.getFinTaxDetails();
 		}
-		
+
 		//CESS Calculations
 		TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 		Taxes cess = null;
@@ -1470,7 +1471,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			TaxAmountSplit taxSplit;
 			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
-				
+
 				//CESS percentage
 				if (cess == null) {
 					cess = new Taxes();
@@ -1481,7 +1482,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					taxHeader.getTaxDetails().add(cess);
 				}
 				cess.setTaxPerc(taxPercentages.get(RuleConstants.CODE_CESS));
-				
+
 				//Actual Amounts
 				BigDecimal actualOriginal = finFeeDetail.getActualAmountOriginal();
 				taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
@@ -1535,7 +1536,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
 				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(taxSplit.gettGST()));
-				
+
 				//Waived Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(waivedAmount, taxPercentages);
 				finTaxDetails.setWaivedCGST(taxSplit.getcGST());
@@ -1632,7 +1633,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finFeeDetail.setRemainingFee(totalRemainingFee);
 				finFeeDetail.setRemainingFeeGST(taxSplit.gettGST());
 				finTaxDetails.setRemFeeTGST(taxSplit.gettGST());
-				
+
 				//Waived Amounts
 				taxSplit = GSTCalculator.getInclusiveGST(waivedAmount, taxPercentages);
 				finTaxDetails.setWaivedCGST(taxSplit.getcGST());
@@ -1651,11 +1652,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finFeeDetail.setNetAmount(netAmountOriginal);
 
 			//Remaining Amount
-			finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal()
-					.subtract(waivedAmount).subtract(finFeeDetail.getPaidAmount()));
-			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(waivedAmount)
+			finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal().subtract(waivedAmount)
 					.subtract(finFeeDetail.getPaidAmount()));
+			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
+			finFeeDetail.setRemainingFee(
+					finFeeDetail.getActualAmount().subtract(waivedAmount).subtract(finFeeDetail.getPaidAmount()));
 
 			//Paid Amount
 			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount());
@@ -1688,7 +1689,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finTaxDetails.setRemFeeSGST(BigDecimal.ZERO);
 			finTaxDetails.setRemFeeUGST(BigDecimal.ZERO);
 			finTaxDetails.setRemFeeTGST(BigDecimal.ZERO);
-			
+
 			//Waived Amounts
 			finTaxDetails.setWaivedCGST(BigDecimal.ZERO);
 			finTaxDetails.setWaivedIGST(BigDecimal.ZERO);
