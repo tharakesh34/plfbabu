@@ -34,7 +34,9 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax,");
-		selectSql.append(" RemFeeTax, WaivedTax ");
+		selectSql.append(" RemFeeTax, WaivedTax,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" From TAX_DETAILS");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE ReferenceId = :ReferenceId");
@@ -53,6 +55,33 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 	}
 
 	@Override
+	public TaxHeader getTaxHeaderDetailsById(long headerId, String type) {
+		logger.debug(Literal.ENTERING);
+		// get the finances list
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("HeaderId", headerId);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT HeaderId,");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" From TAX_Header");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE HeaderId = :HeaderId");
+
+		logger.debug("selectSql : " + selectSql.toString());
+		RowMapper<TaxHeader> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TaxHeader.class);
+		try {
+			logger.debug(Literal.LEAVING);
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION);
+			logger.debug(Literal.LEAVING);
+			return null;
+		}
+	}
+
+	@Override
 	public void update(Taxes taxes, String type) {
 		logger.debug(Literal.ENTERING);
 		// Prepare the SQL, ensure primary key will not be updated.
@@ -60,7 +89,11 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set ReferenceId = :ReferenceId, TaxType = :TaxType, TaxPerc = :TaxPerc,");
 		sql.append(" ActualTax = :ActualTax, PaidTax = :PaidTax, NetTax = :NetTax, RemFeeTax = :RemFeeTax,");
-		sql.append(" WaivedTax = :WaivedTax");
+		sql.append(" WaivedTax = :WaivedTax,");
+		sql.append(" Version = :Version, LastMntBy = :LastMntBy,");
+		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
+		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" Where Id = :Id");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -90,7 +123,28 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteById(long id, String type) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder(" Delete from TAX_DETAILS");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Id = :Id");
+
+		logger.trace(Literal.SQL + sql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -107,10 +161,13 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert Into TAX_DETAILS");
 		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax,");
+		sql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
 		sql.append(
-				" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax)");
-		sql.append(
-				" Values (:Id, :ReferenceId, :TaxType, :TaxPerc, :ActualTax, :PaidTax, :NetTax, :RemFeeTax, :WaivedTax)");
+				" Values(:Id, :ReferenceId, :TaxType, :TaxPerc, :ActualTax, :PaidTax, :NetTax, :RemFeeTax, :WaivedTax,");
+		sql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -126,10 +183,13 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("Insert Into TAX_DETAILS");
 		sql.append(type);
+		sql.append(" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax,");
+		sql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
 		sql.append(
-				" (Id, ReferenceId, TaxType, TaxPerc, ActualTax, PaidTax, NetTax, RemFeeTax, WaivedTax)");
-		sql.append(
-				" Values (:Id, :ReferenceId, :TaxType, :TaxPerc, :ActualTax, :PaidTax, :NetTax, :RemFeeTax, :WaivedTax)");
+				" Values(:Id, :ReferenceId, :TaxType, :TaxPerc, :ActualTax, :PaidTax, :NetTax, :RemFeeTax, :WaivedTax,");
+		sql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (taxes.getId() == Long.MIN_VALUE) {
@@ -156,7 +216,12 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 
 		StringBuilder sql = new StringBuilder("Insert Into TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (HeaderId)  Values (:HeaderId)");
+		sql.append(" (HeaderId,");
+		sql.append(" Version,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
+		sql.append(" RecordType, WorkflowId)");
+		sql.append(" Values(:HeaderId,");
+		sql.append(" :Version,:LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
+		sql.append(" :RecordType, :WorkflowId)");
 
 		if (taxHeader.getId() <= 0) {
 			taxHeader.setId(getNextValue("SeqTAX_Header"));
@@ -217,7 +282,9 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder(" Update TAX_Header");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set HeaderId = :HeaderId");
+		sql.append(" Set HeaderId = :HeaderId,");
+		sql.append(
+				" Version= :Version, LastMntBy= :LastMntBy, LastMntOn= :LastMntOn, RecordStatus= :RecordStatus, RoleCode= :RoleCode, NextRoleCode= :NextRoleCode, TaskId= :TaskId, NextTaskId= :NextTaskId");
 		sql.append(" Where HeaderId = :HeaderId");
 
 		logger.trace(Literal.SQL + sql.toString());

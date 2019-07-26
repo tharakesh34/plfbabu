@@ -16,6 +16,7 @@ import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> implements TaxHeaderDetailsService {
 	private static final Logger logger = Logger.getLogger(TaxHeaderDetailsServiceImpl.class);
@@ -31,13 +32,62 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		} else {
 			getTaxHeaderDetailsDAO().update(taxHeader, tableType);
 		}
-		processTaxHeaderDetails(taxHeader, tableType, auditTranType, false);
+		processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, false);
 
 		logger.debug("Leaving");
 		return taxHeader;
 	}
 
-	private List<AuditDetail> processTaxHeaderDetails(TaxHeader taxHeader, String tableType, String auditTranType,
+	@Override
+	public TaxHeader getTaxHeaderById(long headerId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		TaxHeader header = null;
+		if (headerId > 0) {
+			header = taxHeaderDetailsDAO.getTaxHeaderDetailsById(headerId, type);
+			if (header != null) {
+				header.setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(headerId, type));
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return header;
+	}
+
+	@Override
+	public TaxHeader doApprove(TaxHeader taxHeader, String tableType, String auditTranType) {
+		logger.debug(Literal.ENTERING);
+
+		if (PennantConstants.RECORD_TYPE_DEL.equals(taxHeader.getRecordType())) {
+			delete(taxHeader, TableType.MAIN_TAB.getSuffix());
+		} else {
+			taxHeader.setRoleCode("");
+			taxHeader.setNextRoleCode("");
+			taxHeader.setTaskId("");
+			taxHeader.setNextTaskId("");
+			taxHeader.setWorkflowId(0);
+
+			if (PennantConstants.RECORD_TYPE_NEW.equals(taxHeader.getRecordType())) {
+				taxHeader.setRecordType("");
+				getTaxHeaderDetailsDAO().save(taxHeader, TableType.MAIN_TAB.getSuffix());
+			} else {
+				taxHeader.setRecordType("");
+				getTaxHeaderDetailsDAO().update(taxHeader, TableType.MAIN_TAB.getSuffix());
+			}
+		}
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		auditDetails.addAll(processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, true));
+
+		delete(taxHeader, TableType.TEMP_TAB.getSuffix());
+
+		logger.debug(Literal.LEAVING);
+
+		return taxHeader;
+	}
+
+	private List<AuditDetail> processTaxHeaderChildDetails(TaxHeader taxHeader, String tableType, String auditTranType,
 			boolean isApproveRcd) {
 		logger.debug(Literal.ENTERING);
 
@@ -52,6 +102,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 			boolean approveRec = false;
 
 			for (Taxes taxDetail : taxDetails) {
+				taxDetail.setReferenceId(taxHeader.getHeaderId());
 				saveRecord = false;
 				updateRecord = false;
 				deleteRecord = false;
@@ -146,7 +197,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 	public void deleteTaxDetails(long headerId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		getTaxHeaderDetailsDAO().delete(headerId, type);
+		getTaxHeaderDetailsDAO().deleteById(headerId, type);
 
 		logger.debug(Literal.LEAVING);
 	}

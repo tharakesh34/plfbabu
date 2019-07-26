@@ -25,4 +25,8 @@ public interface TaxHeaderDetailsDAO {
 
 	List<Long> getHeaderIdsByReceiptId(long receiptId, String type);
 
+	void deleteById(long id, String type);
+
+	TaxHeader getTaxHeaderDetailsById(long headerId, String type);
+
 }

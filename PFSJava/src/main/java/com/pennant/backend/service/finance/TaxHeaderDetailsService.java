@@ -9,4 +9,8 @@ public interface TaxHeaderDetailsService {
 	void delete(TaxHeader taxHeader, String type);
 
 	void deleteTaxDetails(long headerId, String type);
+
+	TaxHeader doApprove(TaxHeader taxHeader, String tableType, String auditTranType);
+
+	TaxHeader getTaxHeaderById(long headerId, String type);
 }
