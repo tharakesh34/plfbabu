@@ -3155,6 +3155,7 @@
    			WHERE NOT (EXISTS (SELECT 1 FROM EXTERNAL_LIABILITIES_PD_temp WHERE EXTERNAL_LIABILITIES_PD_temp.LiabilityId = T1.LiabilityId))	
 		</createView>
 	</changeSet>
+	
 	<changeSet id="77" author="saikiran.v">
 		<addColumn tableName="Tax_Header">
 			<column name="version" type="int" />
@@ -3169,6 +3170,7 @@
 			<column name="workflowid" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="78" author="saikiran.v">
 		<addColumn tableName="Tax_Header_temp">
 			<column name="version" type="int" />
@@ -3183,6 +3185,7 @@
 			<column name="workflowid" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="79" author="saikiran.v">
 		<addColumn tableName="Tax_details">
 			<column name="version" type="int" />
@@ -3197,6 +3200,7 @@
 			<column name="workflowid" type="bigint"/>
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="80" author="saikiran.v">
 		<addColumn tableName="Tax_details_temp">
 			<column name="version" type="int" />
@@ -3211,6 +3215,7 @@
 			<column name="workflowid" type="bigint"/>	
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="81" author="saikiran.v">
 		<createView viewName="tax_details_aview" replaceIfExists="true">
 			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax,
@@ -3264,6 +3269,7 @@
  			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_header_temp  WHERE tax_header_temp.headerId = t1.headerId))
 		</createView>
 	</changeSet>
+	
 	<changeSet id="87" author="saikiran.v">
 		<sql>
 			update Tax_Header set workflowid=0 where workflowid is null;
@@ -3272,6 +3278,7 @@
 			update Tax_details_temp set workflowid=0 where workflowid is null;
 		</sql>
 	</changeSet>
+	
 	<changeSet id="88" author="saikiran.v">
 		<addNotNullConstraint tableName="Tax_Header" columnName="workflowid" columnDataType="bigint"/>
 		<addNotNullConstraint tableName="Tax_Header_temp" columnName="workflowid" columnDataType="bigint"/>
