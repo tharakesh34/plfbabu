@@ -65,6 +65,11 @@
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
+				<groupId>com.pennanttech.pennapps.pff</groupId>
+				<artifactId>account-updater</artifactId>
+				<version>1.0.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.pennanttech.pennapps</groupId>
 				<artifactId>pennapps-web</artifactId>
 				<version>0.6.17</version>
