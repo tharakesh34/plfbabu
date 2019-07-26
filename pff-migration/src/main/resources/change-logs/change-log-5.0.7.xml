@@ -3610,8 +3610,6 @@
 	 ]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="104" author="murthy.y">
-		<dropColumn columnName="ID" tableName="CustomerQueuing_Log" />
-	</changeSet>
+	<!--  please skip id no "104" for next change set-->
+	
 </databaseChangeLog>
