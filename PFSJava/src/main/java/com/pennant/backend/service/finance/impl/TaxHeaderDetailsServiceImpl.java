@@ -194,6 +194,16 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 	}
 
 	@Override
+	public void delete(long headerId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		getTaxHeaderDetailsDAO().delete(headerId, type);
+		getTaxHeaderDetailsDAO().delete(headerId, type);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
 	public void deleteTaxDetails(long headerId, String type) {
 		logger.debug(Literal.ENTERING);
 

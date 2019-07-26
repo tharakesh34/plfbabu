@@ -13,4 +13,6 @@ public interface TaxHeaderDetailsService {
 	TaxHeader doApprove(TaxHeader taxHeader, String tableType, String auditTranType);
 
 	TaxHeader getTaxHeaderById(long headerId, String type);
+
+	void delete(long headerId, String type);
 }
