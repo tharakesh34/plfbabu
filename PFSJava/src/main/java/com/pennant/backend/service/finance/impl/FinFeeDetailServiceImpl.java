@@ -70,7 +70,6 @@ import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinTaxDetailsDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
-import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
@@ -98,6 +97,7 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -133,7 +133,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private RuleDAO ruleDAO;
 	private BranchDAO branchDAO;
 	private ProvinceDAO provinceDAO;
-	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;	//For CESS
+	private TaxHeaderDetailsService taxHeaderDetailsService; //For CESS
 
 	public FinFeeDetailServiceImpl() {
 		super();
@@ -191,10 +191,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				//Fin Tax Header
 				long taxHeaderId = finFeeDetail.getTaxHeaderId();
 				if (taxHeaderId > 0) {
-					List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(taxHeaderId, type);
-					TaxHeader taxheader = new TaxHeader();
-					taxheader.setTaxDetails(taxDetails);
-					taxheader.setHeaderId(taxHeaderId);
+					TaxHeader taxheader = getTaxHeaderDetailsService().getTaxHeaderById(taxHeaderId, type);
 					finFeeDetail.setTaxHeader(taxheader);
 				}
 			}
@@ -245,12 +242,23 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
 			boolean isWIF) {
 		logger.debug(Literal.ENTERING);
-		
+
+		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+			if (taxHeader != null) {
+				taxHeader.setRecordType(finFeeDetail.getRecordType());
+				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
+				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
+				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
+				TaxHeader txHeader = getTaxHeaderDetailsService().saveOrUpdate(taxHeader, tableType, auditTranType);
+				finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+			}
+		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditDetails.addAll(processFinFeeDetails(finFeeDetails, tableType, auditTranType, false, isWIF));
-
 		logger.debug(Literal.LEAVING);
-		
+
 		return auditDetails;
 	}
 
@@ -345,18 +353,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
-			TaxHeader taxHeader = fee.getTaxHeader();
-			List<Taxes> taxDetails = taxHeader.getTaxDetails();
-
 			if (saveRecord) {
-				if (taxHeader != null) {
-					long headerId = getTaxHeaderDetailsDAO().save(taxHeader, tableType);
-					for (Taxes taxes : taxDetails) {
-						taxes.setReferenceId(headerId);
-					}
-					getTaxHeaderDetailsDAO().saveTaxes(taxDetails, tableType);
-					fee.setTaxHeaderId(headerId);
-				}
 
 				if (fee.isNewRecord() && !approveRec) {
 					fee.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(fee, isWIF, tableType) + 1);
@@ -389,11 +386,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			if (updateRecord) {
 
-				if (CollectionUtils.isNotEmpty(taxDetails)) {
-					for (Taxes taxes : taxDetails) {
-						getTaxHeaderDetailsDAO().update(taxes, tableType);
-					}
-				}
 				getFinFeeDetailDAO().update(fee, isWIF, tableType);
 
 				if (finTaxDetails.getFinTaxID() != 0 && finTaxDetails.getFinTaxID() != Long.MIN_VALUE) {
@@ -411,10 +403,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (deleteRecord) {
-				if (taxHeader != null) {
-					getTaxHeaderDetailsDAO().delete(taxHeader.getId(), tableType);
-					getTaxHeaderDetailsDAO().delete(taxHeader, tableType);
-				}
+
 				getFinTaxDetailsDAO().deleteByFeeID(fee.getFeeID(), tableType);
 				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
 				getFinFeeDetailDAO().delete(fee, isWIF, tableType);
@@ -533,6 +522,19 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public List<AuditDetail> doApprove(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
 			boolean isWIF) {
 		logger.debug(Literal.ENTERING);
+
+		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+			if (taxHeader != null) {
+				taxHeader.setRecordType(finFeeDetail.getRecordType());
+				taxHeader.setNewRecord(finFeeDetail.isNew());
+				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
+				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
+				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
+				TaxHeader txHeader = getTaxHeaderDetailsService().doApprove(taxHeader, tableType, auditTranType);
+				finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+			}
+		}
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditDetails.addAll(processFinFeeDetails(finFeeDetails, tableType, auditTranType, true, isWIF));
@@ -799,8 +801,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), tableType);
 				finFeeDetailDAO.delete(finFeeDetail, isWIF, tableType);
 				if (finFeeDetail.getTaxHeaderId() > 0) {
-					getTaxHeaderDetailsDAO().delete(finFeeDetail.getTaxHeaderId(), tableType);
-					getTaxHeaderDetailsDAO().delete(finFeeDetail.getTaxHeader(), tableType);
+					getTaxHeaderDetailsService().delete(finFeeDetail.getTaxHeaderId(), tableType);
 				}
 				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
@@ -1940,11 +1941,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		this.provinceDAO = provinceDAO;
 	}
 
-	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {
-		return taxHeaderDetailsDAO;
+	public TaxHeaderDetailsService getTaxHeaderDetailsService() {
+		return taxHeaderDetailsService;
 	}
 
-	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
-		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
+		this.taxHeaderDetailsService = taxHeaderDetailsService;
 	}
 }

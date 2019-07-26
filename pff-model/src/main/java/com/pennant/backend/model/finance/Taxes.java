@@ -72,7 +72,7 @@ public class Taxes extends AbstractWorkflowEntity implements Entity {
 
 	@Override
 	public boolean isNew() {
-		return false;
+		return newRecord;
 	}
 
 	@Override

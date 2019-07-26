@@ -15,4 +15,6 @@ public interface TaxHeaderDetailsService {
 	TaxHeader getTaxHeaderById(long headerId, String type);
 
 	void delete(long headerId, String type);
+
+	TaxHeader doReject(TaxHeader taxHeader);
 }

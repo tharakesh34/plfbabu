@@ -2797,7 +2797,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				fee.setInstructionUID(serviceUID);
 			}
 			auditDetails.addAll(
-					finFeeDetailService.saveOrUpdate(finFeeDetails, tableType.getSuffix(), auditTranType, isWIF));
+					getFinFeeDetailService().saveOrUpdate(finFeeDetails, tableType.getSuffix(), auditTranType, isWIF));
 		}
 
 		// Finance Fee Receipts

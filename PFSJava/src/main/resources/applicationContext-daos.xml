@@ -4403,7 +4403,7 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="branchDAO" ref="branchDAO" />
 		<property name="provinceDAO" ref="provinceDAO" />
-		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
+		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
 	</bean>
 
 	<!--============ Covenant Type Details ============== -->

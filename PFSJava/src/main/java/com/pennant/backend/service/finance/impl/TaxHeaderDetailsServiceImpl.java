@@ -32,6 +32,20 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		} else {
 			getTaxHeaderDetailsDAO().update(taxHeader, tableType);
 		}
+
+		if (taxHeader.getTaxDetails() != null) {
+			if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+				for (Taxes taxes : taxHeader.getTaxDetails()) {
+					//taxHeaderDetailsDAO.getTaxDetailById(taxes.getId(), tableType);
+					taxes.setWorkflowId(0);
+					taxes.setNewRecord(taxHeader.isNew());
+					taxes.setRecordType(taxHeader.getRecordType());
+					taxes.setRecordStatus(taxHeader.getRecordStatus());
+					taxes.setLastMntBy(taxHeader.getLastMntBy());
+					taxes.setLastMntOn(taxHeader.getLastMntOn());
+				}
+			}
+		}
 		processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, false);
 
 		logger.debug("Leaving");
@@ -60,7 +74,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		logger.debug(Literal.ENTERING);
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(taxHeader.getRecordType())) {
-			delete(taxHeader, TableType.MAIN_TAB.getSuffix());
+			delete(taxHeader, tableType);
 		} else {
 			taxHeader.setRoleCode("");
 			taxHeader.setNextRoleCode("");
@@ -68,19 +82,45 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 			taxHeader.setNextTaskId("");
 			taxHeader.setWorkflowId(0);
 
+			if (taxHeader.getTaxDetails() != null) {
+				if (CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
+					for (Taxes taxes : taxHeader.getTaxDetails()) {
+						//taxHeaderDetailsDAO.getTaxDetailById(taxes.getId(), tableType);
+						taxes.setNewRecord(taxHeader.isNew());
+						taxes.setWorkflowId(0);
+						taxes.setRecordType(taxHeader.getRecordType());
+						taxes.setRecordStatus(taxHeader.getRecordStatus());
+						taxes.setLastMntBy(taxHeader.getLastMntBy());
+						taxes.setLastMntOn(taxHeader.getLastMntOn());
+					}
+				}
+			}
+
 			if (PennantConstants.RECORD_TYPE_NEW.equals(taxHeader.getRecordType())) {
 				taxHeader.setRecordType("");
-				getTaxHeaderDetailsDAO().save(taxHeader, TableType.MAIN_TAB.getSuffix());
+				taxHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				getTaxHeaderDetailsDAO().save(taxHeader, tableType);
 			} else {
 				taxHeader.setRecordType("");
-				getTaxHeaderDetailsDAO().update(taxHeader, TableType.MAIN_TAB.getSuffix());
+				getTaxHeaderDetailsDAO().update(taxHeader, tableType);
 			}
+
+			List<AuditDetail> auditDetails = new ArrayList<>();
+			auditDetails.addAll(processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, true));
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.addAll(processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, true));
-
 		delete(taxHeader, TableType.TEMP_TAB.getSuffix());
+
+		logger.debug(Literal.LEAVING);
+
+		return taxHeader;
+	}
+
+	@Override
+	public TaxHeader doReject(TaxHeader taxHeader) {
+		logger.debug(Literal.ENTERING);
+
+		delete(taxHeader, TableType.MAIN_TAB.getSuffix());
 
 		logger.debug(Literal.LEAVING);
 
@@ -125,7 +165,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 					if (PennantConstants.RCD_ADD.equalsIgnoreCase(taxDetail.getRecordType())) {
 						taxDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(taxDetail.getRecordType())) {
-						taxDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						taxDetail.setRecordType(PennantConstants.RCD_DEL);
 					} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(taxDetail.getRecordType())) {
 						taxDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					}
@@ -198,7 +238,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 		logger.debug(Literal.ENTERING);
 
 		getTaxHeaderDetailsDAO().delete(headerId, type);
-		getTaxHeaderDetailsDAO().delete(headerId, type);
+		getTaxHeaderDetailsDAO().delete(new TaxHeader(headerId), type);
 
 		logger.debug(Literal.LEAVING);
 	}
