@@ -3962,8 +3962,8 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="91" author="Kesav" dbms="postgresql,mssql"> 
-	 <sql> <![CDATA[ 
+	<changeSet id="91" author="Kesav" dbms="postgresql,mssql">
+		<sql> <![CDATA[ 
 	 
 			Delete from Seq_GST_Invoice; 
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'D' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' '; 
@@ -3971,11 +3971,11 @@
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'W' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' '; 
 			Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'B' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != '' and TaxStateCode != ' '; 
 			
-		]]> 
-		</sql> 
-		</changeSet> 
-		
-		<changeSet id="92" author="Kesav" dbms="oracle"> 
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="92" author="Kesav" dbms="oracle">
 		<sql> 
 		<![CDATA[ 
 				Delete from Seq_GST_Invoice; 
@@ -3983,9 +3983,9 @@
 				Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'C' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' '; 
 				Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'W' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' '; 
 				Insert Into Seq_GST_Invoice (GstStateCode, TransactionType, SeqNo) Select TaxStateCode GstStateCode, 'B' TransactionType, 0 SeqNo from rmtcountryvsprovince where TaxStateCode is not null and TaxStateCode != ' '; 
-				]]> 
-		</sql> 
-		</changeSet> 
+				]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="93" author="murthy.y">
 		<sql>
@@ -4852,13 +4852,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="137" author="aditya.a">	
+
+	<changeSet id="137" author="aditya.a">
 		<sql>
 			<![CDATA[
 				delete from ErrorDetails where Code = '60408';
 				insert into ErrorDetails values ('60408', 'EN', 'E','Loan cannot be cancelled since there are disbursement instructions with status Awaiting Confirmation',null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
 			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="138" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+			delete from errordetails where code='90499';
+			Insert into ERRORDETAILS values ('90499','EN','E','Partial Settlement Already initiated',null,'Approved',null,null,null,null,null,0,null,1000,0);
+		]]>
 		</sql>
 	</changeSet>
 
