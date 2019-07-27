@@ -84,7 +84,7 @@ public class AMZProcess implements Tasklet {
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
-	private static final String financeSQL = "Select FinReference, CustID from AmortizationQueuing  Where ThreadID = :ThreadId and Progress = :Progress";
+	private static final String financeSQL = "Select FinReference, CustID from AmortizationQueuing  Where ThreadID = ? and Progress = ?";
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {

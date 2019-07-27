@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeAMZProcess.java												*                           
+ * FileName    		:  PartitioningMasterAmortization.java									*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
- * Creation Date    :  13-10-2018															*
+ * Creation Date    :  18-05-2018															*
  *                                                                  
- * Modified Date    :  13-10-2018															*
+ * Modified Date    :  18-05-2018															*
  *                                                                  
  * Description 		:												 						*                                 
  *                                                                                          
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 13-10-2018       Pennant	                 0.1                                            * 
+ * 18-05-2018       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -43,47 +43,99 @@
 package com.pennant.backend.endofday.tasklet;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.item.ExecutionContext;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
-public class AfterAMZProcess implements Tasklet {
+public class PartitioningMasterAmortization implements Partitioner {
 
-	private Logger logger = Logger.getLogger(AfterAMZProcess.class);
+	private Logger logger = Logger.getLogger(Partitioner.class);
 
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
 	@Override
-	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
+	public Map<String, ExecutionContext> partition(int gridSize) {
 
 		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : After Amortization on : " + appDate);
+		logger.debug("START : Amortization Thread Allocation on : " + appDate);
 
-		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
-				.get(AmortizationConstants.AMZ_MONTHEND);
+		Date prvAMZMonth = SysParamUtil.getValueAsDate(AmortizationConstants.AMZ_MONTHEND);
+		Date amzMonth = DateUtility.addDays(prvAMZMonth, 1);
+		amzMonth = DateUtility.getMonthEnd(amzMonth);
 
-		// copy previous AMZ data from Working table to main table
-		projectedAmortizationDAO.copyPrvProjAMZ();
+		boolean recordsLessThanThread = false;
+		Map<String, ExecutionContext> partitionData = new HashMap<String, ExecutionContext>();
 
-		// create indexes on PROJECTEDINCOMEAMZ table
-		projectedAmortizationDAO.createIndexProjIncomeAMZ();
+		// configured thread count
+		int threadCount = SysParamUtil.getValueAsInt("AMZ_THREAD_COUNT");
 
-		// update amortization month
-		SysParamUtil.updateParamDetails(AmortizationConstants.AMZ_MONTHEND,
-				DateUtil.format(amzMonth, DateFormat.FULL_DATE.getPattern()));
+		// finance and total counts by progress
+		long finsCount = projectedAmortizationDAO.getCountByProgress();
 
-		logger.debug("COMPLETE : After Amortization on : " + appDate);
-		return RepeatStatus.FINISHED;
+		// for EOM
+		// long totalCount = projectedAmortizationDAO.getTotalCountByProgress();
+
+		if (finsCount != 0) {
+
+			long noOfRows = Math.round((new Double(finsCount) / new Double(threadCount)));
+
+			if (finsCount < threadCount) {
+				recordsLessThanThread = true;
+				noOfRows = 1;
+			}
+
+			for (int i = 1; i <= threadCount; i++) {
+
+				int financeCount = 0;
+				if (i == threadCount) {
+					// last thread will have the remaining records
+					financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, 0, i);
+				} else {
+					financeCount = projectedAmortizationDAO.updateThreadIDByRowNumber(amzMonth, noOfRows, i);
+				}
+
+				ExecutionContext execution = addExecution(i, financeCount, 0); // 0 -- totalCount
+				partitionData.put(Integer.toString(i), execution);
+
+				if (i == 1) {
+					execution.put(AmortizationConstants.DATA_TOTALFINANCES, finsCount);
+				}
+
+				if (recordsLessThanThread && i == finsCount) {
+					break;
+				}
+			}
+		}
+
+		logger.debug("COMPLETE : Amortization Thread Allocation on : " + appDate);
+		return partitionData;
+	}
+
+	/**
+	 * 
+	 * @param threadID
+	 * @param financeCount
+	 * @param totalCount
+	 * @return
+	 */
+	private ExecutionContext addExecution(int threadID, int financeCount, long totalCount) {
+
+		ExecutionContext execution = new ExecutionContext();
+		execution.put(AmortizationConstants.THREAD, threadID);
+		execution.put(AmortizationConstants.DATA_FINANCECOUNT, financeCount);
+
+		// For EOM
+		execution.put(AmortizationConstants.DATA_TOTALINCOMEAMZ, totalCount);
+
+		return execution;
 	}
 
 	// setters / getters

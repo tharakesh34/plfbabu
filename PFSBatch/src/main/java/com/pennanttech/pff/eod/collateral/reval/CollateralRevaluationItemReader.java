@@ -17,10 +17,13 @@ public class CollateralRevaluationItemReader extends JdbcCursorItemReader<Collat
 	public String getSql() {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select BatchId, FinReference, CollateralType, CollateralRef, CollateralCCY");
-		sql.append(", CollateralValue, MarketValue, BankLTV, ThresholdLTV, CommodityId, POS");
-		sql.append(", ValueDate");
+		sql.append("select ca.Id, BatchId, FinReference, CollateralType, CollateralRef, CollateralCCY");
+		sql.append(", CollateralValue, MarketValue, BankLTV, ThresholdLTV, CommodityId, POS, ValueDate");
+		sql.append(", AlertToRoles, ut.TemplateCode UserTemplateCode, ct.TemplateCode CustomerTemplateCode");
 		sql.append(" from Collateral_Ltv_Breaches ca");
+		sql.append(" inner join COMMODITIES c on c.Id = ca.CommodityId");
+		sql.append(" left join Templates ut on ut.TemplateId = c.UserTemplate");
+		sql.append(" left join Templates ct on ct.TemplateId = c.CustomerTemplate");
 		sql.append(" where BatchId = ").append(batchId);
 		sql.append(" and SendAlert = 0");
 

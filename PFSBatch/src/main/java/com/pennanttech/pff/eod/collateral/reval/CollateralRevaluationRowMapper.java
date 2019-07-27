@@ -24,10 +24,10 @@ public class CollateralRevaluationRowMapper implements RowMapper<CollateralReval
 		cr.setThresholdLTV(rs.getBigDecimal("ThresholdLTV"));
 		cr.setCommodityId(rs.getInt("CommodityId"));
 		cr.setPos(rs.getBigDecimal("POS"));
+		cr.setValueDate(rs.getDate("ValueDate"));
+		cr.setAlertToRoles(rs.getString("AlertToRoles"));
 		cr.setUserTemplateCode(rs.getString("UserTemplateCode"));
 		cr.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
-		cr.setAlertToRoles(rs.getString("AlertToRoles"));
-		cr.setValueDate(rs.getDate("ValueDate"));
 
 		return cr;
 

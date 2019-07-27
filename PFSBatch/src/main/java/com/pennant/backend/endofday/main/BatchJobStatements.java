@@ -91,8 +91,9 @@ public class BatchJobStatements {
 			break;
 
 		case SQL_SERVER:
-			query.append(" SELECT AVG(DATEDIFF (Millisecond, end_time, start_time))  avg FROM");
-			query.append(" (SELECT * FROM BATCH_JOB_EXECUTION T1 ");
+			query.append(" SELECT AVG(DATEDIFF (Millisecond, start_time, end_time)) avg FROM");
+			query.append(" (SELECT T1.JOB_EXECUTION_ID, T1.JOB_INSTANCE_ID, T1.START_TIME, T1.END_TIME");
+			query.append(" FROM BATCH_JOB_EXECUTION T1 ");
 			query.append(" INNER JOIN BATCH_JOB_INSTANCE T2 on T1.JOB_INSTANCE_ID = T2.JOB_INSTANCE_ID");
 			query.append(" WHERE T2.JOB_NAME = ? AND T1.JOB_INSTANCE_ID NOT IN (SELECT JOB_INSTANCE_ID");
 			query.append(" FROM BATCH_JOB_EXECUTION WHERE STATUS IN ('FAILED', 'STARTED', 'STOPPED'))) T");

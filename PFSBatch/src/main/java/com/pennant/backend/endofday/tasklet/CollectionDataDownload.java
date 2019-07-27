@@ -20,8 +20,8 @@ public class CollectionDataDownload implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
 		if (process != null) {
-			int count = process.processDownload();
-			logger.debug("Total Number of OD Records :" + count);
+			//int count = process.processDownload();
+			//logger.debug("Total Number of OD Records :" + count);
 		} else {
 			logger.debug("CollectionDataDownloadProcess Not Configured ");
 		}

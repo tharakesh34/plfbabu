@@ -7,7 +7,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.LedgerDownloadService;
 
@@ -22,7 +22,7 @@ public class LedgerDownload implements Tasklet {
 		logger.debug(Literal.ENTERING);
 
 		if (ledgerDownloadService != null) {
-			ledgerDownloadService.processDownload(DateUtility.getAppDate());
+			ledgerDownloadService.processDownload(SysParamUtil.getAppDate());
 		} else {
 			logger.debug("LedgerDownloadService Not Configured");
 		}

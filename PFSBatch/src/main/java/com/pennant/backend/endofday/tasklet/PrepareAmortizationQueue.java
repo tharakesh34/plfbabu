@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *
- * FileName    		:  BeforeAMZProcess.java												*                           
+ * FileName    		:  PrepareAmortizationQueue.java										*                           
  *                                                                    
  * Author      		:  PENNANT TECHONOLOGIES												*
  *                                                                  
- * Creation Date    :  13-10-2018															*
+ * Creation Date    :  18-05-2018															*
  *                                                                  
- * Modified Date    :  13-10-2018															*
+ * Modified Date    :  18-05-2018															*
  *                                                                  
  * Description 		:												 						*                                 
  *                                                                                          
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 13-10-2018       Pennant	                 0.1                                            * 
+ * 18-05-2018       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -51,15 +51,13 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.util.AmortizationConstants;
-import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennant.backend.util.BatchUtil;
 
-public class AfterAMZProcess implements Tasklet {
+public class PrepareAmortizationQueue implements Tasklet {
 
-	private Logger logger = Logger.getLogger(AfterAMZProcess.class);
+	private Logger logger = Logger.getLogger(PrepareAmortizationQueue.class);
 
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 
@@ -67,22 +65,25 @@ public class AfterAMZProcess implements Tasklet {
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
 
 		Date appDate = DateUtility.getAppDate();
-		logger.debug("START : After Amortization on : " + appDate);
+		logger.debug("START : Prepare Amortization Queue on : " + appDate);
 
 		Date amzMonth = (Date) context.getStepContext().getJobExecutionContext()
 				.get(AmortizationConstants.AMZ_MONTHEND);
 
-		// copy previous AMZ data from Working table to main table
-		projectedAmortizationDAO.copyPrvProjAMZ();
+		// log and truncate previous data
+		projectedAmortizationDAO.logAmortizationQueuing();
+		projectedAmortizationDAO.delete();
 
-		// create indexes on PROJECTEDINCOMEAMZ table
-		projectedAmortizationDAO.createIndexProjIncomeAMZ();
+		// prepare AMZ Queue
+		int count = projectedAmortizationDAO.prepareAmortizationQueue(amzMonth, false);
 
-		// update amortization month
-		SysParamUtil.updateParamDetails(AmortizationConstants.AMZ_MONTHEND,
-				DateUtil.format(amzMonth, DateFormat.FULL_DATE.getPattern()));
+		// copy previous AMZ data into working table and truncate main table
+		projectedAmortizationDAO.truncateAndInsertProjAMZ(amzMonth);
 
-		logger.debug("COMPLETE : After Amortization on : " + appDate);
+		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
+		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));
+
+		logger.debug("COMPLETE : Prepare Amortization Queue on : " + appDate);
 		return RepeatStatus.FINISHED;
 	}
 
