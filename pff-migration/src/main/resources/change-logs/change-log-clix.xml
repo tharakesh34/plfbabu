@@ -2836,7 +2836,13 @@ UNION ALL
 </changeSet>
 
 
-
+<changeSet id="49" author="Manoj">
+	<sql>
+	<![CDATA[
+		update plf.data_engine_column set constrainttype = 'M' where name = 'MANDATE_REG_NO' and tableid in (select id from plf.data_engine_table where name = 'MANDATE_RESPONSE');
+	]]>
+	</sql>
+</changeSet>
 
 
 	
