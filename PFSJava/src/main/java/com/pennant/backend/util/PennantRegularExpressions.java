@@ -188,8 +188,8 @@ public class PennantRegularExpressions {
 
 	public static final String REGEX_LOOK_UP_VALUE = "REGEX_LOOK_UP_VALUE";
 	public static final String REGEX_CLUST_NAME = "REGEX_CLUST_NAME";
-
 	public static final String REGEX_ALPHANUM_ALPHAFIRST = "REGEX_ALPHANUM_ALPHAFIRST";
+	public static final String REGEX_DOC_CODE = "REGEX_DOC_CODE";
 
 	private static Map<String, String> regexMapper = new HashMap<String, String>() {
 		private static final long serialVersionUID = -3549857310897774789L;
@@ -265,6 +265,7 @@ public class PennantRegularExpressions {
 			put(REGEX_CLUST_NAME, "^[A-Za-z]+[A-Za-z0-9&\\-\\_\\,\\s,:]*");
 			put(REGEX_ALPHANUM_ALPHAFIRST, "^[A-Za-z]+[A-Za-z0-9]*");
 			put(REGEX_CLUST_NAME, "^[A-Za-z0-9]+[A-Za-z0-9.\\&\\(\\)\\-\\_\\s]*");
+			put(REGEX_DOC_CODE, "^[A-Z0-9\\_]*");
 		}
 	};
 

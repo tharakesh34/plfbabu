@@ -410,7 +410,7 @@ public class DisbursementInstCtrl {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
-		map.put("documentDetails", documentDetails);
+		map.put("documentDetails", getDocumentDetails());
 		doshowDialog(map, listCtrl, dialogCtrl, module, false);
 
 		logger.debug("Leaving");
@@ -580,9 +580,16 @@ public class DisbursementInstCtrl {
 			return false;
 		}
 
-		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus()) && (!StringUtils
-				.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType())
-				&& !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) {
+		// PSD:138925:We should not allow to maintain instruction once it is paid irrespective of Mode Of Payment
+
+		/*
+		 * if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus()) && (!StringUtils
+		 * .equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE, aFinAdvancePayments.getPaymentType()) &&
+		 * !StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_DD, aFinAdvancePayments.getPaymentType()))) { return
+		 * false; }
+		 */
+
+		if (StringUtils.equals(DisbursementConstants.STATUS_PAID, aFinAdvancePayments.getStatus())) {
 			return false;
 		}
 

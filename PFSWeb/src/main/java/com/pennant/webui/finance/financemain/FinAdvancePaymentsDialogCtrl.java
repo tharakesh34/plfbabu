@@ -52,6 +52,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -63,6 +64,7 @@ import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.East;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Iframe;
@@ -86,7 +88,6 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -169,6 +170,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	//protected Textbox							phoneCountryCode;
 	//protected Textbox							phoneAreaCode;
 	protected Textbox phoneNumber;
+	protected East eastDocument;
 	protected Iframe docName;
 
 	protected Label label_liabilityHoldName;
@@ -228,14 +230,11 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	private transient PartnerBankService partnerBankService;
 	private FinanceMain financeMain;
-	private List<FinFeeDetail> finFeeDetailList;
 	private DocumentDetails documentDetails;
 	@Autowired
 	private ExternalDocumentManager externalDocumentManager = null;
 	@Autowired
 	private DrawingPowerService drawingPowerService;
-
-	private String moduleDefiner;
 
 	/**
 	 * default constructor.<br>
@@ -314,10 +313,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				financeMain = (FinanceMain) arguments.get("financeMain");
 			}
 
-			if (arguments.containsKey("finFeeDetailList")) {
-				finFeeDetailList = (List<FinFeeDetail>) arguments.get("finFeeDetailList");
-			}
-
 			if (this.finAdvancePayments.isNewRecord()) {
 				setNewRecord(true);
 			}
@@ -372,10 +367,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			if (arguments.containsKey("finCcy")) {
 				finCcy = (String) arguments.get("finCcy");
-			}
-
-			if (arguments.containsKey("moduleDefiner")) {
-				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
 			doLoadWorkFlow(this.finAdvancePayments.isWorkflow(), this.finAdvancePayments.getWorkflowId(),
@@ -531,9 +522,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.btnGetCustBeneficiary.setVisible(false);
 			}
 
-			this.window_FinAdvancePaymentsDialog.setHeight("85%");
-			this.window_FinAdvancePaymentsDialog.setWidth("100%");
-			this.docName.setHeight((borderLayoutHeight - 275) + "px");
 			this.gb_statusDetails.setVisible(false);
 			this.window_FinAdvancePaymentsDialog.doModal();
 
@@ -958,7 +946,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 
-		this.docName.setContent(externalDocumentManager.setDocContent(documentDetails));
+		//eastDocument
+
+		AMedia media = externalDocumentManager.getAMedia(documentDetails);
+		if (media != null) {
+			this.docName.setContent(media);
+			eastDocument.setVisible(true);
+			eastDocument.setTitle(documentDetails.getLovDescDocCategoryName());
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -2008,21 +2004,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			}
 			this.btnGetCustBeneficiary.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnGetCustBeneficiary"));
 		}
-		//FIXME Fields moved to branches
-		//		Filter filter[] = new Filter[1];
-		//		switch (str) {
-		//		case DisbursementConstants.PAYMENT_TYPE_CHEQUE:
-		//			filter[0] = new Filter("Cheque", "1", Filter.OP_EQUAL);
-		//			this.bankCode.setFilters(filter);
-		//			break;
-		//		case DisbursementConstants.PAYMENT_TYPE_DD:
-		//			filter[0] = new Filter("DD", "1", Filter.OP_EQUAL);
-		//			this.bankCode.setFilters(filter);
-		//			break;
-		//		default:
-		//			break;
-		//		}
-
 	}
 
 	public void doaddFilter(String payMode) {

@@ -630,7 +630,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, ""));
 		customerDetails.setCustomerPhoneNumList(
 				customerPhoneNumberDAO.getCustomerPhoneNumberByCustomerPhoneType(id, "", phoneType));
-		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, ""));
+		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, "_View"));
 
 		return customerDetails;
 	}
@@ -2299,7 +2299,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
-				auditDetail=validateBankInfoDetail(custBankInfo,auditDetail);
+				auditDetail = validateBankInfoDetail(custBankInfo, auditDetail);
 			}
 		}
 
@@ -2382,7 +2382,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug(Literal.ENTERING);
 		//List grater than tenure
 		ErrorDetail errorDetail = new ErrorDetail();
-		if(liability.getExtLiabilitiesPayments().size() > liability.getTenure()) {
+		if (liability.getExtLiabilitiesPayments().size() > liability.getTenure()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "No of instalment Details ";
 			valueParm[1] = "Tenure";
@@ -2392,16 +2392,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		//EMIType invalidate validation
 		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
 		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
-				liability.getTenure()); 
-		if(CollectionUtils.isNotEmpty(paymentDetails)) {
-			for(int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
+				liability.getTenure());
+		if (CollectionUtils.isNotEmpty(paymentDetails)) {
+			for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
 				int emiCount = 0;
-				for(int j = 0; j < paymentDetails.size(); j++) {
-					if(liability.getExtLiabilitiesPayments().get(i).getEMIType().equals((paymentDetails.get(j).getEMIType()))) {
-						emiCount ++;
+				for (int j = 0; j < paymentDetails.size(); j++) {
+					if (liability.getExtLiabilitiesPayments().get(i).getEMIType()
+							.equals((paymentDetails.get(j).getEMIType()))) {
+						emiCount++;
 					}
 				}
-				if(emiCount == 0) {
+				if (emiCount == 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Emi Type";
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm));
@@ -2419,7 +2420,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
 		return months;
 	}
-	
+
 	private List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate, int noOfMonths) {
 		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
 		if (startDate == null || endDate == null) {
@@ -2439,7 +2440,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		return list;
 	}
-	
+
 	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
 
 		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
@@ -2452,7 +2453,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getDebitAmt() == null ||detail.getDebitAmt().compareTo(BigDecimal.ZERO) < 0) {
+				if (detail.getDebitAmt() == null || detail.getDebitAmt().compareTo(BigDecimal.ZERO) < 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:DebitAmt";
 					valueParm[1] = "Zero";
@@ -2468,7 +2469,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getCreditAmt()== null || detail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
+				if (detail.getCreditAmt() == null || detail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:CreditAmt";
 					valueParm[1] = "Zero";
@@ -2484,7 +2485,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getBounceIn()==null || detail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+				if (detail.getBounceIn() == null || detail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:BounceIn";
 					valueParm[1] = "Zero";
@@ -2492,7 +2493,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				if (detail.getBounceOut()== null ||detail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+				if (detail.getBounceOut() == null || detail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "bankInfoDetails:BounceOut";
 					valueParm[1] = "Zero";
@@ -2525,7 +2526,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
-							if (subDetail.getBalance()==null ||subDetail.getBalance().compareTo(BigDecimal.ZERO) <=0) {
+							if (subDetail.getBalance() == null
+									|| subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
 								String[] valueParm = new String[2];
 								valueParm[0] = "BankInfoSubDetails:Balance";
 								valueParm[1] = "Zero";

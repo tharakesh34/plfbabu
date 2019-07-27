@@ -18,6 +18,7 @@ import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.limit.LimitTransactionDetail;
 import com.pennant.backend.util.LimitConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransactionDetail>
 		implements LimitTransactionDetailsDAO {
@@ -64,7 +65,6 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	@Override
 	public LimitTransactionDetail getTransaction(String referenceCode, String referenceNumber, String tranType,
 			long headerId, int schSeq) {
-		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceCode", referenceCode);
@@ -86,88 +86,75 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 		try {
 			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
+			//
 		}
 		return null;
 	}
 
 	@Override
 	public LimitTransactionDetail geLoantAvaliableReserve(String referenceNumber, String tranType, long headerId) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ReferenceCode", LimitConstants.FINANCE);
 		source.addValue("ReferenceNumber", referenceNumber);
 		source.addValue("TransactionType", tranType);
 		source.addValue("HeaderId", headerId);
 
-		StringBuilder selectSql = new StringBuilder("Select  SUM(LimitAmount) LimitAmount");
-		selectSql.append(" From LimitTransactionDetails");
-		selectSql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND ");
-		selectSql.append("TransactionType = :TransactionType AND HeaderId=:HeaderId");
-		logger.debug("selectSql: " + selectSql.toString());
+		StringBuilder sql = new StringBuilder("Select  SUM(LimitAmount) LimitAmount");
+		sql.append(" From LimitTransactionDetails");
+		sql.append(" Where ReferenceCode = :ReferenceCode And ReferenceNumber = :ReferenceNumber AND ");
+		sql.append("TransactionType = :TransactionType AND HeaderId=:HeaderId");
+		logger.debug("selectSql: " + sql.toString());
 
 		RowMapper<LimitTransactionDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(LimitTransactionDetail.class);
 		try {
-			LimitTransactionDetail limitTranDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), source,
+			LimitTransactionDetail limitTranDetail = this.jdbcTemplate.queryForObject(sql.toString(), source,
 					typeRowMapper);
 			if (limitTranDetail.getLimitAmount() == null) {
 				limitTranDetail.setLimitAmount(BigDecimal.ZERO);
 			}
 			return limitTranDetail;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-		} finally {
-			source = null;
-			selectSql = null;
-			logger.debug("Leaving");
+			//
 		}
 		return null;
 	}
 
 	@Override
 	public long save(LimitTransactionDetail limitTransactionDetail) {
-		logger.debug("Entering");
 		if (limitTransactionDetail.getId() == Long.MIN_VALUE) {
 			limitTransactionDetail.setId(getNextValue("SeqLimitTransactionDetails"));
 			logger.debug("get NextID:" + limitTransactionDetail.getId());
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into LimitTransactionDetails");
-		insertSql.append(" (TransactionId, HeaderId, ReferenceCode, ReferenceNumber,TransactionType,SchSeq,");
-		insertSql.append(" TransactionDate, OverrideFlag ,TransactionAmount ,TransactionCurrency ,LimitCurrency,");
-		insertSql.append(" LimitAmount ,CreatedBy ,CreatedOn ,LastMntBy ,LastMntOn) ");
-		insertSql.append(
-				" Values(:TransactionId, :HeaderId, :ReferenceCode, :ReferenceNumber,:TransactionType,:SchSeq,");
-		insertSql
-				.append(" :TransactionDate ,:OverrideFlag ,:TransactionAmount ,:TransactionCurrency ,:LimitCurrency ,");
-		insertSql.append(" :LimitAmount ,:CreatedBy ,:CreatedOn ,:LastMntBy ,:LastMntOn )");
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into LimitTransactionDetails");
+		sql.append(" (TransactionId, HeaderId, ReferenceCode, ReferenceNumber,TransactionType,SchSeq,");
+		sql.append(" TransactionDate, OverrideFlag ,TransactionAmount ,TransactionCurrency ,LimitCurrency,");
+		sql.append(" LimitAmount ,CreatedBy ,CreatedOn ,LastMntBy ,LastMntOn) ");
+		sql.append(" Values(:TransactionId, :HeaderId, :ReferenceCode, :ReferenceNumber,:TransactionType,:SchSeq,");
+		sql.append(" :TransactionDate ,:OverrideFlag ,:TransactionAmount ,:TransactionCurrency ,:LimitCurrency ,");
+		sql.append(" :LimitAmount ,:CreatedBy ,:CreatedOn ,:LastMntBy ,:LastMntOn )");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(limitTransactionDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+
 		return limitTransactionDetail.getId();
 	}
 
 	@Override
 	public void updateSeq(long transactionId, int schSeq) {
-		logger.debug("Entering");
 		MapSqlParameterSource map = new MapSqlParameterSource();
 		map.addValue("TransactionId", transactionId);
 		map.addValue("SchSeq", schSeq);
 
 		StringBuilder sql = new StringBuilder("update LimitTransactionDetails");
-		sql.append("  set SchSeq=:SchSeq  where TransactionId=:TransactionId ");
-		logger.debug("insertSql: " + sql.toString());
+		sql.append("  set SchSeq=:SchSeq where TransactionId=:TransactionId");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		this.jdbcTemplate.update(sql.toString(), map);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -184,21 +171,19 @@ public class LimitTransactionDetailsDAOImpl extends SequenceDao<LimitTransaction
 	 */
 	@Override
 	public void delete(long transactionId) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("TransactionId", transactionId);
-		StringBuilder deleteSql = new StringBuilder("Delete From LimitTransactionDetails");
-		deleteSql.append(" Where TransactionId = :TransactionId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+
+		StringBuilder sql = new StringBuilder("Delete From LimitTransactionDetails");
+		sql.append(" Where TransactionId = :TransactionId");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), source);
-
+			this.jdbcTemplate.update(sql.toString(), source);
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			//
 		}
-		logger.debug("Leaving");
 	}
 
 	// need to be verified in institution limits

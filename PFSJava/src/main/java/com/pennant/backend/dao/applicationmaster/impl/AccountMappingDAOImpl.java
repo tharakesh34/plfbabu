@@ -74,18 +74,15 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 
 	@Override
 	public AccountMapping getAccountMapping(String account, String type) {
-		logger.debug(Literal.ENTERING);
-
 		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType,");
-
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (type.contains("View")) {
-			sql.append(
-					", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc, accountTypeDesc, finTypeDesc ");
+			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc");
+			sql.append(", accountTypeDesc, finTypeDesc");
 		}
 
 		sql.append(" From AccountMapping");
@@ -102,14 +99,12 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		RowMapper<AccountMapping> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AccountMapping.class);
 
 		try {
-			accountMapping = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			accountMapping = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return accountMapping;
+		return null;
 	}
 
 	@Override
@@ -120,14 +115,14 @@ public class AccountMappingDAOImpl extends BasicDao<AccountMapping> implements A
 		AccountMapping accountMapping = new AccountMapping();
 		accountMapping.setFinType(finType);
 
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType,");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder();
+		sql.append("select account, hostAccount, FinType, CostCenterID, ProfitCenterID, AccountType");
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (type.contains("View")) {
-			sql.append(
-					", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc, accountTypeDesc, finTypeDesc ");
+			sql.append(", costCenterCode, costCenterDesc, profitCenterCode, profitCenterDesc");
+			sql.append(", accountTypeDesc, finTypeDesc");
 		}
 
 		sql.append(" From AccountMapping");

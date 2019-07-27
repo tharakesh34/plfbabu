@@ -351,6 +351,9 @@ public class RepaymentProcessUtil {
 
 		financeMain.setGlSubHeadCodes(financeMainDAO.getGLSubHeadCodes(finReference));
 
+		// GST Mapping details
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finReference);
+
 		// Put Xcess Payables to Map along with GST
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
 		for (int i = 0; i < xcessPayables.size(); i++) {
@@ -514,7 +517,7 @@ public class RepaymentProcessUtil {
 			 * postDate
 			 */
 
-			returnList = doRepayPostings(financeDetail, rch, extDataMap, postingDate);
+			returnList = doRepayPostings(financeDetail, rch, extDataMap, gstExecutionMap, postingDate);
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -1663,7 +1666,7 @@ public class RepaymentProcessUtil {
 	 * @throws InvocationTargetException
 	 */
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
-			Map<String, BigDecimal> extDataMap, Date postDate)
+			Map<String, BigDecimal> extDataMap, Map<String, Object> gstExecutionMap, Date postDate)
 			throws IllegalAccessException, InterfaceException, InvocationTargetException {
 		logger.debug("Entering");
 
@@ -1809,6 +1812,7 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setPartnerBankAcType(rcd.getPartnerBankAcType());
 			rpyQueueHeader.setPftChgAccReq(true);
 			rpyQueueHeader.setExtDataMap(extDataMap);
+			rpyQueueHeader.setGstExecutionMap(gstExecutionMap);
 			rpyQueueHeader.setReceiptId(rch.getReceiptID());
 
 			// Cash Transaction payment Type Verification

@@ -577,7 +577,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		if (!this.docTypeCode.isReadonly()) {
 			this.docTypeCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_DocumentTypeDialog_DocTypeCode.value"),
-							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
+							PennantRegularExpressions.REGEX_DOC_CODE, true));
 		}
 
 		if (!this.docTypeDesc.isReadonly()) {

@@ -1205,6 +1205,10 @@ public class RepaymentPostingsUtil implements Serializable {
 			dataMap.putAll(dataMapTemp);
 		}
 
+		if (rpyQueueHeader.getGstExecutionMap() != null) {
+			dataMap.putAll(rpyQueueHeader.getGstExecutionMap());
+		}
+
 		aeEvent.setDataMap(dataMap);
 
 		// Accounting Entry Execution

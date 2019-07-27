@@ -202,7 +202,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		dataMap.put("LPP_SGST_P", movement.getPaidSGST());
 		dataMap.put("LPP_UGST_P", movement.getPaidUGST());
 		dataMap.put("LPP_IGST_P", movement.getPaidIGST());
-		
+
 		//GST Waivers Details
 		dataMap.put("LPP_CGST_W", rpyQueueHeader.getPenaltyWaiverCGST());
 		dataMap.put("LPP_SGST_W", rpyQueueHeader.getPenaltyWaiverSGST());
@@ -249,6 +249,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (rpyQueueHeader.getExtDataMap() != null) {
 				dataMap.putAll(rpyQueueHeader.getExtDataMap());
 			}
+		}
+
+		if (rpyQueueHeader.getGstExecutionMap() != null) {
+			dataMap.putAll(rpyQueueHeader.getGstExecutionMap());
 		}
 
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_LATEPAY);

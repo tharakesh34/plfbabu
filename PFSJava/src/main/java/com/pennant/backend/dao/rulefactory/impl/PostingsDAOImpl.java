@@ -273,7 +273,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 				linkedTransactions.add(dataSet.getLinkedTranId());
 			}
 
-			stagePostingDAO.saveLinkedTrnasactions(linkedTransactions);
+			if (!linkedTransactions.isEmpty()) {
+				stagePostingDAO.saveLinkedTrnasactions(linkedTransactions);
+			}
 		}
 
 		logger.debug("Leaving");

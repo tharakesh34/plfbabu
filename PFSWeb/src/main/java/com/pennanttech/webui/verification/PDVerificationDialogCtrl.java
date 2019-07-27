@@ -693,7 +693,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<CustomerAddres> addresses = new ArrayList<>();
 		if (customerDetails.getAddressList() != null) {
 			for (CustomerAddres customerAddres : customerDetails.getAddressList()) {
-				if(customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+				if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 					addresses.add(customerAddres);
 				}
 			}
@@ -703,15 +703,14 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void setVerifications() {
 		if (initType) {
-			List<CustomerAddres>     addressesList           = new ArrayList<CustomerAddres>();
+			List<CustomerAddres> addressesList = new ArrayList<CustomerAddres>();
 			List<JointAccountDetail> jointAccountDetailsList = new ArrayList<JointAccountDetail>();
-			for(CustomerAddres addresses:financeDetail.getCustomerDetails().getAddressList()){
-				if(addresses.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
-							addressesList.add(addresses);
+			for (CustomerAddres addresses : financeDetail.getCustomerDetails().getAddressList()) {
+				if (addresses.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+					addressesList.add(addresses);
 				}
 			}
-			
-			
+
 			addCustomerAddresses(addressesList, false);
 			addCoApplicantAddresses(financeDetail.getJountAccountDetailList(), false);
 			getTotalVerifications();
@@ -731,9 +730,9 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> tempVerifications = new ArrayList<>();
 		Set<String> deleteSet = new HashSet<>();
 		Verification newVrf;
-		
-		for(CustomerAddres addres:customerDetails.getAddressList()){
-			if(addres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+
+		for (CustomerAddres addres : customerDetails.getAddressList()) {
+			if (addres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 				addresses.add(addres);
 			}
 		}
@@ -772,7 +771,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
 				for (CustomerAddres newAddress : addresses) {
-					
+
 					if (StringUtils.equals(newAddress.getCustAddrType(), previous.getReferenceFor())
 							&& (newAddress.getCustID() == previous.getCustId())) {
 						CustomerAddres oldAddres = customerAddresService.getCustomerAddresById(previous.getCustId(),
@@ -1195,7 +1194,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			if (verification.getDecision() == Decision.RE_INITIATE.getKey()
 					&& !userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_SAVED)
 					&& verification.getReinitid() == null) {
-				MessageUtil.showError("Field Investigation Re-Initiation is allowed only when user action is save");
+				MessageUtil.showError("Personal Discussion Re-Initiation is allowed only when user action is save");
 				return false;
 			}
 		}

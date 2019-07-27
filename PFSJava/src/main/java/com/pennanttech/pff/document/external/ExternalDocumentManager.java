@@ -31,7 +31,7 @@ public class ExternalDocumentManager {
 	@Autowired(required = false)
 	private DocumentManagementService documentManagementService;
 
-	public AMedia setDocContent(DocumentDetails documentDetails) {
+	public AMedia getAMedia(DocumentDetails documentDetails) {
 		AMedia amedia = null;
 		if (documentDetails == null) {
 			return amedia;

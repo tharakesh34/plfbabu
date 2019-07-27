@@ -113,7 +113,6 @@ public class NotificationService {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private EmailEngine emailEngine;
 	private SmsEngine smsEngine;
-	Map<String, Object> notificationDataMap = new HashMap<String, Object>();
 
 	public NotificationService() {
 		super();
@@ -536,6 +535,7 @@ public class NotificationService {
 			}
 		}
 
+		notificationDataMap.put("contentCode", mailTemplate.getTemplateCode());
 		String json = new ObjectMapper().writeValueAsString(notificationDataMap);
 		mailTemplate.setNotificationData(json);
 
