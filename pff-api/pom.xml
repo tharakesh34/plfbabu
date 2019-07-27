@@ -290,6 +290,10 @@
 			<groupId>com.pennanttech.pennapps</groupId>
 			<artifactId>document-generator</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<artifactId>account-updater</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

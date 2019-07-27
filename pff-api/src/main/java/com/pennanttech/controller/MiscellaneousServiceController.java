@@ -490,6 +490,7 @@ public class MiscellaneousServiceController {
 							postingEntry.setAccount(entry.getAccount());
 							posting.setCreditsCount(jvPosting.getCreditsCount() + 1);
 							totalCredits = totalCredits.add(entry.getTxnAmount());
+							creditEntryList.add(postingEntry);
 							break;
 
 						case "D":
@@ -499,6 +500,7 @@ public class MiscellaneousServiceController {
 							postingEntry.setDebitAccount(entry.getAccount());
 							posting.setDebitCount(jvPosting.getDebitCount() + 1);
 							totalDebits = totalDebits.add(entry.getTxnAmount());
+							debitEntryList.add(postingEntry);
 							break;
 						}
 					}

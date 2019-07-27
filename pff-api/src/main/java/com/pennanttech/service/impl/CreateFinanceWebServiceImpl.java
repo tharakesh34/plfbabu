@@ -124,12 +124,11 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				financeDataValidation.setFinanceDetail(financeDetail);
 			}
 
 			// validate Finance schedule details Validations
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
-					financeDetail.getFinScheduleData(), true);
+					financeDetail.getFinScheduleData(), true, financeDetail);
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
@@ -167,8 +166,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
-		} finally {
-			financeDataValidation.setFinanceDetail(null);
 		}
 	}
 
@@ -434,7 +431,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				financeDataValidation.setFinanceDetail(financeDetail);
 			}
 			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
@@ -467,8 +463,6 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
-		} finally {
-			financeDataValidation.setFinanceDetail(null);
 		}
 	}
 
@@ -836,7 +830,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		}
 		// service level validations
 		if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinReference())) {
-			int count = financeMainDAO.getCountByFinReference(financeDetail.getFinReference(), true);
+			int count = financeMainDAO.getCountByFinReference(financeDetail.getFinScheduleData().getFinReference(),
+					true);
 			if (count <= 0) {
 				response = new FinanceDetail();
 				doEmptyResponseObject(response);
@@ -844,6 +839,8 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				valueParm[0] = financeDetail.getFinReference();
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 				return response;
+			} else {
+				financeDetail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
 			}
 		} else {
 			WSReturnStatus returnStatus = validateOldFinReference(financeDetail, true);
@@ -913,7 +910,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 					return findetail;
 				}
 			}
-			if(StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
+			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getExternalReference())) {
 				int count = financeMainDAO
 						.getCountByExternalReference(financeDetail.getFinScheduleData().getExternalReference());
 				if (count > 0) {

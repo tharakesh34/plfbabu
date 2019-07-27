@@ -395,6 +395,9 @@ public class CreateFinanceController extends SummaryDetailService {
 				schdDetail.setNextRoleCode(roleCode);
 				schdDetail.setTaskId(taskid);
 				schdDetail.setNextTaskId(financeMain.getNextTaskId());
+				if (StringUtils.isBlank(schdDetail.getBaseRate())) {
+					schdDetail.setBaseRate(null);
+				}
 			}
 
 			// Finance detail object
@@ -3350,6 +3353,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					remarksController.doAddRemarks(moveLoanStageRequest.getRemarks());
 				}
 			}
+			financeMain.setServiceName("MoveLoanStage");
 
 			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, finDetail);
 			AuditHeader auditHeader = new AuditHeader(finDetail.getFinReference(), null, null, null, auditDetail,

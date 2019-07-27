@@ -1541,7 +1541,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				receiptData.setDueAdjusted(true);
 				if (receiptPurposeCtg == 2) {
 					boolean duesAdjusted = receiptService
-							.checkDueAdjusted(receiptData.getReceiptHeader().getAllocations());
+							.checkDueAdjusted(receiptData.getReceiptHeader().getAllocations(), receiptData);
 					if (!duesAdjusted) {
 						receiptData = receiptService.adjustToExcess(receiptData);
 						receiptData.setDueAdjusted(false);

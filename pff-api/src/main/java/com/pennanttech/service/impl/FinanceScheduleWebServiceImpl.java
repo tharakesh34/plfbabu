@@ -72,16 +72,17 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			}
 
 			// validate finance data
+			FinanceDetail financeDetail = null;
 			if (!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) {
-				FinanceDetail financeDetail = new FinanceDetail();
+				financeDetail = new FinanceDetail();
 				financeDetail.setFinScheduleData(finScheduleData);
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
 				financeDetail.setCustomerDetails(customerDetails);
-				financeDataValidation.setFinanceDetail(financeDetail);
 			}
 			// validate schedule details
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true);
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true,
+					financeDetail);
 			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
@@ -98,8 +99,6 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
-		} finally {
-			financeDataValidation.setFinanceDetail(null);
 		}
 		// for  logging purpose
 		if (financeSchdData != null) {
