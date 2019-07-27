@@ -207,7 +207,8 @@ public class FinMandateServiceImpl implements FinMandateService {
 					mandate.setStatus(MandateConstants.STATUS_NEW);
 					String mandateCustomStatus = SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS);
 					if (StringUtils.isNotBlank(mandateCustomStatus)) {
-						mandate.setStatus(mandateCustomStatus);
+						//FIXME: Custom Status should not be set to Mandate while Approving.Have to discuss with Respective module owner
+						//mandate.setStatus(mandateCustomStatus);
 					}
 					mandate.setRecordType("");
 					mandate.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

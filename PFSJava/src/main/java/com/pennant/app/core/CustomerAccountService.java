@@ -45,7 +45,7 @@ public class CustomerAccountService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processCustomerAccountUpdate() throws Exception {
-		logger.debug(" Entering ");
+		/*logger.debug(" Entering ");
 
 		Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
 		Map<String, AccountsHistory> accountHistMap = new HashMap<String, AccountsHistory>(1);
@@ -111,12 +111,12 @@ public class CustomerAccountService extends ServiceHelper {
 
 		getPostingsDAO().updatePostCtg();
 
-		logger.debug(" Leaving ");
+		logger.debug(" Leaving ");*/
 
 	}
 
 	public void processCustomerAccountHstyDetails() throws Exception {
-		logger.debug(" Entering ");
+		/*logger.debug(" Entering ");
 
 		List<AccountHistoryDetail> accHstyDetailList = new ArrayList<>();
 
@@ -152,7 +152,7 @@ public class CustomerAccountService extends ServiceHelper {
 			DataSourceUtils.releaseConnection(connection, dataSource);
 		}
 
-		logger.debug(" Leaving ");
+		logger.debug(" Leaving ");*/
 
 	}
 
@@ -198,7 +198,7 @@ public class CustomerAccountService extends ServiceHelper {
 
 	}
 
-	public void prepareAccounts(Map<String, Accounts> accountMap, ReturnDataSet posting, AccountType accountType) {
+	private void prepareAccounts(Map<String, Accounts> accountMap, ReturnDataSet posting, AccountType accountType) {
 		String accountKey = posting.getAccount();
 		Accounts account = new Accounts();
 
@@ -225,7 +225,7 @@ public class CustomerAccountService extends ServiceHelper {
 		accountMap.put(accountKey, account);
 	}
 
-	public Accounts prepareAccountData(ReturnDataSet posting, Accounts account, AccountType accountType) {
+	private Accounts prepareAccountData(ReturnDataSet posting, Accounts account, AccountType accountType) {
 		account.setAccountId(posting.getAccount());
 		account.setAcCcy(posting.getAcCcy());
 		account.setAcType(posting.getAccountType());
@@ -255,7 +255,7 @@ public class CustomerAccountService extends ServiceHelper {
 		return account;
 	}
 
-	public void PrepareAccountsHist(Map<String, AccountsHistory> accountHistMap, ReturnDataSet posting) {
+	private void PrepareAccountsHist(Map<String, AccountsHistory> accountHistMap, ReturnDataSet posting) {
 		String accountHistKey = posting.getAccount().concat(DateUtility.formatToShortDate(posting.getPostDate()));
 		AccountsHistory accountHist = new AccountsHistory();
 

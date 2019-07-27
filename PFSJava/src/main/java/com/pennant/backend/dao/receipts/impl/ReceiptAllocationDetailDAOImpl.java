@@ -186,13 +186,14 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		source.addValue("ReceiptID", curReceiptID);
 
 		StringBuilder selectSql = new StringBuilder("");
-		selectSql.append(" Select RAD.AllocationType AllocationType, SUM(RAD.PaidAmount) PaidAmount, ");
+		selectSql.append(
+				" Select RAD.AllocationType AllocationType,RAD.AllocationTo AllocationTo, SUM(RAD.PaidAmount) PaidAmount, ");
 		selectSql.append(" SUM(RAD.WaivedAmount) WaivedAmount, SUM(RAD.PaidGST) PaidGST, SUM(RAD.WaivedGST) WaivedGST");
 		selectSql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP RAD ");
 		selectSql.append(" INNER JOIN FINRECEIPTHEADER_TEMP RCH ON RAD.RECEIPTID = RCH.RECEIPTID ");
 		selectSql.append(" Where RCH.Reference = :Reference AND RCH.ReceiptID <> :ReceiptID");
 		selectSql.append(" AND RCH.ALLOCATIONTYPE = 'M' AND RCH.CANCELREASON IS NULL ");
-		selectSql.append(" GROUP BY RAD.AllocationType ");
+		selectSql.append(" GROUP BY RAD.AllocationType,RAD.AllocationTo ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ReceiptAllocationDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper

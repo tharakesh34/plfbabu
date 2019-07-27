@@ -196,6 +196,11 @@ public abstract class JsonService<T> {
 		}
 			
 		StringWriter sw = new StringWriter();
+		
+		if (StringUtils.trimToNull(jsonServiceDetail.getRequestString()) != null) {
+			return jsonServiceDetail.getRequestString();
+		}
+		
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(jsonServiceDetail.getRequestData().getClass());
 			Marshaller marshaller = jaxbContext.createMarshaller();

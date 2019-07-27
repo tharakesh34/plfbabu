@@ -336,6 +336,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			FinanceScheduleDetail curSchd, Date valueDate, Date penaltyCalDate, boolean isEODprocess) {
 		logger.debug("Entering");
 
+		Date maxValuDate = penaltyCalDate;
 		fod.setFinODTillDate(penaltyCalDate);
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 
@@ -367,18 +368,23 @@ public class LatePayMarkingService extends ServiceHelper {
 					fod.setFinMaxODPri(fod.getFinMaxODPri().subtract(repayment.getFinSchdPriPaid()));
 					fod.setFinMaxODPft(fod.getFinMaxODPft().subtract(repayment.getFinSchdPftPaid()));
 				}
+				maxValuDate = repayment.getFinValueDate();
 
 			}
 		}
+		if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) == 0 ) {
+			penaltyCalDate = maxValuDate;
+		}
+		
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), penaltyCalDate));
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
 
-		if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {
+		/*if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {
 			penaltyCalDate = DateUtility.getAppDate();
-		}
+		}*/
 		latePayPenaltyService.computeLPP(fod, penaltyCalDate, finMain, finScheduleDetails, repayments);
 
 		String lpiMethod = finMain.getPastduePftCalMthd();

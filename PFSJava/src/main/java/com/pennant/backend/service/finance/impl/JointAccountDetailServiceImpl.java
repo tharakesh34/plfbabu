@@ -835,7 +835,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 
 	@Override
 	public List<AuditDetail> doApprove(List<JointAccountDetail> jointAcDetailList, String tableType,
-			String auditTranType, String finSourceId, Object apiHeader) {
+			String auditTranType, String finSourceId, Object apiHeader, String serviceName) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -854,7 +854,7 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
 			}
 
-			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null) {
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null || StringUtils.isNotBlank(serviceName)) {
 				getJountAccountDetailDAO().delete(jointAccountDetail, "_Temp");
 			}
 

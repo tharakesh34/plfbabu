@@ -133,7 +133,7 @@ public interface ReceiptService {
 
 	FinReceiptData calcuateDues(FinReceiptData receiptData);
 
-	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations);
+	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations, FinReceiptData receiptData);
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
 
@@ -153,5 +153,9 @@ public interface ReceiptService {
 	long getUploadSeqId();
 
 	FinReceiptData createXcessRCD(FinReceiptData receiptData);
+
+	boolean isEarlySettlementInitiated(String finreference);
+
+	boolean isPartialSettlementInitiated(String finreference);
 
 }

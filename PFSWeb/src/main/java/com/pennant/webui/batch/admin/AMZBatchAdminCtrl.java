@@ -97,6 +97,7 @@ public class AMZBatchAdminCtrl extends GFCBaseCtrl<Object> {
 
 	private static final long serialVersionUID = 4309463490869641570L;
 	private static final Logger logger = Logger.getLogger(AMZBatchAdminCtrl.class);
+
 	private DataSource dataSource;
 
 	protected Window window_AMZBatchAdmin;

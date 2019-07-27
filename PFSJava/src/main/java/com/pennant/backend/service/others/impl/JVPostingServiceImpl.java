@@ -427,7 +427,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						}
 					}
 
-					getPostingsDAO().saveBatch(list);
+					getPostingsDAO().saveBatch(list, true);
 					auditHeader.setErrorList(errorDetails);
 				}
 			} catch (Exception e) {

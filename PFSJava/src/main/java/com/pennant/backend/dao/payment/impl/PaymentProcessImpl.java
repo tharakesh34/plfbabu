@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -18,6 +19,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.process.PaymentProcess;
@@ -87,15 +89,23 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 			if (StringUtils.equals("E", instruction.getStatus())) {
 				instruction.setStatus(DisbursementConstants.STATUS_PAID);
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
+				}
 			} else if (StringUtils.equals("P", instruction.getStatus())) {
 				instruction.setStatus(DisbursementConstants.STATUS_REALIZED);
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
+				}
 			} else {
-				AEEvent aeEvent = new AEEvent();
-				aeEvent.setLinkedTranId(instruction.getLinkedTranId());
-				List<ReturnDataSet> list = postingsPreparationUtil
-						.postReversalsByLinkedTranID(instruction.getLinkedTranId());
-				aeEvent.setReturnDataSet(list);
-				aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					AEEvent aeEvent = new AEEvent();
+					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
+					List<ReturnDataSet> list = postingsPreparationUtil
+							.postReversalsByLinkedTranID(instruction.getLinkedTranId());
+					aeEvent.setReturnDataSet(list);
+					aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+				}
 				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
 			}
 			// addToCustomerBeneficiary(instruction, financeMain.getCustID()); FIXME to check the benficiary  adding required

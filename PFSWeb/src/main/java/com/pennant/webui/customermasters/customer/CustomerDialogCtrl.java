@@ -2101,7 +2101,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.directorDetails.setVisible(false);
 			this.gb_rating.setVisible(false);
 			this.label_ArabicName.setVisible(true);
-			this.space_CustArabicName.setSclass("");
+			//this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
 			this.row_party_segment.setVisible(true);
@@ -2343,6 +2343,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustMotherMaiden.value"),
 								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
 			}
+
+			if (!this.custArabicName.isReadonly()) {
+				this.custArabicName.setConstraint(
+						new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"),
+								PennantRegularExpressions.REGEX_CUST_NAME, isMandValidate));
+			}
 		} else {
 			if (!this.custShrtName.isReadonly()) {
 				this.custShrtName
@@ -2350,10 +2356,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 								PennantRegularExpressions.REGEX_CUST_NAME, true));
 			}
 		}
-		if (!this.custArabicName.isReadonly()) {
-			this.custArabicName.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_CustomerDialog_CustArabicName.value"), null, false));
-		}
+
 		if (!this.custDOB.isDisabled()) {
 			if (isRetailCustomer) {
 				this.custDOB.setConstraint(new PTDateValidator(Labels.getLabel("label_CustomerDialog_CustDOB.value"),
@@ -3125,7 +3128,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				List<CustomerDedup> customerDedupList = dedupParmService.getDedupCustomerDetails(aCustomerDetails, null,
 						null);
 				if (customerDedupList != null) {
-
+					logger.debug("CustomerDedupList Found: " + customerDedupList.size());
 					// call the ZUL-file with the parameters packed in a map
 					if (CollectionUtils.isNotEmpty(customerDedupList)) {
 						this.customerDetails.setCustomerDedupList(customerDedupList);
@@ -3139,6 +3142,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 								null, map);
 						return;
 					} else {
+						logger.debug("No dedup list found.");
 						if (MessageUtil.confirm("No dedup list found.",
 								MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
 							return;

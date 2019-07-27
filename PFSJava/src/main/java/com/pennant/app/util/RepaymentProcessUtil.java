@@ -298,7 +298,7 @@ public class RepaymentProcessUtil {
 		// Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = null;
 		long logKey = 0;
-		Date postDate = getPostDate(valueDate);
+		Date postDate = getPostDate(postingDate);
 		if (isSchdLogReq) {
 			entryDetail = new FinLogEntryDetail();
 			entryDetail.setFinReference(finReference);
@@ -514,7 +514,7 @@ public class RepaymentProcessUtil {
 			 * postDate
 			 */
 
-			returnList = doRepayPostings(financeDetail, rch, extDataMap, postDate);
+			returnList = doRepayPostings(financeDetail, rch, extDataMap, postingDate);
 
 			if (!(Boolean) returnList.get(0)) {
 				String errParm = (String) returnList.get(1);
@@ -852,28 +852,30 @@ public class RepaymentProcessUtil {
 					amount = movementMap.get("bounceChargePaid");
 				}
 
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(bounceFee.getTaxComponent())) {
-					BigDecimal gst = movement.getPaidCGST().add(movement.getPaidSGST()).add(movement.getPaidIGST())
-							.add(movement.getPaidUGST());
-					movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount().subtract(gst)));
+				if (bounceFee != null) {
+					if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(bounceFee.getTaxComponent())) {
+						BigDecimal gst = movement.getPaidCGST().add(movement.getPaidSGST()).add(movement.getPaidIGST())
+								.add(movement.getPaidUGST());
+						movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount().subtract(gst)));
 
-					BigDecimal waiverGst = movement.getWaivedCGST().add(movement.getWaivedSGST())
-							.add(movement.getWaivedIGST()).add(movement.getWaivedUGST());
-					amount = BigDecimal.ZERO;
-					if (movementMap.containsKey("bounceChargeWaived")) {
-						amount = movementMap.get("bounceChargeWaived");
-					}
-					movementMap.put("bounceChargeWaived", amount.add(movement.getWaivedAmount().subtract(waiverGst)));
+						BigDecimal waiverGst = movement.getWaivedCGST().add(movement.getWaivedSGST())
+								.add(movement.getWaivedIGST()).add(movement.getWaivedUGST());
+						amount = BigDecimal.ZERO;
+						if (movementMap.containsKey("bounceChargeWaived")) {
+							amount = movementMap.get("bounceChargeWaived");
+						}
+						movementMap.put("bounceChargeWaived",
+								amount.add(movement.getWaivedAmount().subtract(waiverGst)));
 
-				} else {
-					movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
-					amount = BigDecimal.ZERO;
-					if (movementMap.containsKey("bounceChargeWaived")) {
-						amount = movementMap.get("bounceChargeWaived");
+					} else {
+						movementMap.put("bounceChargePaid", amount.add(movement.getPaidAmount()));
+						amount = BigDecimal.ZERO;
+						if (movementMap.containsKey("bounceChargeWaived")) {
+							amount = movementMap.get("bounceChargeWaived");
+						}
+						movementMap.put("bounceChargeWaived", amount.add(movement.getWaivedAmount()));
 					}
-					movementMap.put("bounceChargeWaived", amount.add(movement.getWaivedAmount()));
 				}
-
 				keyCode = "bounceCharge";
 			} else {
 
@@ -1171,10 +1173,8 @@ public class RepaymentProcessUtil {
 											if (CollectionUtils.isNotEmpty(taxDetails)) {
 												for (Taxes taxes : taxDetails) {
 													if (RuleConstants.CODE_CESS.equals(taxes.getTaxType())) {
-														advise.setPaidCESS(
-																taxes.getPaidTax());
-														advise.setWaivedCESS(
-																taxes.getWaivedTax());
+														advise.setPaidCESS(taxes.getPaidTax());
+														advise.setWaivedCESS(taxes.getWaivedTax());
 													}
 												}
 											}

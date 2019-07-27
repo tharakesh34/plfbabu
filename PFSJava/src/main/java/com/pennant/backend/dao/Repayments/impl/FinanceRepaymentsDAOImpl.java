@@ -219,7 +219,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		selectSql
 				.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, T1.FinTotSchdPaid ");
 		selectSql.append(" From FinRepayDetails");
-		selectSql.append(" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate ");
+		selectSql.append(
+				" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate order by T1.FinValueDate ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);

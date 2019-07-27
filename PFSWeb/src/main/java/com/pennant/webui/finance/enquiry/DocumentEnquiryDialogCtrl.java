@@ -206,8 +206,10 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 			lc = new Listcell();
 			Button viewBtn = new Button("View");
 			if (StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)
-					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)
-					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)) {
+					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)
+					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_DOC)
+					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_DOCX)
+					|| StringUtils.trimToEmpty(doc.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				viewBtn.setLabel("Download");
 			}
 			viewBtn.addForward("onClick", window_DocumentEnquiryDialog, "onDocViewButtonClicked", doc.getDocId());
@@ -230,9 +232,11 @@ public class DocumentEnquiryDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 				&& StringUtils.isNotBlank(detail.getDocImage().toString())) {
 			try {
 				if (StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_WORD)
-						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)
-						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)) {
-					Filedownload.save(detail.getDocImage(), "application/msword", detail.getDocName());
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_MSG)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOC)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_DOCX)
+						|| StringUtils.trimToEmpty(detail.getDoctype()).equals(PennantConstants.DOC_TYPE_EXCEL)) {
+					Filedownload.save(detail.getDocImage(), "application/octet-stream", detail.getDocName());
 				} else {
 					HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("FinDocumentDetail", detail);

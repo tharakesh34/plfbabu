@@ -80,28 +80,29 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 		long userId = user.getUsrID();
 		securityUserAccessDAO.deleteDivisionBranchesByUser(userId, "UserAccess");
 
-		List<SecurityUserAccess> list = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(user.getSecurityUserDivBranchList())) {
+			List<SecurityUserAccess> list = new ArrayList<>();
 
-		for (SecurityUserDivBranch divisionBranch : user.getSecurityUserDivBranchList()) {
-			SecurityUserAccess access = new SecurityUserAccess();
+			for (SecurityUserDivBranch divisionBranch : user.getSecurityUserDivBranchList()) {
+				SecurityUserAccess access = new SecurityUserAccess();
 
-			access.setUsrId(userId);
-			access.setBranch(divisionBranch.getUserBranch());
-			access.setDivision(divisionBranch.getUserDivision());
-			access.setAccessType(divisionBranch.getAccessType());
-			access.setEntity(divisionBranch.getEntity());
-			access.setClusterId(divisionBranch.getClusterId());
-			access.setClusterType(divisionBranch.getClusterType());
-			access.setParentCluster(divisionBranch.getParentCluster());
+				access.setUsrId(userId);
+				access.setBranch(divisionBranch.getUserBranch());
+				access.setDivision(divisionBranch.getUserDivision());
+				access.setAccessType(divisionBranch.getAccessType());
+				access.setEntity(divisionBranch.getEntity());
+				access.setClusterId(divisionBranch.getClusterId());
+				access.setClusterType(divisionBranch.getClusterType());
+				access.setParentCluster(divisionBranch.getParentCluster());
 
-			list.add(access);
+				list.add(access);
+			}
 
-		}
+			securityUserAccessDAO.saveDivisionBranches(list);
 
-		securityUserAccessDAO.saveDivisionBranches(list);
-
-		if ("doApprove".equals(method)) {
-			saveDivisionBranches(user, list);
+			if ("doApprove".equals(method)) {
+				saveDivisionBranches(user, list);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);

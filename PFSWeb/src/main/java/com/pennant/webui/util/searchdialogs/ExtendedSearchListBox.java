@@ -43,6 +43,7 @@
 package com.pennant.webui.util.searchdialogs;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -623,6 +624,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		@Override
 		public void onEvent(Event event) throws Exception {
+			resetSelectedItems();
+			
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();
@@ -686,6 +689,8 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		@Override
 		public void onEvent(Event event) throws Exception {
+			resetSelectedItems();
+			
 			final String searchText = ExtendedSearchListBox.this._textbox.getValue();
 
 			// we start new
@@ -704,27 +709,10 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 		@Override
 		public void onEvent(Event event) throws Exception {
-			if (multySelection) {
-				selectedValues.clear();
-				if (ExtendedSearchListBox.this.listbox.getSelectedItems() != null) {
-					for (Listitem item : ExtendedSearchListBox.this.listbox.getSelectedItems()) {
-						final Object object = item.getAttribute("data");
-						String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase()
-								+ fieldString[0].substring(1);
-						String fieldValue = "";
-						if (object.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
-							fieldValue = (String) object.getClass().getMethod(fieldMethod).invoke(object);
-						} else {
-							fieldValue = object.getClass().getMethod(fieldMethod).invoke(object).toString();
-						}
+			if (multySelection && ExtendedSearchListBox.this.listbox.getSelectedItems() != null) {
+				resetSelectedItems();
 
-						selectedValues.remove(fieldValue);
-						if (item.isSelected()) {
-							selectedValues.put(fieldValue, object);
-						}
-					}
-					setObject(selectedValues);
-				}
+				setObject(selectedValues);
 			} else if (ExtendedSearchListBox.this.listbox.getSelectedItem() != null) {
 				final Listitem li = ExtendedSearchListBox.this.listbox.getSelectedItem();
 				final Object object = li.getAttribute("data");
@@ -875,10 +863,12 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	 * @return The search filter.
 	 */
 	private Filter getSearchFilter(String field, String value, DataType type) {
-		if (type == DataType.STRING) {
+		Object object = getValueAsObject(field, value, type);
+
+		if (object instanceof String && type == DataType.STRING) {
 			return new Filter(field, "%" + value + "%", Filter.OP_LIKE);
 		} else {
-			return new Filter(field, getValueAsObject(field, value, type), Filter.OP_EQUAL);
+			return new Filter(field, object, Filter.OP_EQUAL);
 		}
 	}
 
@@ -910,5 +900,25 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 
 	public void setSelectedValues(Map<String, Object> selectedValues) {
 		this.selectedValues = selectedValues;
+	}
+	
+	private void resetSelectedItems() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		for (Listitem item : ExtendedSearchListBox.this.listbox.getItems()) {
+			Object object = item.getAttribute("data");
+
+			String fieldMethod = "get" + fieldString[0].substring(0, 1).toUpperCase() + fieldString[0].substring(1);
+			String fieldValue = "";
+
+			if (object.getClass().getMethod(fieldMethod).getReturnType().equals(String.class)) {
+				fieldValue = (String) object.getClass().getMethod(fieldMethod).invoke(object);
+			} else {
+				fieldValue = object.getClass().getMethod(fieldMethod).invoke(object).toString();
+			}
+
+			selectedValues.remove(fieldValue);
+			if (item.isSelected()) {
+				selectedValues.put(fieldValue, object);
+			}
+		}
 	}
 }

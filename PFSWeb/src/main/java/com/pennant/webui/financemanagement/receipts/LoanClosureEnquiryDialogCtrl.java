@@ -153,9 +153,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	private static final Logger logger = Logger.getLogger(LoanClosureEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autowired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_LoanClosureEnquiryDialog;
 	protected Borderlayout borderlayout_Receipt;
@@ -302,8 +301,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected Rule object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected Rule object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -390,8 +389,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -458,8 +456,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
 	 * @throws Exception
@@ -716,10 +713,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		// Allocation Process start
 		/*
-		 * if (StringUtils.equals(allocateMthd,
-		 * RepayConstants.ALLOCATIONTYPE_AUTO)) { receiptData =
-		 * getReceiptCalculator().recalAutoAllocation(receiptData, valueDate,
-		 * false); }
+		 * if (StringUtils.equals(allocateMthd, RepayConstants.ALLOCATIONTYPE_AUTO)) { receiptData =
+		 * getReceiptCalculator().recalAutoAllocation(receiptData, valueDate, false); }
 		 */
 
 		receiptData = getReceiptCalculator().recalAutoAllocation(receiptData, valueDate, false);
@@ -807,8 +802,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			this.effectiveScheduleTab.setVisible(true);
 
 			/*
-			 * // Dashboard Details Report doLoadTabsData();
-			 * doShowReportChart(fsd);
+			 * // Dashboard Details Report doLoadTabsData(); doShowReportChart(fsd);
 			 */
 
 			// Repayments Calculation
@@ -925,6 +919,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.listBoxSchedule.getItems().clear();
 		aFinScheduleData.setFinanceScheduleDetails(
 				ScheduleCalculator.sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
+		int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 			boolean showRate = false;
@@ -945,6 +940,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			map.put("financeScheduleDetail", aScheduleDetail);
 			map.put("paymentDetailsMap", rpyDetailsMap);
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
+			map.put("formatter", formatter);
 			map.put("window", this.window_LoanClosureEnquiryDialog);
 
 			finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
@@ -1136,8 +1132,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/**
-	 * Method for Rendering Allocation Details based on Allocation Method
-	 * (Auto/Manual)
+	 * Method for Rendering Allocation Details based on Allocation Method (Auto/Manual)
 	 * 
 	 * @param header
 	 * @param allocatePaidMap
@@ -1340,8 +1335,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due
-	 * Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -1426,8 +1420,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/**
-	 * Method for action Event of Changing Allocated Paid Amount on Past due
-	 * Schedule term
+	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -1455,14 +1448,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		allocate.setTotalPaid(paidAmount);
 
 		/*
-		 * if
-		 * (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT))
-		 * { BigDecimal pft = receiptCalculator.getProfit(receiptData,
-		 * waivedAmount); for (ReceiptAllocationDetail
-		 * allocteDtl:rch.getAllocations()){ if
-		 * (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT)
-		 * ){ allocteDtl.setWaivedAmount(pft); } if
-		 * (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)
+		 * if (allocate.getAllocationType().equals(RepayConstants.ALLOCATION_NPFT)) { BigDecimal pft =
+		 * receiptCalculator.getProfit(receiptData, waivedAmount); for (ReceiptAllocationDetail
+		 * allocteDtl:rch.getAllocations()){ if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PFT) ){
+		 * allocteDtl.setWaivedAmount(pft); } if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)
 		 * ){ allocteDtl.setWaivedAmount(pft.subtract(waivedAmount)); } }
 		 * 
 		 * }
@@ -1498,10 +1487,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					allocteDtl.setWaivedAmount(emiSplit[1]);
 					/*
-					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid().
-					 * subtract(allocteDtl.getWaivedAmount()));
-					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount().
-					 * subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid(). subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount(). subtract(allocteDtl.getWaivedAmount()));
 					 */
 
 				}
@@ -1511,10 +1498,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					allocteDtl.setWaivedAmount(emiSplit[2]);
 					/*
-					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid().
-					 * subtract(allocteDtl.getWaivedAmount()));
-					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount().
-					 * subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid(). subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount(). subtract(allocteDtl.getWaivedAmount()));
 					 */
 				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_PRI)) {
@@ -1523,19 +1508,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 					allocteDtl.setWaivedAmount(emiSplit[0]);
 					/*
-					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid().
-					 * subtract(allocteDtl.getWaivedAmount()));
-					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount().
-					 * subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid(). subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount(). subtract(allocteDtl.getWaivedAmount()));
 					 */
 				}
 				if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_TDS)) {
 					allocteDtl.setWaivedAmount(emiSplit[1].subtract(emiSplit[2]));
 					/*
-					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid().
-					 * subtract(allocteDtl.getWaivedAmount()));
-					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount().
-					 * subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setTotalPaid(allocteDtl.getTotalPaid(). subtract(allocteDtl.getWaivedAmount()));
+					 * allocteDtl.setPaidAmount(allocteDtl.getPaidAmount(). subtract(allocteDtl.getWaivedAmount()));
 					 */
 				}
 			}
@@ -1583,8 +1564,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1716,8 +1696,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
 		Date dateValueDate = DateUtility.getAppDate();
 		/*
-		 * if (this.receivedDate.getValue() != null) { dateValueDate =
-		 * this.receivedDate.getValue(); }
+		 * if (this.receivedDate.getValue() != null) { dateValueDate = this.receivedDate.getValue(); }
 		 */
 
 		BigDecimal totalPftSchdOld = BigDecimal.ZERO;
@@ -1910,13 +1889,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			BigDecimal penaltySGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTPaid = BigDecimal.ZERO;
 			BigDecimal penaltyUGSTPaid = BigDecimal.ZERO;
-			
+
 			//Penality Waiver GST Details
 			BigDecimal penaltyCGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltySGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyIGSTWaived = BigDecimal.ZERO;
 			BigDecimal penaltyUGSTWaived = BigDecimal.ZERO;
-		
+
 			for (RepayScheduleDetail rsd : repaySchdList) {
 
 				// Set Repay Amount Codes
@@ -1931,12 +1910,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// Penalties
 				amountCodes.setPenaltyPaid(amountCodes.getPenaltyPaid().add(rsd.getPenaltyPayNow()));
 				amountCodes.setPenaltyWaived(amountCodes.getPenaltyWaived().add(rsd.getWaivedAmt())); //Check here once for Exclusive GST case 
-				
+
 				penaltyCGSTPaid = penaltyCGSTPaid.add(rsd.getPaidPenaltyCGST());
 				penaltySGSTPaid = penaltySGSTPaid.add(rsd.getPaidPenaltySGST());
 				penaltyIGSTPaid = penaltyIGSTPaid.add(rsd.getPaidPenaltyIGST());
 				penaltyUGSTPaid = penaltyUGSTPaid.add(rsd.getPaidPenaltyUGST());
-				
+
 				//Waivers GST
 				penaltyCGSTWaived = penaltyCGSTWaived.add(rsd.getPenaltyWaiverCGST());
 				penaltySGSTWaived = penaltySGSTWaived.add(rsd.getPenaltyWaiverSGST());
@@ -2302,7 +2281,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				aeEvent.getDataMap().put("LPP_SGST_P", penaltySGSTPaid);
 				aeEvent.getDataMap().put("LPP_UGST_P", penaltyIGSTPaid);
 				aeEvent.getDataMap().put("LPP_IGST_P", penaltyUGSTPaid);
-				
+
 				//GST Waivers Details
 				aeEvent.getDataMap().put("LPP_CGST_W", penaltyCGSTWaived);
 				aeEvent.getDataMap().put("LPP_SGST_W", penaltySGSTWaived);
@@ -2398,26 +2377,26 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						amount = movementMap.get(keyCode + "_UGST_P");
 					}
 					movementMap.put(keyCode + "_UGST_P", amount.add(movement.getPaidUGST()));
-					
+
 					//Waiver GST Details
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_CGST_W")) {
 						amount = movementMap.get(keyCode + "_CGST_W");
 					}
 					movementMap.put(keyCode + "_CGST_W", amount.add(movement.getWaivedCGST()));
-					
+
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_SGST_W")) {
 						amount = movementMap.get(keyCode + "_SGST_W");
 					}
 					movementMap.put(keyCode + "_SGST_W", amount.add(movement.getWaivedSGST()));
-					
+
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_IGST_W")) {
 						amount = movementMap.get(keyCode + "_IGST_W");
 					}
 					movementMap.put(keyCode + "_IGST_W", amount.add(movement.getWaivedIGST()));
-					
+
 					amount = BigDecimal.ZERO;
 					if (movementMap.containsKey(keyCode + "_UGST_W")) {
 						amount = movementMap.get(keyCode + "_UGST_W");
@@ -2558,9 +2537,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				String feeTypeCode = finFeeDetail.getFeeTypeCode();
 				dataMap.put(feeTypeCode + "_C", finFeeDetail.getActualAmount());
 				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+					dataMap.put(feeTypeCode + "_W",
+							finFeeDetail.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
 				} else {
-					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());					
+					dataMap.put(feeTypeCode + "_W", finFeeDetail.getWaivedAmount());
 				}
 				dataMap.put(feeTypeCode + "_P", finFeeDetail.getPaidAmount());
 				dataMap.put(feeTypeCode + "_N", finFeeDetail.getNetAmount());
@@ -2593,7 +2573,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				dataMap.put(feeTypeCode + "_SGST_N", finTaxDetails.getNetSGST());
 				dataMap.put(feeTypeCode + "_IGST_N", finTaxDetails.getNetIGST());
 				dataMap.put(feeTypeCode + "_UGST_N", finTaxDetails.getNetUGST());
-				
+
 				//Waiver GST Amounts 
 				dataMap.put(feeTypeCode + "_CGST_W", finTaxDetails.getWaivedCGST());
 				dataMap.put(feeTypeCode + "_SGST_W", finTaxDetails.getWaivedSGST());
@@ -2670,8 +2650,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	/**
-	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and
-	 * set the list in the listBoxCustomerRating listbox by using Pagination
+	 * Generate the Customer Rating Details List in the CustomerDialogCtrl and set the list in the listBoxCustomerRating
+	 * listbox by using Pagination
 	 */
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
 		logger.debug("Entering");
@@ -2838,31 +2818,22 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		BigDecimal totalSchAmount = BigDecimal.ZERO;
 
 		/*
-		 * if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) {
-		 * this.listheader_Refund.setVisible(true); totalSchAmount =
-		 * totalSchAmount.subtract(paymentMap.get("totalRefund"));
-		 * fillListItem(Labels.getLabel("listcell_totalRefund.label"),
-		 * paymentMap.get("totalRefund")); } else {
-		 * this.listheader_Refund.setVisible(false); } if
-		 * (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0) {
-		 * this.listheader_Penalty.setVisible(true); totalSchAmount =
+		 * if (paymentMap.get("totalRefund").compareTo(BigDecimal.ZERO) > 0) { this.listheader_Refund.setVisible(true);
+		 * totalSchAmount = totalSchAmount.subtract(paymentMap.get("totalRefund"));
+		 * fillListItem(Labels.getLabel("listcell_totalRefund.label"), paymentMap.get("totalRefund")); } else {
+		 * this.listheader_Refund.setVisible(false); } if (paymentMap.get("totalCharge").compareTo(BigDecimal.ZERO) > 0)
+		 * { this.listheader_Penalty.setVisible(true); totalSchAmount =
 		 * totalSchAmount.add(paymentMap.get("totalCharge"));
-		 * fillListItem(Labels.getLabel("listcell_totalPenalty.label"),
-		 * paymentMap.get("totalCharge")); } else {
-		 * this.listheader_Penalty.setVisible(false); } if
-		 * (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
+		 * fillListItem(Labels.getLabel("listcell_totalPenalty.label"), paymentMap.get("totalCharge")); } else {
+		 * this.listheader_Penalty.setVisible(false); } if (paymentMap.get("totalPft").compareTo(BigDecimal.ZERO) > 0) {
 		 * totalSchAmount = totalSchAmount.add(paymentMap.get("totalPft"));
-		 * fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"),
-		 * paymentMap.get("totalPft")); } if
+		 * fillListItem(Labels.getLabel("listcell_totalPftPayNow.label"), paymentMap.get("totalPft")); } if
 		 * (paymentMap.get("totalTds").compareTo(BigDecimal.ZERO) > 0) {
-		 * fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"),
-		 * paymentMap.get("totalTds")); this.listheader_Tds.setVisible(true); }
-		 * else { this.listheader_Tds.setVisible(false); } if
-		 * (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount = totalSchAmount.add(paymentMap.get("totalLatePft"));
-		 * this.listheader_LatePft.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"),
-		 * paymentMap.get("totalLatePft")); } else {
+		 * fillListItem(Labels.getLabel("listcell_totalTdsPayNow.label"), paymentMap.get("totalTds"));
+		 * this.listheader_Tds.setVisible(true); } else { this.listheader_Tds.setVisible(false); } if
+		 * (paymentMap.get("totalLatePft").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("totalLatePft")); this.listheader_LatePft.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_totalLatePftPayNow.label"), paymentMap.get("totalLatePft")); } else {
 		 * this.listheader_LatePft.setVisible(false); }
 		 */
 		if (paymentMap.get("totalPri").compareTo(BigDecimal.ZERO) > 0) {
@@ -2871,32 +2842,21 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		/*
-		 * if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount = totalSchAmount.add(paymentMap.get("insPaid"));
-		 * this.listheader_InsPayment.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_insFeePayNow.label"),
-		 * paymentMap.get("insPaid")); } else {
-		 * this.listheader_InsPayment.setVisible(false); } if
-		 * (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
-		 * this.listheader_SchdFee.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"),
-		 * paymentMap.get("schdFeePaid")); } else {
-		 * this.listheader_SchdFee.setVisible(false); } if
-		 * (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdSuplRentPaid"));
-		 * this.listheader_SuplRent.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"),
-		 * paymentMap.get("schdSuplRentPaid")); } else {
-		 * this.listheader_SuplRent.setVisible(false); } if
-		 * (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) {
-		 * totalSchAmount =
-		 * totalSchAmount.add(paymentMap.get("schdIncrCostPaid"));
-		 * this.listheader_IncrCost.setVisible(true);
-		 * fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"),
-		 * paymentMap.get("schdIncrCostPaid")); } else {
-		 * this.listheader_IncrCost.setVisible(false); }
+		 * if (paymentMap.get("insPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("insPaid")); this.listheader_InsPayment.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_insFeePayNow.label"), paymentMap.get("insPaid")); } else {
+		 * this.listheader_InsPayment.setVisible(false); } if (paymentMap.get("schdFeePaid").compareTo(BigDecimal.ZERO)
+		 * > 0) { totalSchAmount = totalSchAmount.add(paymentMap.get("schdFeePaid"));
+		 * this.listheader_SchdFee.setVisible(true); fillListItem(Labels.getLabel("listcell_schdFeePayNow.label"),
+		 * paymentMap.get("schdFeePaid")); } else { this.listheader_SchdFee.setVisible(false); } if
+		 * (paymentMap.get("schdSuplRentPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("schdSuplRentPaid")); this.listheader_SuplRent.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_schdSuplRentPayNow.label"), paymentMap.get("schdSuplRentPaid")); }
+		 * else { this.listheader_SuplRent.setVisible(false); } if
+		 * (paymentMap.get("schdIncrCostPaid").compareTo(BigDecimal.ZERO) > 0) { totalSchAmount =
+		 * totalSchAmount.add(paymentMap.get("schdIncrCostPaid")); this.listheader_IncrCost.setVisible(true);
+		 * fillListItem(Labels.getLabel("listcell_schdIncrCostPayNow.label"), paymentMap.get("schdIncrCostPaid")); }
+		 * else { this.listheader_IncrCost.setVisible(false); }
 		 */
 
 		fillListItem(Labels.getLabel("listcell_totalSchAmount.label"), totalSchAmount);
@@ -3013,8 +2973,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		/*
-		 * if (this.receivedDate.getValue() != null) { receiptValueDate =
-		 * this.receivedDate.getValue(); }
+		 * if (this.receivedDate.getValue() != null) { receiptValueDate = this.receivedDate.getValue(); }
 		 */
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -3061,8 +3020,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		// Entered Receipt Amount Match case test with allocations
 		/*
 		 * BigDecimal totReceiptAmount = receiptData.getTotReceiptAmount(); if
-		 * (totReceiptAmount.compareTo(BigDecimal.ZERO) == 0) {
-		 * MessageUtil.showError(Labels.getLabel(
+		 * (totReceiptAmount.compareTo(BigDecimal.ZERO) == 0) { MessageUtil.showError(Labels.getLabel(
 		 * "label_ReceiptDialog_Valid_NoReceiptAmount")); return false; }
 		 */
 
@@ -3077,12 +3035,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		/*
-		 * if (receiptPurposeCtg == 2 && isForeClosure) {// FIXME ForeClosure if
-		 * (balPending.compareTo(BigDecimal.ZERO) != 0) { MessageUtil
-		 * .showError(Labels.getLabel("label_ReceiptDialog_Valid_Settlement",
-		 * new String[] { PennantApplicationUtil
-		 * .getLabelDesc(rch.getReceiptPurpose(),
-		 * PennantStaticListUtil.getReceiptPurpose()) })); return false; } }
+		 * if (receiptPurposeCtg == 2 && isForeClosure) {// FIXME ForeClosure if (balPending.compareTo(BigDecimal.ZERO)
+		 * != 0) { MessageUtil .showError(Labels.getLabel("label_ReceiptDialog_Valid_Settlement", new String[] {
+		 * PennantApplicationUtil .getLabelDesc(rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()) }));
+		 * return false; } }
 		 */
 		if (!isCalProcess) {
 			return true;
@@ -3106,10 +3062,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Amount_PartialSettlement"));
 				return false;
 			} /*
-				 * else if
-				 * (rch.getTotalPastDues().getBalance().compareTo(BigDecimal.
-				 * ZERO) > 0) { MessageUtil.showError(Labels.getLabel(
-				 * "label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
+				 * else if (rch.getTotalPastDues().getBalance().compareTo(BigDecimal. ZERO) > 0) {
+				 * MessageUtil.showError(Labels.getLabel( "label_ReceiptDialog_Valid_PastAmount_PartialSettlement"));
 				 * return false; }
 				 */ else {
 
@@ -3162,10 +3116,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			// Paid amount still not cleared by paid's or waivers amounts
 			/*
-			 * if (isForeClosure && balPending.compareTo(BigDecimal.ZERO) > 0)
-			 * {// #FIXME ForeClosure MessageUtil.showError(Labels.getLabel(
-			 * "label_ReceiptDialog_Valid_Paids_EarlySettlement")); return
-			 * false; }
+			 * if (isForeClosure && balPending.compareTo(BigDecimal.ZERO) > 0) {// #FIXME ForeClosure
+			 * MessageUtil.showError(Labels.getLabel( "label_ReceiptDialog_Valid_Paids_EarlySettlement")); return false;
+			 * }
 			 */
 
 			// If Schedule Already Paid, not allowed to do Early settlement on
@@ -3621,12 +3574,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					BigDecimal amount = BigDecimal.ZERO;
 
 					/*
-					 * List<Date> presentmentDates =
-					 * receiptCalculator.getPresentmentDates(localReceiptData,
-					 * valueDate); // get presentment dates localReceiptData =
-					 * receiptCalculator.fetchODPenalties(localReceiptData,
-					 * valueDate,presentmentDates); // calculate late pay
-					 * penalties
+					 * List<Date> presentmentDates = receiptCalculator.getPresentmentDates(localReceiptData, valueDate);
+					 * // get presentment dates localReceiptData = receiptCalculator.fetchODPenalties(localReceiptData,
+					 * valueDate,presentmentDates); // calculate late pay penalties
 					 */ List<ReceiptAllocationDetail> allocationsList = localReceiptData.getReceiptHeader()
 							.getAllocations();
 					for (ReceiptAllocationDetail receiptAllocationDetail : allocationsList) {

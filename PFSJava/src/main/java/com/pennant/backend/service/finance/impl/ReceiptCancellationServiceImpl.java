@@ -887,12 +887,11 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// ValueDate CheckUp
 		String finReference = receiptHeader.getReference();
 
-		if (!financeMain.isFinIsActive()) {
-			ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("60204", "", null),
-					PennantConstants.default_Language);
-			// Not Allowed for Inactive Finances
-			return errorDetail.getMessage();
-		}
+		/*
+		 * if (!financeMain.isFinIsActive()) { ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new
+		 * ErrorDetail("60204", "", null), PennantConstants.default_Language); // Not Allowed for Inactive Finances
+		 * return errorDetail.getMessage(); }
+		 */
 
 		boolean isRcdFound = false;
 		boolean isBounceProcess = false;
@@ -1085,7 +1084,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				}
 
 				// Manual Advise Movements Reversal
-				List<ManualAdviseMovements> advMovements = manualAdviseDAO.getAdvMovementsByReceiptSeq(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "_AView");
+				List<ManualAdviseMovements> advMovements = manualAdviseDAO.getAdvMovementsByReceiptSeq(
+						receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(), "_AView");
 				List<ManualAdviseMovements> receivableAdvMovements = new ArrayList<ManualAdviseMovements>();
 				List<ManualAdviseMovements> payableMovements = new ArrayList<>();
 				List<ManualAdviseMovements> waiverAdvMovements = new ArrayList<>();
@@ -1110,14 +1110,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						ManualAdvise advise = new ManualAdvise();
 						advise.setAdviseID(movement.getAdviseID());
-						
+
 						//Paid Details
 						advise.setPaidAmount(movement.getPaidAmount().negate());
 						advise.setPaidCGST(movement.getPaidCGST().negate());
 						advise.setPaidSGST(movement.getPaidSGST().negate());
 						advise.setPaidIGST(movement.getPaidIGST().negate());
 						advise.setPaidUGST(movement.getPaidUGST().negate());
-						
+
 						//Waived Details
 						advise.setWaivedAmount(movement.getWaivedAmount().negate());
 						advise.setWaivedCGST(movement.getWaivedCGST().negate());
@@ -1203,7 +1203,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 									payableMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false,
 									false);
 						}
-						
+
 						//Waiver Advise Movements
 						if (CollectionUtils.isNotEmpty(waiverAdvMovements)) {
 							//Preparing the Waiver GST movements
@@ -1453,7 +1453,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
 				List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(financeMain.getFinReference());
-				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
+				List<FinanceRepayments> repayments = financeRepaymentsDAO
+						.getFinRepayListByFinRef(financeMain.getFinReference(), false, "");
 				scheduleData.setFinanceScheduleDetails(sortSchdDetails(scheduleData.getFinanceScheduleDetails()));
 
 				// Check whether Accrual Reversal required for LPP or not
@@ -1528,15 +1529,16 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						movement.setMovementAmount(movement.getMovementAmount().add(rpySchd.getPenaltyPayNow()));
 						movement.setPaidAmount(movement.getPaidAmount().add(rpySchd.getPenaltyPayNow()));
 					}
-					
+
 					//Waiver GST Calculations
 					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 						BigDecimal waiverGstAmount = BigDecimal.ZERO;
-						waiverGstAmount = rpySchd.getPenaltyWaiverCGST().add(rpySchd.getPenaltyWaiverSGST()).add(rpySchd.getPenaltyWaiverUGST()).add(rpySchd.getPenaltyWaiverIGST());
+						waiverGstAmount = rpySchd.getPenaltyWaiverCGST().add(rpySchd.getPenaltyWaiverSGST())
+								.add(rpySchd.getPenaltyWaiverUGST()).add(rpySchd.getPenaltyWaiverIGST());
 						if (BigDecimal.ZERO.compareTo(waiverGstAmount) >= 0) {
 							continue;
 						}
-						
+
 						movement.setWaivedCGST(movement.getWaivedCGST().add(rpySchd.getPenaltyWaiverCGST()));
 						movement.setWaivedSGST(movement.getWaivedSGST().add(rpySchd.getPenaltyWaiverSGST()));
 						movement.setWaivedUGST(movement.getWaivedUGST().add(rpySchd.getPenaltyWaiverUGST()));
@@ -1661,7 +1663,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 								adviseMovements.setPaidSGST(advise.getPaidSGST());
 								adviseMovements.setPaidIGST(advise.getPaidIGST());
 								adviseMovements.setPaidUGST(advise.getPaidUGST());
-								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(adviseMovements.getTaxComponent())) {
+								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE
+										.equals(adviseMovements.getTaxComponent())) {
 									adviseMovements.setPaidAmount(advise.getAdviseAmount().subtract(gstAmount));
 								} else {
 									adviseMovements.setPaidAmount(advise.getAdviseAmount());
@@ -1670,12 +1673,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 							// GST Invoice data resetting based on Accounting Process
 							String isGSTInvOnDue = SysParamUtil.getValueAsString("GST_INV_ON_DUE");
-							if (gstAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
+							if (gstAmount.compareTo(BigDecimal.ZERO) > 0
+									&& StringUtils.equals(isGSTInvOnDue, PennantConstants.YES)) {
 
 								List<ManualAdviseMovements> advMovements = new ArrayList<ManualAdviseMovements>();
 								advMovements.add(adviseMovements);
 								if (financeDetailTemp == null) {
-									financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "", false);
+									financeDetailTemp = financeDetailService.getFinSchdDetailById(finReference, "",
+											false);
 								}
 
 								this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranId, financeDetailTemp, null,
@@ -1812,16 +1817,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private String procFeeReceiptCancellation(FinReceiptHeader receiptHeader) {
 		logger.debug("Entering");
 
-		long linkedTranId = 0;
-		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
-			FinRepayHeader rpyHeader = receiptDetail.getRepayHeader();
-			linkedTranId = rpyHeader.getLinkedTranId();
-			break;
-		}
-
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
-		postingsPreparationUtil.postReversalsByLinkedTranID(linkedTranId);
+		long postingId = postingsDAO.getPostingId();
+		postingsPreparationUtil.postReversalsByPostRef(receiptHeader.getReceiptID(), postingId);
 
 		// Update Receipt Detail Status
 		for (FinReceiptDetail receiptDetail : receiptHeader.getReceiptDetails()) {
@@ -1903,21 +1902,23 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				AccountEventConstants.ACCEVENT_AMZ, FinanceConstants.MODULEID_FINTYPE);
 
 		Date derivedAppDate = DateUtility.getAppDate();
-		
+
 		if (accountingID != Long.MIN_VALUE) {
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
 
 			FinanceDetail detail = new FinanceDetail();
 			detail.setFinScheduleData(scheduleData);
-			Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, financeMain.getFinCcy());
+			Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap,
+					financeMain.getFinCcy());
 
 			FeeType lppFeeType = getFeeTypeDAO().getTaxDetailByCode(RepayConstants.ALLOCATION_ODC);
 
 			// Calculate LPP GST Amount
 			if (profitDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
 					&& lppFeeType.isTaxApplicable() && lppFeeType.isAmortzReq()) {
-				BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, profitDetail.getLppAmount(), lppFeeType.getTaxComponent());
+				BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, profitDetail.getLppAmount(),
+						lppFeeType.getTaxComponent());
 				profitDetail.setGstLppAmount(gstAmount);
 			}
 
@@ -1947,8 +1948,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			if (aeEvent.getAeAmountCodes().getdGSTLPPAmz().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
 					&& lppFeeType.isTaxApplicable()) {
 
-				FinODAmzTaxDetail odTaxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(), lppFeeType.getTaxComponent());
-				
+				FinODAmzTaxDetail odTaxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(),
+						lppFeeType.getTaxComponent());
+
 				odTaxDetail.setFinReference(profitDetail.getFinReference());
 				odTaxDetail.setTaxFor("LPP");
 				odTaxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPPAmz());
@@ -1959,7 +1961,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				calGstMap.put("LPP_UGST_R", odTaxDetail.getUGST());
 				calGstMap.put("LPP_IGST_R", odTaxDetail.getIGST());
 
-				newTaxRcv.setReceivableAmount(newTaxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPPAmz()));
+				newTaxRcv.setReceivableAmount(
+						newTaxRcv.getReceivableAmount().add(aeEvent.getAeAmountCodes().getdLPPAmz()));
 				newTaxRcv.setCGST(newTaxRcv.getCGST().add(odTaxDetail.getCGST()));
 				newTaxRcv.setSGST(newTaxRcv.getSGST().add(odTaxDetail.getSGST()));
 				newTaxRcv.setUGST(newTaxRcv.getUGST().add(odTaxDetail.getUGST()));
@@ -2057,8 +2060,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug(Literal.LEAVING);
 		return finFeeDetailsList;
 	}
-	
-	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType) {
+
+	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount,
+			String taxType) {
 
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
@@ -2081,13 +2085,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			taxDetail.setSGST(sgstAmount);
 			totalGST = totalGST.add(sgstAmount);
 		}
-		
+
 		if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal ugstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, ugstPerc, totalGSTPerc);
 			taxDetail.setUGST(ugstAmount);
 			totalGST = totalGST.add(ugstAmount);
 		}
-	
+
 		if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal igstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, igstPerc, totalGSTPerc);
 			taxDetail.setIGST(igstAmount);
@@ -2095,7 +2099,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		taxDetail.setTotalGST(totalGST);
-		
+
 		return taxDetail;
 	}
 

@@ -81,6 +81,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
@@ -389,7 +390,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		this.payOrderIssue_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
 		this.payOrderIssue_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
-		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList());
+		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), payIHeader.getvASRecordings());
 		this.recordStatus.setValue(payIHeader.getRecordStatus());
 
 		if (!enqiryModule) {
@@ -875,9 +876,9 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		return processCompleted;
 	}
 
-	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails) {
+	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails, List<VASRecording> vasRecordings) {
 		logger.debug("Entering");
-		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false);
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false, vasRecordings);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		logger.debug("Leaving");
 	}

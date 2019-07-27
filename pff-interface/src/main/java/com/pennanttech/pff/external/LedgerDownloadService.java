@@ -4,5 +4,6 @@ import java.util.Date;
 
 public interface LedgerDownloadService {
 	int processDownload(Date businessDate);
-	 void downloadLedgerData();
+
+	void downloadLedgerData();
 }

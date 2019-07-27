@@ -259,6 +259,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		auditDetails.addAll(processFinFeeDetails(finFeeDetails, tableType, auditTranType, false, isWIF));
+
 		logger.debug(Literal.LEAVING);
 
 		return auditDetails;
@@ -356,7 +357,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (saveRecord) {
-
 				if (fee.isNewRecord() && !approveRec) {
 					fee.setFeeSeq(getFinFeeDetailDAO().getFeeSeq(fee, isWIF, tableType) + 1);
 				}
@@ -387,7 +387,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (updateRecord) {
-
 				getFinFeeDetailDAO().update(fee, isWIF, tableType);
 
 				if (finTaxDetails.getFinTaxID() != 0 && finTaxDetails.getFinTaxID() != Long.MIN_VALUE) {
@@ -405,7 +404,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			}
 
 			if (deleteRecord) {
-
 				getFinTaxDetailsDAO().deleteByFeeID(fee.getFeeID(), tableType);
 				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
 				getFinFeeDetailDAO().delete(fee, isWIF, tableType);

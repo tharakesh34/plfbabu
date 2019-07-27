@@ -44,9 +44,6 @@
 package com.pennanttech.pff.external.mandate;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,17 +52,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.TransactionStatus;
 import org.zkoss.util.media.Media;
 
@@ -76,11 +68,12 @@ import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.MandateProcesses;
+import com.pennanttech.pff.model.mandate.MandateData;
 
 public class DefaultMandateProcess extends AbstractInterface implements MandateProcesses {
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -90,34 +83,21 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	@Override
-	public void sendReqest(Object... object) throws Exception {
-		@SuppressWarnings("unchecked")
-		List<Long> mandateIdList = (List<Long>) object[0];
+	public void sendReqest(MandateData mandateData) {
 
-		Date fromDate = (Date) object[1];
-		Date toDate = (Date) object[2];
-		long userId = (Long) object[3];
-		String userName = (String) object[4];
-		String selectedBranchs = (String) object[5];
-		String entity = (String) object[6];
-
-		Long[] mandateIds = new Long[mandateIdList.size()];
-
-		int i = 0;
-		for (Long mandateId : mandateIdList) {
-			mandateIds[i++] = mandateId;
-		}
-
-		List<Long> mandates = prepareRequest(mandateIds);
-
-		if (mandates == null || mandates.isEmpty()) {
-			return;
-		}
+		long processId = mandateData.getProcess_Id();
+		Date fromDate = mandateData.getFromDate();
+		Date toDate = mandateData.getToDate();
+		long userId = mandateData.getUserId();
+		String userName = mandateData.getUserName();
+		String selectedBranchs = mandateData.getSelectedBranchs();
+		String entity = mandateData.getEntity();
 
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parameterMap = new HashMap<>();
-		filterMap.put("ID", mandates);
-		filterMap.put("MandateId", Arrays.asList(mandateIds));
+		// filterMap.put("ID", mandates);
+		// filterMap.put("MandateId", Arrays.asList(mandateIds));
+		filterMap.put("PROCESS_ID", processId);
 		filterMap.put("FROMDATE", fromDate);
 		filterMap.put("TODATE", toDate);
 
@@ -145,12 +125,17 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	 * @throws Exception
 	 */
 	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap,
-			Map<String, Object> parameterMap) throws Exception {
+			Map<String, Object> parameterMap) {
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setUserName(userName);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
-		return dataEngine.exportData("MANDATES_EXPORT");
+		try {
+			return dataEngine.exportData("MANDATES_EXPORT");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AppException("MANDATES_EXPORT", e);
+		}
 	}
 
 	@Override
@@ -294,235 +279,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 	}
 
-	private List<Long> prepareRequest(Long[] mandateIds) throws Exception {
-		logger.debug(Literal.ENTERING);
-		final Map<String, Integer> bankCodeSeq = getCountByProcessed();
-
-		MapSqlParameterSource paramMap;
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT");
-		sql.append(" MANDATEID,");
-		sql.append(" BANKCODE BANK_CODE,");
-		sql.append(" BANKNAME BANK_NAME,");
-		sql.append(" BRANCHCODE BRANCH_CODE,");
-		sql.append(" BRANCHDESC BRANCH_NAME,");
-		sql.append(" ADDOFBRANCH BRANCH_ADDRESS,");
-		sql.append(" CUSTCIF,");
-		sql.append(" CUSTSHRTNAME CUSTOMER_NAME,");
-		sql.append("CustCoreBank AUXILIARY_FIELD3,");
-		sql.append(" PHONENUMBER CUSTOMER_PHONE,");
-		sql.append(" CUSTEMAIL CUSTOMER_EMAIL,");
-		sql.append(" FINTYPE,");
-		sql.append(" FINREFERENCE,");
-		sql.append(" CUST_EMI,");
-		sql.append(" EMI,");
-		sql.append(" OPENMANDATE OPENFLAG,");
-		sql.append(" ACCNUMBER ACCT_NUMBER,");
-		sql.append(" ACCTYPE ACCT_TYPE,");
-		sql.append(" ACCHOLDERNAME ACCT_HOLDER_NAME,");
-		sql.append(" MICR MICR_CODE,");
-		sql.append(" IFSC IFSC_CODE,");
-		sql.append(" FIRSTDUEDATE EFFECTIVE_DATE,");
-		sql.append(" EMIENDDATE EMI_ENDDATE,");
-		sql.append(" EXPIRYDATE OPEN_ENDDATE,");
-		sql.append(" MAXLIMIT UPPER_LIMIT,");
-		sql.append(" CCYMINORCCYUNITS,");
-		sql.append(" DEBITAMOUNT DEBIT_AMOUNT,");
-		sql.append(" STARTDATE START_DATE,");
-		sql.append(" EXPIRYDATE END_DATE,");
-		sql.append(" APPLICATIONNO APPLICATION_NUMBER,");
-		sql.append(" MANDATETYPE MANDATE_TYPE,");
-		sql.append(" NUMBEROFTERMS NUMBER_OF_TERMS,");
-		sql.append(" PERIODICITY FREQUENCY,");
-		sql.append(" STATUS,");
-		sql.append(" PARTNERBANKNAME PARTNER_BANK,");
-		sql.append(" LASTMNTON REGISTERED_DATE");
-		sql.append(" FROM INT_MANDATE_REQUEST_VIEW");
-		sql.append(" WHERE MANDATEID IN (:MANDATEID)");
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MANDATEID", Arrays.asList(mandateIds));
-
-		final ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
-		try {
-			return namedJdbcTemplate.query(sql.toString(), paramMap, new RowMapper<Long>() {
-				@Override
-				public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Map<String, Object> rowMap = rowMapper.mapRow(rs, rowNum);
-					String bankCode = null;
-
-					if (rowMap.get("BANK_CODE") != null) {
-						bankCode = rowMap.get("BANK_CODE").toString();
-					}
-
-					rowMap.put("BATCH_ID", 0);
-					rowMap.put("BANK_SEQ", getSequence(bankCode, bankCodeSeq));
-					rowMap.put("EXTRACTION_DATE", SysParamUtil.getAppDate());
-
-					String frequency = null;
-
-					if (rowMap.get("FREQUENCY") != null) {
-						String temp = rowMap.get("FREQUENCY").toString();
-						if (temp.contains("D")) {
-							frequency = "DIAL";
-						} else if (temp.contains("M")) {
-							frequency = "MNTH";
-						} else if (temp.contains("W")) {
-							frequency = "Week";
-						} else if (temp.contains("Q")) {
-							frequency = "QURT";
-						} else {
-							frequency = "";
-						}
-						rowMap.put("FREQUENCY", frequency);
-
-					}
-
-					String appId = null;
-					String finReference = StringUtils.trimToNull(rs.getString("FINREFERENCE"));
-
-					if (finReference != null) {
-						appId = StringUtils.substring(finReference, finReference.length() - 7, finReference.length());
-						appId = StringUtils.trim(appId);
-						if (StringUtils.isNumeric(appId)) {
-							rowMap.put("APPLICATION_NUMBER", Integer.parseInt(appId));
-						}
-					} else {
-						rowMap.put("APPLICATION_NUMBER", null);
-
-					}
-
-					BigDecimal UPPER_LIMIT = (BigDecimal) rowMap.get("UPPER_LIMIT");
-					BigDecimal CUST_EMI = (BigDecimal) rowMap.get("CUST_EMI");
-
-					if (UPPER_LIMIT == null) {
-						UPPER_LIMIT = BigDecimal.ZERO;
-					}
-
-					if (CUST_EMI == null) {
-						CUST_EMI = BigDecimal.ZERO;
-					}
-
-					if (StringUtils.trimToNull((String) String.valueOf(rowMap.get("FINREFERENCE"))) == null) {
-
-						if (CUST_EMI.compareTo(UPPER_LIMIT) > 0) {
-							rowMap.put("EMI", UPPER_LIMIT);
-							rowMap.put("DEBIT_AMOUNT", UPPER_LIMIT);
-						} else {
-							rowMap.put("EMI", CUST_EMI);
-							rowMap.put("DEBIT_AMOUNT", CUST_EMI);
-						}
-
-						Date startDate = (Date) rowMap.get("START_DATE");
-						Date firstDueDate = (Date) rowMap.get("FIRSTDUEDATE");
-						Date endDate = DateUtil.addMonths(startDate, 240);
-
-						rowMap.put("EFFECTIVE_DATE", startDate);
-						rowMap.put("EMI_ENDDATE", endDate);
-
-						if (firstDueDate == null) {
-							rowMap.put("EFFECTIVE_DATE", startDate);
-						}
-					}
-
-					rowMap.remove("CCYMINORCCYUNITS");
-					rowMap.remove("CUST_EMI");
-					rowMap.remove("FIRSTDUEDATE");
-
-					long id = insertData(rowMap);
-					Object obj = rowMap.get("mandateid");
-					String mandateId = null;
-					if (obj != null) {
-						mandateId = obj.toString();
-					}
-					logMandateHistory(new Long(mandateId), id);
-					rowMap = null;
-					return id;
-				}
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.ENTERING);
-		return null;
-	}
-
-	private long insertData(Map<String, Object> rowMap) {
-		String sql = QueryUtil.getInsertQuery(rowMap.keySet(), "MANDATE_REQUESTS");
-		final KeyHolder keyHolder = new GeneratedKeyHolder();
-		try {
-			namedJdbcTemplate.update(sql, getMapSqlParameterSource(rowMap), keyHolder, new String[] { "id" });
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return keyHolder.getKey().longValue();
-	}
-
-	private String getSequence(String bankCode, Map<String, Integer> bankCodeSeq) {
-		int seq = 0;
-		if (bankCode == null || bankCodeSeq.get(bankCode) == null) {
-			bankCodeSeq.put(bankCode, 0);
-		} else {
-			seq = bankCodeSeq.get(bankCode);
-		}
-
-		seq = seq + 1;
-		bankCodeSeq.put(bankCode, seq);
-
-		return StringUtils.trimToEmpty(bankCode) + "-" + seq;
-	}
-
-	private Map<String, Integer> getCountByProcessed() {
-		final Map<String, Integer> bankCodeMap = new HashMap<>();
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" Select BANK_CODE, count(*) From MANDATE_REQUESTS");
-		sql.append(" Where EXTRACTION_DATE =:EXTRACTION_DATE");
-		sql.append(" GROUP BY BANK_CODE");
-
-		paramMap.addValue("EXTRACTION_DATE", SysParamUtil.getAppValueDate());
-
-		try {
-			return namedJdbcTemplate.query(sql.toString(), paramMap, new ResultSetExtractor<Map<String, Integer>>() {
-				@Override
-				public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-					while (rs.next()) {
-						bankCodeMap.put(rs.getString(1), rs.getInt(2));
-					}
-					return bankCodeMap;
-				}
-
-			});
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			paramMap = null;
-			sql = null;
-		}
-		return bankCodeMap;
-	}
-
-	protected void logMandateHistory(Long mandateId, long requestId) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
-		sql.append(" (mandateID, status, reason, changeDate, fileID)");
-		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
-
-		paramMap.addValue("mandateID", mandateId);
-
-		paramMap.addValue("STATUS", "AC");
-		paramMap.addValue("REASON", null);
-		paramMap.addValue("changeDate", SysParamUtil.getAppDate());
-		paramMap.addValue("fileID", requestId);
-
-		this.namedJdbcTemplate.update(sql.toString(), paramMap);
-		logger.debug(Literal.LEAVING);
-	}
-
 	protected Mandate getMandateById(final long id) {
 		logger.debug(Literal.ENTERING);
 
@@ -636,7 +392,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		sql.append("Update Mandates");
 		sql.append(" Set MANDATEREF = :MANDATEREF, STATUS = :STATUS, REASON = :REASON");
-		sql.append("  Where MANDATEID = :MANDATEID AND ORGREFERENCE = :FINREFERENCE AND STATUS = :AC");
+		sql.append("  Where MANDATEID = :MANDATEID");
+		if (respmandate.getFinReference() == null) {
+			sql.append(" AND ORGREFERENCE is NULL");
+		} else {
+			sql.append(" AND ORGREFERENCE = :FINREFERENCE");
+		}
+		sql.append(" AND STATUS = :AC");
 
 		paramMap.addValue("MANDATEID", respmandate.getMandateID());
 

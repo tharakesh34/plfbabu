@@ -13,8 +13,6 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.PersistJobDataAfterExecution;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,8 +37,6 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
-@PersistJobDataAfterExecution
-@DisallowConcurrentExecution
 public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 	private static final Logger logger = Logger.getLogger(InvokeSysNotifications.class);
 

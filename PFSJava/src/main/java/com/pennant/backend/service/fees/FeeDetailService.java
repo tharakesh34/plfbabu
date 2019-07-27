@@ -282,7 +282,7 @@ public class FeeDetailService {
 		logger.debug("Leaving");
 	}
 
-	public static void setFeeAmount(String moduleDefiner, FinanceMain financeMain, FinScheduleData finScheduleData) {
+	public void setFeeAmount(String moduleDefiner, FinanceMain financeMain, FinScheduleData finScheduleData) {
 		List<FinFeeDetail> fees = finScheduleData.getFinFeeDetailList();
 
 		BigDecimal deductFromDisbursement = BigDecimal.ZERO;
@@ -317,21 +317,24 @@ public class FeeDetailService {
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, moduleDefiner)) {
 			financeMain.setDeductFeeDisb(deductFromDisbursement);
 			financeMain.setFeeChargeAmt(feeAddToDisbTot);
-		}
-
-		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
-			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
-				disbursement.setDeductFromDisb(deductFromDisbursement);
+		} else {
+			if (CollectionUtils.isNotEmpty(finScheduleData.getDisbursementDetails())) {
+				List<Integer> approvedDisbSeq = financeDetailService
+						.getFinanceDisbSeqs(finScheduleData.getFinanceMain().getFinReference(), false);
+				for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+					if (!approvedDisbSeq.contains(disbursement.getDisbSeq())) {
+						disbursement.setDeductFeeDisb(deductFromDisbursement);
+						break;
+					}
+				}
 			}
-
-			//disbursement.setDeductFromDisb(deductFromDisbursement);
 		}
 	}
 
 	private void validateFeeConfig(List<FinFeeDetail> finFeeDetails, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+		List<ErrorDetail> errorDetails = new ArrayList<>();
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			BigDecimal calcAmount = finFeeDetail.getCalculatedAmount();
@@ -1247,7 +1250,8 @@ public class FeeDetailService {
 			custId = financeDetail.getCustomerDetails().getCustomer().getCustID();
 		}
 
-		return GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch);
+		return GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch,
+				financeDetail.getFinanceTaxDetail());
 	}
 
 	public void setFinFeeDetailList(List<FinFeeDetail> finFeeDetailList) {

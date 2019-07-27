@@ -1087,6 +1087,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.listBoxSchedule.getItems().clear();
 		aFinScheduleData.setFinanceScheduleDetails(
 				ScheduleCalculator.sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
+		int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 			boolean showRate = false;
@@ -1107,6 +1108,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("financeScheduleDetail", aScheduleDetail);
 			map.put("paymentDetailsMap", rpyDetailsMap);
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
+			map.put("formatter", formatter);
 			map.put("window", this.window_ReceiptsEnquiryDialog);
 
 			finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
@@ -1304,6 +1306,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
 			String allocDesc = Labels.getLabel("label_RecceiptDialog_AllocationType_" + rad.getAllocationType());
+			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+				allocDesc = rad.getTypeDesc();
+			}
 			addBoldTextCell(item, allocDesc, rad.isSubListAvailable(), i);
 
 			addAmountCell(item, rad.getTotalDue(), ("AllocateDue_" + i), false);

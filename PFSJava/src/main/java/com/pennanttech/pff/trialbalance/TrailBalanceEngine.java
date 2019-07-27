@@ -5,30 +5,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.finance.TrailBalance;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
@@ -43,10 +34,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus();
 	private static final Logger logger = Logger.getLogger(TrailBalanceEngine.class);
 
-	private int batchSize = 1000;
-	private Date appDate = null;
-	// private Date startDate = null;
-	// private Date endDate = null;
 	private long headerId = 0;
 	private long seqNo = 0;
 	private Dimension dimension = null;
@@ -60,9 +47,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 	private boolean stateWiseReport;
 	private List<String> stateCodeList = null;
 
-	private static final String QUERY_CONSOLIDATE = "select distinct HOSTACCOUNT, ACCOUNT, FINTYPE from ACCOUNTMAPPING";
-	private static final String QUERY_STATE = "select distinct HOSTACCOUNT, ACCOUNT, FINTYPE, BRANCHCOUNTRY, BRANCHPROVINCE from ACCOUNTMAPPING, RMTBRANCHES";
-
 	public enum Dimension {
 		CONSOLIDATE, STATE,
 	}
@@ -72,7 +56,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 	public TrailBalanceEngine(DataSource dataSource, long userId, Date valueDate, Date appDate, Date fromDate,
 			Date toDate) {
 		super(dataSource, userId, App.DATABASE.name(), true, appDate, EXTRACT_STATUS);
-		this.appDate = appDate;
 		this.fromDate = fromDate;
 		this.toDate = toDate;
 	}
@@ -84,7 +67,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 	 */
 	public void doHealthCheck() throws Exception {
 		logger.debug(Literal.ENTERING);
-		//validateAccountHistory();
 		validateAccountMapping();
 		validatePostings();
 		logger.debug(Literal.LEAVING);
@@ -102,27 +84,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		paramMap.addValue("END_DATE", toDate);
 		paramMap.addValue("ENTITYCODE", entityCode);
 		String sql = "Select count (*) from POSTINGS where POSTDATE <= :END_DATE and POSTAMOUNT <>0  AND ENTITYCODE = :ENTITYCODE and account not in(select account from AccountMapping) ";
-		logger.trace(Literal.SQL + sql.toString());
-		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) > 0) {
-			EXTRACT_STATUS.setStatus("F");
-			EXTRACT_STATUS.setRemarks(
-					"Account mapping is not configured, please check the Account Mapping report and configure the missing accounts.");
-			throw new AppException(EXTRACT_STATUS.getRemarks());
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * validate Account History
-	 * 
-	 * @throws Exception
-	 */
-	private void validateAccountHistory() throws Exception {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("START_DATE", fromDate);
-		paramMap.addValue("END_DATE", toDate);
-		String sql = "Select count (*) from AccountsHistory where POSTDATE BETWEEN :START_DATE AND :END_DATE and TODAYCREDITS<>0 and TODAYDEBITS<>0 and accountid not in(select account from AccountMapping) ";
 		logger.trace(Literal.SQL + sql.toString());
 		if (parameterJdbcTemplate.queryForObject(sql, paramMap, Integer.class) > 0) {
 			EXTRACT_STATUS.setStatus("F");
@@ -250,18 +211,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void getStates() {
-		logger.debug(Literal.ENTERING);
-
-		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-			String[] arr = stateCode.split(",");
-			stateCode = String.join("','", arr);
-			// stateCode = StringUtils.join(arr, "','");
-			this.stateCode = "'".concat(stateCode).concat("'");
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	private void insertRecords() throws Exception {
 
 		logger.debug(Literal.ENTERING);
@@ -357,30 +306,32 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(
 				" Update TRIAL_BALANCE_REPORT_WORK set OpeningBal = T3.OpeningBalance, OpeningBalType = T3.OpeningBalType from ");
 		if (stateWiseReport) {
-			sql.append(" (Select Distinct T1.AccountID Account, T1.BranchProvince StateCode,");
+			sql.append(" (Select Distinct ac.AcNumber Account, T1.BranchProvince StateCode,");
 			sql.append(" Sum(T1.ACBALANCE)*-1  OpeningBalance,");
 			sql.append(" (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
-			sql.append(" From AccountHistoryDetails T1 Inner Join( Select Distinct T2.AccountID, ");
+			sql.append(
+					" From Accounts_History_Details T1 inner join accounts ac on ac.id = t1.accountid Inner Join( Select Distinct T2.AccountID, ");
 			sql.append(" T2.BranchProvince, T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate");
-			sql.append(" From AccountHistoryDetails T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
+			sql.append(" From Accounts_History_Details T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
 			sql.append(" Group By T2.AccountID, T2.BranchProvince, T2.PostBranch, T2.EntityCode) T2 ");
 			sql.append(" ON T1.AccountID = T2.AccountID and T1.PostDate = T2.PostDate And ");
 			sql.append(" T2.PostBranch = T1.PostBranch And T2.BranchProvince = T1.BranchProvince");
-			sql.append(" And T2.EntityCode = T1.EntityCode Group By T1.AccountID,T1.BranchProvince)T3 ");
+			sql.append(" And T2.EntityCode = T1.EntityCode Group By ac.AcNumber,T1.BranchProvince)T3 ");
 			sql.append(
 					" where TRIAL_BALANCE_REPORT_WORK.Account = T3.Account And TRIAL_BALANCE_REPORT_WORK.Province = T3.StateCode ");
 
 		} else {
-			sql.append(" (Select Distinct T1.AccountID Account, Sum(T1.ACBALANCE)*-1  OpeningBalance,");
+			sql.append(" (Select Distinct ac.AcNumber Account, Sum(T1.ACBALANCE)*-1  OpeningBalance,");
 			sql.append(" (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
-			sql.append(" From AccountHistoryDetails T1 Inner Join( Select Distinct T2.AccountID,");
+			sql.append(
+					" From Accounts_History_Details T1 inner join accounts ac on ac.id = t1.accountid Inner Join( Select Distinct T2.AccountID,");
 			sql.append(" T2.BranchProvince, T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate");
-			sql.append(" From AccountHistoryDetails T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
+			sql.append(" From Accounts_History_Details T2 Where T2.PostDate < :FromDate And EntityCode = :EntityCode");
 			sql.append(" Group By T2.AccountID, T2.BranchProvince, T2.PostBranch, T2.EntityCode) T2 ");
 			sql.append(" ON T1.AccountID = T2.AccountID and T1.PostDate = T2.PostDate And ");
 			sql.append(" T2.BranchProvince = T1.BranchProvince And T2.POSTBRANCH = T1.POSTBRANCH And ");
 			sql.append(
-					" T2.ENTITYCODE = T1.ENTITYCODE group by T1.ACCOUNTID)T3 where TRIAL_BALANCE_REPORT_WORK.Account = T3.Account");
+					" T2.ENTITYCODE = T1.ENTITYCODE group by ac.AcNumber)T3 where TRIAL_BALANCE_REPORT_WORK.Account = T3.Account");
 		}
 
 		try {
@@ -405,30 +356,32 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(
 				" Update TRIAL_BALANCE_REPORT_WORK set PLACBalance =  T3.openingBal, OpeningBal = TRIAL_BALANCE_REPORT_WORK.OpeningBal - T3.openingBal from ");
 		if (stateWiseReport) {
-			sql.append(" (Select T1.AccountID, T1.BranchProvince, Sum(T1.ACBALANCE)*-1  OpeningBal ");
-			sql.append(" From AccountHistoryDetails T1 Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
-			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From AccountHistoryDetails T2");
+			sql.append(" (Select ac.AcNumber AccountID, T1.BranchProvince, Sum(T1.ACBALANCE)*-1  OpeningBal ");
+			sql.append(
+					" From Accounts_History_Details T1 inner join accounts ac on ac.id = t1.accountid Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
+			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From Accounts_History_Details T2");
 			sql.append(" Where T2.postdate <= :FinanceEndDate And EntityCode = :EntityCode ");
 			sql.append(" Group By T2.ACCOUNTID,T2.BRANCHPROVINCE,T2.POSTBRANCH,T2.ENTITYCODE) T2 ");
 			sql.append(
 					" ON T1.AccountID = T2.AccountID And T1.PostDate = T2.PostDate And T1.PostBranch = T2.PostBranch");
 			sql.append(" And T1.BranchProvince = T2.BranchProvince And T2.EntityCode = T1.EntityCode ");
 			sql.append(
-					" Group By T1.AccountID,T1.BranchProvince) T3 where  TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  ");
+					" Group By ac.AcNumber,T1.BranchProvince) T3 where  TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  ");
 			sql.append(
 					" And TRIAL_BALANCE_REPORT_WORK.Province = T3.BranchProvince And TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE') ");
 
 		} else {
-			sql.append(" (Select T1.AccountID, Sum(T1.ACBALANCE)*-1  OpeningBal ");
-			sql.append(" From AccountHistoryDetails T1 Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
-			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From AccountHistoryDetails T2");
+			sql.append(" (Select ac.AcNumber AccountID, Sum(T1.ACBALANCE)*-1  OpeningBal ");
+			sql.append(
+					" From Accounts_History_Details T1 inner join accounts ac on ac.id = t1.accountid Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
+			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From Accounts_History_Details T2");
 			sql.append(" Where T2.postdate <= :FinanceEndDate And EntityCode = :EntityCode ");
 			sql.append(" Group By T2.AccountID,T2.BranchProvince,T2.PostBranch,T2.EntityCode) T2 ");
 			sql.append(
 					" ON T1.AccountID = T2.AccountID And T1.PostDate = T2.PostDate And T1.PostBranch = T2.PostBranch");
 			sql.append(" And T1.BranchProvince = T2.BranchProvince And T2.EntityCode = T1.EntityCode ");
 			sql.append(
-					" Group By T1.AccountID) T3  where TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  And TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE')");
+					" Group By ac.AcNumber) T3  where TRIAL_BALANCE_REPORT_WORK.Account = T3.AccountID  And TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE')");
 		}
 
 		try {
@@ -546,54 +499,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void updateOpeningBalance() throws Exception {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("headerId", headerId);
-		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (Select ACCOUNT,PROVINCE, (OPENINGBAL - PLACBALANCE) OPENINGBAL");
-		sql.append(" from TRIAL_BALANCE_REPORT_WORK ) T2 ");
-		sql.append(" ON (T1.ACCOUNT = T2.ACCOUNT And  T1.PROVINCE = T2.PROVINCE)");
-		sql.append(" WHEN MATCHED THEN UPDATE SET T1.OPENINGBAL = T2.OPENINGBAL");
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
-			logger.debug(count);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			throw new Exception(e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void setCreditOrDebitType() {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (");
-		sql.append(" Select Account, Province, ClosingBal, OpeningBal,OpeningBalType,");
-		sql.append(" (CASE WHEN ClosingBalType = 'Dr' THEN 'Cr' ELSE 'Dr' END) ClosingBalType");
-		sql.append(" from TRIAL_BALANCE_REPORT_WORK) T2 ON (T1.Account = T2.Acoount And T1.Province = T2.Province)");
-		sql.append(
-				" WHEN MATCHED THEN UPDATE SET T1.CLOSINGBAL = (0-T2.CLOSINGBAL), T1.OpeningBal = (0 - OpeningBal),");
-		sql.append("T1.CLOSINGBALTYPE = T2.CLOSINGBALTYPE");
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("headerId", headerId);
-
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
-			logger.debug("Count: " + count);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	/**
 	 * Based on given from date, return financial end date
 	 * 
@@ -619,31 +524,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 			e.printStackTrace();
 		}
 		return financeEndDate;
-	}
-
-	private String getKey(TrailBalance openingBal) {
-		if (dimension == Dimension.STATE) {
-			return openingBal.getAccount().concat("-").concat(openingBal.getStateCode());
-		} else {
-			return openingBal.getAccount();
-		}
-	}
-
-	private String getSignOfBalanceType(BigDecimal balance) {
-
-		if (balance.compareTo(BigDecimal.ZERO) > 0) {
-			if (ImplementationConstants.NEGATE_SIGN_TB) {
-				return "Cr";
-			} else {
-				return "Dr";
-			}
-		} else {
-			if (ImplementationConstants.NEGATE_SIGN_TB) {
-				return "Dr";
-			} else {
-				return "Cr";
-			}
-		}
 	}
 
 	/**
@@ -706,54 +586,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 		}
 		logger.debug(Literal.LEAVING + "SEQNO : " + seqNo);
 		return seqNo;
-	}
-
-	/**
-	 * Accounting Details mapped to the Trailbalalnce
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<String, TrailBalance> getLedgerAccounts() throws Exception {
-		logger.debug(Literal.ENTERING);
-		createHeader();
-
-		String query = null;
-		if (dimension == Dimension.STATE) {
-			query = QUERY_STATE;
-		} else {
-			query = QUERY_CONSOLIDATE;
-		}
-		logger.trace(Literal.SQL + query.toString());
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(query, new ResultSetExtractor<Map<String, TrailBalance>>() {
-			@Override
-			public Map<String, TrailBalance> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				Map<String, TrailBalance> map = new HashMap<>();
-
-				while (rs.next()) {
-					TrailBalance item = new TrailBalance();
-					item.setHeaderId(headerId);
-					item.setDimention(dimension.name());
-					item.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-					item.setAccount(rs.getString("ACCOUNT"));
-					item.setFinType(rs.getString("FINTYPE"));
-					item.setOpeningBalance(BigDecimal.ZERO);
-					item.setOpeningBalanceType("Cr");
-					item.setDebitAmount(BigDecimal.ZERO);
-					item.setCreditAmount(BigDecimal.ZERO);
-
-					if (dimension == Dimension.STATE) {
-						item.setCountryCode(rs.getString("BRANCHCOUNTRY"));
-						item.setStateCode(rs.getString("BRANCHPROVINCE"));
-						map.put(getKey(item), item);
-					} else {
-						map.put(item.getAccount(), item);
-					}
-				}
-				return map;
-			}
-		});
 	}
 
 	private void initilize() throws Exception {
@@ -849,303 +681,6 @@ public class TrailBalanceEngine extends DataEngineExport {
 				}
 			}
 		});
-		logger.debug(Literal.LEAVING);
-	}
-
-	private Map<String, TrailBalance> getAccountDetails() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select AM.HOSTACCOUNT, AM.ACCOUNT, ATG.GROUPCODE, AT.ACTYPEDESC");
-		sql.append(" from ACCOUNTMAPPING AM");
-		sql.append(" INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE");
-		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID");
-
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			return extractAccountDetails(sql);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	private Map<String, TrailBalance> extractAccountDetails(StringBuilder sql) {
-		return parameterJdbcTemplate.query(sql.toString(), new MapSqlParameterSource(),
-				new ResultSetExtractor<Map<String, TrailBalance>>() {
-					@Override
-					public Map<String, TrailBalance> extractData(ResultSet rs)
-							throws SQLException, DataAccessException {
-						Map<String, TrailBalance> map = new HashMap<>();
-
-						while (rs.next()) {
-							TrailBalance trailBalance = new TrailBalance();
-							trailBalance.setLedgerAccount(rs.getString("HOSTACCOUNT"));
-							trailBalance.setAccount(rs.getString("ACCOUNT"));
-							trailBalance.setAccountType(rs.getString("GROUPCODE"));
-							trailBalance.setAccountTypeDes(rs.getString("ACTYPEDESC"));
-
-							map.put(trailBalance.getAccount(), trailBalance);
-						}
-						return map;
-					}
-				});
-	}
-
-	/**
-	 * get Opening balance from Previous Month Closing balance And closing balance is the sum of credits and debits
-	 * 
-	 * @return List<TrailBalance>
-	 */
-	private List<TrailBalance> getOpeningBalance() {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT distinct T1.account,T5.ACBALANCE openingBalance,RB.BRANCHPROVINCE stateCode");
-		sql.append(" From postings T1 ");
-		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = T1.POSTBRANCH ");
-		sql.append(" INNER JOIN ( Select T1.ACCOUNTID,T1.ACBALANCE, T1.POSTDATE from ACCOUNTSHISTORY T1 ");
-		sql.append(
-				" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 where T2.postdate < :postdate group by T2.accountid) T2");
-		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
-		sql.append(" where T1.EntityCode = :EntityCode and T1.postamount<>0  and  T1.POSTDATE < :postdate ");
-
-		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-			String[] arr = stateCode.split(",");
-			String listofState = StringUtils.join(arr, "','");
-			sql.append(" and RB.BRANCHPROVINCE in ('" + listofState + "')");
-		}
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("postdate", fromDate);
-		paramMap.addValue("EntityCode", entityCode);
-
-		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
-
-		logger.trace(Literal.SQL + sql.toString());
-		try {
-			logger.debug(Literal.LEAVING);
-			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<TrailBalance>();
-	}
-
-	/**
-	 * get Opening balance from Previous Month Closing balance And closing balance is the sum of credits and debits
-	 * 
-	 * @param toDate2
-	 * 
-	 * @return List<TrailBalance>
-	 */
-	private List<TrailBalance> getOpeningBalanceByDate(Date fromDate) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-
-		sql.append(" SELECT distinct T1.account,T5.ACBALANCE openingBalance,RB.BRANCHPROVINCE stateCode, ");
-		sql.append(" ATG.GROUPCODE accountType,AT.ACTYPEDESC accountTypeDes From postings T1 ");
-		sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = T1.POSTBRANCH ");
-		sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT=T1.ACCOUNT ");
-		sql.append(" INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE ");
-		sql.append(" INNER JOIN ACCOUNTTYPEGROUP ATG  ON ATG.GROUPID = AT.ACTYPEGRPID ");
-		sql.append(" INNER JOIN ( Select T1.ACCOUNTID,T1.ACBALANCE, T1.POSTDATE from ACCOUNTSHISTORY T1 ");
-		sql.append(" INNER JOIN ( Select T2.accountid, max(T2.postdate)postdate  from ACCOUNTSHISTORY T2 ");
-		sql.append(" where T2.postdate <= :FROMDATE group by T2.accountid) T2 ");
-		sql.append(" ON T1.accountid = T2.accountid and T1.postdate = T2.postdate) T5 ON T5.accountid = T1.account ");
-		sql.append("  where atg.GROUPCODE in ('EXPENSE','INCOME') and T1.EntityCode = :EntityCode ");
-		sql.append("  and T1.postamount<>0 and  T1.POSTDATE <= :FROMDATE");
-
-		if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-			String[] arr = stateCode.split(",");
-			String listofState = StringUtils.join(arr, "','");
-			sql.append(" and RB.BRANCHPROVINCE in ('" + listofState + "')");
-		}
-
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		paramMap.addValue("FROMDATE", new SimpleDateFormat("yyyy-MM-dd").format(fromDate));
-		paramMap.addValue("EntityCode", entityCode);
-
-		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
-
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<TrailBalance>();
-	}
-
-	private List<TrailBalance> getDebitAmount() {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-
-		StringBuilder sql = new StringBuilder();
-
-		if (dimension == Dimension.STATE) {
-			sql.append(
-					"select AM.HOSTACCOUNT ledgerAccount, AM.ACCOUNT Account, RB.BRANCHPROVINCE stateCode, sum(postAmount) debitAmount");
-			sql.append(" from POSTINGS P");
-			sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-			sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = P.POSTBRANCH");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-			sql.append(" and P.DRORCR = :DRORCR");
-
-			if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-				String[] arr = stateCode.split(",");
-				String listofState = StringUtils.join(arr, "','");
-				sql.append(" and RB.BRANCHPROVINCE in ('" + listofState + "') ");
-			}
-
-			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT, RB.BRANCHPROVINCE");
-		} else {
-			sql.append(" select AM.HOSTACCOUNT ledgerAccount, AM.ACCOUNT Account, sum(postAmount) debitAmount");
-			sql.append(" from POSTINGS P");
-			sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-			sql.append(" and P.DRORCR = :DRORCR");
-			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT");
-		}
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MONTH_STARTDATE", fromDate);
-		paramMap.addValue("MONTH_ENDDATE", toDate);
-		paramMap.addValue("DRORCR", "D");
-		paramMap.addValue("ENTITYCODE", entityCode);
-
-		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
-
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	private List<TrailBalance> getCreditAmount() {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-
-		StringBuilder sql = new StringBuilder();
-
-		if (dimension == Dimension.STATE) {
-			sql.append(
-					"select AM.HOSTACCOUNT ledgerAccount, AM.ACCOUNT Account, RB.BRANCHPROVINCE stateCode, sum(postAmount) creditAmount");
-			sql.append(" from POSTINGS P");
-			sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-			sql.append(" INNER JOIN RMTBRANCHES RB ON RB.BRANCHCODE = P.POSTBRANCH");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-			sql.append(" and P.DRORCR = :DRORCR");
-
-			if (dimension == Dimension.STATE && StringUtils.isNotBlank(stateCode)) {
-				String[] arr = stateCode.split(",");
-				String listofState = StringUtils.join(arr, "','");
-				sql.append(" and RB.BRANCHPROVINCE in ('" + listofState + "') ");
-			}
-
-			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT, RB.BRANCHPROVINCE");
-		} else {
-			sql.append("select AM.HOSTACCOUNT ledgerAccount,  AM.ACCOUNT Account, sum(postAmount) creditAmount");
-			sql.append(" from POSTINGS P");
-			sql.append(" INNER JOIN ACCOUNTMAPPING AM ON AM.Account = P.Account");
-			sql.append(" where POSTDATE BETWEEN :MONTH_STARTDATE AND :MONTH_ENDDATE AND ENTITYCODE = :ENTITYCODE");
-			sql.append(" and P.DRORCR = :DRORCR");
-			sql.append(" group by AM.HOSTACCOUNT, AM.ACCOUNT");
-		}
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MONTH_STARTDATE", fromDate);
-		paramMap.addValue("MONTH_ENDDATE", toDate);
-		paramMap.addValue("DRORCR", "C");
-		paramMap.addValue("ENTITYCODE", entityCode);
-
-		RowMapper<TrailBalance> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(TrailBalance.class);
-
-		try {
-			logger.trace(Literal.SQL + sql.toString());
-			return parameterJdbcTemplate.query(sql.toString(), paramMap, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	private void save(Map<String, TrailBalance> accounts) throws Exception {
-		logger.debug(Literal.ENTERING);
-		List<TrailBalance> list = new ArrayList<>();
-		for (Entry<String, TrailBalance> entry : accounts.entrySet()) {
-			list.add(entry.getValue());
-
-			if (list.size() >= batchSize) {
-				save(list);
-				list.clear();
-			}
-		}
-
-		if (!list.isEmpty()) {
-			save(list);
-		}
-
-		list = null;
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * save the TrailBalance month end data to the TRIAL_BALANCE_REPORT
-	 * 
-	 * @param list
-	 * @throws SQLException
-	 */
-	private void save(List<TrailBalance> list) throws SQLException {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-
-		List<TrailBalance> tempList = new ArrayList<TrailBalance>();
-
-		for (TrailBalance tb : list) {
-			if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) == 0)
-					&& (BigDecimal.ZERO.compareTo(tb.getClosingBalance()) == 0)
-					&& (BigDecimal.ZERO.compareTo(tb.getCreditAmount()) == 0)
-					&& (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) == 0)) {
-
-			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
-					&& BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0
-					&& BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0
-					&& BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
-				tempList.add(tb);
-			} else if ((BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
-					|| (BigDecimal.ZERO.compareTo(tb.getOpeningBalance()) != 0)
-					|| (BigDecimal.ZERO.compareTo(tb.getCreditAmount()) != 0)
-					|| (BigDecimal.ZERO.compareTo(tb.getDebitAmount()) != 0)) {
-				tempList.add(tb);
-			}
-		}
-
-		sql.append("INSERT INTO TRIAL_BALANCE_REPORT VALUES(");
-		sql.append(" :HeaderId,");
-		sql.append(" :AccountType,");
-		sql.append(" :CountryCode,");
-		sql.append(" :StateCode,");
-		sql.append(" :FinType,");
-		sql.append(" :Account,");
-		sql.append(" :LedgerAccount,");
-		sql.append(" :AccountTypeDes,");
-		sql.append(" :OpeningBalance,");
-		sql.append(" :OpeningBalanceType,");
-		sql.append(" :DebitAmount,");
-		sql.append(" :CreditAmount,");
-		sql.append(" :ClosingBalance,");
-		sql.append(" :ClosingBalanceType)");
-
-		parameterJdbcTemplate.batchUpdate(sql.toString(), SqlParameterSourceUtils.createBatch(tempList.toArray()));
 		logger.debug(Literal.LEAVING);
 	}
 

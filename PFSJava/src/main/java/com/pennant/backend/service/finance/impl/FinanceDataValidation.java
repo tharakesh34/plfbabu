@@ -179,10 +179,7 @@ public class FinanceDataValidation {
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private ProvinceDAO provinceDAO;
 	private CityDAO cityDAO;
-	private FinanceDetail financeDetail;
 	private CustomerDocumentService customerDocumentService;
-	private ExtendedFieldDetailsValidation extendedFieldDetailsValidation;
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private PartnerBankDAO partnerBankDAO;
 	private CurrencyDAO currencyDAO;
 	private LoanPurposeDAO loanPurposeDAO;
@@ -203,23 +200,17 @@ public class FinanceDataValidation {
 		super();
 	}
 
-	public FinanceDetail getFinanceDetail() {
-		return financeDetail;
-	}
-
-	public void setFinanceDetail(FinanceDetail financeDetail) {
-		this.financeDetail = financeDetail;
-	}
-
 	/**
 	 * Method for Validating Finance Schedule Prepared Data against application masters.
 	 * 
 	 * @param vldGroup
 	 * @param finScheduleData
 	 * @param apiFlag
+	 * @param financeDetail
 	 * @return
 	 */
-	public FinScheduleData financeDataValidation(String vldGroup, FinScheduleData finScheduleData, boolean apiFlag) {
+	public FinScheduleData financeDataValidation(String vldGroup, FinScheduleData finScheduleData, boolean apiFlag,
+			FinanceDetail finDetail) {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -230,7 +221,7 @@ public class FinanceDataValidation {
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
 		// Non Finance validation
-		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall);
+		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall, finDetail);
 		String financeReference = null;
 		if (finScheduleData.getFinReference() != null) {
 			financeReference = finScheduleData.getFinReference();
@@ -254,7 +245,7 @@ public class FinanceDataValidation {
 		}
 
 		// Basic Details validation
-		errorDetails = basicValidation(vldGroup, finScheduleData, isAPICall);
+		errorDetails = basicValidation(vldGroup, finScheduleData, isAPICall, finDetail);
 		if (!errorDetails.isEmpty()) {
 			finScheduleData.setErrorDetails(errorDetails);
 			return finScheduleData;
@@ -295,10 +286,10 @@ public class FinanceDataValidation {
 		// Fee validations
 		// TODO FIX
 		boolean stp;
-		if (financeDetail == null) {
+		if (finDetail == null) {
 			stp = true;
 		} else {
-			stp = financeDetail.isStp();
+			stp = finDetail.isStp();
 		}
 		errorDetails = doValidateFees(finScheduleData, stp);
 		if (!errorDetails.isEmpty()) {
@@ -334,8 +325,7 @@ public class FinanceDataValidation {
 		// Net Loan Amount
 		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
 		// This is violating Over Draft Loan
-		if (!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+		if (finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
@@ -1152,8 +1142,8 @@ public class FinanceDataValidation {
 			} else {
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(customer);
-				getFinanceDetail().setCustomerDetails(customerDetails);
-				getFinanceDetail().getFinScheduleData().getFinanceMain().setCustID(customer.getCustID());
+				financeDetail.setCustomerDetails(customerDetails);
+				financeDetail.getFinScheduleData().getFinanceMain().setCustID(customer.getCustID());
 			}
 		}
 
@@ -2779,8 +2769,8 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetail> nonFinanceValidation(String vldGroup, FinScheduleData finScheduleData,
-			boolean isAPICall) {
+	private List<ErrorDetail> nonFinanceValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall,
+			FinanceDetail finDetail) {
 		// Re-Initialize Error Details
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -2799,7 +2789,7 @@ public class FinanceDataValidation {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
 			} else {
 				finScheduleData.getFinanceMain().setCustID(customer.getCustID());
-				getFinanceDetail().getCustomerDetails().setCustomer(customer);
+				finDetail.getCustomerDetails().setCustomer(customer);
 			}
 		}
 
@@ -2866,7 +2856,8 @@ public class FinanceDataValidation {
 	 * =======================================
 	 */
 
-	private List<ErrorDetail> basicValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall) {
+	private List<ErrorDetail> basicValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall,
+			FinanceDetail finDetail) {
 		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
@@ -2919,8 +2910,7 @@ public class FinanceDataValidation {
 		}
 
 		// Loan Amount Validation
-		if (!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+		if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (finMain.getFinAmount().compareTo(zeroAmount) <= 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = String.valueOf(finMain.getFinAmount().doubleValue());
@@ -2949,8 +2939,8 @@ public class FinanceDataValidation {
 
 		// validate downpay Bank and supplier
 		if (financeType.isFinIsDwPayRequired()) {
-			if (getFinanceDetail() != null) {
-				setDownpaymentRulePercentage(financeType, finMain);
+			if (finDetail != null) {
+				setDownpaymentRulePercentage(financeType, finMain, finDetail);
 				BigDecimal reqDwnPay = getPercentageValue(finMain.getFinAmount(), finMain.getMinDownPayPerc());
 				BigDecimal downPayment = finMain.getDownPayBank().add(finMain.getDownPaySupl());
 
@@ -3052,11 +3042,11 @@ public class FinanceDataValidation {
 		return new BigDecimal(bigInteger);
 	}
 
-	private void setDownpaymentRulePercentage(FinanceType finType, FinanceMain finMain) {
+	private void setDownpaymentRulePercentage(FinanceType finType, FinanceMain finMain, FinanceDetail finDetail) {
 		if (finType.getDownPayRule() != 0 && finType.getDownPayRule() != Long.MIN_VALUE
 				&& StringUtils.isNotEmpty(finType.getDownPayRuleDesc())) {
 
-			CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(false)
+			CustomerEligibilityCheck customerEligibilityCheck = prepareCustElgDetail(false, finDetail)
 					.getCustomerEligibilityCheck();
 			String sqlRule = ruleService.getAmountRule(finType.getDownPayRuleDesc(), RuleConstants.MODULE_DOWNPAYRULE,
 					RuleConstants.EVENT_DOWNPAYRULE);
@@ -5305,15 +5295,16 @@ public class FinanceDataValidation {
 	/**
 	 * Method for Preparation of Eligibility Data
 	 * 
+	 * @param finDetail
+	 * 
 	 * @param detail
 	 * @return
 	 */
-	public FinanceDetail prepareCustElgDetail(Boolean isLoadProcess) {
-		FinanceDetail detail = getFinanceDetail();
+	public FinanceDetail prepareCustElgDetail(Boolean isLoadProcess, FinanceDetail detail) {
 		if (detail != null) {
 			// Stop Resetting data multiple times on Load Processing on Record
 			// or Double click the record
-			if (isLoadProcess && getFinanceDetail().getCustomerEligibilityCheck() != null) {
+			if (isLoadProcess && detail.getCustomerEligibilityCheck() != null) {
 				return detail;
 			}
 
@@ -5456,9 +5447,8 @@ public class FinanceDataValidation {
 			financeMain.setCustDSR(detail.getCustomerEligibilityCheck().getDSCR());
 			detail.getCustomerEligibilityCheck().setAgreeName(financeMain.getAgreeName());
 			detail.getFinScheduleData().setFinanceMain(financeMain);
-			setFinanceDetail(detail);
 		}
-		return getFinanceDetail();
+		return detail;
 	}
 
 	/**

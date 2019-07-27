@@ -103,7 +103,6 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_INSURANCE = false; // Insurance Required or Not
 	public static final boolean ALLOW_RIA = false; // RIA Required or Not
 	public static final boolean ALLOW_ADDDBSF = false; // Add Disbursement future date Required or Not
-	public static final boolean FRQ_DATE_VALIDATION = true; // Constant to check Frequency and Date Match/Not
 	public static final boolean UPFRONT_ADJUST_PAYABLEADVISE = false; // Excess upfront fees paid by customer to be created as Payable Advise/Excess.
 	public static final boolean CO_APP_ENQ_SAME_AS_CUST_ENQ = true; // Inquiry menu in the co-applicant should show screen as customer details
 	public static final boolean PAN_DUPLICATE_NOT_ALLOWED = true;
@@ -176,11 +175,6 @@ public class ImplementationConstants {
 
 	//For Advance interest Advance at interest frequency
 	public static boolean ALLOW_ADVINT_FREQUENCY = true;
-
-	//For Advance interest/EMI REAR END
-	public static final boolean ALLOW_ADVSTAGE_REAREND = true;
-	//For Advance Interest/EMI Deposit
-	public static final boolean ALLOW_ADVSTAGE_DEPOSIT = false;
 
 	/*
 	 * For Advance Interest/EMI if there is change in the interest or EMI, due to any servicing changes , do we need to

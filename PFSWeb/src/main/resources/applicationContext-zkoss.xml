@@ -2560,9 +2560,8 @@
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
-		<!-- <property name="notificationService" ref="notificationService" />
-		<property name="customerDetailsService" ref="customerDetailsService" />
-		<property name="financeDetailService" ref="financeDetailService" /> -->
+		<!-- <property name="notificationService" ref="notificationService" /> <property name="customerDetailsService" ref="customerDetailsService" 
+			/> <property name="financeDetailService" ref="financeDetailService" /> -->
 	</bean>
 
 	<!--============ Manual Write-off Details ============== -->
@@ -2877,6 +2876,7 @@
 		<property name="customerService" ref="customerService" />
 		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
+		<property name="commitmentService" ref="commitmentService" />
 	</bean>
 
 	<bean id="chequePrintingDialogCtrl" class="com.pennant.webui.finance.enquiry.ChequePrintingDialogCtrl" parent="basisListCtrl"
@@ -3078,6 +3078,7 @@
 	<bean id="reportGenerationPromptDialogCtrl" class="com.pennant.webui.reports.ReportGenerationPromptDialogCtrl"
 		scope="prototype" parent="basisListCtrl">
 		<property name="reportConfigurationService" ref="reportConfigurationService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="unitName" value="PFF" />
 	</bean>
 
@@ -4165,6 +4166,8 @@
 
 	<bean id="disbursementInstCtrl" class="com.pennant.webui.finance.payorderissue.DisbursementInstCtrl" scope="prototype">
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
 	</bean>
 
 
@@ -4897,6 +4900,7 @@
 	<bean id="receiptUploadHeaderListCtrl" class="com.pennant.webui.finance.receiptupload.ReceiptUploadHeaderListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
+		<property name="receiptUploadApprovalProcess" ref="receiptUploadApprovalProcess" />
 	</bean>
 
 	<bean id="selectReceiptUploadHeaderCtrl" class="com.pennant.webui.finance.receiptupload.SelectReceiptUploadHeaderDialogCtrl"
@@ -5129,11 +5133,11 @@
 	<bean id="linkedLoansDialogCtrl" class="com.pennant.webui.financemanagement.receipts.LinkedLoansDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
-	
+
 	<bean id="bounceDetailsListCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsListCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
-	
+
 	<bean id="bounceDetailsDialogCtrl" class="com.pennant.webui.financemanagement.paymentMode.BounceDetailsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 	</bean>
@@ -5317,37 +5321,36 @@
 		scope="prototype">
 		<property name="gstRateService" ref="gstRateService" />
 	</bean>
-	
+
 	<bean id="gstRateDialogCtrl" class="com.pennant.webui.rmtmasters.gstrate.GSTRateDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="gstRateService" ref="gstRateService" />
 	</bean>
-	
-	 <bean id="settlementProcessUploadDialogueCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessUploadDialogueCtrl"
+
+	<bean id="settlementProcessUploadDialogueCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessUploadDialogueCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="settlementProcessUploadResponce" ref="settlementProcessUploadResponce" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
-	</bean> 
+	</bean>
 
-	 <bean id="settlementProcessDAO" class="com.pennanttech.pff.settlement.dao.SettlementProcessDAOImpl" parent="sequenceDao" />	
+	<bean id="settlementProcessDAO" class="com.pennanttech.pff.settlement.dao.SettlementProcessDAOImpl" parent="sequenceDao" />
 
 	<bean name="settlementProcessUploadResponce" class="com.pennanttech.pff.settlementprocess.webui.SettlementProcessUploadResponce">
 		<property name="dataSource" ref="dataSource" />
 		<property name="settlementProcessDAO" ref="settlementProcessDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-	</bean> 
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
+	</bean>
 
 	<bean id="settlementProcessDownloadListCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessDownloadListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="settlementProcessUploadResponce" ref="settlementProcessUploadResponce" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>
-	
-		<bean id="ledgerDownloadCtrl"
-		class="com.pennant.webui.applicationmaster.download.LedgerDownloadProcessCtrl"
+	<bean id="ledgerDownloadCtrl" class="com.pennant.webui.applicationmaster.download.LedgerDownloadProcessCtrl"
 		parent="basisListCtrl" scope="prototype">
-		<property name="ledgerDownloadService" ref="ledgerDownloadService"/>
 	</bean>
 	
 	<!--============ CKYC Download/ Upload ============== -->
@@ -5358,6 +5361,4 @@
 		<property name="ckycService" ref="ckycService"></property>
 
 	</bean>
-	
-	
 </beans>

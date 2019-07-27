@@ -70,6 +70,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.document.DocumentDataMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.document.DocumentCategory;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -697,7 +698,7 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 		this.docCategory.setButtonDisabled(isReadOnly("DocumentTypeDialog_docIsMandatory"));
 		this.docIsPdfExtRequired.setDisabled(isReadOnly("DocumentTypeDialog_docIsPdfExtRequired"));
 		this.docExpDateIsMand.setDisabled(true);
-		this.docIssueDateMand.setDisabled(true);
+		this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
 		this.docIdNumMand.setDisabled(true);
 		this.docIssuedAuthorityMand.setDisabled(true);
 		this.docIsPasswordProtected.setDisabled(true);
@@ -1070,29 +1071,21 @@ public class DocumentTypeDialogCtrl extends GFCBaseCtrl<DocumentType> {
 	 * 
 	 */
 	private void doCheckCustomerDoc(String categoryCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
+		// PSD#138482 Documents Master Edit Issue
+		this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
+		this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
+		this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
+		this.docIssuedAuthorityMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssuedAuthorityMand"));
 		if (DocumentCategories.CUSTOMER.getKey().equals(categoryCode)) {
-			this.docExpDateIsMand.setDisabled(isReadOnly("DocumentTypeDialog_docExpDateIsMand"));
-			this.docIdNumMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssueDateMand"));
-			this.docIssueDateMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIdNumMand"));
-			this.docIssuedAuthorityMand.setDisabled(isReadOnly("DocumentTypeDialog_DocIssuedAuthorityMand"));
 			this.docExpDateIsMand.setChecked(true);
 			this.docIssueDateMand.setChecked(true);
 			this.docIdNumMand.setChecked(true);
 			this.docIssuedAuthorityMand.setChecked(true);
-		} else {
-			this.docExpDateIsMand.setChecked(false);
-			this.docExpDateIsMand.setDisabled(true);
-			this.docIssueDateMand.setChecked(false);
-			this.docIssueDateMand.setDisabled(true);
-			this.docIdNumMand.setChecked(false);
-			this.docIdNumMand.setDisabled(true);
-			this.docIssuedAuthorityMand.setChecked(false);
-			this.docIssuedAuthorityMand.setDisabled(true);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

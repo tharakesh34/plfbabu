@@ -641,7 +641,9 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 
 		//File Name
 		try {
-			aPartnerBank.setFileName(this.fileName.getValue());
+			if (this.fileName.isVisible()) {
+				aPartnerBank.setFileName(this.fileName.getValue());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -88,7 +88,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	 */
 	@Override
 	public Currency getCurrencyById(final String id, String type) {
-		logger.debug("Entering ");
+		//logger.debug("Entering ");
 		Currency currency = new Currency();
 		currency.setId(id);
 
@@ -107,17 +107,17 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append("  Where CcyCode =:CcyCode");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		//logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 		RowMapper<Currency> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Currency.class);
 
 		try {
 			currency = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+			//logger.error("Exception: ", e);
 			currency = null;
 		}
-		logger.debug("Leaving ");
+		//logger.debug("Leaving ");
 		return currency;
 	}
 
@@ -165,7 +165,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 	 */
 	@Override
 	public String getCurrencyById(final String id) {
-		logger.debug("Entering ");
+		//logger.debug("Entering ");
 		String ccyCode = null;
 		Currency currency = new Currency();
 		currency.setId(id);
@@ -173,16 +173,16 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		StringBuilder selectSql = new StringBuilder("SELECT CcyNumber FROM  RMTCurrencies");
 		selectSql.append(" Where CcyCode =:CcyCode");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		//logger.trace(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(currency);
 
 		try {
 			ccyCode = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
+		//	logger.error("Exception: ", e);
 			ccyCode = "";
 		}
-		logger.debug("Leaving ");
+		//logger.debug("Leaving ");
 		return ccyCode;
 	}
 

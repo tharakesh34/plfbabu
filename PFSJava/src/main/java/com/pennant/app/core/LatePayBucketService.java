@@ -85,7 +85,7 @@ public class LatePayBucketService extends ServiceHelper {
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			boolean isFinStsChanged = updateDPDBuketing(finEODEvent.getFinanceScheduleDetails(),
-					finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(), valueDate);
+					finEODEvent.getFinanceMain(), finEODEvent.getFinProfitDetail(), valueDate, true);
 
 			if (isFinStsChanged) {
 				finEODEvent.setUpdFinMain(true);
@@ -107,7 +107,7 @@ public class LatePayBucketService extends ServiceHelper {
 	 * @return
 	 */
 	public boolean updateDPDBuketing(List<FinanceScheduleDetail> listScheduleDetails, FinanceMain financeMain,
-			FinanceProfitDetail finProfitDetail, Date valueDate) {
+			FinanceProfitDetail finProfitDetail, Date valueDate, boolean eodEvent) {
 		logger.debug(" Entering ");
 
 		Map<Date, BigDecimal> reallocationMap = new TreeMap<Date, BigDecimal>();
@@ -160,7 +160,11 @@ public class LatePayBucketService extends ServiceHelper {
 		}
 
 		if (firstDuedate != null) {
-			newCurODDays = DateUtility.getDaysBetween(firstDuedate, valueDate);
+			Date odtCaldate = valueDate;
+			if (ImplementationConstants.LP_MARK_FIRSTDAY && eodEvent) {
+				odtCaldate = DateUtility.addDays(valueDate, 1);
+			}
+			newCurODDays = DateUtility.getDaysBetween(firstDuedate, odtCaldate);
 		}
 
 		// calculate DueBucket

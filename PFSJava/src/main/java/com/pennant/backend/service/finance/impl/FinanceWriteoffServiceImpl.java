@@ -775,7 +775,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 			// save Postings
 			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries);
+				getPostingsDAO().saveBatch(accountingSetEntries, true);
 			}
 
 			// Save/Update Finance Profit Details

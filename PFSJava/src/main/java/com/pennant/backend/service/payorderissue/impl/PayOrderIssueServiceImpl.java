@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -59,6 +60,7 @@ import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
@@ -81,6 +83,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -102,6 +105,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
+	@Autowired
+	private VASRecordingDAO vasRecordingDAO;
 	private PartnerBankService partnerBankService;
 
 	public PayOrderIssueServiceImpl() {
@@ -247,6 +252,21 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				.getFinanceDisbursementDetails(issueHeader.getFinReference(), TableType.TEMP_TAB.getSuffix(), false);
 		List<FinanceDisbursement> mainList = financeDisbursementDAO
 				.getFinanceDisbursementDetails(issueHeader.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+
+		List<FinanceDisbursement> deductDisbFeeList = financeDisbursementDAO
+				.getDeductDisbFeeDetails(finMian.getFinReference());
+
+		if (CollectionUtils.isNotEmpty(deductDisbFeeList)) {
+			for (FinanceDisbursement disbursement : deductDisbFeeList) {
+				for (FinanceDisbursement finDisb : mainList) {
+					if (finDisb.getDisbSeq() == disbursement.getDisbSeq()) {
+						finDisb.setDeductFeeDisb(disbursement.getDeductFeeDisb());
+						break;
+					}
+				}
+			}
+		}
+
 		// Covenants List
 		issueHeader.setCovenantTypeList(
 				getFinCovenantTypeDAO().getFinCovenantTypeByFinRef(issueHeader.getFinReference(), "_View", false));
@@ -267,6 +287,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			if (issueHeader.isLoanApproved()) {
 				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module,
 						TableType.MAIN_TAB.getSuffix());
+
+				issueHeader.setFinanceDisbursements(mainList);
+
 			} else {
 				docDetails = documentDetailsDAO.getDocumentDetails(finMian.getFinReference(), document, module,
 						TableType.TEMP_TAB.getSuffix());
@@ -275,6 +298,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		issueHeader.setApprovedFinanceDisbursements(mainList);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			issueHeader
+					.setvASRecordings(vasRecordingDAO.getVASRecordingsStatusByReference(finMian.getFinReference(), ""));
+		}
+
 		logger.debug("Leaving");
 		return issueHeader;
 	}

@@ -83,4 +83,8 @@ public interface FinReceiptHeaderDAO {
 	void saveMultiReceiptLog(List<FinReceiptQueueLog> finReceiptQueueList);
 
 	List<Long> getInProcessMultiReceiptRecord();
+
+	boolean checkEarlySettlementInitiation(String reference);
+
+	boolean checkPartialSettlementInitiation(String reference);
 }

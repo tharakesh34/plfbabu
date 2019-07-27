@@ -343,6 +343,10 @@ public class VerificationDAOImpl extends BasicDao<Verification> implements Verif
 
 			sql.append(
 					" and v.verificationType = :verificationType and v.verificationdate is not null and v.status !=0)");
+		} else if (type == VerificationType.PD.getKey()) {
+			sql.append(" where Id = (select coalesce(max(id), 0)");
+			sql.append(" from verifications where custid = :custid and referenceFor = :referenceFor");
+			sql.append(" and verificationType = :verificationType and verificationdate is not null and status !=0)");
 		}
 
 		try {

@@ -585,6 +585,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
+			return;
 		}
 
 		refreshList();

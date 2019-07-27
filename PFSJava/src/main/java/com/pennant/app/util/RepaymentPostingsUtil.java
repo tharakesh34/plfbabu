@@ -601,7 +601,7 @@ public class RepaymentPostingsUtil implements Serializable {
 			latePayMarkingService.updateFinPftDetails(pftDetail, overdueList, dateValueDate);
 		}
 
-		latePayBucketService.updateDPDBuketing(scheduleDetails, financeMain, pftDetail, dateValueDate);
+		latePayBucketService.updateDPDBuketing(scheduleDetails, financeMain, pftDetail, dateValueDate, false);
 
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
@@ -1197,6 +1197,13 @@ public class RepaymentPostingsUtil implements Serializable {
 		addZeroifNotContainsObj(dataMap, "bounceCharge_IGST_P");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_SGST_P");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_UGST_P");
+
+		//#PSD138017
+		Map<String, Object> dataMapTemp = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+
+		if (dataMapTemp != null && !dataMapTemp.isEmpty()) {
+			dataMap.putAll(dataMapTemp);
+		}
 
 		aeEvent.setDataMap(dataMap);
 

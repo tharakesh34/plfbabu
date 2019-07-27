@@ -152,6 +152,9 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		logger.debug(Literal.ENTERING);
 
 		setStatusDetails();
+		
+		this.code.setMaxlength(8);
+		this.hsnCode.setMaxlength(20);
 
 		this.type.setMandatoryStyle(true);
 		this.type.setModuleName("CommodityType");
@@ -541,6 +544,14 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		}
 
 		try {
+			if (!this.currentValue.isReadonly()) {
+				if (this.currentValue.getActualValue().compareTo(BigDecimal.ZERO) == 0
+						|| this.currentValue.getActualValue().compareTo(new BigDecimal("0.00")) == 0) {
+					throw new WrongValueException(this.currentValue,
+							Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value") + " should be greater than 0");
+				} 
+			}
+			
 			acommodity.setCurrentValue(PennantApplicationUtil.unFormateAmount(this.currentValue.getActualValue(),
 					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		} catch (WrongValueException we) {
@@ -711,31 +722,12 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					new PTStringValidator(Labels.getLabel("label_StockCompanyDialogue_CompanyCode.value"), null, true));
 		}
 
-		if (!this.code.isReadonly()) {
+		if (!this.code.isDisabled()) {
 			this.code.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CommoditiesDialogue_CommodityCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
-		if (!this.currentValue.isReadonly()) {
-			if (bdcurrentValue.compareTo(BigDecimal.ZERO) == 0
-					|| bdcurrentValue.compareTo(new BigDecimal("0.00")) == 0) {
-				throw new WrongValueException(this.currentValue,
-						Labels.getLabel("label_CommoditiesDialogue_CurrentValueAlert.value.value"));
-			} else {
-				this.currentValue.setConstraint(new PTDecimalValidator(
-						Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value"), 2, false, false));
-			}
-		}
-
-		if (!this.code.isReadonly()) {
-			if (this.code.isValid()) {
-				if (this.code.getValue().length() > 8) {
-					throw new WrongValueException(this.code,
-							Labels.getLabel("label_CommoditiesDialogue_CommodityTypeAlert.value"));
-				}
-			}
-		}
 
 		if (!this.alertToRoles.getButton().isDisabled()) {
 			this.alertToRoles.setConstraint(
@@ -765,13 +757,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
 
-		if (!this.hsnCode.isReadonly())
-			if (this.hsnCode.isValid()) {
-				if (this.hsnCode.getValue().length() > 20) {
-					throw new WrongValueException(this.hsnCode,
-							Labels.getLabel("label_CommoditiesDialogue_HSNAlert.value.value"));
-				}
-			}
 		logger.debug(Literal.LEAVING);
 	}
 

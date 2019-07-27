@@ -1141,37 +1141,43 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		// Identifying Transaction List
 		List<Long> tranIdList = new ArrayList<>();
-		if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
-			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
+		if (!StringUtils.equals(header.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_FEEPAYMENT)) {
+			if (header.getReceiptDetails() != null && !header.getReceiptDetails().isEmpty()) {
+				for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 
-				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
-				boolean isReceiptModeDetail = false;
+					FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
+					boolean isReceiptModeDetail = false;
 
-				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+							&& !StringUtils.equals(receiptDetail.getPaymentType(),
+									RepayConstants.RECEIPTMODE_PAYABLE)) {
 
-					isReceiptModeDetail = true;
-				}
+						isReceiptModeDetail = true;
+					}
 
-				// If Bounce Process and not a Receipt Mode Record then Continue process
-				if (isBounceProcess && !isReceiptModeDetail) {
-					continue;
-				}
+					// If Bounce Process and not a Receipt Mode Record then Continue process
+					if (isBounceProcess && !isReceiptModeDetail) {
+						continue;
+					}
 
-				// List out all Transaction Id's
-				List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
-				for (int j = 0; j < repayHeaderList.size(); j++) {
-					tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
+					// List out all Transaction Id's
+					List<FinRepayHeader> repayHeaderList = receiptDetail.getRepayHeaders();
+					for (int j = 0; j < repayHeaderList.size(); j++) {
+						tranIdList.add(repayHeaderList.get(j).getLinkedTranId());
+					}
 				}
 			}
 		}
 
 		// Posting Details Rendering
+		List<ReturnDataSet> postings = null;
 		if (!tranIdList.isEmpty()) {
-			List<ReturnDataSet> postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
-			doFillPostings(postings);
+			postings = getReceiptCancellationService().getPostingsByTranIdList(tranIdList);
+		} else {
+			postings = getReceiptCancellationService().getPostingsByPostRef(header.getReceiptID());
 		}
+		doFillPostings(postings);
 		logger.debug("Leaving");
 	}
 

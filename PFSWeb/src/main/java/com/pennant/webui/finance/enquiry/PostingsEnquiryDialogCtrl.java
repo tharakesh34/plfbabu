@@ -162,14 +162,14 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						.get("financeEnquiryHeaderDialogCtrl");
 			}
 
-			if (arguments.containsKey("fromRejectFinance")) {
+			/*if (arguments.containsKey("fromRejectFinance")) {
 				fromRejectFinance = (Boolean) arguments.get("fromRejectFinance");
 				if (fromRejectFinance) {
 					tableType = "_RView";
 					this.toolbar_printButton.setVisible(false);
 					this.showAccrual.setDisabled(true);
 				}
-			}
+			}*/
 
 			if (fromRejectFinance && arguments.containsKey("reinstateFinance")) {
 				ReinstateFinance reinstateFinance = (ReinstateFinance) arguments.get("reinstateFinance");

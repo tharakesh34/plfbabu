@@ -807,22 +807,18 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					new ErrorDetail(PennantConstants.KEY_FIELD, "60203", errParm, valueParm), usrLanguage));
 		}
 
-		List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList();
-		if (list != null && !list.isEmpty()) {
-			for (FinAdvancePayments finAdvPayment : list) {
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_PAID)) {
-					//Disbursement instructions should be cancelled before canceling a loan.
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60406", errParm, valueParm), usrLanguage));
-				}
-
-				if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
-					//Disbursement instructions should be cancelled before canceling a loan.
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "60408", errParm, valueParm), usrLanguage));
-				}
-			}
-		}
+		/*
+		 * List<FinAdvancePayments> list = financeDetail.getAdvancePaymentsList(); if (list != null && !list.isEmpty())
+		 * { for (FinAdvancePayments finAdvPayment : list) { if (StringUtils.equals(finAdvPayment.getStatus(),
+		 * DisbursementConstants.STATUS_PAID)) { //Disbursement instructions should be cancelled before canceling a
+		 * loan. auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD,
+		 * "60406", errParm, valueParm), usrLanguage)); }
+		 * 
+		 * if (StringUtils.equals(finAdvPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) { //Disbursement
+		 * instructions should be cancelled before canceling a loan.
+		 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail( new ErrorDetail(PennantConstants.KEY_FIELD, "60408",
+		 * errParm, valueParm), usrLanguage)); } } }
+		 */
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 

@@ -78,9 +78,10 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, providerId,entityCode, paymentMode, bankBranchID, accountNumber, receivableAdjustment, ");
-		sql.append(" reconciliationAmount, active, ");
+		sql.append(" reconciliationAmount, active, partnerBankId, ");
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode,");
+			sql.append(
+					"entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode, partnerBankCode, partnerBankName,");
 		}
 
 		sql.append(
@@ -157,13 +158,13 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		StringBuilder sql = new StringBuilder(" insert into VASProviderAccDetail");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, providerId, entityCode,paymentMode, bankBranchID,accountNumber, receivableAdjustment, ");
-		sql.append(" reconciliationAmount, active, ");
+		sql.append(" reconciliationAmount, active, partnerBankId,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(
 				" :id, :providerId,:entityCode, :paymentMode, :bankBranchID, :accountNumber, :receivableAdjustment, ");
-		sql.append(" :reconciliationAmount,:active, ");
+		sql.append(" :reconciliationAmount,:active, :partnerBankId,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -197,7 +198,7 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 				"  set providerId = :providerId,entityCode =:entityCode, paymentMode = :paymentMode, bankBranchID = :bankBranchID,");
 		sql.append(
 				" accountNumber = :accountNumber, receivableAdjustment = :receivableAdjustment, reconciliationAmount = :reconciliationAmount ");
-		sql.append(",active = :active, ");
+		sql.append(",active = :active, partnerBankId = :partnerBankId, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -253,10 +254,11 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT id, providerId,entityCode, paymentMode, bankBranchID, accountNumber,");
-		sql.append(" receivableAdjustment, reconciliationAmount, active, ");
+		sql.append(" receivableAdjustment, reconciliationAmount, active, partnerBankId, ");
 
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode,");
+			sql.append(
+					"entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode, partnerBankCode, partnerBankName,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		sql.append(" RecordType, WorkflowId From VASProviderAccDetail");
@@ -284,10 +286,11 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT id, providerId,entityCode, paymentMode, bankBranchID, accountNumber,");
-		sql.append(" receivableAdjustment, reconciliationAmount, active, ");
+		sql.append(" receivableAdjustment, reconciliationAmount, active, partnerBankId, ");
 
 		if ("_view".equalsIgnoreCase(type)) {
-			sql.append("entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode,");
+			sql.append(
+					"entityDesc, providerDesc, branchDesc,bankName,ifscCode,micrCode,bankCode, partnerBankCode, partnerBankName,");
 		}
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, ");
 		sql.append(" RecordType, WorkflowId From VASProviderAccDetail");
@@ -298,14 +301,16 @@ public class VASProviderAccDetailDAOImpl extends SequenceDao<VASProviderAccDetai
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("ProviderId", providerId);
 
+		VASProviderAccDetail vASProviderAccDetail = new VASProviderAccDetail();
 		RowMapper<VASProviderAccDetail> rowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(VASProviderAccDetail.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			vASProviderAccDetail = jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
+			vASProviderAccDetail = null;
 		}
 		logger.debug(Literal.LEAVING);
-		return null;
+		return vASProviderAccDetail;
 	}
 }

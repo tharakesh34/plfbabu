@@ -361,7 +361,7 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				getDisbursementResponse().processResponseFile(userId, status, file, media, false);
+				getDisbursementResponse().processResponseFile(userId, status, file, media, false, getUserWorkspace().getLoggedInUser());
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

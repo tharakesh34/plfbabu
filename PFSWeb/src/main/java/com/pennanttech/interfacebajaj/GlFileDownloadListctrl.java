@@ -211,6 +211,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 				TrailBalanceEngine.Dimension.CONSOLIDATE.name()));
 
 		fillComboBox(dimention, "", dimentionsList, "");
+		fillComboBox(months, "", monthsList, "");
 
 		// Application Deployment Date
 		registerField("Id", SortOrder.DESC);

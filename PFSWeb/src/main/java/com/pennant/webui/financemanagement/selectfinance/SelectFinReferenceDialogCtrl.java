@@ -324,8 +324,9 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			FinanceMain finMain = (FinanceMain) dataObject;
 			if (finMain != null) {
 				this.finReference.setValue(finMain.getFinReference());
-				this.custCIF.setValue(String.valueOf(finMain.getCustID()));
 				custDetail = getCustomerDetailsService().getCustomerDetailsById(finMain.getCustID(), true, "_View");
+				this.custCIF.setValue(String.valueOf(custDetail.getCustomer().getCustCIF()));
+
 				if (custDetail != null && custDetail.getCustomer() != null) {
 					this.label_SelectFinReferenceDialog_CustShrtName
 							.setValue(custDetail.getCustomer().getCustShrtName());

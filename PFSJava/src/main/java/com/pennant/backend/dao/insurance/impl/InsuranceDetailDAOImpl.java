@@ -388,4 +388,31 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		logger.debug(Literal.LEAVING);
 
 	}
+	
+	@Override
+	public void updateLinkTranId(long id, long linkedTranId) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Update INSURANCEPAYMENTINSTRUCTIONS set LinkedTranId = :linkedTranId ");
+		sql.append(" Where id = :id");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+
+		source.addValue("linkedTranId", linkedTranId);
+		source.addValue("id", id);
+
+		try {
+			jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			throw e;
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
 }

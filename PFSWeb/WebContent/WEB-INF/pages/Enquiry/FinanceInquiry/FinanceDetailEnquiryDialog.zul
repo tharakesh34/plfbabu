@@ -186,11 +186,14 @@
 													<textbox id="unEarnAcctId" width="175px" readonly="true" />
 												</hbox>
 											</row>
-											<row visible="false">
+											<row id="row_commitment" visible="false">
 												<label id="label_FinanceMainDialog_CollRef" value="${c:l('label_FinanceMainDialog_CommitRef.value')}" />
 												<hbox>
 													<space id="space_CollRef" spacing="2px" />
 													<textbox id="collateralRef" width="170px" readonly="true" />
+													<button id="btnSearchCommitmentRef"
+															tooltiptext="${c:l('label_FinanceMainDialog_CommitRef.value')}" image="/images/icons/more.png"
+															autodisable="btnSearchCommitmentRef" />
 												</hbox>
 												<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}" />
 												<frequencybox id="depreciationFrq" />

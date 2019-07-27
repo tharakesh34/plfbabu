@@ -6,12 +6,13 @@ import org.zkoss.util.media.Media;
 
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.dataengine.model.DataEngineStatus;
+import com.pennanttech.pff.model.mandate.MandateData;
 
 public interface MandateProcesses {
 	public static DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
 	public static DataEngineStatus MANDATES_ACK = new DataEngineStatus("MANDATES_ACK");
 
-	public void sendReqest(Object... object) throws Exception;
+	public void sendReqest(MandateData mandateData);
 
 	public boolean registerMandate(Mandate mandate) throws Exception;
 

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -87,7 +88,8 @@ import com.pennanttech.pennapps.pff.verification.service.RiskContainmentUnitServ
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul
+ * This is the controller class for the
+ * /WEB-INF/pages/Verification/RiskContainmentUnit/RiskContainmentUnitDialog.zul
  * file. <br>
  */
 public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUnit> {
@@ -149,7 +151,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -291,7 +294,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete button.
+	 * The framework calls this event handler when user clicks the delete
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -303,7 +307,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel button.
+	 * The framework calls this event handler when user clicks the cancel
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -614,8 +619,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
-	 * parameter
+	 * This method will create tab and will assign corresponding tab selection
+	 * method and makes tab visibility based on parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -1042,7 +1047,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog controller.
+	 * Clears validation error messages from all the fields of the dialog
+	 * controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -1133,6 +1139,14 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		}
 
 		// Document Details Saving
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RCU_DOCUMENT_MANDATORY)
+				&& this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("submit")) {
+			if (documentDetailDialogCtrl != null
+					&& CollectionUtils.sizeIsEmpty(documentDetailDialogCtrl.getDocumentDetailsList())) {
+				MessageUtil.showError(Labels.getLabel("VERIFICATIONS_DOCUMENT_MANDATORY"));
+				return;
+			}
+		}
 
 		if (documentDetailDialogCtrl != null) {
 			rcu.setDocuments(documentDetailDialogCtrl.getDocumentDetailsList());
@@ -1417,7 +1431,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			comboitem.setValue(valueLabel.getValue());
 			comboitem.setLabel(valueLabel.getLabel());
 			if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_RCU_EYEBALLED_VALUE)
-					&& String.valueOf(RCUDocVerificationType.EYEBALLED.getKey()).equals(valueLabel.getValue())) {
+					&& String.valueOf(RCUDocVerificationType.EYEBALLED.getValue()).equals(valueLabel.getLabel())) {
 				continue;
 			}
 			combobox.appendChild(comboitem);

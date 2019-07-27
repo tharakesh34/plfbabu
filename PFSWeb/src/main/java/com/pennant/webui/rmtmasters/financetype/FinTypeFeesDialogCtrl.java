@@ -15,7 +15,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinTypeFeesDialogCtrl.java                                                   * 	  
+ * FileName    		:  FinTypeFeesDialogCtrl.java                                           * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -120,6 +120,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected Checkbox active;
 	protected Checkbox alwPreIncomization;
 	protected Label label_Window_Title;
+	protected Label label_FinTypeFeesDialog_AlwModifyFeeSchdMthd;
 
 	// not auto wired vars
 	private FinTypeFees finTypeFees; // overhanded per param
@@ -451,6 +452,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		doSetConditionalProp();
 		doSetCalculationTypeProp();
 		doSetFeeSchdMethodProp();
+		//CR : Deduct fee at the time of additional disbursal
+		doSetFeeSchdMethod(aFinTypeFees.getFinEvent());
 
 		logger.debug("Leaving");
 	}
@@ -1128,6 +1131,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			fillComboBox(this.calculationOn, "", PennantStaticListUtil.getFeeCalculatedOnList(),
 					"," + PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE + ",");
 		}
+
+		doSetFeeSchdMethod(finEventValue);
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1136,6 +1142,9 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setObject("");
 		this.ruleCode.setValue("", "");
 		doSetRuleFilters();
+
+		doSetFeeSchdMethod(this.finEvent.getValue());
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -1253,6 +1262,24 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		return "";
 	}
 
+	/**
+	 * Fee Schedule Method Defaulted with 'Deduct from disbursement' For Add Disbursement Event. other event all the Fee
+	 * Schedule Method for selection.
+	 * 
+	 */
+	private void doSetFeeSchdMethod(String finEventValue) {
+		String excluedeFields = "";
+		this.alwModifyFeeSchdMthd.setVisible(false);
+		this.label_FinTypeFeesDialog_AlwModifyFeeSchdMthd.setVisible(false);
+		this.feeScheduleMethod.setReadonly(isReadOnly("FinTypeFeesDialog_feeScheduleMethod"));
+		if (StringUtils.equals(finEventValue, AccountEventConstants.ACCEVENT_CMTDISB)) {
+			excluedeFields = getExcludeFields();
+		}
+		fillComboBox(this.feeScheduleMethod, getFinTypeFees().getFeeScheduleMethod(),
+				PennantStaticListUtil.getRemFeeSchdMethods(), excluedeFields);
+
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1320,12 +1347,4 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	public void setFinTypeFeesListCtrl(FinTypeFeesListCtrl finTypeFeesListCtrl) {
 		this.finTypeFeesListCtrl = finTypeFeesListCtrl;
 	}
-
-	/*
-	 * public FinanceTypeDialogCtrl getFinanceTypeDialogCtrl() { return financeTypeDialogCtrl; }
-	 * 
-	 * public void setFinanceTypeDialogCtrl(FinanceTypeDialogCtrl financeTypeDialogCtrl) { this.financeTypeDialogCtrl =
-	 * financeTypeDialogCtrl; }
-	 */
-
 }

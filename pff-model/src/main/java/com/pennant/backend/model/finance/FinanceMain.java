@@ -749,6 +749,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal tdsLimitAmt;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 	private String extReference;
+	private String serviceName;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -940,6 +941,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("coreBankId");
 		excludeFields.add("intTdsAdjusted");
 		excludeFields.add("extReference");
+		excludeFields.add("serviceName");
 
 		return excludeFields;
 	}
@@ -4399,4 +4401,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.allowRevolving = allowRevolving;
 	}
 
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
 }

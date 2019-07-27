@@ -1019,6 +1019,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 
 			//Clear all the listitems in listbox
+			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 				boolean showRate = false;
@@ -1038,6 +1039,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
+				map.put("formatter", formatter);
+				
 				map.put("window", this.window_FinWriteoffDialog);
 				finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 						false);

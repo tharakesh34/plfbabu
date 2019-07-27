@@ -124,17 +124,15 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 /**
- * This is the controller class for the
- * /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/financeMain/ScheduleDetailDialog.zul file.
  */
 public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(ScheduleDetailDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the ZUL-file are getting autoWired by our
-	 * 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ScheduleDetailDialog; // autoWired
 	protected Listbox listBoxSchedule; // autoWired
@@ -301,9 +299,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * ZUL-file is called with a parameter for a selected financeMain object in
-	 * a Map.
+	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
+	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -351,7 +348,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			setFinFeeDetailListCtrl(((ConvFinanceMainDialogCtrl) financeMainDialogCtrl).getFinFeeDetailListCtrl());
 		}
 
-		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl || financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
+		if (financeMainDialogCtrl instanceof ReceiptDialogCtrl
+				|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
 			//
 		} else {
 			logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
@@ -377,8 +375,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 	/**
 	 * 
-	 * Set the Labels for the ListHeader and Basic Details based oon the Finance
-	 * Types right is only a string. <br>
+	 * Set the Labels for the ListHeader and Basic Details based oon the Finance Types right is only a string. <br>
 	 */
 	private void doSetLabels() {
 		logger.debug("Entering");
@@ -579,8 +576,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Only components are set visible=true if the logged-in <br>
 	 * user have the right for it. <br>
 	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A
-	 * right is only a string. <br>
+	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
 	 */
 	private void doCheckRights() {
 		logger.debug("Entering");
@@ -666,8 +662,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws InterruptedException
@@ -961,6 +956,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			BigDecimal totalAdvPft = BigDecimal.ZERO;
 			boolean lastRecord = false;
+			int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 			for (int i = 0; i < sdSize; i++) {
 				boolean showRate = false;
@@ -1071,6 +1067,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("totalAdvPft", totalAdvPft);
 				map.put("isEMIHEditable", !getUserWorkspace().isAllowed("button_" + dialogName + "_btnRecalEMIH"));
 				map.put("moduleDefiner", moduleDefiner);
+				map.put("formatter", formatter);
 
 				finRender.render(map, prvSchDetail, false, allowRvwRate, true, aFinSchData.getFinFeeDetailList(),
 						showRate, StringUtils.isEmpty(moduleDefiner));
@@ -1237,8 +1234,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Removing previously embedded tabs if any to Re-render them
-	 * dynamically
+	 * Method for Removing previously embedded tabs if any to Re-render them dynamically
 	 */
 	private void removePrevoiusInsTabs() {
 		logger.debug("Entering");
@@ -1532,7 +1528,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
 			list.add(subList1);
 			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,
-					true);
+					true, false);
 			list.add(subList);
 
 			boolean isSchdFee = false;
@@ -2508,8 +2504,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Setting Planned EMI Holiday Months when Planned EMI Holidays
-	 * Allowed
+	 * Method for Setting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
 	public void visiblePlanEMIHolidays(boolean alwPlanEMIHMonths, boolean alwPlanEMIHDates) {
 		logger.debug("Entering");
@@ -2552,8 +2547,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays
-	 * Allowed
+	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
 	public List<Integer> getPlanEMIHMonths() {
 		logger.debug("Entering");
@@ -2575,8 +2569,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays
-	 * Allowed
+	 * Method for Getting Planned EMI Holiday Months when Planned EMI Holidays Allowed
 	 */
 	public List<Integer> setPlanEMIHMonths(List<Integer> planEMIHMonths) {
 		logger.debug("Entering");
@@ -2698,8 +2691,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Capturing Planned EMI Holiday Dates when user did Action on
-	 * it.
+	 * Method for Capturing Planned EMI Holiday Dates when user did Action on it.
 	 */
 	@SuppressWarnings("unchecked")
 	public void onCheckPlanEMIHDate(ForwardEvent event) {
@@ -2732,8 +2724,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	}
 
 	/**
-	 * Method for Checking Validation with Current Business date is required or
-	 * not
+	 * Method for Checking Validation with Current Business date is required or not
 	 */
 	private boolean isAppDateValidationReq() {
 

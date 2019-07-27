@@ -8,6 +8,7 @@ public class GSTINInfo {
 	private String legelName; // lgnm
 	private String tradeName; // tradeNam
 	private Date regesterDate; // rgdt
+	private String registerDateStr;
 	private Date lastUpdatedDate; // lstupdt
 	private String gSTNStatus; // sts
 	private String zone; // stj
@@ -130,4 +131,13 @@ public class GSTINInfo {
 	public void setStatusDesc(String statusDesc) {
 		this.statusDesc = statusDesc;
 	}
+
+	public String getRegisterDateStr() {
+		return registerDateStr;
+	}
+
+	public void setRegisterDateStr(String registerDateStr) {
+		this.registerDateStr = registerDateStr;
+	}
+
 }

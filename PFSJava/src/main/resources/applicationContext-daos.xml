@@ -88,13 +88,13 @@
 	<bean id="emailEngineJobScheduler" class="com.pennanttech.pennapps.notification.email.EmailEngineJobScheduler">
 		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
-	
+
 	<bean id="presentmentDetailExtract" class="com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract">
 		<constructor-arg ref="dataSource" />
 		<constructor-arg ref="presentmentDetailService" />
 		<constructor-arg ref="notificationService" />
 	</bean>
-	
+
 	<!-- ============================================================ -->
 	<!-- Required configuration to use SMS Engine -->
 	<!-- ============================================================== -->
@@ -3191,11 +3191,11 @@
 	<bean id="SysParamUtil" class="com.pennant.app.util.SysParamUtil">
 		<property name="systemParameterService" ref="systemParameterService" />
 	</bean>
-	
+
 	<bean id="CurrencyUtil" class="com.pennant.app.util.CurrencyUtil">
 		<property name="currencyService" ref="currencyService" />
 	</bean>
-	
+
 	<bean id="FinanceWorkflowRoleUtil" class="com.pennant.app.util.FinanceWorkflowRoleUtil">
 		<property name="financeWorkFlowDAO" ref="financeWorkFlowDAO" />
 	</bean>
@@ -3414,6 +3414,7 @@
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
+		<property name="insuranceDetailService" ref="insuranceDetailService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -5521,6 +5522,7 @@
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="gstRateDAO" ref="gstRateDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!--================= Holiday Util =================== -->
@@ -10093,6 +10095,7 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
@@ -10113,6 +10116,9 @@
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="vehicleDealerDAO" ref="vehicleDealerDAO" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<property name="vASConfigurationDAO" ref="vASConfigurationDAO" />
+		<property name="vASProviderAccDetailDAO" ref="vASProviderAccDetailDAO" />
+		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
 
 	<bean id="masterDefTempDAO" class="com.pennanttech.pff.backend.dao.MasterDefDAOImpl" parent="basicDao" />
@@ -10962,6 +10968,16 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 	</bean>
 
+	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
+		<property name="dataSource" ref="dataSource" />
+		<property name="projectedRUDAO" ref="projectedRUDAO" />
+		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
+		<property name="receiptService" ref="receiptService" />
+		<property name="uploadAllocationDetailDAO" ref="uploadAllocationDetailDAO" />
+	</bean>
+
+	<bean id="projectedRUDAO" class="com.pennant.backend.dao.receiptUpload.ProjectedRUDAOImpl" parent="basicDao" />
+
 	<!-- Lower Tax deduction -->
 	<bean id="lowerTaxDeductionDAO" class="com.pennant.backend.dao.finance.impl.LowerTaxDeductionDAOImpl" parent="basicDao" />
 
@@ -10988,13 +11004,39 @@
 		<property name="gstRateDAO" ref="gstRateDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
-	
+
 	<!-- GSTNValidationService -->
-	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl"/>
-	
+	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl" />
+
+	<bean id="MandateProcessdao" class="com.pennanttech.pff.external.mandate.dao.impl.MandateProcessDAOImpl" parent="sequenceDao" />
+
+	<!-- Mandate Download -->
+	<bean id="externalInterfaceService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="externalInterfaceServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="process">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="externalInterfaceServiceTarget" class="com.pennanttech.pff.external.service.impl.ExternalInterfaceServiceImpl" />
+
+	<!-- Drawing power check validation -->
+	<bean id="drawingPowerService" class="com.pennant.backend.service.drawingpower.DrawingPowerServiceImpl" />
+
+
+
+
+
 	<!--============ CKYC Process ============== -->
-	<bean id="ckycDAO" class="com.pennant.backend.dao.ckyc.impl.CKYCDAOImpl"
-		parent="sequenceDao" />
+	<bean id="ckycDAO" class="com.pennant.backend.dao.ckyc.impl.CKYCDAOImpl" parent="sequenceDao" />
 	<bean id="ckycService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -11015,10 +11057,10 @@
 	<bean name="ckycServiceTarget" class="com.pennant.backend.service.ckyc.impl.CKYCServiceImpl">
 		<property name="ckycDAO" ref="ckycDAO" />
 	</bean>
-	
+
 	<!-- Tax Header Details -->
 	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="taxHeaderDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -11034,9 +11076,9 @@
 			</props>
 		</property>
 	</bean>
-	
+
 	<bean name="taxHeaderDetailsServiceTarget" class="com.pennant.backend.service.finance.impl.TaxHeaderDetailsServiceImpl">
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
-	
+
 </beans>

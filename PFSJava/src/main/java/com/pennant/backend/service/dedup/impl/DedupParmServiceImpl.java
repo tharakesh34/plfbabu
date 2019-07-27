@@ -1549,7 +1549,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	@Override
 	public List<CustomerDedup> getDedupCustomerDetails(CustomerDetails details, String finType, String ref) {
-
+		logger.debug("Entering");
 		if (customerDedupService == null) {
 			return null;
 		}
@@ -1577,12 +1577,16 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			status.setReturnText("No Match");
 			details.setReturnStatus(status);
 		}
+		logger.debug("Leaving");
 		return customerDedup;
 	}
 
 	private List<CustomerDedup> getDedupData(DedupCustomerResponse response, CustomerDetails details) {
+		logger.debug("Entering");
+		
 		List<CustomerDedup> custDedupList = new ArrayList<>();
 		if (response != null && response.getDedupCustomerDetails() != null) {
+			logger.debug("Response dedup list :" + response.getDedupCustomerDetails().size());
 			for (DedupCustomerDetail dedupDetail : response.getDedupCustomerDetails()) {
 				CustomerDedup customerDedup = new CustomerDedup();
 				customerDedup.setCustCIF(details.getCustomer().getCustCIF());
@@ -1613,12 +1617,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 						break;
 					}
 				}
-
 				custDedupList.add(customerDedup);
-				// Add appScore
-				// if(StringUtils.equals(response.getC, str2))
 			}
 		}
+		logger.debug("Leaving");
 		return custDedupList;
 	}
 

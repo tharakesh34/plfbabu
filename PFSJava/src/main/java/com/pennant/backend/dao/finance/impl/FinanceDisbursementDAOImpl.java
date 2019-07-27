@@ -606,36 +606,40 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		}
 
 		logger.debug(Literal.LEAVING);
-		return new ArrayList<Integer>();
+		return new ArrayList<>();
 	}
 
+	/**
+	 * 
+	 * @param reference
+	 * @param type
+	 * @return
+	 */
 	@Override
-	public List<FinanceDisbursement> getDeductedFeeAmounts(String finreference) {
+	public List<FinanceDisbursement> getDeductDisbFeeDetails(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select * from (");
-		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFromDisb");
-		sql.append(" from FINFEEDETAIL_TEMP F");
-		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS_Temp DD on DD.FinReference = F.FinReference");
-		sql.append(" where FinEvent in (:FinEvent)");
-		sql.append(" group by F.Finreference, DisbSeq");
-		sql.append(" union all");
-		sql.append(" select F.Finreference, DisbSeq, sum(ACTUALAMOUNT+WAIVEDAMOUNT+PAIDAMOUNT) DeductFromDisb");
-		sql.append(" from FINFEEDETAIL F");
-		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS DD on DD.FinReference = F.FinReference");
-		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FINFEEDETAIL_TEMP WHERE FeeId = F.FeeId)");
-		sql.append(" and FinEvent in (:FinEvent)");
-		sql.append(" group by F.Finreference, DisbSeq");
-		sql.append(" ) t");
-		sql.append(" where FinReference = :FinReference");
-
-		logger.trace(Literal.SQL + sql.toString());
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finreference);
-		source.addValue("FinEvent",
-				Arrays.asList(AccountEventConstants.ACCEVENT_ADDDBSP, AccountEventConstants.ACCEVENT_ADDDBSN));
+		source.addValue("FinReference", finReference);
+		source.addValue("FinEvent", Arrays.asList(
+				new String[] { AccountEventConstants.ACCEVENT_ADDDBSN, AccountEventConstants.ACCEVENT_ADDDBSP }));
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select F.FinReference, D.DisbSeq");
+		sql.append(", SUM(F.ACTUALAMOUNT - F.WAIVEDAMOUNT - F.PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" from FINFEEDETAIL_TEMP F");
+		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS_TEMP D ON D.InstructionUID =  F.InstructionUID");
+		sql.append(" where F.FinReference = :FinReference and F.FinEvent in (:FinEvent)");
+		sql.append(" GROUP BY F.FinReference, D.DisbSeq");
+		sql.append(" UNION ALL");
+		sql.append(" Select F.FinReference, D.DisbSeq");
+		sql.append(", SUM(F.ACTUALAMOUNT - F.WAIVEDAMOUNT - F.PAIDAMOUNT) DeductFeeDisb");
+		sql.append(" from FINFEEDETAIL F");
+		sql.append(" INNER JOIN FINDISBURSEMENTDETAILS D ON D.InstructionUID =  F.InstructionUID");
+		sql.append(" where F.FinReference = :FinReference and F.FinEvent in (:FinEvent)");
+		sql.append(" GROUP BY F.FinReference, D.DisbSeq");
+
+		logger.debug("selectSql: " + sql.toString());
 
 		RowMapper<FinanceDisbursement> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinanceDisbursement.class);

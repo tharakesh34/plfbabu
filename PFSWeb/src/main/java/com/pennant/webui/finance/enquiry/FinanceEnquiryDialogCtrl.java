@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +56,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -98,6 +100,7 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
+import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
@@ -115,6 +118,7 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -194,6 +198,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label label_FinanceMainDialog_SalesDepartment;
 	protected Row row_disbAcctId;
 	protected Row row_FinAcctId;
+	protected Row row_commitment;
 
 	//	protected Label disbAcctBal; 
 	protected Textbox repayAcctId;
@@ -370,6 +375,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 														// parameters
 	private FinanceDetail financeDetail;
 	private AccountInterfaceService accountInterfaceService;
+	private CommitmentService commitmentService;
+
 	private int formatter;
 
 	// Profit Details
@@ -892,6 +899,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter));
 			this.profitSuspense.setChecked(getFinScheduleData().isFinPftSuspended());
 			this.finSuspDate.setValue(getFinScheduleData().getFinSuspDate());
+			
+			if (!aFinanceType.isFinCommitmentReq()) {
+				this.row_commitment.setVisible(true);
+			}
 			this.collateralRef.setValue(aFinanceMain.getFinCommitmentRef());
 
 			if (StringUtils.trimToEmpty(aFinanceMain.getDepreciationFrq()).length() == 5) {
@@ -1573,7 +1584,36 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("fromApproved", fromApproved);
 		return map;
 	}
+	
+	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		this.collateralRef.setErrorMessage("");
 
+		if (StringUtils.isBlank(this.collateralRef.getValue())) {
+			throw new WrongValueException(this.collateralRef, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_FinanceMainDialog_CommitRef.value") }));
+		}
+
+		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(this.collateralRef.getValue(),
+				"", true);
+
+		if (aCommitment == null) {
+			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+			return;
+		}
+
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("commitment", aCommitment);
+		arg.put("enqiryModule", true);
+		arg.put("fromLoan", true);
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Commitment/Commitment/CommitmentDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
 	private Tab getTab(String id) {
 		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
 	}
@@ -2437,6 +2477,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public CommitmentService getCommitmentService() {
+		return commitmentService;
+	}
+
+	public void setCommitmentService(CommitmentService commitmentService) {
+		this.commitmentService = commitmentService;
 	}
 
 }

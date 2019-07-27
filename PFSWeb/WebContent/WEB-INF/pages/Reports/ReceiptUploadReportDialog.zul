@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+	<window id="window_ReceiptUploadReportDialogCtrl" border="normal" title="Receipt Upload Report" width="800px"
+		height="200px" sizable="false" apply="${receiptUploadReportDialogCtrl}">
+		<borderlayout width="100%" height="100%">
+			<north size="30px" border="none">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+
+					<toolbar align="start" sclass="toolbar-start">
+						<hbox>
+							<label value="${c:l('label_Search_Template.label')}" />
+							<space></space>
+							<combobox id="cbSelectTemplate" readonly="true" width="200px" tooltiptext="${c:l('label_Select_Template.label')}" />
+							<space spacing="10px" />
+							<button id="btnSaveTemplate" height="20" label="${c:l('btnSave.label')}" tooltiptext="${c:l('label_Add_Template.tooltipText')}"
+								sclass="z-toolbarbutton" />
+							<space spacing="10px" />
+							<button id="btnDeleteTemplate" height="20" disabled="true" label="${c:l('btnDelete.label')}"
+								tooltiptext="${c:l('label_Delete_Template.tooltipText')}" sclass="z-toolbarbutton" />
+						</hbox>
+					</toolbar>
+
+				</hbox>
+			</north>
+			<center border="true" autoscroll="true" style="overflow: visible !important">
+				<grid id="grid_UploadedDetails" fixedLayout="true" style="border:0px">
+					<columns>
+						<column width="25%" />
+						<column width="35%" />
+						<column width="25%" />
+						<column width="35%" />
+					</columns>
+					<rows>
+						<row>
+							<label value="${c:l('label_ReceiptUploadReport_Date.value')}" />
+							<hbox>
+								<datebox id="uploadDate" />
+							</hbox>
+						</row>
+						<row>
+							<label value="${c:l('label_ReceiptUploadReport_Filename.value')}" />
+							<hbox>
+								<extendedcombobox id="fileName" />
+							</hbox>
+						</row>
+					</rows>
+				</grid>
+			</center>
+			<south border="none" margins="1,0,0,0" size="30px" splittable="false">
+				<div id="divSouth" align="left" width="100%">
+					<grid>
+						<rows>
+							<row valign="middle">
+								<hbox align="start">
+									<button id="btnSearch" height="20" label="${c:l('btnSearch.label')}" tooltiptext="${c:l('btnSearch.tooltiptext')}"
+										sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
+									<button id="btnClear" height="20" label="${c:l('btnRefresh.label')}" tooltiptext="${c:l('btnClear.tooltiptext')}"
+										sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
+									<button id="btnClose" height="20" label="${c:l('btnClose.label')}" tooltiptext="${c:l('btnClose.tooltiptext')}"
+										sclass="z-toolbarbutton" autodisable="btnSearch,btnClear,btnClose" />
+									<label id="label_SecurityUserSearchResult" />
+								</hbox>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

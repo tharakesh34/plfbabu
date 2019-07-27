@@ -75,4 +75,6 @@ public interface VASRecordingDAO {
 	VASRecording getVASRecording(String vasReference, String vasStatus, String type);
 
 	void updateVasStatus(String reference, long paymentInsId);
+
+	List<VASRecording> getVASRecordingsStatusByReference(String finReference, String string);
 }

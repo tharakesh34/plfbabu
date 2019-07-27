@@ -147,6 +147,46 @@ public class FrequencyUtil implements Serializable {
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_DAILY, Labels.getLabel("label_Select_Daily")));
 		return frequencyCode;
 	}
+	
+	public static String getRepayFrequencyLabel(String frequency) {
+		String repayFrequency = "";
+
+		switch (StringUtils.substring(frequency, 0, 1)) {
+		case FrequencyCodeTypes.FRQ_YEARLY:
+			repayFrequency = Labels.getLabel("label_Select_Yearly");
+			break;
+		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
+			repayFrequency = Labels.getLabel("label_Select_HalfYearly");
+			break;
+		case FrequencyCodeTypes.FRQ_QUARTERLY:
+			repayFrequency = Labels.getLabel("label_Select_Quarterly");
+			break;
+		case FrequencyCodeTypes.FRQ_BIMONTHLY:
+			repayFrequency = Labels.getLabel("label_Select_BiMonthly");
+			break;
+		case FrequencyCodeTypes.FRQ_MONTHLY:
+			repayFrequency = Labels.getLabel("label_Select_Monthly");
+			break;
+		case FrequencyCodeTypes.FRQ_FORTNIGHTLY:
+			repayFrequency = Labels.getLabel("label_Select_Fortnightly");
+			break;
+		case FrequencyCodeTypes.FRQ_BIWEEKLY:
+			repayFrequency = Labels.getLabel("label_Select_BiWeekly");
+			break;
+		case FrequencyCodeTypes.FRQ_DAILY:
+			repayFrequency = Labels.getLabel("label_Select_Daily");
+			break;
+		case FrequencyCodeTypes.FRQ_WEEKLY:
+			repayFrequency = Labels.getLabel("label_Select_Weekly");
+			break;
+
+		default:
+			break;
+		}
+
+		return repayFrequency;
+
+	}
 
 	public static ArrayList<ValueLabel> getFrequencyDetails(String frequency) {
 		return getFrequencyDetails(getCharFrequencyCode(frequency));
@@ -741,12 +781,17 @@ public class FrequencyUtil implements Serializable {
 	public static FrequencyDetails getNextDate(String frequency, int terms, Date baseDate, String handlerType,
 			boolean includeBaseDate, int requestedMinDays) {
 
-		FrequencyDetails frequencyDetails = getNextDate(frequency, terms, baseDate, handlerType, includeBaseDate);
-		int days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
-		if (days <= requestedMinDays && requestedMinDays != 0) {
-			frequencyDetails = getNextDate(frequency, terms, frequencyDetails.getNextFrequencyDate(), handlerType,
-					false);
-		}
+		int days = 0;
+		int count = 1;
+		FrequencyDetails frequencyDetails;
+		Date startDate = baseDate;
+		do{
+			frequencyDetails = getNextDate(frequency, terms, startDate, handlerType, (count == 1 ? includeBaseDate : false));
+			days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
+			startDate = frequencyDetails.getNextFrequencyDate();
+			count = count + 1;
+		}while (days <= requestedMinDays && requestedMinDays != 0); 
+		
 		return frequencyDetails;
 	}
 

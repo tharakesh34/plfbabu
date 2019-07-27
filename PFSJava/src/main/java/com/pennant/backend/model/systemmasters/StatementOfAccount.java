@@ -116,6 +116,7 @@ public class StatementOfAccount {
 	private BigDecimal nextRpyPft = BigDecimal.ZERO;
 	private Date nextRpyDate;
 	private boolean advEmiApplicable = false;
+	private String repayFrq;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////		Customer Details		////////////////////////////////
@@ -208,6 +209,8 @@ public class StatementOfAccount {
 
 	//Customer Loan Refrence Details
 	private List<String> custFinRefDetails = new ArrayList<String>();
+
+	private String tenureLabel;
 
 	/**
 	 * Default Constructor
@@ -1081,4 +1084,19 @@ public class StatementOfAccount {
 		this.advEmiApplicable = advEmiApplicable;
 	}
 
+	public String getTenureLabel() {
+		return tenureLabel;
+	}
+
+	public void setTenureLabel(String tenureLabel) {
+		this.tenureLabel = tenureLabel;
+	}
+
+	public String getRepayFrq() {
+		return repayFrq;
+	}
+
+	public void setRepayFrq(String repayFrq) {
+		this.repayFrq = repayFrq;
+	}
 }

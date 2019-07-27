@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="" dbms="oracle" />
+	<property name="add.schema" value="" dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="murthy.y">
+		<createTable tableName="AUCTION_NOTICE_BATCH_HEADER">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auction_notice_batch_header" />
+			</column>
+			<column name="BatchId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoticeType" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoticeDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalAuctions" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="DispatchedAuctions" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="HoldAuctions" type="int" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="RequestBatchId" type="bigint" />
+			<column name="FileName" type="varchar(100)" />
+			<column name="FileLocation" type="varchar(200)" />
+			<column name="Remarks" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2" author="murthy.y">
+		<createTable tableName="AUCTION_NOTICE_BATCH_DETAILS">
+			<column name="Id" type="bigint" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_auction_notice_batch_dtl" />
+			</column>
+			<column name="HeaderId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoticeReference" type="varchar(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinStartDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinAmount" type="decimal(18,4)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinAmounInWords" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPriBal" type="decimal(18,4)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalPriBalInWord" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalOSBal" type="decimal(18,4)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TotalOSBalInWord" type="varchar(200)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinBranch" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinBranchState" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinBranchAddress" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerName" type="varchar(150)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerAddress" type="varchar(500)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DueBucket" type="varchar(10)" />
+			<column name="DN1NoticeDate" type="datetime" />
+			<column name="DN1ReferenceNumber" type="varchar(100)" />
+			<column name="DN2NoticeDate" type="datetime" />
+			<column name="DN2ReferenceNumber" type="varchar(100)" />
+			<column name="ResponseBatchId" type="bigint" />
+			<column name="DispatchStatus" type="varchar(20)" />
+			<column name="DispatchDate" type="datetime" />
+			<column name="BarCode" type="varchar(200)" />
+			<column name="CourierName" type="varchar(200)" />
+			<column name="DeliveryStatus" type="varchar(20)" />
+			<column name="DeliveryDate" type="datetime" />
+			<column name="DeliveryReason" type="varchar(100)" />
+			<column name="AdvertisementStatus" type="varchar(20)" />
+			<column name="AdvertisementDate" type="datetime" />
+			<column name="NationalNewsPaperName" type="varchar(100)" />
+			<column name="NationalNewsAdvertisementDate" type="datetime" />
+			<column name="LocalNewsPaperName" type="varchar(100)" />
+			<column name="LocalNewsAdvertisementDate" type="datetime" />
+			<column name="ChargeAmount" type="decimal(18, 0)" />
+
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="murthy.y">
+		<createView viewName="AUCTION_NOTICE_BATCH_VIEW" replaceIfExists="true">
+			SELECT 
+			AD.ID                
+			, AD.HEADERID
+			, AH.BATCHID           
+			, AH.NOTICETYPE        
+			, AH.NOTICEDATE          
+			, AD.NOTICEREFERENCE   
+			, AD.FINREFERENCE      
+			, AD.FINSTARTDATE      
+			, AD.FINAMOUNT         
+			, AD.FINAMOUNINWORDS   
+			, AD.TOTALPRIBAL       
+			, AD.TOTALPRIBALINWORD 
+			, AD.TOTALOSBAL        
+			, AD.TOTALOSBALINWORD  
+			, AD.FINBRANCH         
+			, AD.FINBRANCHSTATE    
+			, AD.FINBRANCHADDRESS  
+			, AD.CUSTOMERNAME      
+			, AD.CUSTOMERADDRESS   
+			, AD.DUEBUCKET         
+			, AD.DN1NOTICEDATE     
+			, AD.DN1REFERENCENUMBER
+			, AD.DN2NOTICEDATE     
+			, AD.DN2REFERENCENUMBER
+			, AD.RESPONSEBATCHID   
+			, AD.DISPATCHSTATUS    
+			, AD.BARCODE           
+			, AD.COURIERNAME
+			FROM 
+			AUCTION_NOTICE_BATCH_HEADER AH
+			INNER JOIN AUCTION_NOTICE_BATCH_DETAILS AD ON AD.HEADERID = AH.ID
+		</createView>
+	</changeSet>
+
+	<changeSet id="118" author="murthy.y">
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="DispatchStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="DispatchDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="BarCode" type="varchar(200)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="CourierName" type="varchar(200)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="DeliveryStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="DeliveryDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="DeliveryReason" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="AdvertisementStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="AdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="NationalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="NationalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="NationalNewsAdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="LocalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="LocalNewsAdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL">
+			<column name="ChargeAmount" type="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="119" author="murthy.y">
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="DispatchStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="DispatchDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="BarCode" type="varchar(200)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="CourierName" type="varchar(200)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="DeliveryStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="DeliveryDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="DeliveryReason" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="AdvertisementStatus" type="varchar(20)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="AdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="NationalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="NationalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="NationalNewsAdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="LocalNewsPaperName" type="varchar(100)"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="LocalNewsAdvertisementDate" type="datetime"/>
+		</addColumn>
+		<addColumn tableName="AUCTIONNOTICEDETAIL_TEMP">
+			<column name="ChargeAmount" type="decimal(18, 0)"/>
+		</addColumn>
+	</changeSet>
+
+
+</databaseChangeLog>
+

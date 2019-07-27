@@ -54,11 +54,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RepaymentProcessUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -96,6 +98,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -294,6 +297,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction,
 			long presentmentId, long partnerBankId, LoggedInUser userDetails, boolean isPDC) throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+		if (StringUtils.equals(phase, PennantConstants.APP_PHASE_EOD)) {
+			throw new AppException(Labels.getLabel("Amortization_EOD_Check"));
+		}
 
 		if ("Save".equals(userAction)) {
 			savePresentments(excludeList, includeList, presentmentId, partnerBankId);
@@ -829,6 +837,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
+	}
+
+	@Override
+	public PresentmentDetail getPresentmentDetail(String presentmentRef) {
+		return presentmentDetailDAO.getPresentmentDetail(presentmentRef, "");
 	}
 
 	private PresentmentRequest getPresentmentRequest() {

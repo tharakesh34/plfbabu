@@ -17,6 +17,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
@@ -120,8 +121,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			receiptHeader.setReceiptDetails(receiptDetailList);
 
 			// Paid Fee Details
-			receiptHeader
-					.setPaidFeeList(getFinFeeDetailDAO().getPaidFinFeeDetails(receiptHeader.getReference(), "_TView"));
+			receiptHeader.setPaidFeeList(getPaidFinFeeDetails(receiptHeader.getReference()));
 		}
 
 		logger.debug("Leaving");
@@ -133,7 +133,17 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	 */
 	@Override
 	public List<FinFeeDetail> getPaidFinFeeDetails(String finReference) {
-		return getFinFeeDetailDAO().getPaidFinFeeDetails(finReference, "_TView");
+		List<FinFeeDetail> finFeeDetails = getFinFeeDetailDAO().getPaidFinFeeDetails(finReference, "_TView");
+
+		// Finance Fee Schedule Details
+		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : finFeeDetails) {
+				finFeeDetail
+						.setFinTaxDetails(getFinTaxDetailsDAO().getFinTaxByFeeID(finFeeDetail.getFeeID(), "_TView"));
+			}
+		}
+
+		return finFeeDetails;
 	}
 
 	/**
@@ -309,7 +319,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		if (aeEvent.getCcy() == null) {
 			aeEvent.setCcy(receiptHeader.getCustBaseCcy());
 		}
-		
+
 		if (aeEvent.getCcy() == null) {
 			aeEvent.setCcy(SysParamUtil.getAppCurrency());
 		}
@@ -376,6 +386,18 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.setPostRefId(receiptHeader.getReceiptID());
 
 		aeEvent.getAcSetIDList().add(accountingSetID);
+
+		// GST parameters
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(receiptHeader.getReference());
+
+		if (gstExecutionMap != null) {
+			for (String mapkey : gstExecutionMap.keySet()) {
+				if (StringUtils.isNotBlank(mapkey)) {
+					aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+				}
+			}
+		}
+
 		prepareFeeRulesMap(receiptHeader.getPaidFeeList(), aeEvent.getDataMap());
 		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
 

@@ -28,6 +28,8 @@ public class CollateralRevaluation implements Serializable {
 	private long commodityId;
 	private Date valueDate;
 	private boolean sendAlert;
+	private boolean alertsRequired;
+	private String alertType;
 	private String alertToRoles;
 	private String customerTemplateCode;
 	private String userTemplateCode;
@@ -35,6 +37,10 @@ public class CollateralRevaluation implements Serializable {
 	private String hsnCode;
 	private BigDecimal currentValue;
 	private List<CollateralRevaluation> collHSNData;
+
+	public CollateralRevaluation() {
+		super();
+	}
 
 	public long getId() {
 		return id;
@@ -194,6 +200,22 @@ public class CollateralRevaluation implements Serializable {
 
 	public void setSendAlert(boolean sendAlert) {
 		this.sendAlert = sendAlert;
+	}
+
+	public boolean isAlertsRequired() {
+		return alertsRequired;
+	}
+
+	public void setAlertsRequired(boolean alertsRequired) {
+		this.alertsRequired = alertsRequired;
+	}
+
+	public String getAlertType() {
+		return alertType;
+	}
+
+	public void setAlertType(String alertType) {
+		this.alertType = alertType;
 	}
 
 	public String getAlertToRoles() {

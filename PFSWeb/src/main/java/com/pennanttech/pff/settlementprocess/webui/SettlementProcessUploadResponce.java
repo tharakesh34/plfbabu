@@ -9,19 +9,25 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ProcessRecord;
@@ -39,6 +45,16 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private DataSource dataSource;
 	private FinanceMainDAO financeMainDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
+	private DisbursementPostings disbursementPostings;
+
+	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
+		this.disbursementPostings = disbursementPostings;
+	}
+
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
@@ -48,7 +64,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		super();
 	}
 
-	public void collateralFileUploadProcessResponseFile(Object... params) throws Exception {
+	public void settlementFileUploadProcessResponseFile(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		DataEngineStatus status = (DataEngineStatus) params[1];
 		File file = (File) params[2];
@@ -64,7 +80,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 		status.reset();
 		status.setFileName(name);
-		status.setRemarks("initiated Collateral upload  file [ " + name + " ] processing..");
+		status.setRemarks("initiated Settlement upload  file [ " + name + " ] processing..");
 
 		DataEngineImport dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true,
 				DateUtility.getAppDate(), status);
@@ -96,8 +112,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("SettlementRef", (String) record.getValue("SettlementRef"));
 			settlementMapdata.addValue("CustomerRef", (String) record.getValue("CustomerRef"));
 			settlementMapdata.addValue("EMIOffer", (String) record.getValue("EMIOffer"));
-			settlementMapdata.addValue("SubPayByManfacturer",
-					new BigDecimal(subPayByManufacturer));
+			settlementMapdata.addValue("SubPayByManfacturer", new BigDecimal(subPayByManufacturer));
 			settlementMapdata.addValue("SubvensionAmount",
 					new BigDecimal((String) record.getValue("SubvensionAmount")));
 			settlementMapdata.addValue("CustName", (String) record.getValue("CustName"));
@@ -123,8 +138,10 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("BankInvoice", (String) record.getValue("BankInvoice"));
 			settlementMapdata.addValue("AuthCode", (String) record.getValue("AuthCode"));
 			settlementMapdata.addValue("HostReference", (String) record.getValue("HostReference"));
-			settlementMapdata.addValue("TransactionDateTime", DateUtility.getDate((String) record.getValue("TransactionDateTime"), "MMM dd, yyyy  hh:mm:ss"));
-			settlementMapdata.addValue("SettlementDateTime", DateUtility.getDate((String) record.getValue("SettlementDateTime"), "MMM dd, yyyy  hh:mm:ss"));
+			settlementMapdata.addValue("TransactionDateTime",
+					DateUtility.getDate((String) record.getValue("TransactionDateTime"), "MMM dd, yyyy  hh:mm:ss"));
+			settlementMapdata.addValue("SettlementDateTime",
+					DateUtility.getDate((String) record.getValue("SettlementDateTime"), "MMM dd, yyyy  hh:mm:ss"));
 			settlementMapdata.addValue("BillingInvoice", (String) record.getValue("BillingInvoice"));
 			settlementMapdata.addValue("TransactionStatus", (String) record.getValue("TransactionStatus"));
 			settlementMapdata.addValue("Reason", (String) record.getValue("Reason"));
@@ -137,8 +154,42 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
 			validate(settlementMapdata);
-			
+
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
+			FinanceMain finMain = financeMainDAO
+					.getFinanceMainByOldFinReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
+			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
+					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
+			for (FinAdvancePayments finAdvancePayment : advPayments) {
+
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+					finAdvancePayment.setStatus("AC");
+					finMain.setLovDescEntityCode(
+							financeMainDAO.getLovDescEntityCode(finMain.getFinReference(), "_View"));
+					FinanceDetail financeDetail = new FinanceDetail();
+
+					List<FinAdvancePayments> finAdvancePayments = new ArrayList<FinAdvancePayments>();
+					finAdvancePayments.add(finAdvancePayment);
+					financeDetail.setAdvancePaymentsList(finAdvancePayments);
+
+					Map<Integer, Long> finAdvanceMap = disbursementPostings.prepareDisbPostingApproval(
+							financeDetail.getAdvancePaymentsList(), finMain, finMain.getFinBranch());
+
+					List<FinAdvancePayments> advPayList = financeDetail.getAdvancePaymentsList();
+
+					// loop through the disbursements.
+					if (CollectionUtils.isNotEmpty(advPayList)) {
+						for (int i = 0; i < advPayList.size(); i++) {
+							FinAdvancePayments advPayment = advPayList.get(i);
+							if (finAdvanceMap.containsKey(advPayment.getPaymentSeq())) {
+								advPayment.setLinkedTranId(finAdvanceMap.get(advPayment.getPaymentSeq()));
+								finAdvancePaymentsDAO.updateLinkedTranId(advPayment);
+							}
+						}
+					}
+				}
+			}
+
 		} catch (Exception e) {
 			throw new AppException(e.getMessage());
 
@@ -148,10 +199,11 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	private void validate(MapSqlParameterSource settlementMapdata) {
 		FinanceMain finMain = null;
-		if (settlementMapdata.getValue("HostReference") == null || settlementMapdata.getValue("HostReference").equals("")) {
+		if (settlementMapdata.getValue("HostReference") == null
+				|| settlementMapdata.getValue("HostReference").equals("")) {
 			throw new AppException("HostReference is mandatory");
 		} else {
-			 finMain = financeMainDAO
+			finMain = financeMainDAO
 					.getFinanceMainByOldFinReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
 				int count = financeMainDAO.getCountByOldHostReference(String.valueOf(settlementMapdata.getValue("HostReference")));
@@ -160,23 +212,41 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				}
 			}
 		}
+
 		List<ExtendedField> extData = new ArrayList<>();
-		
-		if(settlementMapdata.getValue("TerminalId") == null){
+
+		if (settlementMapdata.getValue("TerminalId") == null) {
 			throw new AppException("TID is mandatory");
 		} else {
-			
+
 		}
-		if(settlementMapdata.getValue("ManufactureId") == null) {
+		if (settlementMapdata.getValue("ManufactureId") == null) {
 			throw new AppException("MID is mandatory");
 		}
-		if(settlementMapdata.getValue("TerminalId")!=null && settlementMapdata.getValue("ManufactureId")!=null){
-			if(finMain!=null) {
-				extData = extendedFieldDetailsService.getExtndedFieldDetails(
-						ExtendedFieldConstants.MODULE_LOAN,
-						finMain.getFinCategory(),
-						FinanceConstants.FINSER_EVENT_ORG, finMain.getFinReference());
-				}
+
+		if (settlementMapdata.getValue("HostReference") != null) {
+			boolean isDuplicateHostRef = settlementProcessDAO
+					.isDuplicateHostReference(settlementMapdata.getValue("HostReference").toString());
+			if (isDuplicateHostRef) {
+				throw new AppException("RRN already Processed");
+			}
+		}
+
+		if (settlementMapdata.getValue("SettlementRef") != null) {
+			boolean isDuplicateSettlementRef = settlementProcessDAO
+					.isDuplicateSettlementRef(settlementMapdata.getValue("SettlementRef").toString());
+			if (isDuplicateSettlementRef) {
+				throw new AppException("EMI Id already exist");
+			}
+		} else {
+			throw new AppException("EMI Id mandatory");
+		}
+
+		if (settlementMapdata.getValue("TerminalId") != null && settlementMapdata.getValue("ManufactureId") != null) {
+			if (finMain != null) {
+				extData = extendedFieldDetailsService.getExtndedFieldDetails(ExtendedFieldConstants.MODULE_LOAN,
+						finMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG, finMain.getFinReference());
+			}
 			Map<String, Object> mapValues = new HashMap<String, Object>();
 			if (extData != null) {
 				for (ExtendedField extendedField : extData) {
@@ -185,34 +255,39 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					}
 				}
 			}
+
 			String mid = (String) mapValues.get("MID");
-			if(!StringUtils.equals(mid,settlementMapdata.getValue("ManufactureId").toString())) {
+			if (!StringUtils.equals(mid, settlementMapdata.getValue("ManufactureId").toString())) {
 				throw new AppException("In valid MID");
 			}
-			String tid = (String) mapValues.get("TID");
-			if(!StringUtils.equals(tid,settlementMapdata.getValue("TerminalId").toString())) {
+
+			BigDecimal TerminalId = new BigDecimal((String) settlementMapdata.getValue("TerminalId"));
+			BigDecimal tid = (BigDecimal) mapValues.get("TID");
+
+			if (!(TerminalId.compareTo(tid) == 0)) {
 				throw new AppException("In valid TID");
 			}
 		}
+
 	}
 
 	public void settlementFileDownload(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		String userName = (String) params[1];
 		String batchId = (String) params[2];
-		
+
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put("REQUESTBATCHID", batchId);
 		Map<String, Object> parameterMap = new HashMap<>();
-		
+
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
 		genetare(dataEngine, userName, filterMap, parameterMap);
-		
+
 	}
-	
+
 	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Map<String, Object> filterMap,
 			Map<String, Object> parameterMap) throws Exception {
 		dataEngine.setFilterMap(filterMap);
@@ -221,7 +296,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 		return dataEngine.exportData("SETTLEMENT_REQUEST_DOWNLOAD");
 	}
-	
+
 	@Override
 	public void setDataSource(DataSource dataSource) {
 		super.setDataSource(dataSource);

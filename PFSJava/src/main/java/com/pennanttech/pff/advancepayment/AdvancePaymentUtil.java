@@ -8,12 +8,14 @@ import java.util.Map;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 
 public class AdvancePaymentUtil {
 
@@ -58,10 +60,10 @@ public class AdvancePaymentUtil {
 				if (AdvanceType.AE == type) {
 					continue;
 				}
-				if (!ImplementationConstants.ALLOW_ADVINT_FREQUENCY) {
-					if (AdvanceType.AF == type) {
-						continue;
-					}
+
+				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
+						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+					continue;
 				}
 
 				list.add(new Property(type.code, type.value));
@@ -72,10 +74,13 @@ public class AdvancePaymentUtil {
 		public static List<Property> getRepayList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceType type : values()) {
-				if (!ImplementationConstants.ALLOW_ADVINT_FREQUENCY) {
-					if (AdvanceType.AF == type) {
-						continue;
-					}
+				if (AdvanceType.AE == type && !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI)) {
+					continue;
+				}
+
+				if ((AdvanceType.UF == type || AdvanceType.UT == type || AdvanceType.AF == type)
+						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_INT)) {
+					continue;
 				}
 				list.add(new Property(type.code, type.value));
 			}
@@ -123,15 +128,17 @@ public class AdvancePaymentUtil {
 		public static List<Property> getList() {
 			List<Property> list = new ArrayList<>();
 			for (AdvanceStage type : values()) {
-				if (!ImplementationConstants.ALLOW_ADVSTAGE_REAREND) {
-					if (AdvanceStage.RE == type) {
-						continue;
-					}
-				} else if (!ImplementationConstants.ALLOW_ADVSTAGE_DEPOSIT) {
-					if (AdvanceStage.RE == type) {
-						continue;
-					}
+				if (AdvanceStage.FE == type
+						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_FRONT_END)) {
+					continue;
+				} else if (AdvanceStage.RE == type
+						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REARE_END)) {
+					continue;
+				} else if (AdvanceStage.RT == type
+						&& !SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS)) {
+					continue;
 				}
+
 				list.add(new Property(type.code, type.value));
 			}
 			return list;

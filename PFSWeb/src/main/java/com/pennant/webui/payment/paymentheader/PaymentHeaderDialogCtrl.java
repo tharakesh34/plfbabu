@@ -52,6 +52,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -100,6 +101,7 @@ import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
@@ -157,6 +159,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	private PaymentHeader paymentHeader;
 	private FinanceMain financeMain;
+	
+	@Autowired
+	private DrawingPowerService drawingPowerService;
 
 	private transient PaymentHeaderListCtrl paymentHeaderListCtrl;
 	private transient PaymentHeaderService paymentHeaderService;
@@ -834,6 +839,20 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		doWriteComponentsToBean(aPaymentHeader);
 
 		isNew = aPaymentHeader.isNew();
+		
+		
+		// Checking the Drawing power
+		if ((this.financeMain.isAllowDrawingPower()) && (isNew)) {
+			String msg = drawingPowerService.doDrawingPowerCheck(aPaymentHeader.getFinReference(),
+					aPaymentHeader.getPaymentInstruction().getPaymentAmount());
+			if (msg != null) {
+				if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+					return;
+				}
+			}
+
+		}
+		
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

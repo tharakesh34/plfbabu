@@ -38,6 +38,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -52,6 +53,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -685,7 +687,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			}
 			try {
 				Intbox alertDays = (Intbox) getComponent(listitem, 5);
-				option.setAlertDays(alertDays.getValue());
+				if (SysParamUtil.isAllowed(SMTParameterConstants.PUTCALL_DEFAULT_ALERTDAYS_REQUIRED)) {
+					if (alertDays.getValue() == 0) {
+						option.setAlertDays(7);
+					}
+				} else {
+					option.setAlertDays(alertDays.getValue());
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

@@ -274,7 +274,7 @@ public class ReportGenerationUtil implements Serializable {
 
 		try {
 
-			dataSourceObj = (DataSource) SpringUtil.getBean("pfsDatasource");
+			dataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 			connection = dataSourceObj.getConnection();
 
 			HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(5);
@@ -301,7 +301,7 @@ public class ReportGenerationUtil implements Serializable {
 
 					logger.debug("Buffer started");
 
-					reportDataSourceObj = (DataSource) SpringUtil.getBean("pfsDatasource");
+					reportDataSourceObj = (DataSource) SpringUtil.getBean("dataSource");
 					con = reportDataSourceObj.getConnection();
 
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

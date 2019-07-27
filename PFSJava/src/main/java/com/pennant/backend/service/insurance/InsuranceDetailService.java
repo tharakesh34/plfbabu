@@ -12,6 +12,7 @@ import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public interface InsuranceDetailService {
 
@@ -56,5 +57,9 @@ public interface InsuranceDetailService {
 	List<ManualAdvise> getManualAdviseByRefAndFeeId(int manualAdvisePayable, long feeTypeId);
 
 	VASConfiguration getVASConfigurationByCode(String productCode);
+
+	void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loggedInUser);
+
+	void executeVasPaymentsAccountingProcess(InsurancePaymentInstructions insurancePaymentInstructions);
 
 }

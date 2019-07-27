@@ -1223,9 +1223,16 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		if (!this.taxCode.isReadonly() && (!StringUtils.equals(gstnNumber, aTaxDetail.getBefImage().getTaxCode()))) {
 			try {
 				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+
 				if (null != gstinInfo) {
-					String msg = gstinInfo.getStatusCode() + "_" + gstinInfo.getStatusDesc();
-					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+					StringBuilder msg = new StringBuilder();
+					msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
+					msg.append("\n").append(" GSTIN :").append(gstinInfo.getgSTNNumber());
+					msg.append("\n").append(" GSTIN Date :").append(gstinInfo.getRegisterDateStr());
+					msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
+					msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
+
+					if (MessageUtil.confirm(msg.toString(), MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
 						return;
 					}
 				}

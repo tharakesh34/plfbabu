@@ -1,5 +1,6 @@
 package com.pennanttech.pff.commodity.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -183,22 +184,24 @@ public class CommoditiesServiceImpl extends GenericService<CommodityType> implem
 				value[0] = code;
 				value[1] = hsnCode;
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
-			} else if (commoditiesDAO.isDuplicateCode(commodity,
-					commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[1];
-				parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value");
+			}
 
-				String[] value = new String[1];
-				value[0] = code;
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
-			} else if (commoditiesDAO.isDuplicateHSNCode(commodity,
-					commodity.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
-				String[] parameters = new String[1];
-				parameters[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value");
+			String tempCode = commoditiesDAO.getCommodityCode(commodity.getHSNCode());
 
-				String[] value = new String[1];
-				value[0] = hsnCode;
-				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41015", parameters, value));
+			if (StringUtils.isNotBlank(tempCode) && !StringUtils.equals(tempCode, code)) {
+				String[] param = new String[2];
+				param[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ":" + hsnCode;
+				param[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ":" + tempCode;
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", param, param));
+			}
+
+			String tempHsnCode = commoditiesDAO.getCommodityHSNCode(commodity.getCode());
+
+			if (StringUtils.isNotBlank(tempHsnCode) && !StringUtils.equals(tempHsnCode, hsnCode)) {
+				String[] param = new String[2];
+				param[0] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_CommodityCode.value") + ":" + code;
+				param[1] = PennantJavaUtil.getLabel("label_CommoditiesDialogue_HSNCode.value") + ":" + tempHsnCode;
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41018", param, param));
 			}
 		}
 

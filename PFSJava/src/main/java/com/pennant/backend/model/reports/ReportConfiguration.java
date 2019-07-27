@@ -66,6 +66,7 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 	private ReportConfiguration befImage;
 	private LoggedInUser userDetails;
 	private boolean whereCondition;
+	private boolean scheduleReq;
 
 	private List<ReportFilterFields> listReportFieldsDetails;
 
@@ -216,5 +217,13 @@ public class ReportConfiguration extends AbstractWorkflowEntity implements Entit
 
 	public void setWhereCondition(boolean whereCondition) {
 		this.whereCondition = whereCondition;
+	}
+
+	public boolean isScheduleReq() {
+		return scheduleReq;
+	}
+
+	public void setScheduleReq(boolean scheduleReq) {
+		this.scheduleReq = scheduleReq;
 	}
 }

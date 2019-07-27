@@ -168,6 +168,7 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -196,6 +197,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.component.Uppercasebox;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
@@ -435,6 +437,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private FinReceiptHeader befImage;
 	private List<ChartDetail> chartDetailList = new ArrayList<ChartDetail>();
 	private List<FinanceScheduleDetail> orgScheduleList = new ArrayList<>();
+	private List<FinanceScheduleDetail> befScheduleList = new ArrayList<>();
 	private List<FinReceiptDetail> recDtls = new ArrayList<>();
 
 	// Temporary Fix for the User Next role Modification On Submit-Fail & Saving
@@ -605,11 +608,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			this.windowTitle.setValue(Labels.getLabel(module + "_Window.Title"));
 			setDialog(DialogType.EMBEDDED);
-			if (receiptPurposeCtg == 2 && isEarlySettle) {
+			if (receiptPurposeCtg == 2) {
 				this.excessAdjustTo.setDisabled(true);
 				fillComboBox(allocationMethod, "A", PennantStaticListUtil.getAllocationMethods(), ",M,");
 				this.excessAdjustTo.setDisabled(true);
 				this.excessAdjustTo.setReadonly(true);
+				this.allocationMethod.setDisabled(true);
 			}
 			if (isForeClosure || isEarlySettle) {
 				this.gb_Payable.setVisible(true);
@@ -818,18 +822,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.finDivision.setDescColumn("DivisionCodeDesc");
 		this.finDivision.setValidateColumns(new String[] { "DivisionCode" });
 
-		
 		appendScheduleMethod(receiptData.getReceiptHeader());
-		BigDecimal recAmount = PennantApplicationUtil.formateAmount(receiptData.getReceiptHeader().getReceiptAmount(),
-				formatter);
-		BigDecimal cashLimit = new BigDecimal(
-				SysParamUtil.getSystemParameterObject("RECEIPTCASHPAN").getSysParmValue());
-		if (recAmount.compareTo(cashLimit) > 0 && StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
-				DisbursementConstants.PAYMENT_TYPE_CASH)) {
-			this.panSpace.setSclass("mandatory");
-			isPanMandatory = true;
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+			BigDecimal recAmount = PennantApplicationUtil
+					.formateAmount(receiptData.getReceiptHeader().getReceiptAmount(), formatter);
+			BigDecimal cashLimit = new BigDecimal(
+					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
+			if (recAmount.compareTo(cashLimit) > 0 && StringUtils
+					.equals(receiptData.getReceiptHeader().getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CASH)) {
+				this.panSpace.setSclass("mandatory");
+				isPanMandatory = true;
+			}
 		}
-
 		if (!StringUtils.equals(module, FinanceConstants.RECEIPT_MAKER) && (StringUtils
 				.equals(receiptData.getReceiptHeader().getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 				|| StringUtils.equals(receiptData.getReceiptHeader().getReceiptMode(),
@@ -1038,6 +1042,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (orgReceiptData != null) {
 			receiptData = orgReceiptData;
 		} else {
+			befScheduleList = receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
 			receiptService.calcuateDues(receiptData);
 			if (!RepayConstants.ALLOCATIONTYPE_MANUAL.equals(receiptData.getReceiptHeader().getAllocationType())
 					&& receiptData.isCalReq()) {
@@ -1457,10 +1462,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						&& !StringUtils.equals(recMode, RepayConstants.RECEIPTMODE_CASH)))) {
 			this.fundingAccount.setMandatoryStyle(true);
 		}
-		 if (isForeClosure || isKnockOff){
-			 this.label_ReceiptDialog_PartnerBankCode.setVisible(false);
-			 this.fundingAccount.setVisible(false); 
-		 }
+		if (isForeClosure || isKnockOff) {
+			this.label_ReceiptDialog_PartnerBankCode.setVisible(false);
+			this.fundingAccount.setVisible(false);
+		}
 
 		// Due to changes in Receipt Amount, call Auto Allocations
 		if (isUserAction) {
@@ -1837,6 +1842,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.listBoxSchedule.getItems().clear();
 		aFinScheduleData.setFinanceScheduleDetails(
 				ScheduleCalculator.sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
+		int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 
 		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 			boolean showRate = false;
@@ -1858,6 +1864,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("paymentDetailsMap", rpyDetailsMap);
 			map.put("penaltyDetailsMap", penaltyDetailsMap);
 			map.put("window", this.window_ReceiptDialog);
+			map.put("formatter", formatter);
 
 			finRender.render(map, prvSchDetail, false, true, true, aFinScheduleData.getFinFeeDetailList(), showRate,
 					false);
@@ -2435,7 +2442,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				String userAction = StringUtils.trimToEmpty(this.userAction.getSelectedItem().getLabel());
 
-				if (StringUtils.isBlank(nextRoleCode)) {
+				if (StringUtils.isBlank(nextRoleCode) && !StringUtils.equals("DEPOSIT_APPROVER", getRole())) {
 					if (!"Save".equalsIgnoreCase(userAction) && !"Cancel".equalsIgnoreCase(userAction)
 							&& !"Resubmit".equalsIgnoreCase(userAction) && !userAction.contains("Reject")
 							&& !userAction.contains("Submit")) {
@@ -2563,8 +2570,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.receiptAmount.setValue(PennantApplicationUtil
 				.formateAmount(rch.getReceiptAmount().subtract(receiptData.getExcessAvailable()), formatter));
 		if (isEarlySettle) {
-			this.receiptAmount.setValue(PennantApplicationUtil
-					.formateAmount(rch.getReceiptAmount().subtract(receiptData.getExcessAvailable()), formatter));
+			this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(rch.getReceiptAmount(), formatter));
 		}
 		this.receiptAmount.setDisabled(true);
 		this.remarks.setValue(rch.getRemarks());
@@ -2811,7 +2817,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addDueFooter(formatter);
 		addExcessAmt();
 
-		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0
+		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
 			return;
@@ -2990,6 +2996,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal paidGST = BigDecimal.ZERO;
 		BigDecimal waived = BigDecimal.ZERO;
 		BigDecimal waivedGST = BigDecimal.ZERO;
+		BigDecimal gstAmount = BigDecimal.ZERO;
 
 		List<ReceiptAllocationDetail> allocList = receiptData.getReceiptHeader().getAllocationsSummary();
 
@@ -3007,6 +3014,16 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				paid = paid.add(allocate.getPaidAmount());
 				paidGST = paidGST.add(allocate.getPaidGST());
 				waived = waived.add(allocate.getWaivedAmount());
+				
+				if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0
+						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
+					TaxAmountSplit taxSplit = new TaxAmountSplit();
+					taxSplit.setAmount(allocate.getWaivedAmount());
+					taxSplit.setTaxType(allocate.getTaxType());
+					taxSplit = getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit);
+					waived = waived.add(taxSplit.gettGST());
+					gstAmount = gstAmount.add(taxSplit.gettGST());
+				}
 
 				//Waiver GST only for Exclusive cases
 				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
@@ -3022,7 +3039,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, totDue, null, true);
 		addAmountCell(item, paid, null, true);
 		addAmountCell(item, paidGST, null, true);
-		addAmountCell(item, waived, null, true);
+		addAmountCell(item, waived.subtract(gstAmount), null, true);
 		addAmountCell(item, totDue.subtract(paid).subtract(waived).subtract(waivedGST), null, true);
 
 		this.listBoxPastdues.appendChild(item);
@@ -5609,7 +5626,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount()) > 0) {
+		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount().add(receiptData.getExcessAvailable())) > 0) {
 			String[] args = new String[2];
 
 			args[0] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(), formatter);
@@ -5617,6 +5634,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt", args));
 			return false;
 		}
+
 		// in case of early settlement,do not allow before first installment
 		// date(based on AlwEarlySettleBefrFirstInstn in finType )
 		if (receiptPurposeCtg == 2 && !financeType.isAlwCloBefDUe()) {
@@ -6485,6 +6503,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			map.put("financeMainDialogCtrl", this);
 			map.put("moduleDefiner", module);
 			map.put("profitDaysBasisList", PennantStaticListUtil.getProfitDaysBasis());
+			Cloner cloner = new Cloner();
+			FinanceDetail fd = cloner.deepClone(getFinanceDetail());
+			fd.getFinScheduleData().setFinanceScheduleDetails(befScheduleList);
+			map.put("financeDetail", fd);
 			map.put("isEnquiry", true);
 
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ScheduleDetailDialog.zul", tabpanel, map);

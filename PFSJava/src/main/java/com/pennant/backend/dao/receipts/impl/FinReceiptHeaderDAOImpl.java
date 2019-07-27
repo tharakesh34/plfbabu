@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -241,11 +243,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			sql.append(", CancelReasonDesc, FinIsActive, PromotionCode, ProductCategory, NextRepayRvwDate");
 			sql.append(", CollectionAgentCode, CollectionAgentDesc, PostBranchDesc, CashierBranchDesc");
 			sql.append(", FinDivisionDesc, EntityCode");
-			
+
 			if (StringUtils.trimToEmpty(type).contains("FView")) {
 				sql.append(", ScheduleMethod, PftDaysBasis, CustID, CustomerCIF, CustomerName, CustBaseCcy");
 			}
-			
+
 			if (StringUtils.trimToEmpty(type).contains("FEView") || StringUtils.trimToEmpty(type).contains("FCView")) {
 				sql.append(", CustID, CustomerCIF, CustomerName");
 			}
@@ -260,12 +262,13 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				.newInstance(FinReceiptHeader.class);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			header = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(Literal.EXCEPTION, e);
+			return null;
 		}
 
-		return null;
+		return header;
 	}
 
 	@Override
@@ -277,7 +280,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(" select ReceiptID, Reference,ReceiptPurpose,ReceiptModeStatus from FinReceiptHeader_Temp) T");
 		sql.append(" Where ReceiptID <> :ReceiptID and Reference = :Reference");
 		sql.append(" and ReceiptPurpose = :ReceiptPurpose and ReceiptModeStatus in('A','F')");
-		
+
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -1009,5 +1012,69 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		List<Long> receiptList = this.jdbcTemplate.queryForList(updateSql.toString(), source, Long.class);
 		logger.debug("Leaving");
 		return receiptList;
+	}
+
+	@Override
+	public boolean checkEarlySettlementInitiation(String reference) {
+
+		MapSqlParameterSource source = null;
+		boolean isReceiptsInProcess = false;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from FinReceiptHeader_view where ");
+		selectSql.append(" Reference = :Reference AND");
+		selectSql.append(" Receiptpurpose IN (:Receiptpurpose) AND");
+		selectSql.append(" ReceiptModeStatus not in ( :Status)");
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("Receiptpurpose",
+				Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE, FinanceConstants.FINSER_EVENT_EARLYRPY));
+		source.addValue("Status", Arrays.asList("B", "C"));
+
+		try {
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+			if (count > 0) {
+				isReceiptsInProcess = true;
+			}
+			logger.debug("Already Early Settlement Initiated");
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		return isReceiptsInProcess;
+
+	}
+
+	@Override
+	public boolean checkPartialSettlementInitiation(String reference) {
+
+		MapSqlParameterSource source = null;
+		boolean isReceiptsInProcess = false;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*)  from FinReceiptHeader_Temp where ");
+		selectSql.append(" Reference = :Reference AND");
+		selectSql.append(" Receiptpurpose IN (:Receiptpurpose) AND");
+		selectSql.append(" ReceiptModeStatus not in ( :Status)");
+
+		source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("Receiptpurpose",
+				Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE, FinanceConstants.FINSER_EVENT_EARLYRPY));
+		source.addValue("Status", Arrays.asList("B", "C"));
+
+		try {
+			int count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+
+			if (count > 0) {
+				isReceiptsInProcess = true;
+			}
+			logger.debug("Already Partial Settlement Initiated");
+		} catch (DataAccessException e) {
+			logger.error(e);
+		}
+
+		return isReceiptsInProcess;
+
 	}
 }

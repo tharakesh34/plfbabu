@@ -623,7 +623,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering" + event.toString());
 
 		List<Filter> filterList = new ArrayList<>();
-		filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 
 		this.custCIF.clearErrorMessage();
 		Clients.clearWrongValue(this.btnSearchCustCIF);
@@ -684,7 +684,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Entering");
 
 		List<Filter> filterList = new ArrayList<>();
-		filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
+		//filterList.add(new Filter("CustCoreBank", "", Filter.OP_NOT_EQUAL));
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);

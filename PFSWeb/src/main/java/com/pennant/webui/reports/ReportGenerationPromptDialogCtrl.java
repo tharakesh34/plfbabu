@@ -105,9 +105,12 @@ import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceScheduleReportData;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.reports.ReportSearchTemplate;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.reports.ReportConfigurationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -116,6 +119,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
+import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -132,6 +136,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.export.AbstractXlsReportConfiguration;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -174,6 +179,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 	private List<ReportSearchTemplate> reportSearchTemplateFieldsList;
 	private ReportConfigurationService reportConfigurationService;
+	private FinanceDetailService financeDetailService;
+	private FinScheduleListItemRenderer renderer;
+
 	private StringBuilder searchCriteriaDesc = new StringBuilder(" ");
 
 	public enum FIELDCLASSTYPE {
@@ -288,7 +296,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					doFillcbSelectTemplate();// Fill Template Library
 					this.window_ReportPromptFilterCtrl.doModal();
 				} else {
-					doShowReport(null, null, null, null);
+					doShowReport(null, null, null, null, null);
 				}
 				logger.debug("Leaving" + event.toString());
 
@@ -1671,7 +1679,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	 * 
 	 * @throws Exception
 	 */
-	public void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate) throws Exception {
+	private void doShowReport(String whereCond, String whereCond2, String fromDate, String toDate, String whereCond1)
+			throws Exception {
 		logger.debug("Entering");
 
 		HashMap<String, Object> reportArgumentsMap = new HashMap<String, Object>(10);
@@ -1687,12 +1696,19 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		if (whereCond != null) {
 			reportArgumentsMap.put("whereCondition", whereCond);
 		}
+
 		if (whereCond2 != null) {
 			reportArgumentsMap.put("whereCondition1", whereCond2);
 		}
+
+		if (whereCond1 != null) {
+			reportArgumentsMap.put("whereCondition2", whereCond1);
+		}
+
 		if (fromDate != null) {
 			reportArgumentsMap.put("fromDate", "'" + DateUtility.getDBDate(fromDate).toString() + "'");
 		}
+
 		if (toDate != null) {
 			reportArgumentsMap.put("toDate", "'" + DateUtility.getDBDate(toDate).toString() + "'");
 		}
@@ -1716,6 +1732,37 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		reportArgumentsMap.put("searchCriteria", searchCriteriaDesc.toString());
 		String reportName = reportConfiguration.getReportJasperName();// This will come dynamically
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_ORGANIZATION) + "/" + reportName + ".jasper";
+
+		if (reportConfiguration.isScheduleReq()) {
+			String finReference = "";
+			reportSearchTemplateFieldsList = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					true);
+			for (int i = 0; i < reportSearchTemplateFieldsList.size(); i++) {
+
+				List<ReportFilterFields> filters = reportConfiguration.getListReportFieldsDetails();
+				for (int j = 0; j < filters.size(); j++) {
+					if (reportSearchTemplateFieldsList.get(i).getFieldID() != filters.get(j).getFieldID()) {
+						continue;
+					}
+					if (!StringUtils.equalsIgnoreCase(filters.get(j).getFieldName(), "Loan Reference")) {
+						continue;
+					}
+					finReference = reportSearchTemplateFieldsList.get(i).getFieldValue();
+				}
+			}
+
+			if (StringUtils.isNotBlank(finReference)) {
+				FinScheduleData scheduleData = financeDetailService.getFinSchDataByFinRef(finReference, "", 0);
+				renderer = new FinScheduleListItemRenderer();
+				List<FinanceScheduleReportData> schdList = renderer.getPrintScheduleData(scheduleData, null, null,
+						false, true);
+
+				List<Object> subList = new ArrayList<Object>();
+				subList.add(schdList);
+				JRBeanCollectionDataSource subListDS = new JRBeanCollectionDataSource(schdList);
+				reportArgumentsMap.put("subDataSource2", subListDS);
+			}
+		}
 
 		byte[] buf = null;
 		Connection con = null;
@@ -2274,7 +2321,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			 */
 
 			doShowReport("where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString(),
-					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), fromDate, toDate);
+					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), fromDate, toDate, null);
 
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_DelinquencyVariance")) {
 			String fromDate = null;
@@ -2288,7 +2335,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
-					fromDate, toDate);
+					fromDate, toDate, null);
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_LimitReports")) {
 			String limitType = null;
 			// SimpleDateFormat format=new SimpleDateFormat()""
@@ -2308,7 +2355,26 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			// StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
-					null);
+					null, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_FeeAmzReferenceReport")
+				|| StringUtils.equals(reportMenuCode, "menu_Item_FeeAmzLoanTypeReport")) {
+
+			StringBuilder whereCond1 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			StringBuilder whereCond2 = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			StringBuilder whereCond = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+
+			/*
+			 * whereCond.append(" and MonthEndDate > (last_DAY(add_months('" + mnthEndDate +
+			 * "',-3))) AND  MonthEndDate <= (last_DAY(add_months('" + mnthEndDate + "',-1)))");
+			 * whereCond1.append("and MonthEndDate = (last_DAY(add_months('" + mnthEndDate + "',-1)))");
+			 * whereCond2.append(" and (MonthEndDate >= (last_DAY('" + mnthEndDate +
+			 * "')) AND MonthEndDate <= (last_DAY(add_months('" + mnthEndDate + "',14))))");
+			 */
+
+			doShowReport("where".equals(whereCond.toString().trim()) ? "" : whereCond.toString(),
+					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), null, null,
+					"where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString());
+
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
 			String custCif = null;
 			String finReference = null;
@@ -2362,7 +2428,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			if (invoiceNoExist) {
 				doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
-						null, null);
+						null, null, null);
 			} else {
 				if (invoiceExist) {
 					MessageUtil.showMessage(Labels.getLabel("info.invoice_cust_not_invoice")); //TODO validate message
@@ -2390,11 +2456,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null,
-					userDate, null);
+					userDate, null, null);
 		} else {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
-					null);
+					null, null);
 		}
 
 		logger.debug("Leaving" + event.toString());
@@ -2879,4 +2945,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	public void setParentFlag(String parentFlag) {
 		this.parentFlag = parentFlag;
 	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
 }

@@ -228,6 +228,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		Listcell listcell;
 		Uppercasebox textBox = new Uppercasebox();
 		textBox.setValue(clusterHierarchy.getClusterType());
+		textBox.setMaxlength(8);
 
 		if (clusterHierarchy.isNewRecord()) {
 			textBox.setReadonly(false);

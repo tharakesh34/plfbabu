@@ -1575,6 +1575,7 @@ public class ScheduleCalculator {
 	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex,
 			boolean addClosingBal) {
 		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(prvIndex);
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
@@ -1589,7 +1590,15 @@ public class ScheduleCalculator {
 		sd.setActRate(prvSchd.getActRate());
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
-		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+		if (StringUtils.equals(prvSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+			if (DateUtility.compare(newSchdDate, financeMain.getGrcPeriodEndDate()) <= 0) {
+				sd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
+			} else {
+				sd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			}
+		} else {
+			sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+		}
 		sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
 		sd.setAdvMargin(prvSchd.getAdvMargin());
 		sd.setAdvPftRate(prvSchd.getAdvPftRate());
@@ -1605,7 +1614,7 @@ public class ScheduleCalculator {
 
 		// ### 10-05-2018 - PSD Ticket ID : 126189, Flexi
 		sd.setNoOfDays(DateUtility.getDaysBetween(newSchdDate, prvSchd.getSchDate()));
-		sd.setDayFactor(CalculationUtil.getInterestDays(prvSchd.getSchDate(), newSchdDate, prvSchd.getPftDaysBasis()));
+		sd.setDayFactor(CalculationUtil.getInterestDays(prvSchd.getSchDate(), newSchdDate, sd.getPftDaysBasis()));
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
@@ -4082,7 +4091,7 @@ public class ScheduleCalculator {
 
 		curSchd.setNoOfDays(DateUtility.getDaysBetween(curSchd.getSchDate(), prvSchd.getSchDate()));
 		curSchd.setDayFactor(
-				CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(), prvSchd.getPftDaysBasis()));
+				CalculationUtil.getInterestDays(prvSchd.getSchDate(), curSchd.getSchDate(), curSchd.getPftDaysBasis()));
 
 		// Possible Values : NO_ADJ, ADJ_LAST_INST, ADJ_NEXT_INST
 		String roundAdjMth = SysParamUtil.getValueAsString(SMTParameterConstants.ROUND_ADJ_METHOD);
@@ -4097,7 +4106,7 @@ public class ScheduleCalculator {
 
 		/* Calculate interest and set interest payment details */
 		BigDecimal calint = CalculationUtil.calInterest(prvSchd.getSchDate(), curSchd.getSchDate(),
-				curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+				curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 		calint = calint.add(prvPftFraction);
 
@@ -4280,7 +4289,7 @@ public class ScheduleCalculator {
 				}
 
 				calInt = CalculationUtil.calInterest(prvSchDate, curSchDate, curSchd.getBalanceForPftCal(),
-						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
 				BigDecimal calIntRounded = BigDecimal.ZERO;
@@ -4371,7 +4380,7 @@ public class ScheduleCalculator {
 							if (StringUtils.equals(roundAdjMth, CalculationConstants.PFTFRACTION_ADJ_LAST_INST)
 									&& !curSchd.isFrqDate()) {
 								calInt = CalculationUtil.calInterest(prvSchDate, curSchDate,
-										curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(),
+										curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(),
 										prvSchd.getCalculatedRate());
 								calInt = calInt.add(prvSchd.getProfitFraction());
 								if (calInt.compareTo(BigDecimal.ZERO) > 0) {
@@ -5575,6 +5584,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail openSchd = finScheduleData.getFinanceScheduleDetails().get(0);
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 
+		sd.setFinReference(finMain.getFinReference());
 		sd.setSchDate(bpiDate);
 		sd.setDefSchdDate(bpiDate);
 		sd.setBpiOrHoliday(FinanceConstants.FLAG_BPI);
@@ -6836,7 +6846,7 @@ public class ScheduleCalculator {
 				// Advised profit amount calculation
 				if (curSchd.getBalanceForPftCal().compareTo(BigDecimal.ZERO) > 0) {
 					calInt = CalculationUtil.calInterest(prvSchd.getSchDate(), curSchd.getSchDate(),
-							curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(), prvSchd.getAdvCalRate());
+							curSchd.getBalanceForPftCal(), curSchd.getPftDaysBasis(), prvSchd.getAdvCalRate());
 
 					calInt = calInt.add(calIntFraction);
 					calIntFraction = calInt.subtract(round(calInt));
@@ -7845,7 +7855,7 @@ public class ScheduleCalculator {
 				}
 
 				calInt = CalculationUtil.calInterest(prvSchDate, curSchDate, curSchd.getBalanceForPftCal(),
-						prvSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
+						curSchd.getPftDaysBasis(), prvSchd.getCalculatedRate());
 
 				calInt = calInt.add(calIntFraction);
 
@@ -8248,5 +8258,4 @@ public class ScheduleCalculator {
 	public static void setIrrFinanceTypeDAO(IRRFinanceTypeDAO irrFinanceTypeDAO) {
 		ScheduleCalculator.irrFinanceTypeDAO = irrFinanceTypeDAO;
 	}
-
 }

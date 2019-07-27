@@ -22,6 +22,7 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.FinServicingEvent;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.RoundingTarget;
@@ -2805,8 +2806,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfit")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,
 					Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
-			// schMthdList.add(new
-			// ValueLabel(CalculationConstants.SCHMTHD_PRI,Labels.getLabel("label_ScheduleMethod_ConstantPrincipal")));
+			if (SysParamUtil.isAllowed("ALW_CONST_PRINCIPLE_SCHD_METHOD")) {
+				schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI,
+						Labels.getLabel("label_ScheduleMethod_ConstantPrincipal")));
+			}
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCAP,
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfitCap")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_POS_INT,
@@ -2863,14 +2866,12 @@ public class PennantStaticListUtil {
 	}
 
 	public static ArrayList<ValueLabel> getStatusTypeList(String customMandateStatus) {
-		if (statusTypeList == null) {
-			statusTypeList = getStatusTypeList();
-			// Added custom mandate status to the list if sysprams contains
-			// custom mandate Status.
-			if (StringUtils.isNotBlank(customMandateStatus)) {
-				statusTypeList.add(
-						new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
-			}
+		statusTypeList = getStatusTypeList();
+		// Added custom mandate status to the list if sysprams contains
+		// custom mandate Status.
+		if (StringUtils.isNotBlank(customMandateStatus)) {
+			statusTypeList
+					.add(new ValueLabel(customMandateStatus, Labels.getLabel("label_Mandate_" + customMandateStatus)));
 		}
 		return statusTypeList;
 	}
@@ -4986,8 +4987,10 @@ public class PennantStaticListUtil {
 		if (calcTypeList == null) {
 			calcTypeList = new ArrayList<ValueLabel>(2);
 			//TODO  CESS Calculated only on Fixed Amount
-			/*calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_FIXED_AMOUNT,
-					Labels.getLabel("label_CalcTypeList_FixedAmount")));*/
+			/*
+			 * calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_FIXED_AMOUNT,
+			 * Labels.getLabel("label_CalcTypeList_FixedAmount")));
+			 */
 			calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_PERCENTAGE,
 					Labels.getLabel("label_CalcTypeList_Percentage")));
 		}
@@ -5000,14 +5003,15 @@ public class PennantStaticListUtil {
 			calcOnList.add(new ValueLabel(RuleConstants.CALCON_TRANSACTION_AMOUNT,
 					Labels.getLabel("label_CalcOnList_Transaction_Amount")));
 			//TODO To Be Calculate  for CESS on below
-			/*calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,
-					Labels.getLabel("label_CalcOnList_TotalAmount_IncludingGST")));
-			calcOnList.add(new ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST")));
-			calcOnList.add(new ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST")));
-			calcOnList.add(new ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST")));
-			calcOnList.add(new ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST")));
-			calcOnList
-					.add(new ValueLabel(RuleConstants.CODE_TOTAL_GST, Labels.getLabel("label_TaxTypeList_Total_GST")));*/
+			/*
+			 * calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,
+			 * Labels.getLabel("label_CalcOnList_TotalAmount_IncludingGST"))); calcOnList.add(new
+			 * ValueLabel(RuleConstants.CODE_CGST, Labels.getLabel("label_TaxTypeList_CGST"))); calcOnList.add(new
+			 * ValueLabel(RuleConstants.CODE_SGST, Labels.getLabel("label_TaxTypeList_SGST"))); calcOnList.add(new
+			 * ValueLabel(RuleConstants.CODE_IGST, Labels.getLabel("label_TaxTypeList_IGST"))); calcOnList.add(new
+			 * ValueLabel(RuleConstants.CODE_UGST, Labels.getLabel("label_TaxTypeList_UGST"))); calcOnList .add(new
+			 * ValueLabel(RuleConstants.CODE_TOTAL_GST, Labels.getLabel("label_TaxTypeList_Total_GST")));
+			 */
 		}
 		return calcOnList;
 	}

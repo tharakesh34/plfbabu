@@ -67,6 +67,7 @@ import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -146,6 +147,9 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 
 		this.fileName.setModuleName("ReceiptUploadHeader");
 		this.fileName.setMandatoryStyle(false);
+		this.fileName.setValueType(DataType.LONG);
+		this.fileName.setValueType(DataType.BIGDECIMAL);
+		this.fileName.setValueType(DataType.INT);
 		this.fileName.setDisplayStyle(2);
 		this.fileName.setValueColumn("FileName");
 		this.fileName.setValidateColumns(new String[] { "FileName" });

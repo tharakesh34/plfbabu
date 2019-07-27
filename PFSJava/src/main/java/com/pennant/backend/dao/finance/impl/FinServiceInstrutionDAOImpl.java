@@ -38,30 +38,34 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			}
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinServiceInstruction");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate,");
-		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,");
-		insertSql.append(" RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq,");
-		insertSql.append(" NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType,");
-		insertSql.append(
-				" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg, InstructionUID, LinkedTranID )");
-		insertSql.append(" Values(:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate,");
-		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate,");
-		insertSql.append(" :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq,");
-		insertSql.append(" :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount,");
-		insertSql.append(
-				" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg, :InstructionUID, :LinkedTranID)");
+		String sql = getInsertQuery(type);
 
-		logger.debug("selectSql: " + insertSql.toString());
+		logger.trace(Literal.SQL + sql);
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(finServiceInstructionList.toArray());
-		logger.debug("Leaving");
 		try {
-			this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.batchUpdate(sql, beanParameters);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
+	}
+
+	private String getInsertQuery(String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate");
+		sql.append(", PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate");
+		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
+		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType");
+		sql.append(", RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
+		sql.append(", InstructionUID, LinkedTranID)");
+		sql.append(" Values (:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate");
+		sql.append(", :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate");
+		sql.append(", :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq");
+		sql.append(", :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount, :RecalType");
+		sql.append(", :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg");
+		sql.append(", :InstructionUID, :LinkedTranID)");
+		return sql.toString();
 	}
 
 	/**
@@ -77,27 +81,15 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			logger.debug("get NextID:" + finServiceInstruction.getServiceSeqId());
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinServiceInstruction");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (ServiceSeqId, FinEvent, FinReference, FromDate, ToDate,");
-		insertSql.append(" PftDaysBasis, SchdMethod, ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate,");
-		insertSql.append(" RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq,");
-		insertSql.append(" NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType,");
-		insertSql.append(
-				" RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg, InstructionUID, LinkedTranID )");
-		insertSql.append(" Values(:ServiceSeqId, :FinEvent, :FinReference, :FromDate, :ToDate,");
-		insertSql.append(" :PftDaysBasis, :SchdMethod, :ActualRate, :BaseRate, :SplRate, :Margin, :GrcPeriodEndDate,");
-		insertSql.append(" :RepayPftFrq, :RepayRvwFrq, :RepayCpzFrq, :GrcPftFrq, :GrcRvwFrq, :GrcCpzFrq,");
-		insertSql.append(" :NextGrcRepayDate, :RepayFrq, :NextRepayDate, :Amount,");
-		insertSql.append(
-				" :RecalType, :RecalFromDate, :RecalToDate, :PftIntact, :Terms, :ServiceReqNo, :Remarks, :PftChg, :InstructionUID, :LinkedTranID)");
-		logger.debug("selectSql: " + insertSql.toString());
+		String sql = getInsertQuery(type);
+
+		logger.trace(Literal.SQL + sql);
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finServiceInstruction);
 
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcTemplate.update(sql, beanParameters);
 		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
 

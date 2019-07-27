@@ -147,7 +147,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", T1.FeeScheduleMethod, T1.Terms, T1.RemainingFee, T1.PaymentRef, T1.CalculationType");
 		sql.append(", T1.VasReference, T1.Status, T1.RuleCode, T1.FixedAmount, T1.Percentage");
 		sql.append(", T1.CalculateOn, T1.AlwDeviation, T1.MaxWaiverPerc, T1.AlwModifyFee");
-		sql.append(", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage, T1.WaivedGST, T1.ReferenceId");
+		sql.append(
+				", T1.AlwModifyFeeSchdMthd, T1.TaxPercent, T1.Refundable, T1.InstructionUID, T1.ActPercentage, T1.WaivedGST, T1.ReferenceId");
 		sql.append(" From FinFeeDetail T1 ");
 		sql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -181,24 +182,24 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
-	
+
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailByReferenceId(long referenceId, String finEvent, String type) {
 		logger.debug("Entering");
-		
+
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setReferenceId(referenceId);
 		finFeeDetail.setFinEvent(finEvent);
-		
+
 		StringBuilder sql = getSelectQuery(false, type);
 		sql.append(" Where ReferenceId = :ReferenceId And FinEvent = :FinEvent");
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
-		
+
 		logger.debug("Leaving");
-		
+
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -236,26 +237,25 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	 */
 	@Override
 	public List<FinFeeDetail> getPaidFinFeeDetails(final String reference, String type) {
-		logger.debug(Literal.ENTERING);
-
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		finFeeDetail.setFinReference(reference);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
-		sql.append(", VasReference, Status, Refundable, ActPercentage, WaivedGST, ReferenceId");
+		sql.append("Select FeeID, FeeOrder, CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount, RemainingFee");
+		sql.append(", VasReference, Status, Refundable");
+		sql.append(", ActualAmountOriginal, PaidAmountOriginal, NetAmount");
+		sql.append(", ActPercentage, WaivedGST, ReferenceId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, TaxComponent");
 		}
 		sql.append(" From FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = :FinReference And PaidAmount > 0 ");
-		logger.debug("selectSql: " + sql.toString());
+		sql.append(" Where FinReference = :FinReference ");
+
+		logger.trace(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finFeeDetail);
 		RowMapper<FinFeeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinFeeDetail.class);
-
-		logger.debug(Literal.LEAVING);
 
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
@@ -273,9 +273,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method Deletes the Record from the FinFeeDetail or
-	 * FinFeeDetail_Temp. if Record not deleted then throws DataAccessException
-	 * with error 41003. delete Goods Details by key LoanRefNumber
+	 * This method Deletes the Record from the FinFeeDetail or FinFeeDetail_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete Goods Details by key LoanRefNumber
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)
@@ -388,9 +387,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)
@@ -480,9 +478,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	/**
-	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if
-	 * Record not updated then throws DataAccessException with error 41004.
-	 * update Goods Details by key LoanRefNumber and Version
+	 * This method updates the Record FinFeeDetail or FinFeeDetail_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Goods Details by key LoanRefNumber and Version
 	 * 
 	 * @param Goods
 	 *            Details (FinFeeDetail)
@@ -664,7 +661,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT feeTypeID From FinFeeDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FeeTypeCode = :FeeTypeCode and FinReference = :FinReference and FinEvent != :FinEvent");
+		selectSql
+				.append(" WHERE FeeTypeCode = :FeeTypeCode and FinReference = :FinReference and FinEvent != :FinEvent");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		MapSqlParameterSource source = new MapSqlParameterSource();

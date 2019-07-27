@@ -1973,6 +1973,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 			if (!added) {
 				SecurityUserDivBranch divBranch = new SecurityUserDivBranch();
+				divBranch.setEntity(division.getEntityCode());
+				divBranch.setEntityDesc(division.getEntityDesc());
 				divBranch.setUserDivision(division.getDivisionCode());
 				divBranch.setDivisionDesc(division.getDivisionCodeDesc());
 				tempList.add(divBranch);
@@ -2812,7 +2814,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		clusters.setParent(hbox);
 		clusters.setMandatoryStyle(true);
 		clusters.setModuleName("Cluster");
-		clusters.setValueColumn("ClusterId");
+		clusters.setValueColumn("Code");
 		clusters.setValidateColumns(new String[] { "ClusterId" });
 		clusters.setValueType(DataType.LONG);
 		clusters.addForward("onFulfill", self, "onChangeClusters", row);
@@ -2843,12 +2845,22 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			return;
 		}
 
-		Object dataObject = clusters.getObject();
-		if (dataObject != null) {
-			Cluster cluster = (Cluster) dataObject;
-			clusters.setValue(cluster.getCode());
-			clusters.setAttribute("clusters", cluster.getId());
+		Object dataObject = clusters.getSelectedValues();
+		StringBuilder value = new StringBuilder();
+
+		if (dataObject != null && dataObject instanceof Map) {
+			Map<String, Object> cluster = (Map<String, Object>) dataObject;
+
+			for (String entity : cluster.keySet()) {
+				if (value.length() > 0) {
+					value.append(",");
+				}
+				value.append(entity);
+			}
 		}
+
+		clusters.setValue(value.toString());
+		clusters.setAttribute("clusters", value);
 	}
 
 	private void appendParentCluster(Row row) {

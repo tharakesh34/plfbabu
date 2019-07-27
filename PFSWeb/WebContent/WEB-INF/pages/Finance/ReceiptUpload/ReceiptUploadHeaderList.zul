@@ -79,7 +79,7 @@
 								<row id="row1">
 									<label id="label_ReceiptUploadSearch_UploadId" value="${c:l('label_ReceiptUploadSearch_Uploadid.value')}" />
 									<listbox id="sortOperator_uploadId" width="43px" mold="select" rows="1" />
-									<textbox id="uploadId" width="100px" maxlength="8" />
+									<intbox id="uploadId" width="100px" maxlength="8" />
 									<label id="label_ReceiptUploadSearch_FileName" value="${c:l('label_ReceiptUploadSearch_FileName.value')}" />
 									<listbox id="sortOperator_fileName" width="43px" mold="select" rows="1" />
 									<textbox id="fileName" width="100px" maxlength="300" />

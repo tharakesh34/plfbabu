@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.UiException;
@@ -245,7 +246,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.btnAddRmvTerms.setTooltiptext(Labels.getLabel("btnRmvTerms.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
 
-			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
+			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
 			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
 					PennantStaticListUtil.getSchCalCodes(), excldValues);
 
@@ -540,6 +541,9 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
+				if (StringUtils.equals("M", curSchd.getSpecifier()) && !isAddTerms()) {
+					continue;
+				}
 				//In Remove Terms the Disbursement Dates Need to be shown
 				if (curSchd.isDisbOnSchDate() && !isAddTerms()) {
 					dateCombobox.getItems().clear();

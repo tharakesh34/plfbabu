@@ -86,4 +86,5 @@ public interface PresentmentDetailService {
 
 	FinanceDetail getFinanceDetailsByRef(String finReference);
 
+	PresentmentDetail getPresentmentDetail(String presentmentRef);
 }

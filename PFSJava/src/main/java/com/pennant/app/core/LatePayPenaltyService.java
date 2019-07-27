@@ -81,10 +81,17 @@ public class LatePayPenaltyService extends ServiceHelper {
 		BigDecimal penalty = BigDecimal.ZERO;
 		//Late Payment Penalty. Do not apply LPP
 		if (!fod.isApplyODPenalty()) {
+			//#PSD 137379
+			fod.setTotPenaltyAmt(penalty);
+			fod.setTotPenaltyBal(penalty);
+
 			return;
 		}
 		//Still before the grace days no need to calculate OD penalty
 		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
+			//#PSD 137379
+			fod.setTotPenaltyAmt(penalty);
+			fod.setTotPenaltyBal(penalty);
 			return;
 		}
 

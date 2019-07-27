@@ -45,6 +45,7 @@ package com.pennant.webui.financemanagement.presentmentdetail;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
@@ -66,6 +67,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -300,6 +302,15 @@ public class PresentmentDetailListCtrl extends GFCBaseListCtrl<PresentmentHeader
 		if (presentmentheader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
+		}
+
+		// Validate EOD is in progress or not
+		if ("A".equals(moduleType)) {
+			String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
+			if (StringUtils.equals(phase, PennantConstants.APP_PHASE_EOD)) {
+				MessageUtil.showError(Labels.getLabel("Amortization_EOD_Check"));
+				return;
+			}
 		}
 
 		StringBuffer whereCond = new StringBuffer();

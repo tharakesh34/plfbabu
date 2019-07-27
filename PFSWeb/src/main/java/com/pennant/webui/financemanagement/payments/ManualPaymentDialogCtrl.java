@@ -1349,6 +1349,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.listBoxSchedule.setStyle("hflex:min;");
 
 			aFinScheduleData.setFinanceScheduleDetails(sortSchdDetails(aFinScheduleData.getFinanceScheduleDetails()));
+			int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
 
 			for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
 				boolean showRate = false;
@@ -1369,6 +1370,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
 				map.put("penaltyDetailsMap", penaltyDetailsMap);
+				map.put("formatter", formatter);
 				map.put("window", this.window_ManualPaymentDialog);
 				finRender.render(map, prvSchDetail, false, true, false, aFinScheduleData.getFinFeeDetailList(),
 						showRate, false);

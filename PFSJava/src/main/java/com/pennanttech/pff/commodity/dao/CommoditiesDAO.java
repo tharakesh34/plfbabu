@@ -22,4 +22,8 @@ public interface CommoditiesDAO extends BasicCrudDao<Commodity> {
 
 	void updateCommodity(Commodity commodity);
 
+	String getCommodityHSNCode(String code);
+
+	String getCommodityCode(String hsnCode);
+
 }

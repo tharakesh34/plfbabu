@@ -95,7 +95,7 @@ public class CollectionDataDownloadProcess {
 		sql.append(" T1.FinStsReason FinStsReason ,T1.FinWorstStatus FinWorstStatus,");
 		sql.append(" T1.FinIsActive FinActive	,'I' RecordStatus, ");
 		sql.append(" (select FinRepayMethod from financemain where finreference =T1.Finreference) RepayMethod, ");
-		sql.append(" :AppDate ");
+		sql.append(" :AppDate AppDate");
 		sql.append("  FROM FinPftDetails T1 ");
 		sql.append("  INNER JOIN Customers T2 ON T1.CustId=T2.CustID");
 		sql.append("  INNER JOIN RMTFinanceTypes T3 on T1.FinType=T3.FinType ");

@@ -357,7 +357,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 					boolean validate = getUserWorkspace()
 							.isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail") || isFinalStage;
 
-					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)) {
+					if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CANCELDISB)|| userAction.contains("Resubmit")) {
 						validate = false;
 					}
 
@@ -440,7 +440,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		logger.debug("Entering");
 		setFinAdvancePaymentsList(finAdvancePayDetails);
 		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(getFinAdvancePaymentsList(),
-				getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"));
+				getUserWorkspace().isAllowed("FinAdvancePaymentsList_NewFinAdvancePaymentsDetail"), getFinancedetail().getFinScheduleData().getVasRecordingList());
 		logger.debug("Leaving");
 	}
 

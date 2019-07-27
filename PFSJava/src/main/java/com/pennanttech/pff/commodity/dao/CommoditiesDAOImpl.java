@@ -201,7 +201,7 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 	public Commodity getCommodity(Commodity commodity) {
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("Code", commodity.getCode());
-		paramSource.addValue("HSNCode", commodity.getCode());
+		paramSource.addValue("HSNCode", commodity.getHSNCode());
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * from COMMODITIES Where");
@@ -214,7 +214,47 @@ public class CommoditiesDAOImpl extends SequenceDao<Commodity> implements Commod
 		try {
 			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			// TODO: handle exception
+
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getCommodityHSNCode(String code) {
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Code", code);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select HSNCode from COMMODITIES_View Where");
+		sql.append(" Code = :Code");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getCommodityCode(String hsnCode) {
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("HSNCode", hsnCode);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select Code from COMMODITIES_View Where");
+		sql.append(" HSNCode = :HSNCode");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, String.class);
+		} catch (EmptyResultDataAccessException e) {
+
 		}
 
 		return null;

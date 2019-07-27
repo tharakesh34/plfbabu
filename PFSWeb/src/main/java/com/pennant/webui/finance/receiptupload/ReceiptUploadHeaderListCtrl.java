@@ -77,6 +77,7 @@ import org.zkoss.zkmax.zul.Filedownload;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -134,7 +135,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	protected Paging pagingReceiptUploadList;
 	protected Listbox listBoxReceiptUpload;
 
-	protected Textbox uploadId;
+	protected Intbox uploadId;
 	protected Textbox fileName;
 
 	protected Listbox sortOperator_uploadId;

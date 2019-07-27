@@ -45,10 +45,13 @@ package com.pennant.backend.dao.rulefactory.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,12 +68,15 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pff.core.account.dao.StagePostingDAO;
 
 /**
  * DAO methods implementation for the <b>ReturnDataSet model</b> class.<br>
  */
 public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements PostingsDAO {
 	private static Logger logger = Logger.getLogger(PostingsDAOImpl.class);
+
+	private StagePostingDAO stagePostingDAO;
 
 	public PostingsDAOImpl() {
 		super();
@@ -239,7 +245,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public void saveBatch(List<ReturnDataSet> dataSetList) {
+	public void saveBatch(List<ReturnDataSet> dataSetList, boolean isNewTranID) {
 		logger.debug("Entering");
 
 		StringBuilder insertSql = new StringBuilder();
@@ -260,6 +266,16 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(dataSetList.toArray());
 		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+
+		if (isNewTranID) {
+			Set<Long> linkedTransactions = new HashSet<>();
+			for (ReturnDataSet dataSet : dataSetList) {
+				linkedTransactions.add(dataSet.getLinkedTranId());
+			}
+
+			stagePostingDAO.saveLinkedTrnasactions(linkedTransactions);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -608,4 +624,10 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		logger.debug("Leaving");
 
 	}
+
+	@Autowired
+	public void setStagePostingDAO(StagePostingDAO stagePostingDAO) {
+		this.stagePostingDAO = stagePostingDAO;
+	}
+
 }

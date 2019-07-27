@@ -161,6 +161,7 @@ import com.pennant.backend.model.finance.FinStageAccountingLog;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinTaxDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1394,7 +1395,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
 		if (StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, finMain.getBpiTreatment())) {
 			amountCodes.setBpi(finMain.getBpiAmount());
-			if(finMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)){
+			if (finMain.isTDSApplicable() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
 				for (int i = 0; i < finSchdDetails.size(); i++) {
 					FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 					if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
@@ -1403,9 +1404,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					}
 				}
 			}
-			
+
 			// BPI Payment on Installment Due Date
-			if(SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)){
+			if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
 				amountCodes.setBpiToAdvInt(true);
 			}
 		}
@@ -1511,16 +1512,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			feeRule.setPaidAmount(fee.getPaidAmount());
 			feeRule.setFeeToFinance(fee.getFeeScheduleMethod());
 			feeRule.setFeeMethod(fee.getFeeScheduleMethod());
-			
+
 			dataMap.put(feeTypeCode + "_C", isPreIncomized ? BigDecimal.ZERO : fee.getActualAmountOriginal());
-			
+
 			//GST Waiver Changes
 			if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
-				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
+				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO
+						: fee.getWaivedAmount().subtract(finTaxDetails.getWaivedTGST()));
 			} else {
 				dataMap.put(feeTypeCode + "_W", isPreIncomized ? BigDecimal.ZERO : fee.getWaivedAmount());
 			}
-			
+
 			dataMap.put(feeTypeCode + "_P", isPreIncomized ? BigDecimal.ZERO : fee.getPaidAmountOriginal());
 
 			//GST Added
@@ -1548,7 +1550,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			dataMap.put(feeTypeCode + "_SGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedSGST());
 			dataMap.put(feeTypeCode + "_IGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedIGST());
 			dataMap.put(feeTypeCode + "_UGST_W", isPreIncomized ? BigDecimal.ZERO : finTaxDetails.getWaivedUGST());
-			
+
 			if (feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
 					|| feeRule.getFeeToFinance().equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
@@ -1587,12 +1589,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeDisb = deductFeeDisb.add(fee.getRemainingFee());
 				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
-					deductVasDisb = deductVasDisb.add(fee.getActualAmount());
+					deductVasDisb = deductVasDisb.add(fee.getRemainingFee());
 				}
 			} else if (fee.getFeeScheduleMethod().equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 				addFeeToFinance = addFeeToFinance.add(fee.getRemainingFee());
 				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fee.getFinEvent())) {
-					addVasToFinance = addVasToFinance.add(fee.getActualAmount());
+					addVasToFinance = addVasToFinance.add(fee.getRemainingFee());
 				}
 			}
 			if (!isPreIncomized) {
@@ -1653,7 +1655,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		boolean isNew = false;
 		String finReference = financeMain.getFinReference();
-		
+
 		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
 			isNew = true;
@@ -1677,7 +1679,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setEntityCode(financeMain.getLovDescEntityCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		Map<String, Object> dataMap = aeEvent.getDataMap();
-		
+
 		dataMap = prepareFeeRulesMap(amountCodes, dataMap, financeDetail);
 
 		/*
@@ -1788,12 +1790,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 				orgination = true;
 			}
-			
+
 			//Normal Fees invoice preparation
 			this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail,
 					financeDetail.getFinScheduleData().getFinFeeDetailList(), null,
 					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, orgination, false);
-			
+
 			//Waiver Fees Invoice Preparation
 			List<FinFeeDetail> waiverFees = new ArrayList<>();
 			for (FinFeeDetail fee : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
@@ -1804,7 +1806,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			if (CollectionUtils.isNotEmpty(waiverFees)) {
 				gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, waiverFees, null,
 						PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, orgination, true);
-			}	
+			}
 		}
 
 		//Disbursement Instruction Posting
@@ -2413,13 +2415,16 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
 		Date curBDay = DateUtility.getAppDate();
-		for (int i = 0; i < finDetail.getDisbursementDetails().size(); i++) {
-			finDetail.getDisbursementDetails().get(i).setFinReference(finDetail.getFinReference());
-			finDetail.getDisbursementDetails().get(i).setDisbReqDate(curBDay);
-			finDetail.getDisbursementDetails().get(i).setDisbIsActive(true);
-			finDetail.getDisbursementDetails().get(i).setDisbDisbursed(true);
-			finDetail.getDisbursementDetails().get(i).setLogKey(logKey);
-			finDetail.getDisbursementDetails().get(i).setInstructionUID(instructionUID);
+		for (FinanceDisbursement disbursement : finDetail.getDisbursementDetails()) {
+			disbursement.setFinReference(finDetail.getFinReference());
+			disbursement.setDisbReqDate(curBDay);
+			disbursement.setDisbIsActive(true);
+			disbursement.setDisbDisbursed(true);
+			disbursement.setLogKey(logKey);
+
+			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
+				disbursement.setInstructionUID(instructionUID);
+			}
 		}
 		getFinanceDisbursementDAO().saveList(finDetail.getDisbursementDetails(), tableType, isWIF);
 

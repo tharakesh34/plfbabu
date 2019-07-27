@@ -59,6 +59,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -159,6 +160,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	protected Listheader listheader_FeeDetailList_PaymentRef;
 
 	protected Listheader listheader_FeeDetailList_FeeScheduleMethod;
+	protected Listheader listheader_FeeDetailList_PaidAmount;
 	protected Listheader listheader_FeeDetailList_Terms;
 	protected Listheader listheader_FeeDetailList_Adjust;
 
@@ -217,6 +219,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	private LinkedHashMap<Long, List<FinFeeReceipt>> finFeeReceiptMap = new LinkedHashMap<>();
 
 	private Map<String, BigDecimal> taxPercentages;
+	private FeeDetailService feeDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -348,6 +351,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.listheader_FeeDetailList_Terms.setVisible(false);
 		}
 
+		if (StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(true);
+			this.listheader_FeeDetailList_PaidAmount.setVisible(false);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -455,7 +463,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							finFee.setFeeModified(true);
 						}
 					}
-					//Preparing Before Image
+					//Prepare Before Image
 					FinFeeDetail befImage = new FinFeeDetail();
 					BeanUtils.copyProperties(finFee, befImage);
 					finFee.setBefImage(befImage);
@@ -737,7 +745,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch,
-					finBranch);
+					finBranch, financeDetail.getFinanceTaxDetail());
 
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finFeeDetail = new FinFeeDetail();
@@ -1053,7 +1061,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								for (FinFeeDetail fiinFeeDetail : finFeeDetailList) {
 									if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(fiinFeeDetail.getFinEvent())
 											&& StringUtils.equals(fiinFeeDetail.getVasReference(),
-													feeDetail.getVasReference())) {
+													feeDetail.getVasReference())
+											&& (fiinFeeDetail.getFeeID() == feeDetail.getFeeID())) {
+
 										found = true;
 										break;
 									}
@@ -1194,12 +1204,21 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		List<FinFeeDetail> feelist = fetchFeeDetails(getFinanceDetail().getFinScheduleData(), false);
 		if (feelist == null) {
 			feelist = new ArrayList<>();
+		} else {
+			String vasReference = vasFee.getVasReference();
+			for (int i = 0; i < feelist.size(); i++) {
+				FinFeeDetail feeDetail = feelist.get(i);
+
+				if (StringUtils.equals(feeDetail.getVasReference(), vasReference)) {
+					feelist.remove(i); // Removing Finance Fee Detail
+					break;
+				}
+			}
 		}
 		feelist.add(vasFee);
 		doFillFinFeeDetailList(feelist);
 		setFinFeeDetailList(feelist);
 		this.dataChanged = true;
-
 		logger.debug("Leaving");
 	}
 
@@ -1415,6 +1434,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					BigDecimal remainingFee = PennantAppUtil
 							.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
 
+					if (StringUtils.isNotBlank(this.moduleDefiner) && remainingFee.compareTo(BigDecimal.ZERO) != 0
+							&& !StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+						throw new WrongValueException(remFeeBox,
+								Labels.getLabel("label_Fee_PaidWaiverAmount_NotEqual"));
+					}
+
 					fee.setRemainingFee(remainingFee);
 				}
 			} catch (WrongValueException we) {
@@ -1489,7 +1514,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					fee.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 			}
-			fee.setRecordStatus(this.recordStatus.getValue());
+
+			fee.setRecordStatus(this.userAction != null ? this.recordStatus.getValue() : "");
 		}
 
 		showErrorDetails(wve);
@@ -1594,6 +1620,11 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
+		boolean isDisbServ = false;
+		if (StringUtils.equals(this.moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+			isDisbServ = true;
+		}
+
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			Map<String, BigDecimal> taxPercentages = getTaxPercentages();
 
@@ -1605,6 +1636,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 				if (!finFeeDetail.isRcdVisible()) {
 					continue;
+				}
+
+				//setting paid amount and remaining amount
+				if (isDisbServ) {
+					finFeeDetail.setPaidAmount(BigDecimal.ZERO);
+					finFeeDetail
+							.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getWaivedAmount()));
 				}
 
 				FinTaxDetails finTaxDetail = finFeeDetail.getFinTaxDetails();
@@ -2120,7 +2158,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
-		boolean feeSchdMthdDisable = false;
+		boolean feeSchdMthdDisable = true;
 		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
 		}
@@ -2783,7 +2821,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		 * for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 		 * this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, gstExecutionMap); }
 		 */
-		FeeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
+		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData.getFinanceMain(),
 				finScheduleData);
 
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
@@ -3148,10 +3186,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	}
 
 	private Map<String, BigDecimal> getTaxPercentages() {
-		if (taxPercentages != null) {
-			return taxPercentages;
-		}
-
 		String userBranch = getUserWorkspace().getLoggedInUser().getBranchCode();
 		String finBranch = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinBranch();
 		String finCCY = getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy();
@@ -3162,7 +3196,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		}
 
-		taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch);
+		taxPercentages = GSTCalculator.getTaxPercentages(custId, finCCY, userBranch, finBranch,
+				financeDetail.getFinanceTaxDetail());
+
 		return taxPercentages;
 	}
 
@@ -3296,4 +3332,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}
+
+	@Autowired
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
+	}
+
 }

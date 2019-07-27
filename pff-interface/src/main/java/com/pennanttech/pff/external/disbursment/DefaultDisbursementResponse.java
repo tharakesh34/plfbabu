@@ -20,6 +20,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 import com.pennanttech.pff.core.process.PaymentProcess;
@@ -31,6 +32,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 	private DisbursementProcess disbursementProcess;
 	private PaymentProcess paymentProcess;
+	private LoggedInUser loggedInUser;
 
 	public DefaultDisbursementResponse() {
 		super();
@@ -72,6 +74,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		DataEngineStatus status = (DataEngineStatus) params[1];
 		File file = (File) params[2];
 		Media media = (Media) params[3];
+		loggedInUser = (LoggedInUser) params[5];
 
 		String configName = status.getName();
 
@@ -127,7 +130,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			sql.append(" FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE,");
 			sql.append(" DR.CHEQUE_NUMBER LLREFERENCENO, DR.REJECT_REASON REJECTREASON,");
 			sql.append(" DR.PAYMENT_DATE CLEARINGDATE, DR.TRANSACTIONREF, FA.PAYMENTSEQ, FA.AMTTOBERELEASED, ");
-			sql.append(" PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY");
+			sql.append(" PB.ACTYPE AS PARTNERBANKACTYPE, PB.ACCOUNTNO AS PARTNERBANKAC, FA.DISBCCY, FA.LLDATE");
 			sql.append(" FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN FINADVANCEPAYMENTS FA ON FA.PAYMENTID = DR.DISBURSEMENT_ID");
 			sql.append(" LEFT JOIN partnerbanks PB ON PB.partnerbankid = FA.partnerbankid");
@@ -189,7 +192,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			sql = new StringBuilder();
 			sql.append(" SELECT PI.LINKEDTRANID, PI.ID, VPA.BANKBRANCHID, VPA.ACCOUNTNUMBER, ");
 			sql.append(" AVD.DEALERNAME, PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.STATUS,");
-			sql.append(" DR.REJECT_REASON REJECTREASON,DR.REALIZATION_DATE REALIZATIONDATE,");
+			sql.append(" DR.REJECT_REASON REJECTREASON, PI.PROVIDERID,");
 			sql.append(" DR.PAYMENT_DATE RESPDATE, DR.TRANSACTIONREF FROM DISBURSEMENT_REQUESTS DR");
 			sql.append(" INNER JOIN INSURANCEPAYMENTINSTRUCTIONS PI ON PI.ID = DR.DISBURSEMENT_ID");
 			sql.append(" INNER JOIN VASPROVIDERACCDETAIL VPA ON VPA.PROVIDERID = PI.PROVIDERID");
@@ -206,6 +209,8 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 
 			for (InsurancePaymentInstructions instruction : insPaymentInstructions) {
 				try {
+					// For VAS Account postings
+					instruction.setUserDetails(loggedInUser);
 					paymentProcess.processInsPayments(instruction);
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);

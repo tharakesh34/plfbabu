@@ -420,7 +420,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	@Autowired(required = false)
-	@Qualifier(value = "mandateProcess")
+	@Qualifier(value = "mandateProcesses")
 	public void setMandateProces(MandateProcesses mandateProcesses) {
 		this.mandateProcesses = mandateProcesses;
 	}

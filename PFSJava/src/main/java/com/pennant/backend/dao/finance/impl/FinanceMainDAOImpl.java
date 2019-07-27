@@ -4595,7 +4595,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder selectSql = new StringBuilder("SELECT  FinReference, PlanDeferCount, ");
 		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory");
+		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference,FinType,FinCategory, FinBranch,");
+		selectSql.append(" CustID,PromotionCode");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where OldFinReference =:OldFinReference AND FinIsActive = :FinIsActive");
 

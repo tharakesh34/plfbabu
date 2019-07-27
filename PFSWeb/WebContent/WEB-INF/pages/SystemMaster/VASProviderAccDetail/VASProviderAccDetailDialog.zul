@@ -81,6 +81,12 @@
 									</label>
 								</hbox>
 							</row>
+							<row id="row6">
+								<label id="label_PartnerBnak" value="${c:l('label_VASProviderAccDetailDialog_PartnerBankID.value')}" />
+								<hbox>
+									<extendedcombobox id="partnerBankId" />
+								</hbox>
+							</row>
 							<row id="row3">
 								<label id="label_MICR" value="${c:l('label_VASProviderAccDetailDialog_MICRCode.value')}" />
 								<hbox>

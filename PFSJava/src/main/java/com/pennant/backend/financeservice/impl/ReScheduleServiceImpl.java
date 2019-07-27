@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -141,7 +142,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 						.getNextDate(frequency, 1, finServiceInstruction.getGrcPeriodEndDate(), "A", false, 0)
 						.getNextFrequencyDate();
 
-				if (DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
+				String frqCode = frequency.substring(0, 1);
+				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
+						&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
 				}
@@ -187,7 +190,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 						.getNextDate(frequency, 1, finServiceInstruction.getFromDate(), "A", false, 0)
 						.getNextFrequencyDate();
 
-				if (DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
+				String frqCode = frequency.substring(0, 1);
+				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
+						&& DateUtility.getDaysBetween(fromDate, startRepayCalDate) <= 15) {
 					startRepayCalDate = FrequencyUtil.getNextDate(frequency, 1, startRepayCalDate, "A", false, 0)
 							.getNextFrequencyDate();
 				}
@@ -557,7 +562,10 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, prvSchd.getSchDate(), "A", false)
 							.getNextFrequencyDate();
 				}
-				if (DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15) {
+
+				String frqCode = finMain.getRepayFrq().substring(0, 1);
+				if (!StringUtils.equals(frqCode, FrequencyCodeTypes.FRQ_DAILY)
+						&& DateUtility.getDaysBetween(brforeDate, startCalFrom) <= 15) {
 					startCalFrom = FrequencyUtil.getNextDate(finMain.getRepayFrq(), 1, startCalFrom, "A", false)
 							.getNextFrequencyDate();
 				}

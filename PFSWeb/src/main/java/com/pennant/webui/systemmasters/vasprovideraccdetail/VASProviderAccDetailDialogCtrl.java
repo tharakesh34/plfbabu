@@ -69,6 +69,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.systemmasters.VASProviderAccDetailService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -115,6 +116,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	protected CurrencyBox reconciliationAmount;
 	protected Checkbox active;
 	protected Label bankNameDesc;
+	protected ExtendedCombobox partnerBankId;
 	private VASProviderAccDetail vASProviderAccDetail; // overhanded per param
 
 	private transient VASProviderAccDetailListCtrl vASProviderAccDetailListCtrl; // overhanded
@@ -123,6 +125,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	private transient VASProviderAccDetailService vASProviderAccDetailService;
 
 	private List<ValueLabel> listPaymentMode = PennantStaticListUtil.getPaymentType();
+	private boolean isFromLoan = false;
 
 	/**
 	 * default constructor.<br>
@@ -162,6 +165,9 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 			this.vASProviderAccDetailListCtrl = (VASProviderAccDetailListCtrl) arguments
 					.get("vASProviderAccDetailListCtrl");
 
+			if (arguments.get("isDisbInst") instanceof Boolean) {
+				this.isFromLoan = (boolean) arguments.get("isDisbInst");
+			}
 			if (this.vASProviderAccDetail == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -223,8 +229,16 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		this.bankBranchID.setMandatoryStyle(true);
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setValueColumn("BankBranchID");
-		this.bankBranchID.setDescColumn("BranchDesc");
+		this.bankBranchID.setDescColumn("BranchDesc");this.bankBranchID.setValueType(DataType.INT);
+		this.bankBranchID.setValueType(DataType.BIGDECIMAL);
+		this.bankBranchID.setValueType(DataType.LONG);
 		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
+
+		this.partnerBankId.setModuleName("PartnerBank");
+		this.partnerBankId.setValueColumn("PartnerBankCode");
+		this.partnerBankId.setDescColumn("PartnerBankName");
+		this.partnerBankId.setValidateColumns(new String[] { "PartnerBankCode", "PartnerBankName" });
+		this.partnerBankId.setMandatoryStyle(true);
 
 		setStatusDetails();
 
@@ -433,6 +447,9 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 
 		this.recordStatus.setValue(aVASProviderAccDetail.getRecordStatus());
 
+		this.partnerBankId.setValue(aVASProviderAccDetail.getPartnerBankCode());
+		this.partnerBankId.setDescription(aVASProviderAccDetail.getPartnerBankName());
+			
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -512,6 +529,16 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 			wve.add(we);
 		}
 
+		try {
+			this.partnerBankId.getValidatedValue();
+			PartnerBank obj = (PartnerBank) this.partnerBankId.getAttribute("PartnerBank");
+			if (obj != null) {
+				aVASProviderAccDetail.setPartnerBankId(obj.getPartnerBankId());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -562,7 +589,14 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		}
 
 		doWriteBeanToComponents(vASProviderAccDetail);
-		setDialog(DialogType.EMBEDDED);
+		if (isFromLoan) {
+			this.window_VASProviderAccDetailDialog.setWidth("65%");
+			this.window_VASProviderAccDetailDialog.setHeight("40%");
+			disableFields();
+			setDialog(DialogType.MODAL);
+		} else {
+			setDialog(DialogType.EMBEDDED);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -604,6 +638,9 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 					Labels.getLabel("label_VASProviderAccDetailDialog_ReconciliationAmount.value"), getCcyFormat(),
 					true, false));
 		}
+
+		this.partnerBankId.setConstraint(new PTStringValidator(
+				Labels.getLabel("label_FinTypePartnerBankDialog_PartnerBankID.value"), null, true, true));
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1026,4 +1063,40 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 	public void setVASProviderAccDetailService(VASProviderAccDetailService vASProviderAccDetailService) {
 		this.vASProviderAccDetailService = vASProviderAccDetailService;
 	}
+
+	public void onFulfill$partnerBankId(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = partnerBankId.getObject();
+
+		if (dataObject instanceof String) {
+			this.partnerBankId.setValue(dataObject.toString());
+			this.partnerBankId.setDescription("");
+		} else {
+			PartnerBank partnerbank = (PartnerBank) dataObject;
+			if (partnerbank != null) {
+				this.partnerBankId.setValue(partnerbank.getPartnerBankCode());
+				this.partnerBankId.setDescription(partnerbank.getPartnerBankName());
+				this.partnerBankId.setAttribute("PartnerBank", partnerbank);
+			}
+		}
+
+		logger.debug("Leaving");
+	}
+
+	public void disableFields() {
+		this.providerId.setButtonDisabled(true);
+		this.paymentMode.setDisabled(true);
+		this.bankBranchID.setButtonDisabled(true);
+		this.accountNumber.setDisabled(true);
+		this.receivableAdjustment.setDisabled(true);
+		this.reconciliationAmount.setDisabled(true);
+		this.active.setDisabled(true);
+		this.entityCode.setButtonDisabled(true);
+		this.bankName.setDisabled(true);
+		this.partnerBankId.setButtonDisabled(true);
+		this.micrCode.setDisabled(true);
+		this.ifscCode.setDisabled(true);
+	}
+
 }

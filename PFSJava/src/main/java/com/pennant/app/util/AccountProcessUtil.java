@@ -76,7 +76,7 @@ public class AccountProcessUtil implements Serializable {
 
 	public void procAccountUpdate(List<ReturnDataSet> dataSets) {
 
-		Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
+		/*Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
 		Map<String, AccountsHistory> accountHistMap = new HashMap<String, AccountsHistory>(1);
 		Map<String, AccountType> accountTypeMap = new HashMap<String, AccountType>(1);
 
@@ -109,11 +109,11 @@ public class AccountProcessUtil implements Serializable {
 		//Update Accounts History
 		for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
 			accountsHistoryDAO.saveOrUpdate(accountHist.getValue());
-		}
+		}*/
 
 	}
 
-	public void prepareAccounts(Map<String, Accounts> accountMap, ReturnDataSet posting, AccountType accountType) {
+	private void prepareAccounts(Map<String, Accounts> accountMap, ReturnDataSet posting, AccountType accountType) {
 		String accountKey = posting.getAccount();
 		Accounts account = new Accounts();
 
@@ -140,7 +140,7 @@ public class AccountProcessUtil implements Serializable {
 		accountMap.put(accountKey, account);
 	}
 
-	public Accounts prepareAccountData(ReturnDataSet posting, Accounts account, AccountType accountType) {
+	private Accounts prepareAccountData(ReturnDataSet posting, Accounts account, AccountType accountType) {
 		account.setAccountId(posting.getAccount());
 		account.setAcCcy(posting.getAcCcy());
 		account.setAcType(posting.getAccountType());
@@ -170,7 +170,7 @@ public class AccountProcessUtil implements Serializable {
 		return account;
 	}
 
-	public void PrepareAccountsHist(Map<String, AccountsHistory> accountHistMap, ReturnDataSet posting) {
+	private void PrepareAccountsHist(Map<String, AccountsHistory> accountHistMap, ReturnDataSet posting) {
 		String accountHistKey = posting.getAccount().concat(DateUtility.formatToShortDate(posting.getPostDate()));
 		AccountsHistory accountHist = new AccountsHistory();
 

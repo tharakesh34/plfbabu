@@ -41,14 +41,14 @@
 				</north>
 				<center border="none" autoscroll="true">
 					<div>
-						<groupbox id="gb_basicDetails" mold="3d">
-							<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
-								<columns>
-									<column width="200px" />
-									<column />
-									<column width="175px" />
-									<column />
-								</columns>
+						<groupbox id="gb_basicDetails" mold="3d" >
+							<grid id="searchGrid" sclass="GridLayoutNoBorder" height="400px"  fixedLayout="true" style="border:0px;">
+											<columns>
+												<column width="220px" />
+												<column width="360px" />
+												<column width="220px" />
+												<column width="360px" />
+											</columns>
 								<rows>
 									<row>
 										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentSequence.value')}" />
@@ -56,42 +56,14 @@
 											<space spacing="2px" />
 											<intbox id="paymentSequence" />
 										</hbox>
-										<cell colspan="2" rowspan="9" valign="top">
-											<iframe id="docName" width="100%">
-											</iframe>
-										</cell>
-									</row>
-									<row>
+										
 										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentDetail.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<combobox id="paymentDetail" width="155px" />
 										</hbox>
 									</row>
-									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_TotalDisbursementAmount.value')}" />
-										<hbox>
-											<currencyBox id="totalDisbursementAmount" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_OtherExpenses.value')}" />
-										<hbox>
-											<currencyBox id="otherExpenses" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAddedAmount.value')}" />
-										<hbox>
-											<currencyBox id="disbursementAddedAmount" />
-										</hbox>
-									</row>
-									<row>
-										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementNetAmount.value')}" />
-										<hbox>
-											<currencyBox id="netAmount" />
-										</hbox>
-									</row>
+									
 									<row>
 										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbDate.value')}" />
 										<hbox>
@@ -101,27 +73,29 @@
 											<decimalbox id="disbDateAmount" readonly="true" width="155px"
 												style="border:none; background-color:white ;font-weight:bold; text-align:left;" />
 										</hbox>
-									</row>
-									<row>
+										
 										<label id="label_llDate" value="${c:l('label_FinAdvancePaymentsDialog_LLDate.value')}" />
 										<hbox id="hbox_llDate">
 											<space spacing="2px" sclass="mandatory" />
 											<datebox id="llDate" width="155px" />
 										</hbox>
 									</row>
+									
 									<row>
+										
 										<label value="${c:l('label_FinAdvancePaymentsDialog_PaymentType.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
 											<combobox id="paymentType" width="155px" />
 										</hbox>
-									</row>
-									<row>
 										<label value="${c:l('label_FinAdvancePaymentsDialog_AmtToBeReleased.value')}" />
 										<hbox>
 											<currencyBox id="amtToBeReleased" />
 										</hbox>
+									
+										
 									</row>
+									
 									<row>
 										<cell>
 											<hbox>
@@ -131,8 +105,6 @@
 										<cell>
 											<extendedcombobox id="partnerBankID" />
 										</cell>
-									</row>
-									<row>
 										<hbox>
 											<label value="${c:l('label_FinAdvancePaymentsDialog_transactionRef.value')}" />
 										</hbox>
@@ -141,57 +113,89 @@
 											<textbox id="transactionRef" width="150px" />
 										</hbox>
 									</row>
+								
 									<row>
-										<cell rowspan="2">
-											<label value="${c:l('label_FinAdvancePaymentsDialog_Remarks.value')}" />
-										</cell>
-										<cell rowspan="2">
+										<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementAddedAmount.value')}" />
+										<hbox>
+											<currencyBox id="disbursementAddedAmount" />
+										</hbox>
+										
+										<label value="${c:l('label_FinAdvancePaymentsDialog_TotalDisbursementAmount.value')}" />
+										<hbox>
+											<currencyBox id="totalDisbursementAmount" />
+										</hbox>
+										
+									</row>
+									
+									
+									
+									<row>
+										<label value="${c:l('label_FinAdvancePaymentsDialog_OtherExpenses.value')}" />
+										<hbox>
+											<currencyBox id="otherExpenses" />
+										</hbox>
+											<label value="${c:l('label_FinAdvancePaymentsDialog_DisbursementNetAmount.value')}" />
+										<hbox>
+											<currencyBox id="netAmount" />
+										</hbox>
+										
+									</row>
+																	
+									<row>
+									
+										<label value="${c:l('label_FinAdvancePaymentsDialog_Remarks.value')}" />
+										
+										<cell colspan="3" valign="top">	
 											<hbox>
 												<space spacing="2px" />
-												<textbox id="remarks" multiline="true" rows="4" />
+												<textbox id="remarks" multiline="true" height="60px"></textbox>
 											</hbox>
 										</cell>
 									</row>
+									<row>
+									<cell colspan="4" valign="top">
+										<iframe id="docName" width="100%" height="10%">
+										</iframe>
+									</cell>
+									</row>
+								
 									<row visible="false">
 										<label id="label_custContribution" value="${c:l('label_FinAdvancePaymentsDialog_CustContribution.value')}" />
 										<hbox id="hbox_custContribution">
 											<currencyBox id="custContribution" />
 										</hbox>
-									</row>
-									<row visible="false">
 										<label id="label_sellerContribution" value="${c:l('label_FinAdvancePaymentsDialog_SellerContribution.value')}" />
 										<hbox id="hbox_sellerContribution">
 											<currencyBox id="sellerContribution" />
 										</hbox>
 									</row>
+									
 									<row visible="false">
 										<label value="${c:l('label_FinAdvancePaymentsDialog_Description.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="description" multiline="true" rows="3" />
 										</hbox>
-									</row>
-									<row visible="false">
 										<label id="label_DisbCCy" value="${c:l('label_FinAdvancePaymentsDialog_DisbCCy.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<textbox id="disbCCy" />
 										</hbox>
 									</row>
+									
 									<row visible="false">
 										<label id="label_Active" value="${c:l('label_FinAdvancePaymentsDialog_Active.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<checkbox id="active" />
 										</hbox>
-									</row>
-									<row visible="false">
 										<label id="label_InputDate" value="${c:l('label_FinAdvancePaymentsDialog_InputDate.value')}" />
 										<hbox>
 											<space spacing="2px" />
 											<datebox id="inputDate" />
 										</hbox>
 									</row>
+									
 								</rows>
 							</grid>
 						</groupbox>
@@ -202,11 +206,11 @@
 							<caption id="caption_FinAdvancePaymentsDialog_ChequeDetails" />
 							<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
 								<columns>
-									<column width="200px" />
-									<column />
-									<column width="175px" />
-									<column />
-								</columns>
+												<column width="220px" />
+												<column width="360px" />
+												<column width="220px" />
+												<column width="360px" />
+											</columns>
 								<rows>
 									<row>
 										<label id="label_BankCode" value="${c:l('label_FinAdvancePaymentsDialog_BankCode.value')}" />
@@ -247,11 +251,11 @@
 							<caption id="caption_FinAdvancePaymentsDialog_NeftDetails" />
 							<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
 								<columns>
-									<column width="200px" />
-									<column />
-									<column width="175px" />
-									<column />
-								</columns>
+												<column width="220px" />
+												<column width="360px" />
+												<column width="220px" />
+												<column width="360px" />
+											</columns>
 								<rows>
 									<row>
 										<label id="label_BankBranchID" value="${c:l('label_FinAdvancePaymentsDialog_BankBranchID.value')}" />

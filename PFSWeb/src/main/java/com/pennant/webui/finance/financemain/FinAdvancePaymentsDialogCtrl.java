@@ -86,12 +86,14 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -102,7 +104,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -116,7 +117,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
 
 /**
@@ -228,9 +228,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	private transient PartnerBankService partnerBankService;
 	private FinanceMain financeMain;
+	private List<FinFeeDetail> finFeeDetailList;
 	private DocumentDetails documentDetails;
 	@Autowired
 	private ExternalDocumentManager externalDocumentManager = null;
+	@Autowired
+	private DrawingPowerService drawingPowerService;
+
+	private String moduleDefiner;
 
 	/**
 	 * default constructor.<br>
@@ -309,6 +314,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				financeMain = (FinanceMain) arguments.get("financeMain");
 			}
 
+			if (arguments.containsKey("finFeeDetailList")) {
+				finFeeDetailList = (List<FinFeeDetail>) arguments.get("finFeeDetailList");
+			}
+
 			if (this.finAdvancePayments.isNewRecord()) {
 				setNewRecord(true);
 			}
@@ -360,9 +369,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (arguments.containsKey("custID")) {
 				custID = (long) arguments.get("custID");
 			}
+
 			if (arguments.containsKey("finCcy")) {
 				finCcy = (String) arguments.get("finCcy");
 			}
+
+			if (arguments.containsKey("moduleDefiner")) {
+				moduleDefiner = (String) arguments.get("moduleDefiner");
+			}
+
 			doLoadWorkFlow(this.finAdvancePayments.isWorkflow(), this.finAdvancePayments.getWorkflowId(),
 					this.finAdvancePayments.getNextTaskId());
 
@@ -705,7 +720,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.valueDate.setWidth("150px");
 		this.llReferenceNo.setWidth("150px");
 		this.description.setWidth("150px");
-		this.remarks.setWidth("150px");
+		this.remarks.setWidth("730px");
 
 		this.bankCode.setModuleName("BankDetail");
 		this.bankCode.setMandatoryStyle(true);
@@ -816,7 +831,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		this.amtToBeReleased.setValue(formate(aFinAdvnancePayments.getAmtToBeReleased()));
 		if (aFinAdvnancePayments.isNewRecord() && aFinAdvnancePayments.getLlDate() == null) {
-			this.llDate.setValue(DateUtility.getAppDate());
+			this.llDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}
@@ -843,7 +858,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.beneficiaryName.setValue(aFinAdvnancePayments.getBeneficiaryName());
 		this.transactionRef.setValue(aFinAdvnancePayments.getTransactionRef());
 
-		//Adding 3 fields for Disbursement Tab in loan queue
+		// Adding 3 fields for Disbursement Tab in loan queue
 		BigDecimal disbAmount = BigDecimal.ZERO;
 		BigDecimal advancePayAmount = BigDecimal.ZERO;
 		BigDecimal otherExp = BigDecimal.ZERO;
@@ -853,12 +868,27 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
 			}
+
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
 
-			otherExp = otherExp.add(curDisb.getDeductFromDisb());
-		}
+			if (curDisb.getDisbDate().getTime() == financeMain.getFinStartDate().getTime()
+					&& curDisb.getDisbSeq() == 1) {
+				otherExp = otherExp.add(financeMain.getDeductFeeDisb());
 
-		disbAmount = disbAmount.subtract(otherExp);
+				disbAmount = disbAmount.subtract(financeMain.getDownPayment());
+				disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
+				disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
+				if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+					disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
+					otherExp = otherExp.add(financeMain.getBpiAmount());
+				}
+			} else if (curDisb.getDisbSeq() > 1) {
+				otherExp = otherExp.add(curDisb.getDeductFeeDisb());
+				otherExp = otherExp.add(curDisb.getDeductInsDisb());
+				disbAmount = disbAmount.subtract(curDisb.getDeductFeeDisb());
+				disbAmount = disbAmount.subtract(curDisb.getDeductInsDisb());
+			}
+		}
 
 		/*
 		 * if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) { for (FinanceDisbursement curDisb :
@@ -868,32 +898,30 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		// Total amount released except current Instruction
 		List<FinAdvancePayments> advPayList = null;
-		BigDecimal deductFeeDisb = BigDecimal.ZERO;
 		if (this.moduleType.equals("LOAN")) {
 			advPayList = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
 		} else {
 			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
 
-		//BigDecimal otherExp = BigDecimal.ZERO;
-		//otherExp = otherExp.add(financeMain.getDeductFeeDisb());
+		/*
+		 * BigDecimal otherExp = BigDecimal.ZERO; otherExp = otherExp.add(financeMain.getDeductFeeDisb());
+		 * 
+		 * disbAmount = disbAmount.subtract(financeMain.getDownPayment()); disbAmount =
+		 * disbAmount.subtract(financeMain.getDeductFeeDisb()); disbAmount =
+		 * disbAmount.subtract(financeMain.getDeductInsDisb()); if
+		 * (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
+		 * disbAmount = disbAmount.subtract(financeMain.getBpiAmount()); otherExp =
+		 * otherExp.add(financeMain.getBpiAmount()); }
+		 */
 
-		disbAmount = disbAmount.subtract(financeMain.getDownPayment());
-		//disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
-		disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
-		if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
-			disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
-			otherExp = otherExp.add(financeMain.getBpiAmount());
-		}
-
-		if (StringUtils.equals(financeMain.getAdvType(), AdvanceType.AE.name())) {
-			disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
-		}
+		//disbAmount = disbAmount.subtract(financeMain.getAdvanceEMI());
 
 		if (advPayList != null && !advPayList.isEmpty()) {
 			for (FinAdvancePayments advPay : advPayList) {
 				if (StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_CANCEL)
-						|| StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
+						|| StringUtils.equals(advPay.getStatus(), DisbursementConstants.STATUS_REJECTED)
+						|| StringUtils.equals(PennantConstants.RCD_DEL, advPay.getRecordType())) {
 					continue;
 				}
 				advancePayAmount = advancePayAmount.add(advPay.getAmtToBeReleased());
@@ -1065,8 +1093,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		try {
-			aFinAdvancePayments.setAmtToBeReleased(PennantAppUtil.unFormateAmount(this.amtToBeReleased.isReadonly()
-					? this.amtToBeReleased.getActualValue() : this.amtToBeReleased.getValidateValue(), ccyFormatter));
+			aFinAdvancePayments.setAmtToBeReleased(PennantApplicationUtil
+					.unFormateAmount(this.amtToBeReleased.isReadonly() ? this.amtToBeReleased.getActualValue()
+							: this.amtToBeReleased.getValidateValue(), ccyFormatter));
 
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1144,7 +1173,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 						aFinAdvancePayments.setLLDate(this.llDate.getValue());
 					}
 
-					BigDecimal disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
+					BigDecimal disAmt = BigDecimal.ZERO;
+					disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
 					BigDecimal insAmt = getAdjustedAmount(disbursement);
 					insAmt = insAmt.add(aFinAdvancePayments.getAmtToBeReleased());
 					if (insAmt.compareTo(disAmt) > 0) {
@@ -1211,9 +1241,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.printingLoc.setErrorMessage("");
 
 			if (!this.printingLoc.isReadonly()) {
-				this.printingLoc.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"),
-								null, mandatory));
+				this.printingLoc.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinAdvancePaymentsDialog_PrintingLoc.value"), null, mandatory));
 			}
 			aFinAdvancePayments.setPrintingLoc(this.printingLoc.getValue());
 			aFinAdvancePayments.setPrintingLocDesc(this.printingLoc.getDescription());
@@ -1409,10 +1438,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			 * PennantRegularExpressions.REGEX_ADDRESS, false)); }
 			 */
 			if (!this.valueDate.isReadonly()) {
-				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
+				Date todate = DateUtility.addMonths(SysParamUtil.getAppDate(), 6);
 				this.valueDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_ValueDate.value"), true,
-								DateUtility.getAppDate(), todate, true));
+								SysParamUtil.getAppDate(), todate, true));
 			}
 		} else {
 			if (!StringUtils.equals(payType, DisbursementConstants.PAYMENT_TYPE_IST)) {
@@ -1540,8 +1569,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							getFinAdvancePaymentsListCtrl()
 									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
 						} else {
-							getPayOrderIssueDialogCtrl()
-									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									null);
 						}
 						closeDialog();
 					}
@@ -1610,11 +1639,25 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			doWriteComponentsToBean(aFinAdvancePayments);
 		}
 
+		isNew = aFinAdvancePayments.isNew();
+
+		// Checking the Drawing power
+		if ((this.financeMain.isAllowDrawingPower()) && (isNew)) {
+			if (!this.amtToBeReleased.isDisabled()) {
+				String msg = drawingPowerService.doDrawingPowerCheck(aFinAdvancePayments.getFinReference(),
+						aFinAdvancePayments.getAmtToBeReleased());
+				if (msg != null) {
+					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+						return;
+					}
+				}
+			}
+		}
+
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFinAdvancePayments.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
@@ -1669,7 +1712,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					if (this.moduleType.equals("LOAN")) {
 						getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
 					} else {
-						getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
+						getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+								null);
 					}
 					closeDialog();
 				}
@@ -1869,7 +1913,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.partnerBankID.setValue("");
 		this.partnerBankID.setDescription("");
 
-		Object attribute = bankCode.getAttribute("bankCode");
 		Filter[] filtersPrintLoc = new Filter[1];
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(dType)) {
 			filtersPrintLoc[0] = new Filter("Cheque", true, Filter.OP_EQUAL);
@@ -2051,7 +2094,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				BigDecimal disAmt = DisbursementInstCtrl.getTotalByDisbursment(disbursement, financeMain);
 				disAmt = disAmt.subtract(getAdjustedAmount(disbursement));
 
-				this.disbDateAmount.setValue(PennantAppUtil.formateAmount(disAmt, ccyFormatter));
+				this.disbDateAmount.setValue(PennantApplicationUtil.formateAmount(disAmt, ccyFormatter));
 			}
 		} else {
 			this.disbDateAmount.setValue(BigDecimal.ZERO);

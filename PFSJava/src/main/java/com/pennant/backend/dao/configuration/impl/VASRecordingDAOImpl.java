@@ -539,5 +539,45 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		this.jdbcTemplate.update(sql.toString(), source);
 		logger.debug(Literal.LEAVING);
 	}
+	
+	/**
+	 * Fetch the Record VASRecording details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return VASRecording
+	 */
+	@Override
+	public List<VASRecording> getVASRecordingsStatusByReference(String primaryLinkRef, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		List<VASRecording> vasRecordingList = new ArrayList<>();
+
+		sql = new StringBuilder("Select ProductCode, PostingAgainst, PrimaryLinkRef, VasReference, Fee, RenewalFee,");
+		sql.append(" FeePaymentMode, VR.EntityCode, TermInsuranceLien, ProviderName, ");
+		sql.append(" PolicyNumber, MedicalApplicable, MedicalStatus, ");
+		sql.append(" ValueDate, AccrualTillDate, RecurringDate, DsaId, DmaId, FulfilOfficerId, ReferralId,");
+		sql.append(" VasStatus, FinanceProcess, PaidAmt, WaivedAmt, VR.Status, OldVasReference,");
+		sql.append(" ManualAdviseId, PaymentInsId, ReceivableAdviseId, IP.Status AS InsStatus");
+		sql.append(" From VASRecording VR");
+		sql.append(" Inner Join InsurancePaymentInstructions IP");
+		sql.append(" ON VR.paymentinsid = IP.ID");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PrimaryLinkRef =:PrimaryLinkRef");
+
+		logger.debug("selectSql: " + sql.toString());
+		
+		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
+
+		source = new MapSqlParameterSource();
+		source.addValue("PrimaryLinkRef", primaryLinkRef);
+		vasRecordingList = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+		return vasRecordingList;
+	}
 
 }

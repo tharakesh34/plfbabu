@@ -161,10 +161,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		List<SecurityUserDivBranch> divBranches = securityUser.getSecurityUserDivBranchList();
-		if (CollectionUtils.isNotEmpty(divBranches)) {
-			auditDetails.addAll(saveUserDivisions(securityUser, tableType.getSuffix(), null));
-		}
+		saveUserDivisions(securityUser, tableType.getSuffix(), null);
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
 		if (CollectionUtils.isNotEmpty(reportingManagers)) {
@@ -314,7 +311,7 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			List<SecurityUserDivBranch> divBranches = securityUser.getSecurityUserDivBranchList();
 			if (CollectionUtils.isNotEmpty(divBranches)) {
 				securityUsersDAO.deleteBranchs(securityUser, "_temp");
-				auditDetails.addAll(saveUserDivisions(securityUser, "", "doApprove"));
+				saveUserDivisions(securityUser, "", "doApprove");
 			}
 
 			List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
@@ -888,10 +885,8 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 	 * @param type
 	 * @return
 	 */
-	private List<AuditDetail> saveUserDivisions(SecurityUser securityUser, String type, String method) {
+	private void saveUserDivisions(SecurityUser securityUser, String type, String method) {
 		logger.debug(Literal.ENTERING);
-
-		List<AuditDetail> list = new ArrayList<>();
 
 		for (SecurityUserDivBranch division : securityUser.getSecurityUserDivBranchList()) {
 			if (StringUtils.isEmpty(type)) {
@@ -918,10 +913,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 			securityUserAccessService.saveDivisionBranches(securityUser, method);
 		} else {
 			securityUsersDAO.deleteBranchs(securityUser, type);
-			securityUsersDAO.saveDivBranchDetails(securityUser.getSecurityUserDivBranchList(), type);
+			if (CollectionUtils.isNotEmpty(securityUser.getSecurityUserDivBranchList())) {
+				securityUsersDAO.saveDivBranchDetails(securityUser.getSecurityUserDivBranchList(), type);
+			}
 		}
 		logger.debug(Literal.LEAVING);
-		return list;
 	}
 
 	public QueueAssignmentDAO getQueueAssignmentDAO() {

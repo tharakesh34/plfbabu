@@ -34,7 +34,7 @@ public class ReceiptResponseJob implements Job, Serializable {
 			}
 
 			ReceiptResponseProcess receiptResponseProcess = new ReceiptResponseProcess(
-					SpringBeanUtil.getBean(ReceiptUploadHeaderService.class));
+					(ReceiptUploadHeaderService) SpringBeanUtil.getBean("receiptUploadHeaderService"));
 			receiptResponseProcess.processResponse();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);

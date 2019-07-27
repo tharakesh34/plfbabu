@@ -245,6 +245,14 @@
 												</hbox>
 											</row>
 											<row>
+												<label id="label_FinanceTypeDialog_AlwDP"
+													value="${c:l('label_FinanceTypeDialog_allowDrawingPower.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="allowDrawingPower" checked="false" />
+												</hbox>
+											</row>
+											<row>
 												<label id="label_FinanceTypeDialog_FinCollateralOvrride" value="${c:l('label_FinanceTypeDialog_FinCollateralOvrride.value')}"
 													visible="false" />
 												<hbox>

@@ -43,7 +43,6 @@
 package com.pennant.backend.dao.masters.impl;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -91,16 +90,15 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(masterDef);
-
-		String code = "";
+		logger.debug("Leaving");
+		String keyCode = "";
 		try {
-			code = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			keyCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			return "";
 		}
-		 return code;
-
+		return keyCode;
 	}
 
 	/**

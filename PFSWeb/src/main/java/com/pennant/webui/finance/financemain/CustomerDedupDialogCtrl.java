@@ -478,10 +478,10 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc = new Listcell(customerDedup.getCustCoreBank());
 			lc.setParent(item);
 
-			lc = new Listcell(customerDedup.getCustFName());
+			lc = new Listcell(customerDedup.getCustShrtName());
 			lc.setParent(item);
 
-			lc = new Listcell(customerDedup.getMobileNumber());
+			lc = new Listcell(customerDedup.getPhoneNumber());
 			if (getCustomerDetails() != null && getCustomerDetails().getCustomerPhoneNumList() != null
 					&& !getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
 				for (CustomerPhoneNumber customerPhoneNumber : getCustomerDetails().getCustomerPhoneNumList()) {

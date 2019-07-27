@@ -10,6 +10,7 @@ import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
@@ -371,8 +372,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				}
 			}
 		} else {
-			// .Events.postEvent("onCreate",
-			// this.window_ImportPresentmentDetails, event);
+			Events.postEvent("onCreate",this.window_ImportPresentmentDetails, event);
 		}
 	}
 

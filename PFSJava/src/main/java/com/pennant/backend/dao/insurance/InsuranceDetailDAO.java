@@ -28,4 +28,6 @@ public interface InsuranceDetailDAO {
 
 	void updatePaymentLinkedTranId(String vasReference, long linkedTranId);
 
+	void updateLinkTranId(long id, long linkTranId);
+
 }

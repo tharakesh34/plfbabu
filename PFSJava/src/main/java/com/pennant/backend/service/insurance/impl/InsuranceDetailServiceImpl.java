@@ -1,6 +1,7 @@
 package com.pennant.backend.service.insurance.impl;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -18,11 +19,14 @@ import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.collateral.CollateralSetupDAO;
+import com.pennant.backend.dao.configuration.VASConfigurationDAO;
+import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
+import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -46,13 +50,16 @@ import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.configuration.VASRecordingService;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.systemmasters.VASProviderAccDetailService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -74,6 +81,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	private CustomerDAO customerDAO;
 	private CollateralSetupDAO collateralSetupDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
+	private VASConfigurationDAO vASConfigurationDAO;
+	private VASRecordingDAO vASRecordingDAO;
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -351,6 +361,11 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		return aeEvent.getLinkedTranId();
 	}
 
+	public void executeVasPaymentsAccountingProcess(InsurancePaymentInstructions instructions) {
+		long linkTranId = executeInsPaymentsAccountingProcess(instructions);
+		insuranceDetailDAO.updateLinkTranId(instructions.getId(), linkTranId);
+	}
+
 	private long executeInsPaymentsAccountingProcess(InsurancePaymentInstructions details) {
 
 		AEEvent aeEvent = new AEEvent();
@@ -359,7 +374,9 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
 		aeEvent.setFinReference(String.valueOf(details.getProviderId()));
 		aeEvent.setValueDate(DateUtility.getAppDate());
-		aeEvent.setBranch(details.getUserDetails().getBranchCode());// FIXME Branch code(GDP)
+		aeEvent.setBranch(details.getUserDetails().getBranchCode());// FIXME
+																	// Branch
+																	// code(GDP)
 		aeEvent.setCcy(details.getPaymentCCy());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -565,6 +582,57 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	}
 
 	@Override
+	public void doApproveVASInsurance(List<VASRecording> vasRecording, LoggedInUser loginUser) {
+		logger.debug(Literal.ENTERING);
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+			for (VASRecording vasDetail : vasRecording) {
+
+				VASConfiguration configuration = vasDetail.getVasConfiguration();
+
+				if (configuration == null) {
+					configuration = this.vASConfigurationDAO.getVASConfigurationByCode(vasDetail.getProductCode(),
+							"_view");
+				}
+
+				VASProviderAccDetail vasProviderAccDetail = vASProviderAccDetailDAO
+						.getVASProviderAccDetByPRoviderId(configuration.getManufacturerId(), "");
+
+				if (vasProviderAccDetail != null) {
+					InsurancePaymentInstructions payments = new InsurancePaymentInstructions();
+
+					payments.setEntityCode(vasProviderAccDetail.getEntityCode());
+					payments.setProviderId(vasProviderAccDetail.getProviderId());
+					payments.setPaymentAmount(vasDetail.getFee());
+					payments.setPaymentDate(SysParamUtil.getAppDate());
+					payments.setPaymentType(vasProviderAccDetail.getPaymentMode());
+					payments.setApprovedDate(SysParamUtil.getAppDate());
+					payments.setDataEngineStatusId(0);
+					payments.setPayableAmount(vasDetail.getFee());
+					payments.setPartnerBankId(vasProviderAccDetail.getPartnerBankId());
+					payments.setNoOfInsurances(0);
+					payments.setNoOfReceivables(0);
+					payments.setLinkedTranId(0);
+					payments.setReceivableAmount(BigDecimal.ZERO);
+
+					payments.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					payments.setStatus(DisbursementConstants.STATUS_APPROVED);
+					payments.setPaymentCCy(SysParamUtil.getAppCurrency());
+					payments.setLastMntBy(loginUser.getUserId());
+					payments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					payments.setUserDetails(loginUser);
+
+					long id = this.insuranceDetailDAO.saveInsurancePayments(payments, TableType.MAIN_TAB);
+					vASRecordingDAO.updateVasStatus(vasDetail.getVasReference(), id);
+
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	@Override
 	public InsuranceDetails getInsurenceDetailsById(long id) {
 		return getInsuranceDetailDAO().getInsurenceDetailsById(id, "_View");
 	}
@@ -740,6 +808,22 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
+		return vASProviderAccDetailDAO;
+	}
+
+	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
+		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
+	}
+
+	public void setvASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
+		this.vASConfigurationDAO = vASConfigurationDAO;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
 }

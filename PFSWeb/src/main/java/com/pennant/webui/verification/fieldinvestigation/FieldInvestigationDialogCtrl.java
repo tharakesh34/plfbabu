@@ -1005,7 +1005,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 				&& this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("submit")) {
 			if (documentDetailDialogCtrl != null
 					&& CollectionUtils.sizeIsEmpty(documentDetailDialogCtrl.getDocumentDetailsList())) {
-				MessageUtil.showError(Labels.getLabel("FI_DOCUMENT_MANDATORY"));
+				MessageUtil.showError(Labels.getLabel("VERIFICATIONS_DOCUMENT_MANDATORY"));
 				return;
 			}
 		}

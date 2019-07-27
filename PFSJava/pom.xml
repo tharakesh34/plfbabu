@@ -223,6 +223,10 @@
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>com.pennanttech.pennapps.pff</groupId>
+			<artifactId>account-updater</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

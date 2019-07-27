@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
@@ -48,6 +49,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	private List<FinanceDisbursement> financeDisbursements;
 	private List<FinanceDisbursement> approvedFinanceDisbursements;
+	private List<VASRecording> vASRecordings = new ArrayList<VASRecording>();
 	private DocumentDetails documentDetails;
 
 	private List<FinCovenantType> covenantTypeList = new ArrayList<FinCovenantType>();
@@ -82,6 +84,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		excludeFields.add("finIsActive");
 		excludeFields.add("financeMain");
 		excludeFields.add("alwMultiPartyDisb");
+		excludeFields.add("vASRecordings");
 		return excludeFields;
 	}
 
@@ -299,5 +302,13 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setDocumentDetailsList(List<DocumentDetails> documentDetailsList) {
 		this.documentDetailsList = documentDetailsList;
+	}
+
+	public List<VASRecording> getvASRecordings() {
+		return vASRecordings;
+	}
+
+	public void setvASRecordings(List<VASRecording> vASRecordings) {
+		this.vASRecordings = vASRecordings;
 	}
 }

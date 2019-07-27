@@ -178,7 +178,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 	@Override
 	public List<AuditDetail> doApprove(List<FinCollaterals> finCollateralList, String tableType, String auditTranType,
-			String finSourceId, Object apiHeader) {
+			String finSourceId, Object apiHeader, String serviceName) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -195,7 +195,8 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			finCollateral.setRecordType("");
 			getFinCollateralsDAO().save(finCollateral, tableType);
 
-			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null) {
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null
+					|| StringUtils.isNotBlank(serviceName)) {
 				getFinCollateralsDAO().delete(finCollateral, "_Temp");
 			}
 

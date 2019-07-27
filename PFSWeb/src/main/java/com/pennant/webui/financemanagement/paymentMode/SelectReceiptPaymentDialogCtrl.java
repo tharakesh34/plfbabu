@@ -366,9 +366,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		//if (isForeClosure) {
-		this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
-		//}
+		if (isForeClosure) {
+			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
+		}
 
 	}
 
@@ -417,8 +417,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (StringUtils.equals(receiptMode, DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
 			this.row_subReceiptMode.setVisible(true);
-		} else {
 			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
+		} else {
+			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,");
 		}
 		loadValueDate();
 		if (!StringUtils.equals(receiptMode, DisbursementConstants.PAYMENT_TYPE_ONLINE)
@@ -461,6 +462,31 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					this.finReference.getValue(), startDate);
 		}
 
+		// PSD:138262
+		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) || receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) ) {
+			boolean initiated = receiptService
+					.isEarlySettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
+			if (initiated) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Receipt For Early Settlement already Initiated and is in process";
+
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90498", valueParm));
+			}
+
+		}
+		// PSD:138262
+		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) || receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			boolean initiated = receiptService
+					.isPartialSettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
+			if (initiated) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Receipt For Partial Settlement already Initiated and is in process";
+
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90499", valueParm));
+			}
+
+		}
+
 		if (errorDetail != null) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(errorDetail));
 		} else {
@@ -501,6 +527,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal totalDues = rch.getTotalPastDues().getTotalDue().add(rch.getTotalBounces().getTotalDue())
 				.add(rch.getTotalRcvAdvises().getTotalDue()).add(rch.getTotalFees().getTotalDue())
 				.subtract(receiptData.getExcessAvailable());
+
+		if (BigDecimal.ZERO.compareTo(totalDues) > 0) {
+			totalDues = BigDecimal.ZERO;
+		}
 
 		this.receiptDues.setValue(PennantApplicationUtil.formateAmount(totalDues, formatter));
 
@@ -910,7 +940,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
-		//Back Value checking will be with Application Date
+		// Back Value checking will be with Application Date
 		try {
 			if (this.receiptDate.getValue().compareTo(appDate) > 0) {
 				throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_BEFORE", new String[] {
@@ -1002,7 +1032,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		if (!financeMain.isFinIsActive()) {
+		if (!financeMain.isFinIsActive()
+				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
 			fillComboBox(receiptPurpose, FinanceConstants.FINSER_EVENT_SCHDRPY,
 					PennantStaticListUtil.getReceiptPurpose(), ",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);

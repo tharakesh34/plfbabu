@@ -155,7 +155,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public List<FinCovenantType> getFinCovenantTypeByFinRef(final String id, String type, boolean isEnquiry) {
-		logger.debug("Entering");
+		//logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
 
@@ -175,11 +175,11 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference = :FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		//logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
 		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinCovenantType.class);
-		logger.debug("Leaving");
+		//logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
@@ -463,7 +463,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	@Override
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
-		logger.debug("Entering");
+		//logger.debug("Entering");
 		FinCovenantType finCovenantType = new FinCovenantType();
 		finCovenantType.setId(id);
 
@@ -489,11 +489,11 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		selectSql.append(
 				" AND finreference not in (select referenceid  from documentdetails where finreference=referenceid and covenanttype=doccategory) ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		//logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finCovenantType);
 		RowMapper<FinCovenantType> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FinCovenantType.class);
-		logger.debug("Leaving");
+		//logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 

@@ -109,6 +109,15 @@ public class FinReceiptData {
 	private List<ErrorDetail> errorDetails = new ArrayList<>(1);
 	private boolean isCalReq = true;
 	private boolean isEventFeePercent = false;
+	private BigDecimal tdPriBal = BigDecimal.ZERO;
+
+	public BigDecimal getTdPriBal() {
+		return tdPriBal;
+	}
+
+	public void setTdPriBal(BigDecimal tdPriBal) {
+		this.tdPriBal = tdPriBal;
+	}
 
 	private BigDecimal curEventFeePercent = BigDecimal.ZERO;
 	private BigDecimal newEventFeePercent = BigDecimal.ZERO;

@@ -86,8 +86,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	protected Listbox listBoxPDVerification;
 	protected Groupbox pdInquiry;
 	protected Radiogroup pd;
-	protected Listheader listheader_FIVerification_ReInitAgency;
-	protected Listheader listheader_FIVerification_ReInitRemarks;
+	protected Listheader listheader_PDVerification_ReInitAgency;
+	protected Listheader listheader_PDVerification_ReInitRemarks;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private Verification verification;
@@ -545,8 +545,8 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 
 			if (enqiryModule) {
-				listheader_FIVerification_ReInitAgency.setVisible(false);
-				listheader_FIVerification_ReInitRemarks.setVisible(false);
+				listheader_PDVerification_ReInitAgency.setVisible(false);
+				listheader_PDVerification_ReInitRemarks.setVisible(false);
 				requestType.setDisabled(true);
 				agency.setReadonly(true);
 				reason.setReadonly(true);
@@ -693,7 +693,9 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<CustomerAddres> addresses = new ArrayList<>();
 		if (customerDetails.getAddressList() != null) {
 			for (CustomerAddres customerAddres : customerDetails.getAddressList()) {
-				addresses.add(customerAddres);
+				if(customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+					addresses.add(customerAddres);
+				}
 			}
 		}
 		return addresses;
@@ -701,7 +703,16 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	private void setVerifications() {
 		if (initType) {
-			addCustomerAddresses(financeDetail.getCustomerDetails().getAddressList(), false);
+			List<CustomerAddres>     addressesList           = new ArrayList<CustomerAddres>();
+			List<JointAccountDetail> jointAccountDetailsList = new ArrayList<JointAccountDetail>();
+			for(CustomerAddres addresses:financeDetail.getCustomerDetails().getAddressList()){
+				if(addresses.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+							addressesList.add(addresses);
+				}
+			}
+			
+			
+			addCustomerAddresses(addressesList, false);
 			addCoApplicantAddresses(financeDetail.getJountAccountDetailList(), false);
 			getTotalVerifications();
 		} else {
@@ -713,13 +724,19 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private List<Verification> getFinalVerifications(CustomerDetails customerDetails, boolean coApplicant) {
 		boolean exists = false;
 		Customer customer = customerDetails.getCustomer();
-		List<CustomerAddres> addresses = customerDetails.getAddressList();
+		List<CustomerAddres> addresses = new ArrayList<CustomerAddres>();
 		List<Verification> verifications = new ArrayList<>();
 		Map<String, Verification> addressMap = new HashMap<>();
 		Map<String, Verification> newAddressMap = new HashMap<>();
 		List<Verification> tempVerifications = new ArrayList<>();
 		Set<String> deleteSet = new HashSet<>();
 		Verification newVrf;
+		
+		for(CustomerAddres addres:customerDetails.getAddressList()){
+			if(addres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)){
+				addresses.add(addres);
+			}
+		}
 
 		//set deleted addresses of Co-Applicant
 		if (coApplicant) {
@@ -755,6 +772,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Verification current = addressMap.get(previous.getReferenceFor());
 			if (current != null) {
 				for (CustomerAddres newAddress : addresses) {
+					
 					if (StringUtils.equals(newAddress.getCustAddrType(), previous.getReferenceFor())
 							&& (newAddress.getCustID() == previous.getCustId())) {
 						CustomerAddres oldAddres = customerAddresService.getCustomerAddresById(previous.getCustId(),

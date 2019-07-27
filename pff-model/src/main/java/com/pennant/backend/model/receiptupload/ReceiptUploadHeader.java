@@ -69,6 +69,7 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 	private String entityCodeDesc;
 	private int uploadProgress;
 	private long receiptId;
+	private String lovValue;
 
 	private ReceiptUploadHeader befImage;
 
@@ -230,5 +231,13 @@ public class ReceiptUploadHeader extends AbstractWorkflowEntity implements Entit
 
 	public void setUploadHeaderId(long uploadHeaderId) {
 		this.uploadHeaderId = uploadHeaderId;
+	}
+
+	public String getLovValue() {
+		return lovValue;
+	}
+
+	public void setLovValue(String lovValue) {
+		this.lovValue = lovValue;
 	}
 }

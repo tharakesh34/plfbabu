@@ -1,7 +1,5 @@
 package com.pennanttech.pff.jobs;
 
-import java.text.ParseException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -66,14 +64,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationInvokeJob() {
-		
+
 		try {
 			CronExpression.validateExpression(SYS_NOTIFICATION_INVOKE_TIME);
 		} catch (Exception e) {
 			return;
 		}
 
-		
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsInvokeJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_INVOKE_JOB, SYS_NOTIFICATIONS_INVOKE_JOB)
@@ -88,13 +85,13 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	}
 
 	private void registerSystemNotificationProcessJob() {
-		
+
 		try {
 			CronExpression.validateExpression(SYS_NOTIFICATION_PROCESS_TIME);
 		} catch (Exception e) {
 			return;
 		}
-		
+
 		Job job = new Job();
 		job.setJobDetail(JobBuilder.newJob(SystemNotificationsProcessJob.class)
 				.withIdentity(SYS_NOTIFICATIONS_PROCESS_JOB, SYS_NOTIFICATIONS_PROCESS_JOB)
@@ -113,7 +110,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		Job job = new Job();
 
 		String scheduleTime = SysParamUtil.getValueAsString("RECEIPT_RESPONSE_JOB_CORNEXP");
-		
+
 		try {
 			CronExpression.validateExpression(scheduleTime);
 		} catch (Exception e) {
@@ -150,13 +147,12 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = CovenantAlertsJob.JOB_KEY;
 		String trigger = CovenantAlertsJob.JOB_TRIGGER;
 		String cronExpression = CovenantAlertsJob.getCronExpression();
-		
+
 		try {
 			CronExpression.validateExpression(cronExpression);
 		} catch (Exception e) {
 			return;
 		}
-
 
 		Job job = new Job();
 
@@ -187,7 +183,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = FinPutCallAlertsJob.JOB_KEY;
 		String trigger = FinPutCallAlertsJob.JOB_TRIGGER;
 		String cronExpression = FinPutCallAlertsJob.getCronExpression();
-		
+
 		try {
 			CronExpression.validateExpression(cronExpression);
 		} catch (Exception e) {
@@ -213,15 +209,17 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		String jobKey = LMSServiceLogAlertsJob.JOB_KEY;
 		String trigger = LMSServiceLogAlertsJob.JOB_TRIGGER;
 		String cronExpression = LMSServiceLogAlertsJob.CRON_EXPRESSION;
-		
+
 		try {
 			CronExpression.validateExpression(cronExpression);
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			return;
 		}
 
 		String lmsServiceLogReq = SysParamUtil.getValueAsString(SMTParameterConstants.LMS_SERVICE_LOG_REQ);
 		if (!StringUtils.equals(lmsServiceLogReq, PennantConstants.YES)) {
+			logger.debug("LMS_SERVICE_LOG_REQ parameter value :" + lmsServiceLogReq);
 			return;
 		}
 		Job job = new Job();

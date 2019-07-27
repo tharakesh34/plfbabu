@@ -32,6 +32,7 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -283,14 +284,18 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		List<OverdueChargeRecovery> lpiListTodisplay = new ArrayList<OverdueChargeRecovery>();
 
-		List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
 		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "", false);
-		List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
-		for (FinODDetails fod : list) {
-			List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod,
-					DateUtility.addDays(DateUtility.getAppDate(), -1), finMian, schlist, null);
-			lpiListTodisplay.addAll(lpiList);
-
+		if ((PennantConstants.YES.equals(this.recoveryCode.getValue())
+				&& StringUtils.equals(CalculationConstants.PDPFTCAL_NOTAPP, finMian.getPastduePftCalMthd()))) {
+			//If the enquiry type as a Interest over due enquiry, and past due calc method as a NotApplicable then no need show the enquiry.
+		} else {
+			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
+			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
+			for (FinODDetails fod : list) {
+				List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod,
+						DateUtility.addDays(DateUtility.getAppDate(), -1), finMian, schlist, null);
+				lpiListTodisplay.addAll(lpiList);
+			}
 		}
 		this.listBoxLatepayProfitRecovery
 				.setModel(new GroupsModelArray(lpiListTodisplay.toArray(), new OverdueChargeRecoveryComparator()));

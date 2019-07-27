@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -29,10 +30,12 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FeeCalculator implements Serializable {
 	private static final long serialVersionUID = 8062681791631293126L;
@@ -43,6 +46,7 @@ public class FeeCalculator implements Serializable {
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
+	private FinanceDetailService financeDetailService;
 
 	public FinReceiptData calculateFees(FinReceiptData receiptData) {
 		receiptData = convertToFinanceFees(receiptData);
@@ -146,7 +150,7 @@ public class FeeCalculator implements Serializable {
 	}
 
 	public FinReceiptData calculateFeeDetail(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 
@@ -161,7 +165,10 @@ public class FeeCalculator implements Serializable {
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
 
+		FinanceMain fm = finScheduleData.getFinanceMain();
 		for (FinFeeDetail fee : fees) {
+			this.finFeeDetailService.calculateFees(fee, fm, taxPercentages);
+
 			if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 				deductFeeFromDisbTot = deductFeeFromDisbTot.add(fee.getRemainingFee());
 			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
@@ -184,23 +191,24 @@ public class FeeCalculator implements Serializable {
 		}
 
 		// FIXME as discussed should be added in finance main table
-		FinanceMain fm = finScheduleData.getFinanceMain();
-		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_ORG, financeDetail.getModuleDefiner())) {
+		if (FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
 			fm.setDeductFeeDisb(deductFeeFromDisbTot);
 			fm.setFeeChargeAmt(feeAddToDisbTot);
-		}
-
-		for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
-			if (disbursement.getInstructionUID() == Long.MIN_VALUE) {
-				disbursement.setDeductFromDisb(deductFeeFromDisbTot);
+		} else {
+			if (CollectionUtils.isNotEmpty(finScheduleData.getDisbursementDetails())) {
+				List<Integer> approvedDisbSeq = financeDetailService
+						.getFinanceDisbSeqs(finScheduleData.getFinanceMain().getFinReference(), false);
+				for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+					if (!approvedDisbSeq.contains(disbursement.getDisbSeq())) {
+						disbursement.setDeductFeeDisb(deductFeeFromDisbTot);
+						break;
+					}
+				}
 			}
+
 		}
 
-		for (FinFeeDetail fee : fees) {
-			this.finFeeDetailService.calculateFees(fee, fm, taxPercentages);
-		}
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return receiptData;
 	}
 
@@ -262,7 +270,9 @@ public class FeeCalculator implements Serializable {
 						BigDecimal outStandingFeeBal = financeScheduleDetailDAO
 								.getOutStandingBalFromFees(financeMain.getFinReference());
 						executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
-						executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+						//PSD: 138255 PrincipalOutStanding will be future Amount to be paid.
+						executionMap.put("principalOutStanding", finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
+						
 						executionMap.put("totOSExcludeFees",
 								finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()
@@ -380,7 +390,7 @@ public class FeeCalculator implements Serializable {
 			calculatedAmt = finPftDetail.getTotalPriBal();
 			break;
 		case PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE:
-			calculatedAmt = finPftDetail.getTotalPriBal().subtract(finPftDetail.getTdSchdPriBal());
+			calculatedAmt = finPftDetail.getTotalPriBal().subtract(receiptData.getTdPriBal());
 			break;
 		case PennantConstants.FEE_CALCULATEDON_PAYAMOUNT:
 			calculatedAmt = receiptData.getReceiptHeader().getPartPayAmount();
@@ -488,5 +498,10 @@ public class FeeCalculator implements Serializable {
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	@Autowired
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 }

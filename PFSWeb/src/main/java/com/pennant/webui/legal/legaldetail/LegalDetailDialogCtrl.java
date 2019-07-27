@@ -64,6 +64,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
@@ -120,6 +121,7 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.engine.workflow.Operation;
@@ -981,6 +983,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	}
 
 	private boolean doWriteComponentsToBean(LegalDetail aLegalDetail) {
+		Date appDate = DateUtility.getAppDate();
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		BeanUtils.copyProperties(this.legalDetail, aLegalDetail);
 
@@ -1081,8 +1085,15 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 				this.encumbranceCertificateTab.setSelected(true);
 				throw new WrongValueException(this.ecPropertyOwnerName, Labels.getLabel("FIELD_IS_MAND",
 						new String[] { Labels.getLabel("label_LegalPropertyTitleDialog_ECPropertyOwnerName.value") }));
-			} else {
-				aLegalDetail.setPropertyDetailECDate(this.propertyDetailECDate.getValue());
+			} else if (this.propertyDetailECDate.getValue() != null) {
+				this.propertyDetailECDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_LegalPropertyTitleDialog_ECdate.value"), true, null, appDate, true));
+				try {
+					aLegalDetail.setPropertyDetailECDate(this.propertyDetailECDate.getValue());
+				} catch (WrongValueException we) {
+					this.encumbranceCertificateTab.setSelected(true);
+					wve.add(we);
+				}
 				aLegalDetail.setEcPropertyOwnerName(this.ecPropertyOwnerName.getValue());
 			}
 		}
@@ -1175,6 +1186,14 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 					}
 				}
 			}
+		}
+		doRemoveValidation();
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
 		}
 		return false;
 	}

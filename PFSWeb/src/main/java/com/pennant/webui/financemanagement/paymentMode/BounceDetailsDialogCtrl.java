@@ -104,7 +104,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			rcdAmount = rcdAmount.add(allocate.getTotRecv());
-			
+
 			lc = new Listcell(PennantApplicationUtil.amountFormate(allocate.getDueGST(), 2));
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
@@ -132,7 +132,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
 			curPaidAmt = curPaidAmt.add(allocate.getPaidAmount());
-			
+
 			//Paid GST
 			lc = new Listcell();
 			CurrencyBox allocationPaidGst = new CurrencyBox();
@@ -141,7 +141,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 			setProps(allocationPaidGst, false, 2, 120);
 			allocationPaidGst.setValue(PennantApplicationUtil.formateAmount(allocate.getPaidGST(), 2));
 			allocationPaidGst.setReadonly(true);
-			
+
 			lc.appendChild(allocationPaidGst);
 			lc.setStyle("text-align:right;");
 			lc.setParent(item);
@@ -191,7 +191,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(dueGST, formatter));
 		label.setId("AllocateAmount_dueGST");
@@ -219,7 +219,7 @@ public class BounceDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDetail
 		lc.setStyle("text-align:right;font-weight:bold;");
 		lc.appendChild(label);
 		lc.setParent(item);
-		
+
 		lc = new Listcell();
 		label = new Label(PennantAppUtil.amountFormate(paidGST, formatter));
 		label.setId("AllocateAmount_curPaidGSTAmt");

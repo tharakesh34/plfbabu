@@ -88,6 +88,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -1327,7 +1328,19 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				dataMap.put("fincollateralreq", false);
 				dataMap.put("btloan", "");
 			}
+
 			aeEvent.setDataMap(dataMap);
+
+			// GST parameters
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(getReceiptHeader().getReference());
+			if (gstExecutionMap != null) {
+				for (String mapkey : gstExecutionMap.keySet()) {
+					if (StringUtils.isNotBlank(mapkey)) {
+						aeEvent.getDataMap().put(mapkey, gstExecutionMap.get(mapkey));
+					}
+				}
+			}
+
 			prepareFeeRulesMap(getReceiptHeader().getPaidFeeList(), aeEvent.getDataMap());
 
 			//execute accounting

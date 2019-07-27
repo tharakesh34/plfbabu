@@ -157,6 +157,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private VASRecording befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private String insStatus;
 
 	private ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
 	private VASConfiguration vasConfiguration = null;
@@ -249,6 +250,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 		excludeFields.add("policyNumber");
 		excludeFields.add("medicalApplicable");
 		excludeFields.add("medicalStatus");
+		excludeFields.add("insStatus");
 		return excludeFields;
 	}
 
@@ -854,6 +856,14 @@ public class VASRecording extends AbstractWorkflowEntity {
 
 	public void setMedicalStatus(String medicalStatus) {
 		this.medicalStatus = medicalStatus;
+	}
+
+	public String getInsStatus() {
+		return insStatus;
+	}
+
+	public void setInsStatus(String insStatus) {
+		this.insStatus = insStatus;
 	}
 
 }

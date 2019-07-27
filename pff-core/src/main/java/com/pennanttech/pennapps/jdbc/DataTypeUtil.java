@@ -78,6 +78,8 @@ public final class DataTypeUtil {
 					return Long.parseLong(value);
 				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.INT && StringUtils.isNumeric(value)) {
 					return Integer.parseInt(value);
+				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.STRING) {
+					return value;
 				}
 				break;
 			}

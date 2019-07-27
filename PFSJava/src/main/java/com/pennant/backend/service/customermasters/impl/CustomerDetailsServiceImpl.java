@@ -716,7 +716,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		long custId = customer.getCustID();
-		String tableType = "_aview";
+		String tableType = "_aView";
 
 		customer.setCustomer(customerDAO.getCustomerByID(custId, tableType));
 		customer.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(custId, tableType));
@@ -2922,6 +2922,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		createOrUpdateCrmCustomer(aAuditHeader);
 
 		if (!aAuditHeader.isNextProcess()) {
+			logger.debug("isNextProcess");
 			logger.debug("Leaving");
 			return aAuditHeader;
 		}
@@ -3137,7 +3138,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			WSReturnStatus status = customerDetails.getReturnStatus();
 
-			if (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode())) {
+			if ((status != null) && (!InterfaceConstants.SUCCESS_CODE.equals(status.getReturnCode()))) {
+				logger.debug("Failure Entering");
 				errorParm[1] = status.getReturnText();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, status.getReturnCode(), errorParm, null),
@@ -3152,6 +3154,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 		} catch (InterfaceException e) {
+			logger.debug("InterfaceException Entering");
 			errorParm[1] = e.getMessage();
 			auditDetail.setErrorDetail(
 					ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "99014", errorParm, null),

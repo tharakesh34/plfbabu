@@ -3175,7 +3175,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("PayableAdvise",
 				new ModuleMapping("ManualAdvise", ManualAdvise.class, new String[] { "ManualAdvise_LovView" }, null,
 						new String[] { "AdviseID", "FeeTypeID", "AdviseAmount", "ReservedAmt", "BalanceAmt" },
-						new String[][] { { "AdviseType", "0", "2" } }, 750));
+						new Object[][] { { "AdviseType", "0", 2 } }, 750));
 
 		ModuleUtil.register("LoanClosureEnquiry",
 				new ModuleMapping("LoanClosureEnquiry", ForeClosure.class, null, masterWF, null, null, 400));

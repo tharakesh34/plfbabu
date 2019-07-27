@@ -451,9 +451,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			lc = new Listcell(payments.getFinType());
 			lc.setParent(item);
 
-			lc = new Listcell(
-					PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased().multiply(new BigDecimal(100)),
-							CurrencyUtil.getFormat(payments.getDisbCCy())));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(payments.getAmtToBeReleased(),
+					CurrencyUtil.getFormat(payments.getDisbCCy())));
 			lc.setParent(item);
 
 			lc = new Listcell(payments.getCustShrtName());
@@ -916,6 +915,15 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	@Autowired(required = false)
 	public void setDisbursementRequest(DisbursementRequest disbursementRequest) {
 		this.disbursementRequest = disbursementRequest;
+	}
+
+	/**
+	 * Method for fetching Currency format of selected currency
+	 * 
+	 * @return
+	 */
+	public int getCcyFormat() {
+		return CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 	}
 
 }

@@ -15,7 +15,6 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.finance.covenant.impl.PutCallAlerts;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -24,7 +23,7 @@ import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class LMSServiceLogAlerts {
-	private static Logger logger = Logger.getLogger(PutCallAlerts.class);
+	private static Logger logger = Logger.getLogger(LMSServiceLogAlerts.class);
 
 	private FinanceMainDAO financeMainDAO;
 	private CustomerDetailsService customerDetailsService;
@@ -78,7 +77,7 @@ public class LMSServiceLogAlerts {
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_RATECHG);
 		lmsServiceNotifyCust.setEmails(emails);
 
-		long lmsServiceNotifyId = sendNotification(financeDetail, lmsServiceNotifyCust);
+		long lmsServiceNotifyId = sendNotification(financeDetail, lmsServiceNotifyCust, customerDetails);
 
 		if (lmsServiceNotifyId > 0) {
 			finServiceInstrutionDAO.updateNotificationFlag(PennantConstants.YES, lmsServiceLog.getId());
@@ -86,10 +85,12 @@ public class LMSServiceLogAlerts {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private long sendNotification(FinanceDetail financeDetail, Notification notification) {
+	private long sendNotification(FinanceDetail financeDetail, Notification notification,
+			CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 
 		if (CollectionUtils.isEmpty(notification.getEmails())) {
+			logger.debug("Customer Emails are not available for the customer: " + customerDetails.getCustID());
 			return 0;
 		}
 		try {

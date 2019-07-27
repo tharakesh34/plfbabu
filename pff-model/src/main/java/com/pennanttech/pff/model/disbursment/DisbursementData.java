@@ -6,6 +6,7 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 
 public class DisbursementData implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String finType;
 	private long userId;
 	private List<FinAdvancePayments> disbursements;

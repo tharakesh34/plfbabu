@@ -52,7 +52,7 @@ public interface PostingsDAO {
 
 	long saveHeader(ReturnDataSet rule, String status, String type);
 
-	void saveBatch(List<ReturnDataSet> dataSetList);
+	void saveBatch(List<ReturnDataSet> dataSetList, boolean isNewTranID);
 
 	void updateStatusByLinkedTranId(long linkedTranId, String postStatus);
 
@@ -90,7 +90,7 @@ public interface PostingsDAO {
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 
 	void updatePostCtg();
-	
+
 	List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference);
 
 }

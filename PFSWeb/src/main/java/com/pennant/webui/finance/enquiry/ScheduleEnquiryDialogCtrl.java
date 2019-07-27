@@ -379,6 +379,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			BigDecimal totalAdvPft = BigDecimal.ZERO;
+			int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
@@ -414,6 +415,7 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 				map.put("window", this.window_ScheduleEnquiryDialog);
 				map.put("totalAdvPft", totalAdvPft);
 				map.put("showAdvRate", showAdvRate);
+				map.put("formatter", formatter);
 
 				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
 						false);

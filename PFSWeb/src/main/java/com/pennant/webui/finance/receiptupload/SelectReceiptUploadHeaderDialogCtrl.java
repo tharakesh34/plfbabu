@@ -111,8 +111,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
-	 * selected Customer object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * zul-file is called with a parameter for a selected Customer object in a
+	 * Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -240,9 +241,10 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
-	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
-	 * where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma
+	 * separated values and then read the document and setting the values to the
+	 * Lead VO and added those vos to the List and it also shows the information
+	 * about where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -376,7 +378,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				return;
 			}
 
-			//Validate Receipt from service as inquiry
+			// Validate Receipt from service as inquiry
 			validateReceipt();
 
 			this.receiptUploadHeader.setReceiptUploadList(this.rudList);
@@ -445,7 +447,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * Method for Validate uploaded file content whether data in proper manner or not
+	 * Method for Validate uploaded file content whether data in proper manner
+	 * or not
 	 * 
 	 * @throws Exception
 	 */
@@ -638,7 +641,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		}
 
 		if (!StringUtils.equals(strValue, "SP") && !StringUtils.equals(strValue, "EP")
-				&& StringUtils.equals(strValue, "ES")) {
+				&& !StringUtils.equals(strValue, "ES")) {
 			setErrorToRUD(rud, "RU0040", "Values other than SP/EP/ES in [RECEIPTPURPOSE] ");
 		}
 
@@ -665,6 +668,10 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			setErrorToRUD(rud, "RU0040", "Values other than A/M in [ALLOCATIONTYPE] ");
 		} else {
 			rud.setAllocationType(strValue);
+		}
+		
+		if(StringUtils.equals(strValue, "M") && !StringUtils.equals(rud.getReceiptPurpose(), "SP")){
+			setErrorToRUD(rud, "RU0040", "Values other than A in [ALLOCATIONTYPE] ");
 		}
 
 		// Receipt Amount
@@ -731,6 +738,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		// Received Date
 		strValue = getCellStringValue(rchRow, 9);
+
 		try {
 			if (StringUtils.isNotBlank(strValue)) {
 				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
@@ -741,7 +749,19 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [RECEIVEDDATE] ");
 		}
+		// Value Date and Received Date
+		// Value Date and Received Date
+		String strValueDate = getCellStringValue(rchRow, 8);
+		String strReceivedDate = getCellStringValue(rchRow, 9);
 
+		try {
+			if (StringUtils.isNotBlank(strValueDate) && StringUtils.isNotBlank(strReceivedDate)
+					&& strReceivedDate.compareTo(strValueDate) < 0) {
+				setErrorToRUD(rud, "RU0040", "[VALUEDATE] is greater than [RECEIVEDDATE]");
+			} 
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "[VALUEDATE] is greater than [RECEIVEDDATE]");
+		}
 		// Receipt Mode
 		strValue = getCellStringValue(rchRow, 10);
 		if (StringUtils.isNotBlank(strValue)) {
@@ -770,6 +790,17 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		if (strValue.length() > 10) {
 			setErrorToRUD(rud, "RU0040", "[RECEIPTCHANNEL] with length more than 10 characters");
+		}
+
+		try {
+			if (StringUtils.isBlank(strValue)
+					&& (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CASH)
+							|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+							|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))) {
+				setErrorToRUD(rud, "RU0040", "Blanks in [RECEIPTCHANNEL]");
+			}
+		} catch (Exception e) {
+			setErrorToRUD(rud, "RU0040", "Blanks in [RECEIPTCHANNEL]");
 		}
 
 		// Funding Account
@@ -841,11 +872,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		// Deposit Date
 		strValue = getCellStringValue(rchRow, 20);
 		try {
-			if (StringUtils.isNotBlank(strValue)) {
+			if (StringUtils.isBlank(strValue)
+					&& (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+							|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))) {
+				setErrorToRUD(rud, "RU0040", "Blanks in [DEPOSITDATE] ");
+			} else {
 				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setDepositDate(dateValue);
-			} else {
-				setErrorToRUD(rud, "RU0040", "Blanks in [DEPOSITDATE] ");
 			}
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [DEPOSITDATE] ");
@@ -854,11 +887,13 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		// Realization Date
 		strValue = getCellStringValue(rchRow, 21);
 		try {
-			if (StringUtils.isNotBlank(strValue)) {
+			if (StringUtils.isBlank(strValue)
+					&& (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+							|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))) {
+				setErrorToRUD(rud, "RU0040", "Blanks in [REALIZATIONDATE] ");
+			} else {
 				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setRealizationDate(dateValue);
-			} else {
-				setErrorToRUD(rud, "RU0040", "Blanks in [REALIZATIONDATE] ");
 			}
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [REALIZATIONDATE] ");
@@ -940,7 +975,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		int rowCount = rchSheet.getLastRowNum();
 
 		// Just Load the valid fields
-		for (int i = 1; i < rowCount; i++) {
+		for (int i = 1; i <= rowCount; i++) {
 			Row rchRow = rchSheet.getRow(i);
 
 			// To avoid possibility of blank row in between
@@ -961,6 +996,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				setErrorToUAD(uad, "RU0040", "Allocation Sheet: [ALLOCATIONTYPE] with blank value ");
 			}
 			uad.setAllocationType(strValue);
+			
+			
 
 			strValue = getCellStringValue(rchRow, 2);
 			if (StringUtils.isNotBlank(strValue)) {
@@ -1172,10 +1209,18 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		for (int i = 0; i < rudList.size(); i++) {
 			ReceiptUploadDetail rud = rudList.get(i);
 
-			//Already error marked. No need to find new errors
+			// Already error marked. No need to find new errors
 			if (!rud.getErrorDetails().isEmpty()) {
+				rud.setUploadStatus(PennantConstants.UPLOAD_STATUS_FAIL);
+
+				String code = StringUtils.trimToEmpty(rud.getErrorDetails().get(0).getCode());
+				String description = StringUtils.trimToEmpty(rud.getErrorDetails().get(0).getError());
+
+				rud.setReason(String.format("%s %s %s", code, "-", description));
 				continue;
 			}
+			
+			
 
 			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, this.entity.getValidatedValue());
 			fsi.setReqType("Inquiry");
@@ -1199,7 +1244,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * validate each object with list and check dedub for loan reference with status,transaction ref,cheque or dd number
+	 * validate each object with list and check dedub for loan reference with
+	 * status,transaction ref,cheque or dd number
 	 * 
 	 * @param receiptUploadDetail
 	 * @return dedup Check

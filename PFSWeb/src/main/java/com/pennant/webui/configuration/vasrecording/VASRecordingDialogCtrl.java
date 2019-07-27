@@ -777,7 +777,16 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
 
-					if (isFeeEditable() && (aVASRecording.getFee().compareTo(BigDecimal.ZERO) > 0)) {
+					boolean allowTomodify= false;
+					if(aVASRecording.isNew()){
+						if(aVASRecording.getFee().compareTo(BigDecimal.ZERO) > 0){
+							allowTomodify = true;
+						}
+					} else {
+						allowTomodify = true;
+					}
+					
+					if (allowTomodify) {
 						FinFeeDetail finFeeDetail = new FinFeeDetail();
 						finFeeDetail.setVasReference(aVASRecording.getVasReference());
 						finFeeDetail.setOriginationFee(true);
@@ -823,7 +832,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						//Deciding the Fee Schedule method based on the configuration
 						if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_COLLECTION,
 								aVASRecording.getVasConfiguration().getModeOfPayment())) {
-							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PAID_BY_CUSTOMER);
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
 
 							finFeeDetail.setPaidAmountOriginal(aVASRecording.getFee());
 							finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
@@ -834,7 +843,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 							finFeeDetail.setRemainingFee(BigDecimal.ZERO);
 						} else if (StringUtils.equals(VASConsatnts.VAS_PAYMENT_DEDUCTION,
 								aVASRecording.getVasConfiguration().getModeOfPayment())) {
-							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_DISBURSE);
+							finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
 						}
 
 						finFeeDetail.setNetAmountOriginal(aVASRecording.getFee());

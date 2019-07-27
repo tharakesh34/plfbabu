@@ -111,13 +111,16 @@ public class MandateListModelItemRenderer implements ListitemRenderer<Mandate>, 
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getExpiryDate()));
 		lc.setParent(item);
+		
 		String status = PennantAppUtil.getlabelDesc(mandate.getStatus(), statusTypeList);
-		if (StringUtils.isEmpty(status)) {
+		
+		// FIXME: Showing Custom Mandate status when Status is not there. Have To check with respective module Owner.
+		/*if (StringUtils.isEmpty(status)) {
 			if (StringUtils.isEmpty(mandate.getStatus())
 					|| StringUtils.equals(mandate.getStatus(), PennantConstants.List_Select)) {
 				status = Labels.getLabel("label_Mandate_" + customMandateStatus);
 			}
-		}
+		}*/
 		lc = new Listcell(status);
 		lc.setParent(item);
 		lc = new Listcell(DateUtility.formatToLongDate(mandate.getInputDate()));

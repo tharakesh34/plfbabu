@@ -90,6 +90,9 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 	private VASProviderAccDetail befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private Long partnerBankId;
+	private String partnerBankCode;
+	private String partnerBankName;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -113,6 +116,8 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 		excludeFields.add("ifscCode");
 		excludeFields.add("micrCode");
 		excludeFields.add("bankCode");
+		excludeFields.add("partnerBankCode");
+		excludeFields.add("partnerBankName");
 		return excludeFields;
 	}
 
@@ -278,6 +283,30 @@ public class VASProviderAccDetail extends AbstractWorkflowEntity implements Enti
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public Long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(Long partnerBankId) {
+		this.partnerBankId = partnerBankId;
+	}
+
+	public String getPartnerBankCode() {
+		return partnerBankCode;
+	}
+
+	public void setPartnerBankCode(String partnerBankCode) {
+		this.partnerBankCode = partnerBankCode;
+	}
+
+	public String getPartnerBankName() {
+		return partnerBankName;
+	}
+
+	public void setPartnerBankName(String partnerBankName) {
+		this.partnerBankName = partnerBankName;
 	}
 
 }

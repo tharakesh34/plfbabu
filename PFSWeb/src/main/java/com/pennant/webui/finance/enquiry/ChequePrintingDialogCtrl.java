@@ -524,6 +524,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+			int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
 			for (int i = 0; i < sdSize; i++) {
 				FinanceScheduleDetail aScheduleDetail = finScheduleData.getFinanceScheduleDetails().get(i);
 				boolean showRate = false;
@@ -541,6 +542,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				map.put("finSchdData", finScheduleData);
 				map.put("financeScheduleDetail", aScheduleDetail);
 				map.put("paymentDetailsMap", rpyDetailsMap);
+				map.put("formatter", formatter);
 				map.put("window", this.window_ChequePrintingDialog);
 				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
 						false);

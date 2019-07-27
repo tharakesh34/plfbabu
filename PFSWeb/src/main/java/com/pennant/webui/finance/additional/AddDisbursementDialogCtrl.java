@@ -770,10 +770,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finMain.setCurDisbursementAmt(finServiceInstruction.getAmount());
 		BigDecimal addingFeeToFinance = BigDecimal.ZERO;
 
-		if (getFinFeeDetailListCtrl() != null) {
-			getFinFeeDetailListCtrl().doExecuteFeeCharges(true, getFinScheduleData());
-		}
-
 		if (isOverdraft) {
 
 			if (posIntProcess) {
@@ -896,6 +892,16 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		aFinScheduleData.getFinanceMain().resetRecalculationFields();
 		aFinScheduleData.setFinServiceInstruction(finServiceInstruction);
 
+		//Set DisbSeq as Reference in Service Instruction
+		int disbSeq = 0;
+		for (int i = 0; i < aFinScheduleData.getDisbursementDetails().size(); i++) {
+			FinanceDisbursement curDisb = aFinScheduleData.getDisbursementDetails().get(i);
+			if (curDisb.getDisbSeq() > disbSeq) {
+				disbSeq = curDisb.getDisbSeq();
+			}
+		}
+		finServiceInstruction.setReference(String.valueOf(disbSeq));
+
 		// Show Error Details in Schedule Maintenance
 		if (aFinScheduleData.getErrorDetails() != null && !aFinScheduleData.getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
@@ -904,6 +910,18 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			aFinScheduleData.setSchduleGenerated(true);
 			if (getScheduleDetailDialogCtrl() != null) {
 				getScheduleDetailDialogCtrl().doFillScheduleList(aFinScheduleData);
+			}
+
+			try {
+				FinFeeDetailListCtrl detailListCtrl = (FinFeeDetailListCtrl) getScheduleDetailDialogCtrl()
+						.getFinanceMainDialogCtrl().getClass().getMethod("getFinFeeDetailListCtrl")
+						.invoke(getScheduleDetailDialogCtrl().getFinanceMainDialogCtrl());
+				if (detailListCtrl != null) {
+					detailListCtrl.doExecuteFeeCharges(true, aFinScheduleData);
+				}
+			} catch (NoSuchMethodException | SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		logger.debug("Leaving");

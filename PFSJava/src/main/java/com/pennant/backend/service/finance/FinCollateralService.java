@@ -48,7 +48,7 @@ public interface FinCollateralService {
 	AuditHeader doReject(AuditHeader auditHeader);
 
 	List<AuditDetail> doApprove(List<FinCollaterals> financeCollaterals, String tableType, String tranType,
-			String finSourceId, Object apiHeader);
+			String finSourceId, Object apiHeader, String serviceName);
 
 	List<AuditDetail> validate(List<FinCollaterals> finCollateralList, long workflowId, String method,
 			String auditTranType, String usrLanguage);
