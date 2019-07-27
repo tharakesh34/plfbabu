@@ -3604,12 +3604,28 @@
 
 	<changeSet id="103" author="Manoj">
 		<sql> 
-	  <![CDATA[ 
-	  	 DELETE FROM SMTPARAMETERS where sysparmcode = 'HOLD_INS_INST_POST';
-		 INSERT INTO SMTPARAMETERS VALUES ('HOLD_INS_INST_POST','Insurance Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1, 1000,CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0); 
-	 ]]>
+	 	 <![CDATA[ 
+	  	 	DELETE FROM SMTPARAMETERS where sysparmcode = 'HOLD_INS_INST_POST';
+		 	INSERT INTO SMTPARAMETERS VALUES ('HOLD_INS_INST_POST','Insurance Instruction Posting During Loan','String', 0, 'N', 1, 0, NULL, NULL,'Disbursement Instruction Posting During Loan',1, 1000,CURRENT_TIMESTAMP,'Approved',NULL, NULL, NULL, NULL, NULL, 0); 
+	 	]]>
 		</sql>
 	</changeSet>
-	<!--  please skip id no "104" for next change set-->
-	
+	<!-- please skip id no "104" for next change set -->
+
+	<changeSet id="105" author="murthy">
+		<comment>New RBFields Added for Limit Rule</comment>
+		<sql>
+            <![CDATA[ 
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_lovDescAccountsOfficer';
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_dmaCodeDesc';
+
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_lovDescAccountsOfficer', 'Sourcing Officer', 'varchar', 100, 0, 0, '', 'dbvalue', 'SourceOfficer');
+				Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_lovDescAccountsOfficer', 'Sourcing Officer', 'varchar', 100, 0, 0, '', 'dbvalue', 'SourceOfficer');
+
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_dmaCodeDesc', 'DMA Code', 'varchar', 100, 0, 0, '', 'dbvalue', 'DMA');
+				Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_dmaCodeDesc', 'DMA Code', 'varchar', 100, 0, 0, '', 'dbvalue', 'DMA');
+    	     ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

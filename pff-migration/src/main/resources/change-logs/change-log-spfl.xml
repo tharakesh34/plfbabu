@@ -47,4 +47,25 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				delete AMTVehicleDealer where DealerType = 'DMA' and DealerName = 'DFT'
+				insert into amtvehicledealer values((select coalesce(max(dealerid), 0)+1 from amtvehicledealer_view), 'DFT', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0, NULL, NULL, NULL, NULL, 'DMA', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,NULL, NULL, NULL, 0, 1, 'DFT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="3" author="murthy.y">
+		<sql>
+			<![CDATA[
+				update financemain set AccountsOfficer = (select max(DealerId) from AMTVehicleDealer where DealerType = 'SOPT' and DealerName = 'DFT') where DmaCode is null  or DmaCode =0;
+				update financemain_Temp set AccountsOfficer = (select max(DealerId) from AMTVehicleDealer where DealerType = 'SOPT' and DealerName = 'DFT') where DmaCode is null  or DmaCode =0;	
+				
+				update financemain set DmaCode = (select max(DealerId) from AMTVehicleDealer where DealerType = 'DMA' and DealerName = 'DFT') where DmaCode is null  or DmaCode =0;
+				update financemain_Temp set DmaCode = (select max(DealerId) from AMTVehicleDealer where DealerType = 'DMA' and DealerName = 'DFT') where DmaCode is null  or DmaCode =0;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
