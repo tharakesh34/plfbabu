@@ -88,6 +88,7 @@ import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
+import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceWorkFlowDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.receipts.DepositChequesDAO;
@@ -225,6 +226,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Autowired
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
 	private FinTaxDetailsDAO finTaxDetailsDAO;
+	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -6092,4 +6094,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return isInitiated;
 	}
 
+	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {
+		return taxHeaderDetailsDAO;
+	}
+
+	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
+		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
 }
