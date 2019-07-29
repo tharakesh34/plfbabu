@@ -134,7 +134,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal orgEndBal = BigDecimal.ZERO;
 	private BigDecimal orgPlanPft = BigDecimal.ZERO;
 
-	//Advised profit Rates
+	// Advised profit Rates
 	private String advBaseRate;
 	private BigDecimal advMargin = BigDecimal.ZERO;
 	private BigDecimal advPftRate = BigDecimal.ZERO;
@@ -148,7 +148,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal suplRentPaid = BigDecimal.ZERO;
 	private BigDecimal incrCostPaid = BigDecimal.ZERO;
 
-	//Fee Details on Schedule Basis
+	// Fee Details on Schedule Basis
 	@XmlElement
 	private BigDecimal feeSchd = BigDecimal.ZERO;
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
@@ -179,12 +179,15 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private boolean repayComplete = false;
 	private List<ErrorDetail> errorDetails = new ArrayList<>();
 
-	//GST
+	// GST
 	private BigDecimal feeTax = BigDecimal.ZERO;
 	private BigDecimal subventionAmount = BigDecimal.ZERO;
 
-	//Is TDS Applicable
+	// Is TDS Applicable
 	private boolean tDSApplicable = false;
+
+	// Profit waiver
+	private BigDecimal schdPftWaiver = BigDecimal.ZERO;
 
 	// HybridFlexi
 	@XmlElement(name = "limitDrop")
@@ -193,6 +196,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal oDLimit = BigDecimal.ZERO;
 	@XmlElement(name = "availableLimit")
 	private BigDecimal availableLimit = BigDecimal.ZERO;
+	
 
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();
@@ -942,7 +946,7 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 		this.limitDrop = limitDrop;
 	}
 
-	//GST
+	// GST
 	public BigDecimal getFeeTax() {
 		return feeTax;
 	}
@@ -997,6 +1001,14 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 
 	public void setTDSApplicable(boolean tDSApplicable) {
 		this.tDSApplicable = tDSApplicable;
+	}
+
+	public BigDecimal getSchdPftWaiver() {
+		return schdPftWaiver;
+	}
+
+	public void setSchdPftWaiver(BigDecimal schdPftWaiver) {
+		this.schdPftWaiver = schdPftWaiver;
 	}
 
 }

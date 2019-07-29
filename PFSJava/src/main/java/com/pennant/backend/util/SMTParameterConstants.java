@@ -217,6 +217,7 @@ public class SMTParameterConstants {
 	 * Parameter code to specify the cron expression for Security user account locking job.
 	 */
 	public static final String USR_ACCT_LOCK_CRON_EXPRESSION = "USR_ACCT_LOCK_CRON_EXPRESSION";
+	public static final String ALLOW_PROFIT_WAIVER = "ALLOW_PROFIT_WAIVER"; //Profit Waiver in Fee Waivers
 
 	public static final String INSURANCE_INST_ON_DISB = "INSURANCE_INST_ON_DISB";
 

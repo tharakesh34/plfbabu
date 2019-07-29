@@ -4442,6 +4442,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("AddrPriority", Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
+		
+		logger.debug("selectSql: " + sql.toString());
 
 		try {
 			this.jdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, Object>>() {

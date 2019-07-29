@@ -3285,4 +3285,521 @@
 		<addNotNullConstraint tableName="Tax_details" columnName="workflowid" columnDataType="bigint"/>
 		<addNotNullConstraint tableName="Tax_details_temp" columnName="workflowid" columnDataType="bigint"/>
 	</changeSet>
+	
+	<!-- Fee Waiver Changes Start -->
+	<changeSet id="78" author="Durgaprasad.g">
+		<addColumn tableName="FEEWAIVERDETAILS">
+			<column name="WaiverType" type="char(1)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="79" author="Durgaprasad.g">
+		<addColumn tableName="FEEWAIVERDETAILS_Temp">
+			<column name="WaiverType" type="char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="80">
+		<addColumn tableName="FEEWAIVERDETAILS">
+			<column name="TaxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="81">
+		<addColumn tableName="FEEWAIVERDETAILS_Temp">
+			<column name="TaxHeaderId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="82">
+		<addColumn tableName="FEEWAIVERDETAILS">
+			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="Kesav" id="83">
+		<addColumn tableName="FEEWAIVERDETAILS_Temp">
+			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="84" author="Kesav">
+		<addColumn tableName="FEEWAIVERDETAILS">
+			<column name="TaxApplicable" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxComponent" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="85" author="Kesav">
+		<addColumn tableName="FEEWAIVERDETAILS_Temp">
+			<column name="TaxApplicable" type="boolean" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="TaxComponent" type="Char(1)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="86" author="Kesav">
+		<sql>
+		 	<![CDATA[
+			    delete from SMTPARAMETERS where sysparmcode='ALLOW_PROFIT_WAIVER';
+				INSERT INTO SMTPARAMETERS Values('ALLOW_PROFIT_WAIVER','Allow Profit Waiver','String', 0, 'N', 1, 0, NULL, NULL,'Allow Profit Waiver', 1, 1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="87" author="Kesav">
+		<comment>Waiver Accounting Configuration</comment>
+		<sql>
+			<![CDATA[
+				Delete from BMTAMOUNTCODES Where AllowedEvent = 'WAIVER';
+				Delete from BMTAEEvents Where AEEVENTCODE = 'WAIVER';
+				
+				Insert into BMTAEEVENTS values ('WAIVER','Waiver',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,1,1, 1, 1);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'ae_pftWaiver','Interest waiver amount','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_CGST_W','Penalty charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_SGST_W','Penalty charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_IGST_W','Penalty charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_UGST_W','Penalty charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'ae_penaltyWaived','Penalty Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceChargeWaived','Bounce charges Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="89" author="Durgaprasad.G">
+		<addColumn tableName="Finscheduledetails">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="90" author="Durgaprasad.G">
+		<addColumn tableName="Finscheduledetails_TEMP">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="91" author="Durgaprasad.G">
+		<addColumn tableName="FINSCHEDULEDETAILS_PA">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="92" author="Durgaprasad.G">
+		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="93" author="Durgaprasad.G">
+		<createView viewName="FINSCHEDULEDETAILS_AVIEW"
+			replaceIfExists="true">
+			SELECT t1.finreference,
+						t1.schseq,
+						t1.schdate,
+						t1.pftonschdate,
+						t1.repayonschdate,
+						t1.cpzonschdate,
+						t1.rvwonschdate,
+						t1.disbonschdate,
+						t1.downpaymentonschdate,
+						t1.balanceforpftcal,
+						t1.baserate,
+						t1.splrate,
+						t1.actrate,
+						t1.noofdays,
+						t1.dayfactor,
+						t1.profitcalc,
+						t1.profitschd,
+						t1.principalschd,
+						t1.repayamount,
+						t1.profitbalance,
+						t1.disbamount,
+						t1.cpzamount,
+						t1.downpaymentamount,
+						t1.closingbalance,
+						t1.profitfraction,
+						t1.prvrepayamount,
+						t1.schdpftpaid,
+						t1.schpftpaid,
+						t1.schdpripaid,
+						t1.schpripaid,
+						t1.specifier,
+						t1.defschddate,
+						t1.schdmethod,
+						t1.mrgrate,
+						t1.calonindrate,
+						t1.feechargeamt,
+						t1.calculatedrate,
+						t1.earlypaidbal,
+						t1.earlypaid,
+						t1.refundorwaiver,
+						t1.writeoffprincipal,
+						t1.writeoffprofit,
+						t1.orgpft,
+						t1.orgpri,
+						t1.orgendbal,
+						t1.orgplanpft,
+						t1.feeschd,
+						t1.schdfeepaid,
+						t1.schdfeeos,
+						t1.insschd,
+						t1.schdinspaid,
+						t1.advpftrate,
+						t1.advprofit,
+						t1.advrepayamount,
+						t1.advbaserate,
+						t1.advmargin,
+						t1.advcalrate,
+						t1.suplrent,
+						t1.incrcost,
+						t1.suplrentpaid,
+						t1.incrcostpaid,
+						t1.rolloveronschdate,
+						t1.rolloveramount,
+						t1.rolloveramountpaid,
+						t1.tdsamount,
+						t1.tdspaid,
+						t1.pftdaysbasis,
+						t1.writeoffins,
+						t1.writeoffincrcost,
+						t1.writeoffsuplrent,
+						t1.writeoffschfee,
+						t1.insuranceamt,
+						t1.instnumber,
+						t1.bpiorholiday,
+						t1.frqdate,
+						t1.presentmentid,
+						t1.partialpaidamt,
+						t1.feetax,
+						t1.recallock,
+						t1.tdsApplicable,
+						t1.schdPftWaiver
+				FROM finscheduledetails t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="94" author="Durgaprasad G">
+		<createView viewName="FINSCHEDULEDETAILS_VIEW"
+			replaceIfExists="true">
+			  SELECT t1.finreference,
+								t1.schseq,
+								t1.schdate,
+								t1.pftonschdate,
+								t1.repayonschdate,
+								t1.cpzonschdate,
+								t1.rvwonschdate,
+								t1.disbonschdate,
+								t1.downpaymentonschdate,
+								t1.balanceforpftcal,
+								t1.baserate,
+								t1.splrate,
+								t1.actrate,
+								t1.noofdays,
+								t1.dayfactor,
+								t1.profitcalc,
+								t1.profitschd,
+								t1.principalschd,
+								t1.repayamount,
+								t1.profitbalance,
+								t1.disbamount,
+								t1.cpzamount,
+								t1.downpaymentamount,
+								t1.closingbalance,
+								t1.profitfraction,
+								t1.prvrepayamount,
+								t1.schdpftpaid,
+								t1.schpftpaid,
+								t1.schdpripaid,
+								t1.schpripaid,
+								t1.specifier,
+								t1.defschddate,
+								t1.schdmethod,
+								t1.mrgrate,
+								t1.calonindrate,
+								t1.feechargeamt,
+								t1.calculatedrate,
+								t1.earlypaidbal,
+								t1.earlypaid,
+								t1.refundorwaiver,
+								t1.writeoffprincipal,
+								t1.writeoffprofit,
+								t1.orgpft,
+								t1.orgpri,
+								t1.orgendbal,
+								t1.orgplanpft,
+								t1.feeschd,
+								t1.schdfeepaid,
+								t1.schdfeeos,
+								t1.insschd,
+								t1.schdinspaid,
+								t1.advpftrate,
+								t1.advprofit,
+								t1.advrepayamount,
+								t1.advbaserate,
+								t1.advmargin,
+								t1.advcalrate,
+								t1.suplrent,
+								t1.incrcost,
+								t1.suplrentpaid,
+								t1.incrcostpaid,
+								t1.rolloveronschdate,
+								t1.rolloveramount,
+								t1.rolloveramountpaid,
+								t1.tdsamount,
+								t1.tdspaid,
+								t1.pftdaysbasis,
+								t1.writeoffins,
+								t1.writeoffincrcost,
+								t1.writeoffsuplrent,
+								t1.writeoffschfee,
+								t1.insuranceamt,
+								t1.instnumber,
+								t1.bpiorholiday,
+								t1.frqdate,
+								t1.presentmentid,
+								t1.partialpaidamt,
+								t1.feetax,
+								t1.recallock,
+								t1.tdsApplicable,
+								t1.schdPftWaiver
+							   FROM finscheduledetails_temp t1
+							UNION ALL
+							 SELECT t1.finreference,
+								t1.schseq,
+								t1.schdate,
+								t1.pftonschdate,
+								t1.repayonschdate,
+								t1.cpzonschdate,
+								t1.rvwonschdate,
+								t1.disbonschdate,
+								t1.downpaymentonschdate,
+								t1.balanceforpftcal,
+								t1.baserate,
+								t1.splrate,
+								t1.actrate,
+								t1.noofdays,
+								t1.dayfactor,
+								t1.profitcalc,
+								t1.profitschd,
+								t1.principalschd,
+								t1.repayamount,
+								t1.profitbalance,
+								t1.disbamount,
+								t1.cpzamount,
+								t1.downpaymentamount,
+								t1.closingbalance,
+								t1.profitfraction,
+								t1.prvrepayamount,
+								t1.schdpftpaid,
+								t1.schpftpaid,
+								t1.schdpripaid,
+								t1.schpripaid,
+								t1.specifier,
+								t1.defschddate,
+								t1.schdmethod,
+								t1.mrgrate,
+								t1.calonindrate,
+								t1.feechargeamt,
+								t1.calculatedrate,
+								t1.earlypaidbal,
+								t1.earlypaid,
+								t1.refundorwaiver,
+								t1.writeoffprincipal,
+								t1.writeoffprofit,
+								t1.orgpft,
+								t1.orgpri,
+								t1.orgendbal,
+								t1.orgplanpft,
+								t1.feeschd,
+								t1.schdfeepaid,
+								t1.schdfeeos,
+								t1.insschd,
+								t1.schdinspaid,
+								t1.advpftrate,
+								t1.advprofit,
+								t1.advrepayamount,
+								t1.advbaserate,
+								t1.advmargin,
+								t1.advcalrate,
+								t1.suplrent,
+								t1.incrcost,
+								t1.suplrentpaid,
+								t1.incrcostpaid,
+								t1.rolloveronschdate,
+								t1.rolloveramount,
+								t1.rolloveramountpaid,
+								t1.tdsamount,
+								t1.tdspaid,
+								t1.pftdaysbasis,
+								t1.writeoffins,
+								t1.writeoffincrcost,
+								t1.writeoffsuplrent,
+								t1.writeoffschfee,
+								t1.insuranceamt,
+								t1.instnumber,
+								t1.bpiorholiday,
+								t1.frqdate,
+								t1.presentmentid,
+								t1.partialpaidamt,
+								t1.feetax,
+								t1.recallock,
+								t1.tdsApplicable,
+								t1.schdPftWaiver
+							   FROM finscheduledetails t1
+							  WHERE NOT (EXISTS ( SELECT 1
+									   FROM finscheduledetails_temp
+									  WHERE finscheduledetails_temp.finreference = t1.finreference))
+	
+	</createView>
+	</changeSet>
+
+	<changeSet id="95" author="Durgaprasad.G">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW"
+			replaceIfExists="true">
+			  SELECT t1.finreference,
+						t1.schseq,
+						t1.schdate,
+						t1.pftonschdate,
+						t1.repayonschdate,
+						t1.cpzonschdate,
+						t1.rvwonschdate,
+						t1.disbonschdate,
+						t1.downpaymentonschdate,
+						t1.balanceforpftcal,
+						t1.baserate,
+						t1.splrate,
+						t1.actrate,
+						t1.noofdays,
+						t1.dayfactor,
+						t1.profitcalc,
+						t1.profitschd,
+						t1.principalschd,
+						t1.repayamount,
+						t1.profitbalance,
+						t1.disbamount,
+						t1.cpzamount,
+						t1.downpaymentamount,
+						t1.closingbalance,
+						t1.profitfraction,
+						t1.prvrepayamount,
+						t1.schdpftpaid,
+						t1.schpftpaid,
+						t1.schdpripaid,
+						t1.schpripaid,
+						t1.specifier,
+						t1.defschddate,
+						t1.schdmethod,
+						t1.mrgrate,
+						t1.calonindrate,
+						t1.feechargeamt,
+						t1.calculatedrate,
+						t1.earlypaidbal,
+						t1.earlypaid,
+						t1.refundorwaiver,
+						t1.writeoffprincipal,
+						t1.writeoffprofit,
+						t1.orgpft,
+						t1.orgpri,
+						t1.orgendbal,
+						t1.orgplanpft,
+						t1.feeschd,
+						t1.schdfeepaid,
+						t1.schdfeeos,
+						t1.insschd,
+						t1.schdinspaid,
+						t1.advpftrate,
+						t1.advprofit,
+						t1.advrepayamount,
+						t1.advbaserate,
+						t1.advmargin,
+						t1.advcalrate,
+						t1.suplrent,
+						t1.incrcost,
+						t1.suplrentpaid,
+						t1.incrcostpaid,
+						t1.rolloveronschdate,
+						t1.rolloveramount,
+						t1.rolloveramountpaid,
+						t1.tdsamount,
+						t1.tdspaid,
+						t1.pftdaysbasis,
+						t1.writeoffins,
+						t1.writeoffincrcost,
+						t1.writeoffsuplrent,
+						t1.writeoffschfee,
+						t1.insuranceamt,
+						t1.instnumber,
+						t1.bpiorholiday,
+						t1.frqdate,
+						t1.presentmentid,
+						t1.partialpaidamt,
+						t1.feetax,
+						t1.recallock,
+						t1.tdsApplicable,
+						t1.schdPftWaiver
+            FROM finscheduledetails_temp t1
+	  </createView>
+	</changeSet>
+	
+	<changeSet id="96" author="Durgaprasad G">
+		<addColumn tableName="FINREPAYDETAILS">
+			<column name="WaiverId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="97" author="Durgaprasad G">
+		<addColumn tableName="FinRepayscheduledetail">
+			<column name="WaiverId" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>	
+	
+	<!-- Fee Waiver Changes END -->
+	
 </databaseChangeLog>

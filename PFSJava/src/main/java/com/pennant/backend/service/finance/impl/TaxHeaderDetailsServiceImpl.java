@@ -109,7 +109,9 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 			auditDetails.addAll(processTaxHeaderChildDetails(taxHeader, tableType, auditTranType, true));
 		}
 
-		delete(taxHeader, TableType.TEMP_TAB.getSuffix());
+		if (!taxHeader.isNewRecord()) {
+			delete(taxHeader, TableType.TEMP_TAB.getSuffix());
+		}
 
 		logger.debug(Literal.LEAVING);
 
@@ -120,7 +122,7 @@ public class TaxHeaderDetailsServiceImpl extends GenericService<TaxHeader> imple
 	public TaxHeader doReject(TaxHeader taxHeader) {
 		logger.debug(Literal.ENTERING);
 
-		delete(taxHeader, TableType.MAIN_TAB.getSuffix());
+		delete(taxHeader, TableType.TEMP_TAB.getSuffix());
 
 		logger.debug(Literal.LEAVING);
 

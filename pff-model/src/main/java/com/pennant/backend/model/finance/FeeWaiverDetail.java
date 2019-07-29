@@ -72,12 +72,26 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 	private BigDecimal WaivedAmount = BigDecimal.ZERO;
 	private BigDecimal balanceAmount = BigDecimal.ZERO;
 	private BigDecimal currWaiverAmount = BigDecimal.ZERO;
+
+	private BigDecimal actualReceivable = BigDecimal.ZERO;
+	private BigDecimal receivableGST = BigDecimal.ZERO;
+	private BigDecimal currActualWaiver = BigDecimal.ZERO;
+	private BigDecimal currWaiverGST = BigDecimal.ZERO;
+
 	private boolean newRecord = false;
 	private String lovValue;
 	private FeeWaiverDetail befImage;
 	private LoggedInUser userDetails;
 	private Date valueDate;
 	private String waivedBy;
+	private String waiverType;
+	
+	//GST fields
+	private boolean taxApplicable;
+	private String taxComponent;
+	private long taxHeaderId = 0;
+	private TaxHeader taxHeader = new TaxHeader();
+	private String finReference;//Display Field
 
 	public FeeWaiverDetail() {
 		super();
@@ -90,6 +104,12 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("netBalance");
 		excludeFields.add("valueDate");
 		excludeFields.add("waivedBy");
+		// Waiver Type
+		excludeFields.add("gstAmount");
+		excludeFields.add("dueWaiver");
+		excludeFields.add("gstWaiver");
+		excludeFields.add("taxHeader");
+		excludeFields.add("finReference");
 
 		return excludeFields;
 	}
@@ -247,6 +267,86 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setWaivedBy(String waivedBy) {
 		this.waivedBy = waivedBy;
+	}
+
+	public String getWaiverType() {
+		return waiverType;
+	}
+
+	public void setWaiverType(String waiverType) {
+		this.waiverType = waiverType;
+	}
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public String getTaxComponent() {
+		return taxComponent;
+	}
+
+	public void setTaxComponent(String taxComponent) {
+		this.taxComponent = taxComponent;
+	}
+
+	public long getTaxHeaderId() {
+		return taxHeaderId;
+	}
+
+	public void setTaxHeaderId(long taxHeaderId) {
+		this.taxHeaderId = taxHeaderId;
+	}
+
+	public TaxHeader getTaxHeader() {
+		return taxHeader;
+	}
+
+	public void setTaxHeader(TaxHeader taxHeader) {
+		this.taxHeader = taxHeader;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public BigDecimal getReceivableGST() {
+		return receivableGST;
+	}
+
+	public void setReceivableGST(BigDecimal receivableGST) {
+		this.receivableGST = receivableGST;
+	}
+
+	public BigDecimal getActualReceivable() {
+		return actualReceivable;
+	}
+
+	public void setActualReceivable(BigDecimal actualReceivable) {
+		this.actualReceivable = actualReceivable;
+	}
+
+	public BigDecimal getCurrActualWaiver() {
+		return currActualWaiver;
+	}
+
+	public void setCurrActualWaiver(BigDecimal currActualWaiver) {
+		this.currActualWaiver = currActualWaiver;
+	}
+
+	public BigDecimal getCurrWaiverGST() {
+		return currWaiverGST;
+	}
+
+	public void setCurrWaiverGST(BigDecimal currWaiverGST) {
+		this.currWaiverGST = currWaiverGST;
 	}
 
 }

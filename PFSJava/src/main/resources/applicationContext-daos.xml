@@ -9878,6 +9878,15 @@
 		<property name="feeWaiverDetailDAO" ref="feeWaiverDetailDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="taxHeaderDetailsService" ref="taxHeaderDetailsService" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
 	</bean>
 
 	<!-- Organization -->

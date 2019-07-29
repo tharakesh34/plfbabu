@@ -30,7 +30,7 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private BigDecimal finWaiver = BigDecimal.ZERO;
 	private BigDecimal finRefund = BigDecimal.ZERO;
 
-	//Fee Details
+	// Fee Details
 	private BigDecimal schdFeePaid = BigDecimal.ZERO;
 	private BigDecimal schdInsPaid = BigDecimal.ZERO;
 	private BigDecimal schdSuplRentPaid = BigDecimal.ZERO;
@@ -45,6 +45,9 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 	private BigDecimal RepayPenal = BigDecimal.ZERO;
 	private BigDecimal RepayWaiver = BigDecimal.ZERO;
 	private BigDecimal RepayRefund = BigDecimal.ZERO;
+
+	// Profit waiver
+	private long waiverId;
 
 	public FinanceRepayments() {
 
@@ -332,6 +335,14 @@ public class FinanceRepayments implements java.io.Serializable, Entity {
 
 	public void setPenaltyWaived(BigDecimal penaltyWaived) {
 		this.penaltyWaived = penaltyWaived;
+	}
+
+	public long getWaiverId() {
+		return waiverId;
+	}
+
+	public void setWaiverId(long waiverId) {
+		this.waiverId = waiverId;
 	}
 
 }

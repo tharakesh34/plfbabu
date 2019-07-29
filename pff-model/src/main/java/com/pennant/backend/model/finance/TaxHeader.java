@@ -64,7 +64,7 @@ public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 	private LoggedInUser userDetails;
 
 	public TaxHeader() {
-
+		super();
 	}
 
 	public TaxHeader(long headerId) {

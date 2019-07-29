@@ -121,7 +121,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			selectSql.append(" From WIFFinScheduleDetails");
 		} else {
 			selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
-			selectSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt ");
+			selectSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver");
 			selectSql.append(" From FinScheduleDetails");
 		}
 
@@ -266,7 +266,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,");
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal , WriteoffPrincipal, WriteoffProfit,");
-			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt,");
+			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
 		}
 		insertSql.append(" DefSchdDate, SchdMethod,  ");
 		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, InsuranceAmt)");
@@ -288,7 +288,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
 			insertSql
-					.append(" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt, ");
+					.append(" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
 		}
 		insertSql.append("  :DefSchdDate, :SchdMethod, ");
 		insertSql.append(" :RolloverOnSchDate , :RolloverAmount, :RolloverAmountPaid, :InsuranceAmt)");
@@ -327,7 +327,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal,WriteoffPrincipal, WriteoffProfit, ");
 			insertSql.append(
-					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId, TDSApplicable, ");
+					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, PresentmentId, TDSApplicable, SchdPftWaiver,");
 			if (type.contains("Log")) {
 				insertSql.append(" LogKey , ");
 			}
@@ -352,7 +352,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
 			insertSql.append(
-					" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt,:PresentmentId, :TDSApplicable , ");
+					" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt,:PresentmentId, :TDSApplicable, :SchdPftWaiver,");
 			if (type.contains("Log")) {
 				insertSql.append(" :LogKey , ");
 			}
@@ -431,7 +431,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			updateSql.append(" WriteoffIns=:WriteoffIns , PresentmentId=:PresentmentId, ");
 			updateSql.append(
 					" WriteoffIncrCost=:WriteoffIncrCost, WriteoffSuplRent=:WriteoffSuplRent, WriteoffSchFee=:WriteoffSchFee, PartialPaidAmt=:PartialPaidAmt,  ");
-			updateSql.append(" tDSApplicable=:tDSApplicable,");
+			updateSql.append(" tDSApplicable=:tDSApplicable, SchdPftWaiver = :SchdPftWaiver,");
 		}
 		updateSql.append(" DefSchdDate= :DefSchdDate, SchdMethod = :SchdMethod, ");
 		updateSql.append(
@@ -540,7 +540,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		if (!isWIF) {
 			sql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt, TdsApplicable");
+			sql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt, TdsApplicable, SchdPftWaiver");
 
 			if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				sql.append(", WriteoffIncrCost, WriteoffSuplRent ");
@@ -589,7 +589,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			selectSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
 		}
 		selectSql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
+		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt, SchdPftWaiver");
 
 		if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 			selectSql.append(", WriteoffIncrCost, WriteoffSuplRent ");
@@ -632,7 +632,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		if (!isWIF) {
 			selectSql.append(" RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit,");
 			selectSql.append(
-					" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, PartialPaidAmt,PresentmentId, ");
+					" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee, PartialPaidAmt,PresentmentId, SchdPftWaiver,");
 		}
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate, SchdMethod, ");
@@ -668,7 +668,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				" Select SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate, BalanceForPftCal,ClosingBalance, ");
 		selectSql.append(
 				" CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, DisbAmount, DownPaymentAmount, CpzAmount, FeeChargeAmt, ");
-		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier ");
+		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, SchdPftWaiver");
 		selectSql.append(" From FinScheduleDetails");
 		selectSql.append(" Where FinReference =:FinReference order by SchDate asc");
 
@@ -1203,6 +1203,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
 		selectSql.append(" WriteoffIns , WriteoffIncrCost,WriteoffSuplRent,WriteoffSchFee,PartialPaidAmt ");
 		if (!isWIF) {
+			selectSql.append(", SchdPftWaiver");
 			selectSql.append(" From FinScheduleDetails");
 		} else {
 			selectSql.append(" From WIFFinScheduleDetails");
@@ -1519,7 +1520,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		selectSql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		selectSql.append(" DefSchdDate, SchdMethod, InstNumber, BpiOrHoliday, FrqDate");
 		selectSql.append(", RefundOrWaiver, EarlyPaid , EarlyPaidBal ,WriteoffPrincipal, WriteoffProfit, ");
-		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt ");
+		selectSql.append(" PresentmentId, WriteoffIns , WriteoffSchFee, PartialPaidAmt, SchdPftWaiver");
 		selectSql.append(" From FinScheduleDetails");
 
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -1693,7 +1694,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" SchdPriPaid, SchdPftPaid, SchPriPaid, SchPftPaid,Specifier,");
 		sql.append(" DefSchdDate, SchdMethod, ");
 		sql.append(" InstNumber, BpiOrHoliday, FrqDate, RecalLock,");
-		sql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid ");
+		sql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, SchdPftWaiver");
 
 		sql.append(" From FinScheduleDetails Where");
 		sql.append(" FinReference = :FinReference ");

@@ -944,25 +944,25 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("AdviseType", FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 
 		sql = new StringBuilder();
 		sql.append(
-				" select MA.adviseID,MA.AdviseType,MA.FeeTypeID,MA.Sequence,MA.finReference, MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount balanceAmt,");
+				" Select MA.adviseID, MA.AdviseType, MA.FeeTypeID, MA.Sequence, MA.finReference, (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) balanceAmt,");
 		sql.append(
-				" MA.adviseAmount,MA.PaidAmount, MA.WaivedAmount,MA.ValueDate,MA.PostDate, MA.BounceID,MA.ReceiptID,MA.ReservedAmt,");
-
+				" MA.adviseAmount, MA.PaidAmount, MA.WaivedAmount, MA.ValueDate, MA.PostDate, MA.BounceID, MA.ReceiptID, MA.ReservedAmt,");
 		sql.append(
 				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
-		sql.append(
-				"FT.feetypecode,FT.FeeTypeDesc from MANUALADVISE_Aview  MA Left join FEETYPES FT on MA.FEETYPEID=FT.FEETYPEID where (MA.advisetype="
-						+ FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-		sql.append(" and (MA.AdviseAmount-MA.PaidAmount-MA.WaivedAmount) >0) and FinReference = :FinReference");
+		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
+		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST");
+		sql.append(" From MANUALADVISE_Aview  MA");
+		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
+		sql.append(" Where (MA.advisetype = :AdviseType And (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) > 0) and FinReference = :FinReference");
 		sql.append(" ORDER by MA.adviseID");
-		logger.trace(Literal.SQL + sql.toString());
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
 		try {
@@ -973,7 +973,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			source = null;
 			sql = null;
 		}
+		
 		logger.debug(Literal.LEAVING);
+		
 		return null;
 	}
 

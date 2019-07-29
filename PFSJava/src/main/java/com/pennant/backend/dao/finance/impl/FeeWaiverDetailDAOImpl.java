@@ -87,15 +87,16 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		StringBuilder sql = new StringBuilder("insert into FeeWaiverDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" (WaiverDetailId, WaiverId, AdviseId, FinODSchdDate, ReceivableAmount,");
-		sql.append(
-				" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode,FeeTypeDesc,Version,lastMntBy,lastMntOn)");
+		sql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode, FeeTypeDesc,");
+		sql.append(" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
+		sql.append(" Version, lastMntBy, lastMntOn)");
 		sql.append(" Values( :WaiverDetailId, :WaiverId, :AdviseId, :FinODSchdDate, :ReceivableAmount,");
-		sql.append(
-				" :ReceivedAmount, :WaivedAmount, :BalanceAmount, :CurrWaiverAmount, :FeeTypeCode, :FeeTypeDesc, :Version, :lastMntBy, :lastMntOn)");
+		sql.append(" :ReceivedAmount, :WaivedAmount, :BalanceAmount, :CurrWaiverAmount, :FeeTypeCode, :FeeTypeDesc,");
+		sql.append(" :WaiverType, :TaxHeaderId, :ActualReceivable, :ReceivableGST, :CurrActualWaiver, :CurrWaiverGST, :TaxApplicable, :TaxComponent,");
+		sql.append(" :Version, :lastMntBy, :lastMntOn)");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeWaiverDetail);
-
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
@@ -116,8 +117,10 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(" set WaiverId = :WaiverId,");
 		sql.append(" AdviseId = :AdviseId, FinODSchdDate = :FinODSchdDate, ReceivableAmount = :ReceivableAmount,");
 		sql.append(" ReceivedAmount = :ReceivedAmount, WaivedAmount= :WaivedAmount, BalanceAmount = :BalanceAmount,");
-		sql.append(" CurrWaiverAmount = :CurrWaiverAmount, FeeTypeCode = :FeeTypeCode, FeeTypeDesc = :FeeTypeDesc");
-		sql.append(" where WaiverDetailId =:WaiverDetailId");
+		sql.append(" CurrWaiverAmount = :CurrWaiverAmount, FeeTypeCode = :FeeTypeCode, FeeTypeDesc = :FeeTypeDesc,");
+		sql.append(" WaiverType = :WaiverType, TaxHeaderId = :TaxHeaderId, ActualReceivable = :ActualReceivable, ReceivableGST = :ReceivableGST,");
+		sql.append(" CurrActualWaiver = :CurrActualWaiver, CurrWaiverGST = :CurrWaiverGST, TaxApplicable = :TaxApplicable, TaxComponent = :TaxComponent");
+		sql.append(" Where WaiverDetailId =:WaiverDetailId");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
@@ -171,7 +174,9 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select WaiverDetailId, WaiverId, AdviseId, FinODSchdDate, ReceivableAmount,");
-		selectSql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode,FeeTypeDesc");
+		selectSql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode, FeeTypeDesc,");
+		selectSql.append(" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
+		selectSql.append(" Version, lastMntBy, lastMntOn");
 		selectSql.append(" From  FeeWaiverDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where WaiverId =:WaiverId");
@@ -197,23 +202,23 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
 		feeWaiverHeader.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		selectSql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");
-		selectSql.append(
-				" FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount, FD.CurrWaiverAmount, FD.FeeTypeCode,FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
-		selectSql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.waiverId=FD.waiverId ");
-		selectSql.append(" left join SecUsers SU on FH.lastMntBy=SU.usrid ");
-		selectSql.append(
-				" where FH.waiverId in (select waiverId from FeeWaiverHeader where FinReference = :FinReference) order by FeeTypeCode ");
+		sql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");
+		sql.append(" FD.FeeTypeCode, FD.WaiverType, FD.ReceivedAmount, FD.WaivedAmount, FD.BalanceAmount,  ");
+		sql.append(" FD.CurrWaiverAmount, FD.FeeTypeDesc,FH.valueDate,SU.usrFName waivedBy");
+		sql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.waiverId=FD.waiverId ");
+		sql.append(" left join SecUsers SU on FH.lastMntBy=SU.usrid where FH.waiverId in ");
+		sql.append(" (select waiverId from FeeWaiverHeader where FinReference = :FinReference) ");
+		sql.append(" order by FeeTypeCode ");
 
-		logger.trace(Literal.SQL + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);
 		RowMapper<FeeWaiverDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(FeeWaiverDetail.class);
 
 		try {
-			return jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error("Exception: ", e);
 			feeWaiverHeader = null;
