@@ -321,4 +321,12 @@
 			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="23" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_PROFIT_WAIVER';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
