@@ -6351,5 +6351,14 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="105" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    INSERT INTO ErrorDetails VALUES('IPF001','EN','E','Total Remaining Fee should be zero for Initial PF Receivables.','','Approved','','','','','',0,current_timestamp,1000,0);
+		]]>
+		</sql>
+		
+	</changeSet>
 		
 </databaseChangeLog>
