@@ -472,7 +472,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		List<PresentmentDetail> detailList = getPresentmentDetailDAO().getPresentmentDetail(presentmentId, true);
 		if (detailList != null && !detailList.isEmpty()) {
 			for (PresentmentDetail detail : detailList) {
-				if (DateUtility.compare(DateUtility.getAppDate(), detail.getSchDate()) >= 0) {
+				if (DateUtility.compare(SysParamUtil.getAppDate(), detail.getSchDate()) >= 0) {
 					try {
 
 						if (detail.getExcludeReason() == RepayConstants.PEXC_EMIINADVANCE) {
@@ -549,7 +549,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			FinScheduleData finScheduleData = financeDetailService
 					.getFinSchDataForReceipt(presentmentDetail.getFinReference(), TableType.MAIN_TAB.getSuffix());
 
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 
 			finScheduleData.getFinanceMain().setRecordType("");
 			finScheduleData.getFinanceMain().setVersion(finScheduleData.getFinanceMain().getVersion() + 1);
@@ -714,7 +714,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 		receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
 		receiptDetail.setValueDate(presentmentDetail.getSchDate());
-		receiptDetail.setReceivedDate(DateUtility.getAppDate());
+		receiptDetail.setReceivedDate(SysParamUtil.getAppDate());
 		receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
 		receiptDetail.setPartnerBankAcType(presentmentDetail.getAcType());
 		receiptDetails.add(receiptDetail);
@@ -725,15 +725,6 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		finReceiptData.setReceiptHeader(header);
 		finReceiptData.setFinReference(presentmentDetail.getFinReference());
 		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(presentmentDetail.getFinReference(), "_View",
-				false);
-		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
-				"_View");
-		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails("", "_View",
-				false);
-		FinanceProfitDetail profitDetail = profitDetailsDAO
-				.getFinProfitDetailsById(presentmentDetail.getFinReference());
-		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 		finReceiptData.setValueDate(presentmentDetail.getSchDate());
 		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, presentmentDetail.getSchDate(), true);
 		finReceiptData = receiptService.calculateRepayments(finReceiptData, true);
@@ -765,7 +756,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		FinReceiptData finReceiptData = new FinReceiptData();
 		FinReceiptHeader header = new FinReceiptHeader();
 
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
 		header.setReference(presentmentDetail.getFinReference());
@@ -833,7 +824,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(financeMain.getFinType(), "_AView");
 		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
 				profitDetail, header, financeType.getRpyHierarchy(), presentmentDetail.getSchDate(),
-				DateUtility.getAppDate());
+				SysParamUtil.getAppDate());
 		if (presentmentDetail.getId() != Long.MIN_VALUE) {
 			presentmentDetailDAO.updateReceptId(presentmentDetail.getId(), header.getReceiptID());
 		}
