@@ -6358,7 +6358,19 @@ UNION ALL
 		    INSERT INTO ErrorDetails VALUES('IPF001','EN','E','Total Remaining Fee should be zero for Initial PF Receivables.','','Approved','','','','','',0,current_timestamp,1000,0);
 		]]>
 		</sql>
-		
+	</changeSet>
+	
+	<changeSet id="106" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    alter table mandate_requests alter column bank_code varchar(50);
+			alter table mandate_response alter column bank_code varchar(50);
+			
+			update data_engine_column set DefaultValue = 'Veritas Finance Private Ltd'
+            where TableId in (select Id from data_engine_table where ConfigId in (select Id from data_engine_config where Name = 'MANDATES_EXPORT'))
+	        and name = 'BANK_CODE';
+		]]>
+		</sql>
 	</changeSet>
 		
 </databaseChangeLog>
