@@ -149,6 +149,8 @@ import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
+import com.pennant.backend.model.finance.TaxHeader;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -275,7 +277,21 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptHeader.setReceiptDetails(receiptDetailList);
 		// Receipt Allocation Details
 		if (!isFeePayment) {
-			receiptHeader.setAllocations(allocationDetailDAO.getAllocationsByReceiptID(receiptID, type));
+			List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptID, type);
+
+			if (CollectionUtils.isNotEmpty(allocations)) {
+				for (ReceiptAllocationDetail allocation : allocations) {
+					long headerId = allocation.getTaxHeaderId();
+					if (headerId > 0) {
+						List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
+						TaxHeader taxHeader = new TaxHeader(headerId);
+						taxHeader.setTaxDetails(taxDetails);
+						allocation.setTaxHeader(taxHeader);
+					}
+				}
+			}
+
+			receiptHeader.setAllocations(allocations);
 		}
 
 		logger.debug("Leaving");
@@ -403,10 +419,28 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				manualAdviseDAO.getManualAdviseByRef(finReference, FinanceConstants.MANUAL_ADVISE_PAYABLE, "_AView"));
 
 		// Fee Details ( Fetch Fee Details for event fee only)
+		String type = "_View";
 		if (StringUtils.isBlank(financeMain.getRecordType())) {
 			scheduleData.setFinFeeDetailList(finFeeDetailDAO.getFinScheduleFees(finReference, false, "_View"));
 		} else {
+			type = "_TView";
 			scheduleData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "_TView"));
+		}
+
+		if (CollectionUtils.isNotEmpty(scheduleData.getFinFeeDetailList())) {
+			for (FinFeeDetail finFeeDetail : scheduleData.getFinFeeDetailList()) {
+				//Fin Tax Details
+				finFeeDetail.setFinTaxDetails(getFinTaxDetailsDAO().getFinTaxByFeeID(finFeeDetail.getFeeID(), type));
+				//Tax Details
+				long headerId = finFeeDetail.getTaxHeaderId();
+				if (headerId > 0) {
+					List<Taxes> taxDetails = getTaxHeaderDetailsDAO().getTaxDetailById(headerId, type);
+					TaxHeader taxheader = new TaxHeader();
+					taxheader.setTaxDetails(taxDetails);
+					taxheader.setHeaderId(headerId);
+					finFeeDetail.setTaxHeader(taxheader);
+				}
+			}
 		}
 
 		// Finance Document Details
@@ -544,8 +578,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.getReceiptHeader().setReceiptDetails(receiptDetailList);
 
 		// Receipt Allocation Details
-		receiptData.getReceiptHeader().setAllocations(allocationDetailDAO.getAllocationsByReceiptID(
-				receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB.getSuffix()));
+		List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(
+				receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB.getSuffix());
+
+		if (CollectionUtils.isNotEmpty(allocations)) {
+			for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
+				if (receiptAllocationDetail.getTaxHeaderId() != 0) {
+					List<Taxes> taxDetailById = getTaxHeaderDetailsDAO()
+							.getTaxDetailById(receiptAllocationDetail.getTaxHeaderId(), TableType.TEMP_TAB.getSuffix());
+					TaxHeader taxHeader = new TaxHeader(receiptAllocationDetail.getTaxHeaderId());
+					taxHeader.setTaxDetails(taxDetailById);
+				}
+			}
+		}
+		receiptData.getReceiptHeader().setAllocations(allocations);
 
 		// 127186 --Changing table type from Temp to Tview to show
 		// bounce code also along with ID
@@ -692,7 +738,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Delete and Save Repayment Schedule details by setting Repay
 				// Header ID
 				financeRepaymentsDAO.deleteRpySchdList(finReference, tableType.getSuffix());
-
+				
+				// Delete Tax Header
+				deleteTaxHeaderId(receiptID, tableType.getSuffix());
+				
 				// Receipt Allocation Details
 				allocationDetailDAO.deleteByReceiptID(receiptID, tableType);
 			}
@@ -838,12 +887,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			// Manual Advise Movements
-			for (ManualAdviseMovements movement : rd.getAdvMovements()) {
-				movement.setReceiptID(receiptID);
-				movement.setReceiptSeqID(receiptSeqID);
-				manualAdviseDAO.saveMovement(movement, TableType.TEMP_TAB.getSuffix());
+			if (CollectionUtils.isNotEmpty(rd.getAdvMovements())) {
+				for (ManualAdviseMovements movement : rd.getAdvMovements()) {
+					if (movement.getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(movement.getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = movement.getTaxHeader().getTaxDetails();
+						long headerId = getTaxHeaderDetailsDAO().save(movement.getTaxHeader(),
+								TableType.TEMP_TAB.getSuffix());
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.TEMP_TAB.getSuffix());
+						movement.setTaxHeaderId(headerId);
+					}
+					movement.setReceiptID(receiptID);
+					movement.setReceiptSeqID(receiptSeqID);
+					manualAdviseDAO.saveMovement(movement, TableType.TEMP_TAB.getSuffix());
+				}
 			}
-
 		}
 
 		// Receipt Allocation Details
@@ -851,6 +912,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			ReceiptAllocationDetail allocation = receiptHeader.getAllocations().get(i);
 			allocation.setReceiptID(receiptID);
 			allocation.setAllocationID(i + 1);
+		}
+
+		if (CollectionUtils.isNotEmpty(receiptHeader.getAllocations())) {
+			for (ReceiptAllocationDetail allocation : receiptHeader.getAllocations()) {
+				if (StringUtils.isNotBlank(allocation.getTaxType())) {
+					if (allocation.getTaxHeader() != null
+							&& CollectionUtils.isNotEmpty(allocation.getTaxHeader().getTaxDetails())) {
+						List<Taxes> taxDetails = allocation.getTaxHeader().getTaxDetails();
+						long headerId = getTaxHeaderDetailsDAO().save(allocation.getTaxHeader(), tableType.getSuffix());
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, tableType.getSuffix());
+						allocation.setTaxHeaderId(headerId);
+					}
+				}
+			}
 		}
 		allocationDetailDAO.saveAllocations(receiptHeader.getAllocations(), tableType);
 
@@ -917,6 +995,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	/**
+	 * Delete Tax Details
+	 */
+	public void deleteTaxHeaderId(long receiptId, String type) {
+		logger.debug(Literal.ENTERING);
+		
+		List<Long> headerIdsByReceiptId = getTaxHeaderDetailsDAO().getHeaderIdsByReceiptId(receiptId, type);
+		if (CollectionUtils.isNotEmpty(headerIdsByReceiptId)) {
+			for (Long headerIds : headerIdsByReceiptId) {
+				if (headerIds != null && headerIds > 0) {
+					getTaxHeaderDetailsDAO().delete(headerIds, type);
+					TaxHeader taxHeader = new TaxHeader();
+					taxHeader.setHeaderId(headerIds);
+					getTaxHeaderDetailsDAO().delete(taxHeader, type);
+				}
+			}
+		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public long executeAccounting(FinReceiptData receiptData) {
@@ -994,6 +1093,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				
+				if (taxHeader != null && taxHeader.getId() > 0) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						getTaxHeaderDetailsDAO().delete(taxHeader.getId(), tableType);
+						getTaxHeaderDetailsDAO().delete(taxHeader, tableType);
+					}
+				}
 			}
 		}
 
@@ -1003,12 +1111,34 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			for (FinFeeDetail finFeeDetail : feeDetailsList) {
 				finFeeDetail.setFinReference(finReference);
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+
 				if (!newRecord && finFeeDetail.isOriginationFee() && finFeeDetail.getFeeID() > 0) {
 					finFeeDetailDAO.update(finFeeDetail, false, tableType);
+
+					if (taxHeader != null) {
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
+						if (CollectionUtils.isNotEmpty(taxDetails)) {
+							for (Taxes taxes : taxDetails) {
+								getTaxHeaderDetailsDAO().update(taxes, tableType);
+							}
+						}
+					}
 				} else {
 					if (!finFeeDetail.isOriginationFee()) {
 						finFeeDetail.setFeeSeq(finFeeDetailDAO.getFeeSeq(finFeeDetail, false, tableType) + 1);
 						finFeeDetail.setReferenceId(receiptID);
+					}
+					if (taxHeader != null) {
+						List<Taxes> taxDetails = taxHeader.getTaxDetails();
+						if (CollectionUtils.isNotEmpty(taxDetails)) {
+							long headerId = getTaxHeaderDetailsDAO().save(taxHeader, tableType);
+							for (Taxes taxes : taxDetails) {
+								taxes.setReferenceId(headerId);
+							}
+							getTaxHeaderDetailsDAO().saveTaxes(taxDetails, tableType);
+							finFeeDetail.setTaxHeaderId(headerId);
+						}
 					}
 					finFeeDetail.setFeeID(finFeeDetailDAO.save(finFeeDetail, false, tableType));
 
@@ -1043,6 +1173,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), false, "_Temp");
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
+				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+				if (finFeeDetail.getTaxHeaderId() > 0) {
+					if (taxHeader == null) {
+						taxHeader = new TaxHeader();
+						taxHeader.setHeaderId(finFeeDetail.getTaxHeaderId());
+					}
+					getTaxHeaderDetailsDAO().delete(finFeeDetail.getTaxHeaderId(), "_Temp");
+					getTaxHeaderDetailsDAO().delete(taxHeader, "_Temp");
+				}
 			}
 		}
 
@@ -1062,10 +1201,30 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			finFeeDetail.setWorkflowId(0);
 			finFeeDetail.setFinReference(finReference);
 
+			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
 			if (finFeeDetail.isOriginationFee()) {
 				finFeeDetailDAO.update(finFeeDetail, false, tableType);
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						for (Taxes taxes : taxDetails) {
+							getTaxHeaderDetailsDAO().update(taxes, tableType);
+						}
+					}
+				}
 			} else {
 				finFeeDetail.setReferenceId(receiptID);
+				if (taxHeader != null) {
+					List<Taxes> taxDetails = taxHeader.getTaxDetails();
+					if (CollectionUtils.isNotEmpty(taxDetails)) {
+						long headerId = getTaxHeaderDetailsDAO().save(taxHeader, tableType);
+						for (Taxes taxes : taxDetails) {
+							taxes.setReferenceId(headerId);
+						}
+						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, tableType);
+						finFeeDetail.setTaxHeaderId(headerId);
+					}
+				}
 				finFeeDetailDAO.save(finFeeDetail, false, tableType);
 
 				FinTaxDetails finTaxDetails = finFeeDetail.getFinTaxDetails();
@@ -1208,6 +1367,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Delete Save Receipt Detail List by Reference
 		finReceiptDetailDAO.deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
+
+		deleteTaxHeaderId(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB.getSuffix());
 
 		// Receipt Allocation Details
 		allocationDetailDAO.deleteByReceiptID(receiptData.getReceiptHeader().getReceiptID(), TableType.TEMP_TAB);
@@ -1649,6 +1810,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			// Delete Save Receipt Detail List by Reference
 			finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
+
+			deleteTaxHeaderId(receiptID, TableType.TEMP_TAB.getSuffix());
 
 			// Receipt Allocation Details
 			allocationDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
@@ -2112,6 +2275,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			// Delete Save Receipt Detail List by Reference
 			finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
+			deleteTaxHeaderId(receiptID, TableType.TEMP_TAB.getSuffix());
 			// Receipt Allocation Details
 			allocationDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
@@ -4630,7 +4794,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			financeMain.setEntityDesc(finMain.getEntityDesc());
 		}
 
-		finReceiptHeader.setAllocations(allocationDetailDAO.getAllocationsByReceiptID(receiptId, "_View"));
+		List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptId, "_View");
+		if (CollectionUtils.isNotEmpty(allocations)) {
+			for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
+				if (receiptAllocationDetail.getTaxHeaderId() != 0) {
+					List<Taxes> taxDetailById = taxHeaderDetailsDAO
+							.getTaxDetailById(receiptAllocationDetail.getTaxHeaderId(), "_View");
+					TaxHeader taxHeader = new TaxHeader(receiptAllocationDetail.getTaxHeaderId());
+					taxHeader.setTaxDetails(taxDetailById);
+				}
+			}
+		}
+		finReceiptHeader.setAllocations(allocations);
 
 		finReceiptHeader.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptId, "_View"));
 
@@ -4707,6 +4882,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<FinFeeDetail> feesList = getFinFeeDetailService().getFinFeeDetailsByReferenceId(receiptId, eventCode,
 				"_TView");
 		if (CollectionUtils.isNotEmpty(feesList)) {
+			for (FinFeeDetail finFeeDetail : feesList) {
+				if (finFeeDetail.getTaxHeaderId() > 0) {
+					List<Taxes> taxDetailById = getTaxHeaderDetailsDAO().getTaxDetailById(finFeeDetail.getTaxHeaderId(),
+							"_TView");
+					TaxHeader taxheader = new TaxHeader();
+					taxheader.setTaxDetails(taxDetailById);
+					taxheader.setHeaderId(finFeeDetail.getTaxHeaderId());
+					finFeeDetail.setTaxHeader(taxheader);
+				}
+			}
 			scheduleData.setFinFeeDetailList(feesList);
 			receiptData.setFinFeeDetails(feesList);
 		}
