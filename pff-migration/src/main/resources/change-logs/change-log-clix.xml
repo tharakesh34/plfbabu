@@ -2844,7 +2844,14 @@ UNION ALL
 	</sql>
 </changeSet>
 
-
+<changeSet id="50" author="Manoj">
+	<sql>
+	<![CDATA[
+			update data_engine_config set fileextension = null where name = 'DISB_EXPORT_DEFAULT';
+			update data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI_CL77RBI' where name = 'DISB_EXPORT_DEFAULT';
+	]]>
+	</sql>
+</changeSet>
 	
 </databaseChangeLog>
 
