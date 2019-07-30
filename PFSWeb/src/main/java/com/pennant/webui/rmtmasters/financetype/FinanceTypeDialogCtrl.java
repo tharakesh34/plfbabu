@@ -464,6 +464,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox vaAllocationMethod;
 	protected Space space_vaAllocationMethod;
 
+	//Sanction Check
+	protected Checkbox sanctionAmount; 
+	protected Checkbox sanctionAmountOverride;
+
 	// Features Tab
 	protected PTCKeditor remarks; // autowired
 
@@ -1664,6 +1668,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			appendInsuranceDetailsTab();
 		}
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
+
+		this.sanctionAmount.setChecked(aFinanceType.isAlwSanctionAmt());
+		this.sanctionAmountOverride.setChecked(aFinanceType.isAlwSanctionAmtOverride());
 
 		// Advance EMI Details
 
@@ -3621,6 +3628,16 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		try {
+			aFinanceType.setAlwSanctionAmt(this.sanctionAmount.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setAlwSanctionAmtOverride(this.sanctionAmountOverride.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// Division Susp Remarks
 		try {
 			if (this.finSuspRemarks.isVisible()) {
@@ -4637,6 +4654,10 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
+
+		this.sanctionAmount.setDisabled(isTrue);
+		this.sanctionAmountOverride.setDisabled(isTrue);
+		
 		if (!isOverdraft) {
 			this.putCallRequired.setDisabled(isTrue);
 			// tasks # >>Start Advance EMI and DSF

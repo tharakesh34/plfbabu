@@ -270,6 +270,9 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
 
+	private boolean alwSanctionAmt;
+	private boolean alwSanctionAmtOverride;
+
 	@XmlTransient
 	private LoggedInUser userDetails;
 
@@ -2480,6 +2483,22 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAllowRevolving(boolean allowRevolving) {
 		this.allowRevolving = allowRevolving;
+	}
+
+	public boolean isAlwSanctionAmt() {
+		return alwSanctionAmt;
+	}
+
+	public void setAlwSanctionAmt(boolean alwSanctionAmt) {
+		this.alwSanctionAmt = alwSanctionAmt;
+	}
+
+	public boolean isAlwSanctionAmtOverride() {
+		return alwSanctionAmtOverride;
+	}
+
+	public void setAlwSanctionAmtOverride(boolean alwSanctionAmtOverride) {
+		this.alwSanctionAmtOverride = alwSanctionAmtOverride;
 	}
 
 }
