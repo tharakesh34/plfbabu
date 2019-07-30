@@ -33,13 +33,18 @@
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
 
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+
 	<changeSet id="1" author="satyanarayana.g">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
 	</changeSet>
-
-
 
 	<changeSet id="3" author="satyanarayana.g">
 		<addColumn tableName="ADTFINANCEMAIN">
@@ -57,7 +62,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="5" author="satyanarayana.g">
 		<createTable tableName="ADTINSTRUMENTWISELIMIT">
 			<column name="AuditId" type="bigint">
@@ -99,7 +104,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet author="saikiran.v" id="5">
 		<addColumn tableName="AdtFinFeeDetail">
 			<column name="taxHeaderId" type="bigint" defaultValue="0">
@@ -107,27 +112,27 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="saikiran.v" id="6">
 		<addColumn tableName="AdtManualAdvise">
-			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0"/>
+			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="saikiran.v" id="7">
 		<addColumn tableName="AdtManualAdvise">
-			<column name="paidCess" type="decimal(18,0)"  defaultValue="0"/>
+			<column name="paidCess" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<!-- Fee Waiver Changes Start -->
-	
+
 	<changeSet id="8" author="Durgaprasad.g">
 		<addColumn tableName="ADTFEEWAIVERDETAILS">
-			<column name="WaiverType" type="char(1)"/>
+			<column name="WaiverType" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="9">
 		<addColumn tableName="ADTFEEWAIVERDETAILS">
 			<column name="TaxHeaderId" type="bigint" defaultValue="0">
@@ -135,7 +140,7 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="10">
 		<addColumn tableName="ADTFEEWAIVERDETAILS">
 			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
@@ -152,22 +157,22 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="11" author="Kesav">
 		<addColumn tableName="ADTFEEWAIVERDETAILS">
 			<column name="TaxApplicable" type="boolean" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="TaxComponent" type="Char(1)"/>
+			<column name="TaxComponent" type="Char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="12" author="Durgaprasad.G">
 		<addColumn tableName="AdtFinscheduledetails">
 			<column name="SchdPftWaiver" type="decimal(18,0)" />
 		</addColumn>
-	</changeSet>	
-	
+	</changeSet>
+
 	<!-- Fee Waiver Changes END -->
-	
+
 </databaseChangeLog>
