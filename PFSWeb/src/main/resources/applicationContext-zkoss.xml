@@ -5361,4 +5361,9 @@
 		<property name="ckycService" ref="ckycService"></property>
 
 	</bean>
+	<!--============ Customer Download ============== -->
+
+	<bean id="customerDownloadListCtrl" class="com.pennant.webui.customermasters.customer.CustomerDownloadListCtrl" parent="basisListCtrl"
+		scope="prototype">
+	</bean>	
 </beans>

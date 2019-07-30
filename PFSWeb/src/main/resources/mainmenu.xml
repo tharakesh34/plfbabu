@@ -434,6 +434,8 @@
 		<menuItem id="menu_Item_CKYCProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/CKYC/CKYCProcess.zul" />
 		<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/> 
 			<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
+		<menuItem id="menu_Item_CustomerDownload" zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerDownloadList.zul"
+			rightName="menuItem_CustomerMasters_CustomerDownload" />
 	</menu>
 
 	<!-- Limits -->
