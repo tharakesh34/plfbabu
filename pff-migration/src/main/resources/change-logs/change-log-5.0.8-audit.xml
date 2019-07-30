@@ -174,5 +174,16 @@
 	</changeSet>
 
 	<!-- Fee Waiver Changes END -->
+	
+	<changeSet id="13" author="Saikiran.V">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="alwSanctionAmt" type="boolean" />
+		</addColumn>
+</changeSet>
+<changeSet id="14" author="Saikiran.V">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="alwSanctionAmtOverride" type="boolean" />
+		</addColumn>
+</changeSet>
 
 </databaseChangeLog>
