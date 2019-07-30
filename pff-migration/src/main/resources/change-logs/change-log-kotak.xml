@@ -329,4 +329,16 @@
 			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="24" author="venkatesh.g">
+		<sql>
+			<![CDATA[
+			INSERT INTO smtparameters (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmdescription, version, lastmntby, lastmnton, recordstatus,  workflowid) 
+			VALUES ('GLEMS_EXPOSURE', 'GLEMS Exposure Download Configuration', 'String', '0', '0', '20', '0', 'GLEMS Exposure - Max Linked Transaction ID', 1, 1000, CURRENT_TIMESTAMP, 'Approved', 0);
+			
+			INSERT INTO smtparameters (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmdescription, version, lastmntby, lastmnton, recordstatus,  workflowid) 
+			VALUES ('GLEMS_EXPOSURE_IS_FULL_DOWNLOAD', 'GLEMS Exposure - Is full download Required (Y/N)', 'String', '1', 'Y', '1', '0', 'GLEMS Exposure - Is full download Required (Y-Yes, N-No)', 1, 1000, CURRENT_TIMESTAMP, 'Approved', 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
