@@ -1407,27 +1407,23 @@
 										<column />
 									</columns>
 									<rows>
-										<row visible="true">
+										<row>
 											<label id="label_FinanceTypeDialog_SanctionAmount" value="${c:l('label_FinanceTypeDialog_SanctionAmount.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<checkbox id="sanctionAmount" />
 											</hbox>
-											
-											<label id="label_FinanceTypeDialog_SanctionAmountOverride" value="${c:l('label_FinanceTypeDialog_SanctionAmountOverride.value')}" visible="false"/>
-											<hbox>
-													<space spacing="2px" />
-												<checkbox id="sanctionAmountOverride" />
-											</hbox>
 										</row>
-										<row >
-											<label
-												id="label_FinanceTypeDialog_AlwDP"
-												value="${c:l('label_FinanceTypeDialog_allowDrawingPower.value')}" />
+										<row visible="false" id="row_sanction">
+											<label id="label_FinanceTypeDialog_SanctionAmountOverride" value="${c:l('label_FinanceTypeDialog_SanctionAmountOverride.value')}"/>
 											<hbox>
 												<space spacing="2px" />
-												<checkbox
-													id="allowDrawingPower" checked="false" />
+												<checkbox id="sanctionAmountOverride" />
+											</hbox>
+											<label id="label_FinanceTypeDialog_AlwDP" value="${c:l('label_FinanceTypeDialog_allowDrawingPower.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="allowDrawingPower" checked="false" />
 											</hbox>
 										</row>
 									</rows>

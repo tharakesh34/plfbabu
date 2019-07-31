@@ -467,6 +467,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	//Sanction Check
 	protected Checkbox sanctionAmount; 
 	protected Checkbox sanctionAmountOverride;
+	protected Row row_sanction;
 
 	// Features Tab
 	protected PTCKeditor remarks; // autowired
@@ -1671,7 +1672,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		this.sanctionAmount.setChecked(aFinanceType.isAlwSanctionAmt());
 		this.sanctionAmountOverride.setChecked(aFinanceType.isAlwSanctionAmtOverride());
-
+		checkSanctionAmountChecked();
 		// Advance EMI Details
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
@@ -5626,6 +5627,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
+	public void onCheck$sanctionAmount(Event event) {
+		checkSanctionAmountChecked();
+	}
+
+	private void checkSanctionAmountChecked() {
+		logger.debug(Literal.ENTERING);
+
+		if (sanctionAmount.isChecked()) {
+			this.row_sanction.setVisible(true);
+		} else {
+			this.row_sanction.setVisible(false);
+			this.allowDrawingPower.setChecked(false);
+			this.sanctionAmountOverride.setChecked(false);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	public void onCheck$tDSApplicable(Event event) {
 		checkTDSApplicableChecked();
 	}
