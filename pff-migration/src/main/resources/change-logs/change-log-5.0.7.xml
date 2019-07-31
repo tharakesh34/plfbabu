@@ -3631,18 +3631,18 @@
 	<changeSet id="106" author="Varaprasad.K">
 		<sql>
 	  <![CDATA[ 
-	  delete from errordetails where code='RU0047';
-	  INSERT INTO ErrorDetails VALUES('RU0047','EN','E','{0} {1} should be equal.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-  ]]>
+		  delete from errordetails where code='RU0047';
+		  INSERT INTO ErrorDetails VALUES('RU0047','EN','E','{0} {1} should be equal.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+  		]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="107" author="Varaprasad.K">
 		<sql>
+		 <![CDATA[ 
 			delete from errordetails where code='RU0048';
-			INSERT INTO plf.ErrorDetails VALUES('RU0048','EN','E','Value date should be after first disbursement
-			date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
-
+			INSERT INTO ErrorDetails VALUES('RU0048','EN','E','Value date should be after first disbursement date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		]]>
 		</sql>
 	</changeSet>
 
