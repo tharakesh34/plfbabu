@@ -3646,5 +3646,24 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="108_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'secusers_rtemp');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="108" author="Varaprasad.k">
+		<modifyDataType tableName="SecUsers_Rtemp" columnName="USERSTAFFID" newDataType="varchar(10)" />
+	</changeSet>
+
+	<changeSet id="108_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'secusers_rtemp');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
