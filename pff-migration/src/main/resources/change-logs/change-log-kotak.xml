@@ -260,7 +260,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16" author="Dheerendra.d">
 		<sql>
 			<![CDATA[
@@ -270,7 +270,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="17" author="Dheerendra.d">
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERNECE" type="varchar(16)" />
@@ -278,17 +278,19 @@
 			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="18" author="Durgaprasad.g" dbms="oracle">
 		<sql>
 			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'Grace', 'Moratorium');
-			UPDATE ERRORDETAILS_TEMP E SET Message = REPLACE(E.Message, 'Grace', 'Moratorium');
-	
+			UPDATE ERRORDETAILS_TEMP E SET
+			Message = REPLACE(E.Message, 'Grace', 'Moratorium');
+
 			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'grace', 'moratorium');
-			UPDATE ERRORDETAILS_TEMP E SET Message = REPLACE(E.Message, 'grace', 'moratorium');
+			UPDATE ERRORDETAILS_TEMP E SET Message =
+			REPLACE(E.Message, 'grace', 'moratorium');
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="19" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -298,15 +300,15 @@
 				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'Corporate','Corporate',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'Trust','Trust',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
 				INSERT INTO RMTLOVFIELDDETAIL VALUES((SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFIELDDETAIL),(SELECT FIELDCODE FROM BMTLOVFIELDCODE WHERE FIELDCODE='CAT_COAPP'),'LLP','LLP',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,0);
-			]]>									  
+			]]>
 		</sql>
 	</changeSet>
-	
-		
+
+
 	<changeSet id="20" author="durgaprasad.g">
-		<dropTable tableName="NLADS_BALANCE"/>
+		<dropTable tableName="NLADS_BALANCE" />
 	</changeSet>
-	
+
 	<changeSet id="21" author="durgaprasad.g">
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERENCE" type="varchar(16)" />
@@ -321,7 +323,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="23" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -329,7 +331,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="24" author="venkatesh.g">
 		<sql>
 			<![CDATA[
@@ -341,4 +343,63 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="25" author="srihari">
+		<createTable tableName="PaymentTransaction">
+			<column name="TransactionId" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="MessageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TranModule" type="VARCHAR(4)" />
+			<column name="TranReference" type="nvarchar(20)" />
+			<column name="TranBatch" type="nvarchar(20)" />
+			<column name="TranStatus" type="char(1)" />
+			<column name="RespReference" type="VARCHAR(50)" />
+			<column name="StatusCode" type="VARCHAR(10)" />
+			<column name="StatusDesc" type="VARCHAR(50)" />
+			<column name="TransctionInitOn" type="datetime" />
+			<column name="StatusUpdateOn" type="datetime" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="26" author="santhoshi.k">
+		<addUniqueConstraint columnNames="TranModule" constraintName="UK_TranModule" tableName="PaymentTransaction" />
+	</changeSet>
+
+	<changeSet id="27" author="santhoshi.k">
+		<addUniqueConstraint columnNames="TranReference" constraintName="UK_TranReference" tableName="PaymentTransaction" />
+	</changeSet>
+
+	<changeSet id="28" author="santhoshi.k">
+		<addUniqueConstraint columnNames="TranBatch" constraintName="UK_TranBatch" tableName="PaymentTransaction" />
+	</changeSet>
+
+	<changeSet id="29" author="santhoshi.k">
+		<createTable tableName="BorrowerDetails">
+			<column name="CUSTCIF" type="varchar2(20)" />
+			<column name="BORROWERCIF" type="VARCHAR2(20)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="30" author="santhoshi.k">
+		<addUniqueConstraint columnNames="BORROWERCIF" constraintName="UK_BorrowerDetails" tableName="BorrowerDetails" />
+	</changeSet>
+
+	<changeSet id="31" author="santhoshi.k">
+		<createTable tableName="INTERFACE_EXTENDED_MAPPING">
+			<column name="MODULE_CODE" type="varchar2(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIELDCODE" type="VARCHAR2(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="FIELDNAME " type="VARCHAR2(20)" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
