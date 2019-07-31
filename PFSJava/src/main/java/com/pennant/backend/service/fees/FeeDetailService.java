@@ -183,7 +183,7 @@ public class FeeDetailService {
 			finFeeDetailList.addAll(vasFees);
 		}
 
-		setFeeAmount(financeDetail.getModuleDefiner(), finScheduleData.getFinanceMain(), finScheduleData);
+		setFeeAmount(financeDetail.getModuleDefiner(), finScheduleData, getFinFeeDetailList());
 
 		for (FinFeeDetail prvFeeDetail : finScheduleData.getFinFeeDetailList()) {
 			for (FinFeeDetail currFeeDetail : getFinFeeDetailList()) {
@@ -282,8 +282,8 @@ public class FeeDetailService {
 		logger.debug("Leaving");
 	}
 
-	public void setFeeAmount(String moduleDefiner, FinanceMain financeMain, FinScheduleData finScheduleData) {
-		List<FinFeeDetail> fees = finScheduleData.getFinFeeDetailList();
+	public void setFeeAmount(String moduleDefiner, FinScheduleData finScheduleData, List<FinFeeDetail> fees) {
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
 		BigDecimal deductFromDisbursement = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
@@ -489,7 +489,7 @@ public class FeeDetailService {
 			}
 		}
 
-		setFeeAmount(financeDetail.getModuleDefiner(), financeMain, finScheduleData);
+		setFeeAmount(financeDetail.getModuleDefiner(), finScheduleData, getFinFeeDetailList());
 
 		for (FinFeeDetail prvFeeDetail : finScheduleData.getFinFeeDetailList()) {
 			for (FinFeeDetail currFeeDetail : getFinFeeDetailList()) {
