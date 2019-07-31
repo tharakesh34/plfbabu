@@ -22,6 +22,8 @@
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
+							<button id="btnCMSTest" tooltiptext="${c:l('btnSave.tooltiptext')}" label="CMS TEST"
+								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
 						<toolbar align="center" sclass="toolbar-center">

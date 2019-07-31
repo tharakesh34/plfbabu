@@ -43,6 +43,7 @@
 package com.pennant.backend.service.payment.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentTaxDetailDAO;
+import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -77,10 +79,13 @@ import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.payment.PaymentDetailService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -106,6 +111,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private FinFeeDetailService finFeeDetailService;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private CustomerAddresDAO customerAddresDAO;
+	//IMPS Splitting
+	private FinAdvancePaymentsService finAdvancePaymentsService;
+	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -403,6 +411,83 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	/**
+	 * split the each transaction based on the Imps Maximum amount
+	 * 
+	 * @param paymentInstructions
+	 * @param instrumentwiseLimit
+	 * @return
+	 */
+	private List<AuditDetail> splitRequest(List<AuditDetail> paymentInstructions) {
+		logger.debug("Entering");
+
+		List<AuditDetail> finalPaymentsList = new ArrayList<AuditDetail>();
+		InstrumentwiseLimit instrumentwiseLimit = getInstrumentwiseLimitService()
+				.getInstrumentWiseModeLimit(DisbursementConstants.PAYMENT_TYPE_IMPS);
+
+		if (instrumentwiseLimit != null) {
+
+			for (int i = 0; i < paymentInstructions.size(); i++) {
+
+				AuditDetail auditDetail = paymentInstructions.get(i);
+				PaymentInstruction paymentInstruction = (PaymentInstruction) auditDetail.getModelData();
+
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(paymentInstruction.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_CAN.equals(paymentInstruction.getRecordType())
+						&& DisbursementConstants.PAYMENT_TYPE_IMPS.equals(paymentInstruction.getPaymentType())
+						&& !DisbursementConstants.STATUS_AWAITCON.equals(paymentInstruction.getStatus())
+						&& !DisbursementConstants.STATUS_PAID.equals(paymentInstruction.getStatus())
+						&& !DisbursementConstants.STATUS_REALIZED.equals(paymentInstruction.getStatus())
+						&& !DisbursementConstants.STATUS_REJECTED.equals(paymentInstruction.getStatus())
+						&& !DisbursementConstants.STATUS_CANCEL.equals(paymentInstruction.getStatus())) {
+
+					if (paymentInstruction.getPaymentAmount()
+							.compareTo(instrumentwiseLimit.getMaxAmtPerInstruction()) > 0) {
+
+						BigDecimal noOfRecords = paymentInstruction.getPaymentAmount()
+								.divide(instrumentwiseLimit.getMaxAmtPerInstruction(), 0, RoundingMode.UP);
+						int records = noOfRecords.intValueExact();
+						BigDecimal totAmount = BigDecimal.ZERO;
+
+						for (int j = 1; j <= records; j++) {
+							PaymentInstruction paymentInstr = new PaymentInstruction();
+							AuditDetail auditDetailTemp = new AuditDetail();
+
+							BeanUtils.copyProperties(paymentInstruction, paymentInstr);
+							BeanUtils.copyProperties(auditDetail, auditDetailTemp);
+
+							if (records == j) {
+								paymentInstr
+										.setPaymentAmount(paymentInstruction.getPaymentAmount().subtract(totAmount));
+							} else {
+								paymentInstr.setPaymentAmount(instrumentwiseLimit.getMaxAmtPerInstruction());
+							}
+							paymentInstr.setPaymentInstructionId(Long.MIN_VALUE);
+							paymentInstr.setNewRecord(true);
+							paymentInstr.setPostDate(DateUtility.getAppDate());
+							totAmount = totAmount.add(instrumentwiseLimit.getMaxAmtPerInstruction());
+
+							auditDetailTemp.setModelData(paymentInstr);
+
+							finalPaymentsList.add(auditDetailTemp);
+						}
+					} else {
+						paymentInstruction.setPostDate(DateUtility.getAppDate());
+						finalPaymentsList.add(auditDetail);
+					}
+				} else {
+					finalPaymentsList.add(auditDetail);
+				}
+			}
+		} else {
+			finalPaymentsList.addAll(paymentInstructions);
+		}
+
+		logger.debug("Leaving");
+
+		return finalPaymentsList;
 	}
 
 	/**
@@ -792,6 +877,22 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
+		return finAdvancePaymentsService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	public InstrumentwiseLimitService getInstrumentwiseLimitService() {
+		return instrumentwiseLimitService;
+	}
+
+	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
+		this.instrumentwiseLimitService = instrumentwiseLimitService;
 	}
 
 	@Override

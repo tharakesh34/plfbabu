@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  FinAdvancePaymentsService.java                                                   * 	  
+ * FileName    		:  CustomerPaymentTxnsListModelItemRenderer.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  14-08-2013    														*
+ * Creation Date    :  19-12-2017    														*
  *                                                                  						*
- * Modified Date    :  14-08-2013    														*
+ * Modified Date    :  19-12-2017    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
+ * 19-12-2017       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,58 +40,48 @@
  *                                                                                          * 
  ********************************************************************************************
 */
+package com.pennant.webui.applicationmaster.customerPaymentTransactions.model;
 
-package com.pennant.backend.service.finance;
+import java.io.Serializable;
 
-import java.util.Date;
-import java.util.List;
+import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceDisbursement;
-import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennant.backend.util.PennantJavaUtil;
 
-public interface FinAdvancePaymentsService {
-	List<FinAdvancePayments> getFinAdvancePaymentsById(String id, String type);
+/**
+ * Item renderer for listitems in the listbox.
+ * 
+ */
+public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRenderer<FinAdvancePayments>, Serializable {
 
-	List<AuditDetail> saveOrUpdate(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
-			String auditTranType);
+	private static final long serialVersionUID = 1L;
 
-	List<AuditDetail> doApprove(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType,
-			String auditTranType);
+	public CustomerPaymentTxnsListModelItemRenderer() {
+		super();
+	}
 
-	List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePaymentDetails, String tableType, String auditTranType);
+	@Override
+	public void render(Listitem item, FinAdvancePayments finAdvancePayments, int count) throws Exception {
 
-	List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePaymentDetails, long workflowId, String method,
-			String auditTranType, String usrLanguage, FinanceDetail financeDetail);
+		Listcell lc;
+		lc = new Listcell(finAdvancePayments.getTransactionRef());
+		lc.setParent(item);
+		lc = new Listcell(finAdvancePayments.getLlReferenceNo());
+		lc.setParent(item);
+		lc = new Listcell(finAdvancePayments.getTransactionRef());
+		lc.setParent(item);
+		lc = new Listcell(finAdvancePayments.getStatus());
+		lc.setParent(item);
+		lc = new Listcell(finAdvancePayments.getRecordStatus());
+		lc.setParent(item);
+		lc = new Listcell(PennantJavaUtil.getLabel(finAdvancePayments.getRecordType()));
+		lc.setParent(item);
+		item.setAttribute("finAdvancePayments", finAdvancePayments);
 
-	void processDisbursments(FinanceDetail financeDetail);
-
-	List<AuditDetail> processQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
-
-	void doCancel(FinanceDetail financeDetail);
-
-	int getCountByFinReference(String finReference);
-
-	void Update(long paymentId, long linkedTranId);
-
-	int getMaxPaymentSeq(String finReference);
-
-	int getFinAdvCountByRef(String finReference, String type);
-
-	List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
-			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
-
-	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
-
-	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce);
-
-	List<ReturnDataSet> getPostingsByLinkedTranId(List<Long> tranIdList, String finReference);
-
-	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate);
-
-	List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> finAdvancePayments);
+		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPaymentTxnsItemDoubleClicked");
+	}
 }

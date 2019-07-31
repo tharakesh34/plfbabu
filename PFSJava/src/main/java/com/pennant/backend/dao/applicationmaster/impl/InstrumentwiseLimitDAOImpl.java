@@ -79,8 +79,7 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(
 				" id, instrumentMode, paymentMinAmtperTrans, paymentMaxAmtperTran, paymentMaxAmtperDay, receiptMinAmtperTran, ");
-		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, ");
-
+		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, MaxAmtPerInstruction,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From InstrumentwiseLimit");
@@ -117,13 +116,13 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		sql.append(tableType.getSuffix());
 		sql.append(
 				"(id, instrumentMode, paymentMinAmtperTrans, paymentMaxAmtperTran, paymentMaxAmtperDay, receiptMinAmtperTran, ");
-		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, ");
+		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, MaxAmtPerInstruction,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(
 				" :id, :instrumentMode, :paymentMinAmtperTrans, :paymentMaxAmtperTran, :paymentMaxAmtperDay, :receiptMinAmtperTran, ");
-		sql.append(" :receiptMaxAmtperTran, :receiptMaxAmtperDay, ");
+		sql.append(" :receiptMaxAmtperTran, :receiptMaxAmtperDay, :MaxAmtPerInstruction,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -154,10 +153,10 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		StringBuilder sql = new StringBuilder("update InstrumentwiseLimit");
 		sql.append(tableType.getSuffix());
 		sql.append(
-				"  set instrumentMode = :instrumentMode, paymentMinAmtperTrans = :paymentMinAmtperTrans, paymentMaxAmtperTran = :paymentMaxAmtperTran, ");
+				" Set instrumentMode = :instrumentMode, paymentMinAmtperTrans = :paymentMinAmtperTrans, paymentMaxAmtperTran = :paymentMaxAmtperTran, ");
 		sql.append(
 				" paymentMaxAmtperDay = :paymentMaxAmtperDay, receiptMinAmtperTran = :receiptMinAmtperTran, receiptMaxAmtperTran = :receiptMaxAmtperTran, ");
-		sql.append(" receiptMaxAmtperDay = :receiptMaxAmtperDay, ");
+		sql.append(" receiptMaxAmtperDay = :receiptMaxAmtperDay, MaxAmtPerInstruction = :MaxAmtPerInstruction,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -250,8 +249,7 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(
 				" id, instrumentMode, paymentMinAmtperTrans, paymentMaxAmtperTran, paymentMaxAmtperDay, receiptMinAmtperTran, ");
-		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, ");
-
+		sql.append(" receiptMaxAmtperTran, receiptMaxAmtperDay, MaxAmtPerInstruction,");
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From InstrumentwiseLimit");

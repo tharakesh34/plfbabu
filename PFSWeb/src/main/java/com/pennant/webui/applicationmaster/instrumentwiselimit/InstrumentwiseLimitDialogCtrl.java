@@ -57,6 +57,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
@@ -97,6 +98,10 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	protected CurrencyBox receiptMinAmtperTran;
 	protected CurrencyBox receiptMaxAmtperTran;
 	protected CurrencyBox receiptMaxAmtperDay;
+	//IMPS Splitting changes
+	protected CurrencyBox maxAmtPerInstruction;
+	protected Row 		  row_MaxAmtPerInstruction;
+	
 	private InstrumentwiseLimit instrumentwiseLimit; // overhanded per param
 
 	private transient InstrumentwiseLimitListCtrl instrumentwiseLimitListCtrl; // overhanded
@@ -104,7 +109,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 																				// param
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 
-	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getAllPaymentTypes();
+	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getPaymentTypes(true, false);
 
 	/**
 	 * default constructor.<br>
@@ -184,36 +189,40 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		logger.debug(Literal.ENTERING);
 
 		this.paymentMinAmtperTrans.setProperties(false, PennantConstants.defaultCCYDecPos);
-		this.paymentMinAmtperTrans
-				.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
+		this.paymentMinAmtperTrans.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.paymentMinAmtperTrans.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.paymentMinAmtperTrans.setScale(PennantConstants.defaultCCYDecPos);
-
+		
 		this.paymentMaxAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.paymentMaxAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.paymentMaxAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.paymentMaxAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
-
+		
 		this.paymentMaxAmtperDay.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.paymentMaxAmtperDay.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.paymentMaxAmtperDay.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.paymentMaxAmtperDay.setScale(PennantConstants.defaultCCYDecPos);
-
+		
 		this.receiptMinAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMinAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.receiptMinAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.receiptMinAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
-
+		
 		this.receiptMaxAmtperTran.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMaxAmtperTran.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.receiptMaxAmtperTran.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.receiptMaxAmtperTran.setScale(PennantConstants.defaultCCYDecPos);
-
+		
 		this.receiptMaxAmtperDay.setProperties(false, PennantConstants.defaultCCYDecPos);
 		this.receiptMaxAmtperDay.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
 		this.receiptMaxAmtperDay.setRoundingMode(BigDecimal.ROUND_DOWN);
 		this.receiptMaxAmtperDay.setScale(PennantConstants.defaultCCYDecPos);
 
+		this.maxAmtPerInstruction.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.maxAmtPerInstruction.setFormat(PennantApplicationUtil.getAmountFormate(PennantConstants.defaultCCYDecPos));
+		this.maxAmtPerInstruction.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.maxAmtPerInstruction.setScale(PennantConstants.defaultCCYDecPos);
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -365,6 +374,14 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 				.formateAmount(aInstrumentwiseLimit.getReceiptMaxAmtperTran(), PennantConstants.defaultCCYDecPos));
 		this.receiptMaxAmtperDay.setValue(PennantApplicationUtil
 				.formateAmount(aInstrumentwiseLimit.getReceiptMaxAmtperDay(), PennantConstants.defaultCCYDecPos));
+		this.maxAmtPerInstruction.setValue(PennantApplicationUtil.formateAmount(aInstrumentwiseLimit.getMaxAmtPerInstruction(), PennantConstants.defaultCCYDecPos));
+		
+		if (BigDecimal.ZERO.compareTo(aInstrumentwiseLimit.getMaxAmtPerInstruction()) < 0) {
+			this.row_MaxAmtPerInstruction.setVisible(true);
+		} else {
+			this.row_MaxAmtPerInstruction.setVisible(false);
+		}
+		
 		this.recordStatus.setValue(aInstrumentwiseLimit.getRecordStatus());
 
 		logger.debug(Literal.LEAVING);
@@ -376,7 +393,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * @param aInstrumentwiseLimit
 	 */
 	public void doWriteComponentsToBean(InstrumentwiseLimit aInstrumentwiseLimit) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		doSetLOVValidation();
 
@@ -397,70 +414,71 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		//Payments Min, Max Amounts per Transactions
 		try {
-			BigDecimal paymentMinAmtperTrans = PennantApplicationUtil
-					.unFormateAmount(this.paymentMinAmtperTrans.getActualValue(), PennantConstants.defaultCCYDecPos);
-			BigDecimal paymentMaxAmtperTran = PennantApplicationUtil
-					.unFormateAmount(this.paymentMaxAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
-			BigDecimal paymentMaxAmtperDay = PennantApplicationUtil
-					.unFormateAmount(this.paymentMaxAmtperDay.getActualValue(), PennantConstants.defaultCCYDecPos);
-
+			BigDecimal paymentMinAmtperTrans =PennantApplicationUtil.unFormateAmount(this.paymentMinAmtperTrans.getActualValue(), PennantConstants.defaultCCYDecPos);
+			BigDecimal paymentMaxAmtperTran =PennantApplicationUtil.unFormateAmount(this.paymentMaxAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
+			BigDecimal paymentMaxAmtperDay =PennantApplicationUtil.unFormateAmount(this.paymentMaxAmtperDay.getActualValue(), PennantConstants.defaultCCYDecPos);
+			
 			if (paymentMinAmtperTrans != null && paymentMaxAmtperTran != null) {
 				if (paymentMinAmtperTrans.compareTo(paymentMaxAmtperTran) > 0) {
-					throw new WrongValueException(this.paymentMinAmtperTrans,
-							Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMinAmtperTrans.value"));
+					throw new WrongValueException(this.paymentMinAmtperTrans, Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMinAmtperTrans.value"));
 				}
 			}
-
-			if (paymentMaxAmtperTran != null && paymentMaxAmtperDay != null) {
-
-				if (paymentMaxAmtperTran.compareTo(paymentMaxAmtperDay) > 0) {
-					throw new WrongValueException(this.paymentMaxAmtperDay,
-							Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay2.value"));
+			
+			if ( paymentMaxAmtperTran != null && paymentMaxAmtperDay != null) {
+				
+				if (paymentMaxAmtperTran.compareTo(paymentMaxAmtperDay) >0) {
+					throw new WrongValueException(this.paymentMaxAmtperDay, Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay2.value"));
 				}
 			}
-
+			
 			aInstrumentwiseLimit.setPaymentMinAmtperTrans(paymentMinAmtperTrans);
 			aInstrumentwiseLimit.setPaymentMaxAmtperTran(paymentMaxAmtperTran);
 			aInstrumentwiseLimit.setPaymentMaxAmtperDay(paymentMaxAmtperDay);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		//Receipts Min, Max Amounts per Transactions
 		try {
-			BigDecimal receiptMinAmtperTran = PennantApplicationUtil
-					.unFormateAmount(this.receiptMinAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
-			BigDecimal receiptMaxAmtperTran = PennantApplicationUtil
-					.unFormateAmount(this.receiptMaxAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
-			BigDecimal receiptMaxAmtperDay = PennantApplicationUtil
-					.unFormateAmount(this.receiptMaxAmtperDay.getActualValue(), PennantConstants.defaultCCYDecPos);
-
+			BigDecimal receiptMinAmtperTran =PennantApplicationUtil.unFormateAmount(this.receiptMinAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
+			BigDecimal receiptMaxAmtperTran =PennantApplicationUtil.unFormateAmount(this.receiptMaxAmtperTran.getActualValue(), PennantConstants.defaultCCYDecPos);
+			BigDecimal receiptMaxAmtperDay =PennantApplicationUtil.unFormateAmount(this.receiptMaxAmtperDay.getActualValue(), PennantConstants.defaultCCYDecPos);
+			
 			if (receiptMinAmtperTran != null && receiptMaxAmtperTran != null) {
 				if (receiptMinAmtperTran.compareTo(receiptMaxAmtperTran) == 1) {
-					throw new WrongValueException(this.receiptMinAmtperTran,
-							Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMinAmtperTrans.value"));
+					throw new WrongValueException(this.receiptMinAmtperTran, Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMinAmtperTrans.value"));
 				}
 			}
-
+			
 			if (receiptMinAmtperTran != null && receiptMaxAmtperTran != null && receiptMaxAmtperDay != null) {
 				if (receiptMinAmtperTran.compareTo(receiptMaxAmtperDay) > 0) {
-					throw new WrongValueException(this.receiptMaxAmtperDay,
-							Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay1.value"));
+					throw new WrongValueException(this.receiptMaxAmtperDay, Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay1.value"));
 				}
 				if (receiptMaxAmtperTran.compareTo(receiptMaxAmtperDay) > 0) {
-					throw new WrongValueException(this.receiptMaxAmtperDay,
-							Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay2.value"));
+					throw new WrongValueException(this.receiptMaxAmtperDay, Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay2.value"));
 				}
 			}
-
+			
 			aInstrumentwiseLimit.setReceiptMinAmtperTran(receiptMinAmtperTran);
 			aInstrumentwiseLimit.setReceiptMaxAmtperTran(receiptMaxAmtperTran);
 			aInstrumentwiseLimit.setReceiptMaxAmtperDay(receiptMaxAmtperDay);
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+		
+		//Imps Splitting (payment Max Amount per Instruction)
+		if (this.row_MaxAmtPerInstruction.isVisible()) {
+			try {
+				BigDecimal maxAmtPerInstruction =PennantApplicationUtil.unFormateAmount(this.maxAmtPerInstruction.getActualValue(), PennantConstants.defaultCCYDecPos);
+				aInstrumentwiseLimit.setMaxAmtPerInstruction(maxAmtPerInstruction);
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		} else {
+			aInstrumentwiseLimit.setMaxAmtPerInstruction(BigDecimal.ZERO);
 		}
 
 		doRemoveValidation();
@@ -484,7 +502,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 *            The entity that need to be render.
 	 */
 	public void doShowDialog(InstrumentwiseLimit instrumentwiseLimit) {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (instrumentwiseLimit.isNew()) {
 			this.btnCtrl.setInitNew();
@@ -507,11 +525,11 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 			}
 		}
 		//once record approved than delete and notes button visible false
-		if (StringUtils.contains(instrumentwiseLimit.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+		if(StringUtils.contains(instrumentwiseLimit.getRecordStatus(),PennantConstants.RCD_STATUS_APPROVED)){
 			this.btnNotes.setVisible(false);
 			this.btnDelete.setVisible(false);
 		}
-
+		
 		if (enqiryModule) {
 			this.btnCtrl.setBtnStatus_Enquiry();
 			this.btnNotes.setVisible(false);
@@ -527,43 +545,41 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
-
+		
 		if (!this.instrumentMode.isDisabled()) {
-			this.instrumentMode.setConstraint(new StaticListValidator(listInstrumentMode,
-					Labels.getLabel("label_InstrumentwiseLimitDialog_InstrumentMode.value")));
+			this.instrumentMode.setConstraint(new StaticListValidator(listInstrumentMode, Labels.getLabel("label_InstrumentwiseLimitDialog_InstrumentMode.value")));
 		}
 		if (!this.paymentMinAmtperTrans.isReadonly()) {
-			this.paymentMinAmtperTrans.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMinAmtperTrans.value"),
+			this.paymentMinAmtperTrans.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMinAmtperTrans.value"),
 					PennantConstants.defaultCCYDecPos, false, false));
 		}
 		if (!this.paymentMaxAmtperTran.isReadonly()) {
-			this.paymentMaxAmtperTran.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperTran.value"),
+			this.paymentMaxAmtperTran.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperTran.value"),
 					PennantConstants.defaultCCYDecPos, false, false));
 		}
 		if (!this.paymentMaxAmtperDay.isReadonly()) {
-			this.paymentMaxAmtperDay.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay.value"),
+			this.paymentMaxAmtperDay.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay.value"),
 							PennantConstants.defaultCCYDecPos, false, false));
 		}
 		if (!this.receiptMinAmtperTran.isReadonly()) {
-			this.receiptMinAmtperTran.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMinAmtperTran.value"),
+			this.receiptMinAmtperTran.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMinAmtperTran.value"),
 					PennantConstants.defaultCCYDecPos, false, false));
 		}
 		if (!this.receiptMaxAmtperTran.isReadonly()) {
-			this.receiptMaxAmtperTran.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperTran.value"),
+			this.receiptMaxAmtperTran.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperTran.value"),
 					PennantConstants.defaultCCYDecPos, false, false));
 		}
 		if (!this.receiptMaxAmtperDay.isReadonly()) {
-			this.receiptMaxAmtperDay.setConstraint(
-					new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay.value"),
+			this.receiptMaxAmtperDay.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay.value"),
 							PennantConstants.defaultCCYDecPos, false, false));
+		}
+		
+		if (this.row_MaxAmtPerInstruction.isVisible() && !this.maxAmtPerInstruction.isReadonly()) {
+			this.maxAmtPerInstruction.setConstraint(new PTDecimalValidator(Labels.getLabel("label_InstrumentwiseLimitDialog_MaxAmtPerInstruction.value"),
+					PennantConstants.defaultCCYDecPos, true, false));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -573,7 +589,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * Remove the Validation by setting empty constraints.
 	 */
 	private void doRemoveValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		this.instrumentMode.setConstraint("");
 		this.paymentMinAmtperTrans.setConstraint("");
@@ -582,7 +598,8 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		this.receiptMinAmtperTran.setConstraint("");
 		this.receiptMaxAmtperTran.setConstraint("");
 		this.receiptMaxAmtperDay.setConstraint("");
-
+		this.maxAmtPerInstruction.setConstraint("");
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -591,7 +608,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 */
 
 	private void doSetLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -601,7 +618,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 */
 
 	private void doRemoveLOVValidation() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -611,20 +628,24 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 */
 	@Override
 	protected void doClearMessage() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
+		
 		Clients.clearWrongValue(this.paymentMinAmtperTrans);
 		Clients.clearWrongValue(this.paymentMaxAmtperTran);
 		Clients.clearWrongValue(this.paymentMaxAmtperTran);
 		Clients.clearWrongValue(this.receiptMinAmtperTran);
 		Clients.clearWrongValue(this.receiptMaxAmtperTran);
 		Clients.clearWrongValue(this.receiptMaxAmtperDay);
-
+		Clients.clearWrongValue(this.maxAmtPerInstruction);
+		
 		this.paymentMinAmtperTrans.clearErrorMessage();
 		this.paymentMaxAmtperTran.clearErrorMessage();
 		this.paymentMaxAmtperDay.clearErrorMessage();
 		this.receiptMinAmtperTran.clearErrorMessage();
 		this.receiptMaxAmtperTran.clearErrorMessage();
 		this.receiptMaxAmtperDay.clearErrorMessage();
+		this.maxAmtPerInstruction.clearErrorMessage();
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -634,7 +655,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * @throws InterruptedException
 	 */
 	private void doDelete() throws InterruptedException {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		final InstrumentwiseLimit aInstrumentwiseLimit = new InstrumentwiseLimit();
 		BeanUtils.copyProperties(this.instrumentwiseLimit, aInstrumentwiseLimit);
@@ -677,7 +698,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * Set the components for edit mode. <br>
 	 */
 	private void doEdit() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		if (this.instrumentwiseLimit.isNewRecord()) {
 			this.btnCancel.setVisible(false);
@@ -686,13 +707,14 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 			readOnlyComponent(true, this.instrumentMode);
 			this.btnCancel.setVisible(true);
 		}
-
+		
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_PaymentMinAmtperTrans"), this.paymentMinAmtperTrans);
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_PaymentMaxAmtperTran"), this.paymentMaxAmtperTran);
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_PaymentMaxAmtperDay"), this.paymentMaxAmtperDay);
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_ReceiptMinAmtperTran"), this.receiptMinAmtperTran);
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_ReceiptMaxAmtperTran"), this.receiptMaxAmtperTran);
 		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_ReceiptMaxAmtperDay"), this.receiptMaxAmtperDay);
+		readOnlyComponent(isReadOnly("InstrumentwiseLimitDialog_MaxAmtPerInstruction"), this.maxAmtPerInstruction);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -715,7 +737,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 	 * Set the components to ReadOnly. <br>
 	 */
 	public void doReadOnly() {
-		logger.debug(Literal.LEAVING);
+		logger.debug(Literal.ENTERING);
 
 		readOnlyComponent(true, this.instrumentMode);
 		readOnlyComponent(true, this.paymentMinAmtperTrans);
@@ -724,6 +746,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		readOnlyComponent(true, this.receiptMinAmtperTran);
 		readOnlyComponent(true, this.receiptMaxAmtperTran);
 		readOnlyComponent(true, this.receiptMaxAmtperDay);
+		readOnlyComponent(true, this.maxAmtPerInstruction);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -749,6 +772,7 @@ public class InstrumentwiseLimitDialogCtrl extends GFCBaseCtrl<InstrumentwiseLim
 		this.receiptMinAmtperTran.setValue("");
 		this.receiptMaxAmtperTran.setValue("");
 		this.receiptMaxAmtperDay.setValue("");
+		this.maxAmtPerInstruction.setValue("");
 
 		logger.debug("Leaving");
 	}

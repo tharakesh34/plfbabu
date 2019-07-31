@@ -319,7 +319,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				" PlanEMIHMethod , PlanEMIHMaxPerYear , PlanEMIHMax , PlanEMIHLockPeriod , PlanEMICpz , CalRoundingMode ,RoundingTarget, AlwMultiDisb, BpiAmount, ");
 		selectSql.append(
 				" DeductFeeDisb, RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,PastduePftMargin,  FinCategory, ProductCategory , ");
-		selectSql.append(" AdvanceEMI, BpiPftDaysBasis, FixedTenorRate,FixedRateTenor ");
+		selectSql.append(
+				" AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor, AllowRevolving, AllowDrawingPower ");
 
 		selectSql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage");
 		if (!isWIF) {

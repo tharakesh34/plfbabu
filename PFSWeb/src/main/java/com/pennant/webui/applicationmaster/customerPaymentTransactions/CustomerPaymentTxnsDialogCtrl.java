@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PayOrderIssueDialogCtrl.java                                                   * 	  
+ * FileName    		:  CustomerPaymentTxnsDialogCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -40,18 +40,18 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.webui.finance.payorderissue;
+package com.pennant.webui.applicationmaster.customerPaymentTransactions;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
@@ -77,18 +77,16 @@ import org.zkoss.zul.Window;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.PagedListService;
-import com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -98,6 +96,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -105,53 +104,42 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/SolutionFactory/PayOrderIssueHeader/PayOrderIssueDialog.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsDialog.zul file.
  */
-public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
+public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private static final long serialVersionUID = -8421583705358772016L;
-	private static final Logger logger = Logger.getLogger(PayOrderIssueDialogCtrl.class);
+	private static final Logger logger = Logger.getLogger(CustomerPaymentTxnsDialogCtrl.class);
 
-	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting auto wired by our 'extends GFCBaseCtrl' GenericForwardComposer.
-	 */
-	protected Window window_PayOrderIssueDialog;
+	protected Window window_CustomerPaymentTxnsDialog;
 
 	protected Textbox finReference;
 	protected Grid grid_Basicdetails;
-	protected Button btnCMSTest;
 
-	// not auto wired variables
-	private PayOrderIssueHeader payOrderIssueHeader;
-	private transient PayOrderIssueListCtrl payOrderIssueListCtrl;
-
+	private FinAdvancePayments finAdvancePayments;
+	private FinanceDisbursement financeDisbursement;
+	private transient CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl;
+	private transient PayOrderIssueService payOrderIssueService;
 	private transient boolean validationOn;
 
-	// ServiceDAOs / Domain Classes
-	private transient PayOrderIssueService payOrderIssueService;
-	private HashMap<String, ArrayList<ErrorDetail>> overideMap = new HashMap<String, ArrayList<ErrorDetail>>();
-
-	// NEEDED for the ReUse in the SearchWindow
-
 	int listRows;
-
-	protected Grid grid_payOrderIssue;
-	protected Label payOrderIssue_finReference;
-	protected Label payOrderIssue_finType;
-	protected Label payOrderIssue_custCIF;
-	protected Checkbox payOrderIssue_quickDisb;
-	protected Label payOrderIssue_finCcy;
-	protected Label payOrderIssue_startDate;
-	protected Label payOrderIssue_maturityDate;
+	protected Label customerPaymentTxn_finType;
+	protected Label customerPaymentTxn_custCIF;
+	protected Checkbox customerPaymentTxn_quickDisb;
+	protected Label customerPaymentTxn_finCcy;
+	protected Label customerPaymentTxn_startDate;
+	protected Label customerPaymentTxn_maturityDate;
 
 	protected Label label_PayOrderIssueDialog_FinReference;
 	protected Button button_PayOrderIssueDialog_NewDisbursement;
+	protected Button btnTest;
 
-	protected Listbox listboxPayOrderIssue;
+	protected Listbox listboxCustomerPaymentTxns;
 	protected Label label_AdvancePayments_Title;
 
 	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
-	private String ModuleType_POISSUE = "POISSUE";
+	private List<FinanceDisbursement> financeDisbursementList = new ArrayList<FinanceDisbursement>();
+	private String ModuleType_CUSTPMTTXN = "CUSTPMTTXN";
 	private DisbursementInstCtrl disbursementInstCtrl;
 	private FinanceMain financeMain;
 	private int ccyformat;
@@ -159,18 +147,14 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Tab tabPosting;
 	protected Listbox listBoxFinAccountings;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	protected Decimalbox payOrderIssue_FinAssetValue;
-	protected Decimalbox payOrderIssue_FinCurrAssetValue;
+	protected Decimalbox customerPaymentTxn_FinAssetValue;
+	protected Decimalbox customerPaymentTxn_FinCurrAssetValue;
 	private DisbursementPostings disbursementPostings;
-
-	//Test
-	@Autowired(required = false)
-	private TestCustomerPaymentService testCustomerPaymentService;
 
 	/**
 	 * default constructor.<br>
 	 */
-	public PayOrderIssueDialogCtrl() {
+	public CustomerPaymentTxnsDialogCtrl() {
 		super();
 	}
 
@@ -179,118 +163,70 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		super.pageRightName = "PayOrderIssueDialog";
 	}
 
-	// Component Events
-
-	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected PayOrderIssueHeader object in a Map.
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
-	public void onCreate$window_PayOrderIssueDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerPaymentTxnsDialog(Event event) throws Exception {
 		logger.debug("Entering");
-
-		// Set the page level components.
-		setPageComponents(window_PayOrderIssueDialog);
+		setPageComponents(window_CustomerPaymentTxnsDialog);
 
 		try {
-
-			// READ OVERHANDED parameters !
-			if (arguments.containsKey("payOrderIssueHeader")) {
-				this.payOrderIssueHeader = (PayOrderIssueHeader) arguments.get("payOrderIssueHeader");
-				PayOrderIssueHeader befImage = new PayOrderIssueHeader();
-				BeanUtils.copyProperties(this.payOrderIssueHeader, befImage);
-				this.payOrderIssueHeader.setBefImage(befImage);
-				setPayOrderIssueHeader(this.payOrderIssueHeader);
-				financeMain = payOrderIssueHeader.getFinanceMain();
-				ccyformat = CurrencyUtil.getFormat(financeMain.getFinCcy());
+			if (arguments.containsKey("finAdvancePayments")) {
+				this.finAdvancePayments = (FinAdvancePayments) arguments.get("finAdvancePayments");
+				FinAdvancePayments befImage = new FinAdvancePayments();
+				BeanUtils.copyProperties(this.finAdvancePayments, befImage);
+				this.finAdvancePayments.setBefImage(befImage);
+				setFinAdvancePayments(this.finAdvancePayments);
 			} else {
-				setPayOrderIssueHeader(null);
+				setFinAdvancePayments(null);
 			}
 
-			doLoadWorkFlow(this.payOrderIssueHeader.isWorkflow(), this.payOrderIssueHeader.getWorkflowId(),
-					this.payOrderIssueHeader.getNextTaskId());
-
-			if (!enqiryModule) {
-				/* set components visible dependent of the users rights */
-				doCheckRights();
+			if (arguments.containsKey("financeMain")) {
+				this.financeMain = (FinanceMain) arguments.get("financeMain");
+				this.ccyformat = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
 			}
+
+			doLoadWorkFlow(this.finAdvancePayments.isWorkflow(), this.finAdvancePayments.getWorkflowId(),
+					this.finAdvancePayments.getNextTaskId());
 
 			if (isWorkFlowEnabled() && !enqiryModule) {
 				this.userAction = setListRecordStatus(this.userAction);
 				getUserWorkspace().allocateRoleAuthorities(getRole(), "PayOrderIssueDialog");
 			}
-
-			// READ OVERHANDED parameters !
-			// we get the payOrderIssueHeaderListWindow controller. So we have access
-			// to it and can synchronize the shown data when we do insert, edit
-			// or
-			// delete payOrderIssueHeader here.
-			if (arguments.containsKey("payOrderIssueListCtrl")) {
-				setPayOrderIssueListCtrl((PayOrderIssueListCtrl) arguments.get("payOrderIssueListCtrl"));
+			if (arguments.containsKey("customerPaymentTxnsListCtrl")) {
+				setCustomerPaymentTxnsListCtrl(
+						(CustomerPaymentTxnsListCtrl) arguments.get("customerPaymentTxnsListCtrl"));
 			} else {
-				setPayOrderIssueListCtrl(null);
+				setCustomerPaymentTxnsListCtrl(null);
 			}
 
 			// Set the DialogController Height for listBox
 			getBorderLayoutHeight();
 			grid_Basicdetails.getRows().getVisibleItemCount();
-			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100 + 75;
+			int dialogHeight = grid_Basicdetails.getRows().getVisibleItemCount() * 20 + 100 + 125;
 			int listboxHeight = borderLayoutHeight - dialogHeight;
-			listboxPayOrderIssue.setHeight(listboxHeight + "px");
+			listboxCustomerPaymentTxns.setHeight(listboxHeight + "px");
 			this.listBoxFinAccountings.setHeight(listboxHeight + "px");
 			listRows = Math.round(listboxHeight / 24) - 1;
 
 			// set Field Properties
 			doSetFieldProperties();
-			doShowDialog(getPayOrderIssueHeader());
+			doShowDialog(getFinAdvancePayments());
 			this.btnDelete.setVisible(false);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
-			this.window_PayOrderIssueDialog.onClose();
+			this.window_CustomerPaymentTxnsDialog.onClose();
 		}
 		logger.debug("Leaving" + event.toString());
 	}
 
-	/**
-	 * Set the properties of the fields, like maxLength.<br>
-	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		// Empty sent any required attributes
-		this.payOrderIssue_FinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
-		this.payOrderIssue_FinCurrAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
+		this.customerPaymentTxn_FinAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
+		this.customerPaymentTxn_FinCurrAssetValue.setFormat(PennantApplicationUtil.getAmountFormate(ccyformat));
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * User rights check. <br>
-	 * Only components are set visible=true if the logged-in <br>
-	 * user have the right for it. <br>
-	 * 
-	 * The rights are get from the spring framework users grantedAuthority(). A right is only a string. <br>
-	 */
-	private void doCheckRights() {
-		logger.debug("Entering");
-
-		if (!enqiryModule) {
-			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole());
-			this.button_PayOrderIssueDialog_NewDisbursement
-					.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnNew"));
-			this.btnNew.setVisible(false);
-			this.btnEdit.setVisible(false);
-			this.btnDelete.setVisible(false);
-			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnSave"));
-			this.btnCancel.setVisible(false);
-		}
-
 		logger.debug("Leaving");
 	}
 
@@ -306,24 +242,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnCMSTest(Event event) throws InterruptedException {
+	public void onClick$btnTest(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		doCMSTest();
+		doTest();
 		logger.debug("Leaving" + event.toString());
-	}
-
-	public void doCMSTest() throws InterruptedException {
-		logger.debug("Entering");
-		try {
-			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
-			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
-
-			//call To Service
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showMessage(e.getMessage());
-		}
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -345,7 +267,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
-		MessageUtil.showHelpWindow(event, window_PayOrderIssueDialog);
+		MessageUtil.showHelpWindow(event, window_CustomerPaymentTxnsDialog);
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -390,80 +312,69 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 */
 	private void doCancel() {
 		logger.debug("Entering");
-		doWriteBeanToComponents(this.payOrderIssueHeader.getBefImage());
+		doWriteBeanToComponents(this.finAdvancePayments.getBefImage(), this.financeDisbursement.getBefImage());
 		doReadOnly();
 		this.btnCtrl.setInitEdit();
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param payIHeader
-	 *            PayOrderIssueHeader
-	 */
-	public void doWriteBeanToComponents(PayOrderIssueHeader payIHeader) {
+	public void doWriteBeanToComponents(FinAdvancePayments finAdvancePayments,
+			FinanceDisbursement financeDisbursement) {
 		logger.debug("Entering");
 
-		this.payOrderIssue_finType.setValue(payIHeader.getFinType() + " - " + payIHeader.getFinTypeDesc());
-		this.payOrderIssue_finCcy
-				.setValue(payIHeader.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(payIHeader.getFinCcy()));
+		this.customerPaymentTxn_finType
+				.setValue(financeMain.getFinType() + " - " + financeMain.getFinType());
+		this.customerPaymentTxn_finCcy
+				.setValue(financeMain.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(financeMain.getFinCcy()));
 
-		this.payOrderIssue_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
-		this.payOrderIssue_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
+		this.customerPaymentTxn_startDate.setValue(DateUtility.formatToLongDate(financeMain.getFinStartDate()));
+		this.customerPaymentTxn_maturityDate.setValue(DateUtility.formatToLongDate(financeMain.getMaturityDate()));
 
 		this.finReference.setValue(financeMain.getFinReference());
-		this.payOrderIssue_quickDisb.setChecked(financeMain.isQuickDisb());
-		this.payOrderIssue_custCIF.setValue(payIHeader.getCustCIF());
+		this.customerPaymentTxn_quickDisb.setChecked(financeMain.isQuickDisb());
+		this.customerPaymentTxn_custCIF.setValue(financeMain.getCustCIF());
 
-		this.payOrderIssue_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
-		this.payOrderIssue_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
-		doFillFinAdvancePaymentsDetails(payIHeader.getFinAdvancePaymentsList(), payIHeader.getvASRecordings());
-		this.recordStatus.setValue(payIHeader.getRecordStatus());
+		this.customerPaymentTxn_FinAssetValue.setValue(formateAmount(financeMain.getFinAssetValue()));
+		this.customerPaymentTxn_FinCurrAssetValue.setValue(formateAmount(financeMain.getFinCurrAssetValue()));
+		doFillFinAdvancePaymentsDetails(finAdvancePayments, financeDisbursement);
+		this.recordStatus.setValue(finAdvancePayments.getRecordStatus());
 
 		if (!enqiryModule) {
 			//Accounting Details Tab Addition
-			showAccounting(payIHeader, false);
+			showAccounting(finAdvancePayments, false);
 		}
 		if (enqiryModule) {
-			showAccounting(payIHeader, true);
+			showAccounting(finAdvancePayments, true);
 		}
 
 		logger.debug("Leaving");
 	}
 
 	private BigDecimal formateAmount(BigDecimal decimal) {
-		return PennantAppUtil.formateAmount(decimal, ccyformat);
+		return PennantApplicationUtil.formateAmount(decimal, ccyformat);
 	}
 
-	/**
-	 * Writes the components values to the bean.<br>
-	 * 
-	 * @param aPayOrderIssueHeader
-	 * @throws InterruptedException
-	 */
-	public void doWriteComponentsToBean(PayOrderIssueHeader aPayOrderIssueHeader) throws InterruptedException {
+	public void doWriteComponentsToBean(FinAdvancePayments finAdvancePayments) throws InterruptedException {
 		logger.debug("Entering");
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			aPayOrderIssueHeader.setFinReference(this.finReference.getValue());
+			finAdvancePayments.setFinReference(this.finReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
-		disbursementInstCtrl.setFinanceDisbursement(aPayOrderIssueHeader.getFinanceDisbursements());
-		disbursementInstCtrl.setDocumentDetails(aPayOrderIssueHeader.getDocumentDetails());
-		List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(),
-				aPayOrderIssueHeader.isLoanApproved());
-		valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage());
-		if (valid != null && !valid.isEmpty()) {
-			for (ErrorDetail errorDetails : valid) {
-				wve.add(new WrongValueException(this.label_AdvancePayments_Title, errorDetails.getError()));
-			}
-
-		}
+		disbursementInstCtrl.setFinanceDisbursement(finAdvancePayments.getFinanceDisbursements());
+		//disbursementInstCtrl.setDocumentDetails(finAdvancePayments.getDocumentDetails());
+		//List<ErrorDetail> valid = disbursementInstCtrl.validateFinAdvancePayment(getFinAdvancePaymentsList(), finAdvancePayments.isLoanApproved());
+		/*
+		 * valid = ErrorUtil.getErrorDetails(valid, getUserWorkspace().getUserLanguage()); if (valid != null &&
+		 * !valid.isEmpty()) { for (ErrorDetail errorDetails : valid) { wve.add(new
+		 * WrongValueException(this.label_AdvancePayments_Title, errorDetails.getError())); }
+		 * 
+		 * }
+		 */
 
 		doRemoveValidation();
 
@@ -475,9 +386,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			throw new WrongValuesException(wvea);
 		}
 
-		aPayOrderIssueHeader.setRecordStatus(this.recordStatus.getValue());
-		aPayOrderIssueHeader.setFinAdvancePaymentsList(getFinAdvancePaymentsList());
-		setPayOrderIssueHeader(aPayOrderIssueHeader);
+		finAdvancePayments.setRecordStatus(this.recordStatus.getValue());
+		setFinAdvancePayments(finAdvancePayments);
 		logger.debug("Leaving");
 	}
 
@@ -489,11 +399,11 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @param header
 	 * @throws Exception
 	 */
-	public void doShowDialog(PayOrderIssueHeader header) throws Exception {
+	public void doShowDialog(FinAdvancePayments finAdvancePayments) throws Exception {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
-		if (header.isNew()) {
+		if (finAdvancePayments.isNew()) {
 			this.btnCtrl.setInitNew();
 			doEdit();
 			// setFocus
@@ -516,20 +426,17 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		}
 
 		try {
-			disbursementInstCtrl.init(this.listboxPayOrderIssue, financeMain.getFinCcy(), header.isAlwMultiPartyDisb(),
-					getRole());
-			disbursementInstCtrl.setFinanceDisbursement(header.getFinanceDisbursements());
+			disbursementInstCtrl.init(this.listboxCustomerPaymentTxns, financeMain.getFinCcy(), false, getRole());
+			disbursementInstCtrl.setFinanceDisbursement(finAdvancePayments.getFinanceDisbursements());
 			disbursementInstCtrl.setFinanceMain(financeMain);
-			// fill the components with the data
-			doWriteBeanToComponents(header);
-			if (!header.isLoanApproved()) {
-				this.button_PayOrderIssueDialog_NewDisbursement.setVisible(false);
-			}
+
+			doWriteBeanToComponents(finAdvancePayments, financeDisbursement);
+			this.button_PayOrderIssueDialog_NewDisbursement.setVisible(false);
 
 			setDialog(DialogType.EMBEDDED);
 		} catch (UiException e) {
-			logger.error("Exception: ", e);
-			this.window_PayOrderIssueDialog.onClose();
+			logger.error(Literal.EXCEPTION, e);
+			this.window_CustomerPaymentTxnsDialog.onClose();
 		} catch (Exception e) {
 			throw e;
 		}
@@ -573,10 +480,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
-		getPayOrderIssueListCtrl().search();
+		getCustomerPaymentTxnsListCtrl().search();
 	}
-
-	// CRUD operations
 
 	/**
 	 * Deletes a PayOrderIssueHeader object from database.<br>
@@ -586,23 +491,23 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private void doDelete() throws InterruptedException {
 		logger.debug("Entering");
 
-		final PayOrderIssueHeader aPayOrderIssueHeader = new PayOrderIssueHeader();
-		BeanUtils.copyProperties(getPayOrderIssueHeader(), aPayOrderIssueHeader);
+		final FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		BeanUtils.copyProperties(getFinAdvancePayments(), finAdvancePayments);
 		String tranType = PennantConstants.TRAN_WF;
 
 		// Show a confirm box
 		final String msg = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record") + "\n\n --> "
-				+ Labels.getLabel("label_PayOrderIssueDialog_FinReference.value") + " : "
-				+ aPayOrderIssueHeader.getFinReference();
+				+ Labels.getLabel("label_CustomerPaymentTxnsDialog_finReference.value") + " : "
+				+ finAdvancePayments.getFinReference();
 		if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-			doWriteBeanToComponents(aPayOrderIssueHeader);
+			doWriteBeanToComponents(finAdvancePayments, financeDisbursement);
 
-			if (StringUtils.isBlank(aPayOrderIssueHeader.getRecordType())) {
-				aPayOrderIssueHeader.setVersion(aPayOrderIssueHeader.getVersion() + 1);
-				aPayOrderIssueHeader.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			if (StringUtils.isBlank(finAdvancePayments.getRecordType())) {
+				finAdvancePayments.setVersion(finAdvancePayments.getVersion() + 1);
+				finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 
 				if (isWorkFlowEnabled()) {
-					aPayOrderIssueHeader.setNewRecord(true);
+					finAdvancePayments.setNewRecord(true);
 					tranType = PennantConstants.TRAN_WF;
 				} else {
 					tranType = PennantConstants.TRAN_DEL;
@@ -610,7 +515,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			}
 
 			try {
-				if (doProcess(aPayOrderIssueHeader, tranType)) {
+				if (doProcess(finAdvancePayments, tranType)) {
 					refreshList();
 					closeDialog();
 				}
@@ -629,7 +534,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		if (getPayOrderIssueHeader().isNewRecord()) {
+		if (getFinAdvancePayments().isNewRecord()) {
 			this.finReference.setReadonly(false);
 			this.btnCancel.setVisible(false);
 		} else {
@@ -642,7 +547,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
 
-			if (this.payOrderIssueHeader.isNewRecord()) {
+			if (this.finAdvancePayments.isNewRecord()) {
 				this.btnCtrl.setBtnStatus_Edit();
 				btnCancel.setVisible(false);
 			} else {
@@ -679,7 +584,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 */
 	public void doClear() {
 		logger.debug("Entering");
-		// remove validation, if there are a save before
 		this.finReference.setValue("");
 		logger.debug("Leaving");
 	}
@@ -691,31 +595,29 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 */
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
-		final PayOrderIssueHeader aPayOrderIssueHeader = new PayOrderIssueHeader();
-		BeanUtils.copyProperties(getPayOrderIssueHeader(), aPayOrderIssueHeader);
+		final FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		BeanUtils.copyProperties(getFinAdvancePayments(), finAdvancePayments);
 		boolean isNew = false;
 
-		// force validation, if on, than execute by component.getValue()
 		doSetValidation();
-		// fill the PayOrderIssueHeader object with the components data
-		doWriteComponentsToBean(aPayOrderIssueHeader);
+		doWriteComponentsToBean(finAdvancePayments);
 
-		isNew = aPayOrderIssueHeader.isNew();
+		isNew = finAdvancePayments.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aPayOrderIssueHeader.getRecordType())) {
-				aPayOrderIssueHeader.setVersion(aPayOrderIssueHeader.getVersion() + 1);
+			if (StringUtils.isBlank(finAdvancePayments.getRecordType())) {
+				finAdvancePayments.setVersion(finAdvancePayments.getVersion() + 1);
 				if (isNew) {
-					aPayOrderIssueHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aPayOrderIssueHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					aPayOrderIssueHeader.setNewRecord(true);
+					finAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					finAdvancePayments.setNewRecord(true);
 				}
 			}
 		} else {
-			aPayOrderIssueHeader.setVersion(aPayOrderIssueHeader.getVersion() + 1);
+			finAdvancePayments.setVersion(finAdvancePayments.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -725,16 +627,16 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		// save it to database
 		try {
-			if (aPayOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
+			if (finAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)
 					|| !(this.finAdvancePaymentsList == null || this.finAdvancePaymentsList.size() == 0)) {
-				if (doProcess(aPayOrderIssueHeader, tranType)) {
+				if (doProcess(finAdvancePayments, tranType)) {
 					refreshList();
 					closeDialog();
 				}
 			} else {
 				MessageUtil.showError(Labels.getLabel("List_Error",
-						new String[] { Labels.getLabel("window_PayOrderIssueDialog.title"),
-								Labels.getLabel("window_PayOrderIssueDialog.title") }));
+						new String[] { Labels.getLabel("window_CustomerPaymentTxnsDialog.title"),
+								Labels.getLabel("window_CustomerPaymentTxnsDialog.title") }));
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -742,39 +644,79 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving");
 	}
 
+	public void doTest() throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
+			FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+
+			Calendar calendar = Calendar.getInstance();
+			String time = String.valueOf(calendar.get(Calendar.DAY_OF_YEAR))
+					+ String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + String.valueOf(calendar.get(Calendar.MINUTE))
+					+ String.valueOf(calendar.get(Calendar.SECOND));
+
+			finAdvancePayments.setPaymentId(Integer.parseInt(time));
+			finAdvancePayments.setAmtToBeReleased(new BigDecimal("99.5"));
+			finAdvancePayments.setPartnerBankAc("09582650000173");
+			finAdvancePayments.setLLDate(new Date());
+			finAdvancePayments.setiFSC("BOFA0BG3978");
+			finAdvancePayments.setBeneficiaryAccNo("1234569874");
+			finAdvancePayments.setBeneficiaryName("INDIA TEST TEST");
+			finAdvancePayments.setPhoneNumber("8970987873");
+			finAdvancePayments.setClearingDate(new Date());
+			finAdvancePayments.setCity("IND");
+			finAdvancePayments.setPaymentType("IFSC");
+			finAdvancePayments.setRemarks("cms tranction details");
+			finAdvancePayments.setPayableLoc("103");
+			finAdvancePayments.setPrintingLoc("234");
+
+			finAdvancePaymentsLists.add(finAdvancePayments);
+
+			//CustomerPaymentServiceImpl impl =new CustomerPaymentServiceImpl();
+
+			//impl.processOnlinePayment(finAdvancePaymentsLists);
+
+			//call To Service
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showMessage(e.getMessage());
+		}
+		logger.debug("Leaving");
+	}
+
 	/**
 	 * Set the workFlow Details List to Object
 	 * 
-	 * @param aPayOrderIssueHeader
+	 * @param finAdvancePayments
 	 * @param tranType
 	 * @return
 	 */
-	private boolean doProcess(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) throws InterfaceException {
+	private boolean doProcess(FinAdvancePayments finAdvancePayments, String tranType) throws InterfaceException {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
 
-		aPayOrderIssueHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		aPayOrderIssueHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		aPayOrderIssueHeader.setUserDetails(getUserWorkspace().getLoggedInUser());
+		finAdvancePayments.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		finAdvancePayments.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		finAdvancePayments.setUserDetails(getUserWorkspace().getLoggedInUser());
 
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			String nextTaskId = "";
-			aPayOrderIssueHeader.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			finAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
 
 			if ("Save".equals(userAction.getSelectedItem().getLabel())) {
 				nextTaskId = taskId + ";";
 			} else {
-				nextTaskId = StringUtils.trimToEmpty(aPayOrderIssueHeader.getNextTaskId());
+				nextTaskId = StringUtils.trimToEmpty(finAdvancePayments.getNextTaskId());
 
 				nextTaskId = nextTaskId.replaceFirst(taskId + ";", "");
 				if ("".equals(nextTaskId)) {
-					nextTaskId = getNextTaskIds(taskId, aPayOrderIssueHeader);
+					nextTaskId = getNextTaskIds(taskId, finAdvancePayments);
 				}
 
-				if (isNotesMandatory(taskId, aPayOrderIssueHeader)) {
+				if (isNotesMandatory(taskId, finAdvancePayments)) {
 					if (!notesEntered) {
 						MessageUtil.showError(Labels.getLabel("Notes_NotEmpty"));
 						return false;
@@ -800,13 +742,13 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				}
 			}
 
-			aPayOrderIssueHeader.setTaskId(taskId);
-			aPayOrderIssueHeader.setNextTaskId(nextTaskId);
-			aPayOrderIssueHeader.setRoleCode(getRole());
-			aPayOrderIssueHeader.setNextRoleCode(nextRoleCode);
+			finAdvancePayments.setTaskId(taskId);
+			finAdvancePayments.setNextTaskId(nextTaskId);
+			finAdvancePayments.setRoleCode(getRole());
+			finAdvancePayments.setNextRoleCode(nextRoleCode);
 
-			auditHeader = getAuditHeader(aPayOrderIssueHeader, tranType);
-			String operationRefs = getServiceOperations(taskId, aPayOrderIssueHeader);
+			auditHeader = getAuditHeader(finAdvancePayments, tranType);
+			String operationRefs = getServiceOperations(taskId, finAdvancePayments);
 
 			if ("".equals(operationRefs)) {
 				processCompleted = doSaveProcess(auditHeader, null);
@@ -814,7 +756,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				String[] list = operationRefs.split(";");
 
 				for (int i = 0; i < list.length; i++) {
-					auditHeader = getAuditHeader(aPayOrderIssueHeader, PennantConstants.TRAN_WF);
+					auditHeader = getAuditHeader(finAdvancePayments, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, list[i]);
 					if (!processCompleted) {
 						break;
@@ -822,7 +764,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				}
 			}
 		} else {
-			auditHeader = getAuditHeader(aPayOrderIssueHeader, tranType);
+			auditHeader = getAuditHeader(finAdvancePayments, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("return value :" + processCompleted);
@@ -871,13 +813,13 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 					} else {
 						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
 								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_PayOrderIssueDialog, auditHeader);
+						retValue = ErrorControl.showErrorControl(this.window_CustomerPaymentTxnsDialog, auditHeader);
 						return processCompleted;
 
 					}
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_PayOrderIssueDialog, auditHeader);
+				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerPaymentTxnsDialog, auditHeader);
 				retValue = auditHeader.getProcessStatus();
 
 				if (retValue == PennantConstants.porcessCONTINUE) {
@@ -885,7 +827,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 				}
 
 				if (deleteNotes) {
-					deleteNotes(getNotes(this.payOrderIssueHeader), true);
+					deleteNotes(getNotes(this.finAdvancePayments), true);
 				}
 
 				if (retValue == PennantConstants.porcessOVERIDE) {
@@ -904,20 +846,18 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		return processCompleted;
 	}
 
-	public void doFillFinAdvancePaymentsDetails(List<FinAdvancePayments> finAdvancePayDetails, List<VASRecording> vasRecordings) {
+	public void doFillFinAdvancePaymentsDetails(FinAdvancePayments finAdvancePayDetail,
+			FinanceDisbursement financeDisbursement) {
 		logger.debug("Entering");
-		disbursementInstCtrl.doFillFinAdvancePaymentsDetails(finAdvancePayDetails, false, vasRecordings);
+		List<FinAdvancePayments> finAdvancePayDetails = new ArrayList<FinAdvancePayments>();
+		List<FinanceDisbursement> financeDisbursements = new ArrayList<FinanceDisbursement>();
+		finAdvancePayDetails.add(finAdvancePayDetail);
+		disbursementInstCtrl.doFillFinAdvancePaymentsDetailss(finAdvancePayDetails, false);
 		setFinAdvancePaymentsList(finAdvancePayDetails);
+		setFinanceDisbursementList(financeDisbursements);
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method to fill the combobox with given list of values
-	 * 
-	 * @param combobox
-	 * @param value
-	 * @param list
-	 */
 	public void fillPOStatus(Combobox combobox, String value, List<ValueLabel> list, String excludeFields) {
 		logger.debug("Entering fillComboBox()");
 		combobox.getChildren().clear();
@@ -944,7 +884,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
+		disbursementInstCtrl.onClickNew(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN,
 				getFinAdvancePaymentsList());
 
 		logger.debug("Leaving" + event.toString());
@@ -952,11 +892,9 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule);
+		disbursementInstCtrl.onDoubleClick(this.customerPaymentTxnsListCtrl, this, ModuleType_CUSTPMTTXN, true);
 		logger.debug("Leaving" + event.toString());
 	}
-
-	// WorkFlow Components
 
 	/**
 	 * Get Audit Header Details
@@ -967,11 +905,10 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 *            (String)
 	 * @return auditHeader
 	 */
-	private AuditHeader getAuditHeader(PayOrderIssueHeader aPayOrderIssueHeader, String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1, aPayOrderIssueHeader.getBefImage(),
-				aPayOrderIssueHeader);
-		return new AuditHeader(String.valueOf(aPayOrderIssueHeader.getFinReference()), null, null, null, auditDetail,
-				aPayOrderIssueHeader.getUserDetails(), getOverideMap());
+	private AuditHeader getAuditHeader(FinAdvancePayments finAdvancePayments, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, finAdvancePayments.getBefImage(), finAdvancePayments);
+		return new AuditHeader(String.valueOf(finAdvancePayments.getFinReference()), null, null, null, auditDetail,
+				finAdvancePayments.getUserDetails(), getOverideMap());
 	}
 
 	/**
@@ -986,7 +923,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.window_PayOrderIssueDialog, auditHeader);
+			ErrorControl.showErrorControl(this.window_CustomerPaymentTxnsDialog, auditHeader);
 		} catch (Exception exp) {
 			logger.error("Exception: ", exp);
 		}
@@ -1002,12 +939,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 * @throws Exception
 	 */
 	public void onClick$btnNotes(Event event) throws Exception {
-		doShowNotes(this.payOrderIssueHeader);
+		doShowNotes(this.finAdvancePayments);
 	}
 
 	@Override
 	protected String getReference() {
-		return String.valueOf(this.payOrderIssueHeader.getFinReference());
+		return String.valueOf(this.finAdvancePayments.getFinReference());
 	}
 
 	/**
@@ -1019,9 +956,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	 */
 	public void doFillAccounting(List<?> accountingSetEntries) {
 		logger.debug("Entering");
-
-		//		setDisbCrSum(BigDecimal.ZERO);
-		//		setDisbDrSum(BigDecimal.ZERO);
 
 		int formatter = ccyformat;
 
@@ -1037,7 +971,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 					if (entry.getPostAmount().compareTo(BigDecimal.ZERO) != 0) {
 
-						//Highlighting Failed Posting Details 
 						String sClassStyle = "";
 						if (StringUtils.isNotBlank(entry.getErrorId())
 								&& !"0000".equals(StringUtils.trimToEmpty(entry.getErrorId()))) {
@@ -1109,15 +1042,17 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving");
 	}
 
-	private void showAccounting(PayOrderIssueHeader issueHeader, boolean enquiry) {
+	private void showAccounting(FinAdvancePayments issueHeader, boolean enquiry) {
 		try {
 			if (enquiry) {
 				List<ReturnDataSet> returnDataSetList = getPostings(issueHeader);
 				doFillAccounting(returnDataSetList);
 			} else {
-				List<ReturnDataSet> datasetList = getDisbursementPostings()
-						.getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
-				doFillAccounting(datasetList);
+				/*
+				 * List<ReturnDataSet> datasetList = getDisbursementPostings()
+				 * .getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
+				 */
+				//doFillAccounting(datasetList);
 			}
 
 		} catch (Exception e) {
@@ -1126,7 +1061,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	}
 
-	private List<ReturnDataSet> getPostings(PayOrderIssueHeader issueHeader) {
+	private List<ReturnDataSet> getPostings(FinAdvancePayments issueHeader) {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 		List<ReturnDataSet> postingAccount = new ArrayList<ReturnDataSet>();
 		JdbcSearchObject<ReturnDataSet> searchObject = new JdbcSearchObject<ReturnDataSet>(ReturnDataSet.class);
@@ -1142,10 +1077,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		return postingAccount;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
 	}
@@ -1154,36 +1085,12 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		return this.validationOn;
 	}
 
-	public PayOrderIssueHeader getPayOrderIssueHeader() {
-		return this.payOrderIssueHeader;
+	public CustomerPaymentTxnsListCtrl getCustomerPaymentTxnsListCtrl() {
+		return customerPaymentTxnsListCtrl;
 	}
 
-	public void setPayOrderIssueHeader(PayOrderIssueHeader payOrderIssueHeader) {
-		this.payOrderIssueHeader = payOrderIssueHeader;
-	}
-
-	public PayOrderIssueService getPayOrderIssueService() {
-		return payOrderIssueService;
-	}
-
-	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
-		this.payOrderIssueService = payOrderIssueService;
-	}
-
-	public PayOrderIssueListCtrl getPayOrderIssueListCtrl() {
-		return payOrderIssueListCtrl;
-	}
-
-	public void setPayOrderIssueListCtrl(PayOrderIssueListCtrl payOrderIssueListCtrl) {
-		this.payOrderIssueListCtrl = payOrderIssueListCtrl;
-	}
-
-	public HashMap<String, ArrayList<ErrorDetail>> getOverideMap() {
-		return overideMap;
-	}
-
-	public void setOverideMap(HashMap<String, ArrayList<ErrorDetail>> overideMap) {
-		this.overideMap = overideMap;
+	public void setCustomerPaymentTxnsListCtrl(CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl) {
+		this.customerPaymentTxnsListCtrl = customerPaymentTxnsListCtrl;
 	}
 
 	public List<FinAdvancePayments> getFinAdvancePaymentsList() {
@@ -1192,6 +1099,14 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setFinAdvancePaymentsList(List<FinAdvancePayments> list) {
 		this.finAdvancePaymentsList = list;
+	}
+
+	public List<FinanceDisbursement> getFinanceDisbursementList() {
+		return financeDisbursementList;
+	}
+
+	public void setFinanceDisbursementList(List<FinanceDisbursement> list) {
+		this.financeDisbursementList = list;
 	}
 
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
@@ -1212,6 +1127,22 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 	public void setDisbursementInstCtrl(DisbursementInstCtrl disbursementInstCtrl) {
 		this.disbursementInstCtrl = disbursementInstCtrl;
+	}
+
+	public FinAdvancePayments getFinAdvancePayments() {
+		return finAdvancePayments;
+	}
+
+	public void setFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
+		this.finAdvancePayments = finAdvancePayments;
+	}
+
+	public PayOrderIssueService getPayOrderIssueService() {
+		return payOrderIssueService;
+	}
+
+	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
+		this.payOrderIssueService = payOrderIssueService;
 	}
 
 }

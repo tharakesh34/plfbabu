@@ -99,14 +99,14 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		}
 
 		if (instrumentwiseLimit.isNew()) {
-			instrumentwiseLimit.setId(Long.parseLong(instrumentwiseLimitDAO.save(instrumentwiseLimit, tableType)));
+			instrumentwiseLimit.setId(Long.parseLong(getInstrumentwiseLimitDAO().save(instrumentwiseLimit, tableType)));
 			auditHeader.getAuditDetail().setModelData(instrumentwiseLimit);
 			auditHeader.setAuditReference(String.valueOf(instrumentwiseLimit.getId()));
 		} else {
-			instrumentwiseLimitDAO.update(instrumentwiseLimit, tableType);
+			getInstrumentwiseLimitDAO().update(instrumentwiseLimit, tableType);
 		}
 
-		auditHeaderDAO.addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -133,9 +133,9 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		}
 
 		InstrumentwiseLimit instrumentwiseLimit = (InstrumentwiseLimit) auditHeader.getAuditDetail().getModelData();
-		instrumentwiseLimitDAO.delete(instrumentwiseLimit, TableType.MAIN_TAB);
+		getInstrumentwiseLimitDAO().delete(instrumentwiseLimit, TableType.MAIN_TAB);
 
-		auditHeaderDAO.addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -150,7 +150,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 	 */
 	@Override
 	public InstrumentwiseLimit getInstrumentwiseLimit(long id) {
-		return instrumentwiseLimitDAO.getInstrumentwiseLimit(id, "_View");
+		return getInstrumentwiseLimitDAO().getInstrumentwiseLimit(id, "_View");
 	}
 
 	/**
@@ -162,20 +162,20 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 	 * @return InstrumentwiseLimit
 	 */
 	public InstrumentwiseLimit getApprovedInstrumentwiseLimit(long id) {
-		return instrumentwiseLimitDAO.getInstrumentwiseLimit(id, "_AView");
+		return getInstrumentwiseLimitDAO().getInstrumentwiseLimit(id, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using instrumentwiseLimitDAO.delete with
-	 * parameters instrumentwiseLimit,"" b) NEW Add new record in to main table by using instrumentwiseLimitDAO.save
-	 * with parameters instrumentwiseLimit,"" c) EDIT Update record in the main table by using
-	 * instrumentwiseLimitDAO.update with parameters instrumentwiseLimit,"" 3) Delete the record from the workFlow table
-	 * by using instrumentwiseLimitDAO.delete with parameters instrumentwiseLimit,"_Temp" 4) Audit the record in to
-	 * AuditHeader and AdtInstrumentwiseLimit by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtInstrumentwiseLimit by using auditHeaderDAO.addAudit(auditHeader) based on the
-	 * transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using getInstrumentwiseLimitDAO().delete
+	 * with parameters instrumentwiseLimit,"" b) NEW Add new record in to main table by using
+	 * getInstrumentwiseLimitDAO().save with parameters instrumentwiseLimit,"" c) EDIT Update record in the main table
+	 * by using getInstrumentwiseLimitDAO().update with parameters instrumentwiseLimit,"" 3) Delete the record from the
+	 * workFlow table by using getInstrumentwiseLimitDAO().delete with parameters instrumentwiseLimit,"_Temp" 4) Audit
+	 * the record in to AuditHeader and AdtInstrumentwiseLimit by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow 5) Audit the record in to AuditHeader and AdtInstrumentwiseLimit by using
+	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -197,7 +197,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		BeanUtils.copyProperties((InstrumentwiseLimit) auditHeader.getAuditDetail().getModelData(),
 				instrumentwiseLimit);
 
-		instrumentwiseLimitDAO.delete(instrumentwiseLimit, TableType.TEMP_TAB);
+		getInstrumentwiseLimitDAO().delete(instrumentwiseLimit, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(instrumentwiseLimit.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -206,7 +206,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 
 		if (instrumentwiseLimit.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			instrumentwiseLimitDAO.delete(instrumentwiseLimit, TableType.MAIN_TAB);
+			getInstrumentwiseLimitDAO().delete(instrumentwiseLimit, TableType.MAIN_TAB);
 		} else {
 			instrumentwiseLimit.setRoleCode("");
 			instrumentwiseLimit.setNextRoleCode("");
@@ -217,21 +217,21 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 			if (instrumentwiseLimit.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				instrumentwiseLimit.setRecordType("");
-				instrumentwiseLimitDAO.save(instrumentwiseLimit, TableType.MAIN_TAB);
+				getInstrumentwiseLimitDAO().save(instrumentwiseLimit, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				instrumentwiseLimit.setRecordType("");
-				instrumentwiseLimitDAO.update(instrumentwiseLimit, TableType.MAIN_TAB);
+				getInstrumentwiseLimitDAO().update(instrumentwiseLimit, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeaderDAO.addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(instrumentwiseLimit);
-		auditHeaderDAO.addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -241,8 +241,9 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using instrumentwiseLimitDAO.delete with parameters instrumentwiseLimit,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtInstrumentwiseLimit by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using getInstrumentwiseLimitDAO().delete with parameters instrumentwiseLimit,"_Temp" 3) Audit
+	 * the record in to AuditHeader and AdtInstrumentwiseLimit by using auditHeaderDAO.addAudit(auditHeader) for Work
+	 * flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -261,9 +262,9 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		InstrumentwiseLimit instrumentwiseLimit = (InstrumentwiseLimit) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		instrumentwiseLimitDAO.delete(instrumentwiseLimit, TableType.TEMP_TAB);
+		getInstrumentwiseLimitDAO().delete(instrumentwiseLimit, TableType.TEMP_TAB);
 
-		auditHeaderDAO.addAudit(auditHeader);
+		getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -291,8 +292,8 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from instrumentwiseLimitDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * from getInstrumentwiseLimitDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -322,18 +323,45 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+	
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
 
-	@Override
-	public InstrumentwiseLimit getInstrumentWiseModeLimit(String paymentMode) {
-		return instrumentwiseLimitDAO.getInstrumentWiseModeLimit(paymentMode, "_AView");
+	/**
+	 * @return the auditHeaderDAO
+	 */
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
 	}
 
+	/**
+	 * @param auditHeaderDAO
+	 *            the auditHeaderDAO to set
+	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	/**
+	 * @return the instrumentwiseLimitDAO
+	 */
+	public InstrumentwiseLimitDAO getInstrumentwiseLimitDAO() {
+		return instrumentwiseLimitDAO;
+	}
+
+	/**
+	 * @param instrumentwiseLimitDAO
+	 *            the instrumentwiseLimitDAO to set
+	 */
 	public void setInstrumentwiseLimitDAO(InstrumentwiseLimitDAO instrumentwiseLimitDAO) {
 		this.instrumentwiseLimitDAO = instrumentwiseLimitDAO;
+	}
+
+	@Override
+	public InstrumentwiseLimit getInstrumentWiseModeLimit(String paymentMode) {
+		// TODO Auto-generated method stub
+		return getInstrumentwiseLimitDAO().getInstrumentWiseModeLimit(paymentMode, "_AView");
 	}
 
 }

@@ -94,7 +94,6 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
-import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -109,6 +108,8 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl;
+import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.payorderissue.DisbursementInstCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueDialogCtrl;
 import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
@@ -210,6 +211,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private FinAdvancePaymentsListCtrl finAdvancePaymentsListCtrl;
 	private transient PayOrderIssueListCtrl payOrderIssueListCtrl;
 	private transient PayOrderIssueDialogCtrl payOrderIssueDialogCtrl;
+	private transient CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl;
+	private transient CustomerPaymentTxnsDialogCtrl customerPaymentTxnsDialogCtrl;
 	private boolean newRecord = false;
 	private boolean newCustomer = false;
 	private int ccyFormatter = 0;
@@ -233,8 +236,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	private DocumentDetails documentDetails;
 	@Autowired
 	private ExternalDocumentManager externalDocumentManager = null;
-	@Autowired
-	private DrawingPowerService drawingPowerService;
 
 	/**
 	 * default constructor.<br>
@@ -339,6 +340,29 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 			if (arguments.containsKey("roleCode")) {
 				setRole((String) arguments.get("roleCode"));
+			}
+
+			if (arguments.containsKey("customerPaymentTxnsListCtrl")) {
+				setCustomerPaymentTxnsListCtrl(
+						(CustomerPaymentTxnsListCtrl) arguments.get("customerPaymentTxnsListCtrl"));
+			}
+
+			if (arguments.containsKey("customerPaymentTxnsDialogCtrl")) {
+				setCustomerPaymentTxnsDialogCtrl(
+						(CustomerPaymentTxnsDialogCtrl) arguments.get("customerPaymentTxnsDialogCtrl"));
+				setNewCustomer(true);
+
+				if (arguments.containsKey("ccyFormatter")) {
+					ccyFormatter = (Integer) arguments.get("ccyFormatter");
+				}
+
+				if (arguments.containsKey("newRecord")) {
+					setNewRecord(true);
+				} else {
+					setNewRecord(false);
+				}
+				setNewFinance(true);
+				this.finAdvancePayments.setWorkflowId(0);
 			}
 
 			if (arguments.containsKey("payOrderIssueListCtrl")) {
@@ -852,6 +876,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		BigDecimal otherExp = BigDecimal.ZERO;
 
 		// Total Disbursed Amount
+		if (financeDisbursement != null) {
 		for (FinanceDisbursement curDisb : financeDisbursement) {
 			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
 				continue;
@@ -876,6 +901,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				disbAmount = disbAmount.subtract(curDisb.getDeductFeeDisb());
 				disbAmount = disbAmount.subtract(curDisb.getDeductInsDisb());
 			}
+			}
 		}
 
 		/*
@@ -888,6 +914,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		List<FinAdvancePayments> advPayList = null;
 		if (this.moduleType.equals("LOAN")) {
 			advPayList = getFinAdvancePaymentsListCtrl().getFinAdvancePaymentsList();
+		} else if (this.moduleType.equals("CUSTPMTTXN")) {
+			advPayList = getCustomerPaymentTxnsDialogCtrl().getFinAdvancePaymentsList();
 		} else {
 			advPayList = getPayOrderIssueDialogCtrl().getFinAdvancePaymentsList();
 		}
@@ -1637,19 +1665,6 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		isNew = aFinAdvancePayments.isNew();
 
-		// Checking the Drawing power
-		if ((this.financeMain.isAllowDrawingPower()) && (isNew)) {
-			if (!this.amtToBeReleased.isDisabled()) {
-				String msg = drawingPowerService.doDrawingPowerCheck(aFinAdvancePayments.getFinReference(),
-						aFinAdvancePayments.getAmtToBeReleased());
-				if (msg != null) {
-					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
-						return;
-					}
-				}
-			}
-		}
-
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
@@ -2201,6 +2216,22 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
+	}
+
+	public CustomerPaymentTxnsListCtrl getCustomerPaymentTxnsListCtrl() {
+		return customerPaymentTxnsListCtrl;
+	}
+
+	public void setCustomerPaymentTxnsListCtrl(CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl) {
+		this.customerPaymentTxnsListCtrl = customerPaymentTxnsListCtrl;
+	}
+
+	public CustomerPaymentTxnsDialogCtrl getCustomerPaymentTxnsDialogCtrl() {
+		return customerPaymentTxnsDialogCtrl;
+	}
+
+	public void setCustomerPaymentTxnsDialogCtrl(CustomerPaymentTxnsDialogCtrl customerPaymentTxnsDialogCtrl) {
+		this.customerPaymentTxnsDialogCtrl = customerPaymentTxnsDialogCtrl;
 	}
 
 }

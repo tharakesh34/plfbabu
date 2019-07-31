@@ -254,6 +254,7 @@
 				rightName="menuItem_ApplicationMaster_LoanPurpose" />
 			<menuItem id="menu_Item_PartnerSource" zulNavigation="/WEB-INF/pages/AMTMasters/VehicleDealer/VehicleDealerList.zul?module=SOPT"
 				rightName="menuItem_SystemMaster_VehicleDealer" />
+			<!-- <menuItem id="menu_Item_InstrumentwiseLimit" zulNavigation="/WEB-INF/pages/ApplicationMaster/InstrumentwiseLimit/InstrumentwiseLimitList.zul" rightName=""/> -->
 			<menuItem id="menu_Item_IRRCode" zulNavigation="/WEB-INF/pages/ApplicationMaster/IRRCode/IRRCodeList.zul"
 				rightName="menuItem_applicationmaster_IRRCode" />
 		</menu>
@@ -1429,6 +1430,11 @@
 		rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
 	<!-- <menuItem id="menuItem_FinOptionTypeEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinoptionTypes/FinOptionTypeEnquiryList.zul?enqiryModule=Y" 
 		rightName="menuItem_FinOptionTypeEnquiry" /> -->
+		
+	<!-- <menuItem id="menu_Item_CustomerPaymentTransactions" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul"
+		rightName="" />
+	<menuItem id="menu_Item_CustomerPaymentTxnsUpdate" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsUpdate.zul"
+		rightName="" /> -->
 
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 

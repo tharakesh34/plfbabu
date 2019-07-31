@@ -2,12 +2,14 @@ package com.pennant.webui.applicationmaster.download;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.LedgerDownloadService;
 
 public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
@@ -17,6 +19,7 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	protected Window window_Download; // autoWired
 	protected Button btnStartLedgerFile;
 	@Autowired(required = false)
+	@Qualifier(value = "ledgerDownloadService")
 	private LedgerDownloadService ledgerDownloadService;
 
 	public void setLedgerDownloadService(LedgerDownloadService ledgerDownloadService) {
@@ -28,16 +31,16 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 	}
 
 	public void onCreate$window_Download(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		setPageComponents(window_Download);
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	
 
 	public void onClick$btnStartLedgerFile(ForwardEvent event) throws Exception {
 		if (ledgerDownloadService != null) {
-		ledgerDownloadService.downloadLedgerData();	
+			ledgerDownloadService.downloadLedgerData();
 		}
 	}
 

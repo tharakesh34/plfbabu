@@ -1,0 +1,28 @@
+package com.pennant.backend.service.gstn.validation.impl;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.CustomerPaymentService;
+
+public class TestCustomerPaymentServiceImpl implements TestCustomerPaymentService {
+	private static Logger logger = Logger.getLogger(TestCustomerPaymentServiceImpl.class);
+
+	@Autowired(required = false)
+	private CustomerPaymentService customerPaymentService;
+
+	@Override
+	public void processOnlinePayment(List<FinAdvancePayments> finAdvPaymentList) {
+		logger.debug(Literal.ENTERING);
+		if (customerPaymentService == null) {
+			logger.debug("customerPaymentService is null");
+		}
+		customerPaymentService.processOnlinePayment(finAdvPaymentList);
+		logger.debug(Literal.LEAVING);
+	}
+
+}

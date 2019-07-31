@@ -116,7 +116,7 @@ public class InstrumentwiseLimitListCtrl extends GFCBaseListCtrl<InstrumentwiseL
 	protected Listbox sortOperator_ReceiptMaxAmtperDay;
 
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
-	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getAllPaymentTypes();
+	private List<ValueLabel> listInstrumentMode = PennantStaticListUtil.getPaymentTypes(true, false);
 
 	/**
 	 * default constructor.<br>
@@ -143,16 +143,14 @@ public class InstrumentwiseLimitListCtrl extends GFCBaseListCtrl<InstrumentwiseL
 	public void onCreate$window_InstrumentwiseLimitList(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
-		setPageComponents(window_InstrumentwiseLimitList, borderLayout_InstrumentwiseLimitList,
-				listBoxInstrumentwiseLimit, pagingInstrumentwiseLimitList);
+		setPageComponents(window_InstrumentwiseLimitList, borderLayout_InstrumentwiseLimitList, listBoxInstrumentwiseLimit, pagingInstrumentwiseLimitList);
 		setItemRender(new InstrumentwiseLimitListModelItemRenderer());
 
 		fillComboBox(this.instrumentMode, "", listInstrumentMode, "");
-
+		
 		// Register buttons and fields.
 		registerButton(button_InstrumentwiseLimitList_InstrumentwiseLimitSearch);
-		registerButton(button_InstrumentwiseLimitList_NewInstrumentwiseLimit,
-				"button_InstrumentwiseLimitList_NewInstrumentwiseLimit", true);
+		registerButton(button_InstrumentwiseLimitList_NewInstrumentwiseLimit, "button_InstrumentwiseLimitList_NewInstrumentwiseLimit", true);
 
 		registerField("id");
 		registerField("instrumentMode", listheader_InstrumentMode, SortOrder.NONE, instrumentMode,

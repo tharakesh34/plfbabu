@@ -115,6 +115,7 @@ import com.pennant.backend.model.applicationmaster.FinanceStatusCode;
 import com.pennant.backend.model.applicationmaster.IRRCode;
 import com.pennant.backend.model.applicationmaster.IRRFeeType;
 import com.pennant.backend.model.applicationmaster.IRRFinanceType;
+import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.applicationmaster.InsurancePolicy;
 import com.pennant.backend.model.applicationmaster.InsuranceType;
 import com.pennant.backend.model.applicationmaster.InsuranceTypeProvider;
@@ -1079,6 +1080,11 @@ public class PennantJavaUtil {
 						new String[] { "EntityCode", "BankCode", "ProviderId", "PaymentMode", "BankBranchID",
 								"AccountNumber", "ReceivableAdjustment", "ReconciliationAmount", "Active" },
 						null, 600));
+		ModuleUtil.register("InstrumentwiseLimit", new ModuleMapping("InstrumentwiseLimit", InstrumentwiseLimit.class,
+				new String[] { "InstrumentwiseLimit", "InstrumentwiseLimit_AView" },
+				masterWF, new String[] { "InstrumentMode", "PaymentMinAmtperTrans", "PaymentMaxAmtperTran",
+						"PaymentMaxAmtperDay", "ReceiptMinAmtperTran", "ReceiptMaxAmtperTran", "ReceiptMaxAmtperDay" },
+				null, 600));
 
 		/************* Accounts *************/
 

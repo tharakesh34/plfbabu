@@ -5367,4 +5367,29 @@
 		scope="prototype">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>	
+	
+	<!-- InstrumentwiseLimit -->
+	<bean id="instrumentwiseLimitListCtrl" class="com.pennant.webui.applicationmaster.instrumentwiselimit.InstrumentwiseLimitListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
+	</bean>
+	<bean id="instrumentwiseLimitDialogCtrl" class="com.pennant.webui.applicationmaster.instrumentwiselimit.InstrumentwiseLimitDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService"/>
+	</bean>
+	
+	<!-- CustomerPaymentTransactions -->
+	<bean id="customerPaymentTxnsListCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="financeMainService" ref="financeMainService" />
+		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+	</bean>
+	
+	<bean id="customerPaymentTxnsDialogCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
+		
+	</bean>	
 </beans>

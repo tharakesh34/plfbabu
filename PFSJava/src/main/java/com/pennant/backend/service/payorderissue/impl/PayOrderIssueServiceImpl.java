@@ -77,6 +77,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -102,6 +103,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
 	private DisbursementPostings disbursementPostings;
+	private FinAdvancePaymentsService finAdvancePaymentsService; // ##PSD: 128172-Auto move the data to staging table
 	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
@@ -355,6 +357,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				payOrderIssueHeader);
 		calcluatePOHeaderDetails(payOrderIssueHeader);
 
+		//Splitting IMPS Requests
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(payOrderIssueHeader.getRecordType())) {
+			payOrderIssueHeader.setFinAdvancePaymentsList(
+					finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
+		}
+
 		boolean posted = true;
 		Map<Integer, Long> data = null;
 		try {
@@ -394,6 +402,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			}
 
 		}
+		
+		//Splitting IMPS Requests
+		payOrderIssueHeader.setFinAdvancePaymentsList(finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
 
 		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "", data);
@@ -875,6 +886,14 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
+	}
+
+	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
+		return finAdvancePaymentsService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

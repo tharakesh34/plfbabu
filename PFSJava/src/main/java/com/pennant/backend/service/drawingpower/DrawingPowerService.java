@@ -1,8 +1,8 @@
 package com.pennant.backend.service.drawingpower;
 
-import java.math.BigDecimal;
+import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface DrawingPowerService {
 
-	String doDrawingPowerCheck(String finReference, BigDecimal disbursementAmt);
+	String doDrawingPowerCheck(FinanceDetail financeDetail);
 }

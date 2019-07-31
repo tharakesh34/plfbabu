@@ -44,6 +44,7 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CurrencyUtil;
@@ -64,6 +66,7 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
+import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -75,6 +78,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
@@ -85,6 +89,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
@@ -104,6 +109,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private MandateDAO mandateDAO;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private CovenantsService covenantsService;
+	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -387,6 +393,101 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return auditDetails;
 	}
 
+	/**
+	 * split the each transaction based on the Imps Maximum amount
+	 * 
+	 * @param finAdvancePayments
+	 * @param instrumentwiseLimit
+	 * @return
+	 */
+	@Override
+	public List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> finAdvancePayments) {
+		logger.debug("Entering");
+
+		List<FinAdvancePayments> finalPaymentsList = new ArrayList<FinAdvancePayments>();
+		InstrumentwiseLimit instrumentwiseLimit = getInstrumentwiseLimitService()
+				.getInstrumentWiseModeLimit(DisbursementConstants.PAYMENT_TYPE_NEFT);
+
+		if (instrumentwiseLimit != null) {
+
+			int seqNo = getNextPaymentSequence(finAdvancePayments);
+
+			for (FinAdvancePayments finAdvancePay : finAdvancePayments) {
+
+				if (!PennantConstants.RECORD_TYPE_DEL.equals(finAdvancePay.getRecordType())
+						&& !PennantConstants.RECORD_TYPE_CAN.equals(finAdvancePay.getRecordType())
+						&& PennantConstants.RECORD_TYPE_NEW.equals(finAdvancePay.getRecordType())
+						&& DisbursementConstants.PAYMENT_TYPE_NEFT.equals(finAdvancePay.getPaymentType())
+						&& !DisbursementConstants.STATUS_AWAITCON.equals(finAdvancePay.getStatus())
+						&& !DisbursementConstants.STATUS_PAID.equals(finAdvancePay.getStatus())
+						&& !DisbursementConstants.STATUS_REALIZED.equals(finAdvancePay.getStatus())
+						&& !DisbursementConstants.STATUS_REJECTED.equals(finAdvancePay.getStatus())
+						&& !DisbursementConstants.STATUS_CANCEL.equals(finAdvancePay.getStatus())) {
+
+					BigDecimal maxAmtPerInstruction = instrumentwiseLimit.getMaxAmtPerInstruction();
+					if (finAdvancePay.getAmtToBeReleased().compareTo(maxAmtPerInstruction) > 0) {
+
+						if (BigDecimal.ZERO.compareTo(maxAmtPerInstruction) == 0) {
+							throw new InterfaceException("NEFT",
+									"For NEFT requests Max Amount Per Instruction should be greater than zero.");
+						}
+
+						BigDecimal noOfRecords = finAdvancePay.getAmtToBeReleased().divide(maxAmtPerInstruction, 0,
+								RoundingMode.UP);
+						int records = noOfRecords.intValueExact();
+						BigDecimal totAmount = BigDecimal.ZERO;
+
+						for (int i = 1; i <= records; i++) {
+							FinAdvancePayments finAdvPay = new FinAdvancePayments();
+							BeanUtils.copyProperties(finAdvancePay, finAdvPay);
+							finAdvPay.setPaymentSeq(seqNo);
+							if (records == i) {
+								finAdvPay.setAmtToBeReleased(finAdvancePay.getAmtToBeReleased().subtract(totAmount));
+							} else {
+								finAdvPay.setAmtToBeReleased(maxAmtPerInstruction);
+							}
+							finAdvPay.setPaymentId(Long.MIN_VALUE);
+							finAdvPay.setNewRecord(true);
+							finAdvPay.setLLDate(SysParamUtil.getAppDate());
+							totAmount = totAmount.add(maxAmtPerInstruction);
+							seqNo++;
+							finalPaymentsList.add(finAdvPay);
+						}
+					} else {
+						finAdvancePay.setLLDate(SysParamUtil.getAppDate());
+						finalPaymentsList.add(finAdvancePay);
+					}
+				} else {
+					finalPaymentsList.add(finAdvancePay);
+				}
+			}
+		} else {
+			finalPaymentsList.addAll(finAdvancePayments);
+		}
+
+		logger.debug("Leaving");
+
+		return finalPaymentsList;
+	}
+	
+	/**
+	 * get the Next Payment Sequence No
+	 * @param finAdvancePayDetails
+	 * @return
+	 */
+	private int getNextPaymentSequence(List<FinAdvancePayments> finAdvancePayDetails) {
+		int seqNo = 0;
+		if (finAdvancePayDetails != null && !finAdvancePayDetails.isEmpty()) {
+			for (FinAdvancePayments advancePayments : finAdvancePayDetails) {
+				int tempId = advancePayments.getPaymentSeq();
+				if (tempId > seqNo) {
+					seqNo = tempId;
+				}
+			}
+		}
+		return seqNo + 1;
+	}
+
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
 			FinanceDetail financeDetail) {
 		logger.debug("Entering");
@@ -515,7 +616,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 			if (mandate != null && StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
 					&& mandate.getExpiryDate() != null
-					&& DateUtility.compare(DateUtility.getAppDate(), mandate.getExpiryDate()) > 0) {
+					&& DateUtility.compare(SysParamUtil.getAppDate(), mandate.getExpiryDate()) > 0) {
 				String[] errParam = new String[1];
 				errParam[0] = String.valueOf(mandateID);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -931,5 +1032,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setCovenantsService(CovenantsService covenantsService) {
 		this.covenantsService = covenantsService;
+	}
+
+	public InstrumentwiseLimitService getInstrumentwiseLimitService() {
+		return instrumentwiseLimitService;
+	}
+
+	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
+		this.instrumentwiseLimitService = instrumentwiseLimitService;
 	}
 }

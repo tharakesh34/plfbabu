@@ -66,6 +66,7 @@ public class InstrumentwiseLimit extends AbstractWorkflowEntity implements Entit
 	private BigDecimal receiptMinAmtperTran;
 	private BigDecimal receiptMaxAmtperTran;
 	private BigDecimal receiptMaxAmtperDay;
+	private BigDecimal maxAmtPerInstruction = BigDecimal.ZERO; //IMPS Splitting changes
 	private boolean newRecord = false;
 	private String lovValue;
 	private InstrumentwiseLimit befImage;
@@ -189,6 +190,14 @@ public class InstrumentwiseLimit extends AbstractWorkflowEntity implements Entit
 	@Override
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public BigDecimal getMaxAmtPerInstruction() {
+		return maxAmtPerInstruction;
+	}
+
+	public void setMaxAmtPerInstruction(BigDecimal maxAmtPerInstruction) {
+		this.maxAmtPerInstruction = maxAmtPerInstruction;
 	}
 
 }

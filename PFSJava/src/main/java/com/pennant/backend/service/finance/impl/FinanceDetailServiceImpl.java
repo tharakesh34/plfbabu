@@ -291,6 +291,7 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.external.CustomerPaymentService;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.ProfectusHunterBreService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -400,6 +401,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
 	private HunterService hunterService;
+	@Autowired(required = false)
+	private CustomerPaymentService customerPaymentService;
+
 	private InsuranceDetailService insuranceDetailService;
 
 	private long tempWorkflowId;
@@ -3821,6 +3825,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String recordMainStatus = StringUtils.trimToEmpty(financeMain.getRcdMaintainSts());
 
 		if (!isWIF) {
+			String recordType = financeMain.getRecordType();
+			if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
+					&& !StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)
+					&& !PennantConstants.RECORD_TYPE_DEL.equals(recordType) && !financeDetail.isExtSource()
+					&& ((FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())
+							&& PennantConstants.RECORD_TYPE_NEW.equals(recordType))
+							|| (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
+									&& PennantConstants.RECORD_TYPE_UPD.equals(recordType)))) {
+				financeDetail.setAdvancePaymentsList(
+						getFinAdvancePaymentsService().splitRequest(financeDetail.getAdvancePaymentsList()));
+				auditHeader.getAuditDetail().setModelData(financeDetail);
+			}
 			auditHeader = executeAccountingProcess(auditHeader, curBDay);
 		}
 
@@ -4930,6 +4946,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Saving the reasons
 			saveReasonDetails(financeDetail);
+
+			//Calling External CMS API system. 
+			processCustomerPayments(financeDetail, auditHeader);
 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
@@ -11135,6 +11154,30 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
+	 * Customer payment process
+	 * 
+	 * @param financeDetail
+	 * @param auditHeader
+	 */
+	private void processCustomerPayments(FinanceDetail financeDetail, AuditHeader auditHeader) {
+		if (this.customerPaymentService == null) {
+			return;
+		}
+		this.customerPaymentService.processOnlinePayment(financeDetail.getAdvancePaymentsList());
+
+		// Check whether to proceed with next service tasks.
+		auditHeader = nextProcess(auditHeader);
+		//FIXME
+
+		/*
+		 * if (!auditHeader.isNextProcess()) {
+		 * 
+		 * }
+		 */
+
+	}
+
+	/**
 	 * Saving the LMS service log
 	 * 
 	 * @param finDetail
@@ -11317,6 +11360,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
 		this.insuranceDetailService = insuranceDetailService;
+	}
+
+	public void setCustomerPaymentService(CustomerPaymentService customerPaymentService) {
+		this.customerPaymentService = customerPaymentService;
 	}
 
 }

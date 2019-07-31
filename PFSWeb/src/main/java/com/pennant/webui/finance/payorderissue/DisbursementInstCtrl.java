@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -208,7 +209,8 @@ public class DisbursementInstCtrl {
 			List<VASRecording> vasRecordingList) {
 		logger.debug("Entering");
 		listbox.getItems().clear();
-		if (finAdvancePayDetails != null && !finAdvancePayDetails.isEmpty()) {
+
+		if (CollectionUtils.isNotEmpty(finAdvancePayDetails)) {
 
 			Map<Integer, List<FinAdvancePayments>> map = groupPayments(finAdvancePayDetails);
 
@@ -397,6 +399,124 @@ public class DisbursementInstCtrl {
 		logger.debug("Leaving");
 	}
 
+	//TESTING PURPOSE
+	public void doFillFinAdvancePaymentsDetailss(List<FinAdvancePayments> finAdvancePayDetails,
+			boolean isMaskingAccNo) {
+		logger.debug("Entering");
+
+		listbox.getItems().clear();
+
+		if (CollectionUtils.isNotEmpty(finAdvancePayDetails)) {
+
+			Map<Integer, List<FinAdvancePayments>> map = groupPayments(finAdvancePayDetails);
+
+			boolean subtotalRequired = true;
+			if (map.size() == 1) {
+				subtotalRequired = false;
+			}
+
+			BigDecimal grandTotal = BigDecimal.ZERO;
+
+			for (Entry<Integer, List<FinAdvancePayments>> entrySet : map.entrySet()) {
+
+				BigDecimal subTotal = BigDecimal.ZERO;
+				Integer key = entrySet.getKey();
+
+				Listgroup listgroup = new Listgroup();
+				Listcell lc;
+
+				lc = new Listcell("");
+				lc.setSpan(5);
+				lc.setParent(listgroup);
+
+				lc.setStyle("text-align:right;padding-right:10px;font-weight:bold");
+				lc.setParent(listgroup);
+
+				lc = new Listcell("");
+				lc.setSpan(3);
+				lc.setParent(listgroup);
+				listbox.appendChild(listgroup);
+
+				List<FinAdvancePayments> list = entrySet.getValue();
+				Comparator<FinAdvancePayments> comp = new BeanComparator<FinAdvancePayments>("paymentSeq");
+				Collections.sort(list, comp);
+
+				for (FinAdvancePayments detail : list) {
+
+					if (!DisbursementInstCtrl.isDeleteRecord(detail)) {
+						grandTotal = grandTotal.add(detail.getAmtToBeReleased());
+						subTotal = subTotal.add(detail.getAmtToBeReleased());
+					}
+					Listitem item = new Listitem();
+					lc = new Listcell(Integer.toString(detail.getPaymentSeq()));
+					lc.setParent(item);
+					lc = new Listcell(
+							PennantApplicationUtil.getLabelDesc(detail.getPaymentDetail(), paymentDetailList));
+					lc.setParent(item);
+					lc = new Listcell(PennantApplicationUtil.getLabelDesc(detail.getPaymentType(), paymentTypeList));
+					lc.setParent(item);
+
+					String bankName = "";
+					String custName = "";
+					String accoountNum = "";
+
+					String paytype = detail.getPaymentType();
+
+					if (paytype.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+							|| paytype.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
+						bankName = detail.getBankName();
+						custName = detail.getLiabilityHoldName();
+						accoountNum = detail.getLlReferenceNo();
+					} else {
+						bankName = detail.getBranchBankName();
+						custName = detail.getBeneficiaryName();
+						accoountNum = detail.getBeneficiaryAccNo();
+					}
+
+					lc = new Listcell(bankName);
+					lc.setParent(item);
+					lc = new Listcell(custName);
+					lc.setParent(item);
+
+					if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING) && !isMaskingAccNo) {
+						lc = new Listcell("**********");
+					} else {
+						lc = new Listcell(accoountNum);
+					}
+					lc.setParent(item);
+
+					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
+					lc.setParent(item);
+
+					lc = new Listcell(detail.getStatus());
+					lc.setParent(item);
+
+					lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordStatus()));
+					lc.setParent(item);
+
+					lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
+					lc.setParent(item);
+
+					item.setAttribute("data", detail);
+					ComponentsCtrl.applyForward(item, "onDoubleClick=onFinAdvancePaymentsItemDoubleClicked");
+					listbox.appendChild(item);
+				}
+
+				if (subtotalRequired) {
+					//sub total Display Totals On Footer
+					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
+				}
+			}
+
+			//group total
+			if (listbox != null && listbox.getItems().size() > 0) {
+				// Display Totals On Footer
+				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
+			}
+		}
+		logger.debug("Leaving");
+	}
+
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list)
 			throws Exception {
 		logger.debug("Entering");
@@ -472,7 +592,12 @@ public class DisbursementInstCtrl {
 		map.put("financeDisbursement", financeDisbursements);
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
-		if ("POISSUE".equals(module)) {
+		if ("CUSTPMTTXN".equals(module)) {
+			map.put("customerPaymentTxnsDialogCtrl", dialogCtrl);
+			map.put("customerPaymentTxnsListCtrl", listCtrl);
+			map.put("module", isEnquiry);
+		}
+		else if ("POISSUE".equals(module)) {
 			map.put("payOrderIssueDialogCtrl", dialogCtrl);
 			map.put("payOrderIssueListCtrl", listCtrl);
 		} else {

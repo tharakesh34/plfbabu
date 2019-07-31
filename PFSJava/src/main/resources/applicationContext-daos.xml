@@ -4358,6 +4358,7 @@
 		<property name="payOrderIssueHeaderDAO" ref="payOrderIssueHeaderDAO" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="mandateDAO" ref="mandateDAO" />
@@ -4469,6 +4470,7 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="partnerBankService" ref="partnerBankService" />
 	</bean>
 
@@ -8461,6 +8463,8 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
 		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
 	</bean>
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
@@ -11038,11 +11042,13 @@
 	<bean name="externalInterfaceServiceTarget" class="com.pennanttech.pff.external.service.impl.ExternalInterfaceServiceImpl" />
 
 	<!-- Drawing power check validation -->
-	<bean id="drawingPowerService" class="com.pennant.backend.service.drawingpower.DrawingPowerServiceImpl" />
+	<bean id="drawingPowerService" class="com.pennant.backend.service.drawingpower.DrawingPowerServiceImpl">
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO"/>
+	</bean>
 
-
-
-
+	<!-- CMS -->
+	<bean id="testCustomerPaymentService" class="com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentServiceImpl" />
 
 	<!--============ CKYC Process ============== -->
 	<bean id="ckycDAO" class="com.pennant.backend.dao.ckyc.impl.CKYCDAOImpl" parent="sequenceDao" />

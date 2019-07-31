@@ -46,6 +46,7 @@ package com.pennant.backend.model.finance;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -162,6 +163,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String partnerbankCode;
 	private String partnerBankName;
 	private String finType;
+	private List<FinanceDisbursement> financeDisbursements;
+
 	@XmlElement
 	private String custShrtName;
 	private long linkedTranId;
@@ -214,6 +217,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("serviceReqNo");
 		excludeFields.add("providerId");
 		excludeFields.add("printingLocDesc");
+		excludeFields.add("financeDisbursements");
 		return excludeFields;
 	}
 
@@ -703,6 +707,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setPrintingLocDesc(String printingLocDesc) {
 		this.printingLocDesc = printingLocDesc;
+	}
+
+	public List<FinanceDisbursement> getFinanceDisbursements() {
+		return financeDisbursements;
+	}
+
+	public void setFinanceDisbursements(List<FinanceDisbursement> financeDisbursements) {
+		this.financeDisbursements = financeDisbursements;
 	}
 
 }

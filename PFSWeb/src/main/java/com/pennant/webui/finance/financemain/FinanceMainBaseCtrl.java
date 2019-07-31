@@ -275,6 +275,7 @@ import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.dda.DDAProcessService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceMainExtService;
@@ -952,6 +953,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private LegalDetailService legalDetailService;
 	private BaseRateService baseRateService;
 	private CollateralSetupFetchingService collateralSetupFetchingService;
+	@Autowired
+	private DrawingPowerService drawingPowerService;
 
 	protected BigDecimal availCommitAmount = BigDecimal.ZERO;
 	protected Commitment commitment;
@@ -6516,6 +6519,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (CollectionUtils.isEmpty(finServiceInstructions)) {
 					MessageUtil.showError("There are no changes to save, so please close the window");
 					return;
+				}
+
+				//Allow DP and sanction amount check.
+				String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail());
+
+				if (StringUtils.trimToNull(msg) != null) {
+					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+						return;
+					}
 				}
 			}
 		}
