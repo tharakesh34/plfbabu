@@ -49,8 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -69,7 +71,9 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -79,6 +83,7 @@ import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.impl.GLEMSCustomerProcess;
 
 /**
  * ************************************************************<br>
@@ -132,6 +137,10 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	private Map<Long, Customer> customerDownloadMap = new HashMap<Long, Customer>();
 
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
+	@Autowired
+	private GLEMSCustomerProcess gLEMSCustomerProcess;
+	
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public CustomerDownloadListCtrl() {
 		super();
@@ -229,6 +238,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		logger.debug(Literal.ENTERING);
 
 		List<Customer> customerList;
+		List<Long> custId = new ArrayList<>();
 
 		if (listHeader_CheckBox_Comp.isChecked()) {
 			customerDownloadMap.clear();
@@ -238,15 +248,27 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 			customerList = new ArrayList<Customer>(customerDownloadMap.values());
 		}
 
+		if (customerList.isEmpty()) {
+			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
+			return;
+		}
+
+		if (CollectionUtils.isNotEmpty(customerList)) {
+			for (Customer customer : customerList) {
+				custId.add(customer.getCustID());
+			}
+			try {
+				gLEMSCustomerProcess.processDownload(custId);
+				MessageUtil.showMessage("file downloaded successfully");
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				MessageUtil.showError("file downloaded failed");
+			}
+		}
 		if (listBoxCustomerDownload.getItems().size() > 0) {
 			listHeader_CheckBox_Comp.setDisabled(false);
 		} else {
 			listHeader_CheckBox_Comp.setDisabled(true);
-		}
-
-		if (customerList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("MandateDataList_NoEmpty"));
-			return;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -254,7 +276,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 
 	public void onClick$btnRefresh(Event event) {
 		doReset();
-		search();
+		renderCustomers();
 	}
 
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
@@ -339,12 +361,37 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		}
 
 		List<Customer> searchList = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
-
+		Map<String, String> retailMap = null;
+		Map<String, String> corpMap = null;
+		Map<String, String> smeMap = null;
+		retailMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_INDIV, "", "");
+		corpMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_CORP, "", "");
+		smeMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_SME, "", "");
+		List<Customer> renderList = new ArrayList<Customer>();
+		if (CollectionUtils.isNotEmpty(searchList)) {
+			for (Customer customer : searchList) {
+				if (retailMap != null && retailMap.containsKey(customer.getCustCIF())) {
+					renderList.add(customer);
+					continue;
+				}
+				if (corpMap != null && corpMap.containsKey(customer.getCustCIF())) {
+					renderList.add(customer);
+					continue;
+				}
+				if (smeMap != null && smeMap.containsKey(customer.getCustCIF())) {
+					renderList.add(customer);
+					continue;
+				}
+			}
+		}
 		this.listbox.setItemRenderer(new CustomerDownloadListModelItemRenderer());
 		getPagedListWrapper().setPagedListService(pagedListService);
-		getPagedListWrapper().initList(searchList, this.listBoxCustomerDownload, this.paging);
+		getPagedListWrapper().initList(renderList, this.listBoxCustomerDownload, this.paging);
 		logger.debug(Literal.LEAVING);
-		return searchList;
+		return renderList;
 	}
 
 	private class CustomerDownloadListModelItemRenderer implements ListitemRenderer<Customer>, Serializable {
@@ -388,6 +435,22 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 			item.setAttribute("id", customer.getCustID());
 			item.setAttribute("data", customer);
 		}
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public GLEMSCustomerProcess getgLEMSCustomerProcess() {
+		return gLEMSCustomerProcess;
+	}
+
+	public void setgLEMSCustomerProcess(GLEMSCustomerProcess gLEMSCustomerProcess) {
+		this.gLEMSCustomerProcess = gLEMSCustomerProcess;
 	}
 
 }

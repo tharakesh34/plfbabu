@@ -5365,5 +5365,6 @@
 
 	<bean id="customerDownloadListCtrl" class="com.pennant.webui.customermasters.customer.CustomerDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>	
 </beans>

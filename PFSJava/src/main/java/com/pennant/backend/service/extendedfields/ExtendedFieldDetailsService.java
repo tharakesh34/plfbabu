@@ -2055,6 +2055,27 @@ public class ExtendedFieldDetailsService {
 		return extendedDetails;
 	}
 
+	public Map<String, String> getAllExtndedFieldDetails(String moduleName, String subModuleName, String event,
+			String type) {
+
+		Map<String, String> orgMap = new HashMap<>();
+		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(moduleName,
+				subModuleName, event, "");
+		if (extendedFieldHeader != null) {
+			StringBuilder tableName = new StringBuilder();
+			tableName.append(extendedFieldHeader.getModuleName());
+			tableName.append("_");
+			tableName.append(extendedFieldHeader.getSubModuleName());
+			if (StringUtils.isNotBlank(event)) {
+				tableName.append("_");
+				tableName.append(StringUtils.trimToEmpty(PennantStaticListUtil.getFinEventCode(event)));
+			}
+			tableName.append("_ED");
+			orgMap = extendedFieldRenderDAO.getAllExtendedFieldMap(tableName.toString(), type);
+		}
+		return orgMap;
+	}
+
 	/**
 	 * @param extendedFieldRenderDAO
 	 *            the extendedFieldRenderDAO to set

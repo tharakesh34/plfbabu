@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.collateral.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -558,5 +561,54 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			logger.error(Literal.ENTERING, e);
 			return map;
 		}
+	}
+
+	@Override
+	public Map<String, String> getAllExtendedFieldMap(String tableName, String type) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, String> renderMap = null;
+
+		type = StringUtils.trimToEmpty(type);
+
+		type = type.toLowerCase();
+
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWith(type, "_view")) {
+			sql.append("select * from (select Reference,CreditParentId from ");
+			sql.append(tableName);
+			sql.append("_TEMP");
+			sql.append(" t1  union all select Reference,CreditParentId from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_TEMP");
+			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+		} else {
+			sql.append("select Reference,CreditParentId  from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(type));
+		}
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
+				@Override
+				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					HashMap<String, String> mapRet = new HashMap<String, String>();
+					while (rs.next()) {
+						if (rs.getString("CreditParentId") == null) {
+							mapRet.put(rs.getString("Reference"), rs.getString("CreditParentId"));
+						}
+					}
+					return mapRet;
+				}
+			});
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			renderMap=new HashMap<String, String>();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return renderMap;
 	}
 }
