@@ -298,4 +298,6 @@
 		scope="step" />
 	<bean id="collateralRevaluationItemWriter" class="com.pennanttech.pff.eod.collateral.reval.CollateralRevaluationItemWriter"
 		scope="step" parent="basicDao" />
+		
+	<bean id="gSTDownloadTaskLet" class="com.pennant.backend.endofday.tasklet.GSTDownload" />
 </beans>
