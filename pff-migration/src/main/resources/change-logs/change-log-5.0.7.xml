@@ -3675,7 +3675,6 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="109" author="Varaprasad.k" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -3683,6 +3682,61 @@
 			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RECEIPTUPLOAD_DEDUPCHECK','Receipt Upload Dedup Check','String',0,'Y',1,0,null,null,'Receipt Upload Dedup Check',1,1000,convert(varchar,'2019-07-30',23),'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="110_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'finprovisions');
+					select deps_save_and_drop_dependencies ('plf', 'finprovisions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="110" author="Varaprasad.k">
+		<modifyDataType tableName="finprovisions" columnName="USENFPROV" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp" columnName="USENFPROV" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp" columnName="AUTORELEASENFP" newDataType="boolean" />
+	</changeSet>
+	
+	<changeSet id="110_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'finprovisions');
+					select deps_restore_dependencies ('plf', 'finprovisions_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="111" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				UPDATE finprovisions Set USENFPROV = 0;
+				UPDATE finprovisions_temp Set USENFPROV = 0;
+				UPDATE finprovisions Set AUTORELEASENFP = 0;
+				UPDATE finprovisions_temp Set AUTORELEASENFP = 0;
+			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="112" author="Saikiran.v" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_finprovisions_USENFPROV DEFAULT 0 FOR USENFPROV;
+				ALTER TABLE finprovisions_temp ADD CONSTRAINT DF_finprovisions_temp_USENFPROV DEFAULT 0 FOR USENFPROV;
+				ALTER TABLE finprovisions ADD CONSTRAINT DF_finprovisions_AUTORELEASENFP DEFAULT 0 FOR AUTORELEASENFP;
+				ALTER TABLE finprovisions_temp ADD CONSTRAINT DF_finprovisions_temp_AUTORELEASENFP DEFAULT 0 FOR AUTORELEASENFP;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="113" author="Saikiran.v" dbms="postgresql, oracle">
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions" defaultValue="0" />
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions_temp" defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions" defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions_temp" defaultValue="0" />
 	</changeSet>
 
 </databaseChangeLog>
