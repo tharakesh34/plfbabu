@@ -2851,11 +2851,51 @@ UNION ALL
 			update data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI_CL77RBI' where name = 'DISB_EXPORT_DEFAULT';
 			update data_engine_column set derivedfrom = '${SYS_DATE}' 
 			where name  = 'DISBURSEMENT_DATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_Config where name = 'DISB_EXPORT_DEFAULT' ))
-
 			
 	]]>
 	</sql>
 </changeSet>
+
+<changeSet id="51" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+			delete from SMTPARAMETERS WHERE SYSPARMCODE='RECEIPTUPLOAD_DEDUPCHECK'; 
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RECEIPTUPLOAD_DEDUPCHECK','Receipt Upload Dedup Check','String',0,'N',1,0,null,null,'Receipt Upload Dedup Check',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+</changeSet>
+
+ <changeSet id="52" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				update Data_engine_config set fileprefixname = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyy}', fileSequenceno = 2 where name = 'MANDATES_EXPORT';
+				update Data_engine_config set fileprefixname = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyyyy}', fileSequenceno = 2 where name = 'MANDATES_IMPORT';
+				update Data_engine_config set fileprefixname = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyy}', fileSequenceno = 2 where name = 'MANDATES_ACK';
+			 ]]>
+		</sql>
+	</changeSet>	
+	
+	<changeSet id="53" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				delete from plf.data_engine_column where name = 'TRANSACTIONREF' and tableid = (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'))
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF2', 1,'N',NULL,NULL,   NULL,     NULL,'15',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF1', 1,'N',NULL,NULL,   NULL,     NULL,'10',NULL,NULL,NULL,NULL,'O');
+				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF', 0,'N',NULL,NULL,   NULL,     NULL,'0',NULL,'if((TRANSACTIONREF ==  ''N'' )){Result =''$TRANSACTIONREF1'';  return;} else if((TRANSACTIONREF ==  ''R'' )){Result =''$TRANSACTIONREF2'';  return;}else {Result ='''';  return;}',NULL,NULL,'O');
+				
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="54" author="Manoj.P">
+		<sql>
+			<![CDATA[
+				update plf.errordetails set severity='E', message = 'Partner bank and Disbusement bank are same but the Payment Type is {0}. Please select Payment Mode as Internal Bank Transfer' where code = '65038'
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	
 	
 </databaseChangeLog>
 
