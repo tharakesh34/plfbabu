@@ -392,6 +392,8 @@ public class BuilderCompanyDialogCtrl extends GFCBaseCtrl<BuilderCompany> {
 		}
 		//Builder Group
 		try {
+
+			this.groupId.getValue();
 			Object object = this.groupId.getAttribute("groupId");
 			if (object != null) {
 				aBuilderCompany.setGroupId(Long.valueOf(object.toString()));
