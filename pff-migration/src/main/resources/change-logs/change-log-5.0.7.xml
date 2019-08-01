@@ -3665,5 +3665,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	 <changeSet id="109" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+			delete from SMTPARAMETERS WHERE SYSPARMCODE='RECEIPTUPLOAD_DEDUPCHECK'; 
+			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RECEIPTUPLOAD_DEDUPCHECK','Receipt Upload Dedup Check','String',0,'Y',1,0,null,null,'Receipt Upload Dedup Check',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+</changeSet>
 
 </databaseChangeLog>
