@@ -3833,26 +3833,26 @@
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-</changeSet>
-<changeSet id="101" author="Saikiran.v">
+	</changeSet>
+	<changeSet id="101" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="102" author="Saikiran.v">
+	<changeSet id="102" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="103" author="Saikiran.v">
+	<changeSet id="103" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="104" author="Saikiran.v">
+	<changeSet id="104" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmt = 0;
@@ -3861,22 +3861,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="105" author="Saikiran.v" dbms="mssql">
+
+	<changeSet id="105" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmt DEFAULT 0 FOR alwSanctionAmt;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAm DEFAULT 0 FOR alwSanctionAmt;
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
+	<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="107" author="Saikiran.v">
+	<changeSet id="107" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmtOverride = 0;
@@ -3885,22 +3885,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="108" author="Saikiran.v" dbms="mssql">
+
+	<changeSet id="108" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
+	<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
+	<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -3910,7 +3910,7 @@
 		</sql>
 	</changeSet>
 
-<changeSet id="110" author="Saikiran.v">
+	<changeSet id="110" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4152,11 +4152,11 @@
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
-</changeSet>
+	</changeSet>
 
 
 
-<changeSet id="111" author="Saikiran.v">
+	<changeSet id="111" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4356,9 +4356,9 @@
      LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="112" author="Saikiran.v">
+	<changeSet id="112" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4843,9 +4843,9 @@ UNION ALL
            FROM rmtfinancetypes_temp
           WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
+	<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -4854,6 +4854,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="113" author="Saikiran.V" dbms="postgresql,oracle">
 		<sql>
 			<![CDATA[
@@ -4862,7 +4863,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="113" author="Saikiran.V" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4871,9 +4872,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
 
-	
 	<changeSet id="114" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
