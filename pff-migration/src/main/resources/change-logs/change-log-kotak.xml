@@ -401,5 +401,9 @@
 			<column name="FIELDNAME " type="VARCHAR2(20)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="32" author="satyanarayana.g">
+		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL" oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
+	</changeSet>
 
 </databaseChangeLog>
