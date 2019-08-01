@@ -11020,6 +11020,7 @@
 
 	<!-- GSTNValidationService -->
 	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl" />
+	<bean id="customerDownloadService" class="com.pennant.backend.service.customermasters.impl.CustomerDownloadServiceImpl" />
 
 	<bean id="MandateProcessdao" class="com.pennanttech.pff.external.mandate.dao.impl.MandateProcessDAOImpl" parent="sequenceDao" />
 

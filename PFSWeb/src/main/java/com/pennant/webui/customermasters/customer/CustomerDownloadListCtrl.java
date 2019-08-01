@@ -71,6 +71,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.service.customermasters.CustomerDownloadService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
@@ -82,12 +83,12 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.impl.GLEMSCustomerProcess;
+import com.pennanttech.pennapps.web.util.MessageUtil;	
 
 /**
  * ************************************************************<br>
- * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerDownloadList.zul<br>
+ * This is the controller class for the
+ * /WEB-INF/pages/CustomerMasters/Customer/CustomerDownloadList.zul<br>
  * ************************************************************<br>
  * 
  */
@@ -138,8 +139,8 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 
 	private final List<ValueLabel> custCtgCodeList = PennantAppUtil.getcustCtgCodeList();
 	@Autowired
-	private GLEMSCustomerProcess gLEMSCustomerProcess;
-	
+	private CustomerDownloadService customerDownloadService;
+
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public CustomerDownloadListCtrl() {
@@ -161,7 +162,8 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -194,7 +196,8 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 				sortOperator_custTypeCode, Operators.STRING);
 		registerField("LovDescRequestStage", listheader_RequestStage);
 
-		// Render the page and display no data when the page loaded for the first time.
+		// Render the page and display no data when the page loaded for the
+		// first time.
 		doRenderPage();
 		this.customerDownloadMap.clear();
 		doSetFieldProperties();
@@ -258,7 +261,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 				custId.add(customer.getCustID());
 			}
 			try {
-				gLEMSCustomerProcess.processDownload(custId);
+				this.customerDownloadService.processDownload(custId);
 				MessageUtil.showMessage("file downloaded successfully");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -445,12 +448,12 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
-	public GLEMSCustomerProcess getgLEMSCustomerProcess() {
-		return gLEMSCustomerProcess;
-	}
-
-	public void setgLEMSCustomerProcess(GLEMSCustomerProcess gLEMSCustomerProcess) {
-		this.gLEMSCustomerProcess = gLEMSCustomerProcess;
+	/**
+	 * @param customerDownloadService
+	 *            the customerDownloadService to set
+	 */
+	public void setCustomerDownloadService(CustomerDownloadService customerDownloadService) {
+		this.customerDownloadService = customerDownloadService;
 	}
 
 }
