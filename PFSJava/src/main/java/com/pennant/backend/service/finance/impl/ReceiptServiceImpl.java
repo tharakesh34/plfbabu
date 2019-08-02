@@ -168,6 +168,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.CashManagementConstants;
 import com.pennant.backend.util.CollateralConstants;
@@ -229,6 +230,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private ReceiptUploadHeaderDAO receiptUploadHeaderDAO;
 	private FinTaxDetailsDAO finTaxDetailsDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+	private ReceiptUploadHeaderService receiptUploadHeaderService;
 
 	public ReceiptServiceImpl() {
 		super();
@@ -3177,7 +3179,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			logger.debug("Leaving - Data Validations Error");
 			return receiptData;
 		}
-		receiptData = doBusinessValidations(receiptData, methodCtg);
+		//receiptData = doBusinessValidations(receiptData, methodCtg);
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - Business Validations Error");
 			return receiptData;
@@ -4656,7 +4658,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (StringUtils.equals(rud.getStatus(), "A")) {
 			fsi.setReceiptdetailExits(false);
 		} else {
-			fsi.setReceiptdetailExits(true);
+
+			if ((StringUtils.equalsIgnoreCase(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+					|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))
+					&& StringUtils.equalsIgnoreCase(rud.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+				String mode = rud.getReceiptMode();
+				boolean isreceiptdataExits = false;
+
+				if (StringUtils.equalsIgnoreCase(rud.getReceiptPurpose(), "SP")) {
+					isreceiptdataExits = receiptUploadHeaderService.isReceiptDetailsExits(rud.getReference(), mode,
+							rud.getChequeNo(), rud.getFavourNumber(), "");
+				} else {
+					isreceiptdataExits = receiptUploadHeaderService.isReceiptDetailsExits(rud.getReference(), mode,
+							rud.getChequeNo(), rud.getFavourNumber(), "_Temp");
+				}
+
+				if (isreceiptdataExits) {
+					fsi.setReceiptdetailExits(true);
+				}
+			}
+
 		}
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
@@ -6271,6 +6292,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public boolean isEarlySettlementInitiated(String finreference) {
 		boolean isInitiated = finReceiptHeaderDAO.checkEarlySettlementInitiation(finreference);
 		return isInitiated;
+	}
+
+	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {
+		this.receiptUploadHeaderService = receiptUploadHeaderService;
 	}
 
 	@Override

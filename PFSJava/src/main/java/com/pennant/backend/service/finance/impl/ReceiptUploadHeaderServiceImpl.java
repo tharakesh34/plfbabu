@@ -423,8 +423,9 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber) {
-		return getFinReceiptHeaderDAO().isReceiptDetailsExits(reference, paytypeCheque, chequeNo, favourNumber);
+	public boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
+			String type) {
+		return getFinReceiptHeaderDAO().isReceiptDetailsExits(reference, paytypeCheque, chequeNo, favourNumber, type);
 	}
 
 	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
@@ -438,6 +439,17 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	@Override
 	public boolean isFinReferenceExists(String reference, String type, boolean isWIF) {
 		return getFinanceMainDAO().isFinReferenceExists(reference, type, isWIF);
+	}
+
+	@Override
+	public boolean isChequeExist(String reference, String paytypeCheque, String bankCode, String favourNumber,
+			String type) {
+		return getFinReceiptHeaderDAO().isChequeExists(reference, paytypeCheque, bankCode, favourNumber, type);
+	}
+
+	@Override
+	public boolean isOnlineExist(String reference, String subReceiptMode, String tranRef, String type) {
+		return getFinReceiptHeaderDAO().isOnlineExists(reference, subReceiptMode, tranRef, type);
 	}
 
 }

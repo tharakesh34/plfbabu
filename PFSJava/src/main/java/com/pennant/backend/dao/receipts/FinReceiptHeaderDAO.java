@@ -61,7 +61,8 @@ public interface FinReceiptHeaderDAO {
 
 	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
 
-	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber);
+	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
+			String type);
 
 	//### 29-10-2018, Ticket id:124998
 	void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate);
@@ -87,4 +88,8 @@ public interface FinReceiptHeaderDAO {
 	boolean checkEarlySettlementInitiation(String reference);
 
 	boolean checkPartialSettlementInitiation(String reference);
+
+	boolean isChequeExists(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
+
+	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
 }

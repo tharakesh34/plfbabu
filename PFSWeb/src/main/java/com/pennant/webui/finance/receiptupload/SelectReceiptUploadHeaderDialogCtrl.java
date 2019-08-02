@@ -539,6 +539,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		final Set<String> setRowIds = new HashSet<String>();
 		final Set<String> setTxnKeys = new HashSet<String>();
+		final Set<String> setTxnKeysCheque = new HashSet<String>();
 		Sheet rchSheet = this.workbook.getSheetAt(0);
 		int rowCount = rchSheet.getLastRowNum();
 		String txnKey = "";
@@ -569,11 +570,42 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 			// Load Receipt Header Data to Receipts Bean
 			ReceiptUploadDetail rud = loadReceiptData(rchRow);
-
-			txnKey = rud.getReference() + "/" + rud.getTransactionRef() + "/" + rud.getReceiptAmount().toString();
-			if (!setTxnKeys.add(txnKey)) {
-				errorMsg = "with combination REFERENCE/TRANSACTIONREF/RECEIPTAMOUNT:" + txnKey;
-				setErrorToRUD(rud, "90273", errorMsg);
+			if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+				txnKey = rud.getReference() + "/" + rud.getTransactionRef() + "/" + rud.getSubReceiptMode();
+				if (!setTxnKeys.add(txnKey)) {
+					errorMsg = "with combination REFERENCE/TRANSACTIONREF/SubReceiptMode:" + txnKey;
+					setErrorToRUD(rud, "90273", errorMsg);
+				}
+			} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+					|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+				txnKey = rud.getReference() + "/" + rud.getReceiptMode() + "/" + rud.getBankCode() + "/"
+						+ rud.getFavourNumber();
+				if (!setTxnKeysCheque.add(txnKey)) {
+					errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
+					setErrorToRUD(rud, "90273", errorMsg);
+				}
+			}
+			boolean isRecDtlExist = isReceiptDetailExist(rud);
+			if (!isRecDtlExist) {
+				boolean isTranExist = false;
+				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+						|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+					String mode = rud.getReceiptMode();
+					isTranExist = receiptUploadHeaderService.isChequeExist(rud.getReference(), mode, rud.getBankCode(),
+							rud.getFavourNumber(), "_View");
+					if (isTranExist) {
+						errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
+						setErrorToRUD(rud, "90273", errorMsg);
+					}
+				} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(),
+						DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+					isTranExist = receiptUploadHeaderService.isOnlineExist(rud.getReference(), rud.getSubReceiptMode(),
+							rud.getTransactionRef(), "_View");
+					if (isTranExist) {
+						errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
+						setErrorToRUD(rud, "90273", errorMsg);
+					}
+				}
 			}
 
 			rudList.add(rud);
@@ -589,6 +621,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		// Validate Receipt Header Vs Allocations
 		validateRUDvsRAD();
+
 		if (uadList != null && !uadList.isEmpty()) {
 			MessageUtil.showError("Allocations not related to Receipts found in allocation sheet");
 			return true;
@@ -596,6 +629,26 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		logger.debug(Literal.LEAVING);
 		return false;
+	}
+
+	private boolean isReceiptDetailExist(ReceiptUploadDetail rud) {
+		boolean isreceiptdataExits = false;
+		if ((StringUtils.equalsIgnoreCase(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+				|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD))
+				&& StringUtils.equalsIgnoreCase(rud.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
+			String mode = rud.getReceiptMode();
+
+			if (StringUtils.equalsIgnoreCase(rud.getReceiptPurpose(), "SP")) {
+				isreceiptdataExits = receiptUploadHeaderService.isReceiptDetailsExits(rud.getReference(), mode,
+						rud.getChequeNo(), rud.getFavourNumber(), "");
+			} else {
+				isreceiptdataExits = receiptUploadHeaderService.isReceiptDetailsExits(rud.getReference(), mode,
+						rud.getChequeNo(), rud.getFavourNumber(), "_Temp");
+			}
+
+		}
+		return isreceiptdataExits;
+
 	}
 
 	/**

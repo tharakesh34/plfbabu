@@ -767,16 +767,17 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	 * @param favourNumber
 	 */
 	@Override
-	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber) {
+	public boolean isReceiptDetailsExits(String reference, String receiptMode, String chequeNo, String favourNumber,
+			String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = null;
 		int count = 0;
 
-		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptheader_temp t ");
-		selectSql.append(" inner join finreceiptdetail_temp t1 on t1.receiptid=t.receiptid ");
+		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptheader" + type);
+		selectSql.append(" t inner join finreceiptdetail" + type);
 		selectSql.append(
-				" where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
+				" t1 on t1.receiptid=t.receiptid where REFERENCE= :REFERENCE and RECEIPTMODE= :RECEIPTMODE and T1.FAVOURNUMBER= :FAVOURNUMBER and T1.CHEQUEACNO = :CHEQUEACNO ");
 		selectSql.append(" and (T.RECEIPTMODESTATUS in ('A') or T.RECEIPTMODESTATUS is null)");
 		logger.debug("selectSql: " + selectSql.toString());
 
@@ -1076,5 +1077,71 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		return isReceiptsInProcess;
 
+	}
+
+	@Override
+	public boolean isChequeExists(String reference, String paytypeCheque, String bankCode, String favourNumber,
+			String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptdetail" + type);
+		selectSql.append(
+				"  where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and FAVOURNUMBER= :FAVOURNUMBER and BANKCODE = :BANKCODE ");
+		selectSql.append(" STATUS NOT IN ('B','C')  ");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("REFERENCE", reference);
+		source.addValue("RECEIPTMODE", paytypeCheque);
+		source.addValue("FAVOURNUMBER", favourNumber);
+		source.addValue("BANKCODE", bankCode);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+		if (count > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = null;
+		int count = 0;
+
+		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptdetail" + type);
+		selectSql.append(
+				"  where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and TRANSACTIONREF= :TRANSACTIONREF  ");
+		selectSql.append(" STATUS NOT IN ('B','C')  ");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("REFERENCE", reference);
+		source.addValue("RECEIPTMODE", subReceiptMode);
+		source.addValue("TRANSACTIONREF", tranRef);
+
+		try {
+			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (DataAccessException e) {
+			logger.error(e);
+			count = 0;
+		}
+
+		logger.debug("Leaving");
+		if (count > 0) {
+			return true;
+		}
+		return false;
 	}
 }

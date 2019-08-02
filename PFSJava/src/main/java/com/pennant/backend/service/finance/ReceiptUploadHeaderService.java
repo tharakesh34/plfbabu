@@ -95,8 +95,13 @@ public interface ReceiptUploadHeaderService {
 
 	boolean isFinReferenceExitsWithEntity(String reference, String string, String validatedValue);
 
-	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber);
+	boolean isReceiptDetailsExits(String reference, String paytypeCheque, String chequeNo, String favourNumber,
+			String type);
 
 	boolean isFinReferenceExists(String reference, String type, boolean b);
+
+	boolean isChequeExist(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
+
+	boolean isOnlineExist(String reference, String subReceiptMode, String tranRef, String type);
 
 }
