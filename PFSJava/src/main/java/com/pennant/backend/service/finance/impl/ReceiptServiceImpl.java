@@ -3378,7 +3378,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Transaction Reference mandatory for all non CASH modes
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)) {
+		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
+				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
 			if (StringUtils.isBlank(rcd.getTransactionRef())) {
 				finScheduleData = setErrorToFSD(finScheduleData, "90502", "Transaction Reference");
 				return receiptData;
@@ -4378,10 +4380,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		// Favour Name is mandatory
-		if (StringUtils.isBlank(receiptDetail.getFavourName())) {
-			finScheduleData = setErrorToFSD(finScheduleData, "90502", "FavourName");
-			return finScheduleData;
-		}
+		/*
+		 * if (StringUtils.isBlank(receiptDetail.getFavourName())) { finScheduleData = setErrorToFSD(finScheduleData,
+		 * "90502", "FavourName"); return finScheduleData; }
+		 */
 
 		return finScheduleData;
 	}
@@ -5264,7 +5266,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		String receiptPurpose = financeDetail.getFinScheduleData().getFinServiceInstruction().getModuleDefiner();
-		financeDetail = validateFees(financeDetail);
+		if (!finServiceInstruction.isReceiptUpload()) {
+			financeDetail = validateFees(financeDetail);
+		}
 
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving");
@@ -5274,7 +5278,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		try {
 			financeDetail = doProcessReceipt(receiptData, receiptPurpose);
 
-			if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+			if (!finServiceInstruction.isReceiptUpload()
+					&& StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 				if (finScheduleData.getErrorDetails() == null || !finScheduleData.getErrorDetails().isEmpty()) {
 					FinanceSummary summary = financeDetail.getFinScheduleData().getFinanceSummary();
 					summary.setFinStatus("M");
@@ -5560,11 +5565,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					FinanceConstants.REALIZATION_MAKER);
 			receiptData = oldReceiptData;
 
-			version = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getVersion();
-			receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain()
-					.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setRecordType("");
-			receiptData.getFinanceDetail().getFinScheduleData().setSchduleGenerated(true);
 			receiptData.getReceiptHeader().setRealizationDate(fsi.getRealizationDate());
 		} else {
 			// Set Version value
@@ -5604,17 +5604,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					nextTaskId = workFlow.getUserTaskId(nextRolecode);
 				}
 
-				financeMain.setWorkflowId(workFlowId);
-				financeMain.setTaskId(taskid);
-				financeMain.setRoleCode(roleCode);
-				financeMain.setNextRoleCode(nextRolecode);
-				financeMain.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				financeMain.setNextTaskId(nextTaskId + ";");
-				financeMain.setNewRecord(true);
-				financeMain.setVersion(version + 1);
-				financeMain.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
-				financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
+				rch.setWorkflowId(workFlowId);
+				rch.setTaskId(taskid);
+				rch.setRoleCode(roleCode);
+				rch.setNextRoleCode(nextRolecode);
+				rch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				rch.setNextTaskId(nextTaskId + ";");
+				rch.setNewRecord(true);
+				rch.setVersion(version + 1);
+				rch.setRcdMaintainSts(FinanceConstants.FINSER_EVENT_RECEIPT);
+				rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				rch.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
 			}
 
 			receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
