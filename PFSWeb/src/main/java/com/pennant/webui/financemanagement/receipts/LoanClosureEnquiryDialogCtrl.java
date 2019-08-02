@@ -1218,7 +1218,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		addAmountCell(item, allocate.getTotRecv(), ("AllocateActualDue_" + idx), false);
 		// FIXME: PV. Pending code to get in process allocations
 		addAmountCell(item, allocate.getInProcess(), ("AllocateInProess_" + idx), true);
-		addAmountCell(item, allocate.getTotalDue(), ("AllocateCurDue_" + idx), true);
+		addAmountCell(item, allocate.getTotRecv(), ("AllocateCurDue_" + idx), true);
 
 		// Editable Amount - Total Paid
 		lc = new Listcell();
@@ -1250,7 +1250,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.setParent(item);
 
 		// Balance Due AMount
-		addAmountCell(item, allocate.getBalance(), ("AllocateBalDue_" + idx), true);
+		addAmountCell(item, allocate.getTotRecv(), ("AllocateBalDue_" + idx), true);
 
 		// if (allocate.isEditable()){
 		this.listBoxPastdues.appendChild(item);
@@ -1322,7 +1322,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			if (allocate.isEditable()) {
 				totRecv = totRecv.add(allocate.getTotRecv());
-				totDue = totDue.add(allocate.getTotalDue());
+				totDue = totDue.add(allocate.getTotRecv());
 				inProc = inProc.add(allocate.getInProcess());
 				paid = paid.add(allocate.getPaidAmount());
 				waived = waived.add(allocate.getWaivedAmount());
@@ -3439,9 +3439,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setAddress(combinedString);
 
 				int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
-				if (getOrgReceiptData() != null) {
-					receiptData = getOrgReceiptData();
-				}
+				/*
+				 * if (getOrgReceiptData() != null) { receiptData = getOrgReceiptData(); }
+				 */
 
 				List<ReceiptAllocationDetail> receiptAllocationDetails = receiptData.getReceiptHeader()
 						.getAllocationsSummary();
@@ -3458,53 +3458,53 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FUT_PRI)) {
 						closureReport.setOutstandingPri(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					// Late Payment Charges
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_ODC)) {
 						closureReport.setLatePayCharges(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_BOUNCE)) {
-						bncCharge = receiptAllocationDetail.getBalance();
+						bncCharge = receiptAllocationDetail.getTotRecv();
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_MANADV)) {
-						receivableAmt = receiptAllocationDetail.getBalance();
+						receivableAmt = receiptAllocationDetail.getTotRecv();
 					}
 
 					// Interest for the month
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FUT_PFT)) {
 						closureReport.setInstForTheMonth(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter));
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter));
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_PFT)) {
-						profitAmt = receiptAllocationDetail.getBalance();
+						profitAmt = receiptAllocationDetail.getTotRecv();
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_PRI)) {
-						principleAmt = receiptAllocationDetail.getBalance();
+						principleAmt = receiptAllocationDetail.getTotRecv();
 					}
 
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_TDS)) {
-						tdsAmt = receiptAllocationDetail.getBalance();
+						tdsAmt = receiptAllocationDetail.getTotRecv();
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FUT_TDS)) {
-						futTdsAmt = receiptAllocationDetail.getBalance();
+						futTdsAmt = receiptAllocationDetail.getTotRecv();
 					}
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_FEE)) {
 						closureReport.setForeClosFees(closureReport.getForeClosFees().add(
-								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getBalance(), formatter)));
+								PennantApplicationUtil.formateAmount(receiptAllocationDetail.getTotRecv(), formatter)));
 					}
 
 				}
