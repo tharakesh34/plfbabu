@@ -23,8 +23,9 @@ public class JsonServiceDetail implements Serializable {
 	private String responseString;
 	private Map<String, String> queryParams;
 	private Map<String, String> pathParams;
-	private boolean xmlRequest=false;
-	
+	private boolean xmlRequest = false;
+	private String serviceEndPoint;
+
 	public String getReference() {
 		return reference;
 	}
@@ -105,7 +106,6 @@ public class JsonServiceDetail implements Serializable {
 		this.responseString = responseString;
 	}
 
-
 	public Object getResponceData() {
 		return responceData;
 	}
@@ -137,4 +137,13 @@ public class JsonServiceDetail implements Serializable {
 	public void setXmlRequest(boolean xmlRequest) {
 		this.xmlRequest = xmlRequest;
 	}
+
+	public String getServiceEndPoint() {
+		return serviceEndPoint;
+	}
+
+	public void setServiceEndPoint(String serviceEndPoint) {
+		this.serviceEndPoint = serviceEndPoint;
+	}
+
 }

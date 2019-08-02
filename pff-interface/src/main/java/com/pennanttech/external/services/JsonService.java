@@ -84,6 +84,9 @@ public abstract class JsonService<T> {
 		Timestamp reqSentOn = null;
 
 		String url = App.getProperty(serviceDetail.getServiceUrl());
+		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
+			url = url + serviceDetail.getServiceEndPoint();
+		}
 
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
@@ -190,17 +193,17 @@ public abstract class JsonService<T> {
 	}
 
 	public String getObjectToXML(JsonServiceDetail jsonServiceDetail) {
-	
-		if(StringUtils.trimToNull(jsonServiceDetail.getRequestString())!=null){
-			return jsonServiceDetail.getRequestString();
-		}
-			
-		StringWriter sw = new StringWriter();
-		
+
 		if (StringUtils.trimToNull(jsonServiceDetail.getRequestString()) != null) {
 			return jsonServiceDetail.getRequestString();
 		}
-		
+
+		StringWriter sw = new StringWriter();
+
+		if (StringUtils.trimToNull(jsonServiceDetail.getRequestString()) != null) {
+			return jsonServiceDetail.getRequestString();
+		}
+
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(jsonServiceDetail.getRequestData().getClass());
 			Marshaller marshaller = jaxbContext.createMarshaller();
