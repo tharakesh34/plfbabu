@@ -738,10 +738,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				// Delete and Save Repayment Schedule details by setting Repay
 				// Header ID
 				financeRepaymentsDAO.deleteRpySchdList(finReference, tableType.getSuffix());
-				
+
 				// Delete Tax Header
 				deleteTaxHeaderId(receiptID, tableType.getSuffix());
-				
+
 				// Receipt Allocation Details
 				allocationDetailDAO.deleteByReceiptID(receiptID, tableType);
 			}
@@ -1002,7 +1002,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 */
 	public void deleteTaxHeaderId(long receiptId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		List<Long> headerIdsByReceiptId = getTaxHeaderDetailsDAO().getHeaderIdsByReceiptId(receiptId, type);
 		if (CollectionUtils.isNotEmpty(headerIdsByReceiptId)) {
 			for (Long headerIds : headerIdsByReceiptId) {
@@ -1014,7 +1014,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1094,7 +1094,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finTaxDetailsDAO.deleteByFeeID(finFeeDetail.getFeeID(), "_Temp");
 				finFeeDetailDAO.delete(finFeeDetail, false, "_Temp");
 				TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-				
+
 				if (taxHeader != null && taxHeader.getId() > 0) {
 					List<Taxes> taxDetails = taxHeader.getTaxDetails();
 					if (CollectionUtils.isNotEmpty(taxDetails)) {
@@ -3349,8 +3349,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 
-			if (fsi.getValueDate().compareTo(fsi.getReceivedDate()) < 0) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0008", null);
+			if (!(fsi.getValueDate().compareTo(fsi.getReceivedDate()) == 0)) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
 				return receiptData;
 			}
 		}

@@ -111,9 +111,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the
-	 * zul-file is called with a parameter for a selected Customer object in a
-	 * Map.
+	 * Before binding the data and calling the dialog window we check, if the zul-file is called with a parameter for a
+	 * selected Customer object in a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -241,10 +240,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * This Method/Event for getting the uploaded document should be comma
-	 * separated values and then read the document and setting the values to the
-	 * Lead VO and added those vos to the List and it also shows the information
-	 * about where we go the wrong data
+	 * This Method/Event for getting the uploaded document should be comma separated values and then read the document
+	 * and setting the values to the Lead VO and added those vos to the List and it also shows the information about
+	 * where we go the wrong data
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -447,8 +445,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * Method for Validate uploaded file content whether data in proper manner
-	 * or not
+	 * Method for Validate uploaded file content whether data in proper manner or not
 	 * 
 	 * @throws Exception
 	 */
@@ -669,8 +666,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		} else {
 			rud.setAllocationType(strValue);
 		}
-		
-		if(StringUtils.equals(strValue, "M") && !StringUtils.equals(rud.getReceiptPurpose(), "SP")){
+
+		if (StringUtils.equals(strValue, "M") && !StringUtils.equals(rud.getReceiptPurpose(), "SP")) {
 			setErrorToRUD(rud, "RU0040", "Values other than A in [ALLOCATIONTYPE] ");
 		}
 
@@ -756,11 +753,11 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		try {
 			if (StringUtils.isNotBlank(strValueDate) && StringUtils.isNotBlank(strReceivedDate)
-					&& strReceivedDate.compareTo(strValueDate) < 0) {
-				setErrorToRUD(rud, "RU0040", "[VALUEDATE] is greater than [RECEIVEDDATE]");
-			} 
+					&& !(strReceivedDate.compareTo(strValueDate) == 0)) {
+				setErrorToRUD(rud, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
+			}
 		} catch (Exception e) {
-			setErrorToRUD(rud, "RU0040", "[VALUEDATE] is greater than [RECEIVEDDATE]");
+			setErrorToRUD(rud, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
 		}
 		// Receipt Mode
 		strValue = getCellStringValue(rchRow, 10);
@@ -996,8 +993,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				setErrorToUAD(uad, "RU0040", "Allocation Sheet: [ALLOCATIONTYPE] with blank value ");
 			}
 			uad.setAllocationType(strValue);
-			
-			
 
 			strValue = getCellStringValue(rchRow, 2);
 			if (StringUtils.isNotBlank(strValue)) {
@@ -1219,8 +1214,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				rud.setReason(String.format("%s %s %s", code, "-", description));
 				continue;
 			}
-			
-			
 
 			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, this.entity.getValidatedValue());
 			fsi.setReqType("Inquiry");
@@ -1244,8 +1237,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	}
 
 	/**
-	 * validate each object with list and check dedub for loan reference with
-	 * status,transaction ref,cheque or dd number
+	 * validate each object with list and check dedub for loan reference with status,transaction ref,cheque or dd number
 	 * 
 	 * @param receiptUploadDetail
 	 * @return dedup Check
