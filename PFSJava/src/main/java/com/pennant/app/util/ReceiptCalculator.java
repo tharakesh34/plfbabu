@@ -3946,7 +3946,7 @@ public class ReceiptCalculator implements Serializable {
 				pftNow = pftPaid;
 				pftPaid = BigDecimal.ZERO;
 			} else {
-				pftNow = pftPaid.subtract(balPft);
+				pftNow = balPft;
 				pftPaid = pftPaid.subtract(pftNow);
 			}
 			if (curSchd.isTDSApplicable()) {

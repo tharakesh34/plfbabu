@@ -522,7 +522,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
-		orgScheduleList = schdData.getFinanceScheduleDetails();
 		RepayMain rpyMain = receiptData.getRepayMain();
 
 		receiptData.setAccruedTillLBD(schdData.getFinanceMain().getLovDescAccruedTillLBD());
@@ -615,7 +614,6 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		Cloner cloner = new Cloner();
-		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(orgScheduleList);
 		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
 		setOrgReceiptData(tempReceiptData);
 
@@ -1119,6 +1117,14 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			receiptData.setValueDate(valueDate);
 			receiptData.setReceiptHeader(receiptHeader);
+			Cloner cloner = new Cloner();
+			if (orgScheduleList.isEmpty()) {
+				orgScheduleList = cloner
+						.deepClone(receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+			} else {
+				receiptData.getFinanceDetail().getFinScheduleData()
+						.setFinanceScheduleDetails(cloner.deepClone(orgScheduleList));
+			}
 			receiptData = receiptService.calcuateDues(receiptData);
 			setFinanceDetail(receiptData.getFinanceDetail());
 
