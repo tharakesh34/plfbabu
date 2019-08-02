@@ -6372,5 +6372,14 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="107" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    update data_engine_column set Name = 'AdditionalField1' where TableId = (select Id from data_engine_table where ConfigId = (select Id from data_engine_config where Name = 'DISB_OTHER_NEFT_RTGS_EXPORT'))
+		    and Name = 'BENFICIARY_NAME';
+		]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
