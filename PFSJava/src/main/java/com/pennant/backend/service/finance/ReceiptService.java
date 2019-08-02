@@ -158,4 +158,6 @@ public interface ReceiptService {
 
 	boolean isPartialSettlementInitiated(String finreference);
 
+	String getLoanReferenc(String finreference, String fileName);
+
 }

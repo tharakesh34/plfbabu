@@ -51,6 +51,7 @@ import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
@@ -606,6 +607,21 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 						setErrorToRUD(rud, "90273", errorMsg);
 					}
 				}
+			}
+
+			//check  FinReference whether it is present in maker stage
+			if (StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.EARLYSETTLEMENT)
+					|| StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.PARTIALSETTLEMENT)) {
+				if (StringUtils.isNotBlank(this.fileName.getValue())) {
+					String finReferenceValue = getReceiptUploadHeaderService().getLoanReferenc(rud.getReference(),
+							this.fileName.getValue());
+					if (StringUtils.isNotBlank(finReferenceValue)) {
+						errorMsg = "Receipt In process for " + rud.getReference();
+						setErrorToRUD(rud, "90273", errorMsg);
+
+					}
+				}
+
 			}
 
 			rudList.add(rud);

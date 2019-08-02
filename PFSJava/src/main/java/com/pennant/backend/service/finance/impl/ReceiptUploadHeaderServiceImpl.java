@@ -266,7 +266,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		ReceiptUploadHeader receiptUploadHeader = (ReceiptUploadHeader) auditHeader.getAuditDetail().getModelData();
 		getReceiptUploadHeaderDAO().delete(receiptUploadHeader, TableType.MAIN_TAB);
 
-		//child
+		// child
 		getReceiptUploadDetailDAO().delete(receiptUploadHeader.getUploadHeaderId());
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -439,6 +439,25 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	@Override
 	public boolean isFinReferenceExists(String reference, String type, boolean isWIF) {
 		return getFinanceMainDAO().isFinReferenceExists(reference, type, isWIF);
+	}
+
+	@Override
+	public int[] getHeaderStatusCnt(long receiptUploadId) {
+
+		List<Long> receiptIdValues = getReceiptUploadHeaderDAO().getHeaderStatusCnt(receiptUploadId);
+		int sucessCount = 0;
+		int failCount = 0;
+		for (Long receiptId : receiptIdValues) {
+			if (receiptId == null) {
+				failCount++;
+			} else {
+				sucessCount++;
+			}
+		}
+		int[] val = new int[2];
+		val[0] = sucessCount;
+		val[1] = failCount;
+		return val;
 	}
 
 	@Override

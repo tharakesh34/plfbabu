@@ -483,4 +483,7 @@ public class FinanceConstants {
 	public static final String SCHEDULE_PAYMENT = "SCHEDULE_PAYMENT";
 	public static final String STAGE_DEPOSITAPPROVER = "STAGE_DEPOSITAPPROVER";
 	public static final String STAGE_DEPOSITMAKER = "STAGE_DEPOSITMAKER";
+
+	public static final String EARLYSETTLEMENT = "ES";
+	public static final String PARTIALSETTLEMENT = "EP";
 }

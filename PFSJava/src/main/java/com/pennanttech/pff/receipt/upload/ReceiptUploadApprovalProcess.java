@@ -14,6 +14,7 @@ import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.dao.receiptUpload.ProjectedRUDAO;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -27,6 +28,7 @@ public class ReceiptUploadApprovalProcess {
 	private ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private ReceiptService receiptService;
 	private UploadAllocationDetailDAO uploadAllocationDetailDAO;
+	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
 
 	public void approveReceipts(List<Long> receiptIds, LoggedInUser loggedInUser) {
 		logger.debug(Literal.ENTERING);
@@ -56,7 +58,8 @@ public class ReceiptUploadApprovalProcess {
 
 		for (Long threadId : threads) {
 			ReceiptUploadThreadProcess threadProcess = new ReceiptUploadThreadProcess(dataSource, projectedRUDAO,
-					receiptUploadDetailDAO, receiptService, uploadAllocationDetailDAO, loggedInUser);
+					receiptUploadDetailDAO, receiptService, uploadAllocationDetailDAO, loggedInUser,
+					receiptUploadHeaderService);
 			threadProcess.processesThread(threadId);
 		}
 
@@ -121,4 +124,13 @@ public class ReceiptUploadApprovalProcess {
 	public void setUploadAllocationDetailDAO(UploadAllocationDetailDAO uploadAllocationDetailDAO) {
 		this.uploadAllocationDetailDAO = uploadAllocationDetailDAO;
 	}
+
+	public ReceiptUploadHeaderService getReceiptUploadHeaderService() {
+		return receiptUploadHeaderService;
+	}
+
+	public void setReceiptUploadHeaderService(ReceiptUploadHeaderService receiptUploadHeaderService) {
+		this.receiptUploadHeaderService = receiptUploadHeaderService;
+	}
+
 }

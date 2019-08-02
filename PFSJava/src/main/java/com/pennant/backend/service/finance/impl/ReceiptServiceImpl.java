@@ -3471,7 +3471,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		Date finStartDate = financeMain.getFinStartDate();
 
 		if (fsi.isReceiptUpload() && fsi.getValueDate().compareTo(finStartDate) < 0) {
-			finScheduleData = setErrorToFSD(finScheduleData, "90286", null);
+			finScheduleData = setErrorToFSD(finScheduleData, "RU0048", null);
 			return receiptData;
 		}
 
@@ -6301,6 +6301,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public boolean isPartialSettlementInitiated(String finreference) {
 		boolean isInitiated = finReceiptHeaderDAO.checkPartialSettlementInitiation(finreference);
+		return isInitiated;
+	}
+
+	@Override
+	public String getLoanReferenc(String finreference, String fileName) {
+		String isInitiated = finReceiptHeaderDAO.getLoanReferenc(finreference, fileName);
 		return isInitiated;
 	}
 

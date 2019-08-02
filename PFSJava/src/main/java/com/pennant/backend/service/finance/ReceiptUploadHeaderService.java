@@ -100,6 +100,8 @@ public interface ReceiptUploadHeaderService {
 
 	boolean isFinReferenceExists(String reference, String type, boolean b);
 
+	int[] getHeaderStatusCnt(long receiptUploadId);
+
 	boolean isChequeExist(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
 
 	boolean isOnlineExist(String reference, String subReceiptMode, String tranRef, String type);

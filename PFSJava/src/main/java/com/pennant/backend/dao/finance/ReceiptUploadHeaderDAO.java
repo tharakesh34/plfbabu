@@ -42,6 +42,8 @@
 */
 package com.pennant.backend.dao.finance;
 
+import java.util.List;
+
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.receiptupload.ReceiptUploadHeader;
 import com.pennanttech.pff.core.TableType;
@@ -67,5 +69,7 @@ public interface ReceiptUploadHeaderDAO {
 	boolean isFileDownlaoded(long id, int receiptDownloaded);
 
 	long generateSeqId();
+
+	List<Long> getHeaderStatusCnt(long uploadHeaderId);
 
 }

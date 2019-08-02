@@ -28,6 +28,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.service.finance.ReceiptService;
+import com.pennant.backend.service.finance.ReceiptUploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.eod.constants.EodConstants;
@@ -45,6 +46,7 @@ public class ReceiptUploadThreadProcess {
 	private UploadAllocationDetailDAO uploadAllocationDetailDAO;
 	private ReceiptService receiptService;
 	private LoggedInUser loggedInUser;
+	private ReceiptUploadHeaderService receiptUploadHeaderService;
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	private DataSourceTransactionManager transactionManager;
@@ -52,7 +54,8 @@ public class ReceiptUploadThreadProcess {
 
 	public ReceiptUploadThreadProcess(DataSource dataSource, ProjectedRUDAO projectedRUDAO,
 			ReceiptUploadDetailDAO receiptUploadDetailDAO, ReceiptService receiptService,
-			UploadAllocationDetailDAO uploadAllocationDetailDAO, LoggedInUser loggedInUser) {
+			UploadAllocationDetailDAO uploadAllocationDetailDAO, LoggedInUser loggedInUser,
+			ReceiptUploadHeaderService receiptUploadHeaderService) {
 		super();
 
 		this.dataSource = dataSource;
@@ -61,6 +64,7 @@ public class ReceiptUploadThreadProcess {
 		this.receiptService = receiptService;
 		this.loggedInUser = loggedInUser;
 		this.uploadAllocationDetailDAO = uploadAllocationDetailDAO;
+		this.receiptUploadHeaderService = receiptUploadHeaderService;
 
 		initilize();
 	}

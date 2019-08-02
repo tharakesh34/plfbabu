@@ -43,6 +43,8 @@
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -341,6 +343,29 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * update success count and failed count for perticular receiptid
+	 * 
+	 * @param uploadHeaderId
+	 * @param sucessCount
+	 * @param failedCount
+	 */
+	@Override
+	public List<Long> getHeaderStatusCnt(long uploadHeaderId) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("uploadHeaderId", uploadHeaderId);
+
+		String selectSql = "Select receiptid FROM  RECEIPTUPLOADDETAILS Where UploadHeaderId =:uploadHeaderId";
+		logger.debug("selectSql: " + selectSql.toString());
+
+		List<Long> countList = this.jdbcTemplate.queryForList(selectSql.toString(), source, Long.class);
+
+		logger.debug("Leaving");
+		return countList;
+
 	}
 
 	@Override

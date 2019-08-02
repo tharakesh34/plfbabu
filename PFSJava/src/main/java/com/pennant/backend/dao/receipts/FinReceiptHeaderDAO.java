@@ -92,4 +92,6 @@ public interface FinReceiptHeaderDAO {
 	boolean isChequeExists(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
 
 	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
+
+	String getLoanReferenc(String finReference, String receiptFileName);
 }

@@ -842,7 +842,14 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			}
 
 			receiptUploadApprovalProcess.approveReceipts(receiptUploadIdList, getUserWorkspace().getLoggedInUser());
+
+			for (Long headerId : receiptUploadIdList) {
+				int[] statuscount = receiptUploadHeaderService.getHeaderStatusCnt(headerId);
+				receiptUploadHeaderService.uploadHeaderStatusCnt(headerId, statuscount[0], statuscount[1]);
+			}
+
 		}
+
 	}
 
 	public void onClick$btnReject(Event event) {

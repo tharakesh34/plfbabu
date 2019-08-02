@@ -66,6 +66,7 @@ import com.pennant.backend.model.finance.FinReceiptQueueLog;
 import com.pennant.backend.model.finance.ReceiptCancelDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -1143,5 +1144,42 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * Get Loan Reference if it is present in Temp table
+	 */
+	@Override
+	public String getLoanReferenc(String finReference, String receiptFileName) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder selectSql = new StringBuilder();
+
+		selectSql.append(" SELECT DISTINCT REFERENCE FROM RECEIPTUPLOADDETAILS ");
+		selectSql.append(" WHERE UPLOADHEADERID IN (SELECT UploadHeaderId FROM RECEIPTUPLOADHEADER_view ");
+		selectSql.append(" where FileName not in ( :FileName) and uploadprogress in ("
+				+ ReceiptUploadConstants.RECEIPT_DEFAULT + "," + ReceiptUploadConstants.RECEIPT_DOWNLOADED + ") )");
+		selectSql.append(
+				" AND REFERENCE = :Reference and uploadstatus in ('" + PennantConstants.UPLOAD_STATUS_SUCCESS + "')");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", finReference);
+		source.addValue("FileName", receiptFileName);
+
+		String reference = null;
+
+		try {
+			reference = this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
+		} catch (DataAccessException e) {
+			logger.error("Exception: ", e);
+			reference = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return reference;
+
 	}
 }
