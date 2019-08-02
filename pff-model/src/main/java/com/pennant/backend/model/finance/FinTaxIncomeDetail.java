@@ -1,6 +1,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Bean values only for Income Details against Tax For ="LPP/LPI" while on taking receipt. Same can be utilized for
@@ -15,6 +16,11 @@ public class FinTaxIncomeDetail {
 	private BigDecimal SGST = BigDecimal.ZERO;
 	private BigDecimal UGST = BigDecimal.ZERO;
 	private BigDecimal IGST = BigDecimal.ZERO;
+
+	// SOA Related Fields
+	private String finReference;
+	private Date postDate;
+	private Date valueDate;
 
 	public long getRepayID() {
 		return repayID;
@@ -70,6 +76,30 @@ public class FinTaxIncomeDetail {
 
 	public void setIGST(BigDecimal iGST) {
 		IGST = iGST;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public Date getPostDate() {
+		return postDate;
+	}
+
+	public void setPostDate(Date postDate) {
+		this.postDate = postDate;
+	}
+
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
 	}
 
 }
