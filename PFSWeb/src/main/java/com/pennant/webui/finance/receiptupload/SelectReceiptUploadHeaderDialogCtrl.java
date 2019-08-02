@@ -55,6 +55,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
@@ -568,47 +569,53 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				MessageUtil.showError(errorMsg);
 				return true;
 			}
-
-			// Load Receipt Header Data to Receipts Bean
+			//duplicate check
+			boolean dedupCheck = SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTUPLOAD_DEDUPCHECK);
 			ReceiptUploadDetail rud = loadReceiptData(rchRow);
-			if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
-				txnKey = rud.getReference() + "/" + rud.getTransactionRef() + "/" + rud.getSubReceiptMode();
-				if (!setTxnKeys.add(txnKey)) {
-					errorMsg = "with combination REFERENCE/TRANSACTIONREF/SubReceiptMode:" + txnKey;
-					setErrorToRUD(rud, "90273", errorMsg);
-				}
-			} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
-					|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
-				txnKey = rud.getReference() + "/" + rud.getReceiptMode() + "/" + rud.getBankCode() + "/"
-						+ rud.getFavourNumber();
-				if (!setTxnKeysCheque.add(txnKey)) {
-					errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
-					setErrorToRUD(rud, "90273", errorMsg);
-				}
-			}
-			boolean isRecDtlExist = isReceiptDetailExist(rud);
-			if (!isRecDtlExist) {
-				boolean isTranExist = false;
-				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+			if (dedupCheck) {
+				// Load Receipt Header Data to Receipts Bean
+
+				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+					txnKey = rud.getReference() + "/" + rud.getTransactionRef() + "/" + rud.getSubReceiptMode();
+					if (!setTxnKeys.add(txnKey)) {
+						errorMsg = "with combination REFERENCE/TRANSACTIONREF/SubReceiptMode:" + txnKey;
+						setErrorToRUD(rud, "90273", errorMsg);
+					}
+				} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 						|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_DD)) {
-					String mode = rud.getReceiptMode();
-					isTranExist = receiptUploadHeaderService.isChequeExist(rud.getReference(), mode, rud.getBankCode(),
-							rud.getFavourNumber(), "_View");
-					if (isTranExist) {
+					txnKey = rud.getReference() + "/" + rud.getReceiptMode() + "/" + rud.getBankCode() + "/"
+							+ rud.getFavourNumber();
+					if (!setTxnKeysCheque.add(txnKey)) {
 						errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
 						setErrorToRUD(rud, "90273", errorMsg);
 					}
-				} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(),
-						DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
-					isTranExist = receiptUploadHeaderService.isOnlineExist(rud.getReference(), rud.getSubReceiptMode(),
-							rud.getTransactionRef(), "_View");
-					if (isTranExist) {
-						errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
-						setErrorToRUD(rud, "90273", errorMsg);
+				}
+				boolean isRecDtlExist = isReceiptDetailExist(rud);
+				if (!isRecDtlExist) {
+					boolean isTranExist = false;
+					if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+							|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(),
+									DisbursementConstants.PAYMENT_TYPE_DD)) {
+						String mode = rud.getReceiptMode();
+						isTranExist = receiptUploadHeaderService.isChequeExist(rud.getReference(), mode,
+								rud.getBankCode(), rud.getFavourNumber(), "_View");
+						if (isTranExist) {
+							errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
+							setErrorToRUD(rud, "90273", errorMsg);
+						}
+					} else if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(),
+							DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
+						isTranExist = receiptUploadHeaderService.isOnlineExist(rud.getReference(),
+								rud.getSubReceiptMode(), rud.getTransactionRef(), "_View");
+						if (isTranExist) {
+							errorMsg = "with combination REFERENCE/ReceiptMode/BankCode/FavourNumber:" + txnKey;
+							setErrorToRUD(rud, "90273", errorMsg);
+						}
 					}
 				}
 			}
 
+			//duplicate check
 			//check  FinReference whether it is present in maker stage
 			if (StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.EARLYSETTLEMENT)
 					|| StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.PARTIALSETTLEMENT)) {
