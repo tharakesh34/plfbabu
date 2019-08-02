@@ -417,4 +417,17 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="34" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				Insert INTO REPORTCONFIGURATION VALUES((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Write-Off Details','Write-Off Details',1,'writeoff','dataSource',1,'menu_Item_WriteoffReport',2,1005,'','','','','','',0,current_Timestamp,0,1,0);
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'1','BranchCode','LOVSEARCH','Branch','FinBranch','','Branch','getBranchCode','getBranchDesc',1,0,0,0,1,0,'','','','','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'' );
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'2','FinType','LOVSEARCH','Loan Type','fintype','','FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'3','CustCIF','LOVSEARCH','Customer Number','custcif','','Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'4','FinReference','LOVSEARCH','Loan Reference','Finreference','','FinanceMain','getFinReference','getFinReference',0,0,0,0,4,0,'','','','','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
