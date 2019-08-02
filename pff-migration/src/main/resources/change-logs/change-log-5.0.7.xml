@@ -3739,4 +3739,48 @@
 		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions_temp" defaultValue="0" />
 	</changeSet>
 
+	<changeSet id="114" author="Saikiran.V">
+		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+					SELECT t1.receiptallocationid,
+				    t1.receiptid,
+				    t1.allocationid,
+				    t1.allocationtype,
+				    t1.allocationto,
+				    t1.paidamount,
+				    t1.waivedamount,
+				    COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,
+				    t1.paidgst,
+				    t1.waivedreqamount,
+				    t1.waiveraccepted,
+				    t1.totaldue,
+				    t1.waivedgst
+				   FROM receiptallocationdetail_temp t1
+				     LEFT JOIN finfeedetail_temp t2 ON t1.allocationto = (- t2.feeid) AND t1.allocationtype = 'FEE' 
+				     LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
+				     LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV'
+				     LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+				UNION ALL
+				 SELECT t1.receiptallocationid,
+				    t1.receiptid,
+				    t1.allocationid,
+				    t1.allocationtype,
+				    t1.allocationto,
+				    t1.paidamount,
+				    t1.waivedamount,
+				    COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,
+				    t1.paidgst,
+				    t1.waivedreqamount,
+				    t1.waiveraccepted,
+				    t1.totaldue,
+				    t1.waivedgst
+				   FROM receiptallocationdetail t1
+				     LEFT JOIN finfeedetail t2 ON t1.allocationto = (- t2.feeid) AND t1.allocationtype = 'FEE' 
+				     LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
+				     LEFT JOIN manualadvise t4 ON t1.allocationto = t4.adviseid AND t1.allocationtype = 'MANADV' 
+				     LEFT JOIN feetypes t5 ON t4.feetypeid = t5.feetypeid
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM receiptallocationdetail_temp
+				          WHERE receiptallocationdetail_temp.receiptid = t1.receiptid))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
