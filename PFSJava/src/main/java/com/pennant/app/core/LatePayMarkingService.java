@@ -372,19 +372,20 @@ public class LatePayMarkingService extends ServiceHelper {
 
 			}
 		}
-		if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) == 0 ) {
+		if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) == 0) {
 			penaltyCalDate = maxValuDate;
 		}
-		
+
 		fod.setFinMaxODAmt(fod.getFinMaxODPft().add(fod.getFinMaxODPri()));
 		fod.setFinCurODDays(DateUtility.getDaysBetween(fod.getFinODSchdDate(), penaltyCalDate));
 
 		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
 		fod.setFinLMdfDate(DateUtility.getAppDate());
 
-		/*if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {
-			penaltyCalDate = DateUtility.getAppDate();
-		}*/
+		/*
+		 * if (fod.getFinCurODPri().add(fod.getFinCurODPft()).compareTo(BigDecimal.ZERO) > 0 && !isEODprocess) {
+		 * penaltyCalDate = DateUtility.getAppDate(); }
+		 */
 		latePayPenaltyService.computeLPP(fod, penaltyCalDate, finMain, finScheduleDetails, repayments);
 
 		String lpiMethod = finMain.getPastduePftCalMthd();
@@ -754,8 +755,9 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		return gstAmount;
 	}
-	
-	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType) {
+
+	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount,
+			String taxType) {
 
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
@@ -778,13 +780,13 @@ public class LatePayMarkingService extends ServiceHelper {
 			taxDetail.setSGST(sgstAmount);
 			totalGST = totalGST.add(sgstAmount);
 		}
-		
+
 		if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal ugstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, ugstPerc, totalGSTPerc);
 			taxDetail.setUGST(ugstAmount);
 			totalGST = totalGST.add(ugstAmount);
 		}
-	
+
 		if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal igstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, igstPerc, totalGSTPerc);
 			taxDetail.setIGST(igstAmount);
@@ -792,7 +794,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 
 		taxDetail.setTotalGST(totalGST);
-		
+
 		return taxDetail;
 	}
 
