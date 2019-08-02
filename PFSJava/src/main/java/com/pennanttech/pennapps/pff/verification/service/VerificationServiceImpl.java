@@ -353,7 +353,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 			if (item.getReinitid() == null) {
 				saveRCU(financeDetail, item);
 			}
-		} else if (verificationType == VerificationType.LV) {
+		} else if (verificationType == VerificationType.PD) {
 			savePD(financeDetail, item);
 		}
 	}
@@ -1166,7 +1166,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 				if (PDStatus.getType(verification.getStatus()).getKey() == 0) {
 					verification.setVerificationStatus(StringUtils.EMPTY);
 				} else {
-					verification.setVerificationStatus(FIStatus.getType(verification.getStatus()).getValue());
+					verification.setVerificationStatus(PDStatus.getType(verification.getStatus()).getValue());
 				}
 
 				verification
