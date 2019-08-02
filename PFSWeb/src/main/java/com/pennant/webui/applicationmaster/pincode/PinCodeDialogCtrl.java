@@ -322,6 +322,7 @@ public class PinCodeDialogCtrl extends GFCBaseCtrl<PinCode> {
 		this.areaName.setValue(aPinCode.getAreaName());
 		this.groupId.setValue(aPinCode.getGroupId());
 		this.isServiceable.setChecked(aPinCode.isServiceable());
+		this.recordStatus.setValue(aPinCode.getRecordStatus());
 		if (aPinCode.isNewRecord()) {
 			this.city.setDescription("");
 		} else {

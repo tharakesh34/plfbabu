@@ -321,6 +321,7 @@ public class LocalityDialogCtrl extends GFCBaseCtrl<Locality> {
 
 		this.name.setValue(aLocality.getName());
 		this.city.setValue(aLocality.getCity());
+		this.recordStatus.setValue(aLocality.getRecordStatus());
 
 		if (aLocality.isNewRecord()) {
 			this.city.setDescription("");
