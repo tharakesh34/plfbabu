@@ -2447,7 +2447,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
 					false);
-			if (!StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport") && filters != null
+			if (!StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport")
+					&& !StringUtils.equals(reportMenuCode, "menu_Item_CashflowReport") && filters != null
 					&& filters.size() == 2) {
 				userDate = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
 			} else if (filters != null && filters.size() == 1) {
