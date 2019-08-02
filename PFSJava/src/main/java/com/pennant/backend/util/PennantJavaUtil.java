@@ -3216,7 +3216,7 @@ public class PennantJavaUtil {
 						new String[] { "DealerMapId", "MerchantId", "StoreId" }, null, 600));
 
 		ModuleUtil.register("PersonalDiscussion", new ModuleMapping("PersonalDiscussion", PersonalDiscussion.class,
-				new String[] { "verification_pd", "verification_pd_AView" }, WF_VERIFICATION_FI, null, null, 600));
+				new String[] { "verification_pd", "verification_pd_AView" }, WF_VERIFICATION_PD, null, null, 600));
 
 		ModuleUtil.register("Manufacturer",
 				new ModuleMapping("Manufacturer", Manufacturer.class,
@@ -3308,12 +3308,12 @@ public class PennantJavaUtil {
 				new ModuleMapping("GSTRate", GSTRate.class, new String[] { "GST_RATES", "GST_RATES_AView" }, masterWF,
 						new String[] { "FromState", "ToState", "TaxType", "Amount", "Percentage", "CalcOn", "Active" },
 						null, 600));
-		
+
 		ModuleUtil.register("SettlementProcess",
 				new ModuleMapping("SettlementProcess", SettlementProcess.class,
 						new String[] { "SETTLEMENT_REQUEST", "SETTLEMENT_REQUEST" }, masterWF,
 						new String[] { "Id", "SettlementRef" }, null, 600));
-		
+
 		registerCustomModules();
 	}
 
