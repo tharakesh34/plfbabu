@@ -306,26 +306,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnCMSTest(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doCMSTest();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void doCMSTest() throws InterruptedException {
-		logger.debug("Entering");
-		try {
-			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
-			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
-
-			//call To Service
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showMessage(e.getMessage());
-		}
-		logger.debug("Leaving");
-	}
-
 	/**
 	 * when the "edit" button is clicked. <br>
 	 * 
@@ -1140,6 +1120,26 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		logger.debug("Leaving");
 		return postingAccount;
+	}
+
+	public void onClick$btnCMSTest(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doCMSTest();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doCMSTest() throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
+			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
+
+			//call To Service
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showMessage(e.getMessage());
+		}
+		logger.debug("Leaving");
 	}
 
 	// ******************************************************//

@@ -11097,4 +11097,7 @@
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
 
+	<!-- CMS -->
+	<bean id="testCustomerPaymentService" class="com.pennant.backend.service.gstn.validation.impl.TestCustomerPaymentServiceImpl" />
+
 </beans>
