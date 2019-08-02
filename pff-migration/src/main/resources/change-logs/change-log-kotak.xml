@@ -426,7 +426,6 @@
 				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'2','FinType','LOVSEARCH','Loan Type','fintype','','FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
 				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'3','CustCIF','LOVSEARCH','Customer Number','custcif','','Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
 				INSERT INTO REPORTFILTERFIELDS VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'4','FinReference','LOVSEARCH','Loan Reference','Finreference','','FinanceMain','getFinReference','getFinReference',0,0,0,0,4,0,'','','','','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
-
 			]]>
 		</sql>
 	</changeSet>
