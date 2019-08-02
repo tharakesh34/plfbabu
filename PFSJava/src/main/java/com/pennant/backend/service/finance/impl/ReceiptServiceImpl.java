@@ -3118,7 +3118,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finScheduleData = setErrorToFSD(finScheduleData, "90498", null);
 				return receiptData;
 			}
-
 		}
 
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
@@ -3355,26 +3354,25 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finScheduleData = setErrorToFSD(finScheduleData, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
 				return receiptData;
 			}
-		   if(StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)){
-			   if(fsi.getDepositDate() == null){
+			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
+					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
+				if (fsi.getDepositDate() == null) {
 					finScheduleData = setErrorToFSD(finScheduleData, "90502", "DepositDate");
 					return receiptData;
-					
+
 				}
-			   if (!(fsi.getValueDate().compareTo(fsi.getDepositDate()) == 0)) {
-				   finScheduleData = setErrorToFSD(finScheduleData, "RU0017", null);
+				if (!(fsi.getValueDate().compareTo(fsi.getDepositDate()) == 0)) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0017", null);
 					return receiptData;
-				   
-			   }
-			   if (fsi.getReceivedDate().compareTo(fsi.getDepositDate()) > 0) {
-				   finScheduleData = setErrorToFSD(finScheduleData, "RU0018", null);
+
+				}
+				if (fsi.getReceivedDate().compareTo(fsi.getDepositDate()) > 0) {
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0018", null);
 					return receiptData;
-				   
-			   }
-		   }
-			
-			
+
+				}
+			}
+
 		}
 		// Funding account is mandatory for all modes
 		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH) && rcd.getFundingAc() <= 0) {

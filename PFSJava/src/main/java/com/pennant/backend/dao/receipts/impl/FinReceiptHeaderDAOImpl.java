@@ -1029,8 +1029,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
-		source.addValue("Receiptpurpose",
-				Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE, FinanceConstants.FINSER_EVENT_EARLYRPY));
+		source.addValue("Receiptpurpose", Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE));
 		source.addValue("Status", Arrays.asList("B", "C"));
 
 		try {
@@ -1061,8 +1060,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
-		source.addValue("Receiptpurpose",
-				Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYSETTLE, FinanceConstants.FINSER_EVENT_EARLYRPY));
+		source.addValue("Receiptpurpose", Arrays.asList(FinanceConstants.FINSER_EVENT_EARLYRPY));
 		source.addValue("Status", Arrays.asList("B", "C"));
 
 		try {
