@@ -369,34 +369,29 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			}
 
 			try {
-				if (this.fromdate != null && DateUtility.getMonth(this.fromdate.getValue()) < SysParamUtil
-						.getValueAsInt("FINANCIAL_YEAR_START_MONTH")) {
-					throw new WrongValueException(this.fromdate,
-							"From Date should be greater or equal to financial start month");
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
+				if (this.fromdate != null && this.toDate != null) {
+					int startMonth = SysParamUtil.getValueAsInt("FINANCIAL_YEAR_START_MONTH");
+					Calendar finYearEnd = Calendar.getInstance();
+					finYearEnd.setTime(this.fromdate.getValue());
 
-			try {
-				if (this.toDate != null
-						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) != 0
-						&& DateUtility.getMonth(this.toDate.getValue()) > SysParamUtil
-								.getValueAsInt("FINANCIAL_YEAR_END_MONTH")) {
-					throw new WrongValueException(this.toDate,
-							"To Date should be less or equal to financial End month");
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
+					if (startMonth == 1) {
+						finYearEnd.set(Calendar.MONTH, Calendar.DECEMBER);
+					} else {
+						if (finYearEnd.get(Calendar.MONTH) < (startMonth - 1)) {
+							finYearEnd.set(Calendar.MONTH, startMonth - 2);
+						} else {
+							finYearEnd.set(Calendar.YEAR, finYearEnd.get(Calendar.YEAR) + 1);
+							finYearEnd.set(Calendar.MONTH, startMonth - 2);
+						}
+					}
 
-			try {
-				if (this.toDate != null && this.fromdate != null
-						&& DateUtility.getYearsBetween(this.fromdate.getValue(), this.toDate.getValue()) > 1) {
-					throw new WrongValueException(this.toDate,
-							"To Date and From Date should be with in financial Year");
-				}
+					finYearEnd.set(Calendar.DATE, finYearEnd.getActualMaximum(Calendar.DATE));
 
+					if (DateUtility.compare(this.toDate.getValue(), finYearEnd.getTime()) > 0) {
+						throw new WrongValueException(this.toDate,
+								"From Date and To Date should be with in financial year");
+					}
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
