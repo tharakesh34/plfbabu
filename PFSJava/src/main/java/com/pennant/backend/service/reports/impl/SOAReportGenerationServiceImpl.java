@@ -1938,7 +1938,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			if (incomeList != null && !incomeList.isEmpty()) {
 				for (FinTaxIncomeDetail detail : incomeList) {
 					soaTranReport = new SOATransactionReport();
-					soaTranReport.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), ""));
+					soaTranReport.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), "dd/MM/yyyy"));
 					soaTranReport.setTransactionDate(detail.getPostDate());
 					soaTranReport.setValueDate(detail.getValueDate());
 					soaTranReport.setDebitAmount(detail.getReceivedAmount());
