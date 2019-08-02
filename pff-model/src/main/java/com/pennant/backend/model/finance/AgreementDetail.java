@@ -318,6 +318,36 @@ public class AgreementDetail {
 
 	private String processingFee = "0.00";
 
+	private String actualProcessingFee = "0.00";
+
+	private String netFinAmount = "0.00";
+
+	private String totalDisbursementAmt = "0.00";
+
+	public String getActualProcessingFee() {
+		return actualProcessingFee;
+	}
+
+	public void setActualProcessingFee(String actualProcessingFee) {
+		this.actualProcessingFee = actualProcessingFee;
+	}
+
+	public String getTotalDisbursementAmt() {
+		return totalDisbursementAmt;
+	}
+
+	public void setTotalDisbursementAmt(String totalDisbursementAmt) {
+		this.totalDisbursementAmt = totalDisbursementAmt;
+	}
+
+	public String getNetFinAmount() {
+		return netFinAmount;
+	}
+
+	public void setNetFinAmount(String netFinAmount) {
+		this.netFinAmount = netFinAmount;
+	}
+
 	public String getProcessingFee() {
 		return processingFee;
 	}
@@ -339,7 +369,7 @@ public class AgreementDetail {
 	}
 
 	public void setBPIAmount(String bPIAmount) {
-		BPIAmount = bPIAmount;
+		this.BPIAmount = bPIAmount;
 	}
 
 	public String getTotalDeductionwithoutBPI() {
@@ -8314,11 +8344,11 @@ public class AgreementDetail {
 		}
 	}
 
-	private List<VerificationDetail> fiVerification;
-	private List<VerificationDetail> technicalVerification;
-	private List<VerificationDetail> rcuVerification;
-	private List<VerificationDetail> legalVerification;
-	private List<VerificationDetail> pdVerification;
+	private List<VerificationDetail> fiVerification = new ArrayList<>();
+	private List<VerificationDetail> technicalVerification = new ArrayList<>();
+	private List<VerificationDetail> rcuVerification = new ArrayList<>();
+	private List<VerificationDetail> legalVerification = new ArrayList<>();
+	private List<VerificationDetail> pdVerification = new ArrayList<>();
 
 	public List<VerificationDetail> getFiVerification() {
 		return fiVerification;

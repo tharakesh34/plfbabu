@@ -80,6 +80,8 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -1838,7 +1840,7 @@ public class AgreementGeneration implements Serializable {
 					agreement.setTotalReceiptFeeAmount(PennantApplicationUtil.amountFormate(totalFeeAmount, formatter));
 				}
 			}
-
+			setNetFinanceAmount(agreement, detail);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e);
@@ -2588,75 +2590,120 @@ public class AgreementGeneration implements Serializable {
 	private void setDisbursementDetails(AgreementDetail agreement, List<FinAdvancePayments> advancePaymentsList,
 			List<FinanceDisbursement> disbursementDetails, int formatter) {
 		agreement.setDisbursements(new ArrayList<>());
-		advancePaymentsList.forEach((advancePayment) -> {
-			Disbursement disbursement = agreement.new Disbursement();
-			disbursement.setDisbursementAmt(
-					PennantApplicationUtil.amountFormate(advancePayment.getAmtToBeReleased(), formatter));
-			disbursement.setAccountHolderName(StringUtils.trimToEmpty(advancePayment.getBeneficiaryName()));
-			disbursement.setDisbursementDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
-			disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
-			disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
-			disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
-			disbursement.setPaymentMode(StringUtils.trimToEmpty(advancePayment.getPaymentType()));
-			disbursement.setFavoringName(StringUtils.trimToEmpty(advancePayment.getLiabilityHoldName()));
-			disbursement.setIssueBankName(StringUtils.trimToEmpty(advancePayment.getBankName()));
-			disbursement.setIirReferenceNo(StringUtils.trimToEmpty(advancePayment.getLlReferenceNo()));
-			disbursement.setPaymentModeRef(StringUtils.trimToEmpty(advancePayment.getTransactionRef()));
-			Date disbDate = null;
-			if (CollectionUtils.isEmpty(disbursementDetails)) {
-				for (FinanceDisbursement disbDetails : disbursementDetails) {
-					if (advancePayment.getDisbSeq() == disbDetails.getDisbSeq()) {
-						disbDate = disbDetails.getDisbDate();
-						break;
+		BigDecimal totalDisbursementAmt = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(advancePaymentsList)) {
+			for (FinAdvancePayments advancePayment : advancePaymentsList) {
+				Disbursement disbursement = agreement.new Disbursement();
+				disbursement.setDisbursementAmt(
+						PennantApplicationUtil.amountFormate(advancePayment.getAmtToBeReleased(), formatter));
+				disbursement.setAccountHolderName(StringUtils.trimToEmpty(advancePayment.getBeneficiaryName()));
+				disbursement.setDisbursementDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
+				disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
+				disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
+				disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
+				disbursement.setPaymentMode(StringUtils.trimToEmpty(advancePayment.getPaymentType()));
+				disbursement.setFavoringName(StringUtils.trimToEmpty(advancePayment.getLiabilityHoldName()));
+				disbursement.setIssueBankName(StringUtils.trimToEmpty(advancePayment.getBankName()));
+				disbursement.setIirReferenceNo(StringUtils.trimToEmpty(advancePayment.getLlReferenceNo()));
+				disbursement.setPaymentModeRef(StringUtils.trimToEmpty(advancePayment.getTransactionRef()));
+				Date disbDate = null;
+				if (CollectionUtils.isEmpty(disbursementDetails)) {
+					for (FinanceDisbursement disbDetails : disbursementDetails) {
+						if (advancePayment.getDisbSeq() == disbDetails.getDisbSeq()) {
+							disbDate = disbDetails.getDisbDate();
+							break;
+						}
 					}
 				}
+				disbursement.setScheduleDisbursementDate(DateUtility.formatToLongDate(disbDate));
+				// additional details
+				disbursement.setPaymentId(String.valueOf(advancePayment.getPaymentId()));
+				disbursement.setPaymentSeq(String.valueOf(advancePayment.getPaymentSeq()));
+				disbursement.setDisbSeq(String.valueOf(advancePayment.getDisbSeq()));
+				disbursement.setPaymentDetail(StringUtils.trimToEmpty(advancePayment.getPaymentDetail()));
+				disbursement.setCustContribution(
+						PennantApplicationUtil.amountFormate(advancePayment.getCustContribution(), formatter));
+				disbursement.setSellerContribution(
+						PennantApplicationUtil.amountFormate(advancePayment.getSellerContribution(), formatter));
+				disbursement.setRemarks(StringUtils.trimToEmpty(advancePayment.getRemarks()));
+				disbursement.setBankCode(StringUtils.trimToEmpty(advancePayment.getBankCode()));
+				disbursement.setBranchBankCode(StringUtils.trimToEmpty(advancePayment.getBranchBankCode()));
+				disbursement.setBranchCode(StringUtils.trimToEmpty(advancePayment.getBranchCode()));
+				disbursement.setBranchDesc(StringUtils.trimToEmpty(advancePayment.getBranchDesc()));
+				disbursement.setCity(StringUtils.trimToEmpty(advancePayment.getCity()));
+				disbursement.setPayableLoc(StringUtils.trimToEmpty(advancePayment.getPayableLoc()));
+				disbursement.setPrintingLoc(StringUtils.trimToEmpty(advancePayment.getPrintingLoc()));
+				disbursement.setValueDate(DateUtility.formatToLongDate(advancePayment.getValueDate()));
+				disbursement.setBankBranchID(String.valueOf(advancePayment.getBankBranchID()));
+				disbursement.setPhoneCountryCode(StringUtils.trimToEmpty(advancePayment.getPhoneCountryCode()));
+				disbursement.setPhoneAreaCode(StringUtils.trimToEmpty(advancePayment.getPhoneAreaCode()));
+				disbursement.setPhoneNumber(StringUtils.trimToEmpty(advancePayment.getPhoneNumber()));
+				disbursement.setClearingDate(DateUtility.formatToLongDate(advancePayment.getClearingDate()));
+				disbursement.setStatus(StringUtils.trimToEmpty(advancePayment.getStatus()));
+				disbursement.setActive((advancePayment.isActive()) ? "YES" : "NO");
+				disbursement.setInputDate(DateUtility.formatToLongDate(advancePayment.getInputDate()));
+				disbursement.setDisbCCy(StringUtils.trimToEmpty(advancePayment.getDisbCCy()));
+				disbursement.setpOIssued((advancePayment.ispOIssued()) ? "YES" : "NO");
+				disbursement.setLovValue(StringUtils.trimToEmpty(advancePayment.getLovValue()));
+				disbursement.setPartnerBankID(String.valueOf(advancePayment.getPartnerBankID()));
+				disbursement.setPartnerbankCode(StringUtils.trimToEmpty(advancePayment.getPartnerbankCode()));
+				disbursement.setPartnerBankName(StringUtils.trimToEmpty(advancePayment.getPartnerBankName()));
+				disbursement.setFinType(StringUtils.trimToEmpty(advancePayment.getFinType()));
+				disbursement.setCustShrtName(StringUtils.trimToEmpty(advancePayment.getCustShrtName()));
+				disbursement.setLinkedTranId(String.valueOf(advancePayment.getLinkedTranId()));
+				disbursement.setPartnerBankAcType(StringUtils.trimToEmpty(advancePayment.getPartnerBankAcType()));
+				disbursement.setRejectReason(StringUtils.trimToEmpty(advancePayment.getRejectReason()));
+				disbursement.setPartnerBankAc(StringUtils.trimToEmpty(advancePayment.getPartnerBankAc()));
+				disbursement.setAlwFileDownload((advancePayment.isAlwFileDownload()) ? "YES" : "NO");
+				disbursement.setFileNamePrefix(StringUtils.trimToEmpty(advancePayment.getFileNamePrefix()));
+				disbursement.setChannel(StringUtils.trimToEmpty(advancePayment.getChannel()));
+				disbursement.setEntityCode(StringUtils.trimToEmpty(advancePayment.getEntityCode()));
+				agreement.getDisbursements().add(disbursement);
+				totalDisbursementAmt = totalDisbursementAmt.add(advancePayment.getAmtToBeReleased());
 			}
-			disbursement.setScheduleDisbursementDate(DateUtility.formatToLongDate(disbDate));
-			//additional details
-			disbursement.setPaymentId(String.valueOf(advancePayment.getPaymentId()));
-			disbursement.setPaymentSeq(String.valueOf(advancePayment.getPaymentSeq()));
-			disbursement.setDisbSeq(String.valueOf(advancePayment.getDisbSeq()));
-			disbursement.setPaymentDetail(StringUtils.trimToEmpty(advancePayment.getPaymentDetail()));
-			disbursement.setCustContribution(
-					PennantApplicationUtil.amountFormate(advancePayment.getCustContribution(), formatter));
-			disbursement.setSellerContribution(
-					PennantApplicationUtil.amountFormate(advancePayment.getSellerContribution(), formatter));
-			disbursement.setRemarks(StringUtils.trimToEmpty(advancePayment.getRemarks()));
-			disbursement.setBankCode(StringUtils.trimToEmpty(advancePayment.getBankCode()));
-			disbursement.setBranchBankCode(StringUtils.trimToEmpty(advancePayment.getBranchBankCode()));
-			disbursement.setBranchCode(StringUtils.trimToEmpty(advancePayment.getBranchCode()));
-			disbursement.setBranchDesc(StringUtils.trimToEmpty(advancePayment.getBranchDesc()));
-			disbursement.setCity(StringUtils.trimToEmpty(advancePayment.getCity()));
-			disbursement.setPayableLoc(StringUtils.trimToEmpty(advancePayment.getPayableLoc()));
-			disbursement.setPrintingLoc(StringUtils.trimToEmpty(advancePayment.getPrintingLoc()));
-			disbursement.setValueDate(DateUtility.formatToLongDate(advancePayment.getValueDate()));
-			disbursement.setBankBranchID(String.valueOf(advancePayment.getBankBranchID()));
-			disbursement.setPhoneCountryCode(StringUtils.trimToEmpty(advancePayment.getPhoneCountryCode()));
-			disbursement.setPhoneAreaCode(StringUtils.trimToEmpty(advancePayment.getPhoneAreaCode()));
-			disbursement.setPhoneNumber(StringUtils.trimToEmpty(advancePayment.getPhoneNumber()));
-			disbursement.setClearingDate(DateUtility.formatToLongDate(advancePayment.getClearingDate()));
-			disbursement.setStatus(StringUtils.trimToEmpty(advancePayment.getStatus()));
-			disbursement.setActive((advancePayment.isActive()) ? "YES" : "NO");
-			disbursement.setInputDate(DateUtility.formatToLongDate(advancePayment.getInputDate()));
-			disbursement.setDisbCCy(StringUtils.trimToEmpty(advancePayment.getDisbCCy()));
-			disbursement.setpOIssued((advancePayment.ispOIssued()) ? "YES" : "NO");
-			disbursement.setLovValue(StringUtils.trimToEmpty(advancePayment.getLovValue()));
-			disbursement.setPartnerBankID(String.valueOf(advancePayment.getPartnerBankID()));
-			disbursement.setPartnerbankCode(StringUtils.trimToEmpty(advancePayment.getPartnerbankCode()));
-			disbursement.setPartnerBankName(StringUtils.trimToEmpty(advancePayment.getPartnerBankName()));
-			disbursement.setFinType(StringUtils.trimToEmpty(advancePayment.getFinType()));
-			disbursement.setCustShrtName(StringUtils.trimToEmpty(advancePayment.getCustShrtName()));
-			disbursement.setLinkedTranId(String.valueOf(advancePayment.getLinkedTranId()));
-			disbursement.setPartnerBankAcType(StringUtils.trimToEmpty(advancePayment.getPartnerBankAcType()));
-			disbursement.setRejectReason(StringUtils.trimToEmpty(advancePayment.getRejectReason()));
-			disbursement.setPartnerBankAc(StringUtils.trimToEmpty(advancePayment.getPartnerBankAc()));
-			disbursement.setAlwFileDownload((advancePayment.isAlwFileDownload()) ? "YES" : "NO");
-			disbursement.setFileNamePrefix(StringUtils.trimToEmpty(advancePayment.getFileNamePrefix()));
-			disbursement.setChannel(StringUtils.trimToEmpty(advancePayment.getChannel()));
-			disbursement.setEntityCode(StringUtils.trimToEmpty(advancePayment.getEntityCode()));
+		}
+		agreement.setTotalDisbursementAmt(PennantApplicationUtil.amountFormate(totalDisbursementAmt, formatter));
+	}
 
-			agreement.getDisbursements().add(disbursement);
-		});
+	public void setNetFinanceAmount(AgreementDetail agreement, FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		int formatter = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		BigDecimal feeChargeAmount = BigDecimal.ZERO;
+		BigDecimal finAmount = financeMain.getFinAmount();
+
+		// Fee calculation for Add to Disbursement
+		List<FinFeeDetail> finFeeDetails = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
+			for (FinFeeDetail feeDetail : finFeeDetails) {
+				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+					feeChargeAmount = feeChargeAmount.add(feeDetail.getActualAmount()
+							.subtract(feeDetail.getWaivedAmount()).subtract(feeDetail.getPaidAmount()));
+				}
+			}
+		}
+
+		feeChargeAmount = PennantApplicationUtil.formateAmount(feeChargeAmount, formatter);
+		BigDecimal netFinanceVal = finAmount.subtract(financeMain.getDownPayBank().add(financeMain.getDownPaySupl()))
+				.add(feeChargeAmount);
+		if (netFinanceVal.compareTo(BigDecimal.ZERO) < 0) {
+			netFinanceVal = BigDecimal.ZERO;
+		}
+
+		String netFinAmt = PennantApplicationUtil
+				.amountFormate(PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
+		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
+			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
+				agreement.setNetFinAmount(netFinAmt);
+			} else {
+				agreement.setNetFinAmount(netFinAmt);
+			}
+		} else {
+			agreement.setNetFinAmount(BigDecimal.ZERO.toString());
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
@@ -2681,6 +2728,8 @@ public class AgreementGeneration implements Serializable {
 						&& finFeeDetail.getFeeTypeDesc().equals("Processing Fee")) {
 					agreement.setProcessingFee(
 							PennantApplicationUtil.amountFormate(finFeeDetail.getPaidAmount(), formatter));
+					agreement.setActualProcessingFee(
+							PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
 				}
 				agreement.getCusCharges().add(charge);
 			});
@@ -3480,7 +3529,11 @@ public class AgreementGeneration implements Serializable {
 
 			agreement.setNoOfPayments(String.valueOf(main.getNumberOfTerms()));
 			String repay = FrequencyUtil.getFrequencyDetail(main.getRepayFrq()).getFrequencyDescription();
-			agreement.setRepayFrq(repay.substring(0, repay.indexOf(",")));
+			if (repay.contains(",")) {
+				agreement.setRepayFrq(repay.substring(0, repay.indexOf(",")));
+			} else {
+				agreement.setRepayFrq(repay);
+			}
 			agreement.setRepayFrqCode(main.getRepayFrq().substring(0, 1));
 			agreement.setRpyRateBasis(PennantApplicationUtil.getLabelDesc(main.getRepayRateBasis(),
 					PennantStaticListUtil.getAccountTypes()));
