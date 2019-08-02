@@ -473,7 +473,7 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		} catch (Exception e) {
 		}
 
-		if (strEmployeeId == null || !StringUtils.isNumeric(strEmployeeId)) {
+		if (strEmployeeId == null || !StringUtils.isNumeric(strEmployeeId) || StringUtils.isEmpty(strEmployeeId)) {
 			otherEmployerId = 0;
 		} else {
 			otherEmployerId = Long.parseLong(strEmployeeId);
