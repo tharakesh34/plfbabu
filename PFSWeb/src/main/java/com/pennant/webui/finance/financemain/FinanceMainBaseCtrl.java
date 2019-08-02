@@ -3322,7 +3322,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
 		this.finAssetValue.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
-		this.finCurrentAssetValue.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
+		this.finCurrentAssetValue
+				.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
 		this.disbAcctId.setValue(aFinanceMain.getDisbAccountId());
 		this.repayAcctId.setValue(aFinanceMain.getRepayAccountId());
 
@@ -3865,7 +3866,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		fillComboBox(this.repayRateBasis, aFinanceMain.getRepayRateBasis(),
 				PennantStaticListUtil.getInterestRateType(!aFinanceMain.isMigratedFinance()), "");
-		this.finRepaymentAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getReqRepayAmount(), format));
+		this.finRepaymentAmount
+				.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getReqRepayAmount(), format));
 
 		if (aFinanceMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFT)) {
 			this.finRepaymentAmount.setReadonly(true);
@@ -4161,8 +4163,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.latePayAmount
 					.setValue(PennantApplicationUtil.formateAmount(rolledoverFinanceHeader.getLatePayAmount(), format));
-			this.latePayWaiverAmount
-					.setValue(PennantApplicationUtil.formateAmount(rolledoverFinanceHeader.getLatePayWaiverAmount(), format));
+			this.latePayWaiverAmount.setValue(
+					PennantApplicationUtil.formateAmount(rolledoverFinanceHeader.getLatePayWaiverAmount(), format));
 			BigDecimal totalPriBal = BigDecimal.ZERO;
 			BigDecimal totalPftBal = BigDecimal.ZERO;
 			for (int i = 0; i < rolledoverFinanceHeader.getRolledoverFinanceDetails().size(); i++) {
@@ -4184,8 +4186,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				listitem.appendChild(lc);
 				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getTotalPftBal(), format));
 				listitem.appendChild(lc);
-				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(detail.getFinAmount().add(detail.getTotalProfit()), format));
+				lc = new Listcell(PennantApplicationUtil
+						.amountFormate(detail.getFinAmount().add(detail.getTotalProfit()), format));
 				listitem.appendChild(lc);
 
 				totalPriBal = totalPriBal.add(detail.getTotalPriBal());
@@ -4415,7 +4417,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayRvwDate.setValue(null);
 			this.nextRepayPftDate.setValue(null);
 		}
-
+		autoFinStartDateUpdation(getFinanceDetail());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -4646,14 +4648,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			detail.setCustPayment(PennantApplicationUtil.unFormateAmount(custPayAmount.getValue(), format));
 
 			if (detail.getCustPayment().compareTo(detail.getTotalPriBal().add(detail.getTotalPftBal())) > 0) {
-				throw new WrongValueException(custPayAmount, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
-						Labels.getLabel("label_RolloverFinanceMainDialog_CustPaymentAmount"),
-						PennantApplicationUtil.amountFormate(detail.getTotalPriBal().add(detail.getTotalPftBal()), format) }));
+				throw new WrongValueException(custPayAmount,
+						Labels.getLabel("NUMBER_MAXVALUE_EQ",
+								new String[] { Labels.getLabel("label_RolloverFinanceMainDialog_CustPaymentAmount"),
+										PennantApplicationUtil.amountFormate(
+												detail.getTotalPriBal().add(detail.getTotalPftBal()), format) }));
 			}
 			totalCustPayAmt = totalCustPayAmt.add(detail.getCustPayment());
 		}
-		this.custPaymentAmount.setValue(
-				PennantApplicationUtil.formateAmount(totalCustPayAmt, CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+		this.custPaymentAmount.setValue(PennantApplicationUtil.formateAmount(totalCustPayAmt,
+				CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 
 		this.custPayAccId.setMandatoryStyle(false);
 		if (totalCustPayAmt.compareTo(BigDecimal.ZERO) > 0) {
@@ -5172,7 +5176,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		BigDecimal oldFinAssetAmount = PennantApplicationUtil.unFormateAmount(this.oldVar_finAssetValue, formatter);
-		BigDecimal newFinAssetAmount = PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter);
+		BigDecimal newFinAssetAmount = PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(),
+				formatter);
 		if (oldFinAssetAmount.compareTo(newFinAssetAmount) != 0) {
 			return true;
 		}
@@ -5332,7 +5337,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		BigDecimal oldFinRepayAmount = PennantApplicationUtil.unFormateAmount(this.oldVar_finRepaymentAmount, formatter);
+		BigDecimal oldFinRepayAmount = PennantApplicationUtil.unFormateAmount(this.oldVar_finRepaymentAmount,
+				formatter);
 		BigDecimal newFinRepayAmount = PennantApplicationUtil.unFormateAmount(this.finRepaymentAmount.getActualValue(),
 				formatter);
 
@@ -8522,8 +8528,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				BigDecimal latePayAmt = CalculationUtil.calInterest(rolledOverDate, this.finStartDate.getValue(),
 						totalRolloverAmt, financeDetail.getFinScheduleData().getFinanceMain().getProfitDaysBasis(),
 						profitRate);
-				this.latePayAmount.setValue(
-						PennantApplicationUtil.formateAmount(latePayAmt, CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
+				this.latePayAmount.setValue(PennantApplicationUtil.formateAmount(latePayAmt,
+						CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -8619,6 +8625,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Events.sendEvent("onChange", finStartDate, null);
 		}
 		logger.debug(Literal.LEAVING);
+		this.financeTypeDetailsTab.setSelected(true);
 	}
 
 	public Date getfinstartDate() {
@@ -10944,7 +10951,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
 		financeMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
-		financeMain.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
+		financeMain.setFinAssetValue(
+				PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
 		financeMain.setFinCurrAssetValue(
 				PennantApplicationUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 		financeMain.setFinStartDate(this.finStartDate.getValue());
@@ -11818,8 +11826,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			try {
-				aFinanceMain
-						.setGrcMaxAmount(PennantApplicationUtil.unFormateAmount(this.grcMaxAmount.getActualValue(), formatter));
+				aFinanceMain.setGrcMaxAmount(
+						PennantApplicationUtil.unFormateAmount(this.grcMaxAmount.getActualValue(), formatter));
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -12014,14 +12022,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		try {
-			aFinanceMain
-					.setSupplementRent(PennantApplicationUtil.unFormateAmount(this.supplementRent.getActualValue(), formatter));
+			aFinanceMain.setSupplementRent(
+					PennantApplicationUtil.unFormateAmount(this.supplementRent.getActualValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
-			aFinanceMain
-					.setIncreasedCost(PennantApplicationUtil.unFormateAmount(this.increasedCost.getActualValue(), formatter));
+			aFinanceMain.setIncreasedCost(
+					PennantApplicationUtil.unFormateAmount(this.increasedCost.getActualValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -12509,10 +12517,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain
 					.setDownPayAccount(PennantApplicationUtil.unFormatAccountNumber(this.downPayAccount.getValue()));
 			if (this.row_downPayBank.isVisible() || this.row_downPaySupl.isVisible()) {
-				aFinanceMain
-						.setDownPayBank(PennantApplicationUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
-				aFinanceMain
-						.setDownPaySupl(PennantApplicationUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
+				aFinanceMain.setDownPayBank(
+						PennantApplicationUtil.unFormateAmount(this.downPayBank.getActualValue(), formatter));
+				aFinanceMain.setDownPaySupl(
+						PennantApplicationUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
 				aFinanceMain.setDownPayment(PennantApplicationUtil.unFormateAmount(
 						this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue()), formatter));
 			}
@@ -12602,8 +12610,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								.setValue(Labels.getLabel("label_FinanceMainDialog_FinAssetValue.value"));
 						validateFinAssetvalue(this.finAmount, financeType, formatter);
 					}
-					aFinanceMain.setFinAssetValue(
-							PennantApplicationUtil.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
+					aFinanceMain.setFinAssetValue(PennantApplicationUtil
+							.unFormateAmount(this.finCurrentAssetValue.getActualValue(), formatter));
 
 				}
 			}
@@ -12896,8 +12904,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else if (FinanceConstants.PENALTYTYPE_PERC_ONETIME.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(getComboboxValue(this.oDChargeType))
 						|| FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH.equals(getComboboxValue(this.oDChargeType))) {
-					penaltyRate
-							.setODChargeAmtOrPerc(PennantApplicationUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
+					penaltyRate.setODChargeAmtOrPerc(
+							PennantApplicationUtil.unFormateAmount(this.oDChargeAmtOrPerc.getValue(), 2));
 				}
 
 			} catch (WrongValueException we) {
@@ -13089,8 +13097,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (this.finRepaymentAmount.getActualValue() != null) {
 				if (this.finRepaymentAmount.getActualValue().compareTo(BigDecimal.ZERO) == 1) {
 					aFinanceMain.setCalculateRepay(false);
-					aFinanceMain.setReqRepayAmount(
-							PennantApplicationUtil.unFormateAmount(this.finRepaymentAmount.getActualValue(), formatter));
+					aFinanceMain.setReqRepayAmount(PennantApplicationUtil
+							.unFormateAmount(this.finRepaymentAmount.getActualValue(), formatter));
 				}
 			}
 
@@ -15744,8 +15752,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					logger.error("Exception: ", e);
 				}
 				if (StringUtils.isEmpty(moduleDefiner)) {
-					getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(
-							PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), details.getCcyEditField()));
+					getFinanceDetail().getFinScheduleData().getFinanceMain().setFinAmount(PennantApplicationUtil
+							.unFormateAmount(this.finAmount.getActualValue(), details.getCcyEditField()));
 				}
 			}
 		}
@@ -16224,8 +16232,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc());
 				if (this.downPaySupl.getActualValue() != null
 						&& this.downPaySupl.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-					reqDwnPay = reqDwnPay
-							.subtract(PennantApplicationUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
+					reqDwnPay = reqDwnPay.subtract(
+							PennantApplicationUtil.unFormateAmount(this.downPaySupl.getActualValue(), formatter));
 					if (reqDwnPay.compareTo(BigDecimal.ZERO) < 0) {
 						reqDwnPay = BigDecimal.ZERO;
 					}
@@ -16250,15 +16258,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			setDownpaymentRulePercentage(false);
 			if (this.finAmount.getActualValue() != null
 					&& this.finAmount.getActualValue().compareTo(BigDecimal.ZERO) > 0) {
-				this.downPayBank.setValue(PennantApplicationUtil.formateAmount(
-						PennantApplicationUtil.getPercentageValue(
-								PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
-								getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc()),
-						formatter));
+				this.downPayBank.setValue(
+						PennantApplicationUtil.formateAmount(
+								PennantApplicationUtil.getPercentageValue(
+										PennantApplicationUtil
+												.unFormateAmount(this.finAmount.getActualValue(), formatter),
+										getFinanceDetail().getFinScheduleData().getFinanceMain().getMinDownPayPerc()),
+								formatter));
 
-				this.downPayBank.setValue(PennantApplicationUtil.formateAmount(PennantApplicationUtil.getPercentageValue(
-						PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter),
-						financeMain.getMinDownPayPerc()), formatter));
+				this.downPayBank
+						.setValue(PennantApplicationUtil.formateAmount(
+								PennantApplicationUtil.getPercentageValue(PennantApplicationUtil.unFormateAmount(
+										this.finAmount.getActualValue(), formatter), financeMain.getMinDownPayPerc()),
+								formatter));
 			} else {
 				this.downPayBank.setValue(BigDecimal.ZERO);
 			}
@@ -17051,9 +17063,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (detail.getCustomerDetails().getCustEmployeeDetail() != null) {
 			detail.getCustomerEligibilityCheck()
-					.setCustMonthlyIncome(PennantApplicationUtil.formateAmount(
-							detail.getCustomerDetails().getCustEmployeeDetail().getMonthlyIncome(), CurrencyUtil
-									.getFormat(detail.getCustomerDetails().getCustomer().getCustBaseCcy())));
+					.setCustMonthlyIncome(PennantApplicationUtil.formateAmount(detail.getCustomerDetails()
+							.getCustEmployeeDetail().getMonthlyIncome(),
+							CurrencyUtil.getFormat(detail.getCustomerDetails().getCustomer().getCustBaseCcy())));
 
 			detail.getCustomerEligibilityCheck()
 					.setCustEmpName(String.valueOf(detail.getCustomerDetails().getCustEmployeeDetail().getEmpName()));
@@ -17098,7 +17110,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 		}
-		 
+
 		detail.getCustomerEligibilityCheck().addExtendedField("finPurpose", this.finPurpose.getValue());
 
 		// ### 08-05-2018 - End- Development Item 81

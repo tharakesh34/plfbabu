@@ -236,7 +236,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		parameterMap.put("PARTNER_BANK_CODE", partnerbankCode);
 
 		try {
-			if ("DISB_EXPORT_CITI".equals(configName)) {
+			if ("DISB_EXPORT_DEFAULT".equals(configName)) {
 				parameterMap.put("CLIENT_CODE", fileNamePrefix);
 				parameterMap.put("SEQ_LPAD_SIZE", 3);
 				parameterMap.put("SEQ_LPAD_VALUE", "0");

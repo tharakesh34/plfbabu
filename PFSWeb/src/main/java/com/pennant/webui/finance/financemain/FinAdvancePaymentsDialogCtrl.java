@@ -877,30 +877,31 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		// Total Disbursed Amount
 		if (financeDisbursement != null) {
-		for (FinanceDisbursement curDisb : financeDisbursement) {
-			if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
-				continue;
-			}
-
-			disbAmount = disbAmount.add(curDisb.getDisbAmount());
-
-			if (curDisb.getDisbDate().getTime() == financeMain.getFinStartDate().getTime()
-					&& curDisb.getDisbSeq() == 1) {
-				otherExp = otherExp.add(financeMain.getDeductFeeDisb());
-
-				disbAmount = disbAmount.subtract(financeMain.getDownPayment());
-				disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
-				disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
-				if (StringUtils.trimToEmpty(financeMain.getBpiTreatment()).equals(FinanceConstants.BPI_DISBURSMENT)) {
-					disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
-					otherExp = otherExp.add(financeMain.getBpiAmount());
+			for (FinanceDisbursement curDisb : financeDisbursement) {
+				if (StringUtils.equals(curDisb.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
+					continue;
 				}
-			} else if (curDisb.getDisbSeq() > 1) {
-				otherExp = otherExp.add(curDisb.getDeductFeeDisb());
-				otherExp = otherExp.add(curDisb.getDeductInsDisb());
-				disbAmount = disbAmount.subtract(curDisb.getDeductFeeDisb());
-				disbAmount = disbAmount.subtract(curDisb.getDeductInsDisb());
-			}
+
+				disbAmount = disbAmount.add(curDisb.getDisbAmount());
+
+				if (curDisb.getDisbDate().getTime() == financeMain.getFinStartDate().getTime()
+						&& curDisb.getDisbSeq() == 1) {
+					otherExp = otherExp.add(financeMain.getDeductFeeDisb());
+
+					disbAmount = disbAmount.subtract(financeMain.getDownPayment());
+					disbAmount = disbAmount.subtract(financeMain.getDeductFeeDisb());
+					disbAmount = disbAmount.subtract(financeMain.getDeductInsDisb());
+					if (StringUtils.trimToEmpty(financeMain.getBpiTreatment())
+							.equals(FinanceConstants.BPI_DISBURSMENT)) {
+						disbAmount = disbAmount.subtract(financeMain.getBpiAmount());
+						otherExp = otherExp.add(financeMain.getBpiAmount());
+					}
+				} else if (curDisb.getDisbSeq() > 1) {
+					otherExp = otherExp.add(curDisb.getDeductFeeDisb());
+					otherExp = otherExp.add(curDisb.getDeductInsDisb());
+					disbAmount = disbAmount.subtract(curDisb.getDeductFeeDisb());
+					disbAmount = disbAmount.subtract(curDisb.getDeductInsDisb());
+				}
 			}
 		}
 
@@ -1256,7 +1257,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		try {
 			boolean mandatory = false;
-			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(paymentType)) {
 				mandatory = true;
 			}
 
@@ -1965,7 +1967,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.beneficiaryAccNo.setValue("");
 			this.beneficiaryName.setValue("");
 			this.phoneNumber.setValue("");
-			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)) {
+			if (str.equals(DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+					|| str.equals(DisbursementConstants.PAYMENT_TYPE_DD)) {
 				readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_printingLoc"), this.printingLoc);
 				this.printingLoc.setMandatoryStyle(true);
 
