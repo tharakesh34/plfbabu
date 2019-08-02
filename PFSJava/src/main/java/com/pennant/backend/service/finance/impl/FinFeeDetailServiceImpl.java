@@ -969,7 +969,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
 		AuditDetail detail = new AuditDetail();
-		if (finFeeReceipts != null && finFeeReceipts.size() > 0) {
+		// Removed empty condition as the below validation should happen when there is no upfront receipt available for the paid amount.
+		if (finFeeReceipts != null) {
 			finFeeAuditDetails = getFinFeeReceiptAuditDetail(finFeeReceipts, auditTranType, method, workflowId);
 
 			for (AuditDetail auditDetail : finFeeAuditDetails) {
