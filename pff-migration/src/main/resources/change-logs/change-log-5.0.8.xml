@@ -2486,101 +2486,7 @@
 		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
 	</changeSet>
 
-	<changeSet id="43" author="saikiran.v">
-		<createTable tableName="tax_details">
-			<column name="id" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="ReferenceId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxType" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxPerc" type="Decimal(5,2)" />
-			<column name="TaxAmount" type="Decimal(18,0)" />
-			<column name="actualTax" type="Decimal(18,0)" />
-			<column name="paidTax" type="Decimal(18,0)" />
-			<column name="netTax" type="Decimal(18,0)" />
-			<column name="remFeeTax" type="Decimal(18,0)" />
-			<column name="WaivedTax" type="Decimal(18,0)" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="44" author="saikiran.v">
-		<createTable tableName="tax_details_temp">
-			<column name="id" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="ReferenceId" type="bigint" />
-			<column name="TaxType" type="varchar(8)">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxPerc" type="Decimal(5,2)" />
-			<column name="TaxAmount" type="Decimal(18,0)" />
-			<column name="actualTax" type="Decimal(18,0)" />
-			<column name="paidTax" type="Decimal(18,0)" />
-			<column name="netTax" type="Decimal(18,0)" />
-			<column name="remFeeTax" type="Decimal(18,0)" />
-			<column name="WaivedTax" type="Decimal(18,0)" />
-		</createTable>
-	</changeSet>
-
-	<changeSet id="44.1" author="Saikiran.v" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE tax_details_temp ADD CONSTRAINT DF_tax_details_temp_ReferenceId DEFAULT 0 FOR ReferenceId;
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="44.1" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="ReferenceId" tableName="tax_details_temp" defaultValue="0" />
-	</changeSet>
-
-	<changeSet id="45" author="saikiran.v">
-		<createView viewName="tax_details_aview">
-			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="46" author="saikiran.v">
-		<createView viewName="tax_details_tview">
-			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax FROM tax_details_temp t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="47" author="saikiran.v">
-		<createView viewName="tax_details_view">
-			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax
-   			 FROM tax_details_temp t1
-			UNION ALL
-			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax
-  			 FROM tax_details t1
- 			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_details_temp  WHERE tax_details_temp.id = t1.id))
-		</createView>
-	</changeSet>
-
-	<changeSet id="48" author="saikiran.v">
-		<createTable tableName="Tax_Header">
-			<column name="headerId" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="49" author="saikiran.v">
-		<createTable tableName="Tax_Header_temp">
-			<column name="headerId" type="bigint">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
-	<changeSet id="50" author="saikiran.v">
-		<createSequence sequenceName="SeqTax_Details" />
-		<createSequence sequenceName="SeqTax_Header" />
-	</changeSet>
+	
 
 	<changeSet author="saikiran.v" id="51">
 		<addColumn tableName="FinFeeDetail">
@@ -2735,45 +2641,6 @@
 		</createView>
 	</changeSet>
 
-	<changeSet author="saikiran.v" id="63">
-		<addColumn tableName="ManualAdviseMovements">
-			<column name="taxHeaderId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="saikiran.v" id="64">
-		<addColumn tableName="ManualAdviseMovements_temp">
-			<column name="taxHeaderId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="65" author="saikiran.v">
-		<createView viewName="manualadvisemovements_aview" replaceIfExists="true">
-			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,
-    		t1.status, t1.receiptid, t1.receiptseqid, t1.paidcgst, t1.paidsgst, t1.paidigst,t1.paidugst,
-    		t2.advisetype, t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,t3.taxcomponent,
-    		t3.feetypedesc,t1.waivedcgst,t1.waivedsgst, t1.waivedugst, t1.waivedigst,t1.taxheaderid
-			FROM manualadvisemovements t1
-    		JOIN manualadvise t2 ON t1.adviseid = t2.adviseid
-    		LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
-		</createView>
-	</changeSet>
-
-	<changeSet id="66" author="saikiran.v">
-		<createView viewName="manualadvisemovements_tview" replaceIfExists="true">
-			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,t1.status,t1.receiptid,t1.receiptseqid,
-			t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t2.advisetype,t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,
-			t3.taxcomponent,t3.feetypedesc,t1.waivedcgst,t1.waivedsgst,t1.waivedugst,t1.waivedigst,t1.taxheaderid
-  			FROM manualadvisemovements_temp t1 
-  			JOIN manualadvise t2 ON t1.adviseid = t2.adviseid 
-  			LEFT JOIN feetypes t3 ON t2.feetypeid = t3.feetypeid
-		</createView>
-	</changeSet>
-
 	<changeSet author="saikiran.v" id="67">
 		<addColumn tableName="ManualAdvise">
 			<column name="WaivedCess" type="decimal(18,0)" defaultValue="0" />
@@ -2895,12 +2762,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="75" author="saikiran.v">
-		<dropColumn tableName="tax_details_temp" columnName="TaxAmount" />
-	</changeSet>
-	<changeSet id="76" author="saikiran.v">
-		<dropColumn tableName="tax_details" columnName="TaxAmount" />
-	</changeSet>
+	
 	<changeSet id="44" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createTable tableName="EXTERNAL_LIABILITIES_PD">
@@ -3156,648 +3018,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="77" author="saikiran.v">
-		<addColumn tableName="Tax_Header">
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="78" author="saikiran.v">
-		<addColumn tableName="Tax_Header_temp">
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="79" author="saikiran.v">
-		<addColumn tableName="Tax_details">
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="80" author="saikiran.v">
-		<addColumn tableName="Tax_details_temp">
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="81" author="saikiran.v">
-		<createView viewName="tax_details_aview" replaceIfExists="true">
-			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax,
-			 t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-			 FROM tax_details t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="82" author="saikiran.v">
-		<createView viewName="tax_details_tview" replaceIfExists="true">
-			 SELECT t1.id,t1.referenceid, t1.taxtype,  t1.taxperc, t1.actualtax, t1.paidtax, t1.nettax, t1.remfeetax, t1.waivedtax,
-			 t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-			 FROM tax_details_temp t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="83" author="saikiran.v">
-		<createView viewName="tax_details_view" replaceIfExists="true">
-			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax,
-			 t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-   			 FROM tax_details_temp t1
-			UNION ALL
-			 SELECT t1.id,t1.referenceid,t1.taxtype,t1.taxperc,t1.actualtax,t1.paidtax,t1.nettax,t1.remfeetax,t1.waivedtax,
-			 t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-  			 FROM tax_details t1
- 			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_details_temp  WHERE tax_details_temp.id = t1.id))
-		</createView>
-	</changeSet>
-
-	<changeSet id="84" author="saikiran.v">
-		<createView viewName="tax_header_aview" replaceIfExists="true">
-			 SELECT t1.headerId, t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-			 FROM tax_header t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="85" author="saikiran.v">
-		<createView viewName="tax_header_tview" replaceIfExists="true">
-			 SELECT t1.headerId, t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-			 FROM tax_header_temp t1		
-		</createView>
-	</changeSet>
-
-	<changeSet id="86" author="saikiran.v">
-		<createView viewName="tax_header_view" replaceIfExists="true">
-			 SELECT t1.headerId, t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-   			 FROM tax_header_temp t1
-			UNION ALL
-			 SELECT t1.headerId, t1.version,t1.lastMntOn, t1.lastMntBy,t1.recordStatus, t1.roleCode, t1.nextRoleCode, t1.taskId, t1.nextTaskId, t1.recordType, t1.workflowId
-  			 FROM tax_header t1
- 			 WHERE NOT (EXISTS ( SELECT 1  FROM tax_header_temp  WHERE tax_header_temp.headerId = t1.headerId))
-		</createView>
-	</changeSet>
-
-	<changeSet id="87" author="saikiran.v">
-		<sql>
-			update Tax_Header set workflowid=0 where workflowid is null;
-			update Tax_Header_temp set workflowid=0 where
-			workflowid is null;
-			update Tax_details set workflowid=0 where workflowid is null;
-			update Tax_details_temp set
-			workflowid=0 where workflowid is null;
-		</sql>
-	</changeSet>
-
-	<changeSet id="88" author="saikiran.v">
-		<addNotNullConstraint tableName="Tax_Header" columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_Header_temp" columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_details" columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_details_temp" columnName="workflowid" columnDataType="bigint" />
-	</changeSet>
-
-	<!-- Fee Waiver Changes Start -->
-	<changeSet id="78" author="Durgaprasad.g">
-		<addColumn tableName="FEEWAIVERDETAILS">
-			<column name="WaiverType" type="char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="79" author="Durgaprasad.g">
-		<addColumn tableName="FEEWAIVERDETAILS_Temp">
-			<column name="WaiverType" type="char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="80">
-		<addColumn tableName="FEEWAIVERDETAILS">
-			<column name="TaxHeaderId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="81">
-		<addColumn tableName="FEEWAIVERDETAILS_Temp">
-			<column name="TaxHeaderId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="82">
-		<addColumn tableName="FEEWAIVERDETAILS">
-			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet author="Kesav" id="83">
-		<addColumn tableName="FEEWAIVERDETAILS_Temp">
-			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="84" author="Kesav">
-		<addColumn tableName="FEEWAIVERDETAILS">
-			<column name="TaxApplicable" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxComponent" type="Char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="85" author="Kesav">
-		<addColumn tableName="FEEWAIVERDETAILS_Temp">
-			<column name="TaxApplicable" type="boolean" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-			<column name="TaxComponent" type="Char(1)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="86" author="Kesav">
-		<sql>
-		 	<![CDATA[
-			    delete from SMTPARAMETERS where sysparmcode='ALLOW_PROFIT_WAIVER';
-				INSERT INTO SMTPARAMETERS Values('ALLOW_PROFIT_WAIVER','Allow Profit Waiver','String', 0, 'N', 1, 0, NULL, NULL,'Allow Profit Waiver', 1, 1000,CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="87" author="Kesav">
-		<comment>Waiver Accounting Configuration</comment>
-		<sql>
-			<![CDATA[
-				Delete from BMTAMOUNTCODES Where AllowedEvent = 'WAIVER';
-				Delete from BMTAEEvents Where AEEVENTCODE = 'WAIVER';
-				
-				Insert into BMTAEEVENTS values ('WAIVER','Waiver',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,1,1, 1, 1);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'ae_pftWaiver','Interest waiver amount','1',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
-				
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_CGST_W','Penalty charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_SGST_W','Penalty charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_IGST_W','Penalty charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'LPP_UGST_W','Penalty charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'ae_penaltyWaived','Penalty Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_CGST_W','Bounce charge CGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_SGST_W','Bounce charge SGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_IGST_W','Bounce charge IGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceCharge_UGST_W','Bounce charge UGST Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-				Insert into BMTAMOUNTCODES values('WAIVER',0,'bounceChargeWaived','Bounce charges Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="89" author="Durgaprasad.G">
-		<addColumn tableName="Finscheduledetails">
-			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="90" author="Durgaprasad.G">
-		<addColumn tableName="Finscheduledetails_TEMP">
-			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="91" author="Durgaprasad.G">
-		<addColumn tableName="FINSCHEDULEDETAILS_PA">
-			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="92" author="Durgaprasad.G">
-		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
-			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="93" author="Durgaprasad.G">
-		<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
-			SELECT t1.finreference,
-						t1.schseq,
-						t1.schdate,
-						t1.pftonschdate,
-						t1.repayonschdate,
-						t1.cpzonschdate,
-						t1.rvwonschdate,
-						t1.disbonschdate,
-						t1.downpaymentonschdate,
-						t1.balanceforpftcal,
-						t1.baserate,
-						t1.splrate,
-						t1.actrate,
-						t1.noofdays,
-						t1.dayfactor,
-						t1.profitcalc,
-						t1.profitschd,
-						t1.principalschd,
-						t1.repayamount,
-						t1.profitbalance,
-						t1.disbamount,
-						t1.cpzamount,
-						t1.downpaymentamount,
-						t1.closingbalance,
-						t1.profitfraction,
-						t1.prvrepayamount,
-						t1.schdpftpaid,
-						t1.schpftpaid,
-						t1.schdpripaid,
-						t1.schpripaid,
-						t1.specifier,
-						t1.defschddate,
-						t1.schdmethod,
-						t1.mrgrate,
-						t1.calonindrate,
-						t1.feechargeamt,
-						t1.calculatedrate,
-						t1.earlypaidbal,
-						t1.earlypaid,
-						t1.refundorwaiver,
-						t1.writeoffprincipal,
-						t1.writeoffprofit,
-						t1.orgpft,
-						t1.orgpri,
-						t1.orgendbal,
-						t1.orgplanpft,
-						t1.feeschd,
-						t1.schdfeepaid,
-						t1.schdfeeos,
-						t1.insschd,
-						t1.schdinspaid,
-						t1.advpftrate,
-						t1.advprofit,
-						t1.advrepayamount,
-						t1.advbaserate,
-						t1.advmargin,
-						t1.advcalrate,
-						t1.suplrent,
-						t1.incrcost,
-						t1.suplrentpaid,
-						t1.incrcostpaid,
-						t1.rolloveronschdate,
-						t1.rolloveramount,
-						t1.rolloveramountpaid,
-						t1.tdsamount,
-						t1.tdspaid,
-						t1.pftdaysbasis,
-						t1.writeoffins,
-						t1.writeoffincrcost,
-						t1.writeoffsuplrent,
-						t1.writeoffschfee,
-						t1.insuranceamt,
-						t1.instnumber,
-						t1.bpiorholiday,
-						t1.frqdate,
-						t1.presentmentid,
-						t1.partialpaidamt,
-						t1.feetax,
-						t1.recallock,
-						t1.tdsApplicable,
-						t1.schdPftWaiver
-				FROM finscheduledetails t1
-		</createView>
-	</changeSet>
-
-	<changeSet id="94" author="Durgaprasad G">
-		<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
-			  SELECT t1.finreference,
-								t1.schseq,
-								t1.schdate,
-								t1.pftonschdate,
-								t1.repayonschdate,
-								t1.cpzonschdate,
-								t1.rvwonschdate,
-								t1.disbonschdate,
-								t1.downpaymentonschdate,
-								t1.balanceforpftcal,
-								t1.baserate,
-								t1.splrate,
-								t1.actrate,
-								t1.noofdays,
-								t1.dayfactor,
-								t1.profitcalc,
-								t1.profitschd,
-								t1.principalschd,
-								t1.repayamount,
-								t1.profitbalance,
-								t1.disbamount,
-								t1.cpzamount,
-								t1.downpaymentamount,
-								t1.closingbalance,
-								t1.profitfraction,
-								t1.prvrepayamount,
-								t1.schdpftpaid,
-								t1.schpftpaid,
-								t1.schdpripaid,
-								t1.schpripaid,
-								t1.specifier,
-								t1.defschddate,
-								t1.schdmethod,
-								t1.mrgrate,
-								t1.calonindrate,
-								t1.feechargeamt,
-								t1.calculatedrate,
-								t1.earlypaidbal,
-								t1.earlypaid,
-								t1.refundorwaiver,
-								t1.writeoffprincipal,
-								t1.writeoffprofit,
-								t1.orgpft,
-								t1.orgpri,
-								t1.orgendbal,
-								t1.orgplanpft,
-								t1.feeschd,
-								t1.schdfeepaid,
-								t1.schdfeeos,
-								t1.insschd,
-								t1.schdinspaid,
-								t1.advpftrate,
-								t1.advprofit,
-								t1.advrepayamount,
-								t1.advbaserate,
-								t1.advmargin,
-								t1.advcalrate,
-								t1.suplrent,
-								t1.incrcost,
-								t1.suplrentpaid,
-								t1.incrcostpaid,
-								t1.rolloveronschdate,
-								t1.rolloveramount,
-								t1.rolloveramountpaid,
-								t1.tdsamount,
-								t1.tdspaid,
-								t1.pftdaysbasis,
-								t1.writeoffins,
-								t1.writeoffincrcost,
-								t1.writeoffsuplrent,
-								t1.writeoffschfee,
-								t1.insuranceamt,
-								t1.instnumber,
-								t1.bpiorholiday,
-								t1.frqdate,
-								t1.presentmentid,
-								t1.partialpaidamt,
-								t1.feetax,
-								t1.recallock,
-								t1.tdsApplicable,
-								t1.schdPftWaiver
-							   FROM finscheduledetails_temp t1
-							UNION ALL
-							 SELECT t1.finreference,
-								t1.schseq,
-								t1.schdate,
-								t1.pftonschdate,
-								t1.repayonschdate,
-								t1.cpzonschdate,
-								t1.rvwonschdate,
-								t1.disbonschdate,
-								t1.downpaymentonschdate,
-								t1.balanceforpftcal,
-								t1.baserate,
-								t1.splrate,
-								t1.actrate,
-								t1.noofdays,
-								t1.dayfactor,
-								t1.profitcalc,
-								t1.profitschd,
-								t1.principalschd,
-								t1.repayamount,
-								t1.profitbalance,
-								t1.disbamount,
-								t1.cpzamount,
-								t1.downpaymentamount,
-								t1.closingbalance,
-								t1.profitfraction,
-								t1.prvrepayamount,
-								t1.schdpftpaid,
-								t1.schpftpaid,
-								t1.schdpripaid,
-								t1.schpripaid,
-								t1.specifier,
-								t1.defschddate,
-								t1.schdmethod,
-								t1.mrgrate,
-								t1.calonindrate,
-								t1.feechargeamt,
-								t1.calculatedrate,
-								t1.earlypaidbal,
-								t1.earlypaid,
-								t1.refundorwaiver,
-								t1.writeoffprincipal,
-								t1.writeoffprofit,
-								t1.orgpft,
-								t1.orgpri,
-								t1.orgendbal,
-								t1.orgplanpft,
-								t1.feeschd,
-								t1.schdfeepaid,
-								t1.schdfeeos,
-								t1.insschd,
-								t1.schdinspaid,
-								t1.advpftrate,
-								t1.advprofit,
-								t1.advrepayamount,
-								t1.advbaserate,
-								t1.advmargin,
-								t1.advcalrate,
-								t1.suplrent,
-								t1.incrcost,
-								t1.suplrentpaid,
-								t1.incrcostpaid,
-								t1.rolloveronschdate,
-								t1.rolloveramount,
-								t1.rolloveramountpaid,
-								t1.tdsamount,
-								t1.tdspaid,
-								t1.pftdaysbasis,
-								t1.writeoffins,
-								t1.writeoffincrcost,
-								t1.writeoffsuplrent,
-								t1.writeoffschfee,
-								t1.insuranceamt,
-								t1.instnumber,
-								t1.bpiorholiday,
-								t1.frqdate,
-								t1.presentmentid,
-								t1.partialpaidamt,
-								t1.feetax,
-								t1.recallock,
-								t1.tdsApplicable,
-								t1.schdPftWaiver
-							   FROM finscheduledetails t1
-							  WHERE NOT (EXISTS ( SELECT 1
-									   FROM finscheduledetails_temp
-									  WHERE finscheduledetails_temp.finreference = t1.finreference))
 	
-	</createView>
-	</changeSet>
-
-	<changeSet id="95" author="Durgaprasad.G">
-		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
-			  SELECT t1.finreference,
-						t1.schseq,
-						t1.schdate,
-						t1.pftonschdate,
-						t1.repayonschdate,
-						t1.cpzonschdate,
-						t1.rvwonschdate,
-						t1.disbonschdate,
-						t1.downpaymentonschdate,
-						t1.balanceforpftcal,
-						t1.baserate,
-						t1.splrate,
-						t1.actrate,
-						t1.noofdays,
-						t1.dayfactor,
-						t1.profitcalc,
-						t1.profitschd,
-						t1.principalschd,
-						t1.repayamount,
-						t1.profitbalance,
-						t1.disbamount,
-						t1.cpzamount,
-						t1.downpaymentamount,
-						t1.closingbalance,
-						t1.profitfraction,
-						t1.prvrepayamount,
-						t1.schdpftpaid,
-						t1.schpftpaid,
-						t1.schdpripaid,
-						t1.schpripaid,
-						t1.specifier,
-						t1.defschddate,
-						t1.schdmethod,
-						t1.mrgrate,
-						t1.calonindrate,
-						t1.feechargeamt,
-						t1.calculatedrate,
-						t1.earlypaidbal,
-						t1.earlypaid,
-						t1.refundorwaiver,
-						t1.writeoffprincipal,
-						t1.writeoffprofit,
-						t1.orgpft,
-						t1.orgpri,
-						t1.orgendbal,
-						t1.orgplanpft,
-						t1.feeschd,
-						t1.schdfeepaid,
-						t1.schdfeeos,
-						t1.insschd,
-						t1.schdinspaid,
-						t1.advpftrate,
-						t1.advprofit,
-						t1.advrepayamount,
-						t1.advbaserate,
-						t1.advmargin,
-						t1.advcalrate,
-						t1.suplrent,
-						t1.incrcost,
-						t1.suplrentpaid,
-						t1.incrcostpaid,
-						t1.rolloveronschdate,
-						t1.rolloveramount,
-						t1.rolloveramountpaid,
-						t1.tdsamount,
-						t1.tdspaid,
-						t1.pftdaysbasis,
-						t1.writeoffins,
-						t1.writeoffincrcost,
-						t1.writeoffsuplrent,
-						t1.writeoffschfee,
-						t1.insuranceamt,
-						t1.instnumber,
-						t1.bpiorholiday,
-						t1.frqdate,
-						t1.presentmentid,
-						t1.partialpaidamt,
-						t1.feetax,
-						t1.recallock,
-						t1.tdsApplicable,
-						t1.schdPftWaiver
-            FROM finscheduledetails_temp t1
-	  </createView>
-	</changeSet>
-
-	<changeSet id="96" author="Durgaprasad G">
-		<addColumn tableName="FINREPAYDETAILS">
-			<column name="WaiverId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="97" author="Durgaprasad G">
-		<addColumn tableName="FinRepayscheduledetail">
-			<column name="WaiverId" type="bigint" defaultValue="0">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
 
 	<!-- Fee Waiver Changes END -->
 
@@ -3833,26 +3054,26 @@
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-	</changeSet>
-	<changeSet id="101" author="Saikiran.v">
+</changeSet>
+<changeSet id="101" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="102" author="Saikiran.v">
+<changeSet id="102" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="103" author="Saikiran.v">
+<changeSet id="103" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="104" author="Saikiran.v">
+<changeSet id="104" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmt = 0;
@@ -3861,22 +3082,22 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="105" author="Saikiran.v" dbms="mssql">
+	
+<changeSet id="105" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmt DEFAULT 0 FOR alwSanctionAmt;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAm DEFAULT 0 FOR alwSanctionAmt;
 			]]>
 		</sql>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
+<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-	</changeSet>
+</changeSet>
 
-	<changeSet id="107" author="Saikiran.v">
+<changeSet id="107" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmtOverride = 0;
@@ -3885,22 +3106,22 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="108" author="Saikiran.v" dbms="mssql">
+	
+<changeSet id="108" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 			]]>
 		</sql>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
+<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-	</changeSet>
+</changeSet>
 
-	<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
+<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -3910,7 +3131,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="110" author="Saikiran.v">
+<changeSet id="110" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4152,11 +3373,11 @@
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
-	</changeSet>
+</changeSet>
 
 
 
-	<changeSet id="111" author="Saikiran.v">
+<changeSet id="111" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4356,9 +3577,9 @@
      LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="112" author="Saikiran.v">
+<changeSet id="112" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4843,9 +4064,9 @@ UNION ALL
            FROM rmtfinancetypes_temp
           WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		</createView>
-	</changeSet>
+</changeSet>
 
-	<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
+<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -4854,39 +4075,11 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="113" author="Saikiran.V" dbms="postgresql,oracle">
+	<changeSet id="113" author="Saikiran.V">
 		<sql>
 			<![CDATA[
 			delete from SMTPARAMETERS WHERE SYSPARMCODE='CALCULATE_GST_ON_GSTRATE_MASTER'; 
 			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CALCULATE_GST_ON_GSTRATE_MASTER','Allow GST to calculate on Gst Rate Master','String',0,'N',1,0,null,null,'Allow GST to calculate on Gst Rate Master',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="113" author="Saikiran.V" dbms="mssql">
-		<sql>
-			<![CDATA[
-			delete from SMTPARAMETERS WHERE SYSPARMCODE='CALCULATE_GST_ON_GSTRATE_MASTER'; 
-			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('CALCULATE_GST_ON_GSTRATE_MASTER','Allow GST to calculate on Gst Rate Master','String',0,'N',1,0,null,null,'Allow GST to calculate on Gst Rate Master',1,1000,convert(varchar,'2019-07-30',23),'Approved',null,null,null,null,null,0);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="114" author="satyanarayana.g">
-		<sql>
-			<![CDATA[
-				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			 	 UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-			 	 
-			 	 DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AllowRevolving');
-			 	 DELETE FROM SECRIGHTS Where RightName = 'FinanceMainDialog_AllowRevolving';
-			 	 
-				 INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'FinanceMainDialog_AllowRevolving','FinanceMainDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
- 				 INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceMainDialog_AllowRevolving'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			 
-				 UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			     UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
 	</changeSet>
