@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -238,6 +239,68 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<FinODAmzTaxDetail> getFinODAmzTaxDetail(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		FinODAmzTaxDetail finODAmzTaxDetail = new FinODAmzTaxDetail();
+		finODAmzTaxDetail.setFinReference(finReference);
+
+		List<FinODAmzTaxDetail> finODAmzTaxDetailList;
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" Select TaxSeqId, FinReference, ValueDate, TaxFor, Amount, TaxType, TotalGST ");
+		selectSql.append(" FROM FinODAmzTaxDetail Where FinReference =:FinReference ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finODAmzTaxDetail);
+		RowMapper<FinODAmzTaxDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinODAmzTaxDetail.class);
+
+		try {
+			finODAmzTaxDetailList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+			finODAmzTaxDetailList = null;
+		}
+		logger.debug(Literal.LEAVING);
+
+		return finODAmzTaxDetailList;
+	}
+
+	@Override
+	public List<FinTaxIncomeDetail> getFinTaxIncomeList(String finReference, String type) {
+		logger.debug(Literal.ENTERING);
+
+		FinTaxIncomeDetail taxIncomeDetail = new FinTaxIncomeDetail();
+		taxIncomeDetail.setFinReference(finReference);
+		taxIncomeDetail.setTaxFor(type);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" Select T.RepayID, H.ValueDate PostDate, D.ReceivedDate ValueDate,  T.TaxFor, T.ReceivedAmount, ");
+		selectSql.append(" T.CGST, T.IGST, T.UGST, T.SGST  FROM FinTaxIncomeDetail T ");
+		selectSql.append(" INNER JOIN FInRepayHeader H ON T.RepayID = H.RepayID ");
+		selectSql.append(
+				" INNER JOIN FinReceiptDetail D ON H.ReceiptSeqID = D.ReceiptSeqID AND D.Status NOT IN ('B', 'C') ");
+		selectSql.append(" WHERE H.FinReference  = :FinReference AND T.TaxFor = :TaxFor ");
+
+		logger.trace(Literal.SQL + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxIncomeDetail);
+		RowMapper<FinTaxIncomeDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinTaxIncomeDetail.class);
+
+		List<FinTaxIncomeDetail> incomeList = null;
+		try {
+			incomeList = jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			incomeList = null;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return incomeList;
 	}
 
 }

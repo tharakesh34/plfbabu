@@ -69,6 +69,7 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.reports.SOAReportGenerationDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -80,11 +81,13 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -134,6 +137,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 	private FinFeeDetailService finFeeDetailService;
 	private RuleExecutionUtil ruleExecutionUtil;
 	private FeeTypeDAO feeTypeDAO;
+	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 
 	private Date fixedEndDate = null;
 
@@ -546,7 +550,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			floatDetail.setNoOfMonths(financeProfitDetail.getTotalTenor() - noOfMonths);
 			interestRateDetails.add(floatDetail);
 		} else {
-			if (StringUtils.isEmpty(statementOfAccount.getIntRateType())) {
+			if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
+				statementOfAccount.setIntRateType("Fixed");
+			} else if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())) {
 				statementOfAccount.setIntRateType("Floating");
 			}
 			calrate = financeProfitDetail.getCurReducingRate();
@@ -607,6 +613,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		BigDecimal due = BigDecimal.ZERO;
 		BigDecimal receipt = BigDecimal.ZERO;
 		BigDecimal overDue = BigDecimal.ZERO;
+		BigDecimal netDue = BigDecimal.ZERO;
 
 		BigDecimal totalProfitSchd = BigDecimal.ZERO;
 		BigDecimal totalPrincipalSchd = BigDecimal.ZERO;
@@ -658,10 +665,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
-
+			netDue = overDue;
 			soaSummaryReportsList.add(soaSummaryReport);
 
-			due = totalPrincipalSchd;
+			due = totalPrincipalSchd.subtract(finMain.getAdvanceEMI());
+			;
 			receipt = totalSchdPriPaid;
 
 			overDue = due.subtract(receipt);
@@ -675,7 +683,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			due = totalProfitSchd;
 			receipt = totalSchdPftPaid;
-
 			overDue = due.subtract(receipt);
 
 			soaSummaryReport = new SOASummaryReport();
@@ -748,7 +755,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 		due = totPenaltyAmt.subtract(totwaived);
 		receipt = totPenaltyPaid;
-
 		overDue = due.subtract(receipt);
 
 		soaSummaryReport = new SOASummaryReport();
@@ -756,12 +762,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setDue(due);
 		soaSummaryReport.setReceipt(receipt);
 		soaSummaryReport.setOverDue(overDue);
+		netDue = netDue.add(overDue);
 
 		soaSummaryReportsList.add(soaSummaryReport);
 
 		due = lpiAmt.subtract(lpiWaived);
 		receipt = lpiPaid;
 		overDue = due.subtract(receipt);
+		netDue = netDue.add(overDue);
 
 		soaSummaryReport = new SOASummaryReport();
 		soaSummaryReport.setComponent("Late Payment Interest");
@@ -867,7 +875,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setDue(bounceDue);
 		soaSummaryReport.setReceipt(bounceRecipt);
 		soaSummaryReport.setOverDue(overDue);
-
+		netDue = netDue.add(overDue);
 		soaSummaryReportsList.add(soaSummaryReport);
 
 		overDue = otherReceivableDue.subtract(otherReceivableReceipt);
@@ -877,6 +885,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setDue(otherReceivableDue);
 		soaSummaryReport.setReceipt(otherReceivableReceipt);
 		soaSummaryReport.setOverDue(overDue);
+
+		netDue = netDue.add(overDue);
 
 		soaSummaryReportsList.add(soaSummaryReport);
 
@@ -888,6 +898,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		soaSummaryReport.setDue(otherPayableDue);
 		soaSummaryReport.setReceipt(receipt);
 		soaSummaryReport.setOverDue(overDue);
+		netDue = netDue.subtract(otherPayableDue);
 
 		soaSummaryReportsList.add(soaSummaryReport);
 
@@ -902,16 +913,16 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				}
 			}
 
-			due = balanceAmt;
-			receipt = BigDecimal.ZERO;
-			overDue = BigDecimal.ZERO;
+			due = BigDecimal.ZERO;
+			receipt = balanceAmt;
+			overDue = balanceAmt;
 
 			soaSummaryReport = new SOASummaryReport();
 			soaSummaryReport.setComponent("Unadjusted Amount");
 			soaSummaryReport.setDue(due);
 			soaSummaryReport.setReceipt(receipt);
-			soaSummaryReport.setOverDue(overDue);
-
+			soaSummaryReport.setOverDue(overDue.negate());
+			netDue = netDue.subtract(overDue);
 			soaSummaryReportsList.add(soaSummaryReport);
 		} else {
 
@@ -923,6 +934,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			soaSummaryReportsList.add(soaSummaryReport);
 		}
+		soaSummaryReport = new SOASummaryReport();
+		soaSummaryReport.setComponent("Net Receivable");
+		soaSummaryReport.setDue(BigDecimal.ZERO);
+		soaSummaryReport.setReceipt(BigDecimal.ZERO);
+		soaSummaryReport.setOverDue(netDue);
+		netDue = overDue;
+
+		soaSummaryReportsList.add(soaSummaryReport);
 
 		logger.debug("Leaving");
 		return soaSummaryReportsList;
@@ -999,8 +1018,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 		//Payment Instructions
 		String payInsEvent = "Amount Paid Vide ";//"STLMNT"; 7
 
+		// FinODDetails
+
 		//FinODDetails
 		String penality = "Penalty Due Created for Past due till date "; //16
+		String penaltyUnAccrued = "Unaccrued Penalty due till date "; // 16
+		String penalityMnthEnd = "Penalty Accrued on Month-End date ";
 
 		//Manual Advise Movement List
 		String manualAdviseMovementEvent = "Waived Amount "; //13
@@ -1887,6 +1910,44 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 				soaTransactionReports.add(soaTranReport);
 			}
 
+			//LPP Penalty Accrued on Month-End date
+			List<FinODAmzTaxDetail> finODAmzTaxDetailList = getFinODAmzTaxDetailDAO()
+					.getFinODAmzTaxDetail(finReference);
+			if (finODAmzTaxDetailList != null && !finODAmzTaxDetailList.isEmpty()) {
+				for (FinODAmzTaxDetail finODAmzTaxDetail : finODAmzTaxDetailList) {
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(penalityMnthEnd + DateUtility.format(finODAmzTaxDetail.getValueDate(), ""));
+					soaTranReport.setTransactionDate(finODAmzTaxDetail.getValueDate());
+					soaTranReport.setValueDate(finODAmzTaxDetail.getValueDate());
+					if (StringUtils.equals(finODAmzTaxDetail.getTaxType(),
+							FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+						soaTranReport
+								.setDebitAmount(finODAmzTaxDetail.getAmount().add(finODAmzTaxDetail.getTotalGST()));
+					} else if (StringUtils.equals(finODAmzTaxDetail.getTaxType(),
+							FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+						soaTranReport.setDebitAmount(finODAmzTaxDetail.getAmount());
+					}
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(27);
+					soaTransactionReports.add(soaTranReport);
+				}
+			}
+
+			//LPP Penalty UnAccrued Paid on Receipts
+			List<FinTaxIncomeDetail> incomeList = getFinODAmzTaxDetailDAO().getFinTaxIncomeList(finReference, "LPP");
+			if (incomeList != null && !incomeList.isEmpty()) {
+				for (FinTaxIncomeDetail detail : incomeList) {
+					soaTranReport = new SOATransactionReport();
+					soaTranReport.setEvent(penaltyUnAccrued + DateUtility.format(detail.getValueDate(), ""));
+					soaTranReport.setTransactionDate(detail.getPostDate());
+					soaTranReport.setValueDate(detail.getValueDate());
+					soaTranReport.setDebitAmount(detail.getReceivedAmount());
+					soaTranReport.setCreditAmount(BigDecimal.ZERO);
+					soaTranReport.setPriority(27);
+					soaTransactionReports.add(soaTranReport);
+				}
+			}
+
 		}
 
 		logger.debug("Leaving");
@@ -2061,5 +2122,13 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public FinODAmzTaxDetailDAO getFinODAmzTaxDetailDAO() {
+		return finODAmzTaxDetailDAO;
+	}
+
+	public void setFinODAmzTaxDetailDAO(FinODAmzTaxDetailDAO finODAmzTaxDetailDAO) {
+		this.finODAmzTaxDetailDAO = finODAmzTaxDetailDAO;
 	}
 }

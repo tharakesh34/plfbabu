@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.finance;
 
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
@@ -63,5 +64,9 @@ public interface FinODAmzTaxDetailDAO {
 	FinTaxIncomeDetail getFinTaxIncomeDetail(long repayID, String type);
 
 	boolean isDueCreatedForDate(String finRef, Date valueDate, String taxFor);
+
+	List<FinODAmzTaxDetail> getFinODAmzTaxDetail(String finReference);
+
+	List<FinTaxIncomeDetail> getFinTaxIncomeList(String finReference, String type);
 
 }
