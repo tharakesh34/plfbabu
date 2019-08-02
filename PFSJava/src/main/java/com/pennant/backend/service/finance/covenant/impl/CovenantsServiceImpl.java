@@ -833,11 +833,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 	}
 
 	@Override
-	public List<ErrorDetail> validatePDDDocuments(String finReference) {
-		List<ErrorDetail> errorDetails = new ArrayList<>();
-
+	public List<ErrorDetail> validatePDDDocuments(String finReference, List<ErrorDetail> errorDetails) {
 		Date appDate = DateUtility.getAppDate();
-
 		List<Covenant> list = covenantsDAO.getCovenants(finReference);
 
 		for (Covenant covenant : list) {

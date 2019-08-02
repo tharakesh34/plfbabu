@@ -366,7 +366,7 @@ public class DisbursementInstCtrl {
 								lc.setParent(item);
 
 								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell();
+									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
 
 								} else {
 									lc = new Listcell(PennantConstants.RCD_ADD);
@@ -596,8 +596,7 @@ public class DisbursementInstCtrl {
 			map.put("customerPaymentTxnsDialogCtrl", dialogCtrl);
 			map.put("customerPaymentTxnsListCtrl", listCtrl);
 			map.put("module", isEnquiry);
-		}
-		else if ("POISSUE".equals(module)) {
+		} else if ("POISSUE".equals(module)) {
 			map.put("payOrderIssueDialogCtrl", dialogCtrl);
 			map.put("payOrderIssueListCtrl", listCtrl);
 		} else {

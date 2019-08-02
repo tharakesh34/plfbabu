@@ -324,6 +324,16 @@ public class AgreementDetail {
 
 	private String totalDisbursementAmt = "0.00";
 
+	private String vasPremium = "0.00";
+
+	public String getVasPremium() {
+		return vasPremium;
+	}
+
+	public void setVasPremium(String vasPremium) {
+		this.vasPremium = vasPremium;
+	}
+
 	public String getActualProcessingFee() {
 		return actualProcessingFee;
 	}

@@ -1147,12 +1147,16 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			wve.add(we);
 		}
 		try {
-			aFinAdvancePayments.setReEnterBeneficiaryAccNo(this.reEnterBeneficiaryAccNo.getValue());
-			if (reEntrBenfAccNo
-					&& !StringUtils.equals(this.beneficiaryAccNo.getValue(), this.reEnterBeneficiaryAccNo.getValue())) {
-				throw new WrongValueException(this.reEnterBeneficiaryAccNo, Labels.getLabel("FIELD_NOT_MATCHED",
-						new String[] { Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"),
-								Labels.getLabel("label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value") }));
+			if (gb_NeftDetails.isVisible()) {
+				aFinAdvancePayments.setReEnterBeneficiaryAccNo(this.reEnterBeneficiaryAccNo.getValue());
+				if (reEntrBenfAccNo && !StringUtils.equals(this.beneficiaryAccNo.getValue(),
+						this.reEnterBeneficiaryAccNo.getValue())) {
+					throw new WrongValueException(this.reEnterBeneficiaryAccNo,
+							Labels.getLabel("FIELD_NOT_MATCHED", new String[] {
+									Labels.getLabel("label_FinAdvancePaymentsDialog_BeneficiaryAccNo.value"), Labels
+											.getLabel(
+													"label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value") }));
+				}
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

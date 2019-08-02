@@ -76,5 +76,5 @@ public interface CovenantsService {
 	List<AuditDetail> doProcess(List<Covenant> covenants, TableType tableType, String auditTranType,
 			boolean isApproveRcd);
 
-	List<ErrorDetail> validatePDDDocuments(String finReference);
+	List<ErrorDetail> validatePDDDocuments(String finReference, List<ErrorDetail> errorDetails);
 }

@@ -107,6 +107,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		parameterMap.put("USER_NAME", userName);
 		parameterMap.put("ENTITY_CODE", entity);
+		parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 
 		addCustomParameter(parameterMap);
 

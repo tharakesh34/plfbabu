@@ -306,13 +306,15 @@ public class ScheduleCalculator {
 
 		if (StringUtils.equals(method, PROC_GETCALSCHD)) {
 
-			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
+			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
+					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 			}
 
 			setFinScheduleData(procGetCalSchd(finScheduleData));
 
-			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
+			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
+					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 			}
 		}
@@ -751,6 +753,7 @@ public class ScheduleCalculator {
 
 		// BPI then add BPI record to the schedule
 		if (finMain.isAlwBPI()) {
+			finScheduleData.getFinanceMain().setModifyBpi(true);
 			finScheduleData = addBPISchd(finScheduleData);
 		}
 
@@ -816,6 +819,7 @@ public class ScheduleCalculator {
 
 		// BPI Change
 		finScheduleData = setFinanceTotals(finScheduleData);
+		finScheduleData.getFinanceMain().setModifyBpi(false);
 		setFinScheduleData(finScheduleData);
 
 		// Return the schedule header
@@ -2485,19 +2489,22 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-		FinanceScheduleDetail curSchd = finSchdDetails.get(0);
 
 		if (StringUtils.isBlank(finMain.getGrcSchdMthd())) {
 			finMain.setGrcSchdMthd(finMain.getScheduleMethod());
 		}
 
 		// Set Default scheduled date and schedule method first time
-		for (int i = 0; i < finSchdDetails.size(); i++) {
-			curSchd = finSchdDetails.get(i);
+		// PSD #138659 Number of Grace Terms should not include the BPI term.
+		int i = 0;
+
+		for (FinanceScheduleDetail curSchd : finSchdDetails) {
 			curSchd.setDefSchdDate(curSchd.getSchDate());
 
-			if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) {
+			if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) <= 0
+					&& !StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				finMain.setGraceTerms(i);
+				i++;
 			}
 		}
 
@@ -3315,7 +3322,7 @@ public class ScheduleCalculator {
 				curSchd.setSchdMethod(finScheduleDetails.get(i + 1).getSchdMethod());
 			}
 
-			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+			if (StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday()) && finMain.isModifyBpi()) {
 				finMain.setBpiAmount(curSchd.getProfitSchd().subtract(curSchd.getTDSAmount()));
 			}
 
@@ -3644,7 +3651,8 @@ public class ScheduleCalculator {
 			finScheduleData = getRpyInstructDetails(finScheduleData);
 
 			/* Grace Schedule calculation */
-			if (finScheduleData.getFinanceMain().getAdvTerms() > 0) {
+			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
+					&& finScheduleData.getFinanceMain().getAdvTerms() > 0) {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 				finScheduleData = graceSchdCal(finScheduleData);
 			}
@@ -3656,7 +3664,8 @@ public class ScheduleCalculator {
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
 				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 
-			if (finMain.getAdvTerms() > 0 && isFirstRun) {
+			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
+					&& finMain.getAdvTerms() > 0 && isFirstRun) {
 				finMain.setAdjustClosingBal(true);
 			}
 
@@ -6176,7 +6185,8 @@ public class ScheduleCalculator {
 
 		int sdSize = finSchdDetails.size();
 
-		if (!isAdjustClosingBal) {
+		if (!isAdjustClosingBal && AdvanceType.hasAdvEMI(finMain.getAdvType())
+				&& AdvanceStage.hasFrontEnd(finMain.getAdvStage())) {
 			sdSize = finSchdDetails.size() - finMain.getAdvTerms();
 		}
 
@@ -6258,7 +6268,10 @@ public class ScheduleCalculator {
 		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
 		for (int i = 0; i < 50; i++) {
-			int size = finSchdDetails.size() - 1 - finMain.getAdvTerms();
+			int size = finSchdDetails.size() - 1;
+			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())) {
+				size = size - finMain.getAdvTerms();
+			}
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
 			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
 					finMain.getRoundingTarget());

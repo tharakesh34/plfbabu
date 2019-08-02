@@ -5307,14 +5307,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} catch (InterfaceException ex) {
 			logger.error("InterfaceException", ex);
 			finScheduleData = setErrorToFSD(finScheduleData, "9998", ex.getMessage());
+			setReturnStatus(financeDetail);
 			return financeDetail;
 		} catch (AppException appEx) {
 			logger.error("AppException", appEx);
 			finScheduleData = setErrorToFSD(finScheduleData, "9999", appEx.getMessage());
+			setReturnStatus(financeDetail);
 			return financeDetail;
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			finScheduleData = setErrorToFSD(finScheduleData, "9999", "Unable to process request.");
+			setReturnStatus(financeDetail);
 			return financeDetail;
 		}
 

@@ -81,6 +81,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.TextField;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
@@ -570,17 +571,21 @@ public class AgreementGeneration implements Serializable {
 					}
 
 					// Customer Phone Numbers
-					/*
-					 * if (detail.getCustomerDetails().getCustomerPhoneNumList() != null) { for (CustomerPhoneNumber
-					 * phoneNumber : detail.getCustomerDetails().getCustomerPhoneNumList()) { if
-					 * ("HOME".equals(phoneNumber.getPhoneTypeCode())) {
-					 * agreement.setPhoneHome(phoneNumber.getPhoneCountryCode() + "-" + phoneNumber.getPhoneAreaCode() +
-					 * "-" + phoneNumber.getPhoneNumber()); } if ("MOBILE".equals(phoneNumber.getPhoneTypeCode())) {
-					 * agreement.setCustMobile(phoneNumber.getPhoneCountryCode() + "-" + phoneNumber.getPhoneAreaCode()
-					 * + "-" + phoneNumber.getPhoneNumber()); } if ("FAX".equals(phoneNumber.getPhoneTypeCode())) {
-					 * agreement.setCustFax(phoneNumber.getPhoneCountryCode() + "-" + phoneNumber.getPhoneAreaCode() +
-					 * "-" + phoneNumber.getPhoneNumber()); } } }
-					 */
+					List<CustomerPhoneNumber> customerPhoneNumList = detail.getCustomerDetails()
+							.getCustomerPhoneNumList();
+					if (CollectionUtils.isNotEmpty(customerPhoneNumList)) {
+						for (CustomerPhoneNumber phoneNumber : customerPhoneNumList) {
+							if ("HOME".equals(phoneNumber.getPhoneTypeCode())) {
+								agreement.setPhoneHome(phoneNumber.getPhoneNumber());
+							}
+							if ("MOBILE".equals(phoneNumber.getPhoneTypeCode())) {
+								agreement.setCustMobile(phoneNumber.getPhoneNumber());
+							}
+							if ("FAX".equals(phoneNumber.getPhoneTypeCode())) {
+								agreement.setCustFax(phoneNumber.getPhoneNumber());
+							}
+						}
+					}
 
 					//Customer address
 					List<CustomerAddres> addressList = detail.getCustomerDetails().getAddressList();
@@ -2707,8 +2712,10 @@ public class AgreementGeneration implements Serializable {
 	}
 
 	private void setFeeChargeDetails(AgreementDetail agreement, int formatter, List<FinFeeDetail> finFeeDetails) {
-		if (null != finFeeDetails && finFeeDetails.size() > 0) {
-			finFeeDetails.forEach((finFeeDetail) -> {
+		BigDecimal vasPremium = BigDecimal.ZERO;
+		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
+			for (FinFeeDetail finFeeDetail : finFeeDetails) {
+
 				com.pennant.backend.model.finance.AgreementDetail.CusCharge charge = agreement.new CusCharge();
 				charge.setFeeChargeDesc(StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc()));
 				charge.setChargeAmt(PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
@@ -2731,8 +2738,13 @@ public class AgreementGeneration implements Serializable {
 					agreement.setActualProcessingFee(
 							PennantApplicationUtil.amountFormate(finFeeDetail.getActualAmount(), formatter));
 				}
+				if (null != finFeeDetail && StringUtils.isNotBlank(finFeeDetail.getFeeTypeDesc())
+						&& finFeeDetail.getFeeTypeCode().contains("VAS")) {
+					vasPremium = vasPremium.add(finFeeDetail.getActualAmount());
+				}
 				agreement.getCusCharges().add(charge);
-			});
+			}
+			agreement.setVasPremium(PennantApplicationUtil.amountFormate(vasPremium, formatter));
 		}
 	}
 
@@ -3526,8 +3538,13 @@ public class AgreementGeneration implements Serializable {
 							CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());
 			agreement.setLpoPriceInWords(word.toUpperCase());
-
-			agreement.setNoOfPayments(String.valueOf(main.getNumberOfTerms()));
+			String interestFrequenceType = " ";
+			if (FrequencyCodeTypes.FRQ_DAILY.equals(main.getRepayFrq().substring(0, 1))) {
+				interestFrequenceType = " Days";
+			} else if (FrequencyCodeTypes.FRQ_MONTHLY.equals(main.getRepayFrq().substring(0, 1))) {
+				interestFrequenceType = " Months";
+			}
+			agreement.setNoOfPayments(String.valueOf(main.getNumberOfTerms() + interestFrequenceType));
 			String repay = FrequencyUtil.getFrequencyDetail(main.getRepayFrq()).getFrequencyDescription();
 			if (repay.contains(",")) {
 				agreement.setRepayFrq(repay.substring(0, repay.indexOf(",")));

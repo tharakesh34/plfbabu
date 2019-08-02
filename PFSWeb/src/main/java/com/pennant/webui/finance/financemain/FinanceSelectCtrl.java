@@ -1017,14 +1017,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)) {
 			whereClause.append(" AND (RcdMaintainSts = '" + moduleDefiner + "' ) ");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
-		} else {
-			if (App.DATABASE == Database.ORACLE) {
-				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
-			} else {
-				// for postgredb sometimes record type is null or empty('')
-				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
-						+ moduleDefiner + "' ) ");
-			}
 		}
 
 		int backValueDays = SysParamUtil.getValueAsInt("MAINTAIN_RATECHG_BACK_DATE");
@@ -1386,6 +1378,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
+			// Validate Loan is INPROGRESS in any Other Servicing option or NOT
+			// ?
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -1499,6 +1500,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -1584,6 +1592,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set Workflow Details
 			String userRole = "";
@@ -1673,6 +1688,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set Workflow Details
 			String userRole = "";
@@ -1774,6 +1796,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -1859,6 +1888,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -1947,6 +1983,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -2078,6 +2121,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -2513,6 +2563,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
+
 			// Set WorkFlow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -2603,6 +2660,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set WorkFlow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -2699,6 +2763,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getId(), "_View");
+
+			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+				return;
+			}
 
 			// Set WorkFlow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
@@ -3222,12 +3293,24 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			buildedWhereCondition = buildedWhereCondition
 					.concat(" ON WD.WorkFlowType = WF.WorkFlowType AND WF.WorkFlowActive = 1 ");
 			buildedWhereCondition = buildedWhereCondition.concat(" WHERE WD.FinEvent = '");
-			buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
+
+			if (StringUtils.equals(workflowCode, FinanceConstants.FINSER_EVENT_ADDFLEXIDISB)) {
+				buildedWhereCondition = buildedWhereCondition.concat(workflowCode);
+			} else {
+				buildedWhereCondition = buildedWhereCondition.concat(moduleDefiner);
+			}
+
 			buildedWhereCondition = buildedWhereCondition
 					.concat("' AND WF.FirstTaskOwner IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
-			buildedWhereCondition = buildedWhereCondition.concat(
-					" UsrID= " + getUserWorkspace().getUserDetails().getUserId() + " AND AppCode='" + App.CODE + "')");
-			buildedWhereCondition = buildedWhereCondition.concat(")) ");
+
+			buildedWhereCondition = buildedWhereCondition.concat(" UsrID = "
+					+ getUserWorkspace().getUserDetails().getUserId() + " AND AppCode = '" + App.CODE + "')");
+
+			buildedWhereCondition = buildedWhereCondition
+					.concat(")) OR NextRoleCode IN (SELECT RoleCd FROM UserOperationRoles_View WHERE ");
+
+			buildedWhereCondition = buildedWhereCondition.concat(" UsrID = "
+					+ getUserWorkspace().getUserDetails().getUserId() + " AND AppCode = '" + App.CODE + "')");
 
 			for (String role : usrfinRolesList) {
 				if (buildedWhereCondition.length() > 0) {

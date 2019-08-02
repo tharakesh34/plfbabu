@@ -62,6 +62,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
@@ -110,6 +111,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private CovenantsService covenantsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
+	protected FinanceDisbursementDAO financeDisbursementDAO;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -469,9 +471,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		return finalPaymentsList;
 	}
-	
+
 	/**
 	 * get the Next Payment Sequence No
+	 * 
 	 * @param finAdvancePayDetails
 	 * @return
 	 */
@@ -637,7 +640,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		if (covenantsService != null) {
-			auditDetail.setErrorDetails(covenantsService.validatePDDDocuments(finReference));
+			auditDetail.setErrorDetails(
+					covenantsService.validatePDDDocuments(finReference, auditDetail.getErrorDetails()));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -858,9 +862,31 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		//since if the loan not approved then user can cancel the instruction and resubmit the record in loan origination
 		if (loanApproved) {
+			// Get approved disbursements.
+			List<FinanceDisbursement> approvedDisbursments = getFinanceDisbursementDAO()
+					.getFinanceDisbursementDetails(financeMain.getFinReference(), "", false);
+			boolean approvedDisbursement;
+
 			for (FinanceDisbursement disbursement : financeDisbursement) {
+				approvedDisbursement = false;
+
 				if (FinanceConstants.DISB_STATUS_CANCEL.equals(disbursement.getDisbStatus())) {
 					continue;
+				}
+
+				// If approved disbursement, continue.
+				if (approvedDisbursments != null && !approvedDisbursments.isEmpty()) {
+					for (FinanceDisbursement aprovedDisbursement : approvedDisbursments) {
+						if (disbursement.getDisbSeq() == aprovedDisbursement.getDisbSeq()) {
+							approvedDisbursement = true;
+
+							break;
+						}
+					}
+
+					if (approvedDisbursement) {
+						continue;
+					}
 				}
 
 				Date disbDate = disbursement.getDisbDate();
@@ -1041,4 +1067,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
 		this.instrumentwiseLimitService = instrumentwiseLimitService;
 	}
+
+	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
+		return financeDisbursementDAO;
+	}
+
+	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
+		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+
 }

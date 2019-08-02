@@ -22,6 +22,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -325,7 +326,11 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" PAYMENT_DETAIL7,");
 		sql.append(" STATUS,");
 		sql.append(" REMARKS,");
-		sql.append(" CHANNEL");
+		sql.append(" CHANNEL,");
+		sql.append(" PINCODE,");
+		sql.append(" FINAMOUNT,");
+		sql.append(" FinBranch BRANCH_NAME,");
+		sql.append(" ACCOUNTNO PartnerBankAccNumber ");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
@@ -348,10 +353,23 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("DD_CHEQUE_CHARGE", null);
 					rowMap.put("PAYMENT_DATE", null);
 					rowMap.put("REJECT_REASON", null);
+					String finAmount = amountFormate((BigDecimal) rowMap.get("FINAMOUNT"),
+							PennantConstants.defaultCCYDecPos);
+					rowMap.put("FINAMOUNT", finAmount);
 
 					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
 					disbAmount = disbAmount.divide(new BigDecimal(100));
 					rowMap.put("DISBURSEMENT_AMOUNT", disbAmount);
+
+					String benfName = (String) rowMap.get("BENFICIARY_NAME");
+					String benfBank = (String) rowMap.get("BENFICIARY_BANK");
+					String benfAccount = (String) rowMap.get("BENFICIARY_ACCOUNT");
+					if ("C".equals(rowMap.get("DISBURSEMENT_TYPE")) || "D".equals(rowMap.get("DISBURSEMENT_TYPE"))) {
+						rowMap.put("AdditionalField1", benfName);
+					} else {
+						rowMap.put("AdditionalField1",
+								benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
+					}
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {
 						try {

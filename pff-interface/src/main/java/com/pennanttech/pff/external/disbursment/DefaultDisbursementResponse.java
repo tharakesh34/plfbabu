@@ -18,6 +18,7 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.ValidateRecord;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -33,6 +34,8 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 	private DisbursementProcess disbursementProcess;
 	private PaymentProcess paymentProcess;
 	private LoggedInUser loggedInUser;
+	@Autowired(required = false)
+	private ValidateRecord disbursementRespDataValidation;
 
 	public DefaultDisbursementResponse() {
 		super();
@@ -96,7 +99,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		dataEngine.setFile(file);
 		dataEngine.setMedia(media);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
-
+		dataEngine.setValidateRecord(disbursementRespDataValidation);
 		Map<String, Object> filterMap = new HashMap<>();
 		filterMap.put(DisbursementConstants.STATUS_AWAITCON, DisbursementConstants.STATUS_AWAITCON);
 		dataEngine.setFilterMap(filterMap);

@@ -168,7 +168,6 @@ import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.ReceiptTaxDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
-import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.XcessPayables;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -2817,7 +2816,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addDueFooter(formatter);
 		addExcessAmt();
 
-		if (receiptData.getPaidNow().compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
+		if (receiptData.getPaidNow()
+				.compareTo(receiptData.getReceiptHeader().getReceiptAmount().add(receiptData.getExcessAvailable())) > 0
 				&& !receiptData.isForeClosure()) {
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt"));
 			return;
@@ -3014,21 +3014,19 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				paid = paid.add(allocate.getPaidAmount());
 				paidGST = paidGST.add(allocate.getPaidGST());
 				waived = waived.add(allocate.getWaivedAmount());
-				
-				if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0
-						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-					TaxAmountSplit taxSplit = new TaxAmountSplit();
-					taxSplit.setAmount(allocate.getWaivedAmount());
-					taxSplit.setTaxType(allocate.getTaxType());
-					taxSplit = getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit);
-					waived = waived.add(taxSplit.gettGST());
-					gstAmount = gstAmount.add(taxSplit.gettGST());
-				}
 
-				//Waiver GST only for Exclusive cases
-				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-					waivedGST = waivedGST.add(allocate.getWaivedGST());
-				}
+				/*
+				 * if (allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0 &&
+				 * FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) { TaxAmountSplit taxSplit
+				 * = new TaxAmountSplit(); taxSplit.setAmount(allocate.getWaivedAmount());
+				 * taxSplit.setTaxType(allocate.getTaxType()); taxSplit =
+				 * getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit); waived =
+				 * waived.add(taxSplit.gettGST()); gstAmount = gstAmount.add(taxSplit.gettGST()); }
+				 * 
+				 * //Waiver GST only for Exclusive cases if
+				 * (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) { waivedGST =
+				 * waivedGST.add(allocate.getWaivedGST()); }
+				 */
 			}
 
 		}
@@ -3040,7 +3038,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, paid, null, true);
 		addAmountCell(item, paidGST, null, true);
 		addAmountCell(item, waived.subtract(gstAmount), null, true);
-		addAmountCell(item, totDue.subtract(paid).subtract(waived).subtract(waivedGST), null, true);
+		addAmountCell(item, totDue.subtract(paid).subtract(waived), null, true);
 
 		this.listBoxPastdues.appendChild(item);
 	}
@@ -3176,12 +3174,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal waivedAmount = PennantApplicationUtil.unFormateAmount(allocationWaived.getValidateValue(),
 				formatter);
 
-		BigDecimal dueAmount = null;
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-			dueAmount = allocate.getTotalDue().subtract(allocate.getDueGST());
-		} else {
-			dueAmount = allocate.getTotalDue();
-		}
+		BigDecimal dueAmount = allocate.getTotalDue();
+		;
 
 		if (waivedAmount.compareTo(dueAmount) > 0) {
 			waivedAmount = dueAmount;
@@ -3318,16 +3312,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		BigDecimal dueAmount;
 		BigDecimal paidAmount;
 		BigDecimal waivedAmount = allocate.getWaivedAmount();
-		boolean excluseTax = false;
 
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
-			excluseTax = true;
-			dueAmount = allocate.getTotalDue().subtract(allocate.getDueGST());
-			paidAmount = allocate.getTotalPaid().subtract(allocate.getPaidGST());
-		} else {
-			dueAmount = allocate.getTotalDue();
-			paidAmount = allocate.getTotalPaid();
-		}
+		dueAmount = allocate.getTotalDue();
+		paidAmount = allocate.getTotalPaid();
 		BigDecimal balAmount = dueAmount.subtract(paidAmount).subtract(waivedAmount);
 
 		if (waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -3343,11 +3330,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		//Calculate the Paid GST values for allocations
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(allocate.getTaxType())) {
-			getReceiptCalculator().calAllocationPaidGST(financeDetail, paidAmount, allocate, allocate.getTaxType());
-		}
-
-		if (excluseTax) {
-			paidAmount = paidAmount.add(allocate.getPaidGST());
+			getReceiptCalculator().calAllocationPaidGST(financeDetail, paidAmount, allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+		} else {
+			allocate.setPaidCGST(BigDecimal.ZERO);
+			allocate.setPaidSGST(BigDecimal.ZERO);
+			allocate.setPaidUGST(BigDecimal.ZERO);
+			allocate.setPaidIGST(BigDecimal.ZERO);
+			allocate.setPaidGST(BigDecimal.ZERO);
 		}
 
 		// Calculate the Waiver GST values for allocations

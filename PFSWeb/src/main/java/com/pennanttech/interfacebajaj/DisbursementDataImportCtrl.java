@@ -277,11 +277,13 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		String extension = config.getFileExtension();
 
 		// Validate the file extension.
-		if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
-			MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
+		if (StringUtils.isNotEmpty(extension)) {
+			if (!(StringUtils.endsWithIgnoreCase(mediaName, extension))) {
+				MessageUtil.showError(Labels.getLabel("invalid_file_ext", new String[] { extension }));
 
-			media = null;
-			return;
+				media = null;
+				return;
+			}
 		}
 
 		// Validate the file prefix.
@@ -361,7 +363,8 @@ public class DisbursementDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		@Override
 		public void run() {
 			try {
-				getDisbursementResponse().processResponseFile(userId, status, file, media, false, getUserWorkspace().getLoggedInUser());
+				getDisbursementResponse().processResponseFile(userId, status, file, media, false,
+						getUserWorkspace().getLoggedInUser());
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}

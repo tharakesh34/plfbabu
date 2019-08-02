@@ -4364,6 +4364,7 @@
 		<property name="mandateDAO" ref="mandateDAO" />
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="covenantsService" ref="covenantsService" />
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
 	</bean>
 
 	<!--============ Fin Fee Details ============== -->

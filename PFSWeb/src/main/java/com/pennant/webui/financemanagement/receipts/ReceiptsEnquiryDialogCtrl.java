@@ -1306,7 +1306,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
 			String allocDesc = Labels.getLabel("label_RecceiptDialog_AllocationType_" + rad.getAllocationType());
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
+			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)
+					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
 				allocDesc = rad.getTypeDesc();
 			}
 			addBoldTextCell(item, allocDesc, rad.isSubListAvailable(), i);

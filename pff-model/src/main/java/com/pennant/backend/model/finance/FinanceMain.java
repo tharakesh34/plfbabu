@@ -662,6 +662,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	// BPI Recalculation setting on Part Payment / Early settlement
 	private boolean bpiResetReq = true;
+	private boolean modifyBpi = false;
 
 	// Service task specific implemented fields
 	//FIXME: DDP: how to pass the below values from extended fields to workflow.
@@ -905,6 +906,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("connectorDesc");
 
 		excludeFields.add("isAdjustClosingBal");
+		excludeFields.add("modifyBpi");
 
 		excludeFields.add("fixedTenorEndDate");
 		excludeFields.add("finBranchProvinceCode");
@@ -4407,5 +4409,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
+	}
+
+	public boolean isModifyBpi() {
+		return modifyBpi;
+	}
+
+	public void setModifyBpi(boolean modifyBpi) {
+		this.modifyBpi = modifyBpi;
 	}
 }
