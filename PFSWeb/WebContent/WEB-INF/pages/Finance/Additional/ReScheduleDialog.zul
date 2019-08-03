@@ -99,7 +99,7 @@
 								</hbox>
 								<label id="label_ReScheduleDialog_RepayPftRate" value="${c:l('label_ReScheduleDialog_RepayPftRate.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space spacing="2px" sclass="mandatory"/>
 									<decimalbox id="repayPftRate" width="180px" />
 								</hbox>
 							</row>
