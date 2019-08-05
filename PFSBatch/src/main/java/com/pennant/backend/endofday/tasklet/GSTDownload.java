@@ -11,7 +11,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.GSTDownloadService;
 
 public class GSTDownload implements Tasklet {
-	private Logger logger = Logger.getLogger(LedgerDownload.class);
+	private Logger logger = Logger.getLogger(GSTDownload.class);
 
 	@Autowired(required = false)
 	private GSTDownloadService gstDownloadService;

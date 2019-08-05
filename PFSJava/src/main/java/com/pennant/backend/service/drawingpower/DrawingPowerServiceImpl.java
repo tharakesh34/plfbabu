@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
@@ -12,31 +13,74 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.DrawingPower;
 
 public class DrawingPowerServiceImpl implements DrawingPowerService {
+
+	private static final Logger logger = Logger.getLogger(DrawingPowerServiceImpl.class);
+
 	@Autowired(required = false)
 	private DrawingPower drawingPower;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 
 	@Override
-	public String doDrawingPowerCheck(FinanceDetail financeDetail) {
+	public String doRevolvingValidations(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
+		List<FinServiceInstruction> instructions = financeDetail.getFinScheduleData().getFinServiceInstructions();
+
+		BigDecimal disbAmt = BigDecimal.ZERO;
+
+		if (CollectionUtils.isNotEmpty(instructions)) {
+			for (FinServiceInstruction instruction : instructions) {
+				if (FinanceConstants.FINSER_EVENT_ADDDISB.equals(instruction.getFinEvent())) {
+					disbAmt = disbAmt.add(instruction.getAmount());
+				}
+			}
+		}
+		logger.debug("Disbursemet Amt " + disbAmt);
+
+		BigDecimal availableLimit = BigDecimal.ZERO;
+		if (financeType.isAllowRevolving()) {
+			availableLimit = financeMain.getFinAssetValue()
+					.subtract(financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount()));
+
+			logger.debug("Available Amt " + disbAmt);
+			if (disbAmt.compareTo(availableLimit) > 0) {
+				return "Disbursement amount should less than or equal to available amount.";
+			}
+		}
+		logger.debug(Literal.ENTERING);
+		return null;
+	}
+
+	@Override
+	public String doDrawingPowerCheck(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
 		if (!financeType.isAlwSanctionAmt()) {
+			
+			logger.debug("AlwSanctionAmt " + 0);
 			return null;
 		}
 
 		BigDecimal checkingAmt = financeMain.getFinAssetValue();
+		
+		logger.debug("checkingAmt " + checkingAmt);
 		BigDecimal totOutStanding = BigDecimal.ZERO;
 
 		FinanceProfitDetail profitDetail = financeDetail.getFinScheduleData().getFinPftDeatil();
@@ -45,10 +89,15 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinReference());
 		}
 
-		totOutStanding = totOutStanding.add(profitDetail.getTotalPriBal());//Principal outstanding
-		totOutStanding = totOutStanding.add(profitDetail.getTotalPftPaid());//Interest receivable
-		totOutStanding = totOutStanding.add(profitDetail.getPenaltyPaid());//Penal receivable
-		totOutStanding = totOutStanding.add(profitDetail.getPftAccrued());//Accured interest
+		totOutStanding = totOutStanding.add(profitDetail.getTotalPriBal());// Principal
+																			// outstanding
+		totOutStanding = totOutStanding.add(profitDetail.getTdSchdPftBal());// Interest
+																			// receivable
+		totOutStanding = totOutStanding.add(profitDetail.getPenaltyDue().subtract(profitDetail.getPenaltyPaid())
+				.subtract(profitDetail.getPenaltyWaived()));// Penal
+		// receivable
+		totOutStanding = totOutStanding.add(profitDetail.getPftAccrued());// Accured
+																			// interest
 
 		String tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
 		int tdsRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TDS_ROUNDINGTARGET);
@@ -56,12 +105,13 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		BigDecimal tdsMultiplier = new BigDecimal(100).divide(new BigDecimal(100).subtract(tdsPerc), 20,
 				RoundingMode.HALF_DOWN);
 
-		BigDecimal accrueDue = profitDetail.getPftAccrued().subtract(profitDetail.getTdSchdPftBal());
-		BigDecimal accrueTDS = accrueDue.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-		accrueTDS = CalculationUtil.roundAmount(accrueTDS, tdsRoundMode, tdsRoundingTarget);
+		BigDecimal pftReceivable = profitDetail.getPftAccrued().add(profitDetail.getTdSchdPftBal());
+		BigDecimal tdsReceivable = pftReceivable.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
+		tdsReceivable = CalculationUtil.roundAmount(tdsReceivable, tdsRoundMode, tdsRoundingTarget);
 
-		totOutStanding = totOutStanding.add(profitDetail.getTdsAccrued());//TDS Receivable//FIXME
-		List<ManualAdvise> advises = manualAdviseDAO.getManualAdvise(financeMain.getFinReference());//Any Charges
+		totOutStanding = totOutStanding.add(tdsReceivable);// TDS Receivable
+		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any Charges
 		if (CollectionUtils.isNotEmpty(advises)) {
 			for (ManualAdvise manualAdvise : advises) {
 				totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()
@@ -69,35 +119,30 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			}
 		}
 
+		logger.debug("totOutStanding " + totOutStanding);
+		
 		if (financeMain.isAllowDrawingPower()) {
 			if (drawingPower != null) {
-
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
-				BigDecimal disbursementAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
-
-				if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
+				if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0) && (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
 					checkingAmt = drawingPowerAmt;
 				}
-
-				StringBuilder sb = new StringBuilder();
-				String drawingPowerAmte = PennantApplicationUtil.amountFormate(drawingPowerAmt, 2);
-				String disbursementAmte = PennantApplicationUtil.amountFormate(disbursementAmt, 2);
-				sb.append("Drawing power amount : ");
-				sb.append(drawingPowerAmte);
-				sb.append(", Disbursement amount :");
-				sb.append(disbursementAmte);
-
-				return sb.toString();
+				
+				logger.debug("drawingPowerAmt " + drawingPowerAmt);
 			}
 		}
 
+		logger.debug("totOutStanding " + totOutStanding);
+		logger.debug("checkingAmt " + checkingAmt);
 		if (totOutStanding.compareTo(checkingAmt) > 0) {
-			String msg = "Sanction AMount less than sum of totak outstanding.";
+			String msg = "Sanction Amount less than sum of total outstanding.";
 			if (financeType.isAlwSanctionAmtOverride()) {
 				msg = msg.concat(" Do you want to proceed.?");
 			}
 			return msg;
 		}
+		
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

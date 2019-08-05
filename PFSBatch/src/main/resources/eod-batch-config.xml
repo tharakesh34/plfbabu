@@ -97,13 +97,13 @@
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
 			<fail on="FAILED" />
-			<next on="*" to="gstDownload" />
+			<next on="*" to="collateralRevaluation" />
 		</step>
-		<step id="gstDownload">
+		<!-- <step id="gstDownload">
 					<tasklet ref="gSTDownloadTaskLet" />
 					<fail on="FAILED" />
 					<next on="*" to="collateralRevaluation" />
-		</step>
+		</step> -->
 		<step id="collateralRevaluation">
 			<tasklet>
 				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"

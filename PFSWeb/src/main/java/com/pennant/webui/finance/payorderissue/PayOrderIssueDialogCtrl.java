@@ -288,7 +288,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			this.btnEdit.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnSave"));
-			this.btnCMSTest.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnCMSTest"));
 			this.btnCancel.setVisible(false);
 		}
 
@@ -305,6 +304,26 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onClick$btnCMSTest(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		doCMSTest();
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void doCMSTest() throws InterruptedException {
+		logger.debug("Entering");
+		try {
+			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
+			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
+
+			//call To Service
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			MessageUtil.showMessage(e.getMessage());
+		}
+		logger.debug("Leaving");
 	}
 
 	/**
@@ -1121,26 +1140,6 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 
 		logger.debug("Leaving");
 		return postingAccount;
-	}
-
-	public void onClick$btnCMSTest(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		doCMSTest();
-		logger.debug("Leaving" + event.toString());
-	}
-
-	public void doCMSTest() throws InterruptedException {
-		logger.debug("Entering");
-		try {
-			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
-			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
-
-			//call To Service
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-			MessageUtil.showMessage(e.getMessage());
-		}
-		logger.debug("Leaving");
 	}
 
 	// ******************************************************//

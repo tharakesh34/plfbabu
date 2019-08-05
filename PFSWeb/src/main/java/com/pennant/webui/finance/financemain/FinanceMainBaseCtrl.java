@@ -1056,6 +1056,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<FinanceReferenceDetail> agreementList = null;
 	protected Listbox listBox_Agreements; // autoWired
 	private List<DocumentDetails> documentDetailsList;
+	
 	protected Window window_documentDetailDialog;
 	private transient AgreementDefinitionService agreementDefinitionService;
 	private Map<String, List> autoDownloadMap = null;
@@ -6527,13 +6528,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-				//Allow DP and sanction amount check.
+				// Allow DP and sanction amount check.
+				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+				if (financeMain.isAllowRevolving()) {
+					String msg = drawingPowerService.doRevolvingValidations(getFinanceDetail());
+					if (StringUtils.trimToNull(msg) != null) {
+						MessageUtil.showError(msg);
+						return;
+					}
+				}
+
 				String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail());
 
 				if (StringUtils.trimToNull(msg) != null) {
-					if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+					FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+					if (financeType.isAlwSanctionAmtOverride()) {
+						if (MessageUtil.confirm(msg, MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+							return;
+						}
+					} else {
+						MessageUtil.showError(msg);
 						return;
 					}
+
 				}
 			}
 		}
@@ -6555,7 +6572,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//if Loan Start Date is higher than application Date 
+		// if Loan Start Date is higher than application Date
 		autoFinStartDateUpdation(getFinanceDetail());
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -6589,7 +6606,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		aFinanceDetail.setModuleDefiner(
 				StringUtils.isEmpty(moduleDefiner) ? FinanceConstants.FINSER_EVENT_ORG : moduleDefiner);
 
-		//Resetting Service Task ID's from Original State
+		// Resetting Service Task ID's from Original State
 		aFinanceMain.setRoleCode(this.curRoleCode);
 		aFinanceMain.setNextRoleCode(this.curNextRoleCode);
 		aFinanceMain.setTaskId(this.curTaskId);
@@ -6607,7 +6624,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
 
-		//LTD Detail
+		// LTD Detail
 		resetLowerTaxDeductionDetail(aFinScheduleData);
 
 		// Setting Accounting Event Code for Postings execution
@@ -6621,7 +6638,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(recSave));
 		}
 
-		//Save Contributor List Details
+		// Save Contributor List Details
 		if (isRIAExist) {
 			aFinanceDetail = contributorDetailsDialogCtrl.doSaveContributorsDetail(aFinanceDetail,
 					getTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR));
@@ -6629,7 +6646,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinContributorHeader(null);
 		}
 
-		//For istisna Product Configurations
+		// For istisna Product Configurations
 		if (disbursementDetailDialogCtrl != null) {
 			boolean isValid = disbursementDetailDialogCtrl.validateContractorAssetDetails(aFinanceDetail,
 					getTab(AssetConstants.UNIQUE_ID_DISBURSMENT));
@@ -6640,7 +6657,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		FinanceType finType = aFinanceDetail.getFinScheduleData().getFinanceType();
 
-		//Schedule details Tab Validation
+		// Schedule details Tab Validation
 		if (!manualSchedule.isChecked()) {
 
 			if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
@@ -6654,7 +6671,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} else {
 						if (!recSave && StringUtils.isEmpty(this.moduleDefiner)
 								&& StringUtils.isEmpty(aFinanceMain.getDroplineFrq())) {
-							//To Rebuild the overdraft if any fields are changed
+							// To Rebuild the overdraft if any fields are
+							// changed
 							aFinanceDetail.getFinScheduleData().getFinanceMain()
 									.setEventFromDate(aFinanceMain.getFinStartDate());
 
@@ -6675,7 +6693,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-				//Commitment Available Amount Checking During Finance Approval
+				// Commitment Available Amount Checking During Finance Approval
 				if (!recSave && !doValidateCommitment(aFinanceDetail)) {
 					return;
 				}
@@ -6726,7 +6744,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Deviation calculations
+		// Deviation calculations
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			deviationExecutionCtrl.checkProductDeviations(getFinanceDetail());
 			deviationExecutionCtrl.checkFeeDeviations(getFinanceDetail());
@@ -6734,7 +6752,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 
-		// Customer Details Tab ---> Customer Details 
+		// Customer Details Tab ---> Customer Details
 		if (customerDialogCtrl != null) {
 			boolean validatePhone = !recSave || "Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel());
 			if (!processCustomerDetails(aFinanceDetail, validatePhone)) {
@@ -6760,7 +6778,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// After Changing Planned EMI Dates / Months Validation for Recalculated or not
+		// After Changing Planned EMI Dates / Months Validation for Recalculated
+		// or not
 		if (StringUtils.isEmpty(moduleDefiner)
 				|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_PLANNEDEMI)) {
 
@@ -6785,7 +6804,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// Guaranteer Details Tab ---> Guaranteer Details 
+		// Guaranteer Details Tab ---> Guaranteer Details
 		if (jointAccountDetailDialogCtrl != null) {
 			if (jointAccountDetailDialogCtrl.getGuarantorDetailList() != null
 					&& jointAccountDetailDialogCtrl.getGuarantorDetailList().size() > 0) {
@@ -6800,13 +6819,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setGurantorsDetailList(null);
 		}
 
-		//Finance Eligibility Details Tab
+		// Finance Eligibility Details Tab
 		setFinanceDetail(aFinanceDetail);
 		if (eligibilityDetailDialogCtrl != null) {
 			aFinanceDetail = eligibilityDetailDialogCtrl.doSave_EligibilityList(aFinanceDetail);
 		}
 
-		//Finance Scoring Details Tab
+		// Finance Scoring Details Tab
 		if (scoringDetailDialogCtrl != null) {
 			boolean scoreexcuted = true;
 			try {
@@ -6814,13 +6833,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				scoringDetailDialogCtrl.doSave_ScoreDetail(aFinanceDetail);
 
 			} catch (InterruptedException e) {
-				//Show validation if the user action is  not save.
+				// Show validation if the user action is not save.
 				if (!recSave) {
 					scoreexcuted = false;
 					MessageUtil.showError(Labels.getLabel("label_Finance_Verify_Score"));
 				}
 			} catch (EmptyResultDataAccessException e) {
-				//Show validation if the user action is not save.
+				// Show validation if the user action is not save.
 				if (!recSave) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_ScoreInsufficient_Error"));
 					return;
@@ -6836,7 +6855,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setScore(BigDecimal.ZERO);
 		}
 
-		//FIXME Satish this will be used for disbursements instructions, need to be renamed when time permits.
+		// FIXME Satish this will be used for disbursements instructions, need
+		// to be renamed when time permits.
 		if (!(isOverdraft && StringUtils.isEmpty(moduleDefiner))) {
 			if (advancePaymentWindow != null && finAdvancePaymentsListCtrl != null) {
 				finAdvancePaymentsListCtrl.doSetLabels(getFinBasicDetails());
@@ -6875,7 +6895,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//validation for account number in disbursment tab based on rightname
+			// validation for account number in disbursment tab based on
+			// rightname
 			if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
 					&& !isReadOnly("FinanceMainDialog_ValidateBeneficiaryAccNo")
 					&& !StringUtils.equals(financeDetail.getUserAction(), "Revert")
@@ -6916,16 +6937,16 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Finance Fee Details
+		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
 			finFeeDetailListCtrl.processFeeDetails(aFinanceDetail.getFinScheduleData());
 		}
 
-		//Document Details Saving
+		// Document Details Saving
 		if (documentDetailDialogCtrl != null) {
 
 			if (!recSave && getUserWorkspace().isAllowed("IsCasdoc_Mandatory")) {
-				//Add Credit scoring Document to the document list
+				// Add Credit scoring Document to the document list
 				addCasDocument(aFinanceDetail);
 			}
 			aFinanceDetail.setDocumentDetailsList(documentDetailDialogCtrl.getDocumentDetailsList());
@@ -6940,7 +6961,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					aFinanceDetail.getFinanceCheckList(), false);
 		}
 
-		//Finance CheckList Details Tab
+		// Finance CheckList Details Tab
 		if (checkListChildWindow != null) {
 			boolean validationSuccess = doSave_CheckList(aFinanceDetail, false);
 			if (!validationSuccess) {
@@ -6994,7 +7015,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				boolean isValid = collateralHeaderDialogCtrl.validCollateralValue(utilizedAmt);
 				if (!isValid) {
-					// Collateral validation based on roles given in process editor
+					// Collateral validation based on roles given in process
+					// editor
 					int finRefType = FinanceConstants.PROCEDT_LIMIT;
 					String collValCode = FinanceConstants.COLLATERAL_VALIDATION;
 					String roles = financeReferenceDetailService.getAllowedRolesByCode(finType.getFinType(), finRefType,
@@ -7080,12 +7102,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				accVerificationReq = false;
 			}
 
-			//Finance Accounting Details Tab
+			// Finance Accounting Details Tab
 			if (!recSave && "Accounting".equals(getTaskTabs(getTaskId(getRole()))) && accVerificationReq) {
 
 				// check if accounting rules executed or not
 				if (accountingDetailDialogCtrl == null || (!accountingDetailDialogCtrl.isAccountingsExecuted())) {
-					// ### 10-05-2018---- PSD TCT No :124885 
+					// ### 10-05-2018---- PSD TCT No :124885
 					if (!ImplementationConstants.CLIENT_NFL) {
 						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
 						return;
@@ -7100,7 +7122,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			//Finance Stage Accounting Details Tab
+			// Finance Stage Accounting Details Tab
 			if (!recSave && stageAccountingDetailDialogCtrl != null) {
 				// check if accounting rules executed or not
 				if (!stageAccountingDetailDialogCtrl.stageAccountingsExecuted) {
@@ -7117,7 +7139,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		//Finance Collaterals Details validating & Saving
+		// Finance Collaterals Details validating & Saving
 		if (finCollateralHeaderDialogCtrl != null) {
 			BigDecimal totCost = BigDecimal.ZERO;
 			boolean isFDAmount = false;
@@ -7142,36 +7164,36 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setFinanceCollaterals(null);
 		}
 
-		//Etihad Credit Bureau Details 
+		// Etihad Credit Bureau Details
 		if (etihadCreditBureauDetailDialogCtrl != null) {
 			etihadCreditBureauDetailDialogCtrl.doSave_EtihadCreditBureauDetail(aFinanceDetail,
 					getTab(AssetConstants.UNIQUE_ID_ETIHADCB), recSave);
 		}
 
-		//Bundled Products Details 
+		// Bundled Products Details
 		if (bundledProductsDetailDialogCtrl != null) {
 			bundledProductsDetailDialogCtrl.doSave_BundledProductsDetail(aFinanceDetail,
 					getTab(AssetConstants.UNIQUE_ID_BUNDLEDPRODUCTS), recSave);
 		}
 
-		//Agreement Fields Details 
+		// Agreement Fields Details
 		if (agreementFieldsDetailDialogCtrl != null) {
 			agreementFieldsDetailDialogCtrl.doSave_AgreementFieldsDetail(aFinanceDetail, recSave);
 		}
 
-		//Asset Evaluation Details 
+		// Asset Evaluation Details
 		if (finAssetEvaluationDialogCtrl != null) {
 			finAssetEvaluationDialogCtrl.doSave_FinAssetEvaluation(aFinanceDetail,
 					getTab(AssetConstants.UNIQUE_ID_ASSETEVALUATION), recSave);
 		}
 
-		//Mandate tab
+		// Mandate tab
 		Tab mandateTab = getTab(AssetConstants.UNIQUE_ID_MANDATE);
 		if (mandateDialogCtrl != null && mandateTab.isVisible()) {
 			mandateDialogCtrl.doSave_Mandate(aFinanceDetail, mandateTab, recSave);
 		}
 
-		//PDC
+		// PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
 		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
 			chequeDetailDialogCtrl.doSave_PDC(aFinanceDetail, getFinanceMain().getFinReference());
@@ -7278,7 +7300,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			pSLDetailDialogCtrl.doSave(aFinanceDetail, pslDetailsTab, recSave);
 		}
 
-		//Validation For Mandatory Recommendation
+		// Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;
 		}
@@ -7286,11 +7308,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Sampling initiation Details
 		if (samplingRequired.isChecked() && !samplingRequired.isDisabled()) {
 			/*
-			 * if
-			 * (extendedFieldDetailsService.getLoanOrgExtendedValue(financeDetail.getFinScheduleData().getFinReference()
-			 * , "CUSTREQLOANAMOUNT") == null) {
-			 * MessageUtil.showError("Requested loan amount should be available in the extended fields for sampling");
-			 * this.financeTypeDetailsTab.setSelected(true); return;
+			 * if (extendedFieldDetailsService.getLoanOrgExtendedValue(
+			 * financeDetail.getFinScheduleData().getFinReference() ,
+			 * "CUSTREQLOANAMOUNT") == null) { MessageUtil.
+			 * showError("Requested loan amount should be available in the extended fields for sampling"
+			 * ); this.financeTypeDetailsTab.setSelected(true); return;
 			 * 
 			 * }
 			 */
@@ -7347,7 +7369,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				//in case of no match found from posidex the same message has to be shown for the user
+				// in case of no match found from posidex the same message has
+				// to be shown for the user
 				if (aFinanceDetail.getCustomerDetails().getReturnStatus() != null
 						&& aFinanceDetail.getCustomerDetails().getReturnStatus().getReturnText() != null
 						&& StringUtils.equalsIgnoreCase(
@@ -7373,8 +7396,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
 			if (StringUtils.isEmpty(moduleDefiner) && deviationDetailDialogCtrl != null) {
-				// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-				// Check whether user has taken decision on the deviations for which he has the authority.
+				// ### 01-05-2018 - Start - story #361(tuleap server) Manual
+				// Deviations
+				// Check whether user has taken decision on the deviations for
+				// which he has the authority.
 				if (this.userAction.getSelectedItem() != null
 						&& !"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 					// Get the list of auto & manual deviations.
@@ -7401,7 +7426,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 
-					// Display a warning to the user, if there are any deviations that he need to take decision.
+					// Display a warning to the user, if there are any
+					// deviations that he need to take decision.
 					if (!pendingDecisions.isEmpty()) {
 						String errorMessage = "";
 
@@ -7616,7 +7642,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				closeDialog();
 
-				//Download Legal MODT Document
+				// Download Legal MODT Document
 				downLoadLegalDocument(aFinanceMain);
 
 				if (listWindowTab != null) {
