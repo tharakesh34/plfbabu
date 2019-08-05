@@ -1192,7 +1192,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			if (!this.dealerPoBox.isReadonly()) {
 				this.dealerPoBox
 						.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_Pobox.value"),
-								PennantRegularExpressions.REGEX_NUMERIC, false));
+								PennantRegularExpressions.REGEX_NUMERIC, true));
 			}
 		}
 		if (!this.zipCode.isReadonly()) {
