@@ -302,6 +302,10 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.receiptDate.setValue(appDate);
 
 		this.receiptAmount.setTextBoxWidth(190);
+		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
+		this.receiptAmount.setProperties(false, formatter);
+		this.receiptAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
+				CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 
 		fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), "");
 		fillComboBox(this.receiptChannel, "", PennantStaticListUtil.getReceiptChannels(), "");

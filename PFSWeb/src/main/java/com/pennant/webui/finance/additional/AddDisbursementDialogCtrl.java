@@ -94,6 +94,7 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
@@ -240,6 +241,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		int format = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
 		// Empty sent any required attributes
+		this.disbAmount.setProperties(false, format);
 		this.disbAmount.setMandatory(true);
 		this.disbAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
 		this.disbAmount.setScale(format);
@@ -290,6 +292,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.fromDate.setValue(getFinanceScheduleDetail().getSchDate());
 		}
 
+		else {
+			this.disbAmount.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO,
+					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
+		}
 		// Future Disbursements not allowed at any case, because with Future Disbursements 
 		// there is an issue with SOA, Disbursement Uploads, Fore Closure Report..etc
 		if (!isWIF) {
