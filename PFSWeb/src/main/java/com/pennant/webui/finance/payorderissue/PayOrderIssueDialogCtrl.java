@@ -288,6 +288,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			this.btnEdit.setVisible(false);
 			this.btnDelete.setVisible(false);
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnSave"));
+			this.btnCMSTest.setVisible(getUserWorkspace().isAllowed("button_PayOrderIssueDialog_btnCMSTest"));
 			this.btnCancel.setVisible(false);
 		}
 
