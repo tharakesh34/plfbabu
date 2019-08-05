@@ -8,6 +8,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pff.notifications.service.ProcessSystemNotifications;
 
@@ -27,14 +28,14 @@ public class SystemNotificationsProcessJob implements Job {
 			processSystemNotifications = (ProcessSystemNotifications) SpringBeanUtil
 					.getBean("processSystemNotifications");
 		} catch (Exception e) {
-
+			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		if (processSystemNotifications != null) {
 			try {
 				processSystemNotifications.processNotifications();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.debug(Literal.EXCEPTION, e);
 			}
 		}
 
