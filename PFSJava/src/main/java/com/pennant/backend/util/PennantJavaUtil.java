@@ -3289,7 +3289,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("TransactionMapping",
 				new ModuleMapping("TransactionMapping", TransactionMapping.class,
 						new String[] { "TransactionMapping", "TransactionMapping_AVIEW" }, masterWF,
-						new String[] { "MID", "TID" }, null, 600));
+						new String[] { "Mid", "Tid" }, null, 600));
 
 		ModuleUtil.register("HSNCodeData",
 				new ModuleMapping("Commodities", Commodity.class, new String[] { "COMMODITIES", "COMMODITIES_AView" },

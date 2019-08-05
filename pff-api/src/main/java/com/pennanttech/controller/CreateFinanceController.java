@@ -21,7 +21,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
@@ -139,7 +138,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -190,7 +188,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private AgreementGeneration agreementGeneration;
 	private FinanceTypeService financeTypeService;
 	private FinanceCancellationService financeCancellationService;
-	private PostValidationHook postValidationHook;
 	private ChequeHeaderService chequeHeaderService;
 	private RemarksWebServiceImpl remarksWebServiceImpl;
 	private RemarksController remarksController;
@@ -208,18 +205,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finReference = null;
 
 		try {
-			// post hook validation
-			if (postValidationHook != null) {
-				List<ErrorDetail> errors = postValidationHook.apiValidation(financeDetail);
-				if (CollectionUtils.isNotEmpty(errors)) {
-					for (ErrorDetail errorDetail : errors) {
-						FinanceDetail response = new FinanceDetail();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(APIErrorHandlerService.getFailedStatus(errorDetail.getCode()));
-						return response;
-					}
-				}
-			}
+		
 			// financeMain details
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -3574,12 +3560,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
 		this.financeCancellationService = financeCancellationService;
-	}
-
-	@Autowired(required = false)
-	@Qualifier(value = "createFinancePostValidationHook")
-	public void setPostValidationHook(PostValidationHook postValidationHook) {
-		this.postValidationHook = postValidationHook;
 	}
 
 	public Map<String, String> getUserActions(FinanceMain finMain) {
