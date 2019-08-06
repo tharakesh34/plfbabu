@@ -2684,7 +2684,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		auditDetail.setErrorDetail(validateMasterCode("CustomerType", customer.getCustTypeCode()));
-
+		//validating the  CoreBank
+		if (StringUtils.isNotBlank(customer.getCustCoreBank())) {
+			Customer cust = customerDAO.getCustomerByCoreBankId(customer.getCustCoreBank(), "");
+			if (cust != null) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CustCoreBankId: ";
+				valueParm[1] = customer.getCustCoreBank();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm)));
+				return auditDetail;
+			}
+		}
+		
 		// validate custTypeCode against the category code
 		int custTypeCount = getCustomerTypeDAO().validateTypeAndCategory(customer.getCustTypeCode(),
 				customer.getCustCtgCode());
