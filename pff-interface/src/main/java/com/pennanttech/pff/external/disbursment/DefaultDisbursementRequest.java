@@ -326,11 +326,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		sql.append(" PAYMENT_DETAIL7,");
 		sql.append(" STATUS,");
 		sql.append(" REMARKS,");
-		sql.append(" CHANNEL,");
-		sql.append(" PINCODE,");
-		sql.append(" FINAMOUNT,");
-		sql.append(" FinBranch BRANCH_NAME,");
-		sql.append(" ACCOUNTNO PartnerBankAccNumber ");
+		sql.append(" CHANNEL");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
 		sql.append(" WHERE PAYMENTID IN (:PAYMENTID)");
 
@@ -355,7 +351,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					rowMap.put("REJECT_REASON", null);
 					String finAmount = amountFormate((BigDecimal) rowMap.get("FINAMOUNT"),
 							PennantConstants.defaultCCYDecPos);
-					rowMap.put("FINAMOUNT", finAmount);
+					//rowMap.put("FINAMOUNT", finAmount);
 
 					BigDecimal disbAmount = (BigDecimal) rowMap.get("DISBURSEMENT_AMOUNT");
 					disbAmount = disbAmount.divide(new BigDecimal(100));
@@ -365,10 +361,10 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 					String benfBank = (String) rowMap.get("BENFICIARY_BANK");
 					String benfAccount = (String) rowMap.get("BENFICIARY_ACCOUNT");
 					if ("C".equals(rowMap.get("DISBURSEMENT_TYPE")) || "D".equals(rowMap.get("DISBURSEMENT_TYPE"))) {
-						rowMap.put("AdditionalField1", benfName);
+						//rowMap.put("AdditionalField1", benfName);
 					} else {
-						rowMap.put("AdditionalField1",
-								benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
+						//rowMap.put("AdditionalField1",
+								//benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
 					}
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {

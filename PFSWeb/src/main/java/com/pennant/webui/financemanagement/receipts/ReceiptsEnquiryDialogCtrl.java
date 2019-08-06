@@ -1306,9 +1306,14 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			sum = sum.add(paidAmount);
 			Listitem item = new Listitem();
 			String allocDesc = Labels.getLabel("label_RecceiptDialog_AllocationType_" + rad.getAllocationType());
-			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)
-					|| StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_MANADV)) {
 				allocDesc = rad.getTypeDesc();
+			}
+			if (StringUtils.equals(rad.getAllocationType(), RepayConstants.ALLOCATION_FEE)) {
+				Filter[] masterCodeFiler = new Filter[1];
+				masterCodeFiler[0] = new Filter("FeeTypeId", -rad.getAllocationTo(), Filter.OP_EQUAL);
+				allocDesc = PennantApplicationUtil.getDBDescription("FeeType", "FeeTypes", "FeeTypeDesc",
+						masterCodeFiler);
 			}
 			addBoldTextCell(item, allocDesc, rad.isSubListAvailable(), i);
 
@@ -1327,7 +1332,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		addAmountCell(item, sum, null, true);
 		this.listBoxPastdues.appendChild(item);
 
-		addExcessAmt(receiptData.getReceiptHeader().getReceiptAmount().subtract(sum));
+		BigDecimal receiptAmount = BigDecimal.ZERO;
+		for (FinReceiptDetail recDtl : receiptData.getReceiptHeader().getReceiptDetails()) {
+			receiptAmount = receiptAmount.add(recDtl.getAmount());
+		}
+
+		addExcessAmt(receiptAmount.subtract(sum));
 
 		logger.debug("Leaving");
 	}

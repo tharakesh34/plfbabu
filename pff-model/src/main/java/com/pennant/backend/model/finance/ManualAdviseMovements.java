@@ -12,7 +12,7 @@ public class ManualAdviseMovements implements Serializable {
 	private long receiptID = Long.MIN_VALUE;
 	private long receiptSeqID = Long.MIN_VALUE;
 	private String feeTypeCode;
-	private String feeTypeDesc; //Used in SOA and GST Invoice
+	private String feeTypeDesc; // Used in SOA and GST Invoice
 	private Date movementDate;
 	private BigDecimal movementAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;
@@ -37,7 +37,7 @@ public class ManualAdviseMovements implements Serializable {
 
 	// Enquiry Purpose
 	private String receiptMode;
-	// ### 24-05-2018  SOA Merging from Bajaj to QC
+	// ### 24-05-2018 SOA Merging from Bajaj to QC
 	private Date valueDate;
 	private long waiverID = Long.MIN_VALUE;
 

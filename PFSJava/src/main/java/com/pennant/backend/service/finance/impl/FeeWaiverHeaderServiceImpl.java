@@ -134,7 +134,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceTypeDAO financeTypeDAO;
 
-	List<ManualAdvise> manualAdviseList; //TODO remove this
+	List<ManualAdvise> manualAdviseList; // TODO remove this
 	private ReceiptCalculator receiptCalculator;
 
 	public FeeWaiverHeaderServiceImpl() {
@@ -164,7 +164,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				return feeWaiverHeader;
 			}
 
-			//For GST Calculations
+			// For GST Calculations
 			Map<String, BigDecimal> gstPercentages = getTaxPercentages(finReference);
 
 			// Manual Advise and Bounce Waivers
@@ -292,7 +292,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				detailList.add(feeWaiverDetail);
 			}
 
-			//Schedule Profit Waiver
+			// Schedule Profit Waiver
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
 				// Get Interest and profits.
 				List<FinanceScheduleDetail> financeScheduleDetails = this.financeScheduleDetailDAO
@@ -414,7 +414,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FeeWaiverHeader feeWaiverHeader = feeWaiverHeaderDAO.getFeeWaiverHeaderByFinRef(finReference, type);
 
 		if (feeWaiverHeader != null) {
-			//Fetch Fee Waiver Details
+			// Fetch Fee Waiver Details
 			List<FeeWaiverDetail> feeWaiverDetails = feeWaiverDetailDAO
 					.getFeeWaiverByWaiverId(feeWaiverHeader.getWaiverId(), "_Temp");
 			feeWaiverHeader.setFeeWaiverDetails(feeWaiverDetails);
@@ -422,7 +422,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				for (FeeWaiverDetail feeWaiver : feeWaiverDetails) {
 					feeWaiver.setFinReference(finReference);
 					if (feeWaiver.getTaxHeaderId() > 0) {
-						//Fetch Tax Details
+						// Fetch Tax Details
 						TaxHeader header = taxHeaderDetailsService.getTaxHeaderById(feeWaiver.getTaxHeaderId(),
 								"_Temp");
 						feeWaiver.setTaxHeader(header);
@@ -738,10 +738,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
 
-		//Update ManualAdvise and Bounce Waivers
+		// Update ManualAdvise and Bounce Waivers
 		movements.addAll(allocateWaiverToBounceAndAdvise(feeWaiverHeader));
 
-		//Update Late Pay Penalty(LPP) and Late Pay Interest(LPI) waivers
+		// Update Late Pay Penalty(LPP) and Late Pay Interest(LPI) waivers
 		movements.addAll(allocateWaivedAmtToPenalities(feeWaiverHeader, finodPftdetails, finodPenalitydetails));
 
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -754,17 +754,17 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		AEEvent aeEvent = null;
 		if (CollectionUtils.isNotEmpty(movements)) {
-			//Execute Accounting
+			// Execute Accounting
 			aeEvent = executeAcctProcessing(BigDecimal.ZERO, financeMain, feeWaiverHeader, aeEvent, movements);
 
-			//Prepare GST Invoice for Bounce/LPP Waiver(when it is due base accounting) 
+			// Prepare GST Invoice for Bounce/LPP Waiver(when it is due base accounting)
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess()) {
 				this.gstInvoiceTxnService.gstInvoicePreparation(aeEvent.getLinkedTranId(), financeDetail, null,
 						movements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false, true);
 			}
 		}
 
-		//Update Profit waivers
+		// Update Profit waivers
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PROFIT_WAIVER)) {
 			allocateWaiverToSchduleDetails(feeWaiverHeader, financeDetail, aeEvent);
 		}
@@ -778,7 +778,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		List<ManualAdviseMovements> movements = new ArrayList<ManualAdviseMovements>();
 
-		//For GST Calculations
+		// For GST Calculations
 		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(feeWaiverHeader.getFinReference());
 
 		for (FeeWaiverDetail waiverdetail : feeWaiverHeader.getFeeWaiverDetails()) {
@@ -830,7 +830,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 							taxSplit = GSTCalculator.getInclusiveGST(amountWaived, gstPercentages);
 						}
 
-						//Taxes Splitting
+						// Taxes Splitting
 						taxHeader = taxSplitting(gstPercentages, taxSplit);
 
 					} else {
@@ -850,7 +850,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					finODDetailsDAO.updatePenaltyTotals(oddetail);
 
-					//TODO update LPP related GST Table data
+					// TODO update LPP related GST Table data
 
 					if (SysParamUtil.isAllowed("GST_INV_ON_DUE")
 							&& waiverdetail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -1030,7 +1030,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 		this.financeRepaymentsDAO.saveRpySchdList(repaySchDetList, TableType.MAIN_TAB);
 
-		//Fin Repay Details
+		// Fin Repay Details
 		for (FinanceRepayments repayments : finRepaymentList) {
 			repayments.setLinkedTranId(linkedTranId);
 			this.financeRepaymentsDAO.save(repayments, TableType.MAIN_TAB.getSuffix());
@@ -1046,7 +1046,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			finODDetailsDAO.updateList(overdueList);
 		}
 
-		//Profit Waiver GST Invoice Preparation
+		// Profit Waiver GST Invoice Preparation
 		if (ImplementationConstants.ALW_PROFIT_SCHD_INVOICE && linkedTranId > 0) {
 			gstInvoiceTxnService.createProfitScheduleInovice(linkedTranId, financeDetail, totPftBal,
 					PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED_TAX_CREDIT);
@@ -1109,13 +1109,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		detailsMap.put("bounceCharge_IGST_W", bounceIGST);
 		detailsMap.put("bounceCharge_UGST_W", bounceUGST);
 		detailsMap.put("bounceChargeWaived", totBounce);
-		//TODO add Cess
+		// TODO add Cess
 
 		detailsMap.put("LPP_CGST_W", lppCGST);
 		detailsMap.put("LPP_SGST_W", lppSGST);
 		detailsMap.put("LPP_IGST_W", lppIGST);
 		detailsMap.put("LPP_UGST_W", lppUGST);
-		//TODO add Cess
+		// TODO add Cess
 
 		detailsMap.put("ae_penaltyWaived", totLPP);
 
@@ -1282,7 +1282,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				taxSplit = GSTCalculator.getInclusiveGST(amountWaived, gstPercentages);
 			}
 
-			//Taxes Splitting
+			// Taxes Splitting
 			taxHeader = taxSplitting(gstPercentages, taxSplit, advise);
 
 		} else {
@@ -1307,8 +1307,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (amountWaived.compareTo(BigDecimal.ZERO) > 0) {
 			movement.setAdviseID(advise.getAdviseID());
 			movement.setMovementDate(DateUtility.getAppDate());
-			//movement.setMovementAmount(advise.getPaidAmount());
-			movement.setMovementAmount(waiverdetail.getCurrWaiverAmount()); //TODO check here once if we give waived amount or Paid amount
+			// movement.setMovementAmount(advise.getPaidAmount());
+			movement.setMovementAmount(waiverdetail.getCurrWaiverAmount()); // TODO check here once if we give waived
+																			// amount or Paid amount
 			movement.setPaidAmount(advise.getPaidAmount());
 			movement.setWaivedAmount(amountWaived);
 			movement.setReceiptID(0);
@@ -1397,7 +1398,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		taxHeader.setVersion(1);
 		taxHeader.setTaxDetails(taxes);
 
-		//Saving the Tax Header and Tax Details
+		// Saving the Tax Header and Tax Details
 		taxHeaderDetailsService.doApprove(taxHeader, "", "");
 
 		logger.debug(Literal.LEAVING);
@@ -1441,7 +1442,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		taxHeader.setVersion(1);
 		taxHeader.setTaxDetails(taxes);
 
-		//Saving the Tax Header and Tax Details
+		// Saving the Tax Header and Tax Details
 		taxHeaderDetailsService.doApprove(taxHeader, "", "");
 
 		logger.debug(Literal.LEAVING);
@@ -1478,7 +1479,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		getFeeWaiverHeaderDAO().delete(feeWaiverHeader, TableType.TEMP_TAB);
 
-		//auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, feeWaiverHeader.getBefImage(), feeWaiverHeader));
+		// auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, feeWaiverHeader.getBefImage(),
+		// feeWaiverHeader));
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 

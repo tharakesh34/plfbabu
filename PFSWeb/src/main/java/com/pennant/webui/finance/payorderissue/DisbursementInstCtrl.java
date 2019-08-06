@@ -362,11 +362,16 @@ public class DisbursementInstCtrl {
 								}
 								lc.setParent(item);
 
-								lc = new Listcell("");
+								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
+									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
+
+								} else {
+									lc = new Listcell("");
+								}
 								lc.setParent(item);
 
 								if (StringUtils.isNotBlank(vasDetail.getInsStatus())) {
-									lc = new Listcell(PennantConstants.RCD_STATUS_APPROVED);
+									lc = new Listcell("");
 
 								} else {
 									lc = new Listcell(PennantConstants.RCD_ADD);

@@ -229,10 +229,13 @@ public abstract class JsonService<T> {
 	}
 
 	protected HttpHeaders getHttpHeader(HttpHeaders headers, boolean xmlRequest) {
-		if (headers == null) {
-			headers = new HttpHeaders();
+		
+		
+		if (headers != null) {
+			return headers;
 		}
-
+		
+		headers = new HttpHeaders();
 		if (xmlRequest) {
 			headers.setContentType(MediaType.APPLICATION_XML);
 			headers.add("Accept", MediaType.APPLICATION_XML_VALUE);

@@ -68,6 +68,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.account.dao.StagePostingDAO;
 
 /**
@@ -625,6 +626,33 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		this.jdbcTemplate.update(insertSql.toString(), paramSource);
 		logger.debug("Leaving");
 
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostingsByFinRef(String finReference) {
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("finReference", finReference);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT LinkedTranId,Postref,PostingId,finReference,FinEvent, PostDate,ValueDate,TranCode, ");
+		selectSql.append(
+				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
+		selectSql.append(
+				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
+		selectSql.append(" FROM Postings ");
+		selectSql.append(" Where LInkedTraniD in (Select linkedTranid from InsurancePaymentInstructions where id in (");
+		selectSql.append(" select id from vasrecording where PRIMARYlinkref = :finReference) )");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+		logger.debug("Leaving");
+		return null;
 	}
 
 	@Autowired

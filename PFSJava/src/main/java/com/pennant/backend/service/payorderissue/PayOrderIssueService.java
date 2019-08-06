@@ -43,8 +43,11 @@
 
 package com.pennant.backend.service.payorderissue;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
 /**
  * Service declaration for methods that depends on <b>PayOrderIssueHeader</b>.<br>
@@ -63,5 +66,7 @@ public interface PayOrderIssueService {
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
+
+	List<ReturnDataSet> getInsurancePostings(String finReference);
 
 }

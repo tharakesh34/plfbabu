@@ -106,8 +106,8 @@ public class RepayScheduleDetail implements Serializable {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-	
-	//Waiver GST Fields
+
+	// Waiver GST Fields
 	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;

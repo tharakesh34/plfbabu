@@ -162,14 +162,11 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 						.get("financeEnquiryHeaderDialogCtrl");
 			}
 
-			/*if (arguments.containsKey("fromRejectFinance")) {
-				fromRejectFinance = (Boolean) arguments.get("fromRejectFinance");
-				if (fromRejectFinance) {
-					tableType = "_RView";
-					this.toolbar_printButton.setVisible(false);
-					this.showAccrual.setDisabled(true);
-				}
-			}*/
+			/*
+			 * if (arguments.containsKey("fromRejectFinance")) { fromRejectFinance = (Boolean)
+			 * arguments.get("fromRejectFinance"); if (fromRejectFinance) { tableType = "_RView";
+			 * this.toolbar_printButton.setVisible(false); this.showAccrual.setDisabled(true); } }
+			 */
 
 			if (fromRejectFinance && arguments.containsKey("reinstateFinance")) {
 				ReinstateFinance reinstateFinance = (ReinstateFinance) arguments.get("reinstateFinance");
@@ -202,7 +199,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 		try {
 			doCheckEnquiry();
-			//Fill Posting Details
+			// Fill Posting Details
 			this.showAccrual.setChecked(true);
 			doFillPostings();
 
@@ -234,8 +231,8 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 	private void doCheckEnquiry() {
 		if (this.enquiry != null) {
-			//this.showAccrual.setDisabled(true);
-			//this.showZeroCals.setDisabled(true);
+			// this.showAccrual.setDisabled(true);
+			// this.showZeroCals.setDisabled(true);
 		}
 
 	}
@@ -369,7 +366,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 	private ArrayList<Object> getFinBasicDetails(ReinstateFinance reinstateFinance) {
 		logger.debug(Literal.ENTERING);
 
-		//FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
+		// FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 		ArrayList<Object> arrayList = new ArrayList<Object>();
 		arrayList.add(0, reinstateFinance.getFinType());
 		arrayList.add(1, reinstateFinance.getFinCcy());

@@ -99,6 +99,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(feeWaiverDetail);
+
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
@@ -125,7 +126,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(
 				" CurrActualWaiver = :CurrActualWaiver, CurrWaiverGST = :CurrWaiverGST, TaxApplicable = :TaxApplicable, TaxComponent = :TaxComponent");
 		sql.append(" Where WaiverDetailId =:WaiverDetailId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -148,7 +149,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		StringBuilder sql = new StringBuilder("delete from FeeWaiverDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" where WaiverDetailId = :WaiverDetailId");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		// sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -207,6 +208,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
 		feeWaiverHeader.setFinReference(finReference);
+
 		StringBuilder sql = new StringBuilder();
 
 		sql.append(" Select FD.WaiverDetailId, FD.WaiverId, FD.AdviseId, FD.FinODSchdDate, FD.ReceivableAmount,");

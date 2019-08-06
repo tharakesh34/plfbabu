@@ -4709,6 +4709,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rcd.setDepositDate(rud.getDepositDate());
 		rcd.setPaymentRef(rud.getPaymentRef());
 		rcd.setTransactionRef(rud.getTransactionRef());
+		rcd.setFavourNumber(fsi.getFavourNumber());
 
 		// FIXME: PV: Is it cheque account number or cheque number
 		rcd.setChequeAcNo(rud.getChequeNo());
@@ -4731,7 +4732,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 			rcd.setReceiptPurpose(FinanceConstants.FINSER_EVENT_EARLYSETTLE);
 		}
-
 		fsi.setReceiptDetail(rcd);
 		return fsi;
 	}
@@ -5216,7 +5216,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		financeDetail = doReceiptTransaction(receiptData, eventCode);
 
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 			financeDetail = setReturnStatus(financeDetail);
 		}
 
@@ -5520,6 +5521,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(receiptPurpose);
 
+		if (receiptPurposeCtg == 2) {
+			rch.getReceiptDetails().clear();
+			createXcessRCD(receiptData);
+			rch.getReceiptDetails().add(rcd);
+		}
+
 		if (!fsi.isReceiptUpload() && !StringUtils.equals(fsi.getReqType(), "Post")) {
 
 			BigDecimal earlyPayAmount = receiptData.getRemBal();
@@ -5664,15 +5671,31 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
 			receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
 
-			for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
-				allocate.setPaidAvailable(allocate.getPaidAmount());
-				allocate.setWaivedAvailable(allocate.getWaivedAmount());
-				allocate.setPaidAmount(BigDecimal.ZERO);
-				allocate.setPaidGST(BigDecimal.ZERO);
-				allocate.setTotalPaid(BigDecimal.ZERO);
-				allocate.setBalance(allocate.getTotalDue());
-				allocate.setWaivedAmount(BigDecimal.ZERO);
-				allocate.setWaivedGST(BigDecimal.ZERO);
+			receiptData.setDueAdjusted(true);
+			if (receiptPurposeCtg == 2) {
+				boolean duesAdjusted = checkDueAdjusted(receiptData.getReceiptHeader().getAllocations(), receiptData);
+				if (!duesAdjusted) {
+					receiptData = adjustToExcess(receiptData);
+					receiptData.setDueAdjusted(false);
+				}
+			}
+
+			if (receiptData.isDueAdjusted()) {
+				for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
+					allocate.setPaidAvailable(allocate.getPaidAmount());
+					allocate.setWaivedAvailable(allocate.getWaivedAmount());
+					allocate.setPaidAmount(BigDecimal.ZERO);
+					allocate.setPaidGST(BigDecimal.ZERO);
+					allocate.setTotalPaid(BigDecimal.ZERO);
+					allocate.setBalance(allocate.getTotalDue());
+					allocate.setWaivedAmount(BigDecimal.ZERO);
+					allocate.setWaivedGST(BigDecimal.ZERO);
+				}
+			} else {
+				finScheduleData = financeDetail.getFinScheduleData();
+				finScheduleData = setErrorToFSD(finScheduleData, "90330", receiptPurpose, "");
+				financeDetail.setFinScheduleData(finScheduleData);
+				return financeDetail;
 			}
 
 			receiptData.setBuildProcess("R");

@@ -19,7 +19,7 @@ public class TaxAmountSplit implements Serializable {
 	private BigDecimal inProcAmount = BigDecimal.ZERO;
 	private String taxType = null;
 	private Taxes taxes;
-	
+
 	public TaxAmountSplit() {
 		super();
 	}

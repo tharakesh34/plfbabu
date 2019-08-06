@@ -147,6 +147,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(),
 				financeMain.getRoundingTarget());
 		fod.setTotPenaltyAmt(penalty); // ### 03-12-2018 PSD Ticket ID: 130669
+		fod.setFinODTillDate(valueDate);
 
 		/*
 		 * fod.setTotPenaltyAmt(penalty);

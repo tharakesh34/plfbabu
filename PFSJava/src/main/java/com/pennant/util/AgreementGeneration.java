@@ -2689,16 +2689,12 @@ public class AgreementGeneration implements Serializable {
 				}
 			}
 		}
-
-		feeChargeAmount = PennantApplicationUtil.formateAmount(feeChargeAmount, formatter);
 		BigDecimal netFinanceVal = finAmount.subtract(financeMain.getDownPayBank().add(financeMain.getDownPaySupl()))
 				.add(feeChargeAmount);
 		if (netFinanceVal.compareTo(BigDecimal.ZERO) < 0) {
 			netFinanceVal = BigDecimal.ZERO;
 		}
-
-		String netFinAmt = PennantApplicationUtil
-				.amountFormate(PennantApplicationUtil.unFormateAmount(netFinanceVal, formatter), formatter);
+		String netFinAmt = PennantApplicationUtil.amountFormate(netFinanceVal, formatter);
 		if (finAmount != null && finAmount.compareTo(BigDecimal.ZERO) > 0) {
 			if (ImplementationConstants.ADD_FEEINFTV_ONCALC) {
 				agreement.setNetFinAmount(netFinAmt);

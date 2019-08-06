@@ -93,9 +93,10 @@ public class SelectLoanClosureEnquiryListCtrl extends GFCBaseCtrl<ForeClosure> {
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
 
-		Filter[] filter = new Filter[2];
+		Filter[] filter = new Filter[3];
 		filter[0] = new Filter("FinStartDate", DateUtility.getAppDate(), Filter.OP_LESS_OR_EQUAL);
 		filter[1] = new Filter("MaturityDate", DateUtility.getAppDate(), Filter.OP_GREATER_OR_EQUAL);
+		filter[2] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
 		this.finReference.setFilters(filter);
 
 		logger.debug(Literal.LEAVING);

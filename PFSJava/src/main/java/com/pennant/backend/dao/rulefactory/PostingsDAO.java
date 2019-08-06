@@ -93,4 +93,6 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByLinkTransId(List<Long> tranIdList, String finReference);
 
+	List<ReturnDataSet> getPostingsByFinRef(String finReference);
+
 }

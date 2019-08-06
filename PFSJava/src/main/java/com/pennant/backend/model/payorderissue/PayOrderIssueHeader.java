@@ -34,6 +34,7 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private List<FinAdvancePayments> finAdvancePaymentsList = new ArrayList<FinAdvancePayments>();
 	private FinanceMain financeMain;
+	private BigDecimal finAssetValue = BigDecimal.TEN;
 
 	//others
 	private String custCIF;
@@ -85,6 +86,8 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 		excludeFields.add("financeMain");
 		excludeFields.add("alwMultiPartyDisb");
 		excludeFields.add("vASRecordings");
+		excludeFields.add("finAssetValue");
+
 		return excludeFields;
 	}
 
@@ -310,5 +313,13 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setvASRecordings(List<VASRecording> vASRecordings) {
 		this.vASRecordings = vASRecordings;
+	}
+
+	public BigDecimal getFinAssetValue() {
+		return finAssetValue;
+	}
+
+	public void setFinAssetValue(BigDecimal finAssetValue) {
+		this.finAssetValue = finAssetValue;
 	}
 }

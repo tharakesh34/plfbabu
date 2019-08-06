@@ -224,6 +224,7 @@ public class RepayConstants {
 	public static final String RECEIVED_GOVT = "GOVERMENT";
 
 	// Waiver types
-	public static final String INTEREST_WAIVER = "I"; //Profit Waiver
+	public static final String INTEREST_WAIVER = "I"; // Profit Waiver
 	public static final String PRINCIPAL_WAIVER = "P"; // Principle Waiver
+
 }

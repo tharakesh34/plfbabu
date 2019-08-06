@@ -224,7 +224,7 @@ public class SMTParameterConstants {
 	// Put-call Default value need or not
 	public static final String PUTCALL_DEFAULT_ALERTDAYS_REQUIRED = "PUTCALL_DEFAULT_ALERTDAYS_REQUIRED";
 
-	//SOA cancel receipt details
+	// SOA cancel receipt details
 	public static final String SOA_SHOW_CANCEL_RECEIPT = "SOA_SHOW_CANCEL_RECEIPT";
 
 	public static final String PD_DOCUMENT_MANDATORY = "PD_DOCUMENT_MANDATORY";
@@ -232,7 +232,7 @@ public class SMTParameterConstants {
 	public static final String TV_DOCUMENT_MANDATORY = "TV_DOCUMENT_MANDATORY";
 	public static final String LV_DOCUMENT_MANDATORY = "LV_DOCUMENT_MANDATORY";
 
-	//Closure Maker field validation
+	// Closure Maker field validation
 	public static final String RECEIPT_CASH_PAN_MANDATORY = "RECEIPT_CASH_PAN_MANDATORY";
 	public static final String HOLD_INS_INST_POST = "HOLD_INS_INST_POST";// LMS
 

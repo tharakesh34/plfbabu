@@ -76,6 +76,7 @@ import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
+import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
@@ -365,16 +366,22 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		boolean posted = true;
 		Map<Integer, Long> data = null;
-		try {
-			data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(),
-					payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
-			for (Long linkedID : data.values()) {
-				if (linkedID == Long.MIN_VALUE) {
-					posted = false;
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+			try {
+				data = disbursementPostings.prepareDisbPostingApproval(payOrderIssueHeader.getFinAdvancePaymentsList(),
+						payOrderIssueHeader.getFinanceMain(), auditHeader.getAuditBranchCode());
+				for (Long linkedID : data.values()) {
+					if (linkedID == Long.MIN_VALUE) {
+						posted = false;
+					}
 				}
+			} catch (Exception e) {
+				posted = false;
 			}
-		} catch (Exception e) {
-			posted = false;
+			if (!posted) {
+				auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
+				return auditHeader;
+			}
 		}
 		if (!posted) {
 			auditHeader.setErrorDetails(new ErrorDetail("0000", "Postigs Failed", null));
@@ -894,6 +901,12 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	@Override
+	public List<ReturnDataSet> getInsurancePostings(String finReference) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

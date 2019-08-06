@@ -196,7 +196,6 @@ public class FinanceScheduleDetail extends AbstractWorkflowEntity {
 	private BigDecimal oDLimit = BigDecimal.ZERO;
 	@XmlElement(name = "availableLimit")
 	private BigDecimal availableLimit = BigDecimal.ZERO;
-	
 
 	public FinanceScheduleDetail(Date schDate, boolean repayOnSchDate, BigDecimal actRate) {
 		super();

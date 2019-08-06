@@ -2992,6 +2992,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			jointAccountDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_DISBURSMENT:
+			Events.sendEvent("onChange", finStartDate, null);
 			disbursementDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_STAGEACCOUNTING:
@@ -4418,7 +4419,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.nextRepayRvwDate.setValue(null);
 			this.nextRepayPftDate.setValue(null);
 		}
-		autoFinStartDateUpdation(getFinanceDetail());
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -8648,7 +8648,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				finAdvancePayments.setLLDate(appDate);
 			}
 			this.finStartDate.setValue(appDate);
-			Events.sendEvent("onChange", finStartDate, null);
+			//Events.sendEvent("onChange", finStartDate, null);
+			appendScheduleDetailTab(true, true);
 		}
 		logger.debug(Literal.LEAVING);
 		this.financeTypeDetailsTab.setSelected(true);
