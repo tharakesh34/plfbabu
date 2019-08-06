@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,8 +20,7 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
-		dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -76,8 +75,7 @@
 	</changeSet>
 
 	<changeSet id="44.1" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="ReferenceId" tableName="tax_details_temp"
-			defaultValue="0" />
+		<addDefaultValue columnName="ReferenceId" tableName="tax_details_temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="45" author="saikiran.v">
@@ -141,8 +139,7 @@
 	</changeSet>
 
 	<changeSet id="65" author="saikiran.v">
-		<createView viewName="manualadvisemovements_aview"
-			replaceIfExists="true">
+		<createView viewName="manualadvisemovements_aview" replaceIfExists="true">
 			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,
     		t1.status, t1.receiptid, t1.receiptseqid, t1.paidcgst, t1.paidsgst, t1.paidigst,t1.paidugst,
     		t2.advisetype, t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,t3.taxcomponent,
@@ -154,8 +151,7 @@
 	</changeSet>
 
 	<changeSet id="66" author="saikiran.v">
-		<createView viewName="manualadvisemovements_tview"
-			replaceIfExists="true">
+		<createView viewName="manualadvisemovements_tview" replaceIfExists="true">
 			SELECT t1.movementid,t1.adviseid,t1.movementdate,t1.movementamount,t1.paidamount,t1.waivedamount,t1.status,t1.receiptid,t1.receiptseqid,
 			t1.paidcgst,t1.paidsgst,t1.paidigst,t1.paidugst,t2.advisetype,t3.feetypecode,COALESCE(t3.taxapplicable, 0) AS taxapplicable,
 			t3.taxcomponent,t3.feetypedesc,t1.waivedcgst,t1.waivedsgst,t1.waivedugst,t1.waivedigst,t1.taxheaderid
@@ -289,7 +285,8 @@
 	<changeSet id="87" author="saikiran.v">
 		<sql>
 			update Tax_Header set workflowid=0 where workflowid is null;
-			update Tax_Header_temp set workflowid=0 where workflowid is null;
+			update Tax_Header_temp set workflowid=0 where
+			workflowid is null;
 			update Tax_details set workflowid=0 where workflowid is null;
 			update
 			Tax_details_temp set
@@ -298,14 +295,10 @@
 	</changeSet>
 
 	<changeSet id="88" author="saikiran.v">
-		<addNotNullConstraint tableName="Tax_Header"
-			columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_Header_temp"
-			columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_details"
-			columnName="workflowid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="Tax_details_temp"
-			columnName="workflowid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="Tax_Header" columnName="workflowid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="Tax_Header_temp" columnName="workflowid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="Tax_details" columnName="workflowid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="Tax_details_temp" columnName="workflowid" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="78" author="Durgaprasad.g">
@@ -338,20 +331,16 @@
 
 	<changeSet author="Kesav" id="82">
 		<addColumn tableName="FEEWAIVERDETAILS">
-			<column name="ActualReceivable" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="ReceivableGST" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="CurrActualWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="CurrWaiverGST" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -359,20 +348,16 @@
 
 	<changeSet author="Kesav" id="83">
 		<addColumn tableName="FEEWAIVERDETAILS_Temp">
-			<column name="ActualReceivable" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="ActualReceivable" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="ReceivableGST" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="ReceivableGST" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="CurrActualWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="CurrActualWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="CurrWaiverGST" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="CurrWaiverGST" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -432,8 +417,7 @@
 
 	<changeSet id="89" author="Durgaprasad.G">
 		<addColumn tableName="Finscheduledetails">
-			<column name="SchdPftWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -441,8 +425,7 @@
 
 	<changeSet id="90" author="Durgaprasad.G">
 		<addColumn tableName="Finscheduledetails_TEMP">
-			<column name="SchdPftWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -450,8 +433,7 @@
 
 	<changeSet id="91" author="Durgaprasad.G">
 		<addColumn tableName="FINSCHEDULEDETAILS_PA">
-			<column name="SchdPftWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -459,16 +441,14 @@
 
 	<changeSet id="92" author="Durgaprasad.G">
 		<addColumn tableName="FINSCHEDULEDETAILS_LOG">
-			<column name="SchdPftWaiver" type="decimal(18,0)"
-				defaultValue="0">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="93" author="Durgaprasad.G">
-		<createView viewName="FINSCHEDULEDETAILS_AVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
 			SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -555,8 +535,7 @@
 	</changeSet>
 
 	<changeSet id="94" author="Durgaprasad G">
-		<createView viewName="FINSCHEDULEDETAILS_VIEW"
-			replaceIfExists="true">
+		<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
 			  SELECT t1.finreference,
 								t1.schseq,
 								t1.schdate,
@@ -730,8 +709,7 @@
 	</changeSet>
 
 	<changeSet id="95" author="Durgaprasad.G">
-		<createView viewName="FINSCHEDULEDETAILS_TVIEW"
-			replaceIfExists="true">
+		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
 			  SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -831,13 +809,38 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="98" author="Varaprasad.K">
-        <addColumn tableName="RejectFinScheduledetails">
-            <column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-    </changeSet>
 
+	<changeSet id="98" author="Varaprasad.K">
+		<addColumn tableName="RejectFinScheduledetails">
+			<column name="SchdPftWaiver" type="decimal(18,0)" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="99_pre" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'amtvehicledealer_temp');
+				
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="99" author="Varaprasad.K">
+		<modifyDataType tableName="AMTVehicleDealer_temp" columnName="DEALERNAME" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer_temp" columnName="DEALERADDRESS1" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer_temp" columnName="DEALERADDRESS2" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer_temp" columnName="DEALERADDRESS3" newDataType="varchar(100)" />
+		<modifyDataType tableName="AMTVehicleDealer_temp" columnName="DEALERADDRESS4" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="99_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'amtvehicledealer_temp');
+					
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
