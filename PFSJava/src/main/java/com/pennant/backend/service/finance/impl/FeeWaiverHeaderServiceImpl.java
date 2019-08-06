@@ -112,8 +112,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
 /**
- * Service implementation for methods that depends on
- * <b>FeeWaiverHeader</b>.<br>
+ * Service implementation for methods that depends on <b>FeeWaiverHeader</b>.<br>
  * 
  */
 public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> implements FeeWaiverHeaderService {
@@ -452,15 +451,12 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * FeeWaiverHeader/FeeWaiverHeader_Temp by using FeeWaiverHeaderDAO's save
-	 * method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FeeWaiverHeaderDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTFeeWaiverHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
+	 * FeeWaiverHeader/FeeWaiverHeader_Temp by using FeeWaiverHeaderDAO's save method b) Update the Record in the table.
+	 * based on the module workFlow Configuration. by using FeeWaiverHeaderDAO's update method 3) Audit the record in to
+	 * AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -610,12 +606,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table FeeWaiverHeader by using FeeWaiverHeaderDAO's delete method with
-	 * type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * FeeWaiverHeader by using FeeWaiverHeaderDAO's delete method with type as Blank 3) Audit the record in to
+	 * AuditHeader and AdtFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -642,20 +636,15 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getFeeWaiverHeaderDAO().delete with parameters FeeWaiverHeader,""
-	 * b) NEW Add new record in to main table by using
-	 * getFeeWaiverHeaderDAO().save with parameters FeeWaiverHeader,"" c) EDIT
-	 * Update record in the main table by using getFeeWaiverHeaderDAO().update
-	 * with parameters FeeWaiverHeader,"" 3) Delete the record from the workFlow
-	 * table by using getFeeWaiverHeaderDAO().delete with parameters
-	 * FeeWaiverHeader,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) for
-	 * Work flow 5) Audit the record in to AuditHeader and AdtBMTFeeWaiverHeader
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getFeeWaiverHeaderDAO().delete with
+	 * parameters FeeWaiverHeader,"" b) NEW Add new record in to main table by using getFeeWaiverHeaderDAO().save with
+	 * parameters FeeWaiverHeader,"" c) EDIT Update record in the main table by using getFeeWaiverHeaderDAO().update
+	 * with parameters FeeWaiverHeader,"" 3) Delete the record from the workFlow table by using
+	 * getFeeWaiverHeaderDAO().delete with parameters FeeWaiverHeader,"_Temp" 4) Audit the record in to AuditHeader and
+	 * AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
+	 * AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
 	 * @param AuditHeader
@@ -1461,13 +1450,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getFeeWaiverHeaderDAO().delete with
-	 * parameters FeeWaiverHeader,"_Temp" 3) Audit the record in to AuditHeader
-	 * and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getFeeWaiverHeaderDAO().delete with parameters FeeWaiverHeader,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtBMTFeeWaiverHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1561,10 +1547,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -1671,10 +1655,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getFeeWaiverHeaderDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getFeeWaiverHeaderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
