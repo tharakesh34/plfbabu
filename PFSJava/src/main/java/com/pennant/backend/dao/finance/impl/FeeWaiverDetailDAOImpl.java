@@ -88,11 +88,13 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(tableType.getSuffix());
 		sql.append(" (WaiverDetailId, WaiverId, AdviseId, FinODSchdDate, ReceivableAmount,");
 		sql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode, FeeTypeDesc,");
-		sql.append(" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
+		sql.append(
+				" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
 		sql.append(" Version, lastMntBy, lastMntOn)");
 		sql.append(" Values( :WaiverDetailId, :WaiverId, :AdviseId, :FinODSchdDate, :ReceivableAmount,");
 		sql.append(" :ReceivedAmount, :WaivedAmount, :BalanceAmount, :CurrWaiverAmount, :FeeTypeCode, :FeeTypeDesc,");
-		sql.append(" :WaiverType, :TaxHeaderId, :ActualReceivable, :ReceivableGST, :CurrActualWaiver, :CurrWaiverGST, :TaxApplicable, :TaxComponent,");
+		sql.append(
+				" :WaiverType, :TaxHeaderId, :ActualReceivable, :ReceivableGST, :CurrActualWaiver, :CurrWaiverGST, :TaxApplicable, :TaxComponent,");
 		sql.append(" :Version, :lastMntBy, :lastMntOn)");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
@@ -118,8 +120,10 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(" AdviseId = :AdviseId, FinODSchdDate = :FinODSchdDate, ReceivableAmount = :ReceivableAmount,");
 		sql.append(" ReceivedAmount = :ReceivedAmount, WaivedAmount= :WaivedAmount, BalanceAmount = :BalanceAmount,");
 		sql.append(" CurrWaiverAmount = :CurrWaiverAmount, FeeTypeCode = :FeeTypeCode, FeeTypeDesc = :FeeTypeDesc,");
-		sql.append(" WaiverType = :WaiverType, TaxHeaderId = :TaxHeaderId, ActualReceivable = :ActualReceivable, ReceivableGST = :ReceivableGST,");
-		sql.append(" CurrActualWaiver = :CurrActualWaiver, CurrWaiverGST = :CurrWaiverGST, TaxApplicable = :TaxApplicable, TaxComponent = :TaxComponent");
+		sql.append(
+				" WaiverType = :WaiverType, TaxHeaderId = :TaxHeaderId, ActualReceivable = :ActualReceivable, ReceivableGST = :ReceivableGST,");
+		sql.append(
+				" CurrActualWaiver = :CurrActualWaiver, CurrWaiverGST = :CurrWaiverGST, TaxApplicable = :TaxApplicable, TaxComponent = :TaxComponent");
 		sql.append(" Where WaiverDetailId =:WaiverDetailId");
 		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -175,7 +179,8 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 
 		selectSql.append(" Select WaiverDetailId, WaiverId, AdviseId, FinODSchdDate, ReceivableAmount,");
 		selectSql.append(" ReceivedAmount, WaivedAmount, BalanceAmount, CurrWaiverAmount, FeeTypeCode, FeeTypeDesc,");
-		selectSql.append(" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
+		selectSql.append(
+				" WaiverType, TaxHeaderId, ActualReceivable, ReceivableGST, CurrActualWaiver, CurrWaiverGST, TaxApplicable, TaxComponent,");
 		selectSql.append(" Version, lastMntBy, lastMntOn");
 		selectSql.append(" From  FeeWaiverDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
