@@ -2903,5 +2903,33 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="53" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'DISB_HDFC_IMPORT');
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'MANDATES_EXPORT');
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'MANDATES_ACK');
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'MANDATES_IMPORT');
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'PRESENTMENT_REQUEST');
+				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'PRESENTMENT_RESPONSE');
+				
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'DISB_HDFC_IMPORT'), 'SFTP',null,'/sftpdata/Pennant/UAT/Bank/Disbursement/Response', 'Pennant', 'PenHa@123', null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_EXPORT'),'SFTP',null,'/sftpdata/Pennant/UAT/Bank/NACH_Mandate/Request', 'Pennant', 'PenHa@123',null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_ACK'),'SFTP',null,'/sftpdata/Pennant/UAT/Bank/NACH_Mandate/Acknowledgement', 'Pennant', 'PenHa@123',null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'MANDATES_IMPORT'),'SFTP',null,'/sftpdata/Pennant/UAT/Bank/NACH_Mandate/Response', 'Pennant', 'PenHa@123',null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'PRESENTMENT_REQUEST'),'SFTP',null,'/sftpdata/Pennant/UAT/Bank/NACH_Presentation/Request', 'Pennant', 'PenHa@123',null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+				insert into data_engine_event_properties values ((select id from data_engine_config where name = 'PRESENTMENT_RESPONSE'),'SFTP',null,'/sftpdata/Pennant/UAT/Bank/NACH_Presentation/Response', 'Pennant', 'PenHa@123',null,null,'10.108.1.4',22,null,(select max(id)+1 from data_engine_event_properties));
+
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'DISB_EXPORT_DEFAULT');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'DISB_HDFC_IMPORT');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'MANDATES_EXPORT');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'MANDATES_ACK');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'MANDATES_IMPORT');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'PRESENTMENT_REQUEST');
+				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'PRESENTMENT_RESPONSE');
+			]]>    	
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
 
