@@ -1670,9 +1670,12 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		this.chequeCaptureReq.setChecked(aFinanceType.isChequeCaptureReq());
 
-		this.sanctionAmount.setChecked(aFinanceType.isAlwSanctionAmt());
-		this.sanctionAmountOverride.setChecked(aFinanceType.isAlwSanctionAmtOverride());
-		checkSanctionAmountChecked();
+		if (!isOverdraft) {
+			this.sanctionAmount.setChecked(aFinanceType.isAlwSanctionAmt());
+			this.sanctionAmountOverride.setChecked(aFinanceType.isAlwSanctionAmtOverride());
+			checkSanctionAmountChecked();
+		}
+		
 		// Advance EMI Details
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
@@ -2229,7 +2232,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		try {
+			if (!isOverdraft) {
 			aFinanceType.setAllowRevolving(this.allowRevolving.isChecked());
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4510,6 +4515,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.tdsApplicableTo.setDisabled(isTrue);
 			this.tDSAllowToModify.setDisabled(isTrue);
 			this.allowDrawingPower.setDisabled(isTrue);
+			this.allowRevolving.setDisabled(isTrue);
 		}
 
 		this.rollOverFrq.setDisabled(isTrue);
@@ -4538,8 +4544,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cpzAtReAge.setDisabled(isTrue);
 		this.fddLockPeriod.setReadonly(isTrue);
 		this.manualSchedule.setDisabled(isTrue);
-		this.allowRevolving.setDisabled(isTrue);
-		this.allowDrawingPower.setDisabled(isTrue);
 		this.roundingMode.setDisabled(isTrue);
 		this.roundingTarget.setDisabled(isTrue);
 		this.alwMaxDisbCheckReq.setDisabled(isTrue);
@@ -4655,9 +4659,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-
-		this.sanctionAmount.setDisabled(isTrue);
-		this.sanctionAmountOverride.setDisabled(isTrue);
 		
 		if (!isOverdraft) {
 			this.putCallRequired.setDisabled(isTrue);
@@ -4675,6 +4676,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.grcAdvDefaultTerms.setReadonly(isTrue);
 			this.dsfReq.setDisabled(isTrue);
 			this.cashCollateralReq.setDisabled(isTrue);
+			this.sanctionAmount.setDisabled(isTrue);
+			this.sanctionAmountOverride.setDisabled(isTrue);
 		}
 		// tasks # >>End Advance EMI and DSF
 
