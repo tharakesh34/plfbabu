@@ -322,7 +322,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+
+		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 
 		// Bounce Reason Code
 		if (receiptHeader.getManualAdvise() != null) {
@@ -336,7 +338,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		auditHeaderDAO.addAudit(auditHeader);
+		//auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
