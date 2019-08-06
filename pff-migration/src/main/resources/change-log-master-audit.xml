@@ -38,5 +38,6 @@
 	<include file="change-logs/change-log-indas_amz-audit.xml" />
 	<include file="change-logs/change-log-5.0.6-audit.xml" /> 
 	<include file="change-logs/change-log-5.0.7-audit.xml" /> 
+	<include file="change-logs/change-log-5.0.7.1-audit.xml" /> 
 	<include file="change-logs/change-log-5.0.8-audit.xml" />
 </databaseChangeLog>
