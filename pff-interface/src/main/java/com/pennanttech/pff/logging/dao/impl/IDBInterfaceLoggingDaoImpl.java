@@ -66,12 +66,22 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 	}
 	@Override
 	public long getSequence() {
-		return getNextValue("SEQ_EXTERANAL_IDBINTERFACE");
+		long nextValue = 0;
+		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		nextValue = getNextValue("SEQ_EXTERANAL_IDBINTERFACE");
+		transactionManager.commit(txStatus);
+		txStatus.flush();
+		return nextValue;
 	}
 
 	@Override
 	public long getSequence(String seqName) {
-		return getNextValue(seqName);
+		long nextValue = 0;
+		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+		nextValue = getNextValue(seqName);
+		transactionManager.commit(txStatus);
+		txStatus.flush();
+		return nextValue;
 	}
 
 	@Override
