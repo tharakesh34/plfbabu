@@ -2895,7 +2895,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="52" author="vijaya.a">
+	<changeSet id="52.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				update Data_engine_config set fileprefixname = 'ClixCapitalstatus' , filenameformat = '${ddMMyyyy}', fileSequenceno = 2 where name = 'MANDATES_IMPORT';
