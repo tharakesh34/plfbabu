@@ -517,6 +517,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 			this.btnSave.setVisible(false);
 			this.btnNotes.setVisible(false);
 			this.groupboxWf.setVisible(false);
+			this.btnCMSTest.setVisible(false);
 		}
 
 		try {
