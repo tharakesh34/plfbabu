@@ -76,8 +76,7 @@ import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
- * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b>
- * class.<br>
+ * DAO methods implementation for the <b>WIFFinanceScheduleDetail model</b> class.<br>
  */
 public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail> implements FinanceScheduleDetailDAO {
 	private static Logger logger = Logger.getLogger(FinanceScheduleDetailDAOImpl.class);
@@ -122,7 +121,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 			selectSql.append(" From WIFFinScheduleDetails");
 		} else {
 			selectSql.append(" , RefundOrWaiver ,EarlyPaid, EarlyPaidBal, WriteoffPrincipal, WriteoffProfit, ");
-			selectSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver");
+			selectSql.append(
+					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver");
 			selectSql.append(" From FinScheduleDetails");
 		}
 
@@ -146,10 +146,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * This method Deletes the Record from the WIFFinScheduleDetails or
-	 * WIFFinScheduleDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Schedule Detail by
-	 * key FinReference
+	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
 	 * @param Finance
 	 *            Schedule Detail (wIFFinanceScheduleDetail)
@@ -186,10 +184,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * This method Deletes the Record from the WIFFinScheduleDetails or
-	 * WIFFinScheduleDetails_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Finance Schedule Detail by
-	 * key FinReference
+	 * This method Deletes the Record from the WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not
+	 * deleted then throws DataAccessException with error 41003. delete Finance Schedule Detail by key FinReference
 	 * 
 	 * @param Finance
 	 *            Schedule Detail (wIFFinanceScheduleDetail)
@@ -230,8 +226,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * This method insert new Records into WIFFinScheduleDetails or
-	 * WIFFinScheduleDetails_Temp.
+	 * This method insert new Records into WIFFinScheduleDetails or WIFFinScheduleDetails_Temp.
 	 * 
 	 * save Finance Schedule Detail
 	 * 
@@ -272,7 +267,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		insertSql.append(" SuplRent , IncrCost ,SuplRentPaid , IncrCostPaid , TDSAmount, TDSPaid, PftDaysBasis,");
 		if (!isWIF) {
 			insertSql.append(" RefundOrWaiver, EarlyPaid, EarlyPaidBal , WriteoffPrincipal, WriteoffProfit,");
-			insertSql.append(" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
+			insertSql.append(
+					" WriteoffIns , WriteoffIncrCost, WriteoffSuplRent, WriteoffSchFee, PartialPaidAmt, SchdPftWaiver,");
 		}
 		insertSql.append(" DefSchdDate, SchdMethod,  ");
 		insertSql.append(" RolloverOnSchDate , RolloverAmount, RolloverAmountPaid, InsuranceAmt)");
@@ -293,8 +289,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 				" :SuplRent , :IncrCost , :SuplRentPaid , :IncrCostPaid , :TDSAmount, :TDSPaid, :PftDaysBasis, ");
 		if (!isWIF) {
 			insertSql.append(" :RefundOrWaiver, :EarlyPaid, :EarlyPaidBal, :WriteoffPrincipal, :WriteoffProfit,");
-			insertSql
-					.append(" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
+			insertSql.append(
+					" :WriteoffIns , :WriteoffIncrCost, :WriteoffSuplRent, :WriteoffSchFee, :PartialPaidAmt, :SchdPftWaiver,");
 		}
 		insertSql.append("  :DefSchdDate, :SchdMethod, ");
 		insertSql.append(" :RolloverOnSchDate , :RolloverAmount, :RolloverAmountPaid, :InsuranceAmt)");
@@ -381,10 +377,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * This method updates the Record WIFFinScheduleDetails or
-	 * WIFFinScheduleDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Schedule Detail by
-	 * key FinReference and Version
+	 * This method updates the Record WIFFinScheduleDetails or WIFFinScheduleDetails_Temp. if Record not updated then
+	 * throws DataAccessException with error 41004. update Finance Schedule Detail by key FinReference and Version
 	 * 
 	 * @param Finance
 	 *            Schedule Detail (wIFFinanceScheduleDetail)
@@ -774,8 +768,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Method for get the count of FinScheduleDetails records depend on
-	 * condition
+	 * Method for get the count of FinScheduleDetails records depend on condition
 	 * 
 	 * @param finReference
 	 * @param schdDate
@@ -1040,8 +1033,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Method for Fetching Account hold Details on Future installment Amounts
-	 * grouping by Repayments Account
+	 * Method for Fetching Account hold Details on Future installment Amounts grouping by Repayments Account
 	 */
 	@Override
 	public List<AccountHoldStatus> getFutureInstAmtByRepayAc(Date dateValueDate, Date futureDate) {
@@ -1343,8 +1335,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Method for fetch Finance Schedule details when Principal Payment greater
-	 * than zero
+	 * Method for fetch Finance Schedule details when Principal Payment greater than zero
 	 * 
 	 */
 	@Override
@@ -1370,8 +1361,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Method for fetch Finance Schedule details when Principal Payment greater
-	 * than zero
+	 * Method for fetch Finance Schedule details when Principal Payment greater than zero
 	 * 
 	 */
 	@Override
@@ -1453,8 +1443,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * method return true if given date is Installment schedule or it will
-	 * consider as schedule change date
+	 * method return true if given date is Installment schedule or it will consider as schedule change date
 	 */
 	@Override
 	public boolean isInstallSchd(String finReference, Date lastPrevDate) {
@@ -1486,8 +1475,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 	}
 
 	/**
-	 * Ticket id:124998,receipt upload Retrieve closing balance for given
-	 * schedule date
+	 * Ticket id:124998,receipt upload Retrieve closing balance for given schedule date
 	 * 
 	 * @param finReference
 	 * @param valueDate
