@@ -128,12 +128,14 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(" FinRpyAmount, FinPostDate , FinValueDate, FinBranch,");
 		sql.append(" FinType, FinCustID, FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid,");
 		sql.append(" SchdFeePaid , SchdInsPaid , SchdSuplRentPaid , SchdIncrCostPaid,");
-		sql.append(" FinTotSchdPaid, FinFee, FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId, WaiverId) Values(");
+		sql.append(
+				" FinTotSchdPaid, FinFee, FinWaiver, FinRefund, PenaltyPaid, PenaltyWaived, ReceiptId, WaiverId) Values(");
 		sql.append(" :FinReference, :FinSchdDate, :FinRpyFor, :FinPaySeq,:LinkedTranId,");
 		sql.append(" :FinRpyAmount, :FinPostDate, :FinValueDate, :FinBranch,");
 		sql.append(" :FinType, :FinCustID, :FinSchdPriPaid, :FinSchdPftPaid,:FinSchdTdsPaid,");
 		sql.append(" :SchdFeePaid , :SchdInsPaid ,  :SchdSuplRentPaid , :SchdIncrCostPaid,");
-		sql.append(" :FinTotSchdPaid,:FinFee, :FinWaiver, :FinRefund, :PenaltyPaid, :PenaltyWaived, :ReceiptId, :WaiverId)");
+		sql.append(
+				" :FinTotSchdPaid,:FinFee, :FinWaiver, :FinRefund, :PenaltyPaid, :PenaltyWaived, :ReceiptId, :WaiverId)");
 
 		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);
@@ -508,7 +510,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		insertSql.append(
 				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow,");
 		insertSql.append(" PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST,");
-		insertSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId) ");
+		insertSql.append(
+				" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId) ");
 		insertSql.append(
 				" Values(:RepayID,:RepaySchID, :FinReference , :SchDate , :SchdFor , :LinkedTranId , :ProfitSchdBal , :PrincipalSchdBal , ");
 		insertSql.append(
@@ -754,7 +757,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		selectSql.append(
 				" PriSchdWaivedNow, SchdFeeWaivedNow, SchdInsWaivedNow, SchdSuplRentWaivedNow, SchdIncrCostWaivedNow,");
 		selectSql.append(" PaidPenaltyCGST, PaidPenaltySGST, PaidPenaltyUGST, PaidPenaltyIGST,");
-		selectSql.append(" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId");
+		selectSql.append(
+				" PenaltyWaiverCGST, PenaltyWaiverSGST, PenaltyWaiverUGST, PenaltyWaiverIGST, TaxHeaderId, WaiverId");
 		selectSql.append(" From FinRepayScheduleDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" where RepayID=:RepayID ");
