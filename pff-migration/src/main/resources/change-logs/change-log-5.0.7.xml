@@ -3846,4 +3846,56 @@
       	   ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="118" author="vijaya.a">
+		<comment>Commodity and LAS</comment>
+		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
+			  SELECT t1.id,
+    			t2.code commodityTypeCode,
+    			t1.commoditytype,
+    			t1.code,
+    			t1.description,
+    			t1.currentvalue,
+    			t1.hsncode,
+    			t1.active,
+    			t2.unittype,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+    			t1.rolecode,
+    			t1.nextrolecode,
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM commodities_temp t1
+     		  JOIN commodity_types t2 ON t2.id = t1.commoditytype
+			  UNION ALL
+ 			  SELECT t1.id,
+ 				t2.code commodityTypeCode,
+    			t1.commoditytype,
+    			t1.code,
+    			t1.description,
+    			t1.currentvalue,
+    			t1.hsncode,
+    			t1.active,
+    			t2.unittype,
+    			t1.version,
+    			t1.lastmntby,
+    			t1.lastmnton,
+    			t1.recordstatus,
+    			t1.rolecode,
+    			t1.nextrolecode,	
+    			t1.taskid,
+    			t1.nexttaskid,
+    			t1.recordtype,
+    			t1.workflowid
+   			  FROM commodities t1
+     		  JOIN commodity_types t2 ON t2.id = t1.commoditytype
+  			  WHERE NOT (EXISTS ( SELECT 1
+              FROM commodities_temp
+              WHERE commodities_temp.id = t1.id))
+		</createView>
+	</changeSet>
 </databaseChangeLog>
