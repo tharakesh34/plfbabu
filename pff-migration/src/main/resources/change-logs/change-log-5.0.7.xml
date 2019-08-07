@@ -3683,7 +3683,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="110_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3692,14 +3692,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="110" author="Varaprasad.k">
 		<modifyDataType tableName="finprovisions" columnName="USENFPROV" newDataType="boolean" />
 		<modifyDataType tableName="finprovisions_temp" columnName="USENFPROV" newDataType="boolean" />
 		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP" newDataType="boolean" />
 		<modifyDataType tableName="finprovisions_temp" columnName="AUTORELEASENFP" newDataType="boolean" />
 	</changeSet>
-	
+
 	<changeSet id="110_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3708,7 +3708,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="111" author="Saikiran.v">
 		<sql>
 			<![CDATA[
@@ -3846,7 +3846,7 @@
       	   ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="119" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
 		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
@@ -3920,4 +3920,35 @@
               WHERE commodities_temp.id = t1.id))
 		</createView>
 	</changeSet>
+
+	<changeSet id="120" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+			delete from errordetails where code='RM0001';
+			INSERT INTO ErrorDetails VALUES('RM0001','EN','E','Now allowed to do earlysettlement on/after maturity date.','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		   ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="121" author="Sudhakar.N">
+		<createIndex tableName="plfapilogdetails" indexName="idx_apilogdetails_messageid">
+			<column name="pincode" />
+			<column name="entityid" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="122" author="Sudhakar.N">
+		<createIndex tableName="pincodes" indexName="idx_pincodes_pincode_city">
+			<column name="messageid" />
+			<column name="city" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="123" author="Sudhakar.N">
+		<createIndex tableName="bankbranches" indexName="idx_apilogdetails_messageid">
+			<column name="micr" />
+			<column name="active" />
+		</createIndex>
+	</changeSet>
+
 </databaseChangeLog>
