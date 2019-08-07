@@ -218,6 +218,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	public void onClick$btnNew_NewFinOption(Event event) throws Exception {
 		FinOption option = new FinOption();
+		//FIXME GDP Default value set to 7, need to parameterized.
+		option.setAlertDays(7);
 		isFinOptionNew = true;
 		option.setNewRecord(true);
 		if (StringUtils.isBlank(option.getRecordType())) {

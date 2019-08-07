@@ -430,15 +430,13 @@
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="35" author="srihari">
-
-		<sql> <![CDATA[
+		<sql> 
+			<![CDATA[
               ALTER TABLE PaymentTransaction MODIFY (TRANREFERENCE VARCHAR2(20));
-
-              ALTER TABLE PaymentTransaction MODIFY (TRANBATCH VARCHAR2(20)); ]]>
+              ALTER TABLE PaymentTransaction MODIFY (TRANBATCH VARCHAR2(20)); 
+              ]]>
 		</sql>
-
 	</changeSet>
 	
 	<changeSet id="36" author="satyanarayana.g">
@@ -448,6 +446,5 @@
 			]]>
 		</sql>
 	</changeSet>
-
 	
 </databaseChangeLog>

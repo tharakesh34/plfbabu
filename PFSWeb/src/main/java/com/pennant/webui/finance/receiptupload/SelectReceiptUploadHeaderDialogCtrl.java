@@ -510,7 +510,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 					&& fsHeaderKeys.contains("INSTRUMENTDATE") && fsHeaderKeys.contains("PANNUMBER")
 					&& fsHeaderKeys.contains("EXTERNALREF") && fsHeaderKeys.contains("COLLECTIONAGENT")
 					&& fsHeaderKeys.contains("RECEIVEDFROM"))) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_HeaderSheet_Format.value"));
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
 				return false;
 			}
 
@@ -519,7 +519,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			if (shHeaderKeys == null || !(shHeaderKeys.contains("<ROOT>_id") && shHeaderKeys.contains("ALLOCATIONTYPE")
 					&& shHeaderKeys.contains("REFERENCECODE") && shHeaderKeys.contains("PAIDAMOUNT")
 					&& shHeaderKeys.contains("WAIVEDAMOUNT"))) {
-				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_AllocSheet_Format.value"));
+				MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_Format_NotAllowed.value"));
 				return false;
 			}
 
