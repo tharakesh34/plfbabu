@@ -41,6 +41,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
+import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -97,8 +98,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	protected South south1;
 
 	private boolean isFinOptionNew = false;
-	private FinanceMainBaseCtrl financeMainDialogCtrl;
 	private boolean newCustomer;
+	private boolean fromLoan;
+	private FinOption finOption; 
 
 	public FinOptionDialogCtrl() {
 		super();
@@ -109,6 +111,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		super.pageRightName = "";
 	}
 
+	@SuppressWarnings("unchecked")
 	public void onCreate$finOptionListWindow(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -160,11 +163,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			} else {
 				this.south.setHeight("0px");
 			}
-
 		}
-
 		if (arguments.containsKey("financeMainDialogCtrl")) {
-			financeMainDialogCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainDialogCtrl");
+			fromLoan = true;
 			setNewCustomer(true);
 		}
 
@@ -193,6 +194,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION);
 		}
+	}
+	
+	public void onClick$btnNotes(Event event) {
+		doShowNotes(this.finOption);
 	}
 
 	private void doShowDialog() {
@@ -777,10 +782,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			}
 
 			boolean isNew = option.isNew();
-			String tranType = "";
-
 			if (isWorkFlowEnabled()) {
-				tranType = PennantConstants.TRAN_WF;
 				if (StringUtils.isBlank(option.getRecordType())) {
 					option.setVersion(option.getVersion() + 1);
 					if (isNew) {
@@ -796,7 +798,6 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 						option.setVersion(1);
 						option.setRecordType(PennantConstants.RCD_ADD);
 					} else {
-						tranType = PennantConstants.TRAN_UPD;
 					}
 
 					if (StringUtils.isBlank(option.getRecordType())) {
@@ -805,17 +806,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 					}
 
 					if (option.getRecordType().equals(PennantConstants.RCD_ADD) && option.isNewRecord()) {
-						tranType = PennantConstants.TRAN_ADD;
 					} else if (option.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						option.setVersion(option.getVersion() + 1);
-						tranType = PennantConstants.TRAN_UPD;
 					}
 				} else {
 					option.setVersion(option.getVersion() + 1);
 					if (isNew) {
-						tranType = PennantConstants.TRAN_ADD;
 					} else {
-						tranType = PennantConstants.TRAN_UPD;
 					}
 				}
 			}
@@ -931,7 +928,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			ExtendedCombobox customerTemplate = (ExtendedCombobox) getComponent(row, 11);
 
 			String frequencyValue = frequency.getSelectedItem().getValue();
-			Date appDate = DateUtility.getAppDate();
+			Date appDate = SysParamUtil.getAppDate();
 			Date selectedOptionDate = currentOption.getValue();
 
 			int days = 0;
@@ -1043,6 +1040,14 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		if (isWorkFlowEnabled()) {
+			
+			//Notes button
+			if (!fromLoan) {
+				if (StringUtils.isNotBlank(this.finMaintainInstruction.getRecordType())) {
+					this.btnNotes.setVisible(true);
+				}
+			}
+			
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
@@ -1050,14 +1055,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			List<FinOption> finOptions = financeDetail.getFinOptions();
 
 			for (FinOption finOption : finOptions) {
-
 				if (finOption.isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				} else {
-
-				}
+				} 
 			}
+			
 			this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 		}
 		logger.debug(Literal.LEAVING);
@@ -1371,6 +1374,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		aFinMaintainInstruction.setFinOptions(this.financeDetail.getFinOptions());
 	}
 
+	@Override
+	protected String getReference() {
+		return String.valueOf(financeDetail.getFinScheduleData().getFinReference());
+	}
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
