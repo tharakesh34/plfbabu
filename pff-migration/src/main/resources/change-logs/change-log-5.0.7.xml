@@ -3847,7 +3847,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="118" author="vijaya.a">
+	<changeSet id="119" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
 		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
 			  SELECT t1.id,
@@ -3857,8 +3857,17 @@
     			t1.description,
     			t1.currentvalue,
     			t1.hsncode,
-    			t1.active,
+    			t1.alertsRequired,
+    			t1.alertType,
+    			t1.alertToRoles,
+    			t1.UserTemplate,
+    			T3.TemplateCode UserTemplateCode,
+			  	T3.TemplateDesc UserTemplateName,
+    			t1.CustomerTemplate,
+    			T4.TemplateCode CustomerTemplateCode,
+			  	T4.TemplateDesc CustomerTemplateName,
     			t2.unittype,
+    			t1.active,
     			t1.version,
     			t1.lastmntby,
     			t1.lastmnton,
@@ -3870,7 +3879,9 @@
     			t1.recordtype,
     			t1.workflowid
    			  FROM commodities_temp t1
-     		  JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			  LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
 			  UNION ALL
  			  SELECT t1.id,
  				t2.code commodityTypeCode,
@@ -3879,8 +3890,17 @@
     			t1.description,
     			t1.currentvalue,
     			t1.hsncode,
-    			t1.active,
+    			t1.alertsRequired,
+    			t1.alertType,
+    			t1.alertToRoles,
+    			t1.UserTemplate,
+    			T3.TemplateCode UserTemplateCode,
+			  	T3.TemplateDesc UserTemplateName,
+    			t1.CustomerTemplate,
+    			T4.TemplateCode CustomerTemplateCode,
+			  	T4.TemplateDesc CustomerTemplateName,
     			t2.unittype,
+    			t1.active,
     			t1.version,
     			t1.lastmntby,
     			t1.lastmnton,
@@ -3892,7 +3912,9 @@
     			t1.recordtype,
     			t1.workflowid
    			  FROM commodities t1
-     		  JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN commodity_types t2 ON t2.id = t1.commoditytype
+     		  LEFT JOIN TEMPLATES T3 ON T3.TemplateId = T1.UserTemplate
+			  LEFT JOIN TEMPLATES T4 ON T4.TemplateId = T1.CustomerTemplate
   			  WHERE NOT (EXISTS ( SELECT 1
               FROM commodities_temp
               WHERE commodities_temp.id = t1.id))
