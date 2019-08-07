@@ -3847,7 +3847,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="119" author="vijaya.a">
+	<changeSet id="118" author="vijaya.a">
 		<comment>Commodity and LAS</comment>
 		<createView viewName="COMMODITIES_VIEW" replaceIfExists="true">
 			  SELECT t1.id,
