@@ -218,6 +218,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected ExtendedCombobox postBranch;
 	protected ExtendedCombobox cashierBranch;
 	protected ExtendedCombobox finDivision;
+	private boolean isAccountingExecuted = false;
 
 	/**
 	 * default constructor.<br>
@@ -862,7 +863,16 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				doClearMessage();
 				doSetValidation();
 				doWriteComponentsToBean();
-
+				// Accounting Details Validations
+				if (getTab(AssetConstants.UNIQUE_ID_ACCOUNTING) != null
+						&& getTab(AssetConstants.UNIQUE_ID_ACCOUNTING).isVisible()) {
+					boolean validate = false;
+					validate = validateAccounting(validate);
+					if (validate && !isAccountingExecuted) {
+						MessageUtil.showError(Labels.getLabel("label_Finance_Calc_Accountings"));
+						return;
+					}
+				}
 				FinReceiptHeader header = getReceiptHeader();
 				if (header.getReceiptDetails().isEmpty()) {
 					FinReceiptDetail receiptDetail = new FinReceiptDetail();
@@ -919,6 +929,16 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Leaving");
 	}
 
+	private boolean validateAccounting(boolean validate) {
+		if (this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("Cancel")
+				|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+				|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
+			validate = false;
+		} else {
+			validate = true;
+		}
+		return validate;
+	}
 	/**
 	 * Method for Process Repayment Details
 	 * 
@@ -1351,6 +1371,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		if (accountingDetailDialogCtrl != null) {
 			accountingDetailDialogCtrl.doFillAccounting(accountingSetEntries);
+			isAccountingExecuted = true;
 		}
 
 		logger.debug("Leaving");
