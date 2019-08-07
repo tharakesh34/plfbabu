@@ -57,6 +57,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * Item renderer for listItems in the listBox.
@@ -75,11 +76,17 @@ public class ReceiptCancellationListModelItemRenderer implements ListitemRendere
 		Listcell lc;
 		lc = new Listcell(header.getReference());
 		lc.setParent(item);
+		lc = new Listcell(header.getPromotionCode());
+		lc.setParent(item);
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()));
 		lc.setParent(item);
 		lc = new Listcell(
 				PennantAppUtil.getlabelDesc(header.getReceiptMode(), PennantStaticListUtil.getReceiptModes()));
+		lc.setParent(item);
+		lc = new Listcell(header.getTransactionRef());
+		lc.setParent(item);
+		lc = new Listcell(DateUtility.format(header.getReceiptDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(PennantApplicationUtil.amountFormate(header.getReceiptAmount(),
 				CurrencyUtil.getFormat(header.getFinCcy())));

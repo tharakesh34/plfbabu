@@ -141,40 +141,37 @@
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxReceiptCancellation" emptyMessage="${c:l('listbox.emptyMessage')}"
-							tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
-							span="true">
+						<listbox id="listBoxReceiptCancellation" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
-								<listheader id="listheader_ReceiptCancellationReference"
-									label="${c:l('listheader_ReceiptCancellationReference.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellation_PromotionCode"
-									label="${c:l('listheader_ReceiptCancellation_PromotionCode')}" sort="auto" hflex="min" visible="false" />
-								<listheader id="listheader_ReceiptCancellationPurpose"
-									label="${c:l('listheader_ReceiptCancellationPurpose.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationMode"
-									label="${c:l('listheader_ReceiptCancellationMode.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellation_ReceiptRef"
-									label="${c:l('listheader_ReceiptCancellation_ReceiptRef')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellation_ReceiptDate"
-									label="${c:l('listheader_ReceiptCancellation_ReceiptDate')}" sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationReference" label="${c:l('listheader_ReceiptCancellationReference.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_PromotionCode" label="${c:l('listheader_ReceiptCancellation_PromotionCode')}"
+									sort="auto" hflex="min" visible="false"/>
+								<listheader id="listheader_ReceiptCancellationPurpose" label="${c:l('listheader_ReceiptCancellationPurpose.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationMode" label="${c:l('listheader_ReceiptCancellationMode.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_ReceiptRef" label="${c:l('listheader_ReceiptCancellation_ReceiptRef')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellation_ReceiptDate" label="${c:l('listheader_ReceiptCancellation_ReceiptDate')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptCancellationAmount" align="right"
 									label="${c:l('listheader_ReceiptCancellationAmount.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationAllocattionType"
-									label="${c:l('listheader_ReceiptCancellationAllocattionType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationFinType"
-									label="${c:l('listheader_ReceiptCancellationFinType.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationFinBranch"
-									label="${c:l('listheader_ReceiptCancellationFinBranch.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationCusomer"
-									label="${c:l('listheader_ReceiptCancellationCusomer.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptCancellationReceivedDate"
-									label="${c:l('listheader_ReceiptCancellationReceivedDate.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationAllocattionType" label="${c:l('listheader_ReceiptCancellationAllocattionType.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationFinType" label="${c:l('listheader_ReceiptCancellationFinType.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationFinBranch" label="${c:l('listheader_ReceiptCancellationFinBranch.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationCusomer" label="${c:l('listheader_ReceiptCancellationCusomer.label')}"
+									sort="auto" hflex="min" />
+								<listheader id="listheader_ReceiptCancellationReceivedDate" label="${c:l('listheader_ReceiptCancellationReceivedDate.label')}"
+									sort="auto" hflex="min" />
 								<listheader id="listheader_ReceiptCancellationCustName" visible="false"
 									label="${c:l('listheader_ReceiptCancellationCustName.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
-									hflex="min" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>
