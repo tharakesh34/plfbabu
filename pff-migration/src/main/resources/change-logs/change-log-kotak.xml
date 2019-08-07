@@ -440,6 +440,14 @@
 		</sql>
 
 	</changeSet>
+	
+	<changeSet id="36" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDLABEL='Limit Line' WHERE REPORTID=108 AND FIELDLABEL='Product';
+			]]>
+		</sql>
+	</changeSet>
 
 	
 </databaseChangeLog>
