@@ -3932,20 +3932,21 @@
 
 	<changeSet id="121" author="Sudhakar.N">
 		<createIndex tableName="plfapilogdetails" indexName="idx_apilogdetails_messageid">
-			<column name="pincode" />
+			<column name="messageid" />
+			<column name="processed" />
 			<column name="entityid" />
 		</createIndex>
 	</changeSet>
 
 	<changeSet id="122" author="Sudhakar.N">
 		<createIndex tableName="pincodes" indexName="idx_pincodes_pincode_city">
-			<column name="messageid" />
+			<column name="pincode" />
 			<column name="city" />
 		</createIndex>
 	</changeSet>
 
 	<changeSet id="123" author="Sudhakar.N">
-		<createIndex tableName="bankbranches" indexName="idx_apilogdetails_messageid">
+		<createIndex tableName="bankbranches" indexName="idx_bankbranches_micr_activce">
 			<column name="micr" />
 			<column name="active" />
 		</createIndex>
