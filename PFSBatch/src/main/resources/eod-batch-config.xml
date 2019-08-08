@@ -96,13 +96,13 @@
 
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
-			<fail on="FAILED" />
 			<next on="*" to="gstDownload" />
+			<fail on="FAILED" />
 		</step>
 		<step id="gstDownload">
 			<tasklet ref="gSTDownloadTaskLet" />
-			<fail on="FAILED" />
 			<next on="*" to="collateralRevaluation" />
+			<fail on="FAILED" />
 		</step>
 		<step id="collateralRevaluation">
 			<tasklet>
