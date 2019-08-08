@@ -784,6 +784,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(presentmentDetail.getPresentmentAmt());
+			receiptDetail.setDueAmount(presentmentDetail.getPresentmentAmt());
 			receiptDetail.setValueDate(presentmentDetail.getSchDate());
 			receiptDetail.setReceivedDate(appDate);
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());
@@ -799,6 +800,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
 			receiptDetail.setPayAgainstID(presentmentDetail.getExcessID());
 			receiptDetail.setAmount(presentmentDetail.getAdvanceAmt());
+			receiptDetail.setDueAmount(presentmentDetail.getAdvanceAmt());
 			receiptDetail.setValueDate(presentmentDetail.getSchDate());
 			receiptDetail.setReceivedDate(appDate);
 			receiptDetail.setPartnerBankAc(presentmentDetail.getAccountNo());

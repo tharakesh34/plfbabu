@@ -340,7 +340,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 
 		// Fetching Promotion Details from main view
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), "_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}
@@ -4856,7 +4856,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 
 		// Fetching Promotion Details from main view
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), "_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}

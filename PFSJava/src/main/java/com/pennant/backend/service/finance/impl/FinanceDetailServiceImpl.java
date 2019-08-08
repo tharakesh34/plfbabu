@@ -8393,7 +8393,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
 			// Fetching Promotion Details
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), type);
 			scheduleData.getFinanceType().setFInTypeFromPromotiion(promotion);

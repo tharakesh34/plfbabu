@@ -1145,7 +1145,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		aeEvent.getAcSetIDList().clear();
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && financeMain.getPromotionSeqId() == 0) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null &&financeMain.getPromotionSeqId() == 0)) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
 					eventCode, FinanceConstants.MODULEID_PROMOTION));
 		} else {
