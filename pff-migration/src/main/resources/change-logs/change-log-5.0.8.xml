@@ -4084,7 +4084,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="114" author="DSurgaprasad G">
+	<changeSet id="114" author="Durgaprasad G">
 		<sql>
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
