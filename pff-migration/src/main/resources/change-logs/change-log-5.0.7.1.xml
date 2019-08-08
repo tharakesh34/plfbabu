@@ -843,4 +843,14 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="100" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+		Delete from SMTparameters where SysParmCode = 'SAP_GL_CATGRY_CODE';
+        INSERT INTO SMTparameters  VALUES ('SAP_GL_CATGRY_CODE', 'SAPGL category code', 'String', '1', 'LEAP', 30, 0, NULL, NULL,'SAPGL category code', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);	
+		]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
