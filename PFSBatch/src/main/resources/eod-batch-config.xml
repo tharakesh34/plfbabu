@@ -100,9 +100,9 @@
 			<fail on="FAILED" />
 		</step>
 		<step id="gstDownload">
-					<tasklet ref="gSTDownloadTaskLet" />
-					<fail on="FAILED" />
-					<next on="*" to="collateralRevaluation" />
+			<tasklet ref="gSTDownloadTaskLet" />
+			<fail on="FAILED" />
+			<next on="*" to="collateralRevaluation" />
 		</step>
 		<step id="collateralRevaluation">
 			<tasklet>
