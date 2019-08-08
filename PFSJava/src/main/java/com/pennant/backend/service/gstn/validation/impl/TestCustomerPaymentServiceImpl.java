@@ -16,12 +16,12 @@ public class TestCustomerPaymentServiceImpl implements TestCustomerPaymentServic
 	private CustomerPaymentService customerPaymentService;
 
 	@Override
-	public void processOnlinePayment(List<FinAdvancePayments> finAdvPaymentList) {
+	public void processOnlinePayment(List<FinAdvancePayments> finAdvPaymentList, String paymentType) {
 		logger.debug(Literal.ENTERING);
 		if (customerPaymentService == null) {
 			logger.debug("customerPaymentService is null");
 		}
-		customerPaymentService.processOnlinePayment(finAdvPaymentList);
+		customerPaymentService.processOnlinePayment(finAdvPaymentList, paymentType);
 		logger.debug(Literal.LEAVING);
 	}
 

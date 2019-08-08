@@ -5,5 +5,6 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 
 public interface TestCustomerPaymentService {
-	void processOnlinePayment(List<FinAdvancePayments> finAdvPaymentList);
+
+	void processOnlinePayment(List<FinAdvancePayments> finAdvancePaymentsLists, String paymentType);
 }

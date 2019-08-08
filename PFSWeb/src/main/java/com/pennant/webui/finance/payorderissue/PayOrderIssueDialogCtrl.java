@@ -320,7 +320,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		logger.debug("Entering");
 		try {
 			List<FinAdvancePayments> finAdvancePaymentsLists = new ArrayList<FinAdvancePayments>();
-			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists);
+			String paymentType = "DISB";
+			this.testCustomerPaymentService.processOnlinePayment(finAdvancePaymentsLists, paymentType);
 
 			//call To Service
 		} catch (Exception e) {
