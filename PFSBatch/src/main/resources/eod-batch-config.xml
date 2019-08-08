@@ -96,8 +96,8 @@
 
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
-			<next on="*" to="gstDownload" />
 			<fail on="FAILED" />
+			<next on="*" to="gstDownload" />
 		</step>
 		<step id="gstDownload">
 			<tasklet ref="gSTDownloadTaskLet" />
