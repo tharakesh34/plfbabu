@@ -285,7 +285,8 @@
 			UPDATE ERRORDETAILS_TEMP E SET
 			Message = REPLACE(E.Message, 'Grace', 'Moratorium');
 
-			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'grace', 'moratorium');
+			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'grace',
+			'moratorium');
 			UPDATE ERRORDETAILS_TEMP E SET Message =
 			REPLACE(E.Message, 'grace', 'moratorium');
 		</sql>
@@ -401,12 +402,12 @@
 			<column name="FIELDNAME " type="VARCHAR2(20)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="32" author="satyanarayana.g">
 		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL" oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
 	</changeSet>
-	
-<changeSet id="33" author="Durgaprasads G">
+
+	<changeSet id="33" author="Durgaprasads G">
 		<sql>
 			<![CDATA[
 				delete from smtparameters where sysparmcode = 'LOAN_REF_FORMAT';
@@ -417,7 +418,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="34" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -438,7 +439,7 @@
               ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="36" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -446,5 +447,37 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="37" author="srihari.m" dbms="oracle">
+		<sql>
+			  <![CDATA[
+			       drop table PAYMENTTRANSACTION;
+			   ]]>
+		</sql>
+	</changeSet>
 	
+	<changeSet id="38" author="srihari.m" dbms="oracle">
+		<createTable tableName="PaymentTransaction">
+			<column name="TRANSACTIONID" type="NUMBER" autoIncrement="true" />
+			<column name="PAYMENTID" type="NUMBER">
+				<constraints nullable="false" />
+			</column>
+			<column name="MessageId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PaymentId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANMODULE" type="VARCHAR(4)" />
+			<column name="TRANREFERENCE" type="VARCHAR(20)" />
+			<column name="TRANBATCH" type="VARCHAR(20)" />
+			<column name="TRANSTATUS" type="CHAR(1)" />
+			<column name="RESPREFERENCE" type="VARCHAR(50)" />
+			<column name="STATUSCODE" type="VARCHAR(10)" />
+			<column name="STATUSDESC" type="VARCHAR(100)" />
+			<column name="TRANSCTIONINITON" type="datetime" />
+			<column name="STATUSUPDATEON" type="datetime" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
