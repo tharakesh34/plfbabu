@@ -465,9 +465,6 @@
 			<column name="MessageId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="PaymentId" type="bigint">
-				<constraints nullable="false" />
-			</column>
 			<column name="TRANMODULE" type="VARCHAR(4)" />
 			<column name="TRANREFERENCE" type="VARCHAR(20)" />
 			<column name="TRANBATCH" type="VARCHAR(20)" />
