@@ -476,5 +476,13 @@
 			<column name="STATUSUPDATEON" type="datetime" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="39" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION SET WHERECONDITION=0 WHERE MENUITEMCODE='MENU_ITEM_NPAREPORT';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
