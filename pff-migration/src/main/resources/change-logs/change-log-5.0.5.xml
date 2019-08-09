@@ -4870,5 +4870,9 @@
 		]]>
 		</sql>
 	</changeSet>
-
+	
+    <changeSet id="139" author="aditya.a">
+      <modifyDataType tableName="data_engine_column" columnName="DefaultValue" newDataType="varchar(200)"/>
+    </changeSet>
+    
 </databaseChangeLog>
