@@ -247,7 +247,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null) {
+			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
@@ -525,7 +525,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null) {
+			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
@@ -1479,6 +1479,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		Taxes cess = null;
 		if (taxHeader == null) {
 			taxHeader = new TaxHeader();
+			taxHeader.setNewRecord(true);
+			taxHeader.setRecordType(PennantConstants.RCD_ADD);
+			taxHeader.setVersion(taxHeader.getVersion() + 1);
 			finFeeDetail.setTaxHeader(taxHeader);
 		}
 		List<Taxes> taxDetails = taxHeader.getTaxDetails();
