@@ -4875,4 +4875,13 @@
       <modifyDataType tableName="data_engine_column" columnName="DefaultValue" newDataType="varchar(200)"/>
     </changeSet>
     
+    <changeSet id="140" author="aditya.a">
+		<sql>
+		<![CDATA[
+		    delete from RBFieldDetails where rbfldname = 'principalSchdOutstanding'  and rbmodule = 'FEES' and rbevent = 'EARLYSTL';
+            Insert into RBFieldDetails Values ('FEES','EARLYSTL','principalSchdOutstanding','Principal Schedule Outstanding','Decimal',30,'1','1',' ','static,global',' ');
+		]]>
+		</sql>
+	</changeSet>
+    
 </databaseChangeLog>
