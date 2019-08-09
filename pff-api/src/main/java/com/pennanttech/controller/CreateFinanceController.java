@@ -138,6 +138,7 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -3055,7 +3056,27 @@ public class CreateFinanceController extends SummaryDetailService {
 				return response;
 			}
 		}
+		List<FinanceScheduleDetail> schdList = findetail.getFinScheduleData().getFinanceScheduleDetails();
+		FinanceScheduleDetail bpiSchedule = null;
+		for (int i = 1; i < schdList.size(); i++) {
+			FinanceScheduleDetail curSchd = schdList.get(i);
+			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+				bpiSchedule = curSchd;
+				continue;
+			}
 
+			if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null), userDetails.getLanguage());
+
+				response = new FinanceDetail();
+				doEmptyResponseObject(response);
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
+				logger.debug("Leaving");
+				return response;
+			}
+		}
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
