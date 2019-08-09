@@ -3952,4 +3952,13 @@
 		</createIndex>
 	</changeSet>
 
+	<changeSet id="124" author="Prabhakar">
+		<sql>
+		<![CDATA[
+	      update RBFIELDDETAILS set RBFLDTYPE = 'char', RBFLDDESC = 'Eligibility Method' where  RBFLDNAME  = 'eligibilityMethod';
+		 ]]>
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
