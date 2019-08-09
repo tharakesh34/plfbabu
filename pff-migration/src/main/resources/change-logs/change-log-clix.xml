@@ -3055,7 +3055,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="53" author="vijaya.a">
+	<changeSet id="60" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				delete from data_engine_event_properties Where config_id = (select id from data_engine_config where name = 'DISB_HDFC_IMPORT');
