@@ -28,11 +28,13 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Groupbox;
+import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.North;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Window;
 
@@ -41,7 +43,6 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
-import com.pennant.backend.model.applicationmaster.DPDBucket;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -235,7 +236,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		for (Component component : finOptionRows.getChildren()) {
 			Row listitem = (Row) component;
 
-			Combobox optionTypeCombo = (Combobox) getComponent(listitem, 1);
+			Combobox optionTypeCombo = (Combobox) getMandComponent(listitem, 1);
 			String optionType = optionTypeCombo.getSelectedItem().getValue();
 
 			if (PennantConstants.List_Select.equals(optionType)) {
@@ -259,6 +260,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	private void appendOption(FinOption option) {
 		Row listitem = new Row();
+		Hbox hbox;
+		Space space;
 
 		List<Property> optionTypes = AppStaticList.getFinOptions();
 
@@ -266,6 +269,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		Cell listcell;
 
 		// Option
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		space.setSclass("mandatory");
 		Combobox options = new Combobox();
 
 		if (StringUtils.equals(option.getUserAction(), "Save")) {
@@ -277,24 +284,38 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		options.setWidth("100px");
 		fillList(options, optionTypes, option.getOptionType());
 		listcell = new Cell();
-		listcell.appendChild(options);
+		hbox.appendChild(space);
+		hbox.appendChild(options);
+		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
 
 		// Current option
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		space.setSclass("mandatory");
 		Datebox currentOption = new Datebox();
 		currentOption.setWidth("100px");
 		currentOption.setFormat(DateFormat.SHORT_DATE.getPattern());
 		currentOption.setValue(option.getCurrentOptionDate());
 		listcell = new Cell();
-		listcell.appendChild(currentOption);
+		hbox.appendChild(space);
+		hbox.appendChild(currentOption);
+		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
 
 		// Frequency
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		space.setSclass("mandatory");
 		Combobox frequency = new Combobox();
 		frequency.setWidth("100px");
 		fillList(frequency, AppStaticList.getFrequencies(), option.getFrequency());
 		listcell = new Cell();
-		listcell.appendChild(frequency);
+		hbox.appendChild(space);
+		hbox.appendChild(frequency);
+		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
 
 		// Notice Period Days
@@ -326,11 +347,17 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		appendNextOptionDate(option, listitem);
 
 		// AlertType
+		hbox = new Hbox();
+		space = new Space();
+		space.setSpacing("2px");
+		space.setSclass("mandatory");
 		Combobox alertType = new Combobox();
 		alertType.setWidth("100px");
 		fillList(alertType, AppStaticList.getAlertsFor(), option.getAlertType());
 		listcell = new Cell();
-		listcell.appendChild(alertType);
+		hbox.appendChild(space);
+		hbox.appendChild(alertType);
+		listcell.appendChild(hbox);
 		listcell.setParent(listitem);
 
 		ExtendedCombobox alertRoles = new ExtendedCombobox();
@@ -439,7 +466,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			for (Component component : finOptionRows.getChildren()) {
 				Row listitem = (Row) component;
 
-				Combobox optionTypeCombo = (Combobox) getComponent(listitem, 1);
+				Combobox optionTypeCombo = (Combobox) getMandComponent(listitem, 1);
 				String optionType = optionTypeCombo.getSelectedItem().getValue();
 
 				if (StringUtils.equals(optionType, property.getValue())) {
@@ -520,7 +547,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	private void onChangeAlertTypes(Row listitem) {
-		Combobox alertType = (Combobox) getComponent(listitem, 8);
+		Combobox alertType = (Combobox) getMandComponent(listitem, 8);
 		String alertTypeValue = alertType.getSelectedItem().getValue();
 
 		ExtendedCombobox alertRolesValue = (ExtendedCombobox) getComponent(listitem, 9);
@@ -548,11 +575,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	public void onChangeFrequencyType(Row listitem) {
-		Datebox currentOption = (Datebox) getComponent(listitem, 2);
+		Datebox currentOption = (Datebox) getMandComponent(listitem, 2);
 		Date option = currentOption.getValue();
 
 		Datebox nextOption = (Datebox) getComponent(listitem, 7);
-		Combobox frequency = (Combobox) getComponent(listitem, 3);
+		Combobox frequency = (Combobox) getMandComponent(listitem, 3);
 		String currentDate = frequency.getSelectedItem().getValue();
 
 		Checkbox optionExcersice = (Checkbox) getComponent(listitem, 6);
@@ -619,6 +646,17 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return null;
 	}
 
+	private Component getMandComponent(Row row, int index) {
+		int i = 1;
+		for (Component component : row.getChildren()) {
+			if (i == index) {
+				return component.getFirstChild().getFirstChild().getNextSibling();
+			}
+			i++;
+		}
+		return null;
+	}
+
 	public List<WrongValueException> doWriteComponentsToBean() {
 		logger.debug(Literal.ENTERING);
 		List<FinOption> finoptions = new ArrayList<>();
@@ -630,8 +668,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		Set<String> optionTYpes = new HashSet<>();
 		for (Component component : finOptionRows.getChildren()) {
 			Row listitem = (Row) component;
-			Combobox optionCombo = (Combobox) getComponent(listitem, 1);
-
+			Combobox optionCombo = (Combobox) getMandComponent(listitem, 1);
+			Clients.clearWrongValue(optionCombo);
 			try {
 				optionTYpes.add(optionCombo.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
@@ -668,20 +706,20 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			FinOption option = (FinOption) listitem.getAttribute("option");
 
 			try {
-				Combobox optionCombo = (Combobox) getComponent(listitem, 1);
+				Combobox optionCombo = (Combobox) getMandComponent(listitem, 1);
 				option.setOptionType(optionCombo.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 			try {
-				Datebox currentOption = (Datebox) getComponent(listitem, 2);
+				Datebox currentOption = (Datebox) getMandComponent(listitem, 2);
 				option.setCurrentOptionDate(currentOption.getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
 
 			try {
-				Combobox frequency = (Combobox) getComponent(listitem, 3);
+				Combobox frequency = (Combobox) getMandComponent(listitem, 3);
 				option.setFrequency(frequency.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -717,7 +755,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				wve.add(we);
 			}
 			try {
-				Combobox alertType = (Combobox) getComponent(listitem, 8);
+				Combobox alertType = (Combobox) getMandComponent(listitem, 8);
 				option.setAlertType(alertType.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
 				wve.add(we);
@@ -888,12 +926,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		for (Component component : finOptionRows.getChildren()) {
 			Row row = (Row) component;
-			Combobox optionCombo = (Combobox) getComponent(row, 1);
-			Datebox currentOption = (Datebox) getComponent(row, 2);
-			Combobox frequency = (Combobox) getComponent(row, 3);
+			Combobox optionCombo = (Combobox) getMandComponent(row, 1);
+			Datebox currentOption = (Datebox) getMandComponent(row, 2);
+			Combobox frequency = (Combobox) getMandComponent(row, 3);
 			Intbox alertDays = (Intbox) getComponent(row, 4);
 			Intbox noticePeriodDays = (Intbox) getComponent(row, 5);
-			Combobox alertType = (Combobox) getComponent(row, 8);
+			Combobox alertType = (Combobox) getMandComponent(row, 8);
 			ExtendedCombobox alertToRoles = (ExtendedCombobox) getComponent(row, 9);
 			ExtendedCombobox userTemplate = (ExtendedCombobox) getComponent(row, 10);
 			ExtendedCombobox customerTemplagte = (ExtendedCombobox) getComponent(row, 11);
@@ -917,12 +955,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		loanStartDt = this.financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
 		for (Component component : finOptionRows.getChildren()) {
 			Row row = (Row) component;
-			Combobox optionCombo = (Combobox) getComponent(row, 1);
-			Datebox currentOption = (Datebox) getComponent(row, 2);
-			Combobox frequency = (Combobox) getComponent(row, 3);
+			Combobox optionCombo = (Combobox) getMandComponent(row, 1);
+			Datebox currentOption = (Datebox) getMandComponent(row, 2);
+			Combobox frequency = (Combobox) getMandComponent(row, 3);
 			Intbox noticePeriodDays = (Intbox) getComponent(row, 4);
 			Intbox alertDays = (Intbox) getComponent(row, 5);
-			Combobox alertType = (Combobox) getComponent(row, 8);
+			Combobox alertType = (Combobox) getMandComponent(row, 8);
 			ExtendedCombobox alertRoles = (ExtendedCombobox) getComponent(row, 9);
 			ExtendedCombobox userTemplate = (ExtendedCombobox) getComponent(row, 10);
 			ExtendedCombobox customerTemplate = (ExtendedCombobox) getComponent(row, 11);
@@ -1017,12 +1055,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		if (loanEnquiry) {
 			for (Component component : finOptionRows.getChildren()) {
 				Row listitem = (Row) component;
-				Combobox optionCombo = (Combobox) getComponent(listitem, 1);
-				Datebox currentOption = (Datebox) getComponent(listitem, 2);
-				Combobox frequency = (Combobox) getComponent(listitem, 3);
+				Combobox optionCombo = (Combobox) getMandComponent(listitem, 1);
+				Datebox currentOption = (Datebox) getMandComponent(listitem, 2);
+				Combobox frequency = (Combobox) getMandComponent(listitem, 3);
 				Intbox alertDays = (Intbox) getComponent(listitem, 4);
 				Intbox noticePeriodDays = (Intbox) getComponent(listitem, 5);
-				Combobox alertType = (Combobox) getComponent(listitem, 8);
+				Combobox alertType = (Combobox) getMandComponent(listitem, 8);
 				ExtendedCombobox alertRoles = (ExtendedCombobox) getComponent(listitem, 9);
 				ExtendedCombobox customerTemplate = (ExtendedCombobox) getComponent(listitem, 10);
 				ExtendedCombobox UserTemplate = (ExtendedCombobox) getComponent(listitem, 11);
@@ -1072,14 +1110,14 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			if (finOption.getRecordStatus() != null && StringUtils.equals("Submitted", finOption.getRecordStatus())) {
 				for (Component component : finOptionRows.getChildren()) {
 					Row listitem = (Row) component;
-					Combobox optionCombo = (Combobox) getComponent(listitem, 1);
-					Datebox currentOption = (Datebox) getComponent(listitem, 2);
-					Combobox frequency = (Combobox) getComponent(listitem, 3);
+					Combobox optionCombo = (Combobox) getMandComponent(listitem, 1);
+					Datebox currentOption = (Datebox) getMandComponent(listitem, 2);
+					Combobox frequency = (Combobox) getMandComponent(listitem, 3);
 					Intbox alertDays = (Intbox) getComponent(listitem, 4);
 					Intbox noticePeriodDays = (Intbox) getComponent(listitem, 5);
 					Checkbox optionExcersice = (Checkbox) getComponent(listitem, 6);
 					Datebox nextOption = (Datebox) getComponent(listitem, 7);
-					Combobox alertType = (Combobox) getComponent(listitem, 8);
+					Combobox alertType = (Combobox) getMandComponent(listitem, 8);
 					ExtendedCombobox alertRoles = (ExtendedCombobox) getComponent(listitem, 9);
 					ExtendedCombobox userTemplate = (ExtendedCombobox) getComponent(listitem, 10);
 					ExtendedCombobox customerTemplate = (ExtendedCombobox) getComponent(listitem, 11);
