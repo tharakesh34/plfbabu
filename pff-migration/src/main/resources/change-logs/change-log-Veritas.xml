@@ -6853,5 +6853,18 @@ UNION ALL
 			  )
 		</createView>
 	</changeSet>
+	
+	<changeSet id="110" author="aditya.a">
+		<sql>
+		<![CDATA[
+            update data_engine_column set skip = 1 where TableId = (select Id from data_engine_table where ConfigId = (select Id from data_engine_config where Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')) and Name = 'PAYMENT_DETAIL6';
+
+            update data_engine_column set skip = 1 where TableId = (select Id from data_engine_table where ConfigId = (select Id from data_engine_config where Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')) and Name = 'PAYMENT_DETAIL6' and Id = (select min(Id) from data_engine_column where tableid = 73 and Name = 'PAYMENT_DETAIL6');
+            update data_engine_column set skip = 0 where TableId = (select Id from data_engine_table where ConfigId = (select Id from data_engine_config where Name = 'DISB_OTHER_NEFT_RTGS_EXPORT')) and Name = 'PAYMENT_DETAIL6' and Id = (select max(Id) from data_engine_column where tableid = 73 and Name = 'PAYMENT_DETAIL6');
+
+            update data_engine_column set Name = 'BRANCH_NAME' where TableId = (select Id from data_engine_table where ConfigId = (select Id from data_engine_config where Name = 'DISB_OTHER_CHEQUE_DD_EXPORT')) and Name = 'PRINT_LOCATION';
+ 		]]>
+		</sql>
+	</changeSet>
 		
 </databaseChangeLog>
