@@ -3871,7 +3871,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finRepaymentAmount
 				.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getReqRepayAmount(), format));
 
-		if (aFinanceMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFT)) {
+		if (aFinanceMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFT)
+				|| aFinanceMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 			this.finRepaymentAmount.setReadonly(true);
 		}
 		this.numberOfTerms_two.setValue(aFinanceMain.getNumberOfTerms());
@@ -10376,10 +10377,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			//Step Policy Conditions Verification
 			if (this.stepFinance.isChecked()) {
 
-				if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-						CalculationConstants.SCHMTHD_PFT)) {
+				String schdMethod = this.cbScheduleMethod.getSelectedItem().getValue().toString();
+				
+				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
-							new String[] { Labels.getLabel("label_ScheduleMethod_CalculatedProfit") },
+							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") },
 							new String[] {}));
 				}
 

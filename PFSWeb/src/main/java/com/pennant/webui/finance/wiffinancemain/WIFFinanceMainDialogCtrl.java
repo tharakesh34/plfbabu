@@ -6706,18 +6706,18 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//Step Policy Conditions Verification
 			if (this.stepFinance.isChecked()) {
+				String schdMethod = this.cbScheduleMethod.getSelectedItem().getValue().toString();
 
-				if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-						CalculationConstants.SCHMTHD_PFT)) {
+				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
-							new String[] { Labels.getLabel("label_ScheduleMethod_CalculatedProfit") },
+							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") },
 							new String[] {}));
 				}
 
 				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
 						FinanceConstants.STEPTYPE_PRIBAL)
-						&& StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)) {
+						&& StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
 					errorList.add(new ErrorDetail("StepFinance", "30555",
 							new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 				}

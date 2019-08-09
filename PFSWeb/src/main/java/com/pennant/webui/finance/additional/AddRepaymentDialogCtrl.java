@@ -934,17 +934,20 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$cbSchdMthd(Event event) {
 		logger.debug("Entering" + event.toString());
 		overrideCount = 0;
+		
+		String schdMthd = this.cbSchdMthd.getSelectedItem().getValue().toString();
+		
 		this.wIAmount.setMandatory(false);
-		if ((this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT))
-				|| (this.cbSchdMthd.getSelectedItem().getValue().toString()
-						.equals(CalculationConstants.SCHMTHD_NOPAY))) {
+		if (StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFT)
+				|| StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFTCPZ)
+				|| StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_NOPAY)) {
 			this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,
 					CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 			this.wIAmount.setDisabled(true);
 		} else {
 			this.wIAmount.setValue(BigDecimal.ZERO);
 			this.wIAmount.setDisabled(false);
-			if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFTCAP)) {
+			if (StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFTCAP)) {
 				this.wIAmount.setMandatory(true);
 			}
 		}
@@ -1045,7 +1048,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				fillComboBox(this.cbSchdMthd, getFinScheduleData().getFinanceMain().getScheduleMethod(),
 						PennantStaticListUtil.getScheduleMethods(), nonGrcExclFields);
 				this.cbSchdMthd.setDisabled(true);
-				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)) {
+				if (this.cbSchdMthd.getSelectedItem().getValue().toString().equals(CalculationConstants.SCHMTHD_PFT)
+						|| this.cbSchdMthd.getSelectedItem().getValue().toString()
+								.equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 					this.wIAmount.setValue(PennantAppUtil.formateAmount(BigDecimal.ZERO,
 							CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy())));
 					this.wIAmount.setDisabled(true);

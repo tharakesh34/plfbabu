@@ -704,6 +704,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		// Adjusting previous profit balance to current Term, based on Method
 		if (!isGrcAllowed) {
 			if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)
+					|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFTCPZ)
 					|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
 				if (DateUtility.compare(prvDb.getValue(), finMain.getGrcPeriodEndDate()) > 0) {
 					BigDecimal calPftdiff = adjustPrvItemPftBal(prvListItem);
@@ -988,7 +989,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				} else {
 					repayInstruction.setRepaySchdMethod(financeMain.getScheduleMethod());
 					if (StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_NOPAY)
-							|| StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+							|| StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+							|| StringUtils.equals(financeMain.getScheduleMethod(),
+									CalculationConstants.SCHMTHD_PFTCPZ)) {
 						repayInstruction.setRepayAmount(BigDecimal.ZERO);
 					} else if (StringUtils.equals(financeMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
 							|| StringUtils.equals(financeMain.getScheduleMethod(),
@@ -1162,7 +1165,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				//Set Non-Editable Fields
 				isRateEditable = true;
-				if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)) {
+				if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)
+						|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 					lastTermPriEditable = false;
 				} else if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT)) {
 					isPriEditable = true;
@@ -1651,7 +1655,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 			// Grace details Setting
 			if (main.isAllowGrcPeriod() && DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) <= 0
-					&& !StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())) {
+					&& (!StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())
+							|| !StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, main.getGrcSchdMthd()))) {
 				grcAlwdWithoutPftPay = true;
 				if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, main.getGrcSchdMthd())) {
 					grcPayEndSchddMthd = true;
@@ -1834,7 +1839,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				boolean alwGrcRepay = false;
 				// Allow Grace Repay if Schedule Method is Profit Payment
 				if (main.isAllowGrcPeriod()
-						&& StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())) {
+						&& (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd()) || StringUtils
+								.equals(CalculationConstants.SCHMTHD_PFTCPZ, main.getGrcSchdMthd()))) {
 					alwGrcRepay = true;
 				}
 

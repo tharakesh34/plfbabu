@@ -327,6 +327,7 @@ public class FinanceDataDefaulting {
 			if (StringUtils.isNotBlank(finMain.getGrcSchdMthd())) {
 				if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)
+						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCPZ)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
 					String[] valueParm = new String[2];
@@ -352,6 +353,7 @@ public class FinanceDataDefaulting {
 				if (!StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_NOPAY)
 						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
 						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
 						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
 						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)
 						&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) {

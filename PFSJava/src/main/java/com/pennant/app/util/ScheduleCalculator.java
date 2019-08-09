@@ -3204,7 +3204,8 @@ public class ScheduleCalculator {
 						} else {
 							curSchd.setRepayAmount(instructAmount);
 						}
-					} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
+					} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+							|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 						curSchd.setRepayAmount(BigDecimal.ZERO);
 					} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI_PFT)
 							|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI)) {
@@ -3662,6 +3663,7 @@ public class ScheduleCalculator {
 
 		if (finMain.isEqualRepay() && finMain.isCalculateRepay()
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
 				&& !StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
 
 			if (AdvanceType.hasAdvEMI(finMain.getAdvType()) && AdvanceStage.hasFrontEnd(finMain.getAdvStage())
@@ -3979,11 +3981,24 @@ public class ScheduleCalculator {
 			evtFromDate = finMain.getFinStartDate();
 		}
 
+		boolean isPftCpzFromReset = false;
+		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)) {
+			isPftCpzFromReset = true;
+		}
+		
+		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		int sdSize = schdDetails.size();
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = schdDetails.get(i);
 			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
+				
+				if (isPftCpzFromReset && curSchd.isCpzOnSchDate() && curSchd.isRepayOnSchDate()) {
+					finMain.setPftCpzFromReset(BigDecimal.ZERO);
+				} else {
+					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
+				}
+				
 				continue;
 			}
 
@@ -4207,6 +4222,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 
 		boolean isRepayComplete = false;
 
@@ -4491,6 +4507,7 @@ public class ScheduleCalculator {
 								curSchd.setCpzOnSchDate(false);
 							}
 						}
+						
 					} else if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 						if (!finMain.isAllowRepayCpz()
 								|| !FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchDate)) {
@@ -4510,10 +4527,12 @@ public class ScheduleCalculator {
 					} else {
 						curSchd.setCpzAmount(curSchd.getProfitBalance());
 					}
+					
 				} else {
 					curSchd.setCpzAmount(BigDecimal.ZERO);
 				}
 
+				finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
 				curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, repayRateBasis));
 
 				// 08-JAN-2018 : When Rounding Effect creates new Record with
@@ -4741,6 +4760,60 @@ public class ScheduleCalculator {
 
 			// PRINCIPAL + CALCULATED PROFIT: Applicable for GRACE & REPAYMENT
 			// period
+		} else if (CalculationConstants.SCHMTHD_PFTCPZ.equals(curSchd.getSchdMethod())) {
+
+			BigDecimal cpzDue = BigDecimal.ZERO;
+			if (curSchd.isRepayOnSchDate() && curSchd.isCpzOnSchDate()) {
+				cpzDue = finMain.getPftCpzFromReset();
+				finMain.setPftCpzFromReset(BigDecimal.ZERO);
+			}
+
+			if (curSchd.getPresentmentId()<=0) {
+				curSchd.setPrincipalSchd(cpzDue);
+			}
+
+			if (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) < 0) {
+				curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+			}
+
+			if (!finMain.isProtectSchdPft()) {
+				schdInterest = calProfitToSchd(curSchd, prvSchd);
+
+				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
+				// testing
+				/*
+				 * if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) <= 0) { if
+				 * (!finMain.isAllowGrcCpz()) { schdInterest = CalculationUtil.roundAmount(schdInterest,
+				 * finMain.getCalRoundingMode(), finMain.getRoundingTarget()); } } else { if
+				 * (!finMain.isAllowRepayCpz()) { schdInterest = CalculationUtil.roundAmount(schdInterest,
+				 * finMain.getCalRoundingMode(), finMain.getRoundingTarget()); } }
+				 */
+
+				if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
+						&& finMain.getBpiTreatment().equals(FinanceConstants.BPI_SCHD_FIRSTEMI)) {
+					schdInterest = BigDecimal.ZERO;
+				}
+
+				curSchd.setProfitSchd(schdInterest);
+				// DEVELOPER FINANCE
+				if (finType.isDeveloperFinance()) {
+					if ((finMain.isScheduleMaintained() || StringUtils.isNotBlank(finMain.getReceiptPurpose()))
+							&& curSchd.getSchDate().compareTo(finMain.getRecalFromDate()) >= 0) {
+						BigDecimal newPrincipal = prvSchd.getClosingBalance().subtract(curSchd.getOrgEndBal());
+						if (newPrincipal.compareTo(BigDecimal.ZERO) < 0) {
+							newPrincipal = BigDecimal.ZERO;
+						}
+
+						curSchd.setPrincipalSchd(newPrincipal);
+					}
+				}
+			}
+			
+			// curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
+			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+
+			// PRINCIPAL + CALCULATED PROFIT: Applicable for GRACE & REPAYMENT
+			// period
 		} else if (CalculationConstants.SCHMTHD_PRI_PFT.equals(curSchd.getSchdMethod())) {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
@@ -4882,6 +4955,12 @@ public class ScheduleCalculator {
 		return curSchd;
 
 	}
+	
+	private BigDecimal getCpzFromLastRepayFrq(FinScheduleData finScheduleData, int iCur, int iPrv, Date evtFromDate) {
+		BigDecimal cpzAmount = BigDecimal.ZERO;
+		String frq = finScheduleData.getFinanceMain().getRepayFrq();
+		return cpzAmount;
+	}
 
 	/*
 	 * ************************************************************************* ***************************************
@@ -4933,7 +5012,6 @@ public class ScheduleCalculator {
 	private BigDecimal calProfitToSchd(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd) {
 		BigDecimal newProfit = BigDecimal.ZERO;
 
-		// pradeep changes merged from bajaj trunk
 		// If profit already paid do not touch the schedule profit.
 		if (curSchd.isSchPftPaid()) {
 			newProfit = curSchd.getSchdPftPaid();
@@ -6899,7 +6977,8 @@ public class ScheduleCalculator {
 					curSchd.setAdvProfit(BigDecimal.ZERO);
 					curSchd.setAdvRepayAmount(curSchd.getPrincipalSchd());
 
-				} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PFT)) {
+				} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PFT)
+						|| curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 					curSchd.setAdvProfit(calInt);
 					curSchd.setAdvRepayAmount(curSchd.getAdvProfit());
 				} else if (curSchd.getSchdMethod().equals(CalculationConstants.SCHMTHD_GRCENDPAY)
@@ -6944,7 +7023,8 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate()) {
 					recalSchdMethod = curSchd.getSchdMethod();
-					if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFT)) {
+					if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFT)
+							|| StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
 					if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
@@ -7523,7 +7603,8 @@ public class ScheduleCalculator {
 		// If schedule method is interest only payment or no payment then
 		// stepping of EMI/Equated Principal not required
 		if (finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFT)
-				&& !finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_NOPAY)) {
+				|| finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_PFTCPZ)
+						&& !finMain.getScheduleMethod().equals(CalculationConstants.SCHMTHD_NOPAY)) {
 			finScheduleData = repaySchdCal(finScheduleData, false);
 			finScheduleData = setFinanceTotals(finScheduleData);
 			logger.debug("Leaving");

@@ -6277,7 +6277,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (!"M".equals(getComboboxValue(cbfinRateType))) {
 			if (this.finIsRvwAlw.isChecked()) {
 				if (getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PRI_PFT)
-						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)) {
+						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFT)
+						|| getComboboxValue(this.cbfinSchdMthd).equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 					// Schedule Calculation Codes
 					fillComboBox(this.cbfinSchCalCodeOnRvw, CalculationConstants.RPYCHG_TILLMDT,
 							PennantStaticListUtil.getSchCalCodes(), ",STEPPOS,");
@@ -6325,7 +6326,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 				this.space_cbfinSchCalCodeOnRvw.setSclass(PennantConstants.mandateSclass);
 				this.finRvwFrq.setMandatoryStyle(true);
 				if (this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.SCHMTHD_PRI_PFT)
-						|| this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.SCHMTHD_PFT)) {
+						|| this.cbfinSchdMthd.getSelectedItem().getValue().equals(CalculationConstants.SCHMTHD_PFT)
+						|| this.cbfinSchdMthd.getSelectedItem().getValue()
+								.equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 
 					String schdCalRvwOn = CalculationConstants.RPYCHG_TILLMDT;
 					if (isOverdraft) {

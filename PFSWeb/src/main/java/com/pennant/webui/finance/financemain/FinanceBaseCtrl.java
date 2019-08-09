@@ -4014,11 +4014,13 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 			//Step Policy Conditions Verification
 			if (this.stepFinance.isChecked()) {
+				String schdMethod = this.cbScheduleMethod.getSelectedItem().getValue().toString();
 
-				if (StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-						CalculationConstants.SCHMTHD_PFT)) {
+				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)
+						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
-							new String[] { Labels.getLabel("label_ScheduleMethod_CalculatedProfit") },
+							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") },
 							new String[] {}));
 				}
 

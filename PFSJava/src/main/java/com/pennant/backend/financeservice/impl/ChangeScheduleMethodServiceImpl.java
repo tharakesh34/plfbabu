@@ -180,11 +180,12 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 		//Repayment Schedule Method (If not blanks validation already happens in defaulting)
 		if (!StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
 				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
 				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Schedule method";
 			valueParm[1] = CalculationConstants.SCHMTHD_EQUAL + ", " + CalculationConstants.SCHMTHD_PFT + ", "
-					+ CalculationConstants.SCHMTHD_PRI_PFT;
+					+ CalculationConstants.SCHMTHD_PFTCPZ + ", " + CalculationConstants.SCHMTHD_PRI_PFT;
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
 			return auditDetail;
 		}

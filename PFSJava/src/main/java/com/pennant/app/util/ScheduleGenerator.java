@@ -300,7 +300,8 @@ public class ScheduleGenerator {
 					if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, curSchd.getSchdMethod())) {
 						curSchd.setPftOnSchDate(true);
 					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())
-							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, curSchd.getSchdMethod())) {
+							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCAP, curSchd.getSchdMethod())
+							|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, curSchd.getSchdMethod())) {
 						if (FrequencyUtil.isFrqDate(financeMain.getGrcPftFrq(), financeMain.getGrcPeriodEndDate())) {
 							curSchd.setPftOnSchDate(true);
 							curSchd.setRepayOnSchDate(true);
@@ -820,7 +821,8 @@ public class ScheduleGenerator {
 								&& financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
 							schedule.setPftOnSchDate(true);
 						} else if (financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFT)
-								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCAP)) {
+								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCAP)
+								|| financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_PFTCPZ)) {
 
 							schedule.setPftOnSchDate(true);
 

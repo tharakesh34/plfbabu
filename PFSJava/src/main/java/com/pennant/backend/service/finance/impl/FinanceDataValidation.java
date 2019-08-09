@@ -3178,6 +3178,7 @@ public class FinanceDataValidation {
 		if (!StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_NOPAY)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)
 				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) {
@@ -3421,9 +3422,11 @@ public class FinanceDataValidation {
 
 		if (finMain.isStepFinance()) {
 			// ScheduleMethod
-			if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)) {
+			if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
+					|| StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
+					|| StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCAP)) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "Calculated Interest on Frequency";
+				valueParm[0] = "Interest only on Frequency";
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30552", valueParm)));
 				return errorDetails;
 			}
@@ -4069,6 +4072,7 @@ public class FinanceDataValidation {
 			} else {
 				if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)
+						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCPZ)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY)
 						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
 					String[] valueParm = new String[2];

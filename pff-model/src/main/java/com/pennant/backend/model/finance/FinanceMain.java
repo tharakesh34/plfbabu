@@ -443,6 +443,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String droppingMethod;
 	private boolean rateChgAnyDay;
 	private BigDecimal pastduePftMargin = BigDecimal.ZERO;
+	private BigDecimal pftCpzFromReset = BigDecimal.ZERO;
 
 	// Finance Maintenance Details
 	private int allowedDefRpyChange = 0;
@@ -944,6 +945,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("intTdsAdjusted");
 		excludeFields.add("extReference");
 		excludeFields.add("serviceName");
+
+		excludeFields.add("pftCpzFromReset");
 
 		return excludeFields;
 	}
@@ -4417,5 +4420,13 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setModifyBpi(boolean modifyBpi) {
 		this.modifyBpi = modifyBpi;
+	}
+
+	public BigDecimal getPftCpzFromReset() {
+		return pftCpzFromReset;
+	}
+
+	public void setPftCpzFromReset(BigDecimal pftCpzFromReset) {
+		this.pftCpzFromReset = pftCpzFromReset;
 	}
 }

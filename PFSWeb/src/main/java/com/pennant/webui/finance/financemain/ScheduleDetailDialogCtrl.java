@@ -1006,14 +1006,15 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				// Check Button visibility Conditions only for NON-WIF Finances
 				if (!isWIF) {
+					String schdMethod = financeMain.getScheduleMethod();
 
 					if (curSchd.isRepayOnSchDate()
 							|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0)) {
 						if ((StringUtils.equals(curSchd.getSpecifier(), CalculationConstants.SCH_SPECIFIER_GRACE)
-								&& StringUtils.equals(financeMain.getScheduleMethod(),
-										CalculationConstants.SCHMTHD_PFT))
-								|| (!StringUtils.equals(financeMain.getScheduleMethod(),
-										CalculationConstants.SCHMTHD_PFT))) {
+								&& (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+										|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)))
+								|| (!StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
+										&& !StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ))) {
 							this.btnChangeRepay.setDisabled(
 									!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 							this.btnChangeRepay.setVisible(
@@ -1030,10 +1031,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 					if (financeMain.isAlwMultiDisb()) {
 						if ((StringUtils.equals(CalculationConstants.SCH_SPECIFIER_GRACE, curSchd.getSpecifier())
-								&& StringUtils.equals(CalculationConstants.SCHMTHD_PFT,
-										financeMain.getScheduleMethod()))
-								|| (!StringUtils.equals(CalculationConstants.SCHMTHD_PFT,
-										financeMain.getScheduleMethod()))) {
+								&& (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, schdMethod)
+										|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, schdMethod)))
+								|| (!StringUtils.equals(CalculationConstants.SCHMTHD_PFT, schdMethod)
+										&& !StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, schdMethod))) {
 							this.btnAddDisbursement
 									.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
 							this.btnAddDisbursement
