@@ -6402,7 +6402,7 @@ UNION ALL
 	</changeSet>
 	
 	<changeSet id="109" author="aditya.a">
-		<createView viewName="" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW " replaceIfExists="true">
 		  SELECT 
 			  FA. PAYMENTID,
 			  FA.FINREFERENCE,
