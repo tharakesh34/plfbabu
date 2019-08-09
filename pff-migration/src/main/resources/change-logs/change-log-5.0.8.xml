@@ -4133,4 +4133,12 @@ UNION ALL
 			
 		</sql>
 	</changeSet>
+	
+	<changeSet id="115" author="Durgaprasad G">
+		<sql>
+			Insert into BMTSCHDMETHOD 
+			(SCHDMETHOD,SCHDMETHODDESC,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values
+			 ('PFTCPZ','Cal. and Capitalize Interest from Last Schedule',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+		</sql>
+	</changeSet>
 </databaseChangeLog>
