@@ -94,7 +94,6 @@ import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
@@ -402,7 +401,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData)
 			throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
-
 		logger.debug("Entering");
 
 		doSetValidation();
@@ -601,7 +599,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				//Allow revolving checking
 			} else if (finMain.isAllowRevolving()) {
 				BigDecimal avalLimit = finMain.getFinAssetValue()
-						.subtract(finMain.getFinCurrAssetValue().subtract(finMain.getFinRepaymentAmount()));
+						.subtract(finMain.getFinCurrAssetValue()).add(finMain.getFinRepaymentAmount());
 				BigDecimal disbursementAmt = PennantApplicationUtil.unFormateAmount(this.disbAmount.getActualValue(),
 						formatter);
 				if (disbursementAmt.compareTo(avalLimit) > 0) {

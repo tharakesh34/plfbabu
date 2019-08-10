@@ -54,7 +54,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		BigDecimal availableLimit = BigDecimal.ZERO;
 		if (financeType.isAllowRevolving()) {
 			availableLimit = financeMain.getFinAssetValue()
-					.subtract(financeMain.getFinCurrAssetValue().subtract(financeMain.getFinRepaymentAmount()));
+					.subtract(financeMain.getFinCurrAssetValue()).add(financeMain.getFinRepaymentAmount());
 
 			logger.debug("Available Amt " + disbAmt);
 			if (disbAmt.compareTo(availableLimit) > 0) {
