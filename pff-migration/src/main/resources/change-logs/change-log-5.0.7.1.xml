@@ -853,4 +853,13 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="101" author="Varaprasad.K">
+		<sql>
+		<![CDATA[
+			delete from errordetails where code='RU0049';
+			INSERT INTO ErrorDetails VALUES('RU0049','EN','E','Loan is inactive','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+		]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
