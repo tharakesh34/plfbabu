@@ -21,7 +21,6 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 
 	protected DefaultTransactionDefinition transDef;
 	private DataSourceTransactionManager transactionManager;
-	
 
 	@Override
 	public int save(IDBInterfaceLogDetail detail) {
@@ -32,55 +31,57 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 		insertSql.append(" Values (:interfaceName,:refNum,:startDate,:recordProcessed,:status,:statusDesc)");
 		logger.debug("selectSql: " + insertSql.toString());
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(detail);
+		TransactionStatus txStatus = null;
 		try {
-			TransactionStatus txStatus = transactionManager.getTransaction(transDef);
+			txStatus = transactionManager.getTransaction(transDef);
 			this.jdbcTemplate.update(insertSql.toString(), paramSource);
 			transactionManager.commit(txStatus);
 			txStatus.flush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			transactionManager.rollback(txStatus);
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
 		logger.debug(Literal.LEAVING);
 		return count;
 	}
-	
+
 	@Override
 	public void update(IDBInterfaceLogDetail detail) {
-		logger.debug(Literal.ENTERING);		
-		StringBuilder updateSql = new StringBuilder("Update IDB_INTERFACES_LOG ");
-		updateSql.append(" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,Interface_Info=:InterfaceInfo ");
-		updateSql.append(" where Interface_Name = :InterfaceName and Ref_Num =:RefNum");
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Update IDB_INTERFACES_LOG ");
+		sql.append(
+				" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,Interface_Info=:InterfaceInfo ");
+		sql.append(" where Interface_Name = :InterfaceName and Ref_Num =:RefNum");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-		logger.debug("selectSql: " + updateSql.toString());
-		
+		logger.debug("selectSql: " + sql.toString());
+		TransactionStatus txStatus = null;
 		try {
-			TransactionStatus txStatus = transactionManager.getTransaction(transDef);
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+			txStatus = transactionManager.getTransaction(transDef);
+			this.jdbcTemplate.update(sql.toString(), beanParameters);
 			transactionManager.commit(txStatus);
-			txStatus.flush();
 		} catch (Exception e) {
-			logger.error("Exception", e);
-			
+			transactionManager.rollback(txStatus);
+		} finally {
+			if (txStatus != null) {
+				txStatus.flush();
+			}
 		}
-		
 	}
+
 	@Override
 	public long getSequence() {
 		long nextValue = 0;
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
 		nextValue = getNextValue("SEQ_EXTERANAL_IDBINTERFACE");
-		transactionManager.commit(txStatus);
-		txStatus.flush();
 		return nextValue;
 	}
 
 	@Override
 	public long getSequence(String seqName) {
 		long nextValue = 0;
-		TransactionStatus txStatus = transactionManager.getTransaction(transDef);
 		nextValue = getNextValue(seqName);
-		transactionManager.commit(txStatus);
-		txStatus.flush();
 		return nextValue;
 	}
 
