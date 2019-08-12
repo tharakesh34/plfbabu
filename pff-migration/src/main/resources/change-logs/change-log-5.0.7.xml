@@ -3960,5 +3960,22 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="125" author="Varaprasad.k">
+		<sql>
+            <![CDATA[
+                delete from reasons where reasontypeid IN (select id from reasontypes where code IN ('PDWRES', 'PDSTATUS')) and reasoncategoryId IN (select id from reasoncategory where code IN ('PDWRES', 'PDSTATUS'));
+                delete from reasontypes where code IN ('PDWRES', 'PDSTATUS');
+                
+                update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+                 
+                insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'PDWRES', 'Personal Discussion verification waiver reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+                insert into reasontypes values((select coalesce(max(Id), 0)+1 from reasontypes_view), 'PDSTATUS', 'Personal Discussion verification status reason type.', 1, 1000, CURRENT_TIMESTAMP,'Approved', ' ', ' ', ' ', ' ', ' ', 0);
+                
+                update seqreasontypes set seqno = (select coalesce(max(Id), 0) from reasontypes_view);
+
+              ]]>
+		</sql>
+	</changeSet>
+
 
 </databaseChangeLog>
