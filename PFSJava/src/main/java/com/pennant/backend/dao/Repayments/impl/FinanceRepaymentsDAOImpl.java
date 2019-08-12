@@ -160,6 +160,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		selectSql.append(" T1.FinType, T1.FinCustID, T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid,");
 		selectSql.append(
 				" T1.FinTotSchdPaid, T1.FinFee, T1.FinWaiver, T1.FinRefund, T1.SchdFeePaid , T1.SchdInsPaid , ");
+		selectSql.append(" T1.PenaltyPaid , T1.PenaltyWaived, ");
 		selectSql.append(" T1.SchdSuplRentPaid , T1.SchdIncrCostPaid");
 		if (isRpyCancelProc) {
 			selectSql.append(" ,T1.LinkedTranId");
@@ -218,11 +219,11 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		financeRepayments.setFinSchdDate(finSchdDate);
 
 		StringBuilder selectSql = new StringBuilder(" Select T1.FinReference, T1.FinPostDate,T1.finSchdDate,");
-		selectSql
-				.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, T1.FinTotSchdPaid ");
+		selectSql.append(" T1.FinValueDate,T1.FinSchdPriPaid, T1.FinSchdPftPaid, T1.FinSchdTdsPaid, ");
+		selectSql.append(" T1.FinTotSchdPaid, T1.PenaltyPaid, T1.PenaltyWaived ");
 		selectSql.append(" From FinRepayDetails");
-		selectSql.append(
-				" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate order by T1.FinValueDate ");
+		selectSql.append(" T1 where T1.FinReference=:FinReference and T1.FinSchdDate=:FinSchdDate");
+		selectSql.append(" order by T1.FinValueDate ");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeRepayments);

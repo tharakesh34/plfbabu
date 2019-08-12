@@ -111,6 +111,12 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal payableAmount = BigDecimal.ZERO;
 
 	private String oDRuleCode;
+	
+	private boolean lpCpz = false;
+	private BigDecimal lpCpzAmount = BigDecimal.ZERO;
+	private BigDecimal lpCurCpzBal = BigDecimal.ZERO;
+	
+	//OD Penalty Capitalization
 
 	/*
 	 * These fields used in bulk upload (Ex: EOD) rcdAction = "" No action Required rcdAction = "I" record to be
@@ -430,6 +436,30 @@ public class FinODDetails implements java.io.Serializable {
 
 	public void setPayableAmount(BigDecimal payableAmount) {
 		this.payableAmount = payableAmount;
+	}
+
+	public boolean isLpCpz() {
+		return lpCpz;
+	}
+
+	public void setLpCpz(boolean lpCpz) {
+		this.lpCpz = lpCpz;
+	}
+
+	public BigDecimal getLpCpzAmount() {
+		return lpCpzAmount;
+	}
+
+	public void setLpCpzAmount(BigDecimal lpCpzAmount) {
+		this.lpCpzAmount = lpCpzAmount;
+	}
+
+	public BigDecimal getLpCurCpzBal() {
+		return lpCurCpzBal;
+	}
+
+	public void setLpCurCpzBal(BigDecimal lpCurCpzBal) {
+		this.lpCurCpzBal = lpCurCpzBal;
 	}
 
 }

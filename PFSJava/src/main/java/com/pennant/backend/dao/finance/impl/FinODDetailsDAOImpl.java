@@ -113,20 +113,24 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	@Override
 	public void update(FinODDetails finOdDetails) {
 		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
-		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
-		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
-		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
-		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal, LPIWaived= :LPIWaived");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
-
+		StringBuilder updateSql = updateFODQuery();
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOdDetails);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
 		logger.debug("Leaving");
+	}
+
+	private StringBuilder updateFODQuery() {
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
+		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
+		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
+		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
+		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal, LPIWaived= :LPIWaived, ");
+		updateSql.append(" LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal ");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		return updateSql;
 	}
 
 	/**
@@ -137,16 +141,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	@Override
 	public void updateList(List<FinODDetails> overdues) {
 		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
-		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
-		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
-		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
-		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
-		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal,LPIWaived= :LPIWaived, ");
-		updateSql.append(" FinMaxODAmt=:FinMaxODAmt,FinMaxODPri=:FinMaxODPri,FinMaxODPft=:FinMaxODPft ");
-		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
-
+		StringBuilder updateSql = updateFODQuery();
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
 		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
@@ -166,7 +161,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
 		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
-		updateSql.append(" FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate ");
+		updateSql.append(" FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate, ");
+		updateSql.append(" LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -182,7 +178,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set FinCurODAmt= :FinCurODAmt, FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
-		updateSql.append(" FinODTillDate= :FinODTillDate, FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate");
+		updateSql.append(" FinODTillDate= :FinODTillDate, FinCurODDays= :FinCurODDays, FinLMdfDate= :FinLMdfDate, ");
+		updateSql.append(" LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -192,6 +189,9 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 	}
 
+	
+	//FIXME: PV 09AUG19. Doubt. How come both paid and balance are setting with addition.
+	//Need to see impact on fields LpCurCpzBal
 	@Override
 	public void updateTotals(FinODDetails finOdDetails) {
 		logger.debug("Entering");
@@ -209,6 +209,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 	}
 
+	//FIXME: PV 09AUG19. Need to see impact on fields LpCurCpzBal
 	@Override
 	public void resetTotals(FinODDetails detail) {
 		logger.debug("Entering");
@@ -216,6 +217,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid , TotPenaltyBal= :TotPenaltyBal ");
+		updateSql.append(" LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -237,6 +239,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		insertSql.append(" GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid,");
 		insertSql.append(" TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived,");
 		insertSql.append(" ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ");
+		insertSql.append(" LpCpz, LpCpzAmount, LpCurCpzBal,  ");
 		insertSql.append(" ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode ) ");
 		insertSql.append(" Values");
 		insertSql.append("(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,");
@@ -244,6 +247,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		insertSql.append(" :GraceDays, :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid,");
 		insertSql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived, ");
 		insertSql.append(" :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, ");
+		insertSql.append(" :LpCpz, :LpCpzAmount, :LpCurCpzBal, ");
 		insertSql.append(" :ODChargeCalOn, :ODChargeAmtOrPerc, :ODAllowWaiver, :ODMaxWaiverPerc, :ODRuleCode )");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -341,7 +345,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		StringBuilder selectSql = new StringBuilder(
 				"select FinReference, sum(TotPenaltyAmt) TotPenaltyAmt, sum(TotWaived) TotWaived,");
 		selectSql.append(" sum(TotPenaltyPaid) TotPenaltyPaid, sum(TotPenaltyBal) TotPenaltyBal, ");
-		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, ");
+		selectSql.append(" SUM(FinCurODPri) FinCurODPri, SUM(FinCurODPft) FinCurODPft, SUM(LpCpzAmount) LpCpzAmount, ");
 
 		//First and last od Date 
 		selectSql.append(" MIN(FinODSchdDate) FinODSchdDate ,MAX(FinODSchdDate) FinODTillDate, ");
@@ -366,6 +370,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return finODDetails;
 	}
 
+	
+	//FIXME: PV. Not used any where. Seems wrong query too. 
 	@Override
 	public Date getFinDueFromDate(String finReference) {
 		logger.debug("Entering");
@@ -477,7 +483,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
 		sql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
 		sql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
-		sql.append(" FinLMdfDate, ODRuleCode ");
+		sql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal ");
 
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinReference =:FinReference ");
@@ -630,7 +636,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
 		updateSql.append(" Set TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
 		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid , TotPenaltyBal= :TotPenaltyBal, ");
-		updateSql.append(" LPIAmt= :LPIAmt , LPIPaid= :LPIPaid, LPIBal=:LPIBal,LPIWaived=:LPIWaived ");
+		updateSql.append(" LPIAmt= :LPIAmt , LPIPaid= :LPIPaid, LPIBal=:LPIBal,LPIWaived=:LPIWaived, ");
+		updateSql.append(" LpCpz = :LpCpz, LpCpzAmount = :LpCpzAmount, LpCurCpzBal = :LpCurCpzBal ");
 		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -640,6 +647,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 	}
 
+	//FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
 	@Override
 	public void updateLatePftTotals(String finReference, Date odSchDate, BigDecimal paidNow, BigDecimal waivedNow) {
 		logger.debug("Entering");
@@ -661,6 +669,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 	}
 
+	//FIXME: PV 09AUG19. Add fields related to LpCurCpzBal
 	@Override
 	public void updateReversals(String finReference, Date odSchDate, BigDecimal penaltyPaid, BigDecimal latePftPaid) {
 		logger.debug("Entering");
@@ -780,7 +789,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
 		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
 		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
-		selectSql.append(" FinLMdfDate, ODRuleCode ");
+		selectSql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal ");
 		selectSql.append(" From FinODDetails");
 		selectSql.append(" Where FinReference =:FinReference ");
 
@@ -837,6 +846,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		insertSql.append(" GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid,");
 		insertSql.append(" TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived,");
 		insertSql.append(" ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, ");
+		insertSql.append(" LpCpz, LpCpzAmount, LpCurCpzBal, ");
 		insertSql.append(" ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode ) ");
 		insertSql.append(" Values");
 		insertSql.append("(:FinReference, :FinODSchdDate, :FinODFor, :FinBranch, :FinType, :CustID, :FinODTillDate,");
@@ -844,6 +854,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		insertSql.append(" :GraceDays, :IncGraceDays, :FinCurODDays, :TotPenaltyAmt, :TotWaived, :TotPenaltyPaid,");
 		insertSql.append(" :TotPenaltyBal, :FinLMdfDate, :LPIAmt, :LPIPaid, :LPIBal, :LPIWaived, ");
 		insertSql.append(" :ApplyODPenalty, :ODIncGrcDays, :ODChargeType, :ODGraceDays, ");
+		insertSql.append(" :LpCpz, :LpCpzAmount, :LpCurCpzBal, ");
 		insertSql.append(" :ODChargeCalOn, :ODChargeAmtOrPerc, :ODAllowWaiver, :ODMaxWaiverPerc, :ODRuleCode )");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -888,6 +899,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
 		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
 		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		selectSql.append(" LpCpz, LpCpzAmount, LpCurCpzBal, ");
 		selectSql.append(" FinLMdfDate, ODRuleCode ");
 		selectSql.append(" From FinODDetails Where FinReference =:FinReference ");
 		if (!isrender) {
@@ -930,6 +942,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
 		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
 		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
+		selectSql.append(" LpCpz, LpCpzAmount, LpCurCpzBal, ");
 		selectSql.append(" FinLMdfDate, ODRuleCode ");
 		selectSql.append(" From FinODDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
