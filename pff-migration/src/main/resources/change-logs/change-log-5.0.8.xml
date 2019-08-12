@@ -4143,4 +4143,35 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="116" author="Durgaprasad G">
+		<addColumn tableName="FINODDETAILS">
+			<column name="LpCpz" type="boolean" defaultValue="false"/>
+			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="117" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Update FINODDETAILS Set LpCpz = 0, LpCpzAmount = 0, LpCurCpzBal = 0;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="118" author="Durgaprasad G">
+		<addColumn tableName="FinODDetails_PD">
+			<column name="LpCpz" type="boolean" defaultValue="false"/>
+			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="119" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Update FinODDetails_PD Set LpCpz = 0, LpCpzAmount = 0, LpCurCpzBal = 0;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
