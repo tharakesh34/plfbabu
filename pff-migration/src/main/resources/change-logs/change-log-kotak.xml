@@ -484,5 +484,41 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="40" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS where reportid in (select reportid FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_WelcomeLetter');
+				DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_WelcomeLetter';
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Welcome Letter','Welcome Letter',1,'welcomeletter','dataSource',1,'menu_Item_WelcomeLetter',2,'1005','','','','','','','0',current_Timestamp,0,1,1);
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_WelcomeLetter'),'1','Customer ID','LOVSEARCH','Customer ID','custcif','','Customer','getCustCIF','getCustShrtName',0,0,0,0,1,1,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="41" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS where reportid in (select reportid FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_WriteoffReport');
+				DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_WriteoffReport';
+				Insert INTO REPORTCONFIGURATION VALUES((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Write-Off Details','Write-Off Details',1,'writeoff','dataSource',1,'menu_Item_WriteoffReport',2,1005,'','','','','','',0,current_Timestamp,0,1,0);
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport'),'1','BranchCode','LOVSEARCH','Branch','FinBranch','','Branch','getBranchCode','getBranchDesc',1,0,0,0,1,0,'','','','','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'' );
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport'),'2','FinType','LOVSEARCH','Loan Type','fintype','','FinanceType','getFinType','getFinTypeDesc',1,0,0,0,2,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport'),'3','CustCIF','LOVSEARCH','Customer Number','custcif','','Customer','getCustCIF','getCustShrtName',1,0,0,0,3,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_WriteoffReport'),'4','FinReference','LOVSEARCH','Loan Reference','Finreference','','FinanceMain','getFinReference','getFinReference',0,0,0,0,4,0,'','','','','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="42" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS where reportid in (select reportid FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_VasDetails');
+				DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_VasDetails';
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Vas Details','Vas Details',1,'VasDetails','dataSource',1,'menu_Item_VasDetails',2,'1005','','','','','','','0',current_Timestamp,0,1,0);
+				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_VasDetails'),'1','FinReference','LOVSEARCH','Loan Reference','PRIMARYLINKREF','','FinanceMain','getFinReference','getFinReference',0,0,0,0,1,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
