@@ -60,7 +60,7 @@ public abstract class SoapClient<T> {
 	}
 
 	
-	protected SOAPServiceDetail processMessage(SOAPServiceDetail serviceDetail) {
+	protected SoapServiceDetail processMessage(SoapServiceDetail serviceDetail) {
 		InterfaceLogDetail logDetail =null;
 		String url = App.getProperty(serviceDetail.getServiceUrl());
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
@@ -110,7 +110,7 @@ public abstract class SoapClient<T> {
 		return serviceDetail;
 	}
 
-	private InterfaceLogDetail logData(SOAPServiceDetail serviceDetail){
+	private InterfaceLogDetail logData(SoapServiceDetail serviceDetail){
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail logDetail = new InterfaceLogDetail();
 		logDetail.setReference(serviceDetail.getReference());
@@ -128,7 +128,7 @@ public abstract class SoapClient<T> {
 	}
 	
 	
-	public SOAPMessage getSoapMessage(SOAPServiceDetail serviceDetail) {
+	public SOAPMessage getSoapMessage(SoapServiceDetail serviceDetail) {
 		try {
 			logger.debug(Literal.ENTERING);
 			MessageFactory mf = MessageFactory.newInstance(serviceDetail.getProtocol());
@@ -149,7 +149,7 @@ public abstract class SoapClient<T> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public SOAPServiceDetail getResponse(SOAPMessage response, SOAPServiceDetail serviceDetail) {
+	public SoapServiceDetail getResponse(SOAPMessage response, SoapServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(serviceDetail.getResponceData().getClass());

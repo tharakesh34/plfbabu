@@ -1,6 +1,6 @@
 package com.pennanttech.external.services;
 
-public class SOAPServiceDetail {
+public class SoapServiceDetail {
 
 	private String reference;
 	private String serviceUrl;
