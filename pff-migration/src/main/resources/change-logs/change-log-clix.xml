@@ -2366,7 +2366,7 @@
 	</changeSet>
 
 	<changeSet id="41" author="Manoj.p">
-		<createView viewName="int_disbursement_request_view" replaceIfExists="true">
+		<createView viewName="`bursement_request_view" replaceIfExists="true">
 			SELECT fa.paymentid,
     fa.finreference,
     'D' AS channel,
@@ -3109,5 +3109,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="62" author="Manoj.p">
+		<sql>
+			<![CDATA[
+				update plf.data_engine_Config set fileextension = null where name = 'DISB_EXPORT_DEFAULT';
+			]]>    	
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 
