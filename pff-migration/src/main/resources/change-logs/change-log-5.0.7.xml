@@ -3976,7 +3976,7 @@
               ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="126" author="Bharat R">
 		<addColumn tableName="FinOdDetails">
 			<column name="LockODRecalCal" type="Boolean" defaultValue="0">
@@ -4023,6 +4023,10 @@
    FROM finoddetails od
      LEFT JOIN finodpenalty_latest_rates_view pr ON od.finreference = pr.finreference
 </createView>
+	</changeSet>
+
+	<changeSet id="128" author="murthy">
+		<dropTable tableName="ACCOUNTS_TEMP" />
 	</changeSet>
 
 </databaseChangeLog>
