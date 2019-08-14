@@ -6866,5 +6866,14 @@ UNION ALL
  		]]>
 		</sql>
 	</changeSet>
-		
+	<changeSet id="111" author="aditya.a">
+		<sql>
+			<![CDATA[
+				delete from SMTparameters where SysParmCode = 'EOD_SKIP_LATE_PAY_MARKING';
+				INSERT INTO SMTparameters VALUES ('EOD_SKIP_LATE_PAY_MARKING', 'Skip Late Pay Marking in EOD.', 'String', '1',
+					'N', 1, 0, NULL, NULL, 'Y to skip late pay marking; otherwise N.', 1, 1000, CURRENT_TIMESTAMP, 'Approved',
+					'', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
