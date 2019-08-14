@@ -2366,7 +2366,7 @@
 	</changeSet>
 
 	<changeSet id="41" author="Manoj.p">
-		<createView viewName="`bursement_request_view" replaceIfExists="true">
+		<createView viewName="int_disbursement_request_view" replaceIfExists="true">
 			SELECT fa.paymentid,
     fa.finreference,
     'D' AS channel,
