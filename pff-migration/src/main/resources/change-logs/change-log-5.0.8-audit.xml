@@ -172,7 +172,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="16" author="Manoj.P">
+	<changeSet id="16" author="naga.g">
 		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtLowerTaxDeduction"
 			tableName="ADTCustomerGST" />
 	</changeSet>
@@ -212,7 +212,7 @@
 		</createTable>
 	</changeSet>
 	
-	<changeSet id="18" author="Manoj.P">
+	<changeSet id="18" author="naga.g">
 		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtLowerTaxDeduction"
 			tableName="ADTCustomerGSTdetails" />
 	</changeSet>
