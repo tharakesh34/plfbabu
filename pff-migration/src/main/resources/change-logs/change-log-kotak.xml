@@ -520,5 +520,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="43" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				Update REPORTFILTERFIELDS set MODULENAME= 'NOCFinanceMain' where reportid=(select reportid from REPORTCONFIGURATION where MENUITEMCODE='menu_Item_NoObjectionCertificate');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
