@@ -2486,7 +2486,7 @@
 		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
 	</changeSet>
 
-	
+
 
 	<changeSet author="saikiran.v" id="51">
 		<addColumn tableName="FinFeeDetail">
@@ -2762,7 +2762,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="44" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createTable tableName="EXTERNAL_LIABILITIES_PD">
@@ -3018,7 +3018,7 @@
 		</createView>
 	</changeSet>
 
-	
+
 
 	<!-- Fee Waiver Changes END -->
 
@@ -3054,26 +3054,26 @@
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-</changeSet>
-<changeSet id="101" author="Saikiran.v">
+	</changeSet>
+	<changeSet id="101" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmt" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="102" author="Saikiran.v">
+	<changeSet id="102" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="103" author="Saikiran.v">
+	<changeSet id="103" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes_temp">
 			<column name="alwSanctionAmtOverride" type="boolean" />
 		</addColumn>
-</changeSet>
+	</changeSet>
 
-<changeSet id="104" author="Saikiran.v">
+	<changeSet id="104" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmt = 0;
@@ -3082,22 +3082,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="105" author="Saikiran.v" dbms="mssql">
+
+	<changeSet id="105" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmt DEFAULT 0 FOR alwSanctionAmt;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAm DEFAULT 0 FOR alwSanctionAmt;
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
+	<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="107" author="Saikiran.v">
+	<changeSet id="107" author="Saikiran.v">
 		<sql>
 			<![CDATA[
 				UPDATE RMTFinanceTypes Set alwSanctionAmtOverride = 0;
@@ -3106,22 +3106,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="108" author="Saikiran.v" dbms="mssql">
+
+	<changeSet id="108" author="Saikiran.v" dbms="mssql">
 		<sql>
 			<![CDATA[
 				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_alwSanctionAmtOverride DEFAULT 0 FOR alwSanctionAmtOverride;
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
-<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
+	<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
-</changeSet>
+	</changeSet>
 
-<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
+	<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -3131,7 +3131,7 @@
 		</sql>
 	</changeSet>
 
-<changeSet id="110" author="Saikiran.v">
+	<changeSet id="110" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -3373,11 +3373,11 @@
      LEFT JOIN rules t68 ON t1.rpypricingmethod = t68.ruleid
      LEFT JOIN profitcenters t69 ON t69.profitcenterid = t1.profitcenterid
 		</createView>
-</changeSet>
+	</changeSet>
 
 
 
-<changeSet id="111" author="Saikiran.v">
+	<changeSet id="111" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -3577,9 +3577,9 @@
      LEFT JOIN rules t7 ON t1.rpypricingmethod = t7.ruleid
      LEFT JOIN entity t8 ON t3.entitycode = t8.entitycode
 		</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="112" author="Saikiran.v">
+	<changeSet id="112" author="Saikiran.v">
 		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
@@ -4064,9 +4064,9 @@ UNION ALL
            FROM rmtfinancetypes_temp
           WHERE rmtfinancetypes_temp.fintype = t1.fintype))
 		</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
+	<changeSet id="110_post" author="Saikiran.v" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -4083,57 +4083,125 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="114" author="Durgaprasad G">
 		<sql>
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO=
+			(SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SecRoles);
-			
-			INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'GSTDETAILS_MAKER','GST details maintaince maker role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
-			INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'GSTDETAILS_APPROVER','GST details maintaince approver role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
-			
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailList_NewFinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_FinReference'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Country'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Province'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_City'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='GSTMAINTENANCE_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='GSTDETAILS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='GSTMAINTENANCE_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='GSTDETAILS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			
+
+			INSERT INTO SecRoles VALUES ((select max(roleid)+1 from secroles),1,'GSTDETAILS_MAKER','GST details maintaince maker
+			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+			INSERT INTO SecRoles VALUES ((select
+			max(roleid)+1 from secroles),1,'GSTDETAILS_APPROVER','GST details maintaince approver
+			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER',
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT
+			MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER', 0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailList_NewFinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_FinReference'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
+			',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
+			',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_Country'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Province'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_City'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='GSTMAINTENANCE_MAKER'), (Select RoleID From SecRoles Where
+			RoleCd='GSTDETAILS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='GSTMAINTENANCE_APPROVER'), (Select RoleID From SecRoles Where
+			RoleCd='GSTDETAILS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
 			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			UPDATE SEQSECOPERATIONROLES SET SEQNO= (SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECOPERATIONROLES SET SEQNO=
+			(SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
 			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SecRoles);
-			
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="115" author="Durgaprasad G">
 		<sql>
 		<![CDATA[
@@ -4143,26 +4211,26 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-	
-	
-<changeSet id="116" author="Durgaprasad G">
+
+
+	<changeSet id="116" author="Durgaprasad G">
 		<addColumn tableName="FINODDETAILS">
-			<column name="LpCpz" type="boolean" defaultValue="0"/>
+			<column name="LpCpz" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-<changeSet id="117" author="Durgaprasad G">
+
+	<changeSet id="117" author="Durgaprasad G">
 		<addColumn tableName="FINODDETAILS">
-			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="118" author="Durgaprasad G">
 		<addColumn tableName="FINODDETAILS">
-			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="119" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -4172,22 +4240,22 @@ UNION ALL
 	</changeSet>
 	<changeSet id="120" author="Durgaprasad G">
 		<addColumn tableName="FinODDetails_PD">
-			<column name="LpCpz" type="boolean" defaultValue="0"/>
+			<column name="LpCpz" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="121" author="Durgaprasad G">
 		<addColumn tableName="FinODDetails_PD">
-			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="122" author="Durgaprasad G">
 		<addColumn tableName="FinODDetails_PD">
-			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0"/>
+			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="123" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -4195,4 +4263,272 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="124" author="naga.g">
+		<createTable tableName="CustomerGST">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="CustomerGST_pk" nullable="false" />
+			</column>
+			<column name="CustId" type="bigint"></column>
+			<column name="GstNumber" type="varchar(15)" />
+			<column name="FrequencyType" type="varchar(15)"></column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="125" author="naga.g">
+		<createTable tableName="CustomerGST_Temp">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="CustomerGST_Temp_pk" nullable="false" />
+			</column>
+			<column name="CustId" type="bigint"></column>
+			<column name="GstNumber" type="varchar(15)" />
+			<column name="FrequencyType" type="varchar(15)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="126" author="naga.g">
+		<createView viewName="CustomerGST_view" replaceIfExists="true">
+				SELECT t1.id,
+			    t1.custid,
+			    t1.gstnumber,
+			    t1.frequencytype,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			  	FROM customergst_temp t1
+				UNION
+				SELECT t1.id,
+			    t1.custid,
+			    t1.gstnumber,
+			    t1.frequencytype,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM customergst t1
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM customergst_temp
+			          WHERE customergst_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="127" author="naga.g">
+		<createView viewName="CustomerGST_aview" replaceIfExists="true">
+			SELECT t1.id,
+			    t1.custid,
+			    t1.gstnumber,
+			    t1.frequencytype,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM customergst t1
+		</createView>
+	</changeSet>
+	
+	<changeSet id="128" author="naga.g">
+		<createTable tableName="CustomerGSTdetails">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="customergstdetails_id_pk" nullable="false" />
+			</column>
+			<column name="headerId" type="bigint" />
+			<column name="Frequancy" type="varchar(15)"></column>
+			<column name="SalAmount" type="bigint" defaultValue="0" />
+			<column name="financialyear" type="varchar(4)"></column>
+
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="129" author="naga.g">
+		<createTable tableName="CustomerGSTdetails_temp">
+			<column name="Id" type="bigint">
+				<constraints primaryKey="true" primaryKeyName="customergstdetails_temp_id_pkey" nullable="false" />
+			</column>
+			<column name="headerId" type="bigint">
+				<constraints foreignKeyName="customergstdetails_temp_headerId_fkey" references="plf.customergst"
+					nullable="false" />
+			</column>
+			<column name="Frequancy" type="varchar(15)"></column>
+			<column name="SalAmount" type="bigint" defaultValue="0" />
+			<column name="financialyear" type="varchar(4)"></column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="130" author="naga.g">
+		<createSequence sequenceName="SEQGSTHEADERDETAILS" />
+	</changeSet>
+	
+	<changeSet id="131" author="naga.g">
+		<createSequence sequenceName="SEQGSTDETAILS" />
+	</changeSet>
+	
+	<changeSet id="132" author="naga.g">
+		<createView viewName="CustomerGSTdetails_view" replaceIfExists="true">
+				SELECT t1.id,
+			    t1.headerid,
+			    t1.frequancy,
+			    t1.financialyear,
+			    t1.salamount,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM customergstdetails_temp t1
+				UNION
+				 SELECT t1.id,
+			    t1.headerid,
+			    t1.frequancy,
+			    t1.financialyear,
+			    t1.salamount,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM customergstdetails t1
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM customergstdetails_temp
+			          WHERE customergstdetails_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="133" author="naga.g">
+		<createView viewName="CustomerGSTdetails_aview" replaceIfExists="true">
+				 SELECT t1.id,
+			    t1.headerid,
+			    t1.frequancy,
+			    t1.financialyear,
+			    t1.salamount,
+			    t1.version,
+			    t1.lastmnton,
+			    t1.lastmntby,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+			   FROM customergstdetails t1
+		</createView>
+	</changeSet>
+
+	<changeSet id="134" author="naga.g">
+		<sql>
+		 <![CDATA[
+		  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		 
+		  insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CustomerGSTDetails_MAKER', 'CustomerGST Process Maker', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+		  insert into SecGroups Values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CustomerGSTDetails_APPROVER', 'CustomerGST Process Approver', 0,1000,current_timestamp,'Approved',null,null,null,null,null,0 );
+		 
+		  insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CustomerGstDetailsDialogCtrl_gstNumber','CustomerGstDetailsDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 		  insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerGSTDetails_MAKER'), (select RightID from SecRights WHERE RightName='CustomerGstDetailsDialogCtrl_gstNumber'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGstDetailsDialogCtrl_gstNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGstDetailsDialogCtrl_gstNumber'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  
+ 		  insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CustomerGstDetailsDialogCtrl_frequencyType','CustomerGstDetailsDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 		  insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerGSTDetails_MAKER'), (select RightID from SecRights WHERE RightName='CustomerGstDetailsDialogCtrl_frequencyType'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGstDetailsDialogCtrl_frequencyType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGstDetailsDialogCtrl_frequencyType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  
+ 		  insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CustomerGstDetailsDialog_btnNew','CustomerGstDetailsDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 		  insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerGSTDetails_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerGstDetailsDialog_btnNew'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerGstDetailsDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerGstDetailsDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  
+ 		  insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'button_CustomerGstDetailsDialog_btnSave','CustomerGstDetailsDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 		  insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerGSTDetails_MAKER'), (select RightID from SecRights WHERE RightName='button_CustomerGstDetailsDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerGstDetailsDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_CustomerGstDetailsDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+ 		  
+ 		  insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CustomerGSTDetails_Gstdetails','CustomerGstDetailsDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+ 		  insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CustomerGSTDetails_MAKER'), (select RightID from SecRights WHERE RightName='CustomerGSTDetails_Gstdetails'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGSTDetails_Gstdetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		  INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerGSTDetails_Gstdetails'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+ 		  
+ 		  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		  UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		 ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
