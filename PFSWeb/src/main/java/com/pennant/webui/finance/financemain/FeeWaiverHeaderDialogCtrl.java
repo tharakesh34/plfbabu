@@ -391,17 +391,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		savePaymentDetails(aFeeWaiverHeader);
 		aFeeWaiverHeader.setRecordStatus(this.recordStatus.getValue());
 
-		if (aFeeWaiverHeader.isNewRecord()) {
-			for (int i = 0; i < aFeeWaiverHeader.getFeeWaiverDetails().size(); i++) {
-				FeeWaiverDetail waiver = aFeeWaiverHeader.getFeeWaiverDetails().get(i);
-				if (waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_ODC)
-						|| waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_LPFT)
-						|| waiver.getFeeTypeCode().equals(RepayConstants.ALLOCATION_BOUNCE)) {
-					waiver.setAdviseId(i);
-				}
-			}
-		}
-
 		// Value Date
 		try {
 			if (this.valueDate.getValue() != null) {
@@ -1186,7 +1175,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 
-				if (detail.getBalanceAmount().compareTo(amount) == -1) {
+				if (PennantApplicationUtil.unFormateAmount(detail.getBalanceAmount(), ccyFormatter).compareTo(amount) == -1) {
 
 					throw new WrongValueException(currWaivedAmt,
 							Labels.getLabel("label_FeeWaiverHeaderDialog_currWaiverAmountErrorMsg.value"));
