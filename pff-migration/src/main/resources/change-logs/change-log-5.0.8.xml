@@ -4092,21 +4092,30 @@ UNION ALL
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 			UPDATE SEQSECOPERATIONROLES SET SEQNO=
 			(SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
-			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SecRoles);
+			UPDATE SEQSECROLES SET SEQNO=
+			(SELECT MAX(ROLEID) FROM SecRoles);
 
-			INSERT INTO SecRoles VALUES ((select max(roleid)+1 from secroles),1,'GSTDETAILS_MAKER','GST details maintaince maker
-			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+			INSERT INTO SecRoles VALUES ((select max(roleid)+1 from
+			secroles),1,'GSTDETAILS_MAKER','GST details maintaince maker
+			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ','
+			',' ',' ',0) ;
 			INSERT INTO SecRoles VALUES ((select
-			max(roleid)+1 from secroles),1,'GSTDETAILS_APPROVER','GST details maintaince approver
+			max(roleid)+1 from secroles),1,'GSTDETAILS_APPROVER','GST details
+			maintaince approver
 			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER',
-			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			INSERT INTO SECGROUPS SELECT (SELECT
-			MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER', 0,1000,CURRENT_TIMESTAMP,' ','
+			INSERT INTO SECGROUPS SELECT
+			(SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER',
+			0,1000,CURRENT_TIMESTAMP,' ','
 			',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT
+			MAX(GRPID)+1 FROM SECGROUPS),
+			'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER', 0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0 FROM
+			SEQSECGROUPS WHERE 0=0;
 
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT
+			GRPID FROM SECGROUPS WHERE
 			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
 			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
@@ -4180,18 +4189,22 @@ UNION ALL
 			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1,
 			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS
+			WHERE
 			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
 			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
 			GrpCode='GSTMAINTENANCE_MAKER'), (Select RoleID From SecRoles Where
 			RoleCd='GSTDETAILS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
+			INSERT INTO SecRoleGroups
+			values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
 			GrpCode='GSTMAINTENANCE_APPROVER'), (Select RoleID From SecRoles Where
 			RoleCd='GSTDETAILS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPS SET SEQNO=
+			(SELECT MAX(GRPID) FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
 			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
@@ -4309,7 +4322,7 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="126" author="naga.g">
 		<createView viewName="CustomerGST_view" replaceIfExists="true">
 				SELECT t1.id,
@@ -4348,7 +4361,7 @@ UNION ALL
 			          WHERE customergst_temp.id = t1.id))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="127" author="naga.g">
 		<createView viewName="CustomerGST_aview" replaceIfExists="true">
 			SELECT t1.id,
@@ -4368,7 +4381,7 @@ UNION ALL
 			   FROM customergst t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="128" author="naga.g">
 		<createTable tableName="CustomerGSTdetails">
 			<column name="Id" type="bigint">
@@ -4376,7 +4389,7 @@ UNION ALL
 			</column>
 			<column name="headerId" type="bigint" />
 			<column name="Frequancy" type="varchar(15)"></column>
-			<column name="SalAmount" type="bigint" defaultValue="0" />
+			<column name="SalAmount" type="bigint" />
 			<column name="financialyear" type="varchar(4)"></column>
 
 			<column name="Version" type="int">
@@ -4393,18 +4406,19 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
+
+
 
 	<changeSet id="129" author="naga.g">
 		<createTable tableName="CustomerGSTdetails_temp">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="customergstdetails_temp_id_pkey" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="custmergstdetails_temp_id_pkey" nullable="false" />
 			</column>
 			<column name="headerId" type="bigint">
-				<constraints foreignKeyName="customergstdetails_temp_headerId_fkey" references="plf.customergst"
-					nullable="false" />
+				<constraints foreignKeyName="custgstdtls_temp_headerId_fkey" references="CustomerGST" nullable="false" />
 			</column>
 			<column name="Frequancy" type="varchar(15)"></column>
-			<column name="SalAmount" type="bigint" defaultValue="0" />
+			<column name="SalAmount" type="bigint" />
 			<column name="financialyear" type="varchar(4)"></column>
 			<column name="Version" type="int">
 				<constraints nullable="false" />
@@ -4420,16 +4434,30 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="130" author="naga.g">
+
+	<changeSet id="130" author="naga.g" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE CustomerGSTdetails ADD CONSTRAINT DF_CustomerGSTdetails_SalAmount DEFAULT 0 FOR SalAmount;
+				ALTER TABLE CustomerGSTdetails_temp ADD CONSTRAINT DF_CustomerGSTdetails_temp_SalAmount DEFAULT 0 FOR SalAmount;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="131" author="naga.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails" defaultValue="0" />
+		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails_Temp" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="132" author="naga.g">
 		<createSequence sequenceName="SEQGSTHEADERDETAILS" />
 	</changeSet>
-	
-	<changeSet id="131" author="naga.g">
+
+	<changeSet id="133" author="naga.g">
 		<createSequence sequenceName="SEQGSTDETAILS" />
 	</changeSet>
-	
-	<changeSet id="132" author="naga.g">
+
+	<changeSet id="134" author="naga.g">
 		<createView viewName="CustomerGSTdetails_view" replaceIfExists="true">
 				SELECT t1.id,
 			    t1.headerid,
@@ -4469,8 +4497,8 @@ UNION ALL
 			          WHERE customergstdetails_temp.id = t1.id))
 		</createView>
 	</changeSet>
-	
-	<changeSet id="133" author="naga.g">
+
+	<changeSet id="135" author="naga.g">
 		<createView viewName="CustomerGSTdetails_aview" replaceIfExists="true">
 				 SELECT t1.id,
 			    t1.headerid,
@@ -4491,7 +4519,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="134" author="naga.g">
+	<changeSet id="136" author="naga.g">
 		<sql>
 		 <![CDATA[
 		  UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
