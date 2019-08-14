@@ -76,15 +76,18 @@ public abstract class SoapClient<T> {
 		
 		try {
 			SOAPMessage request= getSoapMessage(serviceDetail);
-			ByteArrayOutputStream soapString= new ByteArrayOutputStream();
-			request.writeTo(soapString);
-			serviceDetail.setRequestString(soapString.toString());
-			logDetail = logData(serviceDetail);
-			
+			ByteArrayOutputStream soapRequest= new ByteArrayOutputStream();
+			request.writeTo(soapRequest);
+			logger.debug(serviceDetail.getServiceName()+ " Request " + soapRequest.toString());
+			serviceDetail.setRequestString(soapRequest.toString());
+			logDetail = logData(serviceDetail,url);
+
 			SOAPMessage response = executeMessage(request, url);
-			response.writeTo(soapString);
-			serviceDetail.setResponseString(soapString.toString());
-			serviceDetail.setResponceData(getResponse(response, serviceDetail));
+			ByteArrayOutputStream soapResposne= new ByteArrayOutputStream();
+			response.writeTo(soapResposne);
+			logger.debug(serviceDetail.getServiceName()+ " Response" + soapResposne.toString());
+			serviceDetail.setResponseString(soapResposne.toString());
+			serviceDetail = getResponse(response, serviceDetail);
 		}catch (InterfaceException e) {
 			status = InterfaceConstants.STATUS_FAILED;
 			errorCode = e.getErrorCode();
@@ -110,12 +113,12 @@ public abstract class SoapClient<T> {
 		return serviceDetail;
 	}
 
-	private InterfaceLogDetail logData(SoapServiceDetail serviceDetail){
+	private InterfaceLogDetail logData(SoapServiceDetail serviceDetail,String url){
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail logDetail = new InterfaceLogDetail();
 		logDetail.setReference(serviceDetail.getReference());
 		logDetail.setServiceName(serviceDetail.getServiceName());
-		logDetail.setEndPoint(serviceDetail.getServiceUrl());
+		logDetail.setEndPoint(url);
 		logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
 		logDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
 		
