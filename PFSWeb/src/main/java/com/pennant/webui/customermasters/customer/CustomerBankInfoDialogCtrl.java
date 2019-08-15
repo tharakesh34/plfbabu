@@ -1630,8 +1630,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (!this.accountNumber.isReadonly()) {
 			this.accountNumber.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_CustomerBankInfoDialog_AccountNumber.value"),
-							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true, accNoLength));
-
+							PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
 		}
 
 		if (!this.creditTranNo.isDisabled()) {

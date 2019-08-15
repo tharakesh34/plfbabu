@@ -3415,6 +3415,8 @@
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<!-- Payments process service -->
+		<property name="paymentsProcessService" ref="paymentsProcessService" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -11100,5 +11102,10 @@
 	<bean name="taxHeaderDetailsServiceTarget" class="com.pennant.backend.service.finance.impl.TaxHeaderDetailsServiceImpl">
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 	</bean>
+
+	<!-- Payment Process Service -->
+	<bean name="paymentsProcessService" class="com.pennant.backend.service.payment.PaymentsProcessService">
+	</bean>
+
 
 </beans>

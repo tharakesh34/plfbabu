@@ -248,7 +248,9 @@ import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.InsuranceConstants;
@@ -285,13 +287,13 @@ import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
-import com.pennanttech.pff.external.CustomerPaymentService;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.ProfectusHunterBreService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -366,6 +368,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private PSLDetailService pSLDetailService;
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
+	private PaymentsProcessService paymentsProcessService;
 
 	@Autowired(required = false)
 	private Crm crm;
@@ -396,13 +399,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private NotificationService notificationService;
-	private FinExcessAmountDAO finExcessAmountDAO;
 	private SubventionDetailDAO subventionDetailDAO;
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
 	private HunterService hunterService;
-	@Autowired(required = false)
-	private CustomerPaymentService customerPaymentService;
 
 	private InsuranceDetailService insuranceDetailService;
 
@@ -2132,7 +2132,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		String finReference = financeMain.getFinReference();
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 
 		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(financeDetail);
 		long serviceUID = Long.MIN_VALUE;
@@ -3793,7 +3793,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			return aAuditHeader;
 		}
 
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 		// gCDCustomerService.processGcdCustomer(financeDetail, "insert"); //
 		// inserting gcdcustomer.
 		// Execute Accounting Details Process
@@ -3825,7 +3825,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String recordMainStatus = StringUtils.trimToEmpty(financeMain.getRcdMaintainSts());
 
 		if (!isWIF) {
-			String recordType = financeMain.getRecordType();
 			/*if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
 					&& !StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)
 					&& !PennantConstants.RECORD_TYPE_DEL.equals(recordType) && !financeDetail.isExtSource()
@@ -4937,7 +4936,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(Literal.EXCEPTION, e);
 				e.printStackTrace();
 			}
 			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -4948,8 +4947,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			saveReasonDetails(financeDetail);
 
 			//Calling External CMS API system. 
-			processCustomerPayments(financeDetail, auditHeader);
-
+			this.paymentsProcessService.process(financeDetail, auditHeader, DisbursementConstants.CHANNEL_DISBURSEMENT);
+			if (!auditHeader.isNextProcess()) {
+				logger.debug(Literal.LEAVING);
+				return aAuditHeader;
+			}
+			
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -5487,7 +5490,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 
 		// Execute Accounting Details Process
 		// =======================================
@@ -6131,7 +6134,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return auditHeader;
 			}
 		}
-		String tranType = PennantConstants.TRAN_DEL;
 		String productCode = StringUtils
 				.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getFinCategory());
 
@@ -6644,7 +6646,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			int maxDaysForFinRejection = financeType.getAutoRejectionDays();
 			List<String> cancelList = new ArrayList<String>(cancelMap.keySet());
-			Date effctiveDate = DateUtility.addDays(DateUtility.getAppDate(), -(maxDaysForFinRejection - 1));
+			Date effctiveDate = DateUtility.addDays(SysParamUtil.getAppDate(), -(maxDaysForFinRejection - 1));
 
 			for (String finreference : cancelList) {
 				Date finStartDate = cancelMap.get(finreference);
@@ -7864,7 +7866,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			BeanUtils.copyProperties(customer, eligibilityCheck);
 
 			if (customer.getCustDOB() != null) {
-				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), DateUtility.getAppDate());
+				int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 				BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 				eligibilityCheck.setCustAge(age);
 				// Minor Age Calculation
@@ -7890,7 +7892,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				eligibilityCheck.setTenure(new BigDecimal((months / 12) + "." + (months % 12)));
 			}
 
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			eligibilityCheck
 					.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 
@@ -8027,7 +8029,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Eligibility object
 			org.apache.commons.beanutils.BeanUtils.copyProperties(eligibilityCheck, customer);
-			int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), DateUtility.getAppDate());
+			int dobMonths = DateUtility.getMonthsBetween(customer.getCustDOB(), SysParamUtil.getAppDate());
 			BigDecimal age = new BigDecimal((dobMonths / 12) + "." + (dobMonths % 12));
 			eligibilityCheck.setCustAge(age);
 
@@ -8041,7 +8043,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				eligibilityCheck.setCustIsMinor(false);
 			}
 
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			eligibilityCheck
 					.setBlackListExpPeriod(DateUtility.getMonthsBetween(curBussDate, customer.getCustBlackListDate()));
 
@@ -8300,7 +8302,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Summary Details Preparation
-			final Date curBussDate = DateUtility.getAppDate();
+			final Date curBussDate = SysParamUtil.getAppDate();
 			FinanceSummary summary = new FinanceSummary();
 			summary.setFinReference(financeMain.getFinReference());
 			summary.setSchDate(curBussDate);
@@ -8780,7 +8782,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (customerLimitList != null && customerLimitList.size() > 0) {
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			String limitType = "";
 
 			BigDecimal finAmount = financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
@@ -9236,12 +9238,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeDetail.setFinScheduleData(ScheduleCalculator.getDownPaySchd(financeDetail.getFinScheduleData()));
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		financeMain.setFinApprovedDate(curBussDate);
 
 		// Profit Details Data Preparation
 		// =======================================
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 
 		FinanceProfitDetail pftDetail = getAccrualService().calProfitDetails(financeMain,
 				financeDetail.getFinScheduleData().getFinanceScheduleDetails(), null, curBDay);
@@ -9841,7 +9843,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			List<FinRepayQueue> finRepayQueues = new ArrayList<FinRepayQueue>();
 			Map<String, BigDecimal> totalsMap = new HashMap<String, BigDecimal>();
 			FinRepayQueue finRepayQueue = null;
-			Date curBDay = DateUtility.getAppDate();
+			Date curBDay = SysParamUtil.getAppDate();
 
 			for (int i = 0; i < scheduleDetails.size(); i++) {
 
@@ -10192,7 +10194,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 
 		FinanceRepayments repayment = new FinanceRepayments();
-		Date curAppDate = DateUtility.getAppDate();
+		Date curAppDate = SysParamUtil.getAppDate();
 
 		repayment.setFinReference(finMain.getFinReference());
 		repayment.setFinSchdDate(bpiDate);
@@ -10800,7 +10802,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		financeMain.setFinCcy(financeType.getFinCcy());
 		financeMain.setProfitDaysBasis(financeType.getFinDaysCalType());
 		financeMain.setScheduleMethod(financeType.getFinSchdMthd());
-		financeMain.setFinStartDate(DateUtility.getAppDate());
+		financeMain.setFinStartDate(SysParamUtil.getAppDate());
 		financeMain.setDepreciationFrq(financeType.getFinDepreciationFrq());
 		financeMain.setTDSApplicable(financeType.isTdsApplicable());
 		financeMain.setProductCategory(financeType.getProductCategory());
@@ -11154,30 +11156,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Customer payment process
-	 * 
-	 * @param financeDetail
-	 * @param auditHeader
-	 */
-	private void processCustomerPayments(FinanceDetail financeDetail, AuditHeader auditHeader) {
-		if (this.customerPaymentService == null) {
-			return;
-		}
-		//this.customerPaymentService.processOnlinePayment(financeDetail.getAdvancePaymentsList());
-
-		// Check whether to proceed with next service tasks.
-		auditHeader = nextProcess(auditHeader);
-		//FIXME
-
-		/*
-		 * if (!auditHeader.isNextProcess()) {
-		 * 
-		 * }
-		 */
-
-	}
-
-	/**
 	 * Saving the LMS service log
 	 * 
 	 * @param finDetail
@@ -11337,7 +11315,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	@Autowired(required = false)
@@ -11362,8 +11339,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.insuranceDetailService = insuranceDetailService;
 	}
 
-	public void setCustomerPaymentService(CustomerPaymentService customerPaymentService) {
-		this.customerPaymentService = customerPaymentService;
+	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
+		this.paymentsProcessService = paymentsProcessService;
 	}
 
 }
