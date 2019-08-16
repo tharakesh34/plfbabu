@@ -287,7 +287,6 @@ import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
 import com.pennanttech.pff.advancepayment.model.AdvancePayment;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -3825,17 +3824,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String recordMainStatus = StringUtils.trimToEmpty(financeMain.getRcdMaintainSts());
 
 		if (!isWIF) {
-			/*if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
-					&& !StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB)
-					&& !PennantConstants.RECORD_TYPE_DEL.equals(recordType) && !financeDetail.isExtSource()
-					&& ((FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())
-							&& PennantConstants.RECORD_TYPE_NEW.equals(recordType))
-							|| (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner())
-									&& PennantConstants.RECORD_TYPE_UPD.equals(recordType)))) {
-				financeDetail.setAdvancePaymentsList(
-						getFinAdvancePaymentsService().splitRequest(financeDetail.getAdvancePaymentsList()));
-				auditHeader.getAuditDetail().setModelData(financeDetail);
-			}*/
+			/*
+			 * if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList()) &&
+			 * !StringUtils.trimToEmpty(recordMainStatus).equals(FinanceConstants.FINSER_EVENT_CANCELDISB) &&
+			 * !PennantConstants.RECORD_TYPE_DEL.equals(recordType) && !financeDetail.isExtSource() &&
+			 * ((FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner()) &&
+			 * PennantConstants.RECORD_TYPE_NEW.equals(recordType)) ||
+			 * (FinanceConstants.FINSER_EVENT_ADDDISB.equals(financeDetail.getModuleDefiner()) &&
+			 * PennantConstants.RECORD_TYPE_UPD.equals(recordType)))) { financeDetail.setAdvancePaymentsList(
+			 * getFinAdvancePaymentsService().splitRequest(financeDetail.getAdvancePaymentsList()));
+			 * auditHeader.getAuditDetail().setModelData(financeDetail); }
+			 */
 			auditHeader = executeAccountingProcess(auditHeader, curBDay);
 		}
 
@@ -4952,7 +4951,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				logger.debug(Literal.LEAVING);
 				return aAuditHeader;
 			}
-			
+
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
@@ -8395,7 +8394,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Type
 		scheduleData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByID(financeMain.getFinType(), type));
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
+				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			// Fetching Promotion Details
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), type);
 			scheduleData.getFinanceType().setFInTypeFromPromotiion(promotion);
