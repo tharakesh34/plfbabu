@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -58,6 +59,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -170,6 +172,10 @@ public class Commitment extends AbstractWorkflowEntity {
 		excludeFields.add("documents");
 		excludeFields.add("commitmentCheckLists");
 		excludeFields.add("selAnsCountMap");
+
+		excludeFields.add("cmtAmountExt");
+		excludeFields.add("cmtUtilizedAmountExt");
+		excludeFields.add("cmtAvailableExt");
 
 		return excludeFields;
 	}
@@ -658,6 +664,18 @@ public class Commitment extends AbstractWorkflowEntity {
 			}
 		}
 		return commitmentMap;
+	}
+
+	public BigDecimal getCmtAmountExt() {
+		return PennantApplicationUtil.formateAmount(this.cmtAmount, CurrencyUtil.getFormat(this.cmtCcy));
+	}
+
+	public BigDecimal getCmtUtilizedAmountExt() {
+		return PennantApplicationUtil.formateAmount(this.cmtUtilizedAmount, CurrencyUtil.getFormat(this.cmtCcy));
+	}
+
+	public BigDecimal getCmtAvailableExt() {
+		return PennantApplicationUtil.formateAmount(this.cmtUtilizedAmount, CurrencyUtil.getFormat(this.cmtCcy));
 	}
 
 }

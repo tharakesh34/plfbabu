@@ -1507,6 +1507,12 @@ public class PennantJavaUtil {
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
 						null, new String[] { "FinReference", "FinType" }, null, 350));
 
+		ModuleUtil.register("NOCFinanceMain",
+				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
+						null, new String[] { "FinReference", "FinType" },
+						new Object[][] { { "FinIsActive", "0", "0" } },
+						350));
+
 		ModuleUtil.register("FinanceManagement", new ModuleMapping("FinanceMain", FinanceMain.class,
 				new String[] { "FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
 
@@ -1612,8 +1618,9 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("Commitment",
 				new ModuleMapping("Commitment", Commitment.class, new String[] { "Commitments", "Commitments_AView" },
-						facilityCommitWF, new String[] { "CmtReference", "CustCIF", "CustShrtName", "CmtTitle" }, null,
-						800));
+						facilityCommitWF, new String[] { "CmtReference", "CustCIF", "CustShrtName", "CmtTitle",
+								"CmtAmountExt", "CmtUtilizedAmountExt", "CmtAvailableExt" },
+						null, 900));
 
 		ModuleUtil.register("CommitmentMovement",
 				new ModuleMapping("CommitmentMovement", CommitmentMovement.class,
