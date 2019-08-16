@@ -4578,4 +4578,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="139" author="naga.g">
+		<sql>
+			 <![CDATA[
+			 	UPDATE SecRights SET PAGE='CustomerDialog' WHERE RightName='button_CustomerDialog_NewCustomerGstDetails';
+			 ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
