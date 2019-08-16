@@ -12,4 +12,8 @@ public interface TransactionMappingRestService {
 	@POST
 	@Path("/transactionMappingService/doAuthentication")
 	public WSReturnStatus doAuthentication(TransactionMappingRequest transactionMappingRequest) throws ServiceException;
+	
+	@POST
+	@Path("/transactionMappingService/mobileAuthentication")
+	public WSReturnStatus doMobileAuthentication(TransactionMappingRequest transactionMappingRequest) throws ServiceException;
 }

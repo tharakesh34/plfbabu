@@ -50,7 +50,21 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 			return APIErrorHandlerService.getFailedStatus("41002", valueParm);
 		}
 
-		count = transactionMappingDAO.getCountByPhoneNumber(transactionMappingRequest.getMobileNumber());
+		logger.debug(Literal.LEAVING);
+		return APIErrorHandlerService.getSuccessStatus();
+
+	}
+
+	@Override
+	public WSReturnStatus doMobileAuthentication(TransactionMappingRequest transactionMappingRequest)
+			throws ServiceException {
+		logger.debug(Literal.ENTERING);
+		if (StringUtils.isBlank(transactionMappingRequest.getMobileNumber())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Mobile Number";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		int count = transactionMappingDAO.getCountByPhoneNumber(transactionMappingRequest.getMobileNumber());
 		if (count <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Mobile Number ";
@@ -61,7 +75,6 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 		return APIErrorHandlerService.getSuccessStatus();
 
 	}
-
 	private WSReturnStatus validateTransactionMappingRequest(TransactionMappingRequest transactionMappingRequest) {
 		logger.debug(Literal.ENTERING);
 		if (StringUtils.isBlank(transactionMappingRequest.getMobileNumber())) {
@@ -81,6 +94,7 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 			valueParm[1] = "Zero";
 			return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 		}
+		
 
 		logger.debug(Literal.LEAVING);
 		return null;
@@ -90,4 +104,5 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 	public void setTransactionMappingDAO(TransactionMappingDAO transactionMappingDAO) {
 		this.transactionMappingDAO = transactionMappingDAO;
 	}
+
 }
