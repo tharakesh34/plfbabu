@@ -28,7 +28,7 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="01" author="satyanarayana.g">
+	 <changeSet id="01" author="satyanarayana.g">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
@@ -4569,7 +4569,7 @@ UNION ALL
 			 	UPDATE SecRights SET PAGE='CustomerDialog' WHERE RightName='button_CustomerDialog_NewCustomerGstDetails';
 			 ]]>
 		</sql>
-	</changeSet> -->
+	</changeSet>
 	
 	<changeSet id="137" author="satyanarayana.g">
 		<addColumn tableName="RMTFinanceTypes">
