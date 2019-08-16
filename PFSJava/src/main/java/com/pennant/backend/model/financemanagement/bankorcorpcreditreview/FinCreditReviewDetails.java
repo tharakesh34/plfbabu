@@ -6,6 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -13,6 +19,9 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "auditYear", "bankName", "auditors", "consolidated", "location", "conversionRate", "auditedDate",
+		"noOfShares", "marketPrice", "qualified", "lovDescCreditReviewSummaryEntries" })
 public class FinCreditReviewDetails extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
@@ -21,17 +30,26 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String custCtgCode;
 
 	private long customerId;
+	@XmlElement
 	private String auditYear;
+	@XmlElement
 	private String bankName;
+	@XmlElement
 	private String auditors;
+	@XmlElement
 	private boolean consolidated;
+	@XmlElement
 	private String location;
+	@XmlElement
 	private BigDecimal conversionRate = BigDecimal.ZERO;
+	@XmlElement
 	private Date auditedDate;
 	private boolean newRecord = false;
 	private String lovValue;
 	private FinCreditReviewDetails befImage;
 	private LoggedInUser userDetails;
+	@XmlElementWrapper(name = "finCreditRevSummary")
+	@XmlElement(name = "finCreditRevSummary")
 	private List<FinCreditReviewSummary> lovDescCreditReviewSummaryEntries = new ArrayList<FinCreditReviewSummary>();
 	private List<FinCreditRevSubCategory> lovDescFinCreditRevSubCategory = new ArrayList<FinCreditRevSubCategory>();
 	private List<CustomerDocument> customerDocumentList = new ArrayList<CustomerDocument>();
@@ -40,11 +58,15 @@ public class FinCreditReviewDetails extends AbstractWorkflowEntity implements En
 	private String lovDescCustCIF;
 	private String lovDescCustCtgCode;
 	private String lovDescCustShrtName;
+	@XmlElement
 	private long noOfShares;
+	@XmlElement
 	private BigDecimal marketPrice;
 
 	private int auditPeriod;
+	@XmlElement
 	private String auditType;
+	@XmlElement
 	private boolean qualified;
 	private String currency;
 	private String lovDescMaxAuditYear;

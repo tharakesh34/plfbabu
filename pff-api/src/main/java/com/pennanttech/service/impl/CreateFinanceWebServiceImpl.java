@@ -1,6 +1,7 @@
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.LoanStatus;
+import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -1115,5 +1118,49 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return response;
 
 	}
+
+	@Override
+	public List<LoanStatus> getLoansStatus(LoanStatusDetails loanStatusDetails) throws ServiceException {
+		logger.debug("Enetring");
+		// for logging purpose
+		List<LoanStatus> listResponse = new ArrayList<LoanStatus>();
+		for (LoanStatus loanStatus : loanStatusDetails.getLoanSatusDetails()) {
+			APIErrorHandlerService.logReference(loanStatus.getFinReference());
+			LoanStatus response = null;
+			if (StringUtils.isBlank(loanStatus.getFinReference())) {
+				response = new LoanStatus();
+				// /doEmptyResponseObject(response);
+				String[] valueParm = new String[1];
+				valueParm[0] = "finreference";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				listResponse.add(response);
+				return listResponse;
+
+			}
+			FinanceMain finMain = financeMainDAO.getFinanceMainStutusById(loanStatus.getFinReference(), "_View");
+			if (finMain == null) {
+				response = new LoanStatus();
+				// /doEmptyResponseObject(response);
+				String[] valueParm = new String[1];
+				valueParm[0] = loanStatus.getFinReference();
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90501", valueParm));
+				listResponse.add(response);
+				return listResponse;
+			} else {
+				response = new LoanStatus();
+				response.setRecordStatus(finMain.getRecordStatus());
+				response.setRoleCode(finMain.getRoleCode());
+				response.setNextRoleCode(finMain.getNextRoleCode());
+				response.setFinReference(finMain.getFinReference());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				listResponse.add(response);
+
+			}
+		}
+
+		return listResponse;
+	}
+
+
 
 }

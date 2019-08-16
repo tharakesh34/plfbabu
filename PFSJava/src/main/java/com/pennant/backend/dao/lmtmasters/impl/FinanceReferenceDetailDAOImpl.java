@@ -946,4 +946,28 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 		return this.jdbcTemplate.queryForList(selectSql.toString(), beanParameters, Long.class);
 	}
 
+	@Override
+	public List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType,String stage,String type ) {
+		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
+		financeReferenceDetail.setFinType(finType);
+		StringBuilder selectSql = new StringBuilder("SELECT finrefdetailid, fintype, lovdescfintypedescname, finreftype, finrefid, ");
+		selectSql.append("lovdescrefdesc, isactive, showinstage, mandinputinstage, allowinputinstage, allowdeviation, allowwaiver, allowpostpone,");
+		selectSql.append(" allowexpire, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid,");
+		selectSql.append(" lovdescisremarksallowed, lovdesccheckmincount, lovdesccheckmaxcount, override, overridevalue, lovdescelgrulevalue, lovdescrulereturntype, finevent, alerttype ");
+		selectSql.append("FROM lmtfinrefdetail");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinType =:FinType ");
+		if (StringUtils.isNotBlank(stage)) {
+			selectSql.append(" AND ShowInStage LIKE '%" + stage + ",%' ");
+		}
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeReferenceDetail);
+		RowMapper<FinanceReferenceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinanceReferenceDetail.class);
+
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		
+	}
+
 }

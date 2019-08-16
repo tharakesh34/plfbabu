@@ -1,5 +1,7 @@
 package com.pennant.backend.service.customermasters.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -13,12 +15,12 @@ import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
@@ -60,6 +62,14 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	}
 
 	@Override
+	public List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear) {
+		// TODO Auto-generated method stub
+		 return getCustomerBankInfoDAO().getBankInfoSubDetailById(id,monthYear, "_AView");
+	}
+
+
+
+	@Override
 	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId) {
 		return getCustomerBankInfoDAO().getSumOfAmtsCustomerBankInfoByCustId(custId);
 	}
@@ -90,6 +100,10 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 
 		if (customerBankInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
+			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				getCustomerBankInfoDAO().delete(bankInfoDetail.getBankInfoSubDetails(), "");
+				getCustomerBankInfoDAO().delete(bankInfoDetail, "");
+			}
 			getCustomerBankInfoDAO().delete(customerBankInfo, "");
 		} else {
 			customerBankInfo.setRoleCode("");
@@ -101,12 +115,19 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			if (customerBankInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerBankInfo.setRecordType("");
-				customerBankInfo.setBankId(getCustomerBankInfoDAO().save(customerBankInfo, ""));
+				long id =getCustomerBankInfoDAO().save(customerBankInfo, "");
+				customerBankInfo.setBankId(id);
 				//BankInfoDetails
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						bankInfoDetail.setBankId(customerBankInfo.getBankId());
+						for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+							bankInfoSubDetail.setBankId(customerBankInfo.getBankId());
+						}
 						customerBankInfoDAO.save(bankInfoDetail, "");
+						customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), "");
 					}
+					
 				}
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -115,7 +136,12 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				//BankInfoDetails
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+						bankInfoDetail.setBankId(customerBankInfo.getBankId());
 						customerBankInfoDAO.update(bankInfoDetail, "");
+						for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+							bankInfoSubDetail.setBankId(customerBankInfo.getBankId());
+							customerBankInfoDAO.update(bankInfoSubDetail, "");
+						}
 					}
 				}
 			}
@@ -139,6 +165,12 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	@Override
+	public List<BankInfoDetail> getBankInfoDetailById(long id) {
+		// TODO Auto-generated method stub
+		return customerBankInfoDAO.getBankInfoDetailById(id, "_AView");
 	}
 
 	@Override
@@ -169,7 +201,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerBankInfo customerBankInfo) {
+	public AuditDetail doValidations(CustomerBankInfo customerBankInfo , String recordType) {
 
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
@@ -194,7 +226,101 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 		}
+		if (StringUtils.equals(recordType, PennantConstants.RECORD_TYPE_NEW)) {
+			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				if (bankInfoDetail.getMonthYear() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "monthYear";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				if (bankInfoDetail.getDebitNo() <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "debitNo";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				} else if (String.valueOf(bankInfoDetail.getDebitNo()).length() != 4) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "debitNo";
+					valueParm[1] = String.valueOf(bankInfoDetail.getDebitNo());
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				if (bankInfoDetail.getCreditNo() <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CreditNo";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				} else if (String.valueOf(bankInfoDetail.getCreditNo()).length() != 4) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "CreditNo";
+					valueParm[1] = String.valueOf(bankInfoDetail.getCreditNo());
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90501", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
 
+				if (bankInfoDetail.getDebitAmt() == null
+						|| bankInfoDetail.getDebitAmt().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "DebitAmt";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				if (bankInfoDetail.getCreditAmt() == null
+						|| bankInfoDetail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CreditAmt";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+
+				if (bankInfoDetail.getBounceIn() == null
+						|| bankInfoDetail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BounceIn";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				if (bankInfoDetail.getBounceOut() == null
+						|| bankInfoDetail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BounceOut";
+					// valueParm[1] = customerBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
+				}
+				for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+					if (bankInfoSubDetail.getMonthYear() == null) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "MonthYear";
+						// valueParm[1] = customerBankInfo.getAccountType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+					if (bankInfoSubDetail.getDay() <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Day";
+						// valueParm[1] = customerBankInfo.getAccountType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+					if (bankInfoSubDetail.getBalance() == null
+							|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Balance";
+						// valueParm[1] = customerBankInfo.getAccountType();
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+						auditDetail.setErrorDetail(errorDetail);
+					}
+				}
+			}
+		}
 		//validate AccNumber length
 		/*
 		 * if(StringUtils.isNotBlank(customerBankInfo.getBankName())){ int accNoLength =

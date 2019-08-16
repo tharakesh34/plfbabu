@@ -392,5 +392,6 @@ public interface FinanceMainDAO {
 	
 	int getCountByOldHostReference(String oldFinReference);
 	
+	FinanceMain getFinanceMainStutusById(String id, String type);
 
 }

@@ -1,21 +1,28 @@
 package com.pennant.backend.model.financemanagement.bankorcorpcreditreview;
 
 import java.math.BigDecimal;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "subCategoryCode", "itemValue" })
 public class FinCreditReviewSummary extends AbstractWorkflowEntity implements Entity {
 
 	private static final long serialVersionUID = 3557119742009775415L;
 	private long summaryId = Long.MIN_VALUE;
 	private long detailId;
+	@XmlElement
 	private String subCategoryCode;
 	private long lovDescCategoryID;
 	private String lovDescCategoryDesc;
 	private String lovDescSubCategoryDesc;
 	private String lovDescCreditRevCode;
+	@XmlElement
 	private BigDecimal itemValue;
 	private boolean newRecord = false;
 	private String lovValue;

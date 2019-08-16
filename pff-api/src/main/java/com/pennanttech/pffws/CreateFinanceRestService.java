@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -9,6 +11,8 @@ import javax.ws.rs.Produces;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.LoanStatus;
+import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 
@@ -66,4 +70,9 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/moveLoanStage")
 	WSReturnStatus moveLoanStage(MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;
+	
+	@POST
+	@Path("/finance/getLoansStatus")
+	List<LoanStatus> getLoansStatus(LoanStatusDetails loanStatusDetails) throws ServiceException;
 }
+

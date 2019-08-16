@@ -1,5 +1,7 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -7,6 +9,8 @@ import javax.jws.WebService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.LoanStatus;
+import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
 
@@ -49,6 +53,10 @@ public interface CreateFinanceSoapService {
 
 	@WebResult(name = "finance")
 	WSReturnStatus moveLoanStage(@WebParam(name = "finance") MoveLoanStageRequest moveLoanStageRequest)
+			throws ServiceException;
+	
+	@WebResult(name = "finance")
+	List<LoanStatus> getLoansStatus(@WebParam(name = "finance") LoanStatusDetails loanStatusDetails)
 			throws ServiceException;
 
 }

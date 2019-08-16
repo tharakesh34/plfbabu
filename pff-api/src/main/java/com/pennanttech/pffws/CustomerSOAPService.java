@@ -19,6 +19,7 @@ import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @WebService
@@ -170,5 +171,8 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public ProspectCustomerDetails getDedupCustomer(
 			@WebParam(name = "customerDetails") ProspectCustomerDetails prospectCustomerDetails);
+	@WebResult(name = "customer")
+	public WSReturnStatus addCreditReviewDetails(
+			@WebParam(name = "customerDetails") FinCreditReviewDetailsData finCreditReviewDetailsData);
 
 }

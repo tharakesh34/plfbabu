@@ -23,6 +23,7 @@ import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
+import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
 import com.pennanttech.ws.model.eligibility.AgreementData;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -230,5 +231,9 @@ public interface CustomerRESTService {
 	@POST
 	@Path("/customerService/dedupCustomer")
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails prospectCustomerDetails);
+	
+	@POST
+	@Path("/customerService/addCreditReviewDetails")
+	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData);
 
 }

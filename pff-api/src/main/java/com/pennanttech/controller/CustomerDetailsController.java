@@ -1,6 +1,5 @@
 package com.pennanttech.controller;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +18,8 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -814,13 +815,30 @@ public class CustomerDetailsController {
 		logger.debug("Entering");
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
+		List<BankInfoDetail>  bankInfoDetailList=null;
+		List<BankInfoSubDetail> bankInfoSubDetailList=null;
 		try {
 			List<CustomerBankInfo> customerBankInfoList = customerBankInfoService
 					.getApprovedBankInfoByCustomerId(customer.getCustID());
-			if (customerBankInfoList != null && !customerBankInfoList.isEmpty()) {
+			for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
+				bankInfoDetailList = customerBankInfoService.getBankInfoDetailById(customerBankInfo.getBankId());
+				for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
+					customerBankInfoService.getBankInfoSubDetailById(bankInfoDetail.getBankId(),
+							bankInfoDetail.getMonthYear());
+				}
+			}
+
+			if (customerBankInfoList != null && !customerBankInfoList.isEmpty() && bankInfoDetailList != null
+					&& !bankInfoDetailList.isEmpty()) {
 				response = new CustomerDetails();
 				response.setCustCIF(cif);
 				response.setCustomerBankInfoList(customerBankInfoList);
+				for (CustomerBankInfo customerBankInfo : customerBankInfoList) {
+					customerBankInfo.setBankInfoDetails(bankInfoDetailList);
+					for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
+						bankInfoDetail.setBankInfoSubDetails(bankInfoSubDetailList);
+					}
+				}
 				response.setCustomer(null);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
@@ -963,7 +981,20 @@ public class CustomerDetailsController {
 		try {
 			CustomerBankInfo curCustBankInfo = customerBankInfoService
 					.getCustomerBankInfoById(customerBankInfo.getBankId());
+			List<BankInfoDetail> bankInfoDetailList=customerBankInfoService.getBankInfoDetailById(curCustBankInfo.getBankId());
+			List<BankInfoSubDetail> bnkInfoSubDetailList = new ArrayList<>();
+			if (curCustBankInfo != null && !bankInfoDetailList.isEmpty() && bankInfoDetailList != null) {
+				for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
+					 bnkInfoSubDetailList = customerBankInfoService
+							.getBankInfoSubDetailById(bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear());
+					if (bnkInfoSubDetailList != null) {
+						bankInfoDetail.setBankInfoSubDetails(bnkInfoSubDetailList);
+					}
+				}
 
+				curCustBankInfo.setBankInfoDetails(bankInfoDetailList);
+		
+			}
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			curCustBankInfo.setUserDetails(userDetails);
 			curCustBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

@@ -1,5 +1,8 @@
 package com.pennanttech.pffws;
 
+import java.util.List;
+
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,6 +14,8 @@ import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
 import com.pennanttech.ws.model.eligibility.EligibilityDetail;
 import com.pennanttech.ws.model.eligibility.EligibilityDetailResponse;
+import com.pennanttech.ws.model.miscellaneous.CheckListResponse;
+import com.pennanttech.ws.model.miscellaneous.LoanTypeMiscRequest;
 
 @Produces("application/json")
 public interface MiscellaneousRestService {
@@ -26,5 +31,9 @@ public interface MiscellaneousRestService {
 	@POST
 	@Path(value = "/miscellaneous/CreateEligibility")
 	EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail) throws ServiceException;
+	
+	@GET
+	@Path(value = "/miscellaneous/getCheckList")
+	List<CheckListResponse> getCheckList(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
 
 }
