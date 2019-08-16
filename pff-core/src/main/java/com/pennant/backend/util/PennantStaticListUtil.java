@@ -2803,8 +2803,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ScheduleMethod_NoPayment")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFT,
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfit")));
-			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
-					Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));
+			/*schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
+					Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));*/
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,
 					Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
 			if (SysParamUtil.isAllowed("ALW_CONST_PRINCIPLE_SCHD_METHOD")) {
