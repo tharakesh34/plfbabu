@@ -15,6 +15,8 @@ public class ForeClosureReport implements Serializable {
 	private String calDate;
 	private String custName;
 	private String address;
+	private String custCIF;
+	private String vanNumber = "";
 
 	private String finReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
@@ -35,6 +37,7 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal otherRefunds = BigDecimal.ZERO;
 	private BigDecimal totalRefunds = BigDecimal.ZERO;
 	private BigDecimal netReceivable = BigDecimal.ZERO;
+	private BigDecimal manualAdviceAmt = BigDecimal.ZERO;
 	private String total;
 	private String entityDesc;
 	private String productDesc;
@@ -53,6 +56,8 @@ public class ForeClosureReport implements Serializable {
 	private BigDecimal amount5 = BigDecimal.ZERO;
 	private BigDecimal amount6 = BigDecimal.ZERO;
 	private BigDecimal amount7 = BigDecimal.ZERO;
+	private BigDecimal intPerday = BigDecimal.ZERO;
+	private int noOfIntDays;
 
 	private String linkedFinRef;
 
@@ -378,6 +383,46 @@ public class ForeClosureReport implements Serializable {
 
 	public void setChrgTillDate(String chrgTillDate) {
 		this.chrgTillDate = chrgTillDate;
+	}
+
+	public BigDecimal getIntPerday() {
+		return intPerday;
+	}
+
+	public void setIntPerday(BigDecimal intPerday) {
+		this.intPerday = intPerday;
+	}
+
+	public int getNoOfIntDays() {
+		return noOfIntDays;
+	}
+
+	public void setNoOfIntDays(int noOfIntDays) {
+		this.noOfIntDays = noOfIntDays;
+	}
+
+	public String getCustCIF() {
+		return custCIF;
+	}
+
+	public void setCustCIF(String custCIF) {
+		this.custCIF = custCIF;
+	}
+
+	public String getVanNumber() {
+		return vanNumber;
+	}
+
+	public void setVanNumber(String vanNumber) {
+		this.vanNumber = vanNumber;
+	}
+
+	public BigDecimal getManualAdviceAmt() {
+		return manualAdviceAmt;
+	}
+
+	public void setManualAdviceAmt(BigDecimal manualAdviceAmt) {
+		this.manualAdviceAmt = manualAdviceAmt;
 	}
 
 }

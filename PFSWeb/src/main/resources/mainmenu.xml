@@ -543,7 +543,7 @@
 				rightName="menuItem_FinanceManagement_ReceiptKnockOffCancel" />
 			<menuItem id="menu_Item_KnockoffCancelApprover"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTKNOCKOFFCANCEL_APPROVER"
-				rightName="menuItem_FinanceManagement_ReceiptKnockOffCancel" />
+				rightName="menuItem_FinanceManagement_ReceiptKnockOffCancelApprover" />
 			<menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_MAKER"
 				rightName="menuItem_Receipts_ClosureMaker" />
 			<menuItem id="menu_Item_closureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_APPROVER"

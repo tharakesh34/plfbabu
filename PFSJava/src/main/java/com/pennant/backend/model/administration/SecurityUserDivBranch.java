@@ -123,6 +123,7 @@ public class SecurityUserDivBranch extends AbstractWorkflowEntity {
 		excludeFields.add("entities");
 		excludeFields.add("clusters");
 		excludeFields.add("branches");
+		excludeFields.add("clusterId");
 		return excludeFields;
 	}
 

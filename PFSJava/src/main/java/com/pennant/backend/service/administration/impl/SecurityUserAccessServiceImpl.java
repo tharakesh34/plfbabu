@@ -171,7 +171,7 @@ public class SecurityUserAccessServiceImpl extends GenericService<SecurityUserAc
 							continue;
 						}
 
-						if (cluster.getId() == null && branch.getClusterId() == null) {
+						if (cluster.getId() == null || branch.getClusterId() == null) {
 							continue;
 						}
 

@@ -118,7 +118,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			String paymentMode = getPaymenyMode(presentmentId);
 			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
 			paymentModeConfigName = paymentModeConfigName.concat(paymentMode);
-			String smtPaymentModeConfig = SysParamUtil.getValueAsString("PRESENTMENT_REQUEST_");
+			String smtPaymentModeConfig = SysParamUtil.getValueAsString(paymentModeConfigName);
 
 			DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, 1000, App.DATABASE.name(), true,

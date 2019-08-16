@@ -119,6 +119,8 @@ public class FinReceiptData {
 		this.tdPriBal = tdPriBal;
 	}
 
+	private boolean isAdjSchedule = false;
+
 	private BigDecimal curEventFeePercent = BigDecimal.ZERO;
 	private BigDecimal newEventFeePercent = BigDecimal.ZERO;
 
@@ -496,6 +498,14 @@ public class FinReceiptData {
 
 	public void setFinFeeDetails(List<FinFeeDetail> finFeeDetails) {
 		this.finFeeDetails = finFeeDetails;
+	}
+
+	public boolean isAdjSchedule() {
+		return isAdjSchedule;
+	}
+
+	public void setAdjSchedule(boolean isAdjSchedule) {
+		this.isAdjSchedule = isAdjSchedule;
 	}
 
 }

@@ -265,22 +265,26 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		financeMain.setApproved(null);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		//Workflow fields 
-		String finRoleCode = reinstateFinance.getLovDescRoleCode();
-		String finNextRoleCode = reinstateFinance.getLovDescNextRoleCode();
+		//String finNextRoleCode = reinstateFinance.getLovDescNextRoleCode() ; 
+		financeMain.setFinIsActive(true);
 
-		financeMain.setWorkflowId(reinstateFinance.getLovDescWorkflowId());
-		financeMain.setRoleCode(finRoleCode);
+		//Workflow fields 
+		String finNextRoleCode = financeMain.getRoleCode();
+		String nextTaskId = financeMain.getTaskId();
 		financeMain.setNextRoleCode(finNextRoleCode);
-		financeMain.setTaskId(reinstateFinance.getLovDescTaskId());
-		financeMain.setNextTaskId(reinstateFinance.getLovDescNextTaskId());
+		financeMain.setNextTaskId(nextTaskId == null ? null : nextTaskId.concat(";"));
 
-		getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
+		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, false);
+		}
 
-		getReinstateFinanceDAO().processReInstateFinance(financeMain); //Moving finance details from rejected tables to actual finance tables
+		//getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
+
+		//getReinstateFinanceDAO().processReInstateFinance(financeMain); //Moving finance details from rejected tables to actual finance tables
 
 		TaskOwners taskOwner = new TaskOwners();
 		taskOwner.setReference(financeMain.getFinReference());
-		taskOwner.setRoleCode(finRoleCode);
+		taskOwner.setRoleCode(finNextRoleCode);
 		taskOwner.setActualOwner(0);
 		taskOwner.setCurrentOwner(0);
 		taskOwner.setProcessed(false);

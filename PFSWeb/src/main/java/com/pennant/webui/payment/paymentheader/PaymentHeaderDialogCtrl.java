@@ -409,8 +409,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		// Fill PaymentType Instructions.
 		if (this.enqiryModule) {
+			calculatePaymentDetail(aPaymentHeader);
 			setPaymentDetailList(aPaymentHeader.getPaymentDetailList());
-			doFillHeaderList(aPaymentHeader.getPaymentDetailList());
 		} else {
 			calculatePaymentDetail(aPaymentHeader);
 		}
@@ -834,7 +834,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		doWriteComponentsToBean(aPaymentHeader);
 
 		isNew = aPaymentHeader.isNew();
-		
+
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {

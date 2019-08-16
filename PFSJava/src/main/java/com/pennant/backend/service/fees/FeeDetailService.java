@@ -655,6 +655,8 @@ public class FeeDetailService {
 						.getOutStandingBalFromFees(finMain.getFinReference());
 				executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
 				executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+				executionMap.put("principalSchdOutstanding",
+						finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 				executionMap.put("totOSExcludeFees",
 						finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
 				executionMap.put("totOSIncludeFees",

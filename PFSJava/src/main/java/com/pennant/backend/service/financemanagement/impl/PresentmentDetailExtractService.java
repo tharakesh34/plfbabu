@@ -193,7 +193,13 @@ public class PresentmentDetailExtractService {
 		ResultSet rs = null;
 		List<Object> resultList = null;
 		try {
-			resultList = presentmentDetailDAO.getPresentmentDetails(ph);
+
+			if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_PRESENTMENT, ph.getPresentmentType())) {
+				resultList = presentmentDetailDAO.getPresentmentDetails(ph);
+			} else if (StringUtils.equalsIgnoreCase(PennantConstants.PROCESS_REPRESENTMENT, ph.getPresentmentType())) {
+				resultList = presentmentDetailDAO.getRePresentmentDetails(ph);
+			}
+
 			rs = (ResultSet) resultList.get(0);
 			while (rs.next()) {
 				Date defSchDate = rs.getDate("DEFSCHDDATE");

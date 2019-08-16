@@ -580,6 +580,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			receiptHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			receiptHeader.setUserDetails(userDetails);
+			receiptHeader.setActFinReceipt(true);
 
 			receiptHeader.setValueDate(null);
 
@@ -765,13 +766,14 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 		header.setReceiptID(receiptId);
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
-		header.setExcessAdjustTo(PennantConstants.List_Select);
+		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(presentmentDetail.getPresentmentAmt().add(presentmentDetail.getAdvanceAmt()));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
 		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_APPROVED);
 		header.setLogSchInPresentment(true);
+		header.setActFinReceipt(true);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
 

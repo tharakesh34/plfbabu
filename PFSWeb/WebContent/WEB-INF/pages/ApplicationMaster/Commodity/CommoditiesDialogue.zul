@@ -61,7 +61,7 @@
 									<label value="${c:l('label_CommodityTypeDialogue_CommodityTypeDescription.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<textbox id="description" />
+										<textbox id="description" width="300px" />
 									</hbox>
 								</row>
 								<row>

@@ -6133,8 +6133,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return auditHeader;
 			}
 		}
-		String productCode = StringUtils
-				.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getFinCategory());
+		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
+		financeMain.setFinIsActive(false);
+		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
+		}
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
@@ -6143,6 +6146,33 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
 			getPostingsPreparationUtil().postReveralsByFinreference(financeMain.getFinReference(), true);
 		}
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		String[] fieldsArray = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fieldsArray[0], fieldsArray[1],
+				financeMain.getBefImage(), financeMain));
+
+		// Saving the reasons
+		saveReasonDetails(financeDetail);
+
+		getFinanceMainDAO().saveRejectFinanace(financeMain);
+
+		// Update Task_log and Task_Owners tables
+		// =======================================
+		updateTaskLog(financeMain, false);
+
+		if ((StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Reject")
+				|| StringUtils.containsIgnoreCase(financeMain.getRecordStatus(), "Cancel"))
+				&& StringUtils.isEmpty(financeMain.getNextTaskId())) {
+			TaskOwners taskOwner = new TaskOwners();
+			taskOwner.setReference(financeMain.getFinReference());
+			taskOwner.setProcessed(true);
+			taskOwner.setRoleCode(financeMain.getRoleCode());
+			getTaskOwnersDAO().updateTaskOwner(taskOwner, true);
+			return auditHeader;
+		}
+
+		String productCode = StringUtils
+				.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getFinCategory());
 
 		// Save Finance Details Data on Reject Tables
 		// =======================================
@@ -8553,6 +8583,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
 		return getPostingsDAO().getPostingsByFinRefAndEvent(finReference, finEvent, showZeroBal, postingGroupBy, type);
+	}
+
+	@Override
+	public List<ReturnDataSet> getInsurancePostings(String finReference) {
+		return getPostingsDAO().getPostingsByFinRef(finReference);
 	}
 
 	/**

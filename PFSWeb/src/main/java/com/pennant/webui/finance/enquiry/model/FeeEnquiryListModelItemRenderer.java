@@ -10,6 +10,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
 import com.pennant.backend.model.finance.FinFeeDetail;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 
 public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeDetail>, Serializable {
@@ -70,10 +71,11 @@ public class FeeEnquiryListModelItemRenderer implements ListitemRenderer<FinFeeD
 			}
 			lc.setParent(item);
 
-			if (StringUtils.equals("#", finFeeDetail.getPaymentRef())) {
+			if (StringUtils.equals("#", finFeeDetail.getFeeScheduleMethod())) {
 				lc = new Listcell("");
 			} else {
-				lc = new Listcell(finFeeDetail.getFeeScheduleMethod());
+				lc = new Listcell(PennantStaticListUtil.getlabelDesc(finFeeDetail.getFeeScheduleMethod(),
+						PennantStaticListUtil.getRemFeeSchdMethods()));
 			}
 			lc.setParent(item);
 

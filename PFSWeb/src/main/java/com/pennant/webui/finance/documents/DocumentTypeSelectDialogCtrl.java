@@ -310,6 +310,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			}
 			aDocumentDetails.setDocCategory(this.docCategory.getValue());
 			aDocumentDetails.setLovDescDocCategoryName(this.docCategory.getDescription());
+			aDocumentDetails.setCategoryCode(DocumentCategories.FINANCE.getKey());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

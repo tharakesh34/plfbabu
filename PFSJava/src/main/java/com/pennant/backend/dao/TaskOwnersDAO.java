@@ -66,4 +66,7 @@ public interface TaskOwnersDAO {
 	String getUserRoleCodeByRefernce(long userId, String reference, List<String> userRoles);
 
 	void deviationReject(String finreference, String roleCode, String nextRoleCode);
+
+	// Reinstate Loan
+	void updateTaskOwner(TaskOwners taskOwners, boolean baseRole);
 }

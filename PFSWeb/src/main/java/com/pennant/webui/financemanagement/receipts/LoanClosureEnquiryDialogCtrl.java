@@ -3400,15 +3400,18 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			String disDate = DateFormatUtils.format(financeMain.getFinStartDate(), "dd'th' MMMM yyyy");
 			Date chrgTillDate;
 
+			Date prvEmiDate = receiptData.getOrgFinPftDtls().getPrvRpySchDate();
 			if (RepayConstants.RECEIPTMODE_CHEQUE.equals(this.receiptMode.getSelectedItem().getValue())
 					|| RepayConstants.RECEIPTMODE_DD.equals(this.receiptMode.getSelectedItem().getValue())) {
 				chrgTillDate = this.interestTillDate.getValue();
 			} else {
 				chrgTillDate = this.receiptDate.getValue();
 			}
+			int noOfIntDays = DateUtility.getDaysBetween(chrgTillDate, prvEmiDate);
 
 			closureReport.setCalDate(appDate);
 			closureReport.setFinReference(financeMain.getFinReference());
+			closureReport.setVanNumber(financeMain.getVanCode() == null ? "" : financeMain.getVanCode());
 			closureReport.setFinAmount(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter));
 			closureReport.setDisbursalDate(disDate);
 			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
@@ -3416,6 +3419,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			if (getFinanceDetail().getCustomerDetails() != null
 					&& getFinanceDetail().getCustomerDetails().getCustomer() != null) {
 				closureReport.setCustName(getFinanceDetail().getCustomerDetails().getCustomer().getCustShrtName());
+				closureReport.setCustCIF(getFinanceDetail().getCustomerDetails().getCustomer().getCustCIF());
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsbyIdandPhoneType(
 						getFinanceDetail().getCustomerDetails().getCustID(), "MOBILE");
 				CustomerAddres custAdd = customerDetails.getAddressList().stream()
@@ -3509,10 +3513,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				}
 				setOrgReceiptData(receiptData);
+				//Other Charges
+				closureReport.setManualAdviceAmt(PennantApplicationUtil.formateAmount(receivableAmt, formatter));
 
-				// Cheque Bounce Charges and all the receivable fees
-				closureReport.setCheqBncCharges(
-						PennantApplicationUtil.formateAmount(bncCharge.add(receivableAmt), formatter));
+				// Cheque Bounce Charges 
+				closureReport.setCheqBncCharges(PennantApplicationUtil.formateAmount(bncCharge, formatter));
 
 				// Pending Installments
 				closureReport
@@ -3546,7 +3551,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
 						.add(closureReport.getInstForTheMonth()).add(closureReport.getForeClosFees())
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
-
+				if (noOfIntDays > 0) {
+					closureReport
+							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
+				}
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
 				for (ManualAdvise manualAdvise : payableList) {

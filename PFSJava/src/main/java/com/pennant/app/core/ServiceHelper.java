@@ -47,8 +47,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -200,32 +198,6 @@ abstract public class ServiceHelper implements Serializable {
 
 	public List<NPABucketConfiguration> getNPABucketConfigurations(String productCode) {
 		return FinanceConfigCache.getCacheNPABucketConfiguration(StringUtils.trimToEmpty(productCode));
-	}
-
-	public void sortBucketConfig(List<DPDBucketConfiguration> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<DPDBucketConfiguration>() {
-				@Override
-				public int compare(DPDBucketConfiguration detail1, DPDBucketConfiguration detail2) {
-					return detail1.getDueDays() - detail2.getDueDays();
-				}
-			});
-		}
-
-	}
-
-	public void sortNPABucketConfig(List<NPABucketConfiguration> list) {
-
-		if (list != null && !list.isEmpty()) {
-			Collections.sort(list, new Comparator<NPABucketConfiguration>() {
-				@Override
-				public int compare(NPABucketConfiguration detail1, NPABucketConfiguration detail2) {
-					return detail1.getDueDays() - detail2.getDueDays();
-				}
-			});
-		}
-
 	}
 
 	public BigDecimal getDecimal(ResultSet resultSet, String name) throws SQLException {

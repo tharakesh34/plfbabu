@@ -378,6 +378,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 																	// Branch
 																	// code(GDP)
 		aeEvent.setCcy(details.getPaymentCCy());
+		aeEvent.setCcy("INR");
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();

@@ -59,6 +59,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class PresentmentDetailExtract extends FileImport implements Runnable {
@@ -81,6 +82,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	private LoggedInUser userDetails;
 	private DataEngineStatus status;
 	private DataSource dataSource;
+
+	private PresentmentImportProcess presentmentImportProcess;
 
 	public PresentmentDetailExtract(DataSource datsSource, PresentmentDetailService presentmentDetailService,
 			NotificationService notificationService) {
@@ -384,10 +387,18 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setFailedRecords(failedCount);
 						PennantConstants.BATCH_TYPE_PRESENTMENT_IMPORT.setStatus(ExecutionStatus.E.name());
 
-						// Fetching the mandatory data from resultset
-						String presentmentRef = rs.getString("BATCHID");
-						String status = rs.getString("STATUS");
-						String reasonCode = rs.getString("REASONCODE");
+						String presentmentRef = null;
+						String status = null;
+						String reasonCode = null;
+
+						if (presentmentImportProcess != null) {
+							presentmentRef = presentmentImportProcess.getPresentmentRef(rs.getString("BATCHID"));
+							status = presentmentImportProcess.getStatus(rs.getString("STATUS"));
+						} else {
+							presentmentRef = rs.getString("BATCHID");
+							status = rs.getString("STATUS");
+						}
+						reasonCode = rs.getString("REASONCODE");
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
 
 						// Validate presentment response, if on exists.
@@ -1653,6 +1664,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+
+	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
+		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
 }

@@ -2992,7 +2992,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			jointAccountDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_DISBURSMENT:
-			Events.sendEvent("onChange", finStartDate, null);
 			disbursementDetailDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_STAGEACCOUNTING:
@@ -3198,7 +3197,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		default:
 			break;
 		}
-
 		logger.debug(tab.getId() + " --> " + "Leaving");
 	}
 
@@ -8634,7 +8632,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	//Allow Loan Start Date set to update based on AppDate 
-	private void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
+	public void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
 		logger.debug(Literal.ENTERING);
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)) {
 			return;
@@ -8649,8 +8647,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				finAdvancePayments.setLLDate(appDate);
 			}
 			this.finStartDate.setValue(appDate);
-			//Events.sendEvent("onChange", finStartDate, null);
-			appendScheduleDetailTab(true, true);
+			Events.sendEvent("onChange", finStartDate, null);
+			getFinanceDetail().getFinScheduleData().getFinanceMain().setFinStartDate(this.finStartDate.getValue());
 		}
 		logger.debug(Literal.LEAVING);
 		this.financeTypeDetailsTab.setSelected(true);

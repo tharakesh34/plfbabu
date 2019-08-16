@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentProcessUtil;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.customermasters.Customer;
@@ -27,9 +28,9 @@ public class ReceiptPaymentService extends ServiceHelper {
 	private static final long serialVersionUID = 1442146139821584760L;
 	private static Logger logger = Logger.getLogger(ReceiptPaymentService.class);
 
-	@Autowired
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private RepaymentProcessUtil repaymentProcessUtil;
+	private ReceiptCalculator receiptCalculator;
 
 	/**
 	 * @param custId
@@ -91,9 +92,13 @@ public class ReceiptPaymentService extends ServiceHelper {
 					FinanceScheduleDetail sch = finEODEvent.getFinanceScheduleDetails()
 							.get(finEODEvent.getIdxPresentment());
 
-					BigDecimal schAmtDue = sch.getProfitSchd().add(sch.getPrincipalSchd()).add(sch.getFeeSchd())
-							.subtract(sch.getSchdPriPaid()).subtract(sch.getSchdPftPaid())
-							.subtract(sch.getSchdFeePaid()).subtract(sch.getTDSAmount());
+					BigDecimal pftDue = sch.getProfitSchd().subtract(sch.getSchdPftPaid());
+					BigDecimal tdsDue = receiptCalculator.getTDS(pftDue);
+
+					BigDecimal priDue = sch.getPrincipalSchd().subtract(sch.getSchdPriPaid());
+					BigDecimal feeDue = sch.getFeeSchd().subtract(sch.getSchdFeePaid());
+
+					BigDecimal schAmtDue = pftDue.subtract(tdsDue).add(priDue).add(feeDue);
 					if (schAmtDue.compareTo(BigDecimal.ZERO) <= 0) {
 						continue;
 					}
@@ -135,11 +140,13 @@ public class ReceiptPaymentService extends ServiceHelper {
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
 
 		header.setReceiptPurpose(FinanceConstants.FINSER_EVENT_SCHDRPY);
-		header.setExcessAdjustTo(PennantConstants.List_Select);
+		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
 		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
 		header.setReceiptAmount(advanceAmt.add(presentmentAmt));
 		header.setEffectSchdMethod(PennantConstants.List_Select);
+		header.setActFinReceipt(true);
 		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+
 		if (!isPDetailsExits) {
 			header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
 		}
@@ -226,6 +233,16 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 	public void setRepaymentProcessUtil(RepaymentProcessUtil repaymentProcessUtil) {
 		this.repaymentProcessUtil = repaymentProcessUtil;
+	}
+
+	@Autowired
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	@Autowired
+	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
+		this.receiptCalculator = receiptCalculator;
 	}
 
 }

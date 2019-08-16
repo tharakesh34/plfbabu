@@ -301,7 +301,7 @@ public class DPDBucketConfigurationDAOImpl extends SequenceDao<DPDBucketConfigur
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" configID, productCode, bucketID, dueDays, suspendProfit ");
 		sql.append(" From DPDBUCKETSCONFIG");
-		sql.append(" Where ProductCode =:ProductCode ");
+		sql.append(" Where ProductCode =:ProductCode Order by DueDays ");
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		RowMapper<DPDBucketConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper

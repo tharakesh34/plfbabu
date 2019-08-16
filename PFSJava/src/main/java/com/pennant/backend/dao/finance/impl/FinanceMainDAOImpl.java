@@ -2649,7 +2649,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder selectSql = new StringBuilder("SELECT FM.FinReference,FM.FinAmount, FM.FinType, FM.FinCcy,");
 		selectSql.append(" FM.FinAssetValue, FM.NumberOfTerms, FM.MaturityDate, FM.Finstatus,");
 		selectSql.append(
-				" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus,FM.RecordStatus");
+				" FM.FinStartDate, FM.FirstRepay, FT.FinCategory lovDescFinProduct,FM.ClosingStatus,FM.RecordStatus, FM.ProductCategory, FM.FinBranch");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" FM INNER JOIN RMTFinanceTypes FT ON FM.FinType = FT.FinType ");
@@ -4443,7 +4443,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("FinReference", finReference);
 		source.addValue("AddrPriority", Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
-		
+
 		logger.debug("selectSql: " + sql.toString());
 
 		try {
@@ -4598,7 +4598,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		StringBuilder selectSql = new StringBuilder("SELECT  FinReference, PlanDeferCount, ");
 		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
-		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference,FinType,FinCategory, FinBranch,");
+		selectSql.append(
+				" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference,FinType,FinCategory, FinBranch,");
 		selectSql.append(" CustID,PromotionCode");
 		selectSql.append(" From FinanceMain");
 		selectSql.append(" Where OldFinReference =:OldFinReference AND FinIsActive = :FinIsActive");
@@ -4763,7 +4764,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return 0;
 		}
 
-
 	}
 
 	// IND AS - END
@@ -4809,14 +4809,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
-	
+
 	@Override
 	public long saveHostRef(FinanceMainExtension financeMainExtension) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("insert into ");
-			sql.append("FINANCEMAIN_EXTENSION");
+		sql.append("FINANCEMAIN_EXTENSION");
 		sql.append(" (FinId, Finreference, Hostreference, Oldhostreference)");
 		sql.append(" values (:finId, :finreference, :hostreference, :oldhostreference)");
 
@@ -4833,7 +4833,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.LEAVING);
 		return financeMainExtension.getId();
 	}
-	
+
 	@Override
 	public FinanceMain getFinanceMainByHostReference(String oldFinReference, boolean active) {
 		logger.debug("Entering");
@@ -4844,7 +4844,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
 		selectSql.append(" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory");
 		selectSql.append(" From FinanceMain");
-		selectSql.append(" Where FinReference = (Select FinReference from Financemain_Extension Where HostReference = :OldFinReference)");
+		selectSql.append(
+				" Where FinReference = (Select FinReference from Financemain_Extension Where HostReference = :OldFinReference)");
 		selectSql.append(" AND FinIsActive = :FinIsActive");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -4861,7 +4862,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 	@Override
 	public int getCountByExternalReference(String oldHostReference) {
 
@@ -4885,9 +4886,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return 0;
 		}
 
-
 	}
-	
+
 	@Override
 	public int getCountByOldHostReference(String oldHostReference) {
 
@@ -4910,13 +4910,37 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
+	// Reinstate Loan
+	@Override
+	public void updateRejectFinanceMain(FinanceMain financeMain, TableType tableType, boolean isWIF) {
+
+		StringBuilder sql = new StringBuilder("update financemain");
+		sql.append(tableType.getSuffix());
+		sql.append(" set Approved = :Approved");
+		sql.append(", FinIsActive = :FinIsActive");
+		sql.append(", NextTaskId = :NextTaskId");
+		sql.append(", RecordStatus= :RecordStatus");
+		sql.append(", NextRoleCode = :NextRoleCode");
+		sql.append(" where FinReference = :FinReference");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(financeMain);
+		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
 	@Override
 	public FinanceMain getFinanceMainStutusById(String id, String type) {
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference,RecordStatus, RoleCode, NextRoleCode from FinanceMain");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT FinReference,RecordStatus, RoleCode, NextRoleCode from FinanceMain");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -4933,5 +4957,5 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 		return null;
 	}
-	
+
 }

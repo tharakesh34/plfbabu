@@ -340,7 +340,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 
 		// Fetching Promotion Details from main view
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
+				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), "_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}
@@ -3109,6 +3110,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// set Default date formats
 		setDefaultDateFormats(fsi);
+		//closed loan
+		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)
+				|| StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+
+			boolean finactive = financeMainDAO.isFinActive(StringUtils.trimToEmpty(finReference));
+			if (!finactive) {
+				finScheduleData = setErrorToFSD(finScheduleData, "RU0049", null);
+				return receiptData;
+			}
+		}
 
 		if (StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| StringUtils.equals(receiptPurpose, FinanceConstants.FINSER_EVENT_EARLYRPY)) {
@@ -4856,7 +4867,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(financeMain.getFinType(), "_ORGView");
 
 		// Fetching Promotion Details from main view
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
+				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			Promotion promotion = this.promotionDAO.getPromotionByCode(financeMain.getPromotionCode(), "_AView");
 			financeType.setFInTypeFromPromotiion(promotion);
 		}

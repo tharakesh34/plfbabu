@@ -6,6 +6,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -38,6 +40,7 @@ import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
@@ -69,6 +72,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private String errorMsg = null;
 	private boolean allowInstrumentType;
 	private Media media = null;
+
+	PresentmentImportProcess presentmentImportProcess;
 
 	public ImportPresentmentDetailCtrl() {
 		super();
@@ -294,6 +299,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			detailExtract.setUserDetails(getUserWorkspace().getLoggedInUser());
 			detailExtract.setStatus(PRSENTMENT_FILE_IMPORT_STATUS);
 			detailExtract.setMediaOnly(getMedia());
+			detailExtract.setPresentmentImportProcess(presentmentImportProcess);
 
 			Thread thread = new Thread(detailExtract);
 			thread.start();
@@ -372,7 +378,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 				}
 			}
 		} else {
-			Events.postEvent("onCreate",this.window_ImportPresentmentDetails, event);
+			Events.postEvent("onCreate", this.window_ImportPresentmentDetails, event);
 		}
 	}
 
@@ -395,6 +401,12 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	public void setMedia(Media media) {
 		this.media = media;
+	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "presentmentImportProcess")
+	public void setPresentmentImportProcess(PresentmentImportProcess presentmentImportProcess) {
+		this.presentmentImportProcess = presentmentImportProcess;
 	}
 
 }

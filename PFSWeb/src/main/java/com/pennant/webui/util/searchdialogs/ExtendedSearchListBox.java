@@ -625,7 +625,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			resetSelectedItems();
-			
+
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
 			final int start = pageNo * getPageSize();
@@ -690,7 +690,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 		@Override
 		public void onEvent(Event event) throws Exception {
 			resetSelectedItems();
-			
+
 			final String searchText = ExtendedSearchListBox.this._textbox.getValue();
 
 			// we start new
@@ -830,7 +830,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 					searchFilters.add(getSearchFilter(field, value, DataType.STRING));
 				}
 				valueColumnAdded = true;
-				break;
+				continue;
 
 			} else if (valueType == DataType.LONG) {
 				searchFilters.add(getSearchFilter(field, value, valueType));
@@ -901,7 +901,7 @@ public class ExtendedSearchListBox extends Window implements Serializable {
 	public void setSelectedValues(Map<String, Object> selectedValues) {
 		this.selectedValues = selectedValues;
 	}
-	
+
 	private void resetSelectedItems() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		for (Listitem item : ExtendedSearchListBox.this.listbox.getItems()) {
 			Object object = item.getAttribute("data");

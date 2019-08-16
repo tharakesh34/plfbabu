@@ -152,7 +152,7 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		logger.debug(Literal.ENTERING);
 
 		setStatusDetails();
-		
+
 		this.code.setMaxlength(8);
 		this.hsnCode.setMaxlength(20);
 
@@ -548,10 +548,11 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 				if (this.currentValue.getActualValue().compareTo(BigDecimal.ZERO) == 0
 						|| this.currentValue.getActualValue().compareTo(new BigDecimal("0.00")) == 0) {
 					throw new WrongValueException(this.currentValue,
-							Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value") + " should be greater than 0");
-				} 
+							Labels.getLabel("label_CommoditiesDialogue_CurrentValue.value")
+									+ " should be greater than 0");
+				}
 			}
-			
+
 			acommodity.setCurrentValue(PennantApplicationUtil.unFormateAmount(this.currentValue.getActualValue(),
 					CurrencyUtil.getFormat(SysParamUtil.getAppCurrency())));
 		} catch (WrongValueException we) {
@@ -727,7 +728,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 					new PTStringValidator(Labels.getLabel("label_CommoditiesDialogue_CommodityCode.value"),
 							PennantRegularExpressions.REGEX_ALPHANUM_CODE, true));
 		}
-
 
 		if (!this.alertToRoles.getButton().isDisabled()) {
 			this.alertToRoles.setConstraint(
@@ -1173,8 +1173,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 		logger.debug(Literal.ENTERING);
 
 		this.type.setValue("");
-		this.description.setText("");
-		this.active.setChecked(false);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1184,8 +1182,6 @@ public class CommoditiesDialogueCtrl extends GFCBaseCtrl<Commodity> {
 
 		this.type.setValue(commodityType.getCode());
 		this.type.setDescription(commodityType.getDescription());
-		this.description.setText(commodityType.getDescription());
-		this.active.setChecked(commodityType.isActive());
 
 		logger.debug(Literal.LEAVING);
 	}

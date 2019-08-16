@@ -601,7 +601,8 @@ public class RepaymentPostingsUtil implements Serializable {
 			latePayMarkingService.updateFinPftDetails(pftDetail, overdueList, dateValueDate);
 		}
 
-		latePayBucketService.updateDPDBuketing(scheduleDetails, financeMain, pftDetail, dateValueDate, false);
+		latePayBucketService.updateDPDBuketing(scheduleDetails, financeMain, pftDetail, DateUtility.getAppDate(),
+				false);
 
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
@@ -1145,7 +1146,8 @@ public class RepaymentPostingsUtil implements Serializable {
 		}
 
 		aeEvent.getAcSetIDList().clear();
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null &&financeMain.getPromotionSeqId() == 0)) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
+				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
 					eventCode, FinanceConstants.MODULEID_PROMOTION));
 		} else {

@@ -669,7 +669,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReportsList.add(soaSummaryReport);
 
 			due = totalPrincipalSchd.subtract(finMain.getAdvanceEMI());
-			;
 			receipt = totalSchdPriPaid;
 
 			overDue = due.subtract(receipt);
@@ -736,7 +735,11 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					totPenaltyPaid = totPenaltyPaid.add(finODDetails.getTotPenaltyPaid());
 				}
 
-				if (finODDetails.getTotWaived() != null) {
+				if (isODCExclusive && finODDetails.getTotWaived() != null) { //GST Calculation only for Exclusive case
+					BigDecimal gstAmount = GSTCalculator.getTotalGST(finReference, finODDetails.getTotWaived(),
+							odcFeeType.getTaxComponent());
+					totwaived = totwaived.add(finODDetails.getTotWaived()).add(gstAmount);
+				} else if (finODDetails.getTotWaived() != null) {
 					totwaived = totwaived.add(finODDetails.getTotWaived());
 				}
 

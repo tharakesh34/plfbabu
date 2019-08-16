@@ -569,9 +569,15 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				MessageUtil.showError(errorMsg);
 				return true;
 			}
+
 			//duplicate check
 			boolean dedupCheck = SysParamUtil.isAllowed(SMTParameterConstants.RECEIPTUPLOAD_DEDUPCHECK);
 			ReceiptUploadDetail rud = loadReceiptData(rchRow);
+
+			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
+				errorMsg = "Transaction Reference more than 6 digits";
+				setErrorToRUD(rud, "90405", errorMsg);
+			}
 			if (dedupCheck) {
 				// Load Receipt Header Data to Receipts Bean
 

@@ -95,4 +95,6 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByFinRef(String finReference);
 
+	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent);
+
 }

@@ -271,8 +271,11 @@ public class FeeCalculator implements Serializable {
 								.getOutStandingBalFromFees(financeMain.getFinReference());
 						executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
 						//PSD: 138255 PrincipalOutStanding will be future Amount to be paid.
-						executionMap.put("principalOutStanding", finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
-						
+						executionMap.put("principalOutStanding",
+								finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
+
+						executionMap.put("principalSchdOutstanding",
+								finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 						executionMap.put("totOSExcludeFees",
 								finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
 						executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()

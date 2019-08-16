@@ -70,9 +70,7 @@ public class DisbursementPostings {
 				if (finApprovedPay != null
 						&& StringUtils.equals(finApprovedPay.getStatus(), finAdvancePayments.getStatus())
 						&& !StringUtils.equals(PennantConstants.RCD_DEL, finAdvancePayments.getRecordType())) {
-					if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-						continue;
-					}
+					continue;
 				}
 
 				AEEvent aeEvent = new AEEvent();

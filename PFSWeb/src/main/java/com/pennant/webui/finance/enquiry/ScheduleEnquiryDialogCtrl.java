@@ -54,6 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -80,6 +81,7 @@ import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
@@ -88,7 +90,10 @@ import com.pennant.fusioncharts.ChartsConfig;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
+import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
@@ -328,105 +333,115 @@ public class ScheduleEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail
 	 *            (aFinanceDetail)
 	 */
 	public void doFillScheduleList(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		finRender = new FinScheduleListItemRenderer();
-		int advEMITerms = finScheduleData.getFinanceMain().getAdvTerms();
-		if (finScheduleData.getFinanceScheduleDetails() != null) {
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
-			if (advEMITerms > 0) {
-				sdSize = sdSize - advEMITerms;
-			}
-			// Clear all the list items in list box
-			this.listBoxSchedule.getItems().clear();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		int advEMITerms = financeMain.getAdvTerms();
 
-			// Find Out Finance Repayment Details on Schedule
-			Map<Date, ArrayList<FinanceRepayments>> rpyDetailsMap = null;
-			if (finScheduleData.getRepayDetails() != null && finScheduleData.getRepayDetails().size() > 0) {
-				rpyDetailsMap = new HashMap<Date, ArrayList<FinanceRepayments>>();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 
-				for (FinanceRepayments rpyDetail : finScheduleData.getRepayDetails()) {
-					if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
-						ArrayList<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
-						rpyDetailList.add(rpyDetail);
-						rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
-					} else {
-						ArrayList<FinanceRepayments> rpyDetailList = new ArrayList<FinanceRepayments>();
-						rpyDetailList.add(rpyDetail);
-						rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
-					}
-				}
-			}
+		if (CollectionUtils.isEmpty(schedules)) {
+			return;
+		}
 
-			// Find Out Finance Repayment Details on Schedule
-			Map<Date, ArrayList<OverdueChargeRecovery>> penaltyDetailsMap = null;
-			if (finScheduleData.getPenaltyDetails() != null && finScheduleData.getPenaltyDetails().size() > 0) {
-				penaltyDetailsMap = new HashMap<Date, ArrayList<OverdueChargeRecovery>>();
+		int sdSize = schedules.size();
+		if (AdvanceType.hasAdvEMI(financeMain.getAdvType()) && AdvanceStage.hasFrontEnd(financeMain.getAdvStage())
+				&& advEMITerms > 0) {
+			sdSize = sdSize - advEMITerms;
+		}
+		// Clear all the list items in list box
+		this.listBoxSchedule.getItems().clear();
 
-				for (OverdueChargeRecovery penaltyDetail : finScheduleData.getPenaltyDetails()) {
-					if (penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())) {
-						ArrayList<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap
-								.get(penaltyDetail.getFinODSchdDate());
-						penaltyDetailList.add(penaltyDetail);
-						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
-					} else {
-						ArrayList<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
-						penaltyDetailList.add(penaltyDetail);
-						penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
-					}
-				}
-			}
+		// Find Out Finance Repayment Details on Schedule
+		Map<Date, List<FinanceRepayments>> rpyDetailsMap = null;
+		List<FinanceRepayments> repayDetails = finScheduleData.getRepayDetails();
+		if (CollectionUtils.isNotEmpty(repayDetails)) {
+			rpyDetailsMap = new HashMap<Date, List<FinanceRepayments>>();
 
-			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
-			BigDecimal totalAdvPft = BigDecimal.ZERO;
-			int formatter = CurrencyUtil.getFormat(finScheduleData.getFinanceMain().getFinCcy());
-
-			for (int i = 0; i < sdSize; i++) {
-				FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
-				boolean showRate = false;
-				boolean showAdvRate = false;
-				if (i == 0) {
-					prvSchDetail = curSchd;
-					showRate = true;
-
-					if (finScheduleData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_STRUCTMUR)) {
-						showAdvRate = true;
-					}
+			for (FinanceRepayments rpyDetail : repayDetails) {
+				if (rpyDetailsMap.containsKey(rpyDetail.getFinSchdDate())) {
+					List<FinanceRepayments> rpyDetailList = rpyDetailsMap.get(rpyDetail.getFinSchdDate());
+					rpyDetailList.add(rpyDetail);
+					rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
 				} else {
-					prvSchDetail = finScheduleData.getFinanceScheduleDetails().get(i - 1);
-					if (curSchd.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
-						showRate = true;
-					}
-					if (curSchd.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate()) != 0) {
-						showAdvRate = true;
-					}
-				}
-				// ####_0.2
-				doFillIrrDetails(finScheduleData.getiRRDetails());
-				//Preparing Total Advance Profit Amount
-				totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
-
-				final HashMap<String, Object> map = new HashMap<String, Object>();
-				map.put("finSchdData", finScheduleData);
-				map.put("financeScheduleDetail", curSchd);
-				map.put("paymentDetailsMap", rpyDetailsMap);
-				map.put("penaltyDetailsMap", penaltyDetailsMap);
-				map.put("accrueValue", finScheduleData.getAccrueValue());
-				map.put("window", this.window_ScheduleEnquiryDialog);
-				map.put("totalAdvPft", totalAdvPft);
-				map.put("showAdvRate", showAdvRate);
-				map.put("formatter", formatter);
-
-				finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
-						false);
-				if (i == sdSize - 1) {
-					finRender.render(map, prvSchDetail, true, false, true, finScheduleData.getFinFeeDetailList(),
-							showRate, false);
-					break;
+					List<FinanceRepayments> rpyDetailList = new ArrayList<FinanceRepayments>();
+					rpyDetailList.add(rpyDetail);
+					rpyDetailsMap.put(rpyDetail.getFinSchdDate(), rpyDetailList);
 				}
 			}
 		}
-		logger.debug("Leaving");
+
+		// Find Out Finance Repayment Details on Schedule
+		Map<Date, List<OverdueChargeRecovery>> penaltyDetailsMap = null;
+		List<OverdueChargeRecovery> penaltyDetails = finScheduleData.getPenaltyDetails();
+		if (CollectionUtils.isNotEmpty(penaltyDetails)) {
+			penaltyDetailsMap = new HashMap<Date, List<OverdueChargeRecovery>>();
+
+			for (OverdueChargeRecovery penaltyDetail : penaltyDetails) {
+				if (penaltyDetailsMap.containsKey(penaltyDetail.getFinODSchdDate())) {
+					List<OverdueChargeRecovery> penaltyDetailList = penaltyDetailsMap
+							.get(penaltyDetail.getFinODSchdDate());
+					penaltyDetailList.add(penaltyDetail);
+					penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+				} else {
+					List<OverdueChargeRecovery> penaltyDetailList = new ArrayList<OverdueChargeRecovery>();
+					penaltyDetailList.add(penaltyDetail);
+					penaltyDetailsMap.put(penaltyDetail.getFinODSchdDate(), penaltyDetailList);
+				}
+			}
+		}
+
+		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(schedules));
+		BigDecimal totalAdvPft = BigDecimal.ZERO;
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+
+		for (int i = 0; i < sdSize; i++) {
+			FinanceScheduleDetail curSchd = schedules.get(i);
+			boolean showRate = false;
+			boolean showAdvRate = false;
+			if (i == 0) {
+				prvSchDetail = curSchd;
+				showRate = true;
+
+				if (finScheduleData.getFinanceType().getFinCategory().equals(FinanceConstants.PRODUCT_STRUCTMUR)) {
+					showAdvRate = true;
+				}
+			} else {
+				prvSchDetail = schedules.get(i - 1);
+				if (curSchd.getCalculatedRate().compareTo(prvSchDetail.getCalculatedRate()) != 0) {
+					showRate = true;
+				}
+				if (curSchd.getAdvCalRate().compareTo(prvSchDetail.getAdvCalRate()) != 0) {
+					showAdvRate = true;
+				}
+			}
+			// ####_0.2
+			doFillIrrDetails(finScheduleData.getiRRDetails());
+			// Preparing Total Advance Profit Amount
+			totalAdvPft = totalAdvPft.add(curSchd.getAdvProfit());
+
+			final HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("finSchdData", finScheduleData);
+			map.put("financeScheduleDetail", curSchd);
+			map.put("paymentDetailsMap", rpyDetailsMap);
+			map.put("penaltyDetailsMap", penaltyDetailsMap);
+			map.put("accrueValue", finScheduleData.getAccrueValue());
+			map.put("window", this.window_ScheduleEnquiryDialog);
+			map.put("totalAdvPft", totalAdvPft);
+			map.put("showAdvRate", showAdvRate);
+			map.put("formatter", formatter);
+
+			finRender.render(map, prvSchDetail, false, false, true, finScheduleData.getFinFeeDetailList(), showRate,
+					false);
+			if (i == sdSize - 1) {
+				finRender.render(map, prvSchDetail, true, false, true, finScheduleData.getFinFeeDetailList(), showRate,
+						false);
+				break;
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {

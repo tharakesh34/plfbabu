@@ -124,7 +124,7 @@ public interface FinanceDetailService {
 
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroubBy, String type);
-	
+
 	FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired);
 
 	AuditHeader doCheckLimits(AuditHeader auditHeader);
@@ -321,4 +321,6 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMainForRateReport(String finReference, String type);
 
 	String getFinanceMainByRcdMaintenance(String reference, String type);
+
+	List<ReturnDataSet> getInsurancePostings(String finReference);
 }

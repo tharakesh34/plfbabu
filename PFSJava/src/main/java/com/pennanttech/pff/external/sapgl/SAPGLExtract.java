@@ -25,6 +25,7 @@ import com.pennant.backend.model.finance.TrailBalance;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -595,10 +596,21 @@ public class SAPGLExtract extends DataEngineExport {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" INSERT INTO TRANSACTION_SUMMARY_REPORT SELECT");
 		sql.append("  DISTINCT ENTITY, LINK, ");
-		sql.append(" :BLDAT,");
+		if (App.DATABASE == Database.POSTGRES) {
+			sql.append("to_date(:BLDAT,'yyyy-MM-dd'),");
+		} else {
+			sql.append(" :BLDAT,");
+		}
+
 		sql.append(" :BLART,");
 		sql.append(" :BUKRS,");
-		sql.append(" :BUDAT,");
+
+		if (App.DATABASE == Database.POSTGRES) {
+			sql.append("to_date(:BUDAT,'yyyy-MM-dd'),");
+		} else {
+			sql.append(" :BUDAT,");
+		}
+
 		sql.append(" :MONAT,");
 		sql.append(" :APP_DFT_CURR,");
 		sql.append(" :XBLNR,");

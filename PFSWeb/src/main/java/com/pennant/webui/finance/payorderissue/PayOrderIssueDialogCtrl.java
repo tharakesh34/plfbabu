@@ -1120,10 +1120,24 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 		try {
 			if (enquiry) {
 				List<ReturnDataSet> returnDataSetList = getPostings(issueHeader);
+
+				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
+					List<ReturnDataSet> insList = getPayOrderIssueService()
+							.getInsurancePostings(financeMain.getFinReference());
+					if (CollectionUtils.isNotEmpty(insList)) {
+						returnDataSetList.addAll(insList);
+					}
+				}
 				doFillAccounting(returnDataSetList);
 			} else {
-				List<ReturnDataSet> datasetList = getDisbursementPostings()
-						.getDisbPosting(issueHeader.getFinAdvancePaymentsList(), financeMain);
+				List<ReturnDataSet> datasetList = new ArrayList<>();
+				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
+					datasetList = getDisbursementPostings().getDisbPosting(issueHeader.getFinAdvancePaymentsList(),
+							financeMain);
+				} else {
+					datasetList = getPayOrderIssueService().getDisbursementPostings(financeMain.getFinReference(),
+							AccountEventConstants.ACCEVENT_DISBINS);
+				}
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
 					List<ReturnDataSet> insList = getPayOrderIssueService()
 							.getInsurancePostings(financeMain.getFinReference());

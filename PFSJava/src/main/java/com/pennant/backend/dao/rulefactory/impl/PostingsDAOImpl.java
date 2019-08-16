@@ -642,7 +642,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
 		selectSql.append(" FROM Postings ");
 		selectSql.append(" Where LInkedTraniD in (Select linkedTranid from InsurancePaymentInstructions where id in (");
-		selectSql.append(" select id from vasrecording where PRIMARYlinkref = :finReference) )");
+		selectSql.append(" select paymentinsid from vasrecording where PRIMARYlinkref = :finReference) )");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
@@ -652,6 +652,34 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug("Leaving");
+		return null;
+	}
+
+	@Override
+	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent) {
+		logger.debug("Entering");
+
+		ReturnDataSet dataSet = new ReturnDataSet();
+		dataSet.setFinReference(finReference);
+		dataSet.setFinEvent(finEvent);
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" SELECT ValueDate,PostDate, AppDate, AppValueDate, TranCode,RevTranCode, TranDesc, RevTranCode, DrOrCr, Account, PostAmount, ");
+		selectSql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
+		selectSql.append(" FROM Postings");
+		selectSql.append(" Where FinReference =:FinReference AND FinEvent=:FinEvent");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dataSet);
+		RowMapper<ReturnDataSet> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReturnDataSet.class);
+		logger.debug("Leaving");
+
+		try {
+			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
 		return null;
 	}
 

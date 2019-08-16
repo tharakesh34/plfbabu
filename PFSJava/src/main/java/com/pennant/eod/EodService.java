@@ -99,22 +99,30 @@ public class EodService {
 		long custId = custEODEvent.getCustomer().getCustID();
 		custEODEvent = loadFinanceData.prepareFinEODEvents(custEODEvent, custId);
 
-		//late pay marking
-		if (custEODEvent.isPastDueExist()) {
-			//overdue calculated on EOD
-			//LPP calculated on the SOD
-			//LPI calculated on the SOD
-			custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
+		boolean skipLatePayMarking = false;
+
+		if ("Y".equals(SysParamUtil.getValueAsString("EOD_SKIP_LATE_PAY_MARKING"))) {
+			skipLatePayMarking = true;
 		}
 
-		//DPD Bucketing
-		custEODEvent = latePayBuketService.processDPDBuketing(custEODEvent);
+		if (!skipLatePayMarking) {
+			//late pay marking
+			if (custEODEvent.isPastDueExist()) {
+				//overdue calculated on EOD
+				//LPP calculated on the SOD
+				//LPI calculated on the SOD
+				custEODEvent = latePayMarkingService.processLatePayMarking(custEODEvent);
+			}
 
-		//customer status update
-		custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
+			//DPD Bucketing
+			custEODEvent = latePayBuketService.processDPDBuketing(custEODEvent);
 
-		//NPA Service
-		custEODEvent = npaService.processNPABuckets(custEODEvent);
+			//customer status update
+			custEODEvent = latePayMarkingService.processCustomerStatus(custEODEvent);
+
+			//NPA Service
+			custEODEvent = npaService.processNPABuckets(custEODEvent);
+		}
 
 		//LatePay Due creation Service
 		custEODEvent = latePayDueCreationService.processLatePayAccrual(custEODEvent);

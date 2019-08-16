@@ -155,6 +155,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		this.fileName.setValidateColumns(new String[] { "FileName" });
 		this.fileName.setMandatoryStyle(true);
 		this.fileName.setFilters(null);
+		this.fileName.setConstraint("");
 
 		this.uploadDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -170,8 +171,7 @@ public class ReceiptUploadReportDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		}
 
 		Filter[] filter = new Filter[1];
-		filter[0] = new Filter("TRANSACTIONDATE", new SimpleDateFormat("dd-MMM-yyy").format(this.uploadDate.getValue()),
-				Filter.OP_EQUAL);
+		filter[0] = new Filter("TRANSACTIONDATE", this.uploadDate.getValue(), Filter.OP_EQUAL);
 
 		this.fileName.setFilters(filter);
 

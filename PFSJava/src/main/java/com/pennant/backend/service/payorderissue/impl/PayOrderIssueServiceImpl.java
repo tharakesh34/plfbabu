@@ -67,6 +67,7 @@ import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
+import com.pennant.backend.dao.rulefactory.PostingsDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
@@ -111,6 +112,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	@Autowired
 	private VASRecordingDAO vasRecordingDAO;
 	private PartnerBankService partnerBankService;
+	@Autowired
+	private PostingsDAO postingsDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -409,9 +412,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			}
 
 		}
-		
+
 		//Splitting IMPS Requests
-		payOrderIssueHeader.setFinAdvancePaymentsList(finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
+		payOrderIssueHeader.setFinAdvancePaymentsList(
+				finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
 
 		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "", data);
@@ -905,8 +909,21 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	@Override
 	public List<ReturnDataSet> getInsurancePostings(String finReference) {
-		// TODO Auto-generated method stub
-		return null;
+		return postingsDAO.getPostingsByFinRef(finReference);
+
+	}
+
+	@Override
+	public List<ReturnDataSet> getDisbursementPostings(String finReference, String event) {
+		return postingsDAO.getPostingsByFinRefAndEvent(finReference, event);
+	}
+
+	public PostingsDAO getPostingsDAO() {
+		return postingsDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
 	}
 
 }

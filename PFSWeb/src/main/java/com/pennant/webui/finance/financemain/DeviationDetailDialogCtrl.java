@@ -359,18 +359,19 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 			// Check whether authority can be changed.
 			String initDelegationRole = "";
-
-			for (FinanceDeviations item : getFinanceDetail().getManualDeviations()) {
-				if (deviation.getDeviationCode().equals(item.getDeviationCode())) {
-					initDelegationRole = item.getDelegationRole();
+			if (financeDetail != null) {
+				for (FinanceDeviations item : getFinanceDetail().getManualDeviations()) {
+					if (deviation.getDeviationCode().equals(item.getDeviationCode())) {
+						initDelegationRole = item.getDelegationRole();
+					}
 				}
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("financeDeviations", deviation);
+				map.put("InitDelegationRole", initDelegationRole);
+
+				doshowDialog(map, false);
 			}
 
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("financeDeviations", deviation);
-			map.put("InitDelegationRole", initDelegationRole);
-
-			doshowDialog(map, false);
 		}
 		//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 

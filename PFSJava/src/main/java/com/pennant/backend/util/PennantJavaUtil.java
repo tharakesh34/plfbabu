@@ -502,6 +502,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_RCU = "VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH = "PRESENTMENTBATCH";
 	private final static String GST_WF = "GSTDETAILS";
+	private final static String CHEQUE_WF = "CHEQUEDETAIL";
 	private final static String LEGAL_DETAILS = "LEGAL_DETAILS";
 	private final static String costCenters_WF = "COSTCENTERS";
 	private final static String profitCenters_WF = "PROFITCENTERS";
@@ -1510,8 +1511,7 @@ public class PennantJavaUtil {
 		ModuleUtil.register("NOCFinanceMain",
 				new ModuleMapping("FinanceMain", FinanceMain.class, new String[] { "FinanceMain", "FinanceMain_AView" },
 						null, new String[] { "FinReference", "FinType" },
-						new Object[][] { { "FinIsActive", "0", "0" } },
-						350));
+						new Object[][] { { "FinIsActive", "0", "0" } }, 350));
 
 		ModuleUtil.register("FinanceManagement", new ModuleMapping("FinanceMain", FinanceMain.class,
 				new String[] { "FinanceMain" }, null, new String[] { "FinReference", "FinType" }, null, 350));
@@ -2301,7 +2301,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ReinstateFinance",
 				new ModuleMapping("ReinstateFinance", ReinstateFinance.class,
-						new String[] { "ReinstateFinance", "ReinstateFinance_View" }, masterWF,
+						new String[] { "ReinstateFinance", "ReinstateFinance_View" }, "REINSTATELOAN",
 						new String[] { "FinReference", "CustCIF", "FinType" }, null, 300));
 
 		ModuleUtil.register("CustRiskType",
@@ -2733,7 +2733,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("ChequeHeader",
 				new ModuleMapping("ChequeHeader", ChequeHeader.class,
-						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, masterWF,
+						new String[] { "CHEQUEHEADER", "CHEQUEHEADER_AView" }, CHEQUE_WF,
 						new String[] { "FinReference", "ChequeType", "NoOfCheques", "TotalAmount" }, null, 600));
 
 		ModuleUtil.register("ChequeDetail",

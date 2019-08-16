@@ -453,6 +453,20 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		ErrorDetail errorDetail = null;
 		String receiptPurpose = "";
+		BigDecimal receiptAmount = this.receiptAmount.getActualValue();
+		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
+
+		if (isKnockOff) {
+			BigDecimal availableAmount = BigDecimal.ZERO;
+
+			if (!StringUtils.isBlank(this.referenceId.getDescription())) {
+				availableAmount = new BigDecimal(this.referenceId.getDescription());
+			}
+			if (PennantApplicationUtil.formateAmount(receiptAmount, formatter).compareTo(availableAmount) > 0) {
+				this.receiptAmount.setValue(BigDecimal.ZERO);
+				return;
+			}
+		}
 		if (isForeClosure) {
 			receiptPurpose = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
 		} else {
@@ -467,7 +481,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		}
 
 		// PSD:138262
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE) || receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) ) {
+		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {
 			boolean initiated = receiptService
 					.isEarlySettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -479,7 +494,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 		// PSD:138262
-		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY) || receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)
+				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 			boolean initiated = receiptService
 					.isPartialSettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -519,6 +535,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		doSetValidation();
 		doWriteComponentsToBean();
 		validateReceiptData();
+		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		FinScheduleData fsd = financeDetail.getFinScheduleData();
+		FinanceMain finMain = fsd.getFinanceMain();
+
+		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(),
+				FinanceConstants.FINSER_EVENT_EARLYSETTLE)
+				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
+			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
+			return;
+		}
 
 		if (receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails() != null
 				&& receiptData.getFinanceDetail().getFinScheduleData().getErrorDetails().size() > 0) {

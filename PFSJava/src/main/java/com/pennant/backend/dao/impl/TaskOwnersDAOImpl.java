@@ -318,4 +318,25 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		logger.debug("selectSql: " + deleteSql.toString());
 		this.jdbcTemplate.update(deleteSql.toString(), source);
 	}
+
+	// Reinstate Loan
+	@Override
+	public void updateTaskOwner(TaskOwners taskOwners, boolean baseRole) {
+		StringBuilder sql = new StringBuilder("UPDATE Task_Owners");
+		sql.append(" set Processed = :Processed");
+		if (!baseRole) {
+			sql.append(", ActualOwner = :ActualOwner");
+			sql.append(", CurrentOwner = :CurrentOwner ");
+		}
+		sql.append(" where Reference = :Reference and RoleCode = :RoleCode");
+		logger.trace(Literal.SQL + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taskOwners);
+		try {
+			this.jdbcTemplate.update(sql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
+
+	}
 }

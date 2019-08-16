@@ -383,15 +383,20 @@ public interface FinanceMainDAO {
 	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
 
 	String getLovDescEntityCode(String finReference, String string);
-	
+
 	long saveHostRef(FinanceMainExtension financeMainExtension);
-	
+
 	FinanceMain getFinanceMainByHostReference(String oldFinReference, boolean active);
-	
+
 	int getCountByExternalReference(String oldFinReference);
-	
+
 	int getCountByOldHostReference(String oldFinReference);
-	
+
+	// Reinstate Loan
+	String saveRejectFinanace(FinanceMain financeMain);
+
+	void updateRejectFinanceMain(FinanceMain financeMain, TableType tempTab, boolean isWIF);
+
 	FinanceMain getFinanceMainStutusById(String id, String type);
 
 }

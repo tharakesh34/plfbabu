@@ -93,6 +93,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.feetype.FeeType;
@@ -125,6 +126,7 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.financemanagement.receipts.ReceiptDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -315,6 +317,12 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			doCheckRights();
 			doSetFieldProperties();
 			doShowDialog(getFinanceDetail());
+			if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
+					&& !isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
+				getFinanceMainDialogCtrl().getClass().getMethod("autoFinStartDateUpdation", FinanceDetail.class)
+						.invoke(getFinanceMainDialogCtrl(), getFinanceDetail());
+			}
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			logger.error("Exception: ", e);
@@ -2889,6 +2897,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							.getOutStandingBalFromFees(financeMain.getFinReference());
 					executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
 					executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
+					executionMap.put("principalSchdOutstanding",
+							finProfitDetail.getTotalpriSchd().subtract(finProfitDetail.getTdSchdPri()));
 					executionMap.put("totOSExcludeFees",
 							finProfitDetail.getTotalPftBal().add(finProfitDetail.getTotalPriBal()));
 					executionMap.put("totOSIncludeFees", finProfitDetail.getTotalPftBal()

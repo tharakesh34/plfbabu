@@ -989,8 +989,7 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 
 	private void setDecision(List<Verification> verifications) {
 		for (Verification verification : verifications) {
-			if ((verification.getStatus() == FIStatus.POSITIVE.getKey()
-					|| verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())
+			if ((verification.getStatus() == FIStatus.POSITIVE.getKey())
 					&& verification.getDecision() != Decision.RE_INITIATE.getKey()) {
 				verification.setDecision(Decision.APPROVE.getKey());
 			}

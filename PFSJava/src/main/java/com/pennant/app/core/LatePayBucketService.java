@@ -199,8 +199,6 @@ public class LatePayBucketService extends ServiceHelper {
 
 		// DPD Configuration
 		List<DPDBucketConfiguration> list = getBucketConfigurations(financeMain.getFinCategory());
-		sortBucketConfig(list);
-
 		for (DPDBucketConfiguration dpdBucketConfiguration : list) {
 
 			if (dpdBucketConfiguration.getDueDays() >= newDueBucket) {
