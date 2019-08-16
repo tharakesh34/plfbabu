@@ -4028,5 +4028,18 @@
 	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
 	</changeSet>
+	
+	
+	<changeSet id="129" author="Manoj.p">
+	<sql>
+			<![CDATA[
+			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'CUST_PAN_VALIDATION';
+			INSERT INTO SMTPARAMETERS VALUES ('CUST_PAN_VALIDATION', 'Cust
+			Panvalidation Required or Not(Y, N)', 'String', 1, 'N', 1, 0, NULL,
+			NULL,'CRM Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved',
+			NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+	</sql>
+</changeSet>
 
 </databaseChangeLog>
