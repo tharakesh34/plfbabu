@@ -3125,5 +3125,16 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="64" author="Manoj">
+		<sql>
+			<![CDATA[
+					update plf.data_Engine_config  set fileextension  = null where name in ('DISB_EXPORT_DEFAULT','DISB_HDFC_IMPORT');
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<
 </databaseChangeLog>
 
