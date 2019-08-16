@@ -4396,8 +4396,6 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-
-
 	<changeSet id="129" author="naga.g">
 		<createTable tableName="CustomerGSTdetails_temp">
 			<column name="Id" type="bigint">
