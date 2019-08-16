@@ -217,5 +217,18 @@
 			tableName="ADTCustomerGSTdetails" />
 	</changeSet>
 	
-
+	<changeSet id="19" author="satyanarayana.g">
+		<addColumn tableName="AdtRMTFinanceTypes">
+			<column name="SanBsdSchdle" type="boolean" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="19.1" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE AdtRMTFinanceTypes Set SanBsdSchdle = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
