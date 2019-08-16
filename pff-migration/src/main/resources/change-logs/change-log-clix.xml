@@ -3117,5 +3117,13 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	
+	<changeSet id="63" author="Manoj">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='CUST_PAN_VALIDATION';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 
