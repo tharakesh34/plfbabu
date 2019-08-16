@@ -4403,9 +4403,7 @@ UNION ALL
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" primaryKeyName="custmergstdetails_temp_id_pkey" nullable="false" />
 			</column>
-			<column name="headerId" type="bigint">
-				<constraints foreignKeyName="custgstdtls_temp_headerId_fkey" references="CustomerGST" nullable="false" />
-			</column>
+			<column name="headerId" type="bigint" />
 			<column name="Frequancy" type="varchar(15)"></column>
 			<column name="SalAmount" type="bigint" />
 			<column name="financialyear" type="varchar(4)"></column>
