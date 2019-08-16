@@ -172,11 +172,6 @@ public class Commitment extends AbstractWorkflowEntity {
 		excludeFields.add("documents");
 		excludeFields.add("commitmentCheckLists");
 		excludeFields.add("selAnsCountMap");
-
-		excludeFields.add("cmtAmountExt");
-		excludeFields.add("cmtUtilizedAmountExt");
-		excludeFields.add("cmtAvailableExt");
-
 		return excludeFields;
 	}
 
@@ -675,7 +670,7 @@ public class Commitment extends AbstractWorkflowEntity {
 	}
 
 	public BigDecimal getCmtAvailableExt() {
-		return PennantApplicationUtil.formateAmount(this.cmtUtilizedAmount, CurrencyUtil.getFormat(this.cmtCcy));
+		return PennantApplicationUtil.formateAmount(this.cmtAvailable, CurrencyUtil.getFormat(this.cmtCcy));
 	}
 
 }
