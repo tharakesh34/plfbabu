@@ -3082,21 +3082,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// TO-DO
 		// FIXME - To be uncommented while merging
 		// =======================================
-		if (financeDetail.isTvInitTab()) {
+		if (financeDetail.isTvInitTab() && financeDetail.getTvVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, true));
 		}
 
 		// save TV Approval details
 		// =======================================
-		if (financeDetail.isTvApprovalTab()) {
+		if (financeDetail.isTvApprovalTab() && financeDetail.getTvVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.TV, auditTranType, false));
 		}
 
 		// save LV Initiation details
 		// =======================================
-		if (financeDetail.isLvInitTab()) {
+		if (financeDetail.isLvInitTab()&& financeDetail.getLvVerification() != null) {
 			Verification verification = financeDetail.getLvVerification();
 			verification.setVerificationType(VerificationType.LV.getKey());
 			adtVerifications
@@ -3105,7 +3105,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Approval details
 		// =======================================
-		if (financeDetail.isLvApprovalTab()) {
+		if (financeDetail.isLvApprovalTab() && financeDetail.getLvVerification() != null) {
 			Verification verification = financeDetail.getLvVerification();
 			verification.setVerificationType(VerificationType.LV.getKey());
 			adtVerifications
@@ -3114,14 +3114,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Initiation details
 		// =======================================
-		if (financeDetail.isRcuInitTab()) {
+		if (financeDetail.isRcuInitTab()&& financeDetail.getRcuVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
 		}
 
 		// save RCU Approval details
 		// =======================================
-		if (financeDetail.isRcuApprovalTab()) {
+		if (financeDetail.isRcuApprovalTab() && financeDetail.getRcuVerification() != null) {
 			adtVerifications.addAll(
 					verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, false));
 		}
@@ -3134,13 +3134,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save PD Initiation details
 		// =======================================
-		if (financeDetail.isPdInitTab()) {
+		if (financeDetail.isPdInitTab() && financeDetail.getPdVerification()!=null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, true));
 		}
 		//  save pd Approval details
 		// =======================================
-		if (financeDetail.isPdApprovalTab()) {
+		if (financeDetail.isPdApprovalTab() && financeDetail.getPdVerification()!=null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, false));
 		}
@@ -6117,8 +6117,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		boolean apiCall = false;
+		if (StringUtils.equals(PennantConstants.FINSOURCE_ID_API, financeMain.getFinSourceID())) {
+			apiCall = true;
+		}
 		if (isAutoReject) {
 			financeMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
+			//TODO for API Fix me
+			if(apiCall) {
+				financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
+				financeMain.setRecordStatus("Reject");
+				financeMain.setNextTaskId("");
+			}
+			if(financeMain == null) {
+				financeMain=financeDetail.getFinScheduleData().getFinanceMain();
+			}
 			FinScheduleData finScheduleData = new FinScheduleData();
 			finScheduleData.setFinanceMain(financeMain);
 			finScheduleData.setFinReference(financeMain.getFinReference());
@@ -6135,7 +6148,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		financeMain.setFinIsActive(false);
-		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		//TODO for API Fix me
+		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
+				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API, financeMain.getFinSourceID())) {
 			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
 		}
 

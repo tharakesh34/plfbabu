@@ -2960,7 +2960,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 		financeMain.setVersion(1);
 		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		financeMain.setRecordStatus("Reject");
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 
 		// customer details

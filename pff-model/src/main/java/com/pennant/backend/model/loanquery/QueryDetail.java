@@ -71,7 +71,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
-
+	@XmlElement
 	private long id = Long.MIN_VALUE;
 	private String finReference;
 	// private String finReferenceName;
