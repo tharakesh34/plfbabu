@@ -528,5 +528,16 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="44" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM REPORTFILTERFIELDS where reportid in (select reportid FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_LimitDetails');
+				DELETE  FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_LimitDetails';
+				INSERT INTO REPORTCONFIGURATION VALUES ((select max(reportid)+1 from REPORTCONFIGURATION),'Limit Details','Limit Details',1,'LimitDetails','dataSource',1,'menu_Item_LimitDetails',2,'1005','','','','','','','0',current_Timestamp,0,1,0);
+ 				INSERT INTO REPORTFILTERFIELDS VALUES ((select reportid from reportconfiguration where menuitemcode='menu_Item_LimitDetails'),'1','CustCIF','LOVSEARCH','Customer Number','CustCIF','','Customer','getCustCIF','getCustShrtName',1,0,0,0,1,0,' ',' ',' ',' ','250',0,'=',1,'1000','Approved','','','','','','0',current_Timestamp,'');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
