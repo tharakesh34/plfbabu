@@ -58,7 +58,6 @@
 				UPDATE ADTRMTFinanceTypes Set AllowRevolving = 0;
 				UPDATE ADTRMTFinanceTypes Set AllowDrawingPower = 0;
 				UPDATE ADTFINANCEMAIN Set AllowRevolving = 0;
-				
 			]]>
 		</sql>
 	</changeSet>
@@ -171,12 +170,12 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="16" author="naga.g">
 		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_ADTCustomerGST"
 			tableName="ADTCustomerGST" />
 	</changeSet>
-	
+
 	<changeSet id="17" author="naga.g">
 		<createTable tableName="ADTCustomerGSTdetails">
 			<column name="AuditId" type="bigint">
@@ -211,18 +210,18 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="18" author="naga.g">
 		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_ADTCustomerGSTdetails"
 			tableName="ADTCustomerGSTdetails" />
 	</changeSet>
-	
+
 	<changeSet id="19" author="satyanarayana.g">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="SanBsdSchdle" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="19.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -230,5 +229,5 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
