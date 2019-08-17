@@ -3135,6 +3135,104 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<
+		<changeSet id="65" author="amanullah">
+		<createView viewName="ogl_view" replaceIfExists="true">
+				SELECT p.postdate AS acctdate,
+					   p.postref,
+					   p.finevent,
+					   p.acccy AS ccycode,
+					   m.key_code AS jecode,
+					   'PENNANT' AS jesrcname,
+					   mad.key_code AS sgmt1ble,
+					   ma.key_code AS prodcatcode,
+					   f.eligibilitymethod AS programcode,
+					   rb.branchswiftbrncde AS branchcode,
+					   ab.hostaccount,
+					   p.account AS accttype,
+					   COALESCE(pb.hostglcode, '') AS hostglcode,
+					   '000000' AS sgmt5,
+					   m.key_code AS event,
+					   p.finreference AS lan,
+					   CASE
+					   	WHEN p.drorcr = 'D' THEN p.postamount
+					   	WHEN p.drorcr = 'C' THEN 0
+					   	ELSE 0
+					   END AS debit,
+					   CASE
+					   	WHEN p.drorcr = 'D' THEN 0
+					   	WHEN p.drorcr = 'C' THEN p.postamount
+					   	ELSE 0
+					   END AS credit,
+					   p.valuedate AS transactiondate,
+					   f.fintype AS loantype,
+					   c.custshrtname AS customername,
+					   c.custid AS customerid,
+					   ft.findivision AS divisioncode,
+					   p.linkedtranid AS transactionid,
+					   p.entitycode,
+					   p.poststatus,
+					   p.oldlinkedtranid AS oldid,
+					   fap.paymenttype,
+					   fap.llreferenceno,
+					   fap.transactionref,
+					   COALESCE(fap.beneficiaryname, '') AS beneficiaryname,
+					   COALESCE(fap.beneficiaryaccno, '') AS beneaccno
+				FROM plf.postings p
+					 LEFT JOIN plf.financemain f ON p.finreference = f.finreference
+					 LEFT JOIN plf.rmtfinancetypes ft ON f.fintype = ft.fintype
+					 LEFT JOIN plf.smtdivisiondetail sd ON sd.divisioncode = ft.findivision
+					 LEFT JOIN plf.master_def mad ON mad.key_type = sd.entitycode
+					 JOIN plf.rmtbranches rb ON rb.branchcode = p.postbranch
+					 LEFT JOIN plf.finadvancepayments fap ON fap.finreference = p.finreference AND p.linkedtranid = fap.linkedtranid
+					 LEFT JOIN plf.partnerbanks pb ON pb.partnerbankid = fap.partnerbankid
+					 LEFT JOIN plf.customers c ON c.custid = f.custid
+					 LEFT JOIN plf.master_def m ON m.key_type = p.finevent
+					 LEFT JOIN plf.master_def ma ON ma.key_type = ft.fincategory
+					 LEFT JOIN plf.accountmapping ab ON ab.account = p.account
+				WHERE p.postamount > 0
+					  ORDER BY p.linkedtranid;
+		</createView>
+	</changeSet >
+	
+	
+	<changeSet id="66" author="amanullah">
+		<sql>
+			<![CDATA[
+		
+			   DELETE FROM plf.MASTER_DEF WHERE MASTER_TYPE ='OGL';
+			   
+			   INSERT into plf.master_def values ('OGL','ADDDBSP','C-PABPV/Disbursement/Loan Booking');
+			   INSERT into plf.master_def values ('OGL','DEFRPY','C-PAJRL/Other/Differential Repay');
+			   INSERT into plf.master_def values ('OGL','NOCISU','C-PAJRL/Other/NOC Voucher');
+			   INSERT into plf.master_def values ('OGL','EMIDAY','C-PAJRL/Other/EMI Holiday');
+			   INSERT into plf.master_def values ('OGL','FEEAMZ','C-PAJRL/Other/Fee Accrual');
+			   INSERT into plf.master_def values ('OGL','JVPOST','C-PAJRL/Other/Journal voucher');
+			   INSERT into plf.master_def values ('OGL','MANFEE','C-PAJRL/Other/Manual Fee');
+			   INSERT into plf.master_def values ('OGL','RATCHG','C-PAJRL/Other/Rate Change');
+			   INSERT into plf.master_def values ('OGL','REAGING','C-PAJRL/Other/Reaging');
+			   INSERT into plf.master_def values ('OGL','SCDCHG','C-PAJRL/Other/Schedule changes');
+			   INSERT into plf.master_def values ('OGL','VASACRUL','C-PAJRL/Other/Vas Accrual');
+			   INSERT into plf.master_def values ('OGL','VASFEE','C-PAJRL/Other/Vas Fee');
+			   INSERT into plf.master_def values ('OGL','WRITEOFF','C-PAJRL/Other/Write off');
+			   INSERT into plf.master_def values ('OGL','FEEPAY','C-PABRV/Receipt/IMD Receipt');
+			   INSERT into plf.master_def values ('OGL','INSTDATE','C-PAJRL/Other/Installment Due Date');
+			   INSERT into plf.master_def values ('OGL','ADDDBSN','C-PABPV/Disbursement/Additional Disbursements');
+			   INSERT into plf.master_def values ('OGL','EARLYSTL','C-PABRV/Receipt/Early Settlement');
+			   INSERT into plf.master_def values ('OGL','REPAY','C-PABRV/Receipt/Installment Receipt');
+			   INSERT into plf.master_def values ('OGL','DISBINS','C-PABPV/Disbursement/Disbursement Instructions');
+			   INSERT into plf.master_def values ('OGL','PAYMTINS','C-PABPV/Disbursement/Payments - Refunds');
+			   INSERT into plf.master_def values ('OGL','EARLYPAY','C-PABRV/Receipt/Part Prepayment');
+			   INSERT into plf.master_def values ('OGL','AMZ','C-PAJRL/Other/Monthly Accrual');
+			   INSERT into plf.master_def values ('OGL','LATEPAY','C-PABRV/Receipt/Late Payment');
+			   INSERT into  plf.master_def values ('OGL','CLIX','SINCIN8W6P');
+			   INSERT into  plf.master_def values ('OGL','CLIXCAP','SINCIN8W8A');
+			   INSERT into  plf.master_def values ('OGL','BUSINESS','160');
+			   INSERT into  plf.master_def values ('OGL','PO','201');
+			   INSERT into  plf.master_def values ('OGL','LAEP','164');
+
+			]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
 
