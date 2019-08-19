@@ -4040,13 +4040,37 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="130_pre" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'fintypevasproducts');
+					select deps_save_and_drop_dependencies ('plf', 'fintypevasproducts_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="130" author="Manoj.P">
+		<modifyDataType tableName="fintypevasproducts" columnName="mandatory" newDataType="smallint" />
+     <modifyDataType tableName="fintypevasproducts_temp" columnName="mandatory" newDataType="smallint" />
+   </changeSet> 
+   
+	<changeSet id="130_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'fintypevasproducts');
+					select deps_restore_dependencies ('plf', 'fintypevasproducts_temp');
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="130" author="Sai priya">
+	<changeSet id="131" author="Sai priya">
 		<sql>
 		<![CDATA[
 	      update rbfielddetails set rbfldtype='nvarchar' where rbfldname ='eligibilityMethod';
 		 ]]>
 		</sql>
 	</changeSet>
+
 
 </databaseChangeLog>

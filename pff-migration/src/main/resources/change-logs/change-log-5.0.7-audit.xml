@@ -32,7 +32,7 @@
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
 	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
-	
+
 	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
@@ -90,27 +90,27 @@
 		</addColumn>
 	</changeSet>
 	<!-- GST Waiver Changes END -->
-	
-	<changeSet id="6" author="vijaya.a" >
+
+	<changeSet id="6" author="vijaya.a">
 		<addColumn tableName="adtVasprovideraccdetail">
 			<column name="PartnerBankId" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="7" author="Durgaprasad.G">
-		<modifyDataType tableName="ADTERRORDETAILS" columnName="Message" newDataType="Varchar(200)"/>	
+		<modifyDataType tableName="ADTERRORDETAILS" columnName="Message" newDataType="Varchar(200)" />
 	</changeSet>
-	
+
 	<changeSet id="7.0" author="satyanarayana.g">
 		<modifyDataType tableName="ADTQUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
 	</changeSet>
-	
+
 	<changeSet id="8" author="satyanarayana.g">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="AllowDrawingPower" type="boolean" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="8.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -119,5 +119,8 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="9" author="VaraPrasad.K">
+		<modifyDataType tableName="AdtFinTypeVASProducts" columnName="mandatory" newDataType="boolean" />
+	</changeSet>
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 </databaseChangeLog>
