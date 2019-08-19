@@ -3018,10 +3018,6 @@
 		</createView>
 	</changeSet>
 
-
-
-	Fee Waiver Changes END
-
 	<changeSet id="99" author="Saikiran.V">
 		<sql>
 			<![CDATA[

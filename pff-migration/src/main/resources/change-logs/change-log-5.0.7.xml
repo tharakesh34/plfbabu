@@ -4028,10 +4028,9 @@
 	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
 	</changeSet>
-	
-	
+
 	<changeSet id="129" author="Manoj.p">
-	<sql>
+		<sql>
 			<![CDATA[
 			DELETE FROM SMTPARAMETERS where SYSPARMCODE = 'CUST_PAN_VALIDATION';
 			INSERT INTO SMTPARAMETERS VALUES ('CUST_PAN_VALIDATION', 'Cust
@@ -4039,7 +4038,15 @@
 			NULL,'CRM Required or Not', 1, 1000, CURRENT_TIMESTAMP,'Approved',
 			NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
+
+	<changeSet id="130" author="Sai priya">
+		<sql>
+		<![CDATA[
+	      update rbfielddetails set rbfldtype='nvarchar' where rbfldname ='eligibilityMethod';
+		 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
