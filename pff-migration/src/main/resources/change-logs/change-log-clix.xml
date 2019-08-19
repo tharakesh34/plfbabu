@@ -3259,5 +3259,14 @@ UNION ALL
 	]]>
 	</sql>
 </changeSet>
+
+<changeSet id="69" author="Manoj.P">
+	<sql>
+	    <![CDATA[
+			update plf.smtparameters set sysparmvalue='/opt/clix/PFF/external' where sysparmcode='UPLOAD_FILEPATH'
+		]]>
+	</sql>
+</changeSet>
+
 </databaseChangeLog>
 
