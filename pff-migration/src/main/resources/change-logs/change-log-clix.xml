@@ -3234,5 +3234,30 @@ UNION ALL
 		</sql>
 	</changeSet>
 		
+		
+	<changeSet id="67" author="Manoj.p">
+	<sql>
+			<![CDATA[
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/disbursements/request' where name = 'DISB_EXPORT_DEFAULT';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/disbursements/response' where name = 'DISB_HDFC_IMPORT';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/mandates/request'  where name = 'MANDATES_EXPORT';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/mandates/response' where name = 'MANDATES_IMPORT';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/mandates/response' where name = 'MANDATES_ACK';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/OGL' where name = 'OGL_DOWNLOAD';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/presentment/request' where name = 'PRESENTMENT_REQUEST_NACH';
+			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/presentment/response' where name = 'PRESENTMENT_RESPONSE_NACH';
+			update plf.smtparameters set sysparmvalue = '/opt/clix/PFF/presentment/response' where sysparmcode = 'PRESENTMENT_RESPONSE_UPLOAD_FILEPATH';
+			update plf.smtparameters set sysparmvalue = 'Y' where sysparmcode = 'PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE'
+	]]>
+	</sql>
+</changeSet>	
+
+<changeSet id="68" author="Manoj.P">
+	<sql>
+			<![CDATA[
+				update plf.smtparameters set sysparmvalue = 'N' where sysparmcode = 'GROUP_BATCH_BY_BANK'
+	]]>
+	</sql>
+</changeSet>
 </databaseChangeLog>
 
