@@ -309,7 +309,12 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> taxtTypeList;
 	private static ArrayList<ValueLabel> downloadTypeList;
 	private static ArrayList<ValueLabel> vanAllocationMethods;
-
+   
+	//GST Customers
+	private static ArrayList<ValueLabel> frequencyType;
+	private static ArrayList<ValueLabel> frequency;
+	private static ArrayList<ValueLabel> year;
+	
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -5050,5 +5055,52 @@ public class PennantStaticListUtil {
 		}
 		return vanAllocationMethods;
 	}
-
+	// GST Customers 
+	public static ArrayList<ValueLabel> getfrequencyType() {
+		if(frequencyType == null){
+			frequencyType=new ArrayList<ValueLabel>(3);
+			frequencyType.add(new ValueLabel("Monthly",Labels.getLabel("label_CustomerDialog_GstMonth.value")));
+			frequencyType.add(new ValueLabel("Quarterly",Labels.getLabel("label_CustomerDialog_GstQuarter.value")));
+			frequencyType.add(new ValueLabel("Yearly",Labels.getLabel("label_CustomerDialog_GstYearly.value")));
+		}
+		return frequencyType;
+	}
+	
+	public static ArrayList<ValueLabel> getYear() {
+		if(year == null){
+			year=new ArrayList<ValueLabel>(1);
+			year.add(new ValueLabel("2019",Labels.getLabel("label_CustomerDialog_GstYear.value")));
+		}
+		return year;
+	}
+	
+	
+	public static ArrayList<ValueLabel> getfrequency(String ch) {
+		frequency = new ArrayList<ValueLabel>(12);
+		if (StringUtils.isNotEmpty(ch)) {
+			if (ch.equals("Monthly")) {
+				frequency.add(new ValueLabel("Jan", Labels.getLabel("label_CustomerDialog_GstjanMonth.value")));
+				frequency.add(new ValueLabel("Feb", Labels.getLabel("label_CustomerDialog_GstfebMonth.value")));
+				frequency.add(new ValueLabel("Mar", Labels.getLabel("label_CustomerDialog_GstmarMonth.value")));
+				frequency.add(new ValueLabel("Apr", Labels.getLabel("label_CustomerDialog_GstaprMonth.value")));
+				frequency.add(new ValueLabel("May", Labels.getLabel("label_CustomerDialog_GstmayMonth.value")));
+				frequency.add(new ValueLabel("Jun", Labels.getLabel("label_CustomerDialog_GstjunMonth.value")));
+				frequency.add(new ValueLabel("Jul", Labels.getLabel("label_CustomerDialog_GstjulMonth.value")));
+				frequency.add(new ValueLabel("Aug", Labels.getLabel("label_CustomerDialog_GstaugMonth.value")));
+				frequency.add(new ValueLabel("Sep", Labels.getLabel("label_CustomerDialog_GstsepMonth.value")));
+				frequency.add(new ValueLabel("Oct", Labels.getLabel("label_CustomerDialog_GstoctMonth.value")));
+				frequency.add(new ValueLabel("Nov", Labels.getLabel("label_CustomerDialog_GstnovMonth.value")));
+				frequency.add(new ValueLabel("Dec", Labels.getLabel("label_CustomerDialog_GstdecMonth.value")));
+			} else if (ch.equals("Quarterly")) {
+				frequency.add(new ValueLabel("Q1", Labels.getLabel("label_CustomerDialog_GstQ1.value")));
+				frequency.add(new ValueLabel("Q2", Labels.getLabel("label_CustomerDialog_GstQ2.value")));
+				frequency.add(new ValueLabel("Q3", Labels.getLabel("label_CustomerDialog_GstQ3.value")));
+				frequency.add(new ValueLabel("Q4", Labels.getLabel("label_CustomerDialog_GstQ4.value")));
+			} else if (ch.equals("Yearly")) {
+				frequency.add(new ValueLabel("Yearly", Labels.getLabel("label_CustomerDialog_Year.value")));
+			}
+		}
+		return frequency;
+	}
+  
 }

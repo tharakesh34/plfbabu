@@ -194,6 +194,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIdentity;
 import com.pennant.backend.model.customermasters.CustomerIncome;
@@ -1150,6 +1152,15 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
 						new String[] { "CustID", "bankName" }, null, 300));
+		ModuleUtil.register("CustomerGST",
+				new ModuleMapping("CustomerGST", CustomerGST.class,
+						new String[] { "CustomerGST", "CustomerGST_AView" }, null,
+						new String[] { "gstNumber" },null, 300));
+		
+		ModuleUtil.register("CustomerGSTDetails",
+				new ModuleMapping("CustomerGSTDetails", CustomerGSTDetails.class,
+						new String[] { "CustomerGSTDetails", "CustomerGSTDetails_AView" }, null,
+						null, null, 300));
 
 		ModuleUtil.register("CustEmployeeDetail",
 				new ModuleMapping("CustEmployeeDetail", CustEmployeeDetail.class,

@@ -2075,6 +2075,7 @@
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="customerService" ref="customerService" />
 		<property name="bankDetailDAO" ref="bankDetailDAO" />
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->
@@ -11026,6 +11027,35 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
+	
+	
+	<!--============ Customer GST Details ============== -->
+	<bean id="customerGstDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerGstDetailDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="customerGstService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="customerGstServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="customerGstServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerGstServiceImpl">
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
 	<!-- GSTNValidationService -->
 	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl" />
 	<bean id="customerDownloadService" class="com.pennant.backend.service.customermasters.impl.CustomerDownloadServiceImpl" />

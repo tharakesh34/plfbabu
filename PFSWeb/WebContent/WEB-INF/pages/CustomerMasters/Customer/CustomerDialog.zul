@@ -53,6 +53,7 @@
 							<tab label="${c:l('label_CustomerDialog_ShareHolderDetails.value')}" id="directorDetails"
 								visible="false" />
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
+							<tab label="${c:l('label_CustomerDialog_GstDetails.value')}" id="tabGstDetails" visible="false" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
 							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_basicDetails">
@@ -857,6 +858,56 @@
 										</row>
 									</rows>
 								</grid>
+							</tabpanel>
+							<tabpanel style="overflow:auto"
+								ca:data-scrollable="true" id="tp_gstDetails">
+								<div id="divKeygstDetails">
+
+									<groupbox id="gb_gstDetails">
+										<div sclass="z-toolbar"
+											style="padding:0">
+											<hbox pack="stretch"
+												sclass="hboxRemoveWhiteStrips" style=" padding:0px;"
+												width="100%">
+												<toolbar align="start"
+													style="border:none;">
+													<label
+														value="${c:l('customerGSTDetails')}"
+														sclass="listboxHeading">
+													</label>
+												</toolbar>
+												<toolbar align="end"
+													style="float:right; border-style: none; padding:0px;">
+													<button
+														id="btnNew_CustomerGSTDetails" label="${c:l('label_New')}"
+														tooltiptext="${c:l('btnNew_CustomerGSTDetails.tooltiptext')}" />
+												</toolbar>
+											</hbox>
+										</div>
+										<listbox id="listBoxCustomerGst"
+											emptyMessage="${c:l('listbox.emptyMessage')}" span="true"
+											sizedByContent="true"
+											tooltiptext="${c:l('listbox.tooltiptext')}"
+											multiple="false">
+											<listhead sizable="true">
+
+												<listheader
+													id="listheader_GstNumber"
+													label="${c:l('listheader_GstNumber.label')}" sort="false"
+													hflex="min" style="text-align:left;" />
+												<listheader
+													id="listheader_frequencyType"
+													label="${c:l('listheader_frequency.label')}" sort="false"
+													hflex="min" style="text-align:left;" />
+												<listheader
+													id="listheader_GstOperation"
+													label="${c:l('listheader_GstOperation.label')}"
+													sort="false" hflex="min" style="text-align:left;" />
+											</listhead>
+										</listbox>
+
+									</groupbox>
+								</div>
 							</tabpanel>
 						</tabpanels>
 					</tabbox>

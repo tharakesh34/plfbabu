@@ -89,6 +89,7 @@ import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
+import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
@@ -132,6 +133,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -244,6 +247,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	protected IncomeDetailDAO incomeDetailDAO;
 	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
+    private CustomerGstDetailDAO customerGstDetailDAO;
+
 	private CustomerDocumentService customerDocumentService;
 
 	// Declaring Classes For validation for Lists
@@ -456,6 +461,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public CustomerInterfaceService getCustomerInterfaceService() {
 		return customerInterfaceService;
+	}
+
+	
+	public CustomerGstDetailDAO getCustomerGstDetailDAO() {
+		return customerGstDetailDAO;
+	}
+
+	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
+		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
 
 	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
@@ -703,7 +717,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					.addAll(getvASRecordingDAO().getVASRecordingsByLinkRef(financemain.getFinReference(), type));
 			customerDetails.setVasRecordingList(vasRecordingList);
 		}
-
+		
+		customerDetails.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
+		List<CustomerGST> customerGstList = customerDetails.getCustomerGstList();
+		if (CollectionUtils.isNotEmpty(customerGstList)) {
+			for (CustomerGST customerGST : customerGstList) {
+				customerGST.setCustomerGSTDetailslist(
+						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
+			}
+		}
 		logger.debug("Leaving");
 		return customerDetails;
 	}
@@ -766,6 +788,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (CustomerBankInfo customerBankInfo : customerDetails.getCustomerBankInfoList()) {
 					customerBankInfo.setBankInfoDetails(
 							customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
+				}
+			}
+			customerDetails.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
+			
+			if (customerDetails.getCustomerGstList() != null
+					&& customerDetails.getCustomerGstList().size() > 0) {
+				for (CustomerGST customerGST : customerDetails.getCustomerGstList()) {
+					customerGST.setCustomerGSTDetailslist(customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
 				}
 			}
 			customerDetails.setCustomerChequeInfoList(customerChequeInfoDAO.getChequeInfoByCustomer(id, type));
@@ -1033,6 +1063,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
 					customerDetails.getExtendedFieldHeader(), tableType, 0);
+			auditDetails.addAll(details);
+		}
+
+		if(customerDetails.getCustomerGstList()!=null){
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerGST");
+			details = processingCustomerGSTList(details, tableType, customerDetails.getCustID());
 			auditDetails.addAll(details);
 		}
 
@@ -1415,7 +1451,79 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						custBankInfo.getBefImage(), custBankInfo));
 			}
 		}
+       if(customerDetails.getCustomerGstList()!=null){
+    	   for(CustomerGST customerGST:customerDetails.getCustomerGstList()){
+    		   if (StringUtils.isBlank(customerGST.getRecordType())) {
+					continue;
+				}
+    		   customerGST.setWorkflowId(0);
+    		   customerGST.setCustId(customer.getCustID());
+    		   if (StringUtils.isEmpty(tableType) && !StringUtils.trimToEmpty(customerGST.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+    			   customerGST.setRecordType("");
+    			   customerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+    		   if (StringUtils.trimToEmpty(customerGST.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+					customerGstDetailDAO.delete(customerGST, tableType);
+				} else if (customerGST.isNewRecord()) {
+					auditTranType = PennantConstants.TRAN_ADD;
+					long headerId = customerGstDetailDAO.save(customerGST, tableType);
 
+					
+					if (customerGST.getCustomerGSTDetailslist().size() > 0) {
+						for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+							if (StringUtils.isEmpty(tableType) && !StringUtils.trimToEmpty(customerGSTDetails.getRecordType())
+									.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+								customerGSTDetails.setRecordType("");
+								customerGSTDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+							}
+							customerGSTDetails.setHeaderId(headerId);
+							customerGstDetailDAO.save(customerGSTDetails, tableType);
+							//Audit
+							fields = PennantJavaUtil.getFieldDetails(customerGSTDetails, customerGSTDetails.getExcludeFields());
+							auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
+									fields[1], customerGSTDetails.getBefImage(), customerGSTDetails));
+						}
+					}
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+					customerGstDetailDAO.update(customerGST, tableType);
+					// BankInfoDetails
+					if (customerGST.getCustomerGSTDetailslist().size() > 0) {
+						for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+							if (customerGSTDetails.isNewRecord()) {
+								if (StringUtils.isEmpty(tableType) && !StringUtils.trimToEmpty(customerGSTDetails.getRecordType())
+										.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+									customerGSTDetails.setRecordType("");
+									customerGSTDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+								}
+								customerGSTDetails.setHeaderId(customerGST.getId());
+								customerGstDetailDAO.save(customerGSTDetails, tableType);
+							} else {
+								if (StringUtils.isEmpty(tableType) && !StringUtils.trimToEmpty(customerGSTDetails.getRecordType())
+										.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+									customerGSTDetails.setRecordType("");
+				    			   customerGSTDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+								}
+								customerGstDetailDAO.update(customerGSTDetails, tableType);
+							}
+
+							// Audit
+							fields = PennantJavaUtil.getFieldDetails(customerGSTDetails,
+									customerGSTDetails.getExcludeFields());
+							auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
+									fields[1], customerGSTDetails.getBefImage(), customerGSTDetails));
+						}
+					}
+				}
+    		   fields = PennantJavaUtil.getFieldDetails(customerGST, customerGST.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
+						customerGST.getBefImage(), customerGST));
+    	   }
+       }
+		
 		if (customerDetails.getCustomerChequeInfoList() != null) {
 			for (CustomerChequeInfo custChequeInfo : customerDetails.getCustomerChequeInfoList()) {
 				if (StringUtils.isBlank(custChequeInfo.getRecordType())) {
@@ -2302,6 +2410,43 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetail = validateBankInfoDetail(custBankInfo, auditDetail);
 			}
 		}
+		
+		
+
+		// customer bank info details
+		List<CustomerGST> custGstDetails = customerDetails.getCustomerGstList();
+		if (custGstDetails != null) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (CustomerGST customerGST : custGstDetails) {
+				//auditDetail.setErrorDetail(validateMasterCode("CustomerGST", customerGST.getGstNumber()));
+
+			/*	LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",
+						customerGST.getFrequencytype());*/
+				/*if (lovFieldDetail == null) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = "Acctype";
+					valueParm[1] = custBankInfo.getAccountType();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+				}
+*/				// validate AccNumber length
+				if (StringUtils.isNotBlank(customerGST.getGstNumber())) {
+					int gstNoLength = bankDetailDAO.getAccNoLengthByCode(customerGST.getGstNumber(), "_View");
+					if (gstNoLength != 0) {
+						if (customerGST.getGstNumber().length() != gstNoLength) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "GSTNumber";
+							valueParm[1] = String.valueOf(gstNoLength) + " characters";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
+				}
+				auditDetail=validateGstInfoDetail(customerGST,auditDetail);
+			}
+		}
 
 		List<CustomerExtLiability> libailities = customerDetails.getCustomerExtLiabilityList();
 		if (libailities != null) {
@@ -2544,6 +2689,40 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
+	
+	private AuditDetail validateGstInfoDetail(CustomerGST customerGSTInfo, AuditDetail auditDetail) {
+
+		if (CollectionUtils.isNotEmpty(customerGSTInfo.getCustomerGSTDetailslist())) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (CustomerGSTDetails detail : customerGSTInfo.getCustomerGSTDetailslist()) {
+				if (detail.getFrequancy() == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "gstInfoDetails:Frequency";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getHeaderId() == Long.MIN_VALUE) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "gstInfoDetails:GSTNumber ";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getSalAmount() == null || detail.getSalAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:GstAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+
+			}
+		}
+		return auditDetail;
+	}
+	
 	private ErrorDetail validateDatesWithDefaults(Date date, String label) {
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (date != null) {
@@ -3061,6 +3240,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditDetails.addAll(details);
 			}
 
+			if(customerDetails.getCustomerGstList() !=null 
+					&& customerDetails.getCustomerGstList().size()>0){
+				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerGST");
+				details = processingCustomerGSTList(details, "", customerDetails.getCustID());
+				auditDetails.addAll(details);
+				
+			}
+			
 			if (customerDetails.getCustomerChequeInfoList() != null
 					&& customerDetails.getCustomerChequeInfoList().size() > 0) {
 				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustomerChequeInfo");
@@ -4893,7 +5080,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			deleteList(custDetails, tableType);
 			getCustomerBankInfoDAO().deleteByCustomer(custDetails.getCustID(), tableType);
 		}
-
+		if(custDetails.getCustomerGstList()!=null && custDetails.getCustomerGstList().size()>0){
+			CustomerGST custGST = new  CustomerGST();
+			String[] fields = PennantJavaUtil.getFieldDetails(custGST, custGST.getExcludeFields());
+			for (int i = 0; i < custDetails.getCustomerGstList().size(); i++) {
+				CustomerGST customerGST = custDetails.getCustomerGstList().get(i);
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						customerGST.getBefImage(), customerGST));
+			}
+			//delete Customer gst details
+			deletegstList(custDetails, tableType);
+			getCustomerGstDetailDAO().deleteCustomerGSTByCustomer(custDetails.getCustID(), tableType);
+		}		
+		
 		if (custDetails.getCustomerChequeInfoList() != null && custDetails.getCustomerChequeInfoList().size() > 0) {
 
 			CustomerChequeInfo custChequeInfo = new CustomerChequeInfo();
@@ -4928,6 +5127,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		return auditList;
+	}
+
+	private void deletegstList(CustomerDetails custDetails, String tableType) {
+		List<CustomerGST> customerGSTList = custDetails.getCustomerGstList();
+		for (CustomerGST customerGST : customerGSTList) {
+			if (customerGST.getCustomerGSTDetailslist() != null) {
+				for (int i = 0; i < customerGST.getCustomerGSTDetailslist().size(); i++) {
+					CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
+					customerGSTDetails.setHeaderId(customerGST.getId());
+					/*
+					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
+					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
+					 */
+					getCustomerGstDetailDAO().delete(customerGSTDetails, tableType);
+				}
+			}
+		}
 	}
 
 	private void deleteList(CustomerDetails custDetails, String tableType) {
@@ -5017,6 +5234,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.addAll(auditDetailMap.get("CustomerBankInfo"));
 		}
 
+		if (customerDetails.getCustomerGstList() != null) {
+			auditDetailMap.put("CustomerGST", setCustomerGSTAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerGST"));
+		}
+		
 		if (customerDetails.getCustomerChequeInfoList() != null
 				&& customerDetails.getCustomerChequeInfoList().size() > 0) {
 			auditDetailMap.put("CustomerChequeInfo",
@@ -5626,6 +5848,142 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetails;
 	}
 
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCustomerGSTAuditData(CustomerDetails customerDetails, String auditTranType,
+			String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		// CustomerBankInfo custBankInfo = new CustomerBankInfo();
+		CustomerGST customerGSTdt = new CustomerGST();
+		String[] fields = PennantJavaUtil.getFieldDetails(customerGSTdt, customerGSTdt.getExcludeFields());
+
+		for (int i = 0; i < customerDetails.getCustomerGstList().size(); i++) {
+			CustomerGST customerGST = customerDetails.getCustomerGstList().get(i);
+
+			if (StringUtils.isEmpty(customerGST.getRecordType())) {
+				continue;
+			}
+
+			customerGST.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (customerGST.getCustId() <= 0) {
+				customerGST.setCustId(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && isRcdType) {
+				customerGST.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			customerGST.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			customerGST.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerGST.getBefImage(),
+					customerGST));
+
+			// Audit Bank Info Details
+			if (customerGST.getCustomerGSTDetailslist() != null && customerDetails.getCustomerGstList().size() > 0) {
+				customerGST.getAuditDetailMap().put("CustomerGSTDetails",
+						setCustomerGSTDetailsAuditData(customerGST, auditTranType, method));
+			}
+
+		}
+
+		return auditDetails;
+	}
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCustomerGSTDetailsAuditData(CustomerGST customerGST, String auditTranType,
+			String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		//BankInfoDetail bankInfoDetail = new BankInfoDetail();
+		CustomerGSTDetails customerGSTDetail = new CustomerGSTDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(customerGSTDetail, customerGSTDetail.getExcludeFields());
+
+		for (int i = 0; i < customerGST.getCustomerGSTDetailslist().size(); i++) {
+		
+			CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
+			customerGSTDetails.setRecordStatus(customerGST.getRecordStatus());
+
+			if (StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
+				continue;
+			}
+
+			customerGSTDetails.setWorkflowId(customerGST.getWorkflowId());
+
+			boolean isRcdType = false;
+
+			if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerGST.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method)|| "Validate".equals(method))  && (isRcdType)) {
+				customerGSTDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+		//	auditTranType.setRecordStatus(custBankInfo.getRecordStatus());
+			//auditTranType.setLastMntOn(custBankInfo.getLastMntOn());
+
+			auditDetails
+					.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerGSTDetails.getBefImage(), customerGSTDetails));
+		}
+
+		return auditDetails;
+	}
 	/**
 	 * Methods for Creating List of Audit Details with detailed fields
 	 * 
@@ -6276,7 +6634,194 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug("Leaving");
 
 	}
+	/**
+	 * 
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	private List<AuditDetail> processingCustomerGSTList(List<AuditDetail> auditDetails, String type, long custId) {
 
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustomerGST customerGST = (CustomerGST) auditDetails.get(i).getModelData();
+			
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				customerGST.setRoleCode("");
+				customerGST.setNextRoleCode("");
+				customerGST.setTaskId("");
+				customerGST.setNextTaskId("");
+			}
+			customerGST.setWorkflowId(0);
+			customerGST.setCustId(custId);
+			
+			if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (customerGST.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerGST.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerGST.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerGST.setRecordType(PennantConstants.RCD_UPD);
+				}
+
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;	
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerGST.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = customerGST.getRecordType();
+				recordStatus = customerGST.getRecordStatus();
+				customerGST.setRecordType("");
+				customerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				customerGstDetailDAO.save(customerGST, type);
+			}
+
+			if (updateRecord) {
+				customerGstDetailDAO.update(customerGST, type);
+			}
+
+			if (deleteRecord) {
+				customerGstDetailDAO.delete(customerGST, type);
+			}
+
+			if (approveRec) {
+				customerGST.setRecordType(rcdType);
+				customerGST.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerGST);
+
+			//Bank Info Details
+			List<AuditDetail> details = customerGST.getAuditDetailMap().get("CustomerGSTDetails");
+			if (details != null) {
+				details = processingCustomerGstDetailList(details, type, customerGST.getId());
+			}
+			
+		}
+
+		return auditDetails;
+
+	}
+	/**
+	 * Method For Preparing List of AuditDetails for Bank Information Details
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> processingCustomerGstDetailList(List<AuditDetail> auditDetails, String type, long id) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustomerGSTDetails customerGSTDetails = (CustomerGSTDetails) auditDetails.get(i).getModelData();
+			customerGSTDetails.setHeaderId(id);
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				customerGSTDetails.setRoleCode("");
+				customerGSTDetails.setNextRoleCode("");
+				customerGSTDetails.setTaskId("");
+				customerGSTDetails.setNextTaskId("");
+			}
+
+			customerGSTDetails.setWorkflowId(0);
+
+			if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (customerGSTDetails.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerGSTDetails.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = customerGSTDetails.getRecordType();
+				recordStatus = customerGSTDetails.getRecordStatus();
+				customerGSTDetails.setRecordType("");
+				customerGSTDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				customerGstDetailDAO.save(customerGSTDetails, type);
+			}
+
+			if (updateRecord) {
+				customerGstDetailDAO.update(customerGSTDetails, type);
+			}
+
+			if (deleteRecord) {
+				customerGstDetailDAO.delete(customerGSTDetails, type);
+			}
+
+			if (approveRec) {
+				customerGSTDetails.setRecordType(rcdType);
+				customerGSTDetails.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerGSTDetails);
+		}
+		return auditDetails;
+	}
 	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
 		return getCustomerDAO().getCustomerCountByCIF(custCIF, type);

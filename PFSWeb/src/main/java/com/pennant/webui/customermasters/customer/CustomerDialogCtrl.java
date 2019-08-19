@@ -126,6 +126,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -312,7 +314,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tab basicDetails;
 	protected Tab tabkYCDetails;
 	protected Tab tabbankDetails;
-
+	protected Tab tabGstDetails;
 	protected Button btnNew_CustomerDocuments;
 	protected Listbox listBoxCustomerDocuments;
 	private List<CustomerDocument> customerDocumentDetailList = new ArrayList<CustomerDocument>();
@@ -373,6 +375,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_CustInc_RecordStatus;
 	protected Listheader listheader_CustInc_RecordType;
 	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
+    
+	//Customer Gst Details List
+	protected Button btnNew_CustomerGSTDetails;
+	protected Listbox listBoxCustomerGst;
+	private List<CustomerGST> customerGstList = new ArrayList<CustomerGST>();
+	
 
 	private transient String oldVar_empStatus;
 	private CustomerDetails customerDetails; // overhanded per param
@@ -390,7 +398,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tabpanel tp_Financials;
 	protected Tabpanel tp_directorDetails;
 	protected Tabpanel tp_BankDetails;
-
+	protected Tabpanel tp_gstDetails;
+	
 	protected Groupbox gb_Action;
 	protected Groupbox gb_statusDetails;
 	String parms[] = new String[4];
@@ -458,6 +467,13 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Combobox subCategory;
 	protected ExtendedCombobox religion;
 	protected ExtendedCombobox caste;
+	
+	//customerGST Detaisl;
+	protected Textbox custId;
+	protected Textbox gstNumber;
+	protected Combobox frequencyType;
+	protected Combobox frequency;
+	
 
 	// Extended fields
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
@@ -636,7 +652,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.tp_Financials.setHeight(borderLayoutHeight - 195 + "px");
 					this.tp_BankDetails.setHeight(borderLayoutHeight - 195 + "px");
 					this.tp_directorDetails.setHeight(borderLayoutHeight - 195 + "px");
-
+					this.tp_gstDetails.setHeight(borderLayoutHeight - 195 + "px");
 					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 +
 					// "px");
 					// this.grid_KYCDetails.setHeight(borderLayoutHeight +
@@ -647,6 +663,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 90 + "px");
 					this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 90 + "px");
 					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 90 + "px");
+					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 90 + "px");
 				} else {
 					this.divKeyDetails.setHeight(borderLayoutHeight - 130 + "px");
 					this.listBoxCustomerRating.setHeight(semiBorderlayoutHeights - 130 + "px");
@@ -655,7 +672,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.listBoxCustomerAddress.setHeight(semiBorderlayoutHeights - 125 + "px");
 					this.listBoxCustomerPhoneNumbers.setHeight(semiBorderlayoutHeights - 125 + "px");
 					this.listBoxCustomerEmails.setHeight(semiBorderlayoutHeights - 125 + "px");
+					this.listBoxCustomerGst.setHeight(semiBorderlayoutHeights - 125 + "px");
 				}
+				this.listBoxCustomerGst.setHeight(borderLayoutHeight - 240 + "px");
 				this.listBoxCustomerIncome.setHeight(borderLayoutHeight - 240 + "px");
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 220 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 220 + "px");
@@ -685,6 +704,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 						.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
 				this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
 				this.listBoxCustomerAddress.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
+				this.listBoxCustomerGst.setHeight(borderLayoutHeight - (isRetailCustomer ? 132 : 90) + "px");
 				this.listBoxCustomerPhoneNumbers.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 				this.listBoxCustomerEmails.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 90) + "px");
 
@@ -955,6 +975,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custRO1.setValidateColumns(new String[] { "DealerName" });
 
 		this.applicationNo.setMaxlength(LengthConstants.LEN_REF);
+		
+		if (SysParamUtil.isAllowed("CUST_GST_TAB_REQUIRED")) {
+			this.tabGstDetails.setVisible(true);
+		}
 
 		if (isWorkFlowEnabled()) {
 			this.gb_Action.setVisible(true);
@@ -1002,7 +1026,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewChequeInformation"));
 		this.btnNew_ExternalLiability
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewExternalLiability"));
+		this.btnNew_CustomerGSTDetails
+		.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerGstDetails"));
 		validateCustDocs = getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerDocuments");
+
 		logger.debug("Leaving");
 	}
 
@@ -1116,6 +1143,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		setComboBoxValue(this.custSalutationCode, aCustomer.getCustSalutationCode(),
 				aCustomer.getLovDescCustSalutationCodeName());
 		setComboBoxValue(this.custMaritalSts, aCustomer.getCustMaritalSts(), aCustomer.getLovDescCustMaritalStsName());
+	
 		this.target.setValue(aCustomer.getCustAddlVar82());
 		this.custCIF.setValue(StringUtils.trimToEmpty(aCustomer.getCustCIF()));
 		this.custCoreBank.setValue(aCustomer.getCustCoreBank());
@@ -1299,7 +1327,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doFillCustomerChequeInfoDetails(aCustomerDetails.getCustomerChequeInfoList());
 		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
-
+          
+		//customer gst details
+		 doFillCustomerGstDetails(aCustomerDetails.getCustomerGstList());
+		
 		// Extended Field Details
 		appendExtendedFieldDetails(aCustomerDetails);
 
@@ -1862,6 +1893,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomerDetails.setCustomerBankInfoList(cloner.deepClone(this.customerBankInfoDetailList));
 		aCustomerDetails.setCustomerChequeInfoList(cloner.deepClone(this.customerChequeInfoDetailList));
 		aCustomerDetails.setCustomerExtLiabilityList(cloner.deepClone(this.customerExtLiabilityDetailList));
+		//Custome Gst Details list
+		aCustomerDetails.setCustomerGstList(cloner.deepClone(this.customerGstList));
 		if (this.directorDetails.isVisible()) {
 			aCustomerDetails.setCustomerDirectorList(this.directorList);
 		}
@@ -2189,6 +2222,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.btnNew_ExternalLiability.setVisible(false);
 			this.btnNew_CustomerPhoneNumber.setVisible(false);
 			this.btnNew_CustomerEmail.setVisible(false);
+			this.btnNew_CustomerGSTDetails.setVisible(false);
 			// for eid read only in enquiry
 			this.eidNumber.setReadonly(true);
 		} else if (StringUtils.isNotEmpty(getCustomerDetails().getCustomer().getCustCoreBank())) {
@@ -2946,7 +2980,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.btnNew_BankInformation.setVisible(false);
 		this.btnNew_ChequeInformation.setVisible(false);
 		this.btnNew_ExternalLiability.setVisible(false);
-
+		this.btnNew_CustomerGSTDetails.setVisible(false);
+				
 		this.custMaritalSts.setDisabled(true);
 		this.noOfDependents.setReadonly(true);
 
@@ -4849,6 +4884,96 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		}
 		logger.debug("Leaving");
 	}
+	
+	// ********************************************************************//
+		// *** New Button for Customer GST Details **//
+		// ********************************************************************//
+	
+public void onClick$btnNew_CustomerGSTDetails(Event event) throws Exception {
+		logger.debug("Entering");
+		CustomerGST customerGST= new CustomerGST();
+		customerGST.setNewRecord(true);
+		customerGST.setWorkflowId(0);
+		customerGST.setCustId(getCustomerDetails().getCustID());
+		customerGST.setCustCif(getCustomerDetails().getCustomer().getCustCIF());
+		customerGST.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
+		customerGST.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("customerGst",customerGST);
+		map.put("customerDialogCtrl", this);
+		map.put("newRecord", "true");
+		map.put("finFormatter", ccyFormatter);
+		map.put("isFinanceProcess", isFinanceProcess);
+		map.put("CustomerGstList", customerGstList);
+		map.put("roleCode", getRole());
+		try {
+			Executions.createComponents(
+					"/WEB-INF/pages/CustomerMasters/Customer/CustomerGstDetailsDialog.zul",
+					null, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
+	logger.debug("Entering");
+	this.listBoxCustomerGst.getItems().clear();
+	if(customerGstDetails != null){
+		for(CustomerGST customerGST:customerGstDetails){
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc= new Listcell(customerGST.getGstNumber());
+				lc.setParent(item);
+				lc= new Listcell(customerGST.getFrequencytype());
+				lc.setParent(item);
+				lc= new Listcell(String.valueOf(customerGST.getRecordType()));
+				lc.setParent(item);
+				item.setAttribute("data",customerGST);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerGstDetailsItemDoubleClicked");
+				this.listBoxCustomerGst.appendChild(item);	
+		}
+		setCustomerGstList(customerGstDetails);
+	}
+		
+	logger.debug("Leaving");
+}
+
+	public void onCustomerGstDetailsItemDoubleClicked(Event event) throws Exception {
+		logger.debug("Entering");
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerGst.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustomerGST customerGST = (CustomerGST) item.getAttribute("data");
+			
+			customerGST.setCustId(getCustomerDetails().getCustID());
+			customerGST.setCustCif(getCustomerDetails().getCustomer().getCustCIF());
+			customerGST.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
+			customerGST.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+			
+			if (isDeleteRecord(customerGST.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("customerDialogCtrl", this);
+				map.put("customerGst", customerGST);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				map.put("CustomerGstList", customerGstList);
+				map.put("fromDouble", true);
+				map.put("retailCustomer",
+						StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerGstDetailsDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug("Leaving");
+	}
 
 	public boolean getCurrentEmployerExist(CustomerEmploymentDetail custEmpDetail) {
 		boolean isCurrentEmp = false;
@@ -6718,4 +6843,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.PdVerificationDialogCtrl = PdVerificationDialogCtrl;
 
 	}
+
+	public List<CustomerGST> getCustomerGstList() {
+		return customerGstList;
+	}
+
+	public void setCustomerGstList(List<CustomerGST> customerGstList) {
+		this.customerGstList = customerGstList;
+	}
+
+	
 }

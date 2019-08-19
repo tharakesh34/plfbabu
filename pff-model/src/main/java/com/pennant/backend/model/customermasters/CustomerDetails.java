@@ -67,6 +67,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennant.backend.model.customermasters.CustomerGST;
 
 /**
  * Model class for the <b>Customer table</b>.<br>
@@ -76,7 +77,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
 		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
-		"blackListReq", "returnStatus", "customerDedupList" })
+		"blackListReq", "returnStatus", "customerDedupList","customerGstLists" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {
@@ -133,6 +134,9 @@ public class CustomerDetails implements java.io.Serializable {
 	@XmlElement(name = "address")
 	private List<CustomerAddres> addressList;
 
+	@XmlElementWrapper(name = "customerGstLists")
+	@XmlElement(name = "customerGstList")
+	private List<CustomerGST> customerGstList;
 	@XmlElementWrapper(name = "phones")
 	@XmlElement(name = "phone")
 	private List<CustomerPhoneNumber> customerPhoneNumList;
@@ -240,6 +244,14 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setPrimaryRelationOfficer(long primaryRelationOfficer) {
 		this.primaryRelationOfficer = primaryRelationOfficer;
+	}
+
+	public List<CustomerGST> getCustomerGstList() {
+		return customerGstList;
+	}
+
+	public void setCustomerGstList(List<CustomerGST> customerGstList) {
+		this.customerGstList = customerGstList;
 	}
 
 	private CustomerDetails befImage;

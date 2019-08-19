@@ -5390,6 +5390,9 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
-		
+	</bean>
+	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="customerGstService" ref="customerGstService" />
 	</bean>	
 </beans>
