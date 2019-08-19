@@ -4029,7 +4029,7 @@
 		<dropView viewName="accounts_view" />
 	</changeSet>
 
-	<changeSet id="128" author="murthy" >
+	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
 	</changeSet>
 
@@ -4076,5 +4076,33 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="132" author="murthy" dbms="postgresql">
+		<sql>
+		<![CDATA[
+	        delete from deps_saved_ddl;
+		 ]]>
+		</sql>
+	</changeSet>
+
+
+	<changeSet id="133_pre" author="murthy" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'bmtsubsectors');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="133" author="murthy">
+		<modifyDataType tableName="BMTSUBSECTORS" columnName="SubSectorDesc" newDataType="varchar(100)" />
+	</changeSet>
+
+	<changeSet id="133_post" author="Manoj.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'bmtsubsectors');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
