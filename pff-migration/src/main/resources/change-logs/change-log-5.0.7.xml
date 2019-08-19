@@ -4025,7 +4025,11 @@
 </createView>
 	</changeSet>
 
-	<changeSet id="128" author="murthy">
+	<changeSet id="128_pre" author="murthy" dbms="postgresql">
+		<dropView viewName="accounts_view" />
+	</changeSet>
+
+	<changeSet id="128" author="murthy" >
 		<dropTable tableName="ACCOUNTS_TEMP" />
 	</changeSet>
 
@@ -4040,7 +4044,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="130_pre" author="Manoj.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4049,12 +4053,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="130" author="Manoj.P">
 		<modifyDataType tableName="fintypevasproducts" columnName="mandatory" newDataType="smallint" />
-     <modifyDataType tableName="fintypevasproducts_temp" columnName="mandatory" newDataType="smallint" />
-   </changeSet> 
-   
+		<modifyDataType tableName="fintypevasproducts_temp" columnName="mandatory" newDataType="smallint" />
+	</changeSet>
+
 	<changeSet id="130_post" author="Manoj.P" dbms="postgresql">
 		<sql>
 			<![CDATA[
