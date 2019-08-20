@@ -2689,24 +2689,24 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="44" author="Manoj.P">
 		<sql>
 			<![CDATA[
 			 INSERT INTO BMTAMOUNTCODES VALUES('LATEPAY',0,'ae_penaltyRcv','Penalty
 			Receivable',1,1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0);
 			 ]]>
-			
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="45" author="Varaprasad.K">
-	<sql>
+		<sql>
 			<![CDATA[
 				update plf.smtparameters set sysparmvalue='N' where SysParmCode = 'RECEIPT_CASH_PAN_MANDATORY';
 			]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
 
 	<changeSet id="46" author="Manoj.p">
@@ -2727,8 +2727,8 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 
 	<changeSet id="47" author="amanullah">
 		<createView viewName="ogl_view" replaceIfExists="true">
@@ -2789,10 +2789,10 @@ UNION ALL
 					
         where p.postamount > 0  order by p.linkedtranid;
 		</createView>
-	</changeSet >
-	
+	</changeSet>
+
 	<changeSet id="48" author="amanullah">
-	<sql>
+		<sql>
 			<![CDATA[
 		
 			  DELETE FROM MASTER_DEF WHERE MASTER_TYPE ='OGL';
@@ -2833,19 +2833,19 @@ UNION ALL
               INSERT into  plf.master_def values ('OGL','LAEP','164');	
 ]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 
-<changeSet id="49" author="Manoj">
-	<sql>
+	<changeSet id="49" author="Manoj">
+		<sql>
 	<![CDATA[
 		update plf.data_engine_column set constrainttype = 'M' where name = 'MANDATE_REG_NO' and tableid in (select id from plf.data_engine_table where name = 'MANDATE_RESPONSE');
 	]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="50" author="Manoj">
-	<sql>
+	<changeSet id="50" author="Manoj">
+		<sql>
 	<![CDATA[
 			update data_engine_config set fileextension = null where name = 'DISB_EXPORT_DEFAULT';
 			update data_engine_config set fileprefixname = 'CLIXCAP_CL77RBI_CL77RBI' where name = 'DISB_EXPORT_DEFAULT';
@@ -2853,19 +2853,19 @@ UNION ALL
 			where name  = 'DISBURSEMENT_DATE' and tableid in (select id from data_engine_table where configid in (select id from data_engine_Config where name = 'DISB_EXPORT_DEFAULT' ))
 			
 	]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="51" author="Varaprasad.k">
+	<changeSet id="51" author="Varaprasad.k">
 		<sql>
 			<![CDATA[
 			delete from SMTPARAMETERS WHERE SYSPARMCODE='RECEIPTUPLOAD_DEDUPCHECK'; 
 			Insert into SMTPARAMETERS (SYSPARMCODE,SYSPARMDESC,SYSPARMTYPE,SYSPARMMAINT,SYSPARMVALUE,SYSPARMLENGTH,SYSPARMDEC,SYSPARMLIST,SYSPARMVALDMOD,SYSPARMDESCRIPTION,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('RECEIPTUPLOAD_DEDUPCHECK','Receipt Upload Dedup Check','String',0,'N',1,0,null,null,'Receipt Upload Dedup Check',1,1000,to_date('30-07-19','DD-MM-RR'),'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
- <changeSet id="52" author="vijaya.a">
+	<changeSet id="52" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				update Data_engine_config set fileprefixname = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyy}', fileSequenceno = 2 where name = 'MANDATES_EXPORT';
@@ -2873,8 +2873,8 @@ UNION ALL
 				update Data_engine_config set fileprefixname = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyy}', fileSequenceno = 2 where name = 'MANDATES_ACK';
 			 ]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="53" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -2886,7 +2886,7 @@ UNION ALL
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="54" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -2894,7 +2894,7 @@ UNION ALL
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="52.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -2902,7 +2902,7 @@ UNION ALL
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="53" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -2927,12 +2927,12 @@ UNION ALL
 				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'MANDATES_IMPORT');
 				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'PRESENTMENT_REQUEST');
 				update data_engine_config set postevent = 'COPY_TO_SFTP' Where id = (select id from data_engine_config where name = 'PRESENTMENT_RESPONSE');
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="55" author="vijaya.a" dbms="postgresql">
-		<createView viewName="PRESENTMENT_REQ_DETAILS_View" replaceIfExists="true" >
+		<createView viewName="PRESENTMENT_REQ_DETAILS_View" replaceIfExists="true">
 			SELECT t1.txn_ref,
     			t1.entity_code,
    				t1.cycle_type,
@@ -2975,15 +2975,15 @@ UNION ALL
   			FROM PRESENTMENT_REQ_DETAILS_Temp t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="57" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				Alter table PRESENTMENT_FILEIMPORT alter column batchid Type varchar(50);
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="58" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3006,10 +3006,10 @@ UNION ALL
 				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="59" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3051,10 +3051,10 @@ UNION ALL
 				UPDATE SEQ_DATA_ENGINE_CONFIG SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_CONFIG);
 				UPDATE SEQ_DATA_ENGINE_TABLE  SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_TABLE);
 				UPDATE SEQ_DATA_ENGINE_COLUMN SET SeqNo=(Select coalesce(MAX(ID), 1) FROM DATA_ENGINE_COLUMN);
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="60" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3082,10 +3082,10 @@ UNION ALL
 				
 				update data_engine_config set postevent = '' Where id = (select id from data_engine_config where name = 'PRESENTMENT_REQUEST_NACH');
 				update data_engine_config set postevent = '' Where id = (select id from data_engine_config where name = 'PRESENTMENT_RESPONSE_NACH');
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="61" author="Manoj.P">
 		<sql>
 			<![CDATA[
@@ -3105,19 +3105,19 @@ UNION ALL
 				INSERT INTO plf.STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (12, 'PSLDTLS', 'Other Details', 1);
 				INSERT INTO plf.STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (13, 'CRTAB', 'Credit Review Details', 1);
 				INSERT INTO plf.STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (14, 'LegalDet', 'Legal Details', 1)
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="62" author="Manoj.p">
 		<sql>
 			<![CDATA[
 				update plf.data_engine_Config set fileextension = null where name = 'DISB_EXPORT_DEFAULT';
-			]]>    	
+			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="63" author="Manoj">
 		<sql>
 			<![CDATA[
@@ -3125,7 +3125,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="64" author="Manoj">
 		<sql>
 			<![CDATA[
@@ -3134,8 +3134,8 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="65" author="amanullah">
+
+	<changeSet id="65" author="amanullah">
 		<createView viewName="ogl_view" replaceIfExists="true">
 				SELECT p.postdate AS acctdate,
 					   p.postref,
@@ -3192,9 +3192,9 @@ UNION ALL
 				WHERE p.postamount > 0
 					  ORDER BY p.linkedtranid;
 		</createView>
-	</changeSet >
-	
-	
+	</changeSet>
+
+
 	<changeSet id="66" author="amanullah">
 		<sql>
 			<![CDATA[
@@ -3233,10 +3233,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
-		
+
+
 	<changeSet id="67" author="Manoj.p">
-	<sql>
+		<sql>
 			<![CDATA[
 			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/disbursements/request' where name = 'DISB_EXPORT_DEFAULT';
 			update plf.data_engine_config set uploadpath = '/opt/clix/PFF/disbursements/response' where name = 'DISB_HDFC_IMPORT';
@@ -3249,25 +3249,25 @@ UNION ALL
 			update plf.smtparameters set sysparmvalue = '/opt/clix/PFF/presentment/response' where sysparmcode = 'PRESENTMENT_RESPONSE_UPLOAD_FILEPATH';
 			update plf.smtparameters set sysparmvalue = 'Y' where sysparmcode = 'PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE'
 	]]>
-	</sql>
-</changeSet>	
+		</sql>
+	</changeSet>
 
-<changeSet id="68" author="Manoj.P">
-	<sql>
+	<changeSet id="68" author="Manoj.P">
+		<sql>
 			<![CDATA[
 				update plf.smtparameters set sysparmvalue = 'N' where sysparmcode = 'GROUP_BATCH_BY_BANK'
 	]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="69" author="Manoj.P">
-	<sql>
+	<changeSet id="69" author="Manoj.P">
+		<sql>
 	    <![CDATA[
 			update plf.smtparameters set sysparmvalue='/opt/clix/PFF/external' where sysparmcode='UPLOAD_FILEPATH'
 		]]>
-	</sql>
-</changeSet>
-	
+		</sql>
+	</changeSet>
+
 	<changeSet id="70" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
@@ -3276,5 +3276,48 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-</databaseChangeLog>
+	<changeSet id="71" author="Varaprasad.K">
+		<sql>
+        <![CDATA[
+            Delete from SMTparameters where SysParmCode = 'ALLOW_PRESENTMENT_DOWNLOAD';
+            INSERT INTO SMTparameters  VALUES ('ALLOW_PRESENTMENT_DOWNLOAD', 'Presentment download related flag if it is Y then initiates dowmload.', 'String', '1', 'Y', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+        ]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="72" author="Varaprasad.K">
+		<sql>
+        <![CDATA[
+            DELETE FROM PLF.CIBIL_ACCOUNT_TYPES_MAPPING WHERE SEGMENT_TYPE = 'CORP';
+            INSERT INTO PLF.CIBIL_ACCOUNT_TYPES_MAPPING VALUES('9999', 'CORP', 'LAEP',      1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+            INSERT INTO PLF.CIBIL_ACCOUNT_TYPES_MAPPING VALUES('9999', 'CORP', 'BL',     1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+        ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="73" author="Varaprasad.K">
+		<sql>
+            <![CDATA[
+                    delete from secrights where rightname='MandateDialog_InputDate';
+                    delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE in ('BFSD_ORIGINATION_MAKER','MANDATE_MAKER','CL_ORIGINATION_MAKER','CL_ORIGINATION_WRM','MANDATES_MAKER','LAP_SSO') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+
+                    insert into secrights values ((select max(rightid)+1 from secrights), 3, 'MandateDialog_InputDate','MandateDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='MANDATE_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='CL_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='CL_ORIGINATION_WRM'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='MANDATES_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+                    insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='LAP_SSO'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
+            ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="74" author="Varaprasad.K">
+		<sql>
+        <![CDATA[
+            update plf.secrights set rightname='VehicleDealerDialog_DSA_code' where rightname='VehicleDealerDialog_DSA_Code'
+        ]]>
+		</sql>
+	</changeSet>
+
+</databaseChangeLog>
