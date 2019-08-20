@@ -3298,8 +3298,14 @@ UNION ALL
 	<changeSet id="73" author="Varaprasad.K">
 		<sql>
             <![CDATA[
+            		delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='BFSD_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+					delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='MANDATE_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+					delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='CL_ORIGINATION_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+					delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='CL_ORIGINATION_WRM') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+					delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='MANDATES_MAKER') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+					delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE='LAP_SSO') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
                     delete from secrights where rightname='MandateDialog_InputDate';
-                    delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE in ('BFSD_ORIGINATION_MAKER','MANDATE_MAKER','CL_ORIGINATION_MAKER','CL_ORIGINATION_WRM','MANDATES_MAKER','LAP_SSO') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'));
+                    
 
                     insert into secrights values ((select max(rightid)+1 from secrights), 3, 'MandateDialog_InputDate','MandateDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
                     insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
