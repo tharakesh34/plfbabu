@@ -4105,4 +4105,12 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="134" author="Kesav">
+		<sql>
+			<![CDATA[
+				Update SMTParameters set SysParmValue = '10,20,30', SysParmType ='String' where SysParmCode = 'BANKINFO_DAYS';
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
