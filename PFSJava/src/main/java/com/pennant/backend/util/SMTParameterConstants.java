@@ -244,4 +244,6 @@ public class SMTParameterConstants {
 	public static final String ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS = "ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS";
 	public static final String RECEIPTUPLOAD_DEDUPCHECK = "RECEIPTUPLOAD_DEDUPCHECK";
 
+	public static final String CUST_CARD_SALES_REQ = "CUST_CARD_SALES_REQ";
+
 }

@@ -128,5 +128,8 @@
 		<field name="customerExtLiabilityList">
 			<valid />
 		</field>
+		<field name="custCardSales">
+			<valid />
+		</field>
 	</bean>
 </constraint-mappings>

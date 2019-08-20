@@ -5554,4 +5554,366 @@ UNION ALL
 		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details" startValue="1000" incrementBy="1"/>
 	</changeSet>
 	
+	<changeSet id="56" author="vijaya.a" dbms="postgresql, oracle">
+	 <comment>Clix Card Sales changes</comment>
+		<createSequence sequenceName="SEQCUSTCARDSALES" />
+	</changeSet>
+
+	<changeSet id="57" author="vijaya.a" dbms="mssql">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="SEQCUSTCARDSALES">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="58" author="vijaya.a">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="CUSTCARDSALES">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CUSTCARDSALES_ID"/>
+			</column>
+			<column name = "MerchantId" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="59" author="vijaya.a">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="CUSTCARDSALES_Temp">
+			<column name="Id" type="bigInt">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALES_TEMP_ID"/>
+			</column>
+			<column name = "MerchantId" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="60" author="vijaya.a">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="CUSTCARDSALESDETAILS">
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_ID"/>
+			</column>
+			<column name="CardSalesId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Month" type="datetime">
+			</column>
+			<column name="SalesAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfSettlements" type="bigInt">
+			</column>
+			<column name="TotalNoOfCredits" type="bigInt">
+			</column>
+			<column name="TotalNoOfDebits" type="bigInt">
+			</column>
+			<column name="TotalCreditValue" type="decimal(18,0)">
+			</column>
+			<column name="TotalDebitValue" type="decimal(18,0)">
+			</column>
+			<column name="InwardBounce" type="decimal(18,0)">
+			</column>
+			<column name="OutWardBounce" type="decimal(18,0)">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="61" author="vijaya.a">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="CUSTCARDSALESDETAILS_TEMP">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_TEMP_ID"/>
+			</column>
+			<column name="CardSalesId" type="bigInt">
+				<constraints nullable="false" />
+			</column>
+			<column name="Month" type="datetime">
+			</column>
+			<column name="SalesAmount" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="NoOfSettlements" type="bigInt">
+			</column>
+			<column name="TotalNoOfCredits" type="bigInt">
+			</column>
+			<column name="TotalNoOfDebits" type="bigInt">
+			</column>
+			<column name="TotalCreditValue" type="decimal(18,0)">
+			</column>
+			<column name="TotalDebitValue" type="decimal(18,0)">
+			</column>
+			<column name="InwardBounce" type="decimal(18,0)">
+			</column>
+			<column name="OutWardBounce" type="decimal(18,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet> 
+	
+	<changeSet id="62" author="vijaya.a">
+		<comment>Clix Card Sales changes</comment>
+		<createView viewName="CUSTCARDSALES_View" replaceIfExists="true">
+			SELECT t1.Id, 
+				t1.merchantId,
+    			t1.CustId,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+   		    FROM CUSTCARDSALES_temp t1
+			UNION ALL
+ 			SELECT t1.Id, 
+ 				t1.merchantId,
+    			t1.CustId,
+    			t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+   			FROM CUSTCARDSALES t1
+   			WHERE NOT (EXISTS (SELECT 1 FROM CUSTCARDSALES_temp WHERE CUSTCARDSALES_temp.Id = t1.Id))	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="63" author="vijaya.a">
+		<comment>Clix Card Sales changes</comment>
+		<createView viewName="CUSTCARDSALES_AView" replaceIfExists="true">
+			   SELECT t1.Id,
+			   	t1.merchantId,
+    			t1.CustId,
+    			t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid
+   		    FROM CUSTCARDSALES t1  		
+		</createView>
+	</changeSet>
+	
+	<changeSet id="64" author="vijaya.a">
+		<comment>Clix Installment clearence changes</comment>
+		<createView viewName="CUSTCARDSALESDETAILS_View" replaceIfExists="true">
+			SELECT t1.Id,
+    			t1.CardSalesId,
+    			t1.Month,
+			    t1.SalesAmount,
+			    t1.NoOfSettlements,
+			    t1.TotalNoOfCredits,
+			    t1.TotalNoOfDebits,
+			    t1.TotalCreditValue,
+			    t1.TotalDebitValue,
+			    t1.InwardBounce,
+			    t1.OutWardBounce,
+			    t1.Version,
+			    t1.LastMntBy,
+				t1.LastMntOn,
+				t1.RecordStatus,
+				t1.RoleCode,
+				t1.NextRoleCode,
+				t1.TaskId,
+				t1.NextTaskId,
+				t1.RecordType,
+				t1.WorkflowId
+   		    FROM CUSTCARDSALESDETAILS_temp t1
+			UNION ALL
+ 			SELECT t1.Id,
+    			t1.CardSalesId,
+    			t1.Month,
+			    t1.SalesAmount,
+			    t1.NoOfSettlements,
+			    t1.TotalNoOfCredits,
+			    t1.TotalNoOfDebits,
+			    t1.TotalCreditValue,
+			    t1.TotalDebitValue,
+			    t1.InwardBounce,
+			    t1.OutWardBounce,
+			    t1.Version,
+			    t1.LastMntBy,
+				t1.LastMntOn,
+				t1.RecordStatus,
+				t1.RoleCode,
+				t1.NextRoleCode,
+				t1.TaskId,
+				t1.NextTaskId,
+				t1.RecordType,
+				t1.WorkflowId
+   			FROM CUSTCARDSALESDETAILS t1
+   			WHERE NOT (EXISTS (SELECT 1 FROM CUSTCARDSALESDETAILS_temp WHERE CUSTCARDSALESDETAILS_temp.Id = t1.Id))	
+		</createView>
+	</changeSet>
+
+	<changeSet id="65" author="vijaya.a">
+		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
+		<createView viewName="CUSTCARDSALESDETAILS_AView" replaceIfExists="true">
+			  SELECT t1.Id,
+    			t1.CardSalesId,
+    			t1.Month,
+			    t1.SalesAmount,
+			    t1.NoOfSettlements,
+			    t1.TotalNoOfCredits,
+			    t1.TotalNoOfDebits,
+			    t1.TotalCreditValue,
+			    t1.TotalDebitValue,
+			    t1.InwardBounce,
+			    t1.OutWardBounce,
+			    t1.Version,
+			    t1.LastMntBy,
+				t1.LastMntOn,
+				t1.RecordStatus,
+				t1.RoleCode,
+				t1.NextRoleCode,
+				t1.TaskId,
+				t1.NextTaskId,
+				t1.RecordType,
+				t1.WorkflowId
+   		    FROM CUSTCARDSALESDETAILS t1
+		</createView>
+	</changeSet>
+	
+	 <changeSet id="66" author="vijaya.a" dbms="postgresql, oracle">
+	 <comment>Clix Card Sales changes</comment>
+		<createSequence sequenceName="SEQCUSTCARDSALESDETAILS" />
+	</changeSet>
+
+	<changeSet id="67" author="vijaya.a" dbms="mssql">
+	<comment>Clix Card Sales changes</comment>
+		<createTable tableName="SEQCUSTCARDSALESDETAILS">
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int"></column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="68" author="vijaya.a" >
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CustomerCardSalesInfo_VIEW', 'Role for card sales enquiry', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CustomerCardSalesInfo_APPROVER', 'Role for card sales approver', NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles), 1, 'CustomerCardSalesInfo_MAKER', 'Role for card sales maker',	NULL, 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0) ;
+												
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CustomerCardSalesInfo_VIEW', 'Group for card sales enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CustomerCardSalesInfo_MAKER', 'Group for card sales maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'CustomerCardSalesInfo_APPROVER', 'Group for card sales approver', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CustomerCardSalesInfo_btnNew','CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CustomerCardSalesInfo_btnEdit','CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CustomerCardSalesInfo_btnDelete','CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_CustomerCardSalesInfo_btnSave','CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CustomerCardSalesInfo_MerchantName', 'CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CustomerCardSalesInfo_NewCardMnthDetails', 'CustomerCardSalesInfo', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'button_CustomerCardSalesInfo_btnNew'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'button_CustomerCardSalesInfo_btnEdit'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'button_CustomerCardSalesInfo_btnDelete'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'button_CustomerCardSalesInfo_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+								
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'CustomerCardSalesInfo_MerchantName'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_MAKER'), (Select RightID from SecRights where RightName = 'CustomerCardSalesInfo_NewCardMnthDetails'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CustomerCardSalesInfo_APPROVER'), (Select RightID from SecRights where RightName = 'button_CustomerCardSalesInfo_btnSave'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+								
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CustomerCardSalesInfo_MAKER'),(select RoleID from secRoles where RoleCd='CustomerCardSalesInfo_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CustomerCardSalesInfo_APPROVER'),(select RoleID from secRoles where RoleCd='CustomerCardSalesInfo_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 'CustomerCardSalesInfo_NewCardDetails', 'CustomerDialog', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+								
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID)  FROM SECGROUPRIGHTS);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID)  FROM SECROLEGROUPS);
+
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="69" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='CUST_CARD_SALES_REQ';
+			   	INSERT INTO SMTPARAMETERS VALUES ('CUST_CARD_SALES_REQ', 'Card Sales Req', 'String', 1, 'N', 1, 0, NULL, NULL,'Card sales Req', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

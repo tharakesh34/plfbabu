@@ -136,6 +136,97 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="8" author="vijaya.a">
+		<createTable tableName="ADTCUSTCARDSALES">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="MerchantId" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="9" author="vijaya.a">
+		<createTable tableName="ADTCUSTCARDSALESDETAILS">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="CardSalesId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Month" type="datetime">
+			</column>
+			<column name="SalesAmount" type="decimal(18,0)">
+			</column>
+			<column name="NoOfSettlements" type="bigInt">
+			</column>
+			<column name="TotalNoOfCredits" type="bigInt">
+			</column>
+			<column name="TotalNoOfDebits" type="bigInt">
+			</column>
+			<column name="TotalCreditValue" type="decimal(18,0)">
+			</column>
+			<column name="TotalDebitValue" type="decimal(18,0)">
+			</column>
+			<column name="InwardBounce" type="decimal(18,0)">
+			</column>
+			<column name="OutWardBounce" type="decimal(18,0)">
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
 	<changeSet id="15" author="naga.g">
 		<createTable tableName="ADTCustomerGST">
 			<column name="AuditId" type="bigint">

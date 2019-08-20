@@ -182,6 +182,8 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAdditionalDetail;
@@ -3332,6 +3334,16 @@ public class PennantJavaUtil {
 						new String[] { "SETTLEMENT_REQUEST", "SETTLEMENT_REQUEST" }, masterWF,
 						new String[] { "Id", "SettlementRef" }, null, 600));
 
+		ModuleUtil.register("CustCardSales",
+				new ModuleMapping("CustCardSales", CustCardSales.class,
+						new String[] { "CustCardSales", "CustCardSales_AView" }, masterWF,
+						new String[] { "Id, MerchantId" }, null, 600));
+		
+		ModuleUtil.register("CustCardSalesDetails",
+				new ModuleMapping("CustCardSalesDetails", CustCardSalesDetails.class,
+						new String[] { "CustCardSalesDetails", "CustCardSalesDetails_AView" }, masterWF,
+						new String[] { "Id", "CardSalesId" }, null, 600));
+		
 		registerCustomModules();
 	}
 

@@ -179,6 +179,9 @@ public class CustomerDetails implements java.io.Serializable {
 	private List<FinanceMain> financeMainList;
 	private List<VASRecording> vasRecordingList;
 	private List<CollateralSetup> collateraldetailList;
+	@XmlElementWrapper(name = "custCardSales")
+	@XmlElement(name = "custCardSales")
+	private List<CustCardSales> custCardSales;
 
 	@XmlElement
 	public WSReturnStatus returnStatus = null;
@@ -624,6 +627,14 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setBlackListReq(boolean blackListReq) {
 		this.blackListReq = blackListReq;
+	}
+
+	public List<CustCardSales> getCustCardSales() {
+		return custCardSales;
+	}
+
+	public void setCustCardSales(List<CustCardSales> custCardSales) {
+		this.custCardSales = custCardSales;
 	}
 
 }

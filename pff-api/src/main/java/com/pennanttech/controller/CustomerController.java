@@ -35,6 +35,8 @@ import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -598,6 +600,53 @@ public class CustomerController {
 			}
 
 		}
+		//Cust card details
+		List<CustCardSales> customerCardSalesInfo = customerDetails.getCustCardSales();
+		if (customerCardSalesInfo != null) {
+			for (CustCardSales curCustCardSalesInfo : customerCardSalesInfo) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					curCustCardSalesInfo.setNewRecord(true);
+					curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					curCustCardSalesInfo.setVersion(1);
+					if(CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())){
+						for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo.getCustCardMonthSales()) {
+							cardsalesInfoDetail.setNewRecord(true);
+							cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							cardsalesInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							cardsalesInfoDetail.setVersion(1);
+						}
+					}
+				} else {
+					List<CustCardSales> prvCustomerCardSalesInfoList = prvCustomerDetails.getCustCardSales();
+					if (prvCustomerCardSalesInfoList != null) {
+						for (CustCardSales prvCustomerBankInfo : prvCustomerCardSalesInfoList) {
+							if (curCustCardSalesInfo.getMerchantId().equals(prvCustomerBankInfo.getMerchantId())) {
+								curCustCardSalesInfo.setNewRecord(false);
+								curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								curCustCardSalesInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
+								curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								if(CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())){
+									for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo
+											.getCustCardMonthSales()) {
+										if (curCustCardSalesInfo.getId() == prvCustomerBankInfo.getId()) {
+											cardsalesInfoDetail.setNewRecord(false);
+											cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+											cardsalesInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+											cardsalesInfoDetail.setVersion(1);
+										}
+									}
+								}
+							
+							}
+							// copy properties
+							BeanUtils.copyProperties(curCustCardSalesInfo, prvCustomerBankInfo);
+						}
+						
+					}
+				}
+			}
+		}
 
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
@@ -904,6 +953,15 @@ public class CustomerController {
 				customerExtLiability.setNewRecord(false);
 				customerExtLiability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			}
+		}
+		
+		// customer Card Sales information
+		List<CustCardSales> customerCardSalesInfoList = customerDetails.getCustCardSales();
+		if (customerCardSalesInfoList != null) {
+			for (CustCardSales custCardSalesInfo : customerCardSalesInfoList) {
+				custCardSalesInfo.setNewRecord(false);
+				custCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
 	}

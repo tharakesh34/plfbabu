@@ -115,6 +115,7 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerCategory;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -314,7 +315,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tab basicDetails;
 	protected Tab tabkYCDetails;
 	protected Tab tabbankDetails;
+	protected Tab tabCardSaleDetails;
 	protected Tab tabGstDetails;
+	
 	protected Button btnNew_CustomerDocuments;
 	protected Listbox listBoxCustomerDocuments;
 	private List<CustomerDocument> customerDocumentDetailList = new ArrayList<CustomerDocument>();
@@ -351,6 +354,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listbox listBoxCustomerExternalLiability;
 	private List<CustomerExtLiability> customerExtLiabilityDetailList = new ArrayList<>();
 
+	protected Button btnNew_CardSalesInformation;
+	protected Groupbox gp_CardSalesInformation;
+	protected Listbox listBoxCustomerCardSalesInformation;
+	private List<CustCardSales> customerCardSales = new ArrayList<CustCardSales>();
+	
 	protected Listheader listheader_JointCust;
 
 	// Customer ratings List
@@ -398,6 +406,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Tabpanel tp_Financials;
 	protected Tabpanel tp_directorDetails;
 	protected Tabpanel tp_BankDetails;
+	protected Tabpanel tp_CardSales;
+
 	protected Tabpanel tp_gstDetails;
 	
 	protected Groupbox gb_Action;
@@ -418,6 +428,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Div divKeyDetails;
 	protected Grid grid_KYCDetails;
 	protected Grid grid_BankDetails;
+	protected Grid grid_CardSales;
 
 	private boolean isRetailCustomer = false;
 	private boolean isSMECustomer = false;
@@ -462,6 +473,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public boolean validateCustDocs = true;
 	private String moduleName;
 	private List<CustomerBankInfo> CustomerBankInfoList;
+	private List<CustCardSales> CustomerCardSalesInfoList;
 
 	protected Grid grid_ExtendedDetails;
 	protected Combobox subCategory;
@@ -652,6 +664,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					this.tp_Financials.setHeight(borderLayoutHeight - 195 + "px");
 					this.tp_BankDetails.setHeight(borderLayoutHeight - 195 + "px");
 					this.tp_directorDetails.setHeight(borderLayoutHeight - 195 + "px");
+					if(this.tp_CardSales.isVisible()) {
+						this.tp_CardSales.setHeight(borderLayoutHeight - 195 + "px");
+					}
 					this.tp_gstDetails.setHeight(borderLayoutHeight - 195 + "px");
 					// this.divKeyDetails.setHeight(borderLayoutHeight - 130 +
 					// "px");
@@ -679,10 +694,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 220 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 220 + "px");
 				this.grid_BankDetails.setHeight(borderLayoutHeight - 220 + "px");
+				this.grid_CardSales.setHeight(borderLayoutHeight - 220 + "px");
 				this.listBoxCustomerBankInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
 				this.listBoxCustomerChequeInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
 				this.listBoxCustomerFinExposure.setHeight(semiBorderlayoutHeights - 125 + "px");
 				this.listBoxCustomerExternalLiability.setHeight(semiBorderlayoutHeights - 125 + "px");
+				this.listBoxCustomerCardSalesInformation.setHeight(semiBorderlayoutHeights - 125 + "px");
 			} else {
 				int divKycHeight = this.borderLayoutHeight - 80;
 				int borderlayoutHeights = divKycHeight / 2;
@@ -699,7 +716,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.tp_Financials.setHeight(borderLayoutHeight - 90 + "px");
 				this.tp_BankDetails.setHeight(borderLayoutHeight - 90 + "px");
 				this.tp_directorDetails.setHeight(borderLayoutHeight - 90 + "px");
-
+				if(this.tp_CardSales.isVisible()) {
+					this.tp_CardSales.setHeight(borderLayoutHeight - 90 + "px");
+				}
+				
 				this.listBoxCustomerEmploymentDetail
 						.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
 				this.listBoxCustomerDocuments.setHeight(borderlayoutHeights - (isRetailCustomer ? 100 : 10) + "px");
@@ -712,10 +732,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.gb_directorDetails.setHeight(borderLayoutHeight - 40 + "px");
 				this.listBoxCustomerDirectory.setHeight(borderLayoutHeight - 40 + "px");
 
-				this.listBoxCustomerBankInformation.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerChequeInformation.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerFinExposure.setHeight(borderlayoutHeights - 130 + "px");
 				this.listBoxCustomerExternalLiability.setHeight(borderlayoutHeights - 130 + "px");
+				this.listBoxCustomerCardSalesInformation.setHeight(borderlayoutHeights - 130 + "px");
 			}
 
 			doShowDialog(this.customerDetails);
@@ -985,6 +1005,14 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} else {
 			this.gb_Action.setVisible(false);
 		}
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.CUST_CARD_SALES_REQ)) {
+			this.tp_CardSales.setVisible(true);
+			this.tabCardSaleDetails.setVisible(true);
+		} else {
+			this.tp_CardSales.setVisible(false);
+			this.tabCardSaleDetails.setVisible(false);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1026,10 +1054,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewChequeInformation"));
 		this.btnNew_ExternalLiability
 				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewExternalLiability"));
+		this.btnNew_CardSalesInformation
+				.setVisible(getUserWorkspace().isAllowed("CustomerCardSalesInfo_NewCardDetails"));
 		this.btnNew_CustomerGSTDetails
-		.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerGstDetails"));
+				.setVisible(getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerGstDetails"));
 		validateCustDocs = getUserWorkspace().isAllowed("button_CustomerDialog_NewCustomerDocuments");
-
 		logger.debug("Leaving");
 	}
 
@@ -1327,7 +1356,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doFillCustomerChequeInfoDetails(aCustomerDetails.getCustomerChequeInfoList());
 		doFillCustomerExtLiabilityDetails(aCustomerDetails.getCustomerExtLiabilityList());
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
-          
+		doFillCustomerCardSalesInfoDetails(aCustomerDetails.getCustCardSales());
+
 		//customer gst details
 		 doFillCustomerGstDetails(aCustomerDetails.getCustomerGstList());
 		
@@ -1893,6 +1923,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomerDetails.setCustomerBankInfoList(cloner.deepClone(this.customerBankInfoDetailList));
 		aCustomerDetails.setCustomerChequeInfoList(cloner.deepClone(this.customerChequeInfoDetailList));
 		aCustomerDetails.setCustomerExtLiabilityList(cloner.deepClone(this.customerExtLiabilityDetailList));
+		aCustomerDetails.setCustCardSales(cloner.deepClone(this.customerCardSales));
 		//Custome Gst Details list
 		aCustomerDetails.setCustomerGstList(cloner.deepClone(this.customerGstList));
 		if (this.directorDetails.isVisible()) {
@@ -2225,6 +2256,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.btnNew_CustomerGSTDetails.setVisible(false);
 			// for eid read only in enquiry
 			this.eidNumber.setReadonly(true);
+			this.btnNew_CardSalesInformation.setVisible(false);
 		} else if (StringUtils.isNotEmpty(getCustomerDetails().getCustomer().getCustCoreBank())) {
 			if (StringUtils.isEmpty(this.custFirstName.getValue())) {
 				this.custFirstName.setReadonly(isReadOnly("CustomerDialog_custFirstName"));
@@ -2980,8 +3012,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.btnNew_BankInformation.setVisible(false);
 		this.btnNew_ChequeInformation.setVisible(false);
 		this.btnNew_ExternalLiability.setVisible(false);
+		this.btnNew_CardSalesInformation.setVisible(false);
+
 		this.btnNew_CustomerGSTDetails.setVisible(false);
-				
 		this.custMaritalSts.setDisabled(true);
 		this.noOfDependents.setReadonly(true);
 
@@ -5688,6 +5721,29 @@ public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
 		}
 		logger.debug("Leaving");
 	}
+	
+	public void doFillCustomerCardSalesInfoDetails(List<CustCardSales> customerCardSalesInfoDetails) {
+		logger.debug("Entering");
+		CustomerCardSalesInfoList = customerCardSalesInfoDetails;
+		this.listBoxCustomerCardSalesInformation.getItems().clear();
+		if (customerCardSalesInfoDetails != null) {
+			for (CustCardSales custCardSalesInfo : customerCardSalesInfoDetails) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				lc = new Listcell(custCardSalesInfo.getMerchantId());
+				lc.setParent(item);
+				lc = new Listcell(custCardSalesInfo.getRecordStatus());
+				lc.setParent(item);
+				lc = new Listcell(PennantJavaUtil.getLabel(custCardSalesInfo.getRecordType()));
+				lc.setParent(item);
+				item.setAttribute("data", custCardSalesInfo);
+				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerCardSalesInfoItemDoubleClicked");
+				this.listBoxCustomerCardSalesInformation.appendChild(item);
+			}
+			setCustomerCardSales(customerCardSalesInfoDetails);
+		}
+		logger.debug("Leaving");
+	}
 
 	// ********************************************************************//
 	// ++ New Button & Double Click Events for Cheque Information List ++//
@@ -5943,6 +5999,64 @@ public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
 		logger.debug("Leaving");
 	}
 
+	public void onClick$btnNew_CardSalesInformation(Event event) throws Exception {
+		logger.debug("Entering");
+		CustCardSales custCardSales = new CustCardSales();
+		custCardSales.setNewRecord(true);
+		custCardSales.setWorkflowId(0);
+		custCardSales.setCustID(getCustomerDetails().getCustID());
+		custCardSales.setLovDescCustCIF(getCustomerDetails().getCustomer().getCustCIF());
+		custCardSales.setLovDescCustShrtName(getCustomerDetails().getCustomer().getCustShrtName());
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("customerCardSales", custCardSales);
+		map.put("customerDialogCtrl", this);
+		map.put("newRecord", "true");
+		map.put("isFinanceProcess", isFinanceProcess);
+		map.put("roleCode", getRole());
+		map.put("CustomerCardSalesInfoList", CustomerCardSalesInfoList);
+		map.put("retailCustomer", StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+		try {
+			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerCardSalesDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+	}
+	
+	public void onCustomerCardSalesInfoItemDoubleClicked(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		// get the selected invoiceHeader object
+		final Listitem item = this.listBoxCustomerCardSalesInformation.getSelectedItem();
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final CustCardSales custBankInfo = (CustCardSales) item.getAttribute("data");
+			if (isDeleteRecord(custBankInfo.getRecordType())) {
+				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
+			} else {
+				final HashMap<String, Object> map = new HashMap<String, Object>();
+				custBankInfo.setLovDescCustCIF(this.custCIF.getValue());
+				custBankInfo.setLovDescCustShrtName(this.custShrtName.getValue());
+				map.put("customerCardSales", custBankInfo);
+				map.put("customerDialogCtrl", this);
+				map.put("isFinanceProcess", isFinanceProcess);
+				map.put("roleCode", getRole());
+				map.put("moduleType", this.moduleType);
+				map.put("CustomerCardSalesInfoList", CustomerCardSalesInfoList);
+				map.put("retailCustomer",
+						StringUtils.equals(this.custCtgCode.getValue(), PennantConstants.PFF_CUSTCTG_INDIV));
+				// call the zul-file with the parameters packed in a map
+				try {
+					Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerCardSalesDialog.zul",
+							null, map);
+				} catch (Exception e) {
+					MessageUtil.showError(e);
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public void doFillCustFinanceExposureDetails(List<FinanceEnquiry> custFinanceExposureDetails) {
 		logger.debug("Entering");
 		this.listBoxCustomerFinExposure.getItems().clear();
@@ -5979,7 +6093,7 @@ public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
 		}
 		logger.debug("Leaving");
 	}
-
+	
 	public int getChequeSeq() {
 		int idNumber = 0;
 		if (getCustomerChequeInfoDetailList() != null && !getCustomerChequeInfoDetailList().isEmpty()) {
@@ -6844,6 +6958,14 @@ public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
 
 	}
 
+	public List<CustCardSales> getCustomerCardSales() {
+		return customerCardSales;
+	}
+
+	public void setCustomerCardSales(List<CustCardSales> customerCardSales) {
+		this.customerCardSales = customerCardSales;
+	}
+
 	public List<CustomerGST> getCustomerGstList() {
 		return customerGstList;
 	}
@@ -6852,5 +6974,4 @@ public void doFillCustomerGstDetails(List<CustomerGST> customerGstDetails) {
 		this.customerGstList = customerGstList;
 	}
 
-	
 }

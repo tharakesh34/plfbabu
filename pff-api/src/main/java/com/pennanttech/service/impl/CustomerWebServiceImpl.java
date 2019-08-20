@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
+import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
@@ -104,6 +105,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerDedupDAO customerDedupDAO;
 	private BlackListCustomerDAO blacklistCustomerDAO;
 	private CustomerCategoryDAO customerCategoryDAO;
+	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
+
 	private CreditApplicationReviewService creditApplicationReviewService;
 	/**
 	 * Method for create customer in PLF system.
@@ -2826,6 +2829,14 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
+	}
+
+	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
+		return customerCardSalesInfoDAO;
+	}
+
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
 
 }

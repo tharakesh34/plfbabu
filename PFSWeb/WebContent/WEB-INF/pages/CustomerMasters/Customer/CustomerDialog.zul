@@ -53,6 +53,7 @@
 							<tab label="${c:l('label_CustomerDialog_ShareHolderDetails.value')}" id="directorDetails"
 								visible="false" />
 							<tab label="${c:l('label_CustomerDialog_BankingDetails.value')}" id="tabbankDetails" />
+							<tab label="${c:l('label_CustomerDialog_CardSalesDetails.value')}" id="tabCardSaleDetails" />
 							<tab label="${c:l('label_CustomerDialog_GstDetails.value')}" id="tabGstDetails" visible="false" />
 						</tabs>
 						<tabpanels id="tabpanelsBoxIndexCenter">
@@ -851,6 +852,45 @@
 														<listheader id="listheader_ExternalLiability_RecordStatus"
 															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" visible="false" />
 														<listheader id="listheader_ExternalLiability_RecordType"
+															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
+													</listhead>
+												</listbox>
+											</groupbox>
+										</row>
+									</rows>
+								</grid>
+							</tabpanel>
+							<tabpanel style="overflow:auto" ca:data-scrollable="true" id="tp_CardSales">
+								<grid id="grid_CardSales" sclass="GridLayoutNoBorder" fixedLayout="true"
+									style="border:0px; padding:0px;">
+									<columns>
+										<column width="100%" />
+										<column />
+									</columns>
+									<rows>
+										<row style="vertical-align: top;">
+											<groupbox id="gp_CardSalesInformation" closable="true">
+												<caption label="${c:l('gp_CardSalesInformation')}"></caption>
+												<div sclass="z-toolbar" style="padding:0">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+														style=" padding:1px;">
+														<toolbar align="end"
+															style="float:right; border-style: none; padding:0px;">
+															<button id="btnNew_CardSalesInformation"
+																label="${c:l('label_New')}" tooltiptext="${c:l('btnNew_CardSalesInformation.tooltiptext')}"
+																autodisable="btnNew_CardSalesInformation" />
+														</toolbar>
+													</hbox>
+												</div>
+												<listbox id="listBoxCustomerCardSalesInformation" span="true"
+													sizedByContent="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false"
+													emptyMessage="${c:l('listbox.emptyMessage')}">
+													<listhead sizable="true">
+														<listheader id="listheader_CustomerCardSalesInfo_MerchantId"
+															label="${c:l('listheader_CustomerCardSalesInfo_MerchantId.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerCardSalesInfo_RecordStatus"
+															label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
+														<listheader id="listheader_CustomerCardSalesInfo_RecordType"
 															label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 													</listhead>
 												</listbox>

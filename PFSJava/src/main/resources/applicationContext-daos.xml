@@ -2075,6 +2075,7 @@
 		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
 		<property name="customerService" ref="customerService" />
 		<property name="bankDetailDAO" ref="bankDetailDAO" />
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 	</bean>
 
@@ -11115,6 +11116,33 @@
 	<!-- Tax Header Details -->
 	<bean id="taxHeaderDetailsDAO" class="com.pennant.backend.dao.finance.impl.TaxHeaderDetailsDAOImpl" parent="sequenceDao" />
 
+	<bean id="customerCardSalesInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl"
+		parent="sequenceDao" />
+		
+	<bean id="customerCardSalesInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="customerCardSalesInfoServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="customerCardSalesInfoServiceTarget" class="com.pennant.backend.service.customermasters.impl.CustomerCardSalesInfoServiceImpl">
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
+	</bean>	
+	
 	<bean id="taxHeaderDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />

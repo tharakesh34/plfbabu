@@ -400,19 +400,19 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		ExtLiabilityPaymentdetails extLiabilitiesPaymentdetails = new ExtLiabilityPaymentdetails();
 		extLiabilitiesPaymentdetails.setLiabilityId(custId);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
-		selectSql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  EXTERNAL_LIABILITIES_PD");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where LiabilityId = :LiabilityId ");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT Id, LiabilityId, EmiType, InstallmentCleared, Version, LastMntOn, LastMntBy");
+		sql.append(" , RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" FROM  EXTERNAL_LIABILITIES_PD");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where LiabilityId = :LiabilityId ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extLiabilitiesPaymentdetails);
 		RowMapper<ExtLiabilityPaymentdetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(ExtLiabilityPaymentdetails.class);
 
-		List<ExtLiabilityPaymentdetails> liabilitiesPaymentdetails = this.jdbcTemplate.query(selectSql.toString(),
+		List<ExtLiabilityPaymentdetails> liabilitiesPaymentdetails = this.jdbcTemplate.query(sql.toString(),
 				beanParameters, typeRowMapper);
 
 		logger.debug("Leaving");

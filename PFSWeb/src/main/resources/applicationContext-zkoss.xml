@@ -5395,4 +5395,8 @@
 		scope="prototype">
 		<property name="customerGstService" ref="customerGstService" />
 	</bean>	
+
+	<bean id="customerCardSalesInfoDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerCardSalesInfoDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+	</bean>	
 </beans>
