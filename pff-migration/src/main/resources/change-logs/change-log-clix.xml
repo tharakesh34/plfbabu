@@ -3267,6 +3267,14 @@ UNION ALL
 		]]>
 	</sql>
 </changeSet>
+	
+	<changeSet id="70" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+				Update Data_Engine_Config set filePrefixName = 'Clix_Pennant_Lot_' , filenameformat = '${SEQ_FILE},-${ddMMyy}' Where Name = 'PRESENTMENT_REQUEST_NACH';
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
 
