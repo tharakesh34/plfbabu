@@ -123,4 +123,10 @@
 		<modifyDataType tableName="AdtFinTypeVASProducts" columnName="mandatory" newDataType="boolean" />
 	</changeSet>
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
+	
+	<changeSet author="Kesav" id="10">
+		<comment>data type modified from varchar(10) to varchar(20)</comment>
+		<modifyDataType tableName="AdtExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
+	</changeSet> 
+	
 </databaseChangeLog>
