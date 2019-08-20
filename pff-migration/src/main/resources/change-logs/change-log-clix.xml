@@ -2878,7 +2878,7 @@ UNION ALL
 	<changeSet id="53" author="Manoj.P">
 		<sql>
 			<![CDATA[
-				delete from plf.data_engine_column where name = 'TRANSACTIONREF' and tableid = (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'))
+				delete from plf.data_engine_column where name = 'TRANSACTIONREF' and tableid = (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'));
 				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF2', 1,'N',NULL,NULL,   NULL,     NULL,'15',NULL,NULL,NULL,NULL,'O');
 				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF1', 1,'N',NULL,NULL,   NULL,     NULL,'10',NULL,NULL,NULL,NULL,'O');
 				INSERT INTO plf.data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM plf.DATA_ENGINE_COLUMN), (Select Id FROM plf.DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM plf.DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'TRANSACTIONREF', 0,'N',NULL,NULL,   NULL,     NULL,'0',NULL,'if((TRANSACTIONREF ==  ''N'' )){Result =''$TRANSACTIONREF1'';  return;} else if((TRANSACTIONREF ==  ''R'' )){Result =''$TRANSACTIONREF2'';  return;}else {Result ='''';  return;}',NULL,NULL,'O');
@@ -3299,7 +3299,7 @@ UNION ALL
 		<sql>
             <![CDATA[
                     delete from secrights where rightname='MandateDialog_InputDate';
-                    delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE in ('BFSD_ORIGINATION_MAKER','MANDATE_MAKER','CL_ORIGINATION_MAKER','CL_ORIGINATION_WRM','MANDATES_MAKER','LAP_SSO') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate');
+                    delete from SECGROUPRIGHTS where GRPID = (select GRPID from SECGROUPS where GRPCODE in ('BFSD_ORIGINATION_MAKER','MANDATE_MAKER','CL_ORIGINATION_MAKER','CL_ORIGINATION_WRM','MANDATES_MAKER','LAP_SSO') and rightid = (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'));
 
                     insert into secrights values ((select max(rightid)+1 from secrights), 3, 'MandateDialog_InputDate','MandateDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
                     insert into SECGROUPRIGHTS values((select max(GRPRIGHTID) + 1 from SECGROUPRIGHTS), (select GRPID from SECGROUPS where GRPCODE ='BFSD_ORIGINATION_MAKER'), (select RIGHTID from SECRIGHTS where RIGHTNAME = 'MandateDialog_InputDate'),1, 1, 1000, CURRENT_TIMESTAMP,null, null, null, null, null, null, 0 );
