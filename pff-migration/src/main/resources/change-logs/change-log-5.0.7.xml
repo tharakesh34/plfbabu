@@ -4113,6 +4113,15 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="135_pre" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'extendedfieldheader_temp');
+					select deps_save_and_drop_dependencies ('plf', 'extendedfieldheader');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet author="Kesav" id="135">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
 		<modifyDataType tableName="ExtendedFieldHeader_Temp" columnName="ModuleName" newDataType="varchar(20)" />
@@ -4122,5 +4131,14 @@
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
 		<modifyDataType tableName="ExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
 	</changeSet> 
+	
+	<changeSet id="135_post" author="Kesav" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'extendedfieldheader_temp');
+					select deps_restore_dependencies ('plf', 'extendedfieldheader');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
