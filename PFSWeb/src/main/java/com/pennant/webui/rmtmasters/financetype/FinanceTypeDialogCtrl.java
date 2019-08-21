@@ -377,6 +377,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox roundingTarget;
 	protected Textbox frequencyDays;
 	protected Checkbox chequeCaptureReq;
+	protected Row row_sanbsdschd;
+	protected Checkbox sanBsdSchdle;
+	protected Label label_FinanceTypeDialog_SanBsdSchdle;
 
 	// Advised Profit Rates
 	protected ExtendedCombobox rpyAdvBaseRate; // autoWired
@@ -1320,6 +1323,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setValue(aFinanceType.getFinIntRate());
 		this.financeBaserate.setEffectiveRateVisible(true);
 		this.alwHybridRate.setChecked(aFinanceType.isAlwHybridRate());
+		this.sanBsdSchdle.setChecked(aFinanceType.isSanBsdSchdle());
 		setFixedRateTenor(aFinanceType.isAlwHybridRate(), this.isCompReadonly);
 		this.fixedRateTenor.setValue(aFinanceType.getFixedRateTenor());
 
@@ -2234,6 +2238,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		try {
 			if (!isOverdraft) {
 			aFinanceType.setAllowRevolving(this.allowRevolving.isChecked());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (!isOverdraft) {
+				aFinanceType.setSanBsdSchdle(this.sanBsdSchdle.isChecked());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4516,6 +4528,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.tDSAllowToModify.setDisabled(isTrue);
 			this.allowDrawingPower.setDisabled(isTrue);
 			this.allowRevolving.setDisabled(isTrue);
+			this.sanBsdSchdle.setDisabled(isTrue);
 		}
 
 		this.rollOverFrq.setDisabled(isTrue);
@@ -4874,6 +4887,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.manualSchedule.setChecked(false);
 		this.allowRevolving.setChecked(false);
 		this.allowDrawingPower.setChecked(false);
+		this.sanBsdSchdle.setChecked(false);
 		this.taxNoMand.setChecked(false);
 		if (isOverdraft) {
 			this.lPPRule.setValue("");
@@ -5628,6 +5642,31 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 					.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage()).getError());
 			this.financeGrcBaseRate.setSpecialValue("");
 		}
+	}
+
+	public void onCheck$sanBsdSchdle(Event event) {
+		checkSanBsdSchdleChecked();
+	}
+
+	private void checkSanBsdSchdleChecked() {
+		logger.debug(Literal.ENTERING);
+
+		if (sanBsdSchdle.isChecked()) {
+			fillComboBox(this.cbfinSchdMthd, CalculationConstants.SCHMTHD_PRI_PFT,
+					PennantStaticListUtil.getScheduleMethods(), "");
+			fillComboBox(this.cbFinScheduleOn, CalculationConstants.EARLYPAY_ADJMUR,
+					PennantStaticListUtil.getEarlyPayEffectOn(), "");
+			this.alwEarlyPayMethods.setValue(CalculationConstants.EARLYPAY_ADJMUR);
+			this.developerFinance.setDisabled(true);
+		} else {
+			fillComboBox(this.cbfinSchdMthd, this.financeType.getFinSchdMthd(),
+					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
+			fillComboBox(this.cbFinScheduleOn, "", PennantStaticListUtil.getEarlyPayEffectOn(), "");
+			this.alwEarlyPayMethods.setValue("");
+			this.developerFinance.setDisabled(false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onCheck$sanctionAmount(Event event) {

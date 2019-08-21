@@ -54,19 +54,24 @@
 							<column />
 						</columns>
 						<rows>
-							<row visible="true">
+							<row>
 								<label id="label_BaseRateCodeDialog_BRType" value="${c:l('label_BaseRateCodeDialog_BRType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<uppercasebox id="bRType" maxlength="8" width="96px" />
 								</hbox>
 							</row>
-							<row visible="true">
+							<row>
 								<label id="label_BaseRateCodeDialog_BRTypeDesc" value="${c:l('label_BaseRateCodeDialog_BRTypeDesc.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<textbox id="bRTypeDesc" maxlength="50" width="400px" />
 								</hbox>
+							</row>
+							<row>
+								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq"
+									value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
+								<frequencybox id="bRRepayRvwFrq" />
 							</row>
 							<row>
 								<label id="label_BaseRateCodeDialog_BRTypeIsActive" value="${c:l('label_BaseRateCodeDialog_BRTypeIsActive.value')}" />

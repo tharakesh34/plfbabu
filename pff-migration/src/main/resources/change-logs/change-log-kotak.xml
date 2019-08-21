@@ -539,5 +539,21 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="45" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='BR_INRST_RVW_FRQ_FRQDAYVAL_REQ';
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="46" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ';
+			 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

@@ -187,11 +187,9 @@ public class SMTParameterConstants {
 																								// required
 																								// or
 																								// not
-	public static final String DOC_SPLIT_SCREEN_REQ = "DOC_SPLIT_SCREEN_REQ";// Document
-																				// Split
-																				// Screen
-																				// is
-																				// Required
+	public static final String DOC_SPLIT_SCREEN_REQ = "DOC_SPLIT_SCREEN_REQ";// Document Split Screen  is Required
+	public static final String BR_INRST_RVW_FRQ_FRQDAYVAL_REQ = "BR_INRST_RVW_FRQ_FRQDAYVAL_REQ";
+	public static final String ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ = "ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ";
 	public static final String HUNTER_REQ = "HUNTER_REQUIRED";
 
 	// COMMITMENTS is Required or Not

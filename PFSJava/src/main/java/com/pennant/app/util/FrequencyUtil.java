@@ -54,6 +54,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 /**
@@ -135,6 +136,12 @@ public class FrequencyUtil implements Serializable {
 	public static ArrayList<ValueLabel> getFrequency() {
 		ArrayList<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
+		
+		String brInrtRvwFrqDayValReq = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ);
+		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
+			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, Labels.getLabel("label_Select_2Yearly")));
+			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, Labels.getLabel("label_Select_3Yearly")));
+		}
 		frequencyCode
 				.add(new ValueLabel(FrequencyCodeTypes.FRQ_HALF_YEARLY, Labels.getLabel("label_Select_HalfYearly")));
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_QUARTERLY, Labels.getLabel("label_Select_Quarterly")));
@@ -196,6 +203,34 @@ public class FrequencyUtil implements Serializable {
 		ArrayList<ValueLabel> arrfrqMonth = new ArrayList<ValueLabel>();
 		switch (frequency) {
 		case 'Y':
+			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_Jan")));
+			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_Feb")));
+			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_Mar")));
+			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_Apr")));
+			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_May")));
+			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_Jun")));
+			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_Jly")));
+			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_Aug")));
+			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_Sep")));
+			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_Oct")));
+			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_Nov")));
+			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_Dec")));
+			break;
+		case '2':
+			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_Jan")));
+			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_Feb")));
+			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_Mar")));
+			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_Apr")));
+			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_May")));
+			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_Jun")));
+			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_Jly")));
+			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_Aug")));
+			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_Sep")));
+			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_Oct")));
+			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_Nov")));
+			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_Dec")));
+			break;
+		case '3':
 			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_Jan")));
 			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_Feb")));
 			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_Mar")));

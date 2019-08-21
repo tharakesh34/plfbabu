@@ -88,6 +88,7 @@ import com.pennant.backend.dao.QueueAssignmentDAO;
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.UserActivityLogDAO;
+import com.pennant.backend.dao.applicationmaster.BaseRateCodeDAO;
 import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
@@ -131,6 +132,7 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.FinRepayQueue.FinRepayQueue;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
+import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -404,6 +406,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private HunterService hunterService;
 
 	private InsuranceDetailService insuranceDetailService;
+	private transient BaseRateCodeDAO baseRateCodeDAO;
 
 	private long tempWorkflowId;
 
@@ -10893,13 +10896,30 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 								"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 			}
 			financeMain.setAllowGrcPftRvw(financeType.isFinGrcIsRvwAlw());
-			financeMain.setGrcPftRvwFrq(financeType.getFinGrcRvwFrq());
-			if (StringUtils.isNotEmpty(financeType.getFinGrcRvwFrq())
-					&& FrequencyUtil.validateFrequency(financeType.getFinGrcRvwFrq()) == null) {
-				financeMain.setNextGrcPftRvwDate(
-						FrequencyUtil.getNextDate(financeType.getFinGrcRvwFrq(), 1, financeMain.getFinStartDate(), "A",
-								false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+
+			// Setting the GrcRepayRvwFrq from Base rate master if exists. Otherwise will take it from loan type.
+			String finGrcRvwFrq = null;
+			if (CalculationConstants.RATE_BASIS_R.equals(financeType.getFinGrcRateType())) {
+				BaseRateCode baseRateCode = baseRateCodeDAO.getBaseRateCodeById(financeType.getFinGrcRateType(), "");
+				if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+					finGrcRvwFrq = baseRateCode.getbRRepayRvwFrq();
+					financeMain.setGrcPftRvwFrq(finGrcRvwFrq);
+				} else {
+					finGrcRvwFrq = financeType.getFinGrcRvwFrq();
+					financeMain.setGrcPftRvwFrq(finGrcRvwFrq);
+				}
+			} else {
+				finGrcRvwFrq = financeType.getFinGrcRvwFrq();
+				financeMain.setGrcPftRvwFrq(finGrcRvwFrq);
 			}
+
+			if (StringUtils.isNotEmpty(finGrcRvwFrq) && FrequencyUtil.validateFrequency(finGrcRvwFrq) == null) {
+				financeMain
+						.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(),
+								"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+			}
+			
+
 			financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
 			financeMain.setGrcCpzFrq(financeType.getFinGrcCpzFrq());
 			if (StringUtils.isNotEmpty(financeType.getFinGrcCpzFrq())
@@ -10938,18 +10958,34 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 		}
 		financeMain.setAllowRepayRvw(financeType.isFinIsRvwAlw());
-		financeMain.setRepayRvwFrq(financeType.getFinRvwFrq());
+
+		// Setting the RepayRvwFrq from Base rate master if exists. Otherwise will take it from loan type.
+		String finRvwFrq = null;
+		if (CalculationConstants.RATE_BASIS_R.equals(financeType.getFinRateType())) {
+			BaseRateCode baseRateCode = baseRateCodeDAO.getBaseRateCodeById(financeMain.getRepayBaseRate(), "");
+			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+				finRvwFrq = baseRateCode.getbRRepayRvwFrq();
+				financeMain.setRepayRvwFrq(finRvwFrq);
+			} else {
+				finRvwFrq = financeType.getFinRvwFrq();
+				financeMain.setRepayRvwFrq(finRvwFrq);
+			}
+		} else {
+			finRvwFrq = financeType.getFinRvwFrq();
+			financeMain.setRepayRvwFrq(finRvwFrq);
+		}
+
 		financeMain.setSchCalOnRvw(financeType.getFinSchCalCodeOnRvw());
 		financeMain.setPastduePftCalMthd(financeType.getPastduePftCalMthd());
 		financeMain.setPastduePftMargin(financeType.getPastduePftMargin());
 		financeMain.setDroppingMethod(financeType.getDroppingMethod());
 		financeMain.setRateChgAnyDay(financeType.isRateChgAnyDay());
 
-		if (StringUtils.isNotEmpty(financeType.getFinRvwFrq())
-				&& FrequencyUtil.validateFrequency(financeType.getFinRvwFrq()) == null) {
-			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(financeType.getFinRvwFrq(), 1,
-					financeMain.getFinStartDate(), "A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
+		if (StringUtils.isNotEmpty(finRvwFrq) && FrequencyUtil.validateFrequency(finRvwFrq) == null) {
+			financeMain.setNextRepayRvwDate(FrequencyUtil.getNextDate(finRvwFrq, 1, financeMain.getFinStartDate(), "A",
+					false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 		}
+
 		financeMain.setAllowRepayCpz(financeType.isFinIsIntCpz());
 		financeMain.setRepayCpzFrq(financeType.getFinCpzFrq());
 		if (StringUtils.isNotEmpty(financeType.getFinCpzFrq())
@@ -11391,6 +11427,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
+	}
+
+	public BaseRateCodeDAO getBaseRateCodeDAO() {
+		return baseRateCodeDAO;
+	}
+
+	public void setBaseRateCodeDAO(BaseRateCodeDAO baseRateCodeDAO) {
+		this.baseRateCodeDAO = baseRateCodeDAO;
 	}
 
 }

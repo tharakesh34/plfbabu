@@ -269,6 +269,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private String vanAllocationMethod;
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
+	private boolean sanBsdSchdle;
 
 	private boolean alwSanctionAmt;
 	private boolean alwSanctionAmtOverride;
@@ -2499,6 +2500,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setAlwSanctionAmtOverride(boolean alwSanctionAmtOverride) {
 		this.alwSanctionAmtOverride = alwSanctionAmtOverride;
+	}
+
+	public boolean isSanBsdSchdle() {
+		return sanBsdSchdle;
+	}
+
+	public void setSanBsdSchdle(boolean sanBsdSchdle) {
+		this.sanBsdSchdle = sanBsdSchdle;
 	}
 
 }

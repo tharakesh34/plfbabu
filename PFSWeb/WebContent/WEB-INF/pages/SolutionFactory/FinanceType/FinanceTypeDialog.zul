@@ -648,6 +648,14 @@
 													<intbox id="fixedRateTenor" width="45px" maxlength="3" style="text-align:right" />
 												</hbox>
 											</row>
+											<row id="row_sanbsdschd">
+												<label id="label_FinanceTypeDialog_SanBsdSchdle"
+													value="${c:l('label_FinanceTypeDialog_SanBsdSchdle.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="sanBsdSchdle" checked="false" />
+												</hbox>
+											</row>
 											<row id="row_ApplyPricingPolicy">
 												<label id="label_ApplyRpyPricing" value="${c:l('label_FinanceTypeDialog_ApplyRpyPricing.value')}" />
 												<hbox>

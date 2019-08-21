@@ -3420,6 +3420,7 @@
 		<property name="insuranceDetailService" ref="insuranceDetailService" />
 		<!-- Payments process service -->
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
+		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->

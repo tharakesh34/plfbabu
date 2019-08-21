@@ -320,5 +320,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="20.0" author="satyanarayana.g">
+		<addColumn tableName="ADTRMTBaseRateCodes">
+			<column name="bRRepayRvwFrq" type="VARCHAR2(5)"/>
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>

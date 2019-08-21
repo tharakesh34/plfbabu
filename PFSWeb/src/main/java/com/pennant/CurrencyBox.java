@@ -53,6 +53,7 @@ public class CurrencyBox extends Hbox {
 	private String errormesage3 = " A character can't be follwed by another character";
 	private String errormesage4 = " Value exceeded the maximum range.";
 	private String errormesage5 = " Value should not be negative.";
+	private String errormesage6 = " Invalid format.Allowed only numbers and like '1H','1T','1C','1M' ";
 
 	public CurrencyBox() {
 		super();
@@ -442,6 +443,15 @@ public class CurrencyBox extends Hbox {
 		int indexofm = 0;
 		int indexoft = 0;
 		int indexofh = 0;
+
+		for (int i = 0; i < value.length(); i++) {
+			if (Character.isLetter(value.charAt(i))) {
+				if (i < value.length() - 1)
+					if (Character.isLetter(value.charAt(i + 1))) {
+						throw new WrongValueException(this.textbox, errormesage6);
+					}
+			}
+		}
 
 		if (StringUtils.containsIgnoreCase(value, B)) {
 			indexofb = value.indexOf(B);

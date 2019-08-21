@@ -45,6 +45,8 @@ package com.pennant.app.constants;
 public class FrequencyCodeTypes {
 
 	public static final String FRQ_YEARLY = "Y";
+	public static final String FRQ_2YEARLY = "2";
+	public static final String FRQ_3YEARLY = "3";
 	public static final String FRQ_HALF_YEARLY = "H";
 	public static final String FRQ_QUARTERLY = "Q";
 	public static final String FRQ_MONTHLY = "M";

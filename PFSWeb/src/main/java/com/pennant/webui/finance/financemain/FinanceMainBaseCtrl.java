@@ -3910,6 +3910,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					PennantStaticListUtil.getScheduleMethods(), ",NO_PAY,GRCNDPAY,PFTCAP,POSINT,");
 		}
 
+		//Sanction Based Schedule
+		if ((financeType.isSanBsdSchdle())) {
+			fillComboBox(this.cbScheduleMethod, CalculationConstants.SCHMTHD_PRI_PFT,
+					PennantStaticListUtil.getScheduleMethods(), "");
+			cbScheduleMethod.setDisabled(true);
+		}
+
 		if (StringUtils.isNotEmpty(aFinanceMain.getRepayBaseRate()) && StringUtils.equals(
 				CalculationConstants.RATE_BASIS_R, this.repayRateBasis.getSelectedItem().getValue().toString())) {
 			this.repayBaseRateRow.setVisible(true);

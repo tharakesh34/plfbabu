@@ -61,6 +61,7 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 	private BaseRateCode befImage;
 	private LoggedInUser userDetails;
 	private boolean bRTypeIsActive;
+	private String bRRepayRvwFrq;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -145,6 +146,14 @@ public class BaseRateCode extends AbstractWorkflowEntity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public String getbRRepayRvwFrq() {
+		return bRRepayRvwFrq;
+	}
+
+	public void setbRRepayRvwFrq(String bRRepayRvwFrq) {
+		this.bRRepayRvwFrq = bRRepayRvwFrq;
 	}
 
 }
