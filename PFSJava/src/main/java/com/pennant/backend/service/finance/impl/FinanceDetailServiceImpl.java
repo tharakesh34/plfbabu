@@ -10900,7 +10900,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Setting the GrcRepayRvwFrq from Base rate master if exists. Otherwise will take it from loan type.
 			String finGrcRvwFrq = null;
 			if (CalculationConstants.RATE_BASIS_R.equals(financeType.getFinGrcRateType())) {
-				BaseRateCode baseRateCode = baseRateCodeDAO.getBaseRateCodeById(financeType.getFinGrcRateType(), "");
+				BaseRateCode baseRateCode = baseRateCodeDAO.getBaseRateCodeById(financeType.getFinGrcBaseRate(), "");
 				if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 					finGrcRvwFrq = baseRateCode.getbRRepayRvwFrq();
 					financeMain.setGrcPftRvwFrq(finGrcRvwFrq);

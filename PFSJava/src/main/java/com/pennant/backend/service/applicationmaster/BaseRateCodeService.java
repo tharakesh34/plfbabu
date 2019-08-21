@@ -64,4 +64,6 @@ public interface BaseRateCodeService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
+	BaseRateCode getBaseRateCodeById(String id, String type);
+
 }

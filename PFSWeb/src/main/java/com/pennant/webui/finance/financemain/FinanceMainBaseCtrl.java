@@ -264,6 +264,7 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.AgreementDefinitionService;
+import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.backend.service.applicationmaster.BaseRateService;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.collateral.impl.CollateralSetupFetchingService;
@@ -1046,6 +1047,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private SamplingService samplingService;
 	@Autowired
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	@Autowired
+	private BaseRateCodeService baseRateCodeService;
 
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
 	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
@@ -6333,7 +6336,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (finType.isFInIsAlwGrace()) {
+
 				this.gracePftFrq.setValue(finType.getFinGrcDftIntFrq());
+
 				this.gracePftFrq.setDisabled(checked ? isReadOnly("FinanceMainDialog_gracePftFrq") : true);
 
 				if (this.finStartDate.getValue() == null) {
@@ -6368,7 +6373,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (finType.isFinGrcIsRvwAlw()) {
 				this.grcPftRvwFrqRow.setVisible(true);
-				this.gracePftRvwFrq.setValue(finType.getFinGrcRvwFrq());
+
+				if (CalculationConstants.RATE_BASIS_R.equals(finType.getFinGrcRateType())) {
+					
+					BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(finType.getFinGrcBaseRate(),
+							"");
+					if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+						this.gracePftRvwFrq.setValue(baseRateCode.getbRRepayRvwFrq());
+					} else {
+						this.gracePftRvwFrq.setValue(finType.getFinGrcRvwFrq());
+					}
+				} else {
+					this.gracePftRvwFrq.setValue(finType.getFinGrcRvwFrq());
+				}
+
 				this.gracePftRvwFrq.setDisabled(checked ? isReadOnly("FinanceMainDialog_gracePftRvwFrq") : true);
 				if (this.allowGrace.isChecked()) {
 					this.nextGrcPftRvwDate_two.setValue(FrequencyUtil
@@ -8804,7 +8822,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
 							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
 							frqCode);
-				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)) {
+				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
 					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
 							.split("-")[1];
 				}
@@ -8996,19 +9016,31 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.grcPftFrqRow.setVisible(isGraceCheck);
 				fillComboBox(cbGrcSchdMthd, this.cbGrcSchddemethod, PennantStaticListUtil.getScheduleMethods(),
 						",EQUAL,PRI_PFT,PRI,POSINT,");
+				
+				String finGrcRvwFrq = null;
+				if (CalculationConstants.RATE_BASIS_R.equals(finType.getFinGrcRateType())) {
+					BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(finType.getFinGrcBaseRate(),
+							"");
+					if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+						finGrcRvwFrq = baseRateCode.getbRRepayRvwFrq();
+					} else {
+						finGrcRvwFrq = finType.getFinGrcRvwFrq();
+					}
+				} else {
+					finGrcRvwFrq = finType.getFinGrcRvwFrq();
+				}
 
 				if (finType.isFinGrcIsRvwAlw()) {
-					if (StringUtils.isNotBlank(finType.getFinGrcRvwFrq())
-							&& !StringUtils.equals(finType.getFinGrcRvwFrq(), PennantConstants.List_Select)) {
+					if (StringUtils.isNotBlank(finGrcRvwFrq)
+							&& !StringUtils.equals(finGrcRvwFrq, PennantConstants.List_Select)) {
 						this.grcPftRvwFrqRow.setVisible(true);
-						this.gracePftRvwFrq.setValue(finType.getFinGrcRvwFrq());
+						this.gracePftRvwFrq.setValue(finGrcRvwFrq);
 					}
 					readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcPftRvwDate"), this.nextGrcPftRvwDate);
 				} else {
 					this.gracePftRvwFrq.setDisabled(true);
 					this.nextGrcPftRvwDate.setValue(SysParamUtil.getValueAsDate("APP_DFT_ENDDATE"));
 					readOnlyComponent(true, this.nextGrcPftRvwDate);
-
 				}
 
 				if (finType.isFinGrcIsIntCpz()) {

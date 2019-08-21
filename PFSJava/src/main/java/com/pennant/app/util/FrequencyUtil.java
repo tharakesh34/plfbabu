@@ -162,6 +162,12 @@ public class FrequencyUtil implements Serializable {
 		case FrequencyCodeTypes.FRQ_YEARLY:
 			repayFrequency = Labels.getLabel("label_Select_Yearly");
 			break;
+		case FrequencyCodeTypes.FRQ_2YEARLY:
+			repayFrequency = Labels.getLabel("label_Select_2Yearly");
+			break;
+		case FrequencyCodeTypes.FRQ_3YEARLY:
+			repayFrequency = Labels.getLabel("label_Select_3Yearly");
+			break;
 		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
 			repayFrequency = Labels.getLabel("label_Select_HalfYearly");
 			break;
@@ -217,32 +223,32 @@ public class FrequencyUtil implements Serializable {
 			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_Dec")));
 			break;
 		case '2':
-			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_Jan")));
-			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_Feb")));
-			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_Mar")));
-			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_Apr")));
-			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_May")));
-			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_Jun")));
-			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_Jly")));
-			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_Aug")));
-			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_Sep")));
-			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_Oct")));
-			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_Nov")));
-			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_Dec")));
+			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_2Jan")));
+			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_2Feb")));
+			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_2Mar")));
+			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_2Apr")));
+			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_2May")));
+			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_2Jun")));
+			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_2Jly")));
+			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_2Aug")));
+			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_2Sep")));
+			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_2Oct")));
+			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_2Nov")));
+			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_2Dec")));
 			break;
 		case '3':
-			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_Jan")));
-			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_Feb")));
-			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_Mar")));
-			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_Apr")));
-			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_May")));
-			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_Jun")));
-			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_Jly")));
-			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_Aug")));
-			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_Sep")));
-			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_Oct")));
-			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_Nov")));
-			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_Dec")));
+			arrfrqMonth.add(new ValueLabel(Y01, Labels.getLabel("label_Select_3Jan")));
+			arrfrqMonth.add(new ValueLabel(Y02, Labels.getLabel("label_Select_3Feb")));
+			arrfrqMonth.add(new ValueLabel(Y03, Labels.getLabel("label_Select_3Mar")));
+			arrfrqMonth.add(new ValueLabel(Y04, Labels.getLabel("label_Select_3Apr")));
+			arrfrqMonth.add(new ValueLabel(Y05, Labels.getLabel("label_Select_3May")));
+			arrfrqMonth.add(new ValueLabel(Y06, Labels.getLabel("label_Select_3Jun")));
+			arrfrqMonth.add(new ValueLabel(Y07, Labels.getLabel("label_Select_3Jly")));
+			arrfrqMonth.add(new ValueLabel(Y08, Labels.getLabel("label_Select_3Aug")));
+			arrfrqMonth.add(new ValueLabel(Y09, Labels.getLabel("label_Select_3Sep")));
+			arrfrqMonth.add(new ValueLabel(Y10, Labels.getLabel("label_Select_3Oct")));
+			arrfrqMonth.add(new ValueLabel(Y11, Labels.getLabel("label_Select_3Nov")));
+			arrfrqMonth.add(new ValueLabel(Y12, Labels.getLabel("label_Select_3Dec")));
 			break;
 		case 'H':
 			arrfrqMonth.add(new ValueLabel(H01, Labels.getLabel("label_Select_H1")));
@@ -295,6 +301,8 @@ public class FrequencyUtil implements Serializable {
 
 			switch (frqCode) {
 			case 'Y':
+			case '2':
+			case '3':
 				Calendar calendar = Calendar.getInstance();
 				calendar.set(Calendar.YEAR, frqMonth - 1, 1);
 				days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -391,9 +399,11 @@ public class FrequencyUtil implements Serializable {
 
 	private static FrequencyDetails validateFreqCode(FrequencyDetails frequencyDetail) {
 
-		switch (frequencyDetail.getFrequencyCode().charAt(0)) {
+		char frqCode = frequencyDetail.getFrequencyCode().charAt(0);
+		switch (frqCode) {
 		case 'Y':
-
+		case '2':
+		case '3':
 			frequencyDetail.setErrorDetails(
 					validMonthDay(1, 12, 1, frqMthDays[frequencyDetail.getFrequencyMonth() - 1], frequencyDetail));
 
@@ -401,11 +411,17 @@ public class FrequencyUtil implements Serializable {
 				return frequencyDetail;
 			}
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Yearly") + ","
-					+ getYearlyConstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
-					+ frequencyDetail.getFrequencyDay());
-			break;
+			String label = "label_Select_Yearly";
+			if (frqCode == '2') {
+				label = "label_Select_2Yearly";
+			} else if (frqCode == '3') {
+				label = "label_Select_3Yearly";
+			}
 
+			frequencyDetail.setFrequencyDescription(
+					Labels.getLabel(label) + "," + getYearlyConstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
+							+ frequencyDetail.getFrequencyDay());
+			break;
 		case 'H':
 
 			frequencyDetail.setErrorDetails(validMonthDay(1, 6, 1, 31, frequencyDetail));
@@ -793,6 +809,10 @@ public class FrequencyUtil implements Serializable {
 		switch (frequencyDetails.getFrequencyCode().charAt(0)) {
 		case 'Y':
 			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 12, includeBaseDate);
+		case '2':
+			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 24, includeBaseDate);
+		case '3':
+			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 36, includeBaseDate);
 		case 'H':
 			return getQHYSchedule(terms, baseDate, frequencyDetails, handlerType, 6, includeBaseDate);
 		case 'Q':
@@ -1399,6 +1419,28 @@ public class FrequencyUtil implements Serializable {
 				break;
 			case 'Y':
 				if (frqCode2 != 'Y') {
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if (frqMnt1 != frqMnt2) {
+					return FrequencyCodeTypes.INVALID_MONTH;
+				}
+				if (frqDay1 != frqDay2) {
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case '2':
+				if (frqCode2 != '2') {
+					return FrequencyCodeTypes.INVALID_CODE;
+				}
+				if (frqMnt1 != frqMnt2) {
+					return FrequencyCodeTypes.INVALID_MONTH;
+				}
+				if (frqDay1 != frqDay2) {
+					return FrequencyCodeTypes.INVALID_DATE;
+				}
+				break;
+			case '3':
+				if (frqCode2 != '3') {
 					return FrequencyCodeTypes.INVALID_CODE;
 				}
 				if (frqMnt1 != frqMnt2) {

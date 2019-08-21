@@ -67,6 +67,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.model.RateDetail;
@@ -91,9 +92,9 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	private static final long serialVersionUID = -4578996988245614938L;
@@ -128,6 +129,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Row reviewDateToDateRow;
 	protected Row anyDateFromDateRow;
 	protected Row anyDateToDateRow;
+
+	protected Row baseRateRvwFrqRow;
+	protected FrequencyBox bRRepayRvwFrq;
+
 	protected Datebox anyDateRateChangeFromDate;
 	protected Datebox anyDateRateChangeToDate;
 	protected Uppercasebox serviceReqNo;
@@ -256,6 +261,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.rate.setSpecialProperties("SplRateCode", "SRType", "SRTypeDesc");
 		this.serviceReqNo.setMaxlength(20);
 		this.remarks.setMaxlength(200);
+		this.bRRepayRvwFrq.setDisabled(true);
+		this.bRRepayRvwFrq.getFrqDayCombobox().setWidth("35px");
 		logger.debug("Leaving");
 	}
 
@@ -1039,6 +1046,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		
+		
+
 
 		//Show Error Details in Schedule Maintainance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
@@ -1180,6 +1190,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Clients.clearWrongValue(this.rate.getSpecialComp());
 		this.rate.getMarginComp().setErrorMessage("");
 		ForwardEvent forwardEvent = (ForwardEvent) event;
+
+		this.baseRateRvwFrqRow.setVisible(false);
+
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
 			Object dataObject = rate.getBaseObject();
@@ -1203,6 +1216,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								.getErrorDetail(rateDetail.getErrorDetails(), getUserWorkspace().getUserLanguage())
 								.getError());
 						this.rate.setBaseValue("");
+					}
+
+					if (StringUtils.trimToNull(details.getbRRepayRvwFrq()) != null) {
+						this.bRRepayRvwFrq.setValue(details.getbRRepayRvwFrq());
+						this.baseRateRvwFrqRow.setVisible(true);
 					}
 				}
 			}

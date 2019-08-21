@@ -179,6 +179,11 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 		return getBaseRateCodeDAO().getBaseRateCodeById(id, "_View");
 	}
 
+	@Override
+	public BaseRateCode getBaseRateCodeById(String id, String type) {
+		return getBaseRateCodeDAO().getBaseRateCodeById(id, type);
+	}
+
 	/**
 	 * getApprovedBaseRateCodeById fetch the details by using BaseRateCodeDAO's getBaseRateCodeById method . with
 	 * parameter id and type as blank. it fetches the approved records from the RMTBaseRateCodes.

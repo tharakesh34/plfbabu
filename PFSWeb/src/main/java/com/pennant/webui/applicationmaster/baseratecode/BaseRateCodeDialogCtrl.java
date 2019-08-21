@@ -357,13 +357,13 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 						Labels.getLabel("FIELD_NO_EMPTY",
 								new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRpyFrqMth.value") }));
 			}
-			aBaseRateCode.setbRRepayRvwFrq(this.bRRepayRvwFrq.getValue() == null ? "" : this.bRRepayRvwFrq.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 		try {
 			// to Check frequency month and frequency day
-			if (!"#".equals(this.bRRepayRvwFrq.getFrqMonthValue()) && "#".equals(this.bRRepayRvwFrq.getFrqDayValue())
+			if (!"#".equals(this.bRRepayRvwFrq.getFrqCodeValue()) && !"#".equals(this.bRRepayRvwFrq.getFrqMonthValue())
+					&& "#".equals(this.bRRepayRvwFrq.getFrqDayValue())
 					&& !this.bRRepayRvwFrq.getFrqDayCombobox().isDisabled()) {
 				throw new WrongValueException(this.bRRepayRvwFrq.getFrqDayCombobox(), Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_FinanceTypeDialog_FinRpyFrqDay.value") }));
@@ -373,13 +373,11 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		}
 
 		try {
-			if (this.bRRepayRvwFrq.isValidComboValue()) {
-				aBaseRateCode
-						.setbRRepayRvwFrq(this.bRRepayRvwFrq.getValue() == null ? "" : this.bRRepayRvwFrq.getValue());
-			}
+			aBaseRateCode.setbRRepayRvwFrq(this.bRRepayRvwFrq.getValue() == null ? "" : this.bRRepayRvwFrq.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
