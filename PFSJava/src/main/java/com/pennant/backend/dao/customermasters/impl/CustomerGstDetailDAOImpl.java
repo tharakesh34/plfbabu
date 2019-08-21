@@ -198,7 +198,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		insertSql.append(" (Id, headerId, frequancy,financialYear,salAmount,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
 		insertSql.append(" NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:id, :gstNumber, :frequancy, :financialYear, :salAmount,");
+		insertSql.append(" Values(:Id,:headerId, :gstNumber, :frequancy, :financialYear, :salAmount,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
@@ -252,23 +252,31 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 	}
 
 	@Override
-	public int getCustomerGSTByGstNumber(String gstNumber, String type) {
+	public CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type) {
+		
 		logger.debug("Entering");
-		int recordCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("GstNumber", gstNumber);
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Id FROM CustomerGST");
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT Id, CustId, GstNumber, Frequencytype,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  customergst");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" WHERE ");
-		selectSql.append("GstNumber= :GstNumber");
+		selectSql.append("CustId = :CustId and GstNumber= :GstNumber");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
+		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerGST.class);
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			recordCount = 0;
+			logger.warn("Exception: ", e);
+			customerGST = null;
 		}
 		logger.debug("Leaving");
-		return recordCount;
+		return customerGST;
+		
 	}
 
 	@Override
@@ -307,7 +315,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
 		selectSql.append(" FROM  customergst");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustId = :CustId");
+		selectSql.append(" Where Id = :Id");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
@@ -364,8 +372,25 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 	}
 
 	@Override
-	public int getCustomerGstInfoByCustGstNumber(long id, long custId, String gstNumber, String string) {
-		return 0;
+	public int getCustomerGstInfoByCustGstNumber(long id, long custId, String gstNumber, String type) {
+		logger.debug("Entering");
+		int recordCount = 0;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+		source.addValue("CustId", custId);
+		source.addValue("GstNumber", gstNumber);
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT count(*) FROM CustomerGST");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" WHERE ");
+		selectSql.append(" Id =:Id and  CustId = :CustId and GstNumber= :GstNumber");
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException e) {
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		return recordCount;
 	}
 
 }

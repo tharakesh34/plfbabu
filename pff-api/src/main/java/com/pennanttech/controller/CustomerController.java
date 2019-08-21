@@ -47,6 +47,8 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
@@ -525,6 +527,56 @@ public class CustomerController {
 				}
 			}
 		}
+		
+		// customer Gst information
+		List<CustomerGST> CustomerGSTInfoList = customerDetails.getCustomerGstList();
+		if (CustomerGSTInfoList != null) {
+			for (CustomerGST cuCustomerGSTInfo : CustomerGSTInfoList) {
+				if (StringUtils.equals(processType, PROCESS_TYPE_SAVE)) {
+					cuCustomerGSTInfo.setNewRecord(true);
+					cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					cuCustomerGSTInfo.setVersion(1);
+					if (CollectionUtils.isNotEmpty(cuCustomerGSTInfo.getCustomerGSTDetailslist())) {
+						for (CustomerGSTDetails customerGSTDetails : cuCustomerGSTInfo.getCustomerGSTDetailslist()) {
+							customerGSTDetails.setNewRecord(true);
+							customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							customerGSTDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+							customerGSTDetails.setVersion(1);
+						}
+					}
+				} else {
+					List<CustomerGST> prvCustomerGSTInfoList = prvCustomerDetails.getCustomerGstList();
+					List<CustomerGSTDetails> cuCustomerGSTDetailsList = cuCustomerGSTInfo.getCustomerGSTDetailslist();
+					if (prvCustomerGSTInfoList != null) {
+						for (CustomerGST prvCustomerGSTInfo : prvCustomerGSTInfoList) {
+							if (cuCustomerGSTInfo.getId() == prvCustomerGSTInfo.getId()) {
+								cuCustomerGSTInfo.setNewRecord(false);
+								cuCustomerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+								cuCustomerGSTInfo.setVersion(prvCustomerGSTInfo.getVersion() + 1);
+								cuCustomerGSTInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+								// copy properties
+								List<CustomerGSTDetails> customerGSTDetailsList = cuCustomerGSTInfo
+										.getCustomerGSTDetailslist();
+								for (CustomerGSTDetails customerGSTDetails : customerGSTDetailsList) {
+									for (CustomerGSTDetails cuCustomerGSTDetails : cuCustomerGSTDetailsList) {
+										if (customerGSTDetails.getId() == cuCustomerGSTDetails.getId()) {
+											cuCustomerGSTDetails.setNewRecord(false);
+											cuCustomerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+											cuCustomerGSTDetails.setVersion(prvCustomerGSTInfo.getVersion() + 1);
+											cuCustomerGSTDetails
+													.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+										}
+									}
+
+								}
+								BeanUtils.copyProperties(cuCustomerGSTInfo, prvCustomerGSTInfo);
+							}
+						}
+					}
+				}
+			}
+		}
 
 		// customer Account behavior
 		List<CustomerChequeInfo> customerChequeInfoList = customerDetails.getCustomerChequeInfoList();
@@ -935,6 +987,15 @@ public class CustomerController {
 			for (CustomerBankInfo custBankInfo : customerBankInfoList) {
 				custBankInfo.setNewRecord(false);
 				custBankInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+		}
+		
+		// customer GST information
+		List<CustomerGST> customerGSTInfoList = customerDetails.getCustomerGstList();
+		if (customerGSTInfoList != null) {
+			for (CustomerGST customerGSTInfo : customerGSTInfoList) {
+				customerGSTInfo.setNewRecord(false);
+				customerGSTInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
 

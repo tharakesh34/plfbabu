@@ -32,6 +32,7 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
@@ -45,6 +46,7 @@ import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
+import com.pennant.backend.service.customermasters.CustomerGstService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -76,6 +78,7 @@ import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
@@ -99,6 +102,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	private CustomerDocumentService customerDocumentService;
 	private CustomerBankInfoService customerBankInfoService;
+	private CustomerGstService customerGstService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private DedupParmDAO dedupParmDAO;
@@ -1688,6 +1692,205 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+	/**
+	 * Method for create CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * @throws ServiceException
+	 */
+	@Override
+	public CustomerGstInfoDetail addCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
+			throws ServiceException {
+		logger.debug("Entering");
+		// bean validations
+		validationUtility.validate(customerGstInfoDetail, SaveValidationGroup.class);
+		if (customerGstInfoDetail.getCustomerGST() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "customerGstInfo";
+			CustomerGstInfoDetail aCustomerGstInfoDetail = new CustomerGstInfoDetail();
+			aCustomerGstInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return aCustomerGstInfoDetail;
+		}
+		if (StringUtils.isNotBlank(customerGstInfoDetail.getCif())) {
+			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerGstInfoDetail.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerGstInfoDetail.getCif();
+				CustomerGstInfoDetail customerGstInfoDetails = new CustomerGstInfoDetail();
+				customerGstInfoDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return customerGstInfoDetail;
+			}
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerGstInfoDetail.getCustomerGST(), PennantConstants.TRAN_WF);
+		// validate customer details as per the API specification
+		AuditDetail auditDetail = customerGstService.doValidations(customerGstInfoDetail.getCustomerGST(),
+				PennantConstants.RECORD_TYPE_NEW);
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		CustomerGstInfoDetail response = null;
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = new CustomerGstInfoDetail();
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				return response;
+			}
+		}
+
+		// call add Customer gst method in case of no errors
+		response = customerDetailsController.addCustomerGstInformation(customerGstInfoDetail.getCustomerGST(),
+				customerGstInfoDetail.getCif());
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	/**
+	 * Method for update CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * @throws ServiceException
+	 */
+	@Override
+	public WSReturnStatus updateCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
+			throws ServiceException {
+		logger.debug("Entering");
+		// bean validations
+		validationUtility.validate(customerGstInfoDetail, UpdateValidationGroup.class);
+		if (customerGstInfoDetail.getCustomerGST() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "customerBankInfo";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		// customer validations
+		Customer customer = null;
+		if (StringUtils.isNotBlank(customerGstInfoDetail.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(customerGstInfoDetail.getCif());
+			if (customer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerGstInfoDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerGstInfoDetail.getCustomerGST(), PennantConstants.TRAN_WF);
+
+		// validate customer details as per the API specification
+		AuditDetail auditDetail = customerGstService.doValidations(customerGstInfoDetail.getCustomerGST(),
+				PennantConstants.RECORD_TYPE_UPD);
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		}
+
+		WSReturnStatus response = null;
+		// validate Customer with given CustCIF
+		CustomerGST CustomerGSTInfo = customerGstService
+				.getCustomerGstDeatailsByCustomerId(customerGstInfoDetail.getCustomerGST().getId());
+
+		if (CustomerGSTInfo != null) {
+			// call update customer if there is no errors
+			response = customerDetailsController.updateCustomerGstInformation(customerGstInfoDetail.getCustomerGST(),
+					customerGstInfoDetail.getCif());
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = String.valueOf(customerGstInfoDetail.getCustomerGST().getCustId());
+			valueParm[1] = customerGstInfoDetail.getCif();
+			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+
+	/**
+	 * get CustomerGstInfoDetail by the given customer cif.
+	 * 
+	 * @param custCIF
+	 */
+	@Override
+	public CustomerDetails getCustomerGstnformation(String custCIF) throws ServiceException {
+		logger.debug("Entering");
+		// Mandatory validation
+		if (StringUtils.isBlank(custCIF)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
+		CustomerDetails response = new CustomerDetails();
+		// validation
+		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = custCIF;
+			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setCustomer(null);
+		} else {
+			response = customerDetailsController.getCustomerGstInformation(custCIF);
+		}
+		logger.debug("Leaving");
+
+		return response;
+	}
+	/**
+	 * delete CustomerGstInfoDetail.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 */
+	@Override
+	public WSReturnStatus deleteCustomerGstInformation(CustomerGstInfoDetail customerGstInfoDetail)
+			throws ServiceException {
+
+		logger.debug("Enetring");
+		// bean validations
+		validationUtility.validate(customerGstInfoDetail, DeleteValidationGroup.class);
+
+		// customer validations
+		CustomerGST customerGST = null;
+		if (StringUtils.isNotBlank(customerGstInfoDetail.getCif())) {
+			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerGstInfoDetail.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerGstInfoDetail.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			} else {
+				customerGST = new CustomerGST();
+				customerGST.setCustId(customerDetails.getCustID());
+				customerGST.setId(customerGstInfoDetail.getId());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerGstInfoDetail.getCif());
+			}
+		}
+		WSReturnStatus response = null;
+		// validate Customer with given CustCIF
+		CustomerGST customeGST = customerGstService.getCustomerGstDeatailsByCustomerId(customerGstInfoDetail.getId());
+
+		if (customeGST != null) {
+			// call delete customer service
+			response = customerDetailsController.deleteCustomerGSTInformation(customeGST);
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = String.valueOf(customerGstInfoDetail.getId());
+			valueParm[1] = customerGstInfoDetail.getCif();
+			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+	
 
 	/**
 	 * Method for create CustomerAccountBehaviour in PLF system.
@@ -2598,6 +2801,20 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	/**
 	 * Get Audit Header Details
 	 * 
+	 * @param aCustomerBankInfo
+	 * @param tranType
+	 * @return AuditHeader
+	 */
+	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
+		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()),
+				String.valueOf(aCustomerGST.getCustId()), null, null, auditDetail,
+				aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
+	/**
+	 * Get Audit Header Details
+	 * 
 	 * @param aCustomerExtLiability
 	 * @param tranType
 	 * @return AuditHeader
@@ -2829,6 +3046,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
+	}
+	@Autowired
+	public void setCustomerGstService(CustomerGstService customerGstService) {
+		this.customerGstService = customerGstService;
 	}
 
 	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {

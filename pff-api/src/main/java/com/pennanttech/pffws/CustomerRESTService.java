@@ -21,6 +21,7 @@ import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
@@ -167,6 +168,25 @@ public interface CustomerRESTService {
 	public WSReturnStatus deleteCustomerBankingInformation(
 			@WebParam(name = "customer") CustomerBankInfoDetail customerBankInfoDetail) throws ServiceException;
 
+	@POST
+	@Path("/customerService/addCustomerGstInformation")
+	public CustomerGstInfoDetail addCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
+	@POST
+	@Path("/customerService/updateCustomerGstInformation")
+	public WSReturnStatus updateCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
+	@GET
+	@Path("/customerService/getCustomerGstnformation/{cif}")
+	public CustomerDetails getCustomerGstnformation(@PathParam("cif") String custCIF) throws ServiceException;
+
+	@DELETE
+	@Path("/customerService/deleteCustomerGstInformation")
+	WSReturnStatus deleteCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+	
 	@POST
 	@Path("/customerService/addCustomerAccountBehaviour")
 	public CustomerChequeInfoDetail addCustomerAccountBehaviour(

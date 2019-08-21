@@ -19,7 +19,7 @@ public interface CustomerGstDetailDAO {
 
 	public CustomerGST getCustomerGstByCustId(CustomerGST customerGST, String type);
 
-	int getCustomerGSTByGstNumber(String gstNumber, String type);
+	CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type);
 	
 	CustomerGST getCustomerGstByCustId(long id, String type);
 	

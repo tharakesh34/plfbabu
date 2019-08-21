@@ -14,6 +14,7 @@ import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -28,6 +29,8 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentManager;
@@ -38,11 +41,13 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
 import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
+import com.pennant.backend.service.customermasters.CustomerGstService;
 import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.validation.CustomerBankInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerChequeInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
+import com.pennant.backend.service.customermasters.validation.CustomerGstInfoValidation;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -52,6 +57,7 @@ import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class CustomerDetailsController {
@@ -63,10 +69,12 @@ public class CustomerDetailsController {
 	private CustomerEMailService customerEMailService;
 	private CustomerIncomeService customerIncomeService;
 	private CustomerBankInfoDAO customerBankInfoDAO;
+	private CustomerGstDetailDAO customerGstDetailDAO;
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	private CustomerDocumentService customerDocumentService;
 	private CustomerBankInfoService customerBankInfoService;
+	private CustomerGstService customerGstService;
 	private CustomerChequeInfoService customerChequeInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private DocumentManagerDAO documentManagerDAO;
@@ -1028,7 +1036,212 @@ public class CustomerDetailsController {
 		return response;
 
 	}
+	
+	/**
+	 * get CustomerGstInformation By the Customer Id
+	 * 
+	 * @param customerId
+	 * @return
+	 */
+	public CustomerDetails getCustomerGstInformation(String cif) {
+		logger.debug("Entering");
+		CustomerDetails response = null;
+		Customer customer = customerDetailsService.getCustomerByCIF(cif);
+		try {
+			List<CustomerGST> custometGSTInfoList = customerGstService
+					.getApprovedGstInfoByCustomerId(customer.getCustID());
+			for (int i = 0; i < custometGSTInfoList.size(); i++) {
+				List<CustomerGSTDetails> CustomerGSTDetailslist = customerGstService
+						.getCustomerGstDeatailsByCustomerId(custometGSTInfoList.get(i).getId(), "");
+				custometGSTInfoList.get(i).setCustomerGSTDetailslist(CustomerGSTDetailslist);
+			}
 
+			if (custometGSTInfoList != null && !custometGSTInfoList.isEmpty()) {
+				response = new CustomerDetails();
+				response.setCustCIF(cif);
+				response.setCustomerGstList(custometGSTInfoList);
+				response.setCustomer(null);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				response = new CustomerDetails();
+				response.setCustomer(null);
+				String[] valueParm = new String[1];
+				valueParm[0] = cif;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	
+	/**
+	 * Method for create Customer CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * 
+	 */
+
+	public CustomerGstInfoDetail addCustomerGstInformation(CustomerGST customerGST, String cif) {
+		CustomerGstInfoDetail response = null;
+		try {
+			logger.debug("Entering");
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
+			customerGST.setCustId(customer.getCustID());
+			// customerGST.setLovDescCustCIF(cif);
+			customerGST.setNewRecord(true);
+			customerGST.setVersion(1);
+			customerGST.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			customerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			customerGST.setLastMntBy(userDetails.getUserId());
+			customerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
+			customerGST.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
+			AuditHeader auditHeader = validation
+					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");
+
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new CustomerGstInfoDetail();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				auditHeader = customerGstService.doApprove(auditHeader);
+				response = new CustomerGstInfoDetail();
+				CustomerGST customerGstInfo = (CustomerGST) auditHeader.getAuditDetail().getModelData();
+				response.setId(customerGstInfo.getId());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new CustomerGstInfoDetail();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+
+		logger.debug("Leaving");
+
+		return response;
+
+	}
+	
+
+	/**
+	 * Method for update CustomerGSTInformation in PLF system.
+	 * 
+	 * @param customerBankInfo
+	 */
+
+	public WSReturnStatus updateCustomerGstInformation(CustomerGST customerGST, String cif) {
+		logger.debug("Entering");
+		WSReturnStatus response = null;
+		try {
+			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
+			// user language
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			customerGST.setUserDetails(userDetails);
+			customerGST.setCustId(prvCustomer.getCustID());
+			// customerGST.setLovDescCustCIF(cif);
+			customerGST.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			customerGST.setNewRecord(false);
+			customerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			customerGST.setLastMntBy(userDetails.getUserId());
+			customerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
+			customerGST.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			customerGST.setVersion((customerGstService.getVersion(customerGST.getId())) + 1);
+			for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+				customerGSTDetails.setVersion(customerGST.getVersion());
+			}
+			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
+			AuditHeader auditHeader = validation
+					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				customerGstService.doApprove(auditHeader);
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+	
+	/**
+	 * delete the CustomerGSTInformation.
+	 * 
+	 * @param CustomerGSTInformation
+	 * @return WSReturnStatus
+	 * 
+	 */
+	public WSReturnStatus deleteCustomerGSTInformation(CustomerGST CustomerGSTInfo) {
+		logger.debug("Entering");
+		WSReturnStatus response = null;
+		try {
+			CustomerGST curCustomerGST = customerGstService.getCustomerGstDeatailsByCustomerId(CustomerGSTInfo.getId());
+
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			curCustomerGST.setUserDetails(userDetails);
+			curCustomerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			curCustomerGST.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			curCustomerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
+			curCustomerGST.setNewRecord(false);
+			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
+			AuditHeader auditHeader = validation
+					.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				customerGstService.doApprove(auditHeader);
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	
+	
+	
 	/**
 	 * get CustomerAccountBehaviour By the cif
 	 * 
@@ -1654,6 +1867,19 @@ public class CustomerDetailsController {
 	/**
 	 * Get Audit Header Details
 	 * 
+	 * @param aCustomerGSTInfo
+	 * @param tranType
+	 * @return AuditHeader
+	 */
+	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
+		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()),
+				String.valueOf(aCustomerGST.getCustId()), null, null, auditDetail,
+				aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+	/**
+	 * Get Audit Header Details
+	 * 
 	 * @param aCustomerAddres
 	 * @param tranType
 	 * @return AuditHeader
@@ -1789,5 +2015,22 @@ public class CustomerDetailsController {
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
 	}
+
+	public CustomerGstDetailDAO getCustomerGstDetailDAO() {
+		return customerGstDetailDAO;
+	}
+
+	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
+		this.customerGstDetailDAO = customerGstDetailDAO;
+	}
+
+	public CustomerGstService getCustomerGstService() {
+		return customerGstService;
+	}
+
+	public void setCustomerGstService(CustomerGstService customerGstService) {
+		this.customerGstService = customerGstService;
+	}
+	
 
 }

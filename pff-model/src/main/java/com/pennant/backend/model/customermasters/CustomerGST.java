@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
@@ -20,6 +21,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerGST extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 2527200144895549992L;
+	@XmlElementWrapper(name = "id")
 	@XmlElement
 	private long id = Long.MIN_VALUE;
 	@XmlElement
@@ -32,6 +34,7 @@ public class CustomerGST extends AbstractWorkflowEntity implements Entity {
 	private String gstNumber;
 	@XmlElement
 	private String frequencytype;
+	@XmlElementWrapper(name = "customerGSTDetailslist")
 	@XmlElement
 	private List<CustomerGSTDetails> customerGSTDetailslist = new ArrayList<CustomerGSTDetails>();
 

@@ -3,6 +3,10 @@ package com.pennanttech.pffws;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.pennant.backend.model.WSReturnStatus;
@@ -17,6 +21,7 @@ import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
 import com.pennanttech.ws.model.customer.FinCreditReviewDetailsData;
@@ -174,5 +179,19 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public WSReturnStatus addCreditReviewDetails(
 			@WebParam(name = "customerDetails") FinCreditReviewDetailsData finCreditReviewDetailsData);
+
+	@WebResult(name = "customer")
+	public CustomerGstInfoDetail addCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public WSReturnStatus updateCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerDetails getCustomerGstnformation(@WebParam(name = "cif") String custCIF) throws ServiceException;
+
+	WSReturnStatus deleteCustomerGstInformation(
+			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
 
 }
