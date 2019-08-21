@@ -3420,4 +3420,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="1" author="dheerendra">
+		<sql>
+			<![CDATA[	
+			INSERT into plf.master_def values ('OGL','INSPAY','C-PABPV/Disbursement/Insurance Payment');
+			INSERT into plf.master_def values ('OGL','WAIVER','C-PAJRL/Other/Fee Waiver');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
