@@ -5544,8 +5544,8 @@ UNION ALL
 		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1"/>
 	</changeSet>
 	
-	<changeSet id="142" author="Durgaprasad G">
-	<comment> Select SeqNo from Seq_Gst_Invoice_Txn_Details, result of this query should be start value of below sequence.</comment>
+	 <changeSet id="142" author="Durgaprasad G">
+	<comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
 		<dropTable tableName="Seq_Gst_Invoice_Txn_Details"/>
 	</changeSet>
 	
