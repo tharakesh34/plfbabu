@@ -166,6 +166,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> repayMethodList;
 	private static ArrayList<ValueLabel> limitCategoryList;
 	private static ArrayList<ValueLabel> limitcheckTypes;
+	private static ArrayList<ValueLabel> facilityLevels;
+	private static ArrayList<ValueLabel> limitCondition;
 	private static ArrayList<ValueLabel> groupOfList;
 	private static ArrayList<ValueLabel> currencyUnitsList;
 	private static ArrayList<ValueLabel> productCategories;
@@ -2977,6 +2979,31 @@ public class PennantStaticListUtil {
 			limitcheckTypes.add(new ValueLabel(LimitConstants.LIMIT_CHECK_RESERVED, "Reserved"));
 		}
 		return limitcheckTypes;
+	}
+
+	public static ArrayList<ValueLabel> getBankingArrangement() {
+
+		if (facilityLevels == null) {
+			facilityLevels = new ArrayList<ValueLabel>(4);
+			facilityLevels.add(new ValueLabel(LimitConstants.LIMIT_BANKING_CONSORTIUM, "Consortium "));
+			facilityLevels.add(new ValueLabel(LimitConstants.LIMIT_BANKING_OUTSIDECONSORTIUM, "Outside Consortium "));
+			facilityLevels.add(new ValueLabel(LimitConstants.LIMIT_BANKING_MULTIPLEBANKING, "Multiple Banking "));
+			facilityLevels.add(new ValueLabel(LimitConstants.LIMIT_BANKING_SOLEBANKING, "Sole Banking"));
+			facilityLevels
+					.add(new ValueLabel(LimitConstants.LIMIT_BANKING_BORROWERISINDIVIDUAL, "Borrower is individual"));
+			facilityLevels.add(new ValueLabel(LimitConstants.LIMIT_BANKING_NOTKNOWN, "Not Known"));
+		}
+		return facilityLevels;
+	}
+
+	public static ArrayList<ValueLabel> getLimitCondition() {
+		if (limitCondition == null) {
+			limitCondition = new ArrayList<ValueLabel>(2);
+			limitCondition.add(new ValueLabel(LimitConstants.LIMIT_CONDITION_INTRADAYLIMIT, "Intraday Limit"));
+			limitCondition.add(new ValueLabel(LimitConstants.LIMIT_CONDITION_ADHOCLIMIT, "Adhoc Limit"));
+			limitCondition.add(new ValueLabel(LimitConstants.LIMIT_CONDITION_SEASONALLIMIT, "Seasonal Limit"));
+		}
+		return limitCondition;
 	}
 
 	public static ArrayList<ValueLabel> getGroupOfList() {

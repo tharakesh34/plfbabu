@@ -36,8 +36,19 @@ public class LimitConstants {
 	public static final String LIMIT_GROUP_LINE = "LMTLINE";
 	public static final String LIMIT_GROUP_GROUP = "GROUP";
 
+	public static final String LIMIT_BANKING_CONSORTIUM = "C";
+	public static final String LIMIT_BANKING_OUTSIDECONSORTIUM = "O";
+	public static final String LIMIT_BANKING_MULTIPLEBANKING = "M";
+	public static final String LIMIT_BANKING_SOLEBANKING = "S";
+	public static final String LIMIT_BANKING_BORROWERISINDIVIDUAL  = "B";
+	public static final String LIMIT_BANKING_NOTKNOWN = "N";
+	
 	public static final String LIMIT_CHECK_ACTUAL = "A";
 	public static final String LIMIT_CHECK_RESERVED = "R";
+	
+	public static final String LIMIT_CONDITION_INTRADAYLIMIT = "I";
+	public static final String LIMIT_CONDITION_ADHOCLIMIT = "A";
+	public static final String LIMIT_CONDITION_SEASONALLIMIT = "S";
 
 	// Currency Units
 	public static final String CCY_UNITS_DEFAULT = "D";
