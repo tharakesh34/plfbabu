@@ -4140,5 +4140,134 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet author="Varaprasad.K" id="137">
+		<sql>
+			
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='RECEIPTUPLOAD';
+			
+		</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">RECEIPTUPLOAD</column>
+			<column name="WorkFlowSubType">Receipt Upload</column>
+			<column name="WorkFlowDesc">Receipt Upload</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">RECEIPTUPLOAD_MAKER;RECEIPTUPLOAD_APPROVER</column>
+			<column name="FirstTaskOwner">RECEIPTUPLOAD_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">0</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+	
+<changeSet id="138" author="Varaprasad.K">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":"canvas","properties":{"process_id":"RECEIPTUPLOAD","name":"Receipt Upload","documentation":"Receipt Upload","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-389A8CE0-888D-4B00-920C-69E34A7C0661"}],"bounds":{"lowerRight":{"x":120,"y":180},"upperLeft":{"x":90,"y":150}},"dockers":[]},{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTUPLOAD_MAKER","firstName":"RECEIPTUPLOAD_MAKER","fullName":"RECEIPTUPLOAD_MAKER","id":"RECEIPTUPLOAD_MAKER","roledesc":"RECEIPTUPLOAD_MAKER","$$hashKey":"object:2569"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-801C6882-8F81-4ED2-93C0-7A01911559A3"}],"bounds":{"lowerRight":{"x":282.34375,"y":205},"upperLeft":{"x":182.34375,"y":125}},"dockers":[]},{"resourceId":"sid-389A8CE0-888D-4B00-920C-69E34A7C0661","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}],"bounds":{"lowerRight":{"x":181.60009765625,"y":165},"upperLeft":{"x":120.923095703125,"y":165}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}},{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277","properties":{"overrideid":"","name":"Author","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTUPLOAD_APPROVER","firstName":"RECEIPTUPLOAD_APPROVER","fullName":"RECEIPTUPLOAD_APPROVER","id":"RECEIPTUPLOAD_APPROVER","roledesc":"Receipt Upload Approver","$$hashKey":"object:5001"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640"}],"bounds":{"lowerRight":{"x":636.34375,"y":205},"upperLeft":{"x":536.34375,"y":125}},"dockers":[]},{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-AC222929-D459-4D8F-BA05-D961DA14FC32"},{"resourceId":"sid-11AE199B-F50B-493C-86CF-FB3130890950"},{"resourceId":"sid-B0C34E28-1BC6-410D-9E16-1D201079A426"}],"bounds":{"lowerRight":{"x":776.34375,"y":185},"upperLeft":{"x":736.34375,"y":145}},"dockers":[]},{"resourceId":"sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211"}],"bounds":{"lowerRight":{"x":735.8632855499009,"y":165.43847371129004},"upperLeft":{"x":636.6289019500991,"y":165.14746378870996}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211"}},{"resourceId":"sid-801C6882-8F81-4ED2-93C0-7A01911559A3","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277"}],"bounds":{"lowerRight":{"x":535.5625,"y":165},"upperLeft":{"x":283.125,"y":165}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277"}},{"resourceId":"sid-AC222929-D459-4D8F-BA05-D961DA14FC32","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}],"bounds":{"lowerRight":{"x":756.84375,"y":144.482421875},"upperLeft":{"x":232.34375,"y":27}},"dockers":[{"x":20.5,"y":20.5},{"x":756.84375,"y":27},{"x":232.34375,"y":27},{"x":50,"y":40}],"target":{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}},{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9","properties":{"overrideid":"","name":"Approve","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1"}],"bounds":{"lowerRight":{"x":955,"y":200},"upperLeft":{"x":855,"y":120}},"dockers":[]},{"resourceId":"sid-11AE199B-F50B-493C-86CF-FB3130890950","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9"}],"bounds":{"lowerRight":{"x":854.2294481116865,"y":164.7754025836125},"upperLeft":{"x":776.3625929039385,"y":161.8847536663875}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9"}},{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1058.34375,"y":174},"upperLeft":{"x":1030.34375,"y":146}},"dockers":[]},{"resourceId":"sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8"}],"bounds":{"lowerRight":{"x":1030.2802734375,"y":160},"upperLeft":{"x":955.5323486328125,"y":160}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8"}},{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594","properties":{"overrideid":"","name":"Cancel Process","rerunnable":true,"servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D"}],"bounds":{"lowerRight":{"x":803.34375,"y":359},"upperLeft":{"x":703.34375,"y":279}},"dockers":[]},{"resourceId":"sid-B0C34E28-1BC6-410D-9E16-1D201079A426","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594"}],"bounds":{"lowerRight":{"x":756.3971264969502,"y":278.4260410983908},"upperLeft":{"x":754.2688891280498,"y":185.0876307766092}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594"}},{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":908.34375,"y":333},"upperLeft":{"x":880.34375,"y":305}},"dockers":[]},{"resourceId":"sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E"}],"bounds":{"lowerRight":{"x":880.125,"y":319},"upperLeft":{"x":803.9140625,"y":319}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="RECEIPTUPLOAD" name="Receipt Upload" isExecutable="true">
+    <documentation>Receipt Upload</documentation>
+    <startEvent id="startEvent1" name="Start"/>
+    <userTask id="sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38" name="Maker" activiti:actor="RECEIPTUPLOAD_MAKER" activiti:assignmentLevel="Role Queue"/>
+    <sequenceFlow id="sid-389A8CE0-888D-4B00-920C-69E34A7C0661" sourceRef="startEvent1" targetRef="sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <userTask id="sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277" name="Author" activiti:actor="RECEIPTUPLOAD_APPROVER" activiti:assignmentLevel="Role Queue"/>
+    <exclusiveGateway id="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211"/>
+    <sequenceFlow id="sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640" sourceRef="sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277" targetRef="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-801C6882-8F81-4ED2-93C0-7A01911559A3" name="Submit" sourceRef="sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38" targetRef="sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-AC222929-D459-4D8F-BA05-D961DA14FC32" name="Resubmit" sourceRef="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211" targetRef="sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+    </sequenceFlow>
+    <serviceTask id="sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9" name="Approve" activiti:operation="doApprove" activiti:rerunnable="true"/>
+    <sequenceFlow id="sid-11AE199B-F50B-493C-86CF-FB3130890950" name="Approve" sourceRef="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211" targetRef="sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="sid-797F644F-7D8B-42C2-833B-80827AAAC7E8" name="Approved"/>
+    <sequenceFlow id="sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1" sourceRef="sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9" targetRef="sid-797F644F-7D8B-42C2-833B-80827AAAC7E8" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <serviceTask id="sid-A841C3F5-F0CD-4D94-8670-47E344328594" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
+    <sequenceFlow id="sid-B0C34E28-1BC6-410D-9E16-1D201079A426" name="Reject" sourceRef="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211" targetRef="sid-A841C3F5-F0CD-4D94-8670-47E344328594" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E" name="Approved"/>
+    <sequenceFlow id="sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D" sourceRef="sid-A841C3F5-F0CD-4D94-8670-47E344328594" targetRef="sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_RECEIPTUPLOAD">
+    <bpmndi:BPMNPlane bpmnElement="RECEIPTUPLOAD" id="BPMNPlane_RECEIPTUPLOAD">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="90.0" y="150.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38" id="BPMNShape_sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38">
+        <omgdc:Bounds height="80.0" width="100.0" x="182.34375" y="125.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277" id="BPMNShape_sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277">
+        <omgdc:Bounds height="80.0" width="100.0" x="536.34375" y="125.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-D6A6605D-79A3-4AF4-87AF-7B1520094211" id="BPMNShape_sid-D6A6605D-79A3-4AF4-87AF-7B1520094211">
+        <omgdc:Bounds height="40.0" width="40.0" x="736.34375" y="145.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9" id="BPMNShape_sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9">
+        <omgdc:Bounds height="80.0" width="100.0" x="855.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-797F644F-7D8B-42C2-833B-80827AAAC7E8" id="BPMNShape_sid-797F644F-7D8B-42C2-833B-80827AAAC7E8">
+        <omgdc:Bounds height="28.0" width="28.0" x="1030.34375" y="146.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A841C3F5-F0CD-4D94-8670-47E344328594" id="BPMNShape_sid-A841C3F5-F0CD-4D94-8670-47E344328594">
+        <omgdc:Bounds height="80.0" width="100.0" x="703.34375" y="279.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E" id="BPMNShape_sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E">
+        <omgdc:Bounds height="28.0" width="28.0" x="880.34375" y="305.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D" id="BPMNEdge_sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D">
+        <omgdi:waypoint x="803.34375" y="319.0"/>
+        <omgdi:waypoint x="880.34375" y="319.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-389A8CE0-888D-4B00-920C-69E34A7C0661" id="BPMNEdge_sid-389A8CE0-888D-4B00-920C-69E34A7C0661">
+        <omgdi:waypoint x="120.0" y="165.0"/>
+        <omgdi:waypoint x="182.34375" y="165.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1" id="BPMNEdge_sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1">
+        <omgdi:waypoint x="955.0" y="160.0"/>
+        <omgdi:waypoint x="1030.34375" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-AC222929-D459-4D8F-BA05-D961DA14FC32" id="BPMNEdge_sid-AC222929-D459-4D8F-BA05-D961DA14FC32">
+        <omgdi:waypoint x="756.84375" y="145.5"/>
+        <omgdi:waypoint x="756.84375" y="27.0"/>
+        <omgdi:waypoint x="232.34375" y="27.0"/>
+        <omgdi:waypoint x="232.34375" y="125.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-11AE199B-F50B-493C-86CF-FB3130890950" id="BPMNEdge_sid-11AE199B-F50B-493C-86CF-FB3130890950">
+        <omgdi:waypoint x="776.1278663310962" y="164.7841163310962"/>
+        <omgdi:waypoint x="855.0" y="161.85614849187937"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B0C34E28-1BC6-410D-9E16-1D201079A426" id="BPMNEdge_sid-B0C34E28-1BC6-410D-9E16-1D201079A426">
+        <omgdi:waypoint x="756.4004166666666" y="184.94333333333333"/>
+        <omgdi:waypoint x="754.2558021172638" y="279.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-801C6882-8F81-4ED2-93C0-7A01911559A3" id="BPMNEdge_sid-801C6882-8F81-4ED2-93C0-7A01911559A3">
+        <omgdi:waypoint x="282.34375" y="165.0"/>
+        <omgdi:waypoint x="536.34375" y="165.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640" id="BPMNEdge_sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640">
+        <omgdi:waypoint x="636.34375" y="165.1466275659824"/>
+        <omgdi:waypoint x="736.7849264705883" y="165.44117647058823"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>]]></column>
+			<where>workflowtype='RECEIPTUPLOAD' and workflowactive=1
+			</where>
+		</update>
+	</changeSet>
 
 </databaseChangeLog>
