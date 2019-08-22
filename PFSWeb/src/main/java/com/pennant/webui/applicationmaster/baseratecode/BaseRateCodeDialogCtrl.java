@@ -311,15 +311,21 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 				.equals(PennantConstants.RECORD_TYPE_NEW)) {
 			this.bRTypeIsActive.setChecked(true);
 			this.bRTypeIsActive.setDisabled(true);
+
 		}
-		//Repay Frequency
+		//Interest Review Frequency
 		String rpyRvwFrq = aBaseRateCode.getbRRepayRvwFrq();
 		String brInrtRvwFrqDayValReq = SysParamUtil
 				.getValueAsString(SMTParameterConstants.BR_INRST_RVW_FRQ_FRQDAYVAL_REQ);
 		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
 			this.bRRepayRvwFrq.setAlwFrqDays("01");
 		}
-		this.bRRepayRvwFrq.setValue(rpyRvwFrq);
+		if (aBaseRateCode.isNew()) {
+			this.bRRepayRvwFrq.setValue("Y0101");
+			processRvwFrq(this.bRRepayRvwFrq);
+		} else {
+			this.bRRepayRvwFrq.setValue(rpyRvwFrq);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -905,6 +911,34 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		notes.setVersion(getBaseRateCode().getVersion());
 		logger.debug("Leaving");
 		return notes;
+	}
+
+	public void onSelectCode$bRRepayRvwFrq(Event event) {
+		logger.debug("Entering" + event.toString());
+		processRvwFrq(this.bRRepayRvwFrq);
+		logger.debug("Leaving" + event.toString());
+	}
+
+	// Interest Review Frequency Box Data Setting Based on Client Requirement
+	private void processRvwFrq(FrequencyBox frequencyBox) {
+		String mnth = "";
+		String day = "";
+		String frqCode = frequencyBox.getFrqCodeValue();
+		if ("Y".contains(frqCode) || "2".contains(frqCode) || "3".contains(frqCode) || "H".contains(frqCode)
+				|| "Q".contains(frqCode) || "B".contains(frqCode)) {
+			mnth = "01";
+			day = "01";
+			mnth = frqCode.concat("01").concat("01");
+			this.bRRepayRvwFrq.setDisableFrqDay(true);
+		} else if ("M0000".contains(frqCode) || "F0000".contains(frqCode) || "X0000".contains(frqCode)
+				|| "W0000".contains(frqCode)) {
+			mnth = frqCode.concat("00").concat("01");
+			day = "01";
+		} else if ("D0000".contains(frqCode)) {
+			mnth = frqCode.concat("00").concat("01");
+			day = "00";
+		}
+		frequencyBox.updateFrequency(mnth, day);
 	}
 
 	// ******************************************************//
