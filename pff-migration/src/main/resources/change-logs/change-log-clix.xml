@@ -3436,4 +3436,13 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+		
+	<changeSet id="80" author="vijaya.a">
+		<sql>
+        	<![CDATA[
+           		update data_engine_config set uploadpath = '/opt/clix_8090/PFF/BASE/presentment/response' where name = 'PRESENTMENT_RESPONSE_PDC';
+				update data_engine_config set uploadpath = '/opt/clix_8090/PFF/BASE/presentment/request' where name = 'PRESENTMENT_REQUEST_PDC';
+        	]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
