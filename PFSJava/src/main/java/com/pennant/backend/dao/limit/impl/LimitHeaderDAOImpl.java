@@ -324,7 +324,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		try {
 			limitHeader = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			//logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
 		logger.debug("Leaving");

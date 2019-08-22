@@ -5916,6 +5916,88 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+
+	<changeSet id="70" author="meena.a">
+	<comment>extra fields added in Limitdetails</comment>
+	<addColumn tableName="Limitdetails">
+		<column name="BankingArrangement" type="char(1)" />
+		<column name="LimitCondition" type="char(1)" />
+		<column name="ExternalRef" type="varchar(50)" />
+		<column name="Tenor" type="int" />
+	</addColumn>
+</changeSet>
+
+	<changeSet id="71" author="meena.a">
+		<comment>extra fields added in Limitdetails_temp</comment>
+		<addColumn tableName="Limitdetails_temp">
+			<column name="BankingArrangement" type="char(1)" />
+			<column name="LimitCondition" type="char(1)" />
+			<column name="ExternalRef" type="varchar(50)" />
+			<column name="Tenor" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="72" author="meena.a">
+		 <createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
+			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+		                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq,T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+		                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+		                      T1.WorkflowId, T1.NonRvlUtilised, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.Tenor
+			   	FROM      LimitDetails_Temp  T1 INNER JOIN
+		                     SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+		                     LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+		                     LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+		                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+		</createView>
+	</changeSet>
+
+	<changeSet id="73" author="meena.a">
+		 <createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
+			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode, T3.GroupName,T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+				                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+				                      T1.WorkflowId, T1.NonRvlUtilised, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.Tenor
+						FROM      LimitDetails  T1 INNER JOIN
+				                     SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				                     LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+				                     LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+				                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+		</createView>
+	</changeSet>
+
+	
+	<changeSet id="74" author="meena.a">
+		 <createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
+			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving ,T1.ExpiryDate, T1.LimitSanctioned,  
+				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+				                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+				                      T1.WorkflowId, T1.NonRvlUtilised, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.Tenor
+						FROM       LimitDetails_Temp  T1 INNER JOIN
+				                      SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				                      LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+				                      LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+				                      Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+				                      
+						UNION ALL
+						
+						SELECT   	T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
+				                    T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
+				                    T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
+				                    T1.WorkflowId, T1.NonRvlUtilised, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.Tenor
+						FROM        LimitDetails  T1 INNER JOIN
+				                       SecUsers  T2 ON T1.LastMntBy = T2.UsrID INNER JOIN
+				                       LimitStructureDetails  T5 ON T1.LimitStructureDetailsID = T5.LimitStructureDetailsID LEFT OUTER JOIN
+				                       LimitGroup  T3 ON T5.GroupCode = T3.GroupCode LEFT OUTER JOIN
+				                      Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
+						
+						WHERE     NOT EXISTS
+						                          (SELECT     1
+						                            FROM          LimitDetails_Temp
+						                            WHERE      DetailId = T1.DetailId)
+		</createView>
+	</changeSet>
+	
+
 	<changeSet id="145" author="satyanarayana.g">
 		<addColumn tableName="RMTBaseRateCodes">
 			<column name="bRRepayRvwFrq" type="VARCHAR2(5)" />
@@ -6053,5 +6135,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-
+    <changeSet id="152" author="meena.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='LIMIT_ADDTNAL_FIELDS_REQ';
+			   	INSERT INTO SMTPARAMETERS VALUES ('LIMIT_ADDTNAL_FIELDS_REQ','Limit additional fields required or not','String',1,'N',1,0,null,null,'Allow Base Rate Interest Review FrqCode Value Req',3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

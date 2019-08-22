@@ -134,7 +134,7 @@ public class LimitStructureDAOImpl extends BasicDao<LimitStructure> implements L
 		try {
 			limitStructure = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			//logger.warn("Exception: ", e);
 			limitStructure = null;
 		}
 		logger.debug("Leaving");

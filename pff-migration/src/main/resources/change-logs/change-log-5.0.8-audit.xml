@@ -40,7 +40,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="satyanarayana.g">
+	 <changeSet id="1" author="satyanarayana.g">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
@@ -319,6 +319,16 @@
 				UPDATE AdtRMTFinanceTypes Set SanBsdSchdle = 0;
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="20" author="meena.a">
+		<comment>extra fields added in AdtLimitDetails</comment>
+		<addColumn tableName="AdtLimitDetails">
+			<column name="BankingArrangement" type="char(1)" />
+			<column name="LimitCondition" type="char(1)" />
+			<column name="ExternalRef" type="varchar(50)" />
+			<column name="Tenor" type="int" />
+		</addColumn>
 	</changeSet>
 	
 	<changeSet id="20.0" author="satyanarayana.g">

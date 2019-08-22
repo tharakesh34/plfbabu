@@ -199,9 +199,14 @@
 
 								<listheader id="listheader_AvailableLimit" align="right" label="${c:l('listheader_AvailableLimit.label')}"
 									hflex="min" />
-
-
-								<!-- <listheader visible="false" id="listheader_LimitColateralBtn" width="80px" /> -->
+								<listheader id="listheader_BankingArrangement" label="${c:l('listheader_BankingArrangement.label')}"
+									hflex="min" visible="false"/>
+								<listheader id="listheader_LimitCondition" label="${c:l('listheader_LimitCondition.label')}"
+									hflex="min" visible="false"/>
+								<listheader id="listheader_ExternalReference" align="right" label="${c:l('listheader_ExternalReference.label')}"
+									hflex="min" visible="false"/>
+								<listheader id="listheader_Tenor" align="right" label="${c:l('listheader_Tenor.label')}"
+									hflex="min" visible="false"/>
 							</listhead>
 						</listbox>
 						<paging id="pagingLimitDetailDialog" height="28px" visible="false" />

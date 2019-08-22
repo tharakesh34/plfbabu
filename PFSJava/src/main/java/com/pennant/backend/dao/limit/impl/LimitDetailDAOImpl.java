@@ -101,7 +101,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
-					" ,LimitLineDesc,GroupName ,GroupCode, LimitLine,ItemSeq ,ItemPriority,Editable ,DisplayStyle,ItemLevel");
+					" ,LimitLineDesc,GroupName ,GroupCode, LimitLine,ItemSeq ,ItemPriority,Editable ,DisplayStyle,ItemLevel,bankingArrangement,limitCondition,externalRef,tenor");
 		}
 		selectSql.append(" From LimitDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -134,7 +134,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		limitDetail.setLimitHeaderId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				" Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit, UtilisedLimit, NonRvlUtilised");
+				" Select DetailId, LimitHeaderId, LimitStructureDetailsID, LimitSanctioned, ReservedLimit, UtilisedLimit, NonRvlUtilised,bankingArrangement,limitCondition,externalRef,tenor");
 		selectSql.append(" From LimitDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where LimitHeaderId = :LimitHeaderId");
@@ -211,11 +211,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		insertSql.append(
 				" (DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,  ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
 		insertSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,bankingArrangement,limitCondition,externalRef,tenor)");
 		insertSql.append(
 				" Values(:DetailId, :LimitHeaderId, :LimitStructureDetailsID, :ExpiryDate,:Revolving, :LimitSanctioned,  :ReservedLimit, :UtilisedLimit, :LimitCheck, :LimitChkMethod ");
 		insertSql.append(
-				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:bankingArrangement,:limitCondition,:externalRef,:tenor)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -252,7 +252,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		updateSql.append(
 				" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId,bankingArrangement=:bankingArrangement,limitCondition=:limitCondition,externalRef=:externalRef,tenor=:tenor");
 
 		// For Non Revolving Limits LimitSanctioned need to check update or not ?
 		updateSql.append(", LimitSanctioned = :LimitSanctioned");
@@ -487,7 +487,7 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(
-					", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority, Editable, DisplayStyle, ItemLevel");
+					", LimitLineDesc, GroupName, GroupCode, LimitLine, ItemSeq, ItemPriority, Editable, DisplayStyle, ItemLevel,bankingArrangement,limitCondition,externalRef,tenor");
 		}
 		sql.append(" From LimitDetails");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -599,11 +599,11 @@ public class LimitDetailDAOImpl extends SequenceDao<LimitDetails> implements Lim
 		insertSql.append(
 				" (DetailId, LimitHeaderId, LimitStructureDetailsID, ExpiryDate,Revolving, LimitSanctioned,  ReservedLimit, UtilisedLimit, LimitCheck,LimitChkMethod");
 		insertSql.append(
-				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+				", Version , CreatedBy,CreatedOn,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,bankingArrangement,limitCondition,externalRef,tenor)");
 		insertSql.append(
 				" Values(:DetailId, :LimitHeaderId, :LimitStructureDetailsID, :ExpiryDate,:Revolving, :LimitSanctioned,  :ReservedLimit, :UtilisedLimit, :LimitCheck, :LimitChkMethod ");
 		insertSql.append(
-				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+				", :Version ,:CreatedBy, :CreatedOn, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:bankingArrangement,:limitCondition,:externalRef,:tenor)");
 
 		logger.debug("updateSql: " + insertSql.toString());
 

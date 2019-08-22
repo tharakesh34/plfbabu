@@ -128,6 +128,27 @@
 				<pfs.liquibase.password>Pennant_123</pfs.liquibase.password>
 			</properties>
 		</profile>
+		 <profile>
+			<id>PLF_KOTAK_QC</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@pennantsrv21-02:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLF_KOTAK_QC</pfs.liquibase.username>
+				<pfs.liquibase.password>Kotak_plf_qc_321</pfs.liquibase.password>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>PLFAUDIT_KOTAK_QC</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>oracle.jdbc.driver.OracleDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:oracle:thin:@pennantsrv21-02:1521:orcl</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFAUDIT_KOTAK_QC</pfs.liquibase.username>
+				<pfs.liquibase.password>Kotak_plf_qc_321</pfs.liquibase.password>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>

@@ -181,7 +181,12 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private BigDecimal limitActualexposure = BigDecimal.ZERO;
 	@XmlElement(name = "reservedexposure")
 	private BigDecimal limitReservedexposure = BigDecimal.ZERO;
+
 	private boolean validateMaturityDate;
+	private String bankingArrangement;
+	private String limitCondition;
+	private String externalRef;
+	private int tenor;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -769,5 +774,37 @@ public class LimitDetails implements java.io.Serializable, Entity {
 
 	public void setValidateMaturityDate(boolean validateMaturityDate) {
 		this.validateMaturityDate = validateMaturityDate;
+	}
+
+	public String getBankingArrangement() {
+		return bankingArrangement;
+	}
+
+	public void setBankingArrangement(String bankingArrangement) {
+		this.bankingArrangement = bankingArrangement;
+	}
+
+	public String getLimitCondition() {
+		return limitCondition;
+	}
+
+	public void setLimitCondition(String limitCondition) {
+		this.limitCondition = limitCondition;
+	}
+
+	public String getExternalRef() {
+		return externalRef;
+	}
+
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
+	}
+
+	public int getTenor() {
+		return tenor;
+	}
+
+	public void setTenor(int tenor) {
+		this.tenor = tenor;
 	}
 }

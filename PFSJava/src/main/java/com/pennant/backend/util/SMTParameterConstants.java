@@ -243,5 +243,6 @@ public class SMTParameterConstants {
 	public static final String RECEIPTUPLOAD_DEDUPCHECK = "RECEIPTUPLOAD_DEDUPCHECK";
 
 	public static final String CUST_CARD_SALES_REQ = "CUST_CARD_SALES_REQ";
+	public static final String LIMIT_ADDTNAL_FIELDS_REQ = "LIMIT_ADDTNAL_FIELDS_REQ";
 
 }
