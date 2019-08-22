@@ -72,9 +72,9 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 		}
 
 		//login user validation
-		String userLogin = queryDetail.getUsrLogin();
-		if (StringUtils.isNotBlank(userLogin)) {
-			SecurityUser securityUser = securityUserService.getSecurityUserByLogin(userLogin.toUpperCase());
+		if (StringUtils.isNotBlank(qryDetail.getUsrLogin())) {
+			SecurityUser securityUser = securityUserService
+					.getSecurityUserByLogin(qryDetail.getUsrLogin().toUpperCase());
 
 			if (securityUser == null) {
 				returnStatus = new WSReturnStatus();
@@ -83,7 +83,7 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 				paramValue[1] = queryDetail.getUsrLogin();
 				return APIErrorHandlerService.getFailedStatus("90224", paramValue);
 			}
-			//set userId
+			// set userId
 			queryDetail.setRaisedBy(securityUser.getUsrID());
 		}
 		//set data to queryDetail for update 
@@ -93,7 +93,7 @@ public class QueryModuleWebServiceImpl implements QueryModuleRestService, QueryM
 		queryDetail.setVersion(qryDetail.getVersion());
 		queryDetail.setModule(qryDetail.getModule());
 		queryDetail.setReference(qryDetail.getReference());
-
+		queryDetail.setQryNotes(qryDetail.getQryNotes());
 		logger.debug(Literal.LEAVING);
 		return queryModuleController.doQueryUpdate(queryDetail);
 

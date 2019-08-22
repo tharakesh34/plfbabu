@@ -2960,7 +2960,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 		financeMain.setVersion(1);
 		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		financeMain.setRecordStatus("Reject");
+		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
 		financeDetail.setModuleDefiner(FinanceConstants.FINSER_EVENT_ORG);
 
 		// customer details
@@ -2989,7 +2989,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		} else {
 			FinanceMain dbFinanceMain = financeDetailService
 					.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
-			if (null != dbFinanceMain) {
+			if (null != dbFinanceMain && !StringUtils.equals(dbFinanceMain.getRecordStatus(),PennantConstants.RCD_STATUS_REJECTED)) {
 				financeMain.setFinReference(dbFinanceMain.getFinReference());
 				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
 				financeMain.setCustID(dbFinanceMain.getCustID());

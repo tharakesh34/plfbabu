@@ -6128,13 +6128,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			financeMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
 			//TODO for API Fix me
 			if(apiCall) {
+				if(financeMain == null) {
+					financeMain=financeDetail.getFinScheduleData().getFinanceMain();
+				}
 				financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
-				financeMain.setRecordStatus("Reject");
+				financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
 				financeMain.setNextTaskId("");
+				financeMain.setNextRoleCode("");
 			}
-			if(financeMain == null) {
-				financeMain=financeDetail.getFinScheduleData().getFinanceMain();
-			}
+			
 			FinScheduleData finScheduleData = new FinScheduleData();
 			finScheduleData.setFinanceMain(financeMain);
 			finScheduleData.setFinReference(financeMain.getFinReference());
@@ -6152,8 +6154,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		financeMain.setFinIsActive(false);
 		//TODO for API Fix me
-		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)
-				&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API, financeMain.getFinSourceID())) {
+		FinanceMain financeMainAvl = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
+		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl!=null) {
 			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
 		}
 
