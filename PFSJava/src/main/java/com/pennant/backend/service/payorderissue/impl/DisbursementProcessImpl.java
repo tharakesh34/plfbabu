@@ -60,7 +60,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		try {
 			if (StringUtils.equals(PAID_STATUS, disbursement.getStatus())) {
 				disbursement.setStatus(DisbursementConstants.STATUS_PAID);
-				//Postings entry
+				// Postings entry
 				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
 					financeMain.setLovDescEntityCode(
 							financeMainDAO.getLovDescEntityCode(disbursement.getFinReference(), "_View"));
@@ -93,9 +93,12 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				}
 
 				/*
-				 * Bug On 19-08-2017 with the mail subject Issue in Posting after Disbursement cancellation AEEvent
-				 * aeEvent = new AEEvent(); aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
-				 * aeEvent.setReturnDataSet(list); aeEvent = postingsPreparationUtil.processPostings(aeEvent);
+				 * Bug On 19-08-2017 with the mail subject Issue in Posting
+				 * after Disbursement cancellation AEEvent aeEvent = new
+				 * AEEvent();
+				 * aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
+				 * aeEvent.setReturnDataSet(list); aeEvent =
+				 * postingsPreparationUtil.processPostings(aeEvent);
 				 */
 
 				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
@@ -108,7 +111,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				addToCustomerBeneficiary(disbursement, financeMain.getCustID());
 			}
 
-			//update paid or rejected
+			// update paid or rejected
 			finAdvancePaymentsDAO.updateDisbursmentStatus(disbursement);
 
 		} catch (Exception e) {
@@ -132,5 +135,40 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 			beneficiary.setPhoneNumber(finAdvPay.getPhoneNumber());
 			beneficiaryDAO.save(beneficiary, "");
 		}
+	}
+
+	@Override
+	public void updateStatus(Object... params) {
+		logger.debug(Literal.ENTERING);
+		
+		String channel = (String) params[0];
+		long paymentId = (Long) params[1];
+		String status = (String) params[2];
+		String rejectReason = (String) params[3];
+		String tranReference = (String) params[5];
+		
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setPaymentId(paymentId);
+		finAdvancePayments = this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
+
+		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
+			channel = DisbursementConstants.CHANNEL_DISBURSEMENT;
+		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
+			channel = DisbursementConstants.CHANNEL_PAYMENT;
+		} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
+			channel = DisbursementConstants.CHANNEL_INSURANCE;
+		}
+
+		if (DisbursementConstants.STATUS_PAID.equals(status)) {
+			finAdvancePayments.setStatus("E");
+		} else {
+			finAdvancePayments.setStatus("R");
+		}
+		finAdvancePayments.setRejectReason(rejectReason);
+		finAdvancePayments.setTransactionRef(tranReference);
+
+		process(finAdvancePayments);
+
+		logger.debug(Literal.LEAVING);
 	}
 }

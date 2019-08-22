@@ -1040,6 +1040,16 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce, toDate, "");
 	}
 
+	@Override
+	public void updateStatus(FinAdvancePayments finAdvancePayment, String type) {
+		 finAdvancePaymentsDAO.updateStatus(finAdvancePayment, type);
+	}
+
+	@Override
+	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, type);
+	}
+	
 	public MandateDAO getMandateDAO() {
 		return mandateDAO;
 	}

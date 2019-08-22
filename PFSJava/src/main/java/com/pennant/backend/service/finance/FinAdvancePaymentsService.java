@@ -94,4 +94,8 @@ public interface FinAdvancePaymentsService {
 	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate);
 
 	List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> finAdvancePayments);
+
+	void updateStatus(FinAdvancePayments finAdvancePayment, String type);
+	
+	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
 }
