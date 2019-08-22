@@ -3325,7 +3325,7 @@ UNION ALL
         ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="75" author="vijaya.a">
 		<sql>
         	<![CDATA[
@@ -3354,7 +3354,7 @@ UNION ALL
         	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="76" author="vijaya.a">
 		<sql>
         	<![CDATA[
@@ -3410,7 +3410,7 @@ UNION ALL
         	]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="78" author="vijaya.a">
 		<sql>
         	<![CDATA[
@@ -3428,7 +3428,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="80" author="Manoj.p">
 		<sql>
         <![CDATA[
@@ -3436,7 +3436,7 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="81" author="dheerendra">
 		<sql>
 		<![CDATA[	
@@ -3444,14 +3444,12 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-	
-		
-	<changeSet id="82" author="vijaya.a">
+
+	<changeSet id="82" author="dheerendra">
 		<sql>
-        	<![CDATA[
-           		update data_engine_config set uploadpath = '/opt/clix_8090/PFF/BASE/presentment/response' where name = 'PRESENTMENT_RESPONSE_PDC';
-				update data_engine_config set uploadpath = '/opt/clix_8090/PFF/BASE/presentment/request' where name = 'PRESENTMENT_REQUEST_PDC';
-        	]]>
+		<![CDATA[	
+		update plf.master_def set key_type = 'CC' where master_type = 'OGL' and key_type = 'CLIX'; 
+		]]>
 		</sql>
 	</changeSet>
 </databaseChangeLog>
