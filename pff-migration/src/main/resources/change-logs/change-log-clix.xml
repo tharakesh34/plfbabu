@@ -3429,10 +3429,19 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="79" author="Manoj.p">
+	<changeSet id="80" author="Manoj.p">
 		<sql>
         <![CDATA[
-				update ERRORDETAILS set Message = 'Received Date shall be greater than or equal to Value date.' where code='RU0008';        ]]>
+				update ERRORDETAILS set Message = 'Received Date shall be greater than or equal to Value date.' where code='RU0008';        
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="81" author="dheerendra">
+		<sql>
+		<![CDATA[	
+		update plf.master_def set key_code = 'SINPL08W6P' where master_type = 'OGL' and key_type = 'CLIX'; 
+		]]>
 		</sql>
 	</changeSet>
 	
