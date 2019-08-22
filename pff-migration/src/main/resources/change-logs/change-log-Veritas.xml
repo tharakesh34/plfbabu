@@ -6876,4 +6876,14 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="112" author="aditya.a">
+		<sql>
+		<![CDATA[
+            delete from RBFieldDetails where rbfldname = 'recordStatus'
+            Insert into RBFieldDetails Values ('AGRRULE','AGRRULE','recordStatus', 'Record Status like Saved, Submitted, Approved, Rejected etc..','nvarchar',18, 0,1, '','static,global', '');
+ 		]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
