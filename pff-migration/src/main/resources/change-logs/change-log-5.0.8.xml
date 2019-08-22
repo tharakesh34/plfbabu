@@ -28,7 +28,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="01" author="satyanarayana.g">
+	<changeSet id="01" author="satyanarayana.g">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
@@ -4515,7 +4515,7 @@ UNION ALL
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="137" author="satyanarayana.g">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="SanBsdSchdle" type="boolean" />
@@ -4549,7 +4549,7 @@ UNION ALL
 		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes" defaultValue="0" />
 		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="142_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4557,7 +4557,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="142" author="satyanarayana.g">
 		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
 		    SELECT T1.FINTYPE,
@@ -4801,8 +4801,8 @@ UNION ALL
 					LEFT JOIN RULES T68 ON T1.RPYPRICINGMETHOD = T68.RULEID
 					LEFT JOIN PROFITCENTERS T69 ON T69.PROFITCENTERID = T1.PROFITCENTERID
 	</createView>
-		</changeSet>
-		
+	</changeSet>
+
 	<changeSet id="142_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4810,7 +4810,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="143_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4818,7 +4818,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="143" author="satyanarayana.g">
 		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
 		    SELECT T1.FINTYPE,
@@ -5020,8 +5020,8 @@ UNION ALL
 					LEFT JOIN RULES T7 ON T1.RPYPRICINGMETHOD = T7.RULEID
 					LEFT JOIN ENTITY T8 ON T3.ENTITYCODE = T8.ENTITYCODE
 	 </createView>
-		  </changeSet>
-		 
+	</changeSet>
+
 	<changeSet id="143_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5029,7 +5029,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="144_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5037,7 +5037,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="144" author="satyanarayana.g">
 		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
 		    SELECT T1.FINTYPE,
@@ -5524,8 +5524,8 @@ UNION ALL
 					WHERE NOT (EXISTS
 					(SELECT 1 AS EXPR1 FROM RMTFINANCETYPES_TEMP WHERE RMTFINANCETYPES_TEMP.FINTYPE = T1.FINTYPE ))
 	 </createView>
-		 </changeSet>
-		 
+	</changeSet>
+
 	<changeSet id="144_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5535,45 +5535,45 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="140" author="Durgaprasad G">
-	<comment> Select SeqNo from Seq_Gst_Invoice_Txn, result of this query should be start value of below sequence.</comment>
-		<dropTable tableName="Seq_Gst_Invoice_Txn"/>
+		<comment> Select SeqNo from Seq_Gst_Invoice_Txn, result of this query should be start value of below sequence.</comment>
+		<dropTable tableName="Seq_Gst_Invoice_Txn" />
 	</changeSet>
-	
+
 	<changeSet id="141" author="Durgaprasad G">
-	<comment> startValue is result of above query.</comment>
-		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1"/>
+		<comment> startValue is result of above query.</comment>
+		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1" />
 	</changeSet>
-	
-	  <changeSet id="142" author="Durgaprasad G">
-	<comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
-		<dropTable tableName="Seq_Gst_Invoice_Txn_Details"/>
-	</changeSet>
-	
+
+	 <changeSet id="142" author="Durgaprasad G">
+	  <comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
+		 <dropTable tableName="Seq_Gst_Invoice_Txn_Details"/> 
+	 </changeSet> 
+		 
 	<changeSet id="143" author="Durgaprasad G">
 		<comment> startValue is result of above query.</comment>
-		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details" startValue="1000" incrementBy="1"/>
+		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details" startValue="1000" incrementBy="1" />
 	</changeSet>
-	
+
 	<changeSet id="56" author="vijaya.a" dbms="postgresql, oracle">
-	 <comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createSequence sequenceName="SEQCUSTCARDSALES" />
 	</changeSet>
 
 	<changeSet id="57" author="vijaya.a" dbms="mssql">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="SEQCUSTCARDSALES">
 			<column name="SeqNo" type="bigint" autoIncrement="true" />
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="58" author="vijaya.a">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALES">
 			<column name="Id" type="bigInt">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CUSTCARDSALES_ID"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CUSTCARDSALES_ID" />
 			</column>
-			<column name = "MerchantId" type="varchar(20)">
+			<column name="MerchantId" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="CustId" type="bigint">
@@ -5593,14 +5593,14 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="59" author="vijaya.a">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALES_Temp">
 			<column name="Id" type="bigInt">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALES_TEMP_ID"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALES_TEMP_ID" />
 			</column>
-			<column name = "MerchantId" type="varchar(20)">
+			<column name="MerchantId" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
 			<column name="CustId" type="bigint">
@@ -5620,12 +5620,12 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="60" author="vijaya.a">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALESDETAILS">
 			<column name="Id" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_ID"/>
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_ID" />
 			</column>
 			<column name="CardSalesId" type="bigInt">
 				<constraints nullable="false" />
@@ -5663,12 +5663,12 @@ UNION ALL
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="61" author="vijaya.a">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALESDETAILS_TEMP">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_TEMP_ID"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_TEMP_ID" />
 			</column>
 			<column name="CardSalesId" type="bigInt">
 				<constraints nullable="false" />
@@ -5706,8 +5706,8 @@ UNION ALL
 			<column name="RecordType" type="varchar(50)" />
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="62" author="vijaya.a">
 		<comment>Clix Card Sales changes</comment>
 		<createView viewName="CUSTCARDSALES_View" replaceIfExists="true">
@@ -5743,7 +5743,7 @@ UNION ALL
    			WHERE NOT (EXISTS (SELECT 1 FROM CUSTCARDSALES_temp WHERE CUSTCARDSALES_temp.Id = t1.Id))	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="63" author="vijaya.a">
 		<comment>Clix Card Sales changes</comment>
 		<createView viewName="CUSTCARDSALES_AView" replaceIfExists="true">
@@ -5763,7 +5763,7 @@ UNION ALL
    		    FROM CUSTCARDSALES t1  		
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="64" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
 		<createView viewName="CUSTCARDSALESDETAILS_View" replaceIfExists="true">
@@ -5843,21 +5843,21 @@ UNION ALL
    		    FROM CUSTCARDSALESDETAILS t1
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="66" author="vijaya.a" dbms="postgresql, oracle">
-	 <comment>Clix Card Sales changes</comment>
+
+	<changeSet id="66" author="vijaya.a" dbms="postgresql, oracle">
+		<comment>Clix Card Sales changes</comment>
 		<createSequence sequenceName="SEQCUSTCARDSALESDETAILS" />
 	</changeSet>
 
 	<changeSet id="67" author="vijaya.a" dbms="mssql">
-	<comment>Clix Card Sales changes</comment>
+		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="SEQCUSTCARDSALESDETAILS">
 			<column name="SeqNo" type="bigint" autoIncrement="true" />
 			<column name="Value" type="int"></column>
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="68" author="vijaya.a" >
+
+	<changeSet id="68" author="vijaya.a">
 		<sql>
 			<![CDATA[
 				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -5915,19 +5915,19 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="145" author="satyanarayana.g">
 		<addColumn tableName="RMTBaseRateCodes">
-			<column name="bRRepayRvwFrq" type="VARCHAR2(5)"/>
+			<column name="bRRepayRvwFrq" type="VARCHAR2(5)" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="146" author="satyanarayana.g">
 		<addColumn tableName="RMTBaseRateCodes_Temp">
-			<column name="bRRepayRvwFrq" type="VARCHAR2(5)"/>
+			<column name="bRRepayRvwFrq" type="VARCHAR2(5)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="147_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5935,7 +5935,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="147" author="satyanarayana.g">
 		<createView viewName="RMTBASERATECODES_AVIEW" replaceIfExists="true">
 		   SELECT T1.BRTYPE,
@@ -5954,8 +5954,8 @@ UNION ALL
 				  T1.BRREPAYRVWFRQ
 				FROM RMTBASERATECODES T1
 	 </createView>
-		  </changeSet>
-		  
+	</changeSet>
+
 	<changeSet id="147_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5963,7 +5963,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="148_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5971,10 +5971,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="148" author="satyanarayana.g">
 		<createView viewName="RMTBASERATECODES_VIEW" replaceIfExists="true">
-		   SELECT T1.BRTYPE,
+		   SELECT   T1.BRTYPE,
 					T1.BRTYPEDESC,
 					T1.BRTYPEISACTIVE,
 					T1.VERSION,
@@ -5990,26 +5990,26 @@ UNION ALL
 					T1.BRREPAYRVWFRQ
 					FROM RMTBASERATECODES_TEMP T1
 					UNION ALL
-					SELECT T1.BRTYPE,
-					T1.BRTYPEDESC,
-					T1.BRTYPEISACTIVE,
-					T1.VERSION,
-					T1.LASTMNTBY,
-					T1.LASTMNTON,
-					T1.RECORDSTATUS,
-					T1.ROLECODE,
-					T1.NEXTROLECODE,
-					T1.TASKID,
-					T1.NEXTTASKID,
-					T1.RECORDTYPE,
-					T1.WORKFLOWID,
-					T1.BRREPAYRVWFRQ
-					FROM RMTBASERATECODES T1
-					WHERE NOT (EXISTS ( SELECT 1 FROM RMTBASERATECODES_TEMP
-					WHERE RMTBASERATECODES_TEMP.BRTYPE = RMTBASERATECODES.BRTYPE))
+			 SELECT T2.BRTYPE,
+					T2.BRTYPEDESC,
+					T2.BRTYPEISACTIVE,
+					T2.VERSION,
+					T2.LASTMNTBY,
+					T2.LASTMNTON,
+					T2.RECORDSTATUS,
+					T2.ROLECODE,
+					T2.NEXTROLECODE,
+					T2.TASKID,
+					T2.NEXTTASKID,
+					T2.RECORDTYPE,
+					T2.WORKFLOWID,
+					T2.BRREPAYRVWFRQ
+					FROM RMTBASERATECODES T2
+					WHERE NOT (EXISTS ( SELECT 1 FROM RMTBASERATECODES_TEMP t1
+					WHERE T1.BRTYPE = T2.BRTYPE))
 	 </createView>
-		  </changeSet>
-		  
+	</changeSet>
+
 	<changeSet id="148_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6017,7 +6017,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="149" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6026,7 +6026,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="150" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6035,7 +6035,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="151" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6053,5 +6053,5 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
