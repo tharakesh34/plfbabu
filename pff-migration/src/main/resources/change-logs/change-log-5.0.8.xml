@@ -6191,4 +6191,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="156" author="DurgaPrasad G">
+		<modifyDataType tableName="RMTLOVFIELDDETAIL" columnName="VALUEDESC" newDataType="varchar(200)"/>
+	</changeSet>
+	
+	<changeSet id="157" author="DurgaPrasad G">
+		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP" columnName="VALUEDESC" newDataType="varchar(200)"/>
+	</changeSet>
+	
 </databaseChangeLog>
