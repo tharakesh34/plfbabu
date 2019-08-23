@@ -88,7 +88,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 			return;
 		}
-		
+
 		//Still before the grace days no need to calculate OD penalty
 		if (fod.getFinCurODDays() <= fod.getODGraceDays()) {
 			//#PSD 137379
@@ -141,7 +141,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			if (rpdList == null) {
 				rpdList = getFinanceRepaymentsDAO().getByFinRefAndSchdDate(finReference, odDate);
 			}
-			
+
 			rpdList = sortRpdListByValueDate(rpdList);
 			prepareDueDateData(fod, valueDate, financeMain.getProfitDaysBasis(), rpdList, financeMain, fsdList);
 			penalty = fod.getTotPenaltyAmt();
@@ -210,7 +210,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 		if (rpdList == null) {
 			rpdList = new ArrayList<FinanceRepayments>();
 		}
-		
+
 		boolean isAddTodayRcd = true;
 
 		//Load Overdue Charge Recovery from Repayments Movements
@@ -253,11 +253,11 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcr.setPenaltyPaid(rpd.getPenaltyPaid());
 			odcr.setWaivedAmt(rpd.getPenaltyWaived());
 			odcrList.add(odcr);
-			
+
 			if (odcr.getMovementDate().compareTo(valueDate) == 0) {
 				isAddTodayRcd = false;
 			}
-			
+
 		}
 
 		fod.setTotPenaltyAmt(BigDecimal.ZERO);
@@ -272,7 +272,6 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcrList.add(odcr);
 		}
 
-		
 		//If LPP capitalization required then load capitalize dates
 		if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_PIPD)) {
 			loadCpzDate(fsdList, odcrList, valueDate);
@@ -287,10 +286,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 			odcrNext = odcrList.get(iOdcr + 1);
 
 			BigDecimal prvCpzBal = BigDecimal.ZERO;
-			if (iOdcr>0) {
-				prvCpzBal = odcrList.get(iOdcr-1).getLpCurCpzBal();
+			if (iOdcr > 0) {
+				prvCpzBal = odcrList.get(iOdcr - 1).getLpCurCpzBal();
 			}
-			
+
 			//Calculate the Penalty
 			BigDecimal balanceForCal = BigDecimal.ZERO;
 			if (StringUtils.equals(fod.getODChargeCalOn(), FinanceConstants.ODCALON_SPFT)) {
@@ -353,33 +352,34 @@ public class LatePayPenaltyService extends ServiceHelper {
 				BigDecimal penaltyRate = fod.getODChargeAmtOrPerc().divide(new BigDecimal(100), RoundingMode.HALF_DOWN);
 				penalty = CalculationUtil.calInterest(dateCur, dateNext, balanceForCal, idb, penaltyRate);
 			}
-		
+
 			penalty = CalculationUtil.roundAmount(penalty, financeMain.getCalRoundingMode(),
 					financeMain.getRoundingTarget());
-			
+
 			odcrCur.setPenalty(penalty);
-			odcrCur.setPenaltyBal(odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid()).subtract(odcrCur.getWaivedAmt()));
-			
+			odcrCur.setPenaltyBal(
+					odcrCur.getPenalty().subtract(odcrCur.getPenaltyPaid()).subtract(odcrCur.getWaivedAmt()));
+
 			if (odcrNext.isLpCpz()) {
 				odcrCur.setLpCpzAmount(odcrCur.getPenaltyBal());
 			}
-			
+
 			odcrCur.setLpCurCpzBal(prvCpzBal.add(odcrCur.getLpCpzAmount()).subtract(odcrCur.getPenaltyPaid()));
-			if (odcrCur.getLpCurCpzBal().compareTo(BigDecimal.ZERO)<0) {
+			if (odcrCur.getLpCurCpzBal().compareTo(BigDecimal.ZERO) < 0) {
 				odcrCur.setLpCurCpzBal(odcrCur.getLpCpzAmount());
 			}
-			
+
 			fod.setTotPenaltyAmt(fod.getTotPenaltyAmt().add(penalty));
 			fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(odcrCur.getPenaltyPaid()));
 			fod.setTotWaived(fod.getTotWaived().add(odcrCur.getWaivedAmt()));
 		}
-		
+
 		//Add Today Paid and Waived
 		fod.setTotPenaltyPaid(fod.getTotPenaltyPaid().add(odcrNext.getPenaltyPaid()));
 		fod.setTotWaived(fod.getTotWaived().add(odcrNext.getWaivedAmt()));
 		fod.setTotPenaltyBal(fod.getTotPenaltyAmt().subtract(fod.getTotPenaltyPaid()).subtract(fod.getTotWaived()));
 	}
-	
+
 	private void loadCpzDate(List<FinanceScheduleDetail> fsdList, List<OverdueChargeRecovery> odcrList,
 			Date valueDate) {
 		OverdueChargeRecovery odcrStart = odcrList.get(0);
@@ -470,7 +470,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		return rpdList;
 	}
-	
+
 	public List<OverdueChargeRecovery> sortOdcrListByValueDate(List<OverdueChargeRecovery> odcrList) {
 
 		if (odcrList != null && odcrList.size() > 0) {
