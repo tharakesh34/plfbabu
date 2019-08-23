@@ -5544,10 +5544,10 @@ UNION ALL
 		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1" />
 	</changeSet>
 
-	 <changeSet id="142" author="Durgaprasad G">
+	<!--  <changeSet id="142" author="Durgaprasad G">
 	  <comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
 		 <dropTable tableName="Seq_Gst_Invoice_Txn_Details"/> 
-	 </changeSet> 
+	 </changeSet>  -->
 		 
 	<changeSet id="143" author="Durgaprasad G">
 		<comment> startValue is result of above query.</comment>
@@ -5921,23 +5921,61 @@ UNION ALL
 	<comment>extra fields added in Limitdetails</comment>
 	<addColumn tableName="Limitdetails">
 		<column name="BankingArrangement" type="char(1)" />
-		<column name="LimitCondition" type="char(1)" />
-		<column name="ExternalRef" type="varchar(50)" />
-		<column name="Tenor" type="int" />
 	</addColumn>
 </changeSet>
 
 	<changeSet id="71" author="meena.a">
+	<comment>extra fields added in Limitdetails</comment>
+	<addColumn tableName="Limitdetails">
+		<column name="LimitCondition" type="char(1)" />
+	</addColumn>
+</changeSet>
+
+	<changeSet id="72" author="meena.a">
+	<comment>extra fields added in Limitdetails</comment>
+	<addColumn tableName="Limitdetails">
+		<column name="ExternalRef" type="varchar(50)" />
+	</addColumn>
+</changeSet>
+
+	<changeSet id="73" author="meena.a">
+	<comment>extra fields added in Limitdetails</comment>
+	<addColumn tableName="Limitdetails">
+		<column name="Tenor" type="int" />
+	</addColumn>
+</changeSet>
+
+
+
+	<changeSet id="74" author="meena.a">
 		<comment>extra fields added in Limitdetails_temp</comment>
 		<addColumn tableName="Limitdetails_temp">
 			<column name="BankingArrangement" type="char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="75" author="meena.a">
+		<comment>extra fields added in Limitdetails_temp</comment>
+		<addColumn tableName="Limitdetails_temp">
 			<column name="LimitCondition" type="char(1)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="76" author="meena.a">
+		<comment>extra fields added in Limitdetails_temp</comment>
+		<addColumn tableName="Limitdetails_temp">
 			<column name="ExternalRef" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="77" author="meena.a">
+		<comment>extra fields added in Limitdetails_temp</comment>
+		<addColumn tableName="Limitdetails_temp">
 			<column name="Tenor" type="int" />
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="72" author="meena.a">
+	<changeSet id="78" author="meena.a">
 		 <createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
 		                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq,T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
@@ -5950,8 +5988,25 @@ UNION ALL
 		                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
 		</createView>
 	</changeSet>
+	
+	<changeSet id="79_deps" author="meena.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					truncate table deps_saved_ddl;
+			]]>
+		</sql>
+	</changeSet>
 
-	<changeSet id="73" author="meena.a">
+	<changeSet id="79_pre" author="meena.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'limitdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="79" author="meena.a">
 		 <createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode, T3.GroupName,T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
 				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
@@ -5964,9 +6019,17 @@ UNION ALL
 				                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
 		</createView>
 	</changeSet>
+	
+	<changeSet id="79_post" author="meena.a" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'limitdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
 
 	
-	<changeSet id="74" author="meena.a">
+	<changeSet id="80" author="meena.a">
 		 <createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving ,T1.ExpiryDate, T1.LimitSanctioned,  
 				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
@@ -6192,12 +6255,30 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="156_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			    select deps_save_and_drop_dependencies ('plf', 'rmtlovfielddetail');
+				select deps_save_and_drop_dependencies ('plf', 'rmtlovfielddetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="156" author="DurgaPrasad G">
 		<modifyDataType tableName="RMTLOVFIELDDETAIL" columnName="VALUEDESC" newDataType="varchar(200)"/>
 	</changeSet>
 	
 	<changeSet id="157" author="DurgaPrasad G">
 		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP" columnName="VALUEDESC" newDataType="varchar(200)"/>
+	</changeSet>
+	
+	<changeSet id="156_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtlovfielddetail');
+				select deps_restore_dependencies ('plf', 'rmtlovfielddetail_temp');
+			]]>
+		</sql>
 	</changeSet>
 	
 </databaseChangeLog>
