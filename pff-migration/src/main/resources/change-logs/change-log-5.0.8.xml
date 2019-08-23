@@ -6179,7 +6179,7 @@ UNION ALL
 	
 				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Limit_LimitDownload','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
 				INSERT INTO SECGROUPS values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LIMIT_DOWNLOAD', 'Limit Download Group', 0,1000,CURRENT_TIMESTAMP,'Approved','',null,'','','',0);
-				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LIMIT_DOWNLOAD') ,(menuItem_Limit_LimitDownload), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LIMIT_DOWNLOAD') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Limit_LimitDownload'), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
 				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'LIMIT_DOWNLOAD','Role for Limit Download','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
 				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LIMIT_DOWNLOAD'), (Select  RoleID  From SecRoles Where RoleCd='LIMIT_DOWNLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 				
