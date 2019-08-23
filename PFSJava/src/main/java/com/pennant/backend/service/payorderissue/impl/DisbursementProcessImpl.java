@@ -145,7 +145,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		long paymentId = (Long) params[1];
 		String status = (String) params[2];
 		String rejectReason = (String) params[3];
-		String tranReference = (String) params[5];
+		String tranReference = (String) params[4];
 		
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setPaymentId(paymentId);
