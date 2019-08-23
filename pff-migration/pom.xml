@@ -149,6 +149,28 @@
 				<pfs.liquibase.password>Kotak_plf_qc_321</pfs.liquibase.password>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>plf_iifl_mssql</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://pennant92:1433;database=PLF_IIFL_QC</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFIIFLQCAdmin</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>
+		<profile>
+			<id>plf_audit_iifl_mssql</id>
+			<properties>
+				<pfs.liquibase.changeLogFile>change-log-master-audit.xml</pfs.liquibase.changeLogFile>
+				<pfs.liquibase.driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</pfs.liquibase.driver>
+				<pfs.liquibase.url>jdbc:sqlserver://pennant92:1433;database=PLFAUDIT_IIFL_QC</pfs.liquibase.url>
+				<pfs.liquibase.username>PLFIIFLQCAdmin</pfs.liquibase.username>
+				<pfs.liquibase.password>zxcvbn1@</pfs.liquibase.password>
+			</properties>
+		</profile>	
+		
 	</profiles>
 
 	<build>

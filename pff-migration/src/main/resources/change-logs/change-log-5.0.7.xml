@@ -4269,5 +4269,54 @@
 			</where>
 		</update>
 	</changeSet>
+	
+	<changeSet id="139" author="Kesav">
+		<createTable tableName="CREDITREVIEWCONFIG">
+			<column name="Id" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="BUSINESSVERTICAL" type="varchar(8)" />
+			<column name="PRODUCT" type="varchar(8)" />
+			<column name="FINCATEGORY" type="varchar(8)" />
+			<column name="EMPLOYMENTTYPE" type="varchar(8)" />
+			<column name="ELIGIBILITYMETHOD" type="varchar(8)" />
+			<column name="SECTION" type="varchar(8)" />
+			<column name="TEMPLATENAME" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATEVERSION" type="bigint"/>
+			<column name="FIELDS" type="varchar(2000)" />
+			<column name="CUSTID" type="bigint" defaultValue = "0"/>
+			<column name="PROTECTEDCELLS" type="varchar(2000)"/>
+			<column name="SURROGATETYPE" type="varchar(10)" />
+			<column name="SQLQUERY" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="140" author="Kesav">
+		<createTable tableName="CREDITREVIEWDATA">
+			<column name="FINREFERENCE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATEDATA" type="varchar(2000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATENAME" type="varchar(50)" />
+			<column name="TEMPLATEVERSION" type="bigint"/>
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
 
 </databaseChangeLog>
