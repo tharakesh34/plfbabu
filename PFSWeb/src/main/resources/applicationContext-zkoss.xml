@@ -5363,9 +5363,17 @@
 	</bean>
 	<!--============ Customer Download ============== -->
 
-	<bean id="customerDownloadListCtrl" class="com.pennant.webui.customermasters.customer.CustomerDownloadListCtrl" parent="basisListCtrl"
+	<bean id="customerDownloadListCtrl" class="com.pennant.webui.filedownload.CustomerDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+	</bean>	
+	<!--============ Collateral  Download ============== -->
+
+	<bean id="collateralDownloadListCtrl" class="com.pennant.webui.filedownload.CollateralDownloadListCtrl" parent="basisListCtrl"
+		scope="prototype">
+	</bean>	
+	<bean id="limitDownloadListCtrl" class="com.pennant.webui.filedownload.LimitDownloadListCtrl" parent="basisListCtrl"
+		scope="prototype">
 	</bean>	
 	
 	<!-- InstrumentwiseLimit -->

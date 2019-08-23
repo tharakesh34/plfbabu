@@ -41,7 +41,7 @@
  ********************************************************************************************
  */
 
-package com.pennant.webui.customermasters.customer;
+package com.pennant.webui.filedownload;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -71,8 +71,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.service.customermasters.CustomerDownloadService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.filedownload.CustomerDownloadService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;

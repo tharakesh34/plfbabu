@@ -80,6 +80,7 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -120,6 +121,7 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	protected Datebox expiryDate;
 	protected Datebox nextReviewDate;
 	protected Textbox depositorCif;
+
 
 	protected Listbox sortOperator_CollateralRef;
 	protected Listbox sortOperator_DepositorCif;
@@ -201,6 +203,9 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		registerField("nextRoleCode");
 		registerField("finReference");
 		registerField("status");
+
+		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.nextReviewDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		// Render the page and display the data.
 		doRenderPage();

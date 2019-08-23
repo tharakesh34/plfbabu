@@ -1,10 +1,10 @@
-package com.pennant.backend.service.customermasters.impl;
+package com.pennant.backend.service.filedownload.impl;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.backend.service.customermasters.CustomerDownloadService;
+import com.pennant.backend.service.filedownload.CustomerDownloadService;
 import com.pennanttech.pff.external.GLEMSCustomerProcess;
 
 public class CustomerDownloadServiceImpl implements CustomerDownloadService {

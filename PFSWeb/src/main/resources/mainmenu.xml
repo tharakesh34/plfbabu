@@ -435,10 +435,15 @@
 		<menuItem id="menu_Item_CKYCProcess" zulNavigation="/WEB-INF/pages/CustomerMasters/CKYC/CKYCProcess.zul" />
 		<!-- <menuItem id="menu_Item_CommCreditAppReview" zulNavigation="/WEB-INF/pages/FinanceManagement/BankOrCorpCreditReview/CreditApplicationReviewList.zul?moduleName=CommCreditAppReview"/> 
 			<menuItem id="menu_Item_FinCreditRevSubCategory" zulNavigation="/WEB-INF/pages/CustomerMasters/FinCreditRevSubCategory/FinCreditRevSubCategoryList.zul"/> -->
-		<menuItem id="menu_Item_CustomerDownload" zulNavigation="/WEB-INF/pages/CustomerMasters/Customer/CustomerDownloadList.zul"
-			rightName="menuItem_CustomerMasters_CustomerDownload" />
 	</menu>
-
+	<menu id="menu_Category_FileDownload">
+		<menuItem id="menu_Item_CustomerDownload" zulNavigation="/WEB-INF/pages/FileDownload/CustomerDownloadList.zul"
+			rightName="menuItem_CustomerMasters_CustomerDownload" />
+		<menuItem id="menu_Item_CollateralDownload" zulNavigation="/WEB-INF/pages/FileDownload/CollateralDownloadList.zul"
+			rightName="menuItem_Collatral_CollateralDownload" />
+		<menuItem id="menu_Item_LimitDownload" zulNavigation="/WEB-INF/pages/FileDownload/LimitDownloadList.zul"
+			rightName="menuItem_Limit_LimitDownload" />
+	</menu>
 	<!-- Limits -->
 	<menu id="menu_Category_Limit">
 		<menuItem id="menu_Item_LimitDefinitionInstitutionalRules" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/LimitRuleDefinitionInstitutional.zul"
