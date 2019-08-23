@@ -3452,4 +3452,13 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+		
+	<changeSet id="83" author="vijaya.a">
+		<sql>
+        	<![CDATA[
+           		update data_engine_column set skip = 1 , defaultValue = null, derivedfrom = '${ROW_NUM}' where tableid in (select Id from data_engine_table where configId In (select Id from data_engine_config where name = 'PRESENTMENT_REQUEST_PDC')) and name = 'SeqNo';
+        	]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
