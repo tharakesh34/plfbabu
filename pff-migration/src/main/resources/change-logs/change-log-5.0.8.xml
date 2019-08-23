@@ -6143,4 +6143,52 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="153" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+	
+				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Collatral_CollateralDownload','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SECGROUPS values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'COLLATERAL_DOWNLOAD', 'Collateral Download Group', 0,1000,CURRENT_TIMESTAMP,'Approved','',null,'','','',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERAL_DOWNLOAD') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_Collatral_CollateralDownload'), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'COLLATERAL_DOWNLOAD','Role for Collateral Download','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='COLLATERAL_DOWNLOAD'), (Select  RoleID  From SecRoles Where RoleCd='COLLATERAL_DOWNLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="154" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+	
+				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_Limit_LimitDownload','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SECGROUPS values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'LIMIT_DOWNLOAD', 'Limit Download Group', 0,1000,CURRENT_TIMESTAMP,'Approved','',null,'','','',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='LIMIT_DOWNLOAD') ,(menuItem_Limit_LimitDownload), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'LIMIT_DOWNLOAD','Role for Limit Download','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='LIMIT_DOWNLOAD'), (Select  RoleID  From SecRoles Where RoleCd='LIMIT_DOWNLOAD'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
