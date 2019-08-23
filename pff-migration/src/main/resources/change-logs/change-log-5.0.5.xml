@@ -4902,4 +4902,40 @@
 		</sql>
 	</changeSet>
     
+    <changeSet id="142" author="aditya.a">
+		<createView viewName="LegalDetails_TView" replaceIfExists="true">
+	       SELECT 
+	        T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+			T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T1.Module
+			, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+			T2.BranchDesc, T3.FinBranch, T4.FinDivision
+			FROM    LegalDetails_Temp T1 
+			Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+			Inner Join FinanceMain_Temp T3 ON T3.FinReference = T1.LoanReference
+			Inner JOIN rmtfinancetypes T4 ON T4.fintype = T3.fintype
+    	</createView>
+	</changeSet>
+	
+	<changeSet id="143" author="aditya.a">
+		<createView viewName="LegalDetails_View" replaceIfExists="true">
+	        SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T1.Module
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc, T3.FinBranch, T4.FinDivision
+				FROM    	LegalDetails_Temp T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+				Inner Join FinanceMain_Temp T3 ON T3.FinReference = T1.LoanReference
+				Inner JOIN rmtfinancetypes T4 ON T4.fintype = T3.fintype
+			UNION ALL
+			SELECT T1.LegalId, T1.LegalReference, T1.LoanReference, T1.CollateralReference, T1.Branch, T1.LegalDate, T1.SchedulelevelArea, T1.LegalDecision, T1.LegalRemarks,
+				T1.PropertyDetailModt, T1.PropertyDetailECDate, T1.EcPropertyOwnerName, T1.Active, T1.Module
+				, T1.Version , T1.LastMntBy, T1.LastMntOn,T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T2.BranchDesc, T3.FinBranch, T4.FinDivision	
+				FROM    	LegalDetails T1 
+				Inner Join RmtBranches T2 ON T1.Branch = T2.BranchCode
+				Inner Join FinanceMain_View T3 ON T3.FinReference = T1.LoanReference
+				Inner JOIN rmtfinancetypes T4 ON T4.fintype = T3.fintype
+			WHERE     NOT EXISTS (SELECT 1 FROM LegalDetails_TEMP WHERE LegalId = T1.LegalId)
+    	</createView>
+	</changeSet>
 </databaseChangeLog>
