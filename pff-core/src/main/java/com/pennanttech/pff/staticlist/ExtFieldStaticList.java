@@ -111,6 +111,13 @@ public final class ExtFieldStaticList {
 		list.add("TransactionMapping");
 		list.add("HSNCodeData");
 
+		list.add("AssetCalc");
+		list.add("BankCode");
+		list.add("CreditArea");
+		list.add("IndustryCode");
+		list.add("OtherBank");
+		list.add("RelationShipArea");
+
 		return list;
 	}
 

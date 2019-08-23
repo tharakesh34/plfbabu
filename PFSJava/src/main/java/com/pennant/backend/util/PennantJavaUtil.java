@@ -3247,7 +3247,51 @@ public class PennantJavaUtil {
 				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
+		
+		/*LovFieldDetails Module mappings*/
+		
+		ModuleUtil.register("AssetCalc",
+				new ModuleMapping("AssetCalc", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "ASSETCALC" } }, 400));
+		
+		ModuleUtil.register("BankCode",
+				new ModuleMapping("BankCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "BANKCODE" } }, 400));
+		
+		ModuleUtil.register("CreditArea",
+				new ModuleMapping("CreditArea", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CRDTAREA" } }, 400));
 
+		ModuleUtil.register("IndustryCode",
+				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "INDUSTRYCODE" } }, 400));
+		
+		ModuleUtil.register("OtherBank",
+				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "OTHERBANK" } }, 400));
+		
+		ModuleUtil.register("RelationShipArea",
+				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "RELATIONSHPAREA" } }, 400));
+		/*LovFieldDetails Module mappings*/
+		
+		
+		ModuleUtil.register("OtherBank",
+				new ModuleMapping("OtherBank", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "OTHERBANK" } }, 400));
+
+		ModuleUtil.register("RealationShipArea",
+				new ModuleMapping("RealationShipArea", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
+						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
+						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "RELATIONSHPAREA" } }, 400));
+		
 		ModuleUtil.register("ConsumerProduct",
 				new ModuleMapping("ConsumerProduct", ConsumerProduct.class,
 						new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" }, masterWF,
