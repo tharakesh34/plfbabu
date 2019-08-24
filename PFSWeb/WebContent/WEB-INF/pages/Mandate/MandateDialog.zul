@@ -198,7 +198,7 @@
 									<label id="label_InputDate" value="${c:l('label_MandateDialog_InputDate.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<datebox id="inputDate" disabled="true" />
+										<datebox id="inputDate" />
 									</hbox>
 								</row>
 								<row id="rowPartnerBank" visible="false">

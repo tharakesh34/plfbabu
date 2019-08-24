@@ -189,4 +189,10 @@ public interface CustomerDAO {
 
 	Customer getCustomerByCoreBankId(String externalCif, String type);
 
+	String getCustomerByCRCPR(String custCRCPR, String custCtgCode, String type);
+
+	boolean isDuplicateCif(long custId, String cif, String custCtgCode);
+
+	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
+
 }

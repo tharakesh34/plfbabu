@@ -86,6 +86,8 @@ public class PathUtil {
 	public static final String MAIL_ATTACHMENT_REPORT = "/Downloads/Mail/Attachments/Reports/";
 	public static final String MAIL_BODY = "/Downloads/Mail/body/";
 
+	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
+
 	/**
 	 * Method for Set Environment Variable to Root Path Location
 	 * 

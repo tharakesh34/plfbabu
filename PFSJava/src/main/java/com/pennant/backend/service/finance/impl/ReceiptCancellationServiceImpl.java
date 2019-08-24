@@ -58,6 +58,7 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.core.FinEODEvent;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
@@ -322,9 +323,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-
-		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Bounce Reason Code
 		if (receiptHeader.getManualAdvise() != null) {
@@ -338,7 +337,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		//auditHeaderDAO.addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -832,7 +831,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (rule != null) {
 			fieldsAndValues.put("br_finType", receiptHeader.getFinType());
-			if (eventMapping != null) {
+			if (eventMapping != null && eventMapping.size() > 0) {
 				fieldsAndValues.put("emptype", eventMapping.get("Emptype"));
 				fieldsAndValues.put("branchcity", eventMapping.get("Branchcity"));
 				fieldsAndValues.put("fincollateralreq", eventMapping.get("fincollateralreq"));
@@ -1057,8 +1056,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					unRealizeAmz = unRealizeAmz.add(rpyHeader.getRealizeUnAmz());
 
 					// Update Profit Details for UnRealized LPI
-					//unRealizeLpi = unRealizeLpi.add(rpyHeader.getRealizeUnLPI());
-					//unRealizeLpiGst = unRealizeLpiGst.add(rpyHeader.getRealizeUnLPIGst());
+					// unRealizeLpi = unRealizeLpi.add(rpyHeader.getRealizeUnLPI());
+					// unRealizeLpiGst = unRealizeLpiGst.add(rpyHeader.getRealizeUnLPIGst());
 
 					// Update Profit Details for UnRealized LPP
 					FinTaxIncomeDetail taxIncome = finODAmzTaxDetailDAO
@@ -1113,14 +1112,14 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						ManualAdvise advise = new ManualAdvise();
 						advise.setAdviseID(movement.getAdviseID());
 
-						//Paid Details
+						// Paid Details
 						advise.setPaidAmount(movement.getPaidAmount().negate());
 						advise.setPaidCGST(movement.getPaidCGST().negate());
 						advise.setPaidSGST(movement.getPaidSGST().negate());
 						advise.setPaidIGST(movement.getPaidIGST().negate());
 						advise.setPaidUGST(movement.getPaidUGST().negate());
 
-						//Waived Details
+						// Waived Details
 						advise.setWaivedAmount(movement.getWaivedAmount().negate());
 						advise.setWaivedCGST(movement.getWaivedCGST().negate());
 						advise.setWaivedSGST(movement.getWaivedSGST().negate());
@@ -1192,23 +1191,23 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "",
 								false);
 
-						//Receivable Advise Movements
+						// Receivable Advise Movements
 						if (CollectionUtils.isNotEmpty(receivableAdvMovements)) {
 							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail, null,
 									receivableAdvMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT, false,
 									false);
 						}
 
-						//Payable Advise Movements
+						// Payable Advise Movements
 						if (CollectionUtils.isNotEmpty(payableMovements)) {
 							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail, null,
 									payableMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false,
 									false);
 						}
 
-						//Waiver Advise Movements
+						// Waiver Advise Movements
 						if (CollectionUtils.isNotEmpty(waiverAdvMovements)) {
-							//Preparing the Waiver GST movements
+							// Preparing the Waiver GST movements
 							this.gstInvoiceTxnService.gstInvoicePreparation(linkedTranID, financeDetail, null,
 									waiverAdvMovements, PennantConstants.GST_INVOICE_TRANSACTION_TYPE_DEBIT, false,
 									true);
@@ -1462,7 +1461,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				// Check whether Accrual Reversal required for LPP or not
 				if (unRealizeLpp.compareTo(BigDecimal.ZERO) > 0) {
 
-					// prepare GST Invoice Report for Penalty reversal 
+					// prepare GST Invoice Report for Penalty reversal
 					if (penalityFeeType == null) {
 						penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 					}
@@ -1504,7 +1503,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						accrualDiffPostReq = true;
 					}
 
-					// If No Accrual postings required, 
+					// If No Accrual postings required,
 					pftDetail.setLppTillLBD(pftDetail.getLppTillLBD().subtract(unRealizeLpp));
 					pftDetail.setGstLppTillLBD(pftDetail.getGstLppTillLBD().subtract(unRealizeLppGst));
 
@@ -1515,7 +1514,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					movement.setTaxApplicable(penalityFeeType.isTaxApplicable());
 					movement.setTaxComponent(penalityFeeType.getTaxComponent());
 
-					//Paid GST Calculations
+					// Paid GST Calculations
 					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 						BigDecimal gstAmount = BigDecimal.ZERO;
 						gstAmount = rpySchd.getPaidPenaltyCGST().add(rpySchd.getPaidPenaltySGST())
@@ -1532,7 +1531,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						movement.setPaidAmount(movement.getPaidAmount().add(rpySchd.getPenaltyPayNow()));
 					}
 
-					//Waiver GST Calculations
+					// Waiver GST Calculations
 					for (RepayScheduleDetail rpySchd : tempRpySchdList) {
 						BigDecimal waiverGstAmount = BigDecimal.ZERO;
 						waiverGstAmount = rpySchd.getPenaltyWaiverCGST().add(rpySchd.getPenaltyWaiverSGST())
@@ -1582,17 +1581,48 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Check Current Finance Max Status For updation
 				// ============================================
-				overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain, overdueList, valueDate,
-						scheduleData.getFinanceScheduleDetails(), repayments, true, true);
+
+				FinEODEvent finEodEvent = new FinEODEvent();
+				finEodEvent.setFinanceMain(scheduleData.getFinanceMain());
+				finEodEvent.setFinanceScheduleDetails(scheduleData.getFinanceScheduleDetails());
+				finEodEvent.setFinProfitDetail(pftDetail);
+				finEodEvent = latePayMarkingService.findLatePay(finEodEvent, null, DateUtility.addDays(valueDate, -1));
+
+				/*
+				 * overdueList = latePayMarkingService.calPDOnBackDatePayment(financeMain,
+				 * finEodEvent.getFinODDetails(), valueDate, scheduleData.getFinanceScheduleDetails(), repayments, true,
+				 * true);
+				 */
 
 				// Status Updation
 				repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleData.getFinanceScheduleDetails(),
-						pftDetail, overdueList, null);
+						pftDetail, finEodEvent.getFinODDetails(), null);
 
 				// Overdue Details Updation after Recalculation with Current Data
-				if (overdueList != null && !overdueList.isEmpty()) {
-					finODDetailsDAO.updateList(overdueList);
+				if (finEodEvent.getFinODDetails() != null && !finEodEvent.getFinODDetails().isEmpty()) {
+					List<FinODDetails> updateODlist = new ArrayList<>();
+					List<FinODDetails> saveODlist = new ArrayList<>();
+
+					for (FinODDetails od : finEodEvent.getFinODDetails()) {
+						if (StringUtils.equals("I", od.getRcdAction())) {
+							saveODlist.add(od);
+						} else {
+							updateODlist.add(od);
+						}
+					}
+
+					if (!saveODlist.isEmpty()) {
+						getFinODDetailsDAO().saveList(saveODlist);
+					}
+					if (!updateODlist.isEmpty()) {
+						getFinODDetailsDAO().updateList(updateODlist);
+					}
 				}
+
+				/*
+				 * // Overdue Details Updation after Recalculation with Current Data if (overdueList != null &&
+				 * !overdueList.isEmpty()) { finODDetailsDAO.updateList(overdueList); }
+				 */
 				if (totalPriAmount.compareTo(BigDecimal.ZERO) > 0) {
 
 					// Finance Main Details Update

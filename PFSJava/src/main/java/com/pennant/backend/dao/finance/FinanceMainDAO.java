@@ -399,4 +399,6 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceMainStutusById(String id, String type);
 
+	FinanceMain getFinanceDetailsForInsurance(String finReference, String type);
+
 }

@@ -603,7 +603,7 @@
 														value="${c:l('label_FinanceMainDialog_VanCode.value')}" />
 													<hbox>
 														<space spacing="2px" />
-														<uppercasebox id="vanCode" width="170px" />
+														<uppercasebox id="vanCode" width="180px" />
 													</hbox>
 												</row>
 											</rows>

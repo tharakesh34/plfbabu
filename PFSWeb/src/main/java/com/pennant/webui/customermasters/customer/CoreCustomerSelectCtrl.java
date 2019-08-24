@@ -315,7 +315,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			String cif = StringUtils.trimToEmpty(custCIF.getValue());
 			Customer customer = null;
 
-			// If customer exist is checked 
+			// If customer exist is checked
 			if (exsiting.isChecked()) {
 				if (StringUtils.isEmpty(cif)) {
 					throw new WrongValueException(custCIF, Labels.getLabel("FIELD_NO_EMPTY",
@@ -403,12 +403,17 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					throw new WrongValuesException(wvea);
 				}
 
-				// Check whether any other customer exists with the same primary identity.
-				if (StringUtils.isNotBlank(primaryIdNumber)) {
+				// Check whether any other customer exists with the same primary
+				// identity.
+				if (StringUtils.isNotBlank(primaryIdNumber)
+						&& "Y".equals(SysParamUtil.getValueAsString("CUST_PAN_VALIDATION"))) {
+					cif = getCustomerDetailsService().getEIDNumberById(primaryIdNumber,
+							this.custCtgType.getSelectedItem().getValue(), "_View");
+				} else {
 					cif = getCustomerDetailsService().getEIDNumberById(primaryIdNumber, "_View");
 				}
-
 				if (StringUtils.isNotBlank(cif)) {
+
 					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
 							new String[] { Labels.getLabel(primaryIdLabel), cif + ". \n" });
 
@@ -556,7 +561,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			customerDetails.getCustomer().setLovDescCustNationalityName(custNationality.getDescription());
 		}
 
-		//Setting Primary Relation Ship Officer
+		// Setting Primary Relation Ship Officer
 		RelationshipOfficer officer = getRelationshipOfficerService()
 				.getApprovedRelationshipOfficerById(getUserWorkspace().getUserDetails().getUsername());
 		if (officer != null && String.valueOf(customerDetails.getCustomer().getCustRO1()) == null) {
@@ -564,7 +569,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			customerDetails.getCustomer().setLovDescCustRO1Name(officer.getROfficerDesc());
 		}
 
-		//Setting User Branch to Customer Branch
+		// Setting User Branch to Customer Branch
 		Branch branch = getBranchService()
 				.getApprovedBranchById(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 		if (branch != null && customerDetails.getCustomer().getCustDftBranch() == null) {
@@ -572,7 +577,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			customerDetails.getCustomer().setLovDescCustDftBranchName(branch.getBranchDesc());
 		}
 
-		//Reset Data from WIF Details if Exists
+		// Reset Data from WIF Details if Exists
 		String custCPRCR = "";
 
 		if (!(StringUtils.isEmpty(custCPRCR))) {

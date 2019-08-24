@@ -161,7 +161,12 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		saveUserDivisions(securityUser, tableType.getSuffix(), null);
+		//saveUserDivisions(securityUser, tableType.getSuffix(), null);
+
+		if (auditHeader.getAuditDetails() != null && !auditHeader.getAuditDetails().isEmpty()) {
+			auditDetails
+					.addAll(processingDetailList(auditHeader.getAuditDetails(), tableType.getSuffix(), securityUser));
+		}
 
 		List<AuditDetail> reportingManagers = securityUser.getAuditDetailMap().get("reportingManagers");
 		if (CollectionUtils.isNotEmpty(reportingManagers)) {
@@ -226,6 +231,109 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		securityUser.setReportingManagersList(reportingManagerDAO.getReportingManagers(id, "_View"));
 
 		return securityUser;
+	}
+
+	private List<AuditDetail> processingDetailList(List<AuditDetail> auditDetails, String type,
+			SecurityUser securityUser) {
+		logger.debug("Entering ");
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		List<AuditDetail> list = new ArrayList<AuditDetail>();
+
+		for (AuditDetail auditDetail : auditDetails) {
+
+			SecurityUserDivBranch securityUserDivBranch = (SecurityUserDivBranch) auditDetail.getModelData();
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+
+			if (StringUtils.isEmpty(type)) {
+				securityUserDivBranch.setVersion(securityUserDivBranch.getVersion() + 1);
+				approveRec = true;
+			} else {
+				securityUserDivBranch.setRoleCode(securityUser.getRoleCode());
+				securityUserDivBranch.setNextRoleCode(securityUser.getNextRoleCode());
+				securityUserDivBranch.setTaskId(securityUser.getTaskId());
+				securityUserDivBranch.setNextTaskId(securityUser.getNextTaskId());
+			}
+
+			if (StringUtils.isNotEmpty(type)
+					&& securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				deleteRecord = true;
+			} else if (securityUserDivBranch.isNewRecord()) {
+				saveRecord = true;
+				if (securityUserDivBranch.getId() == Long.MIN_VALUE) {
+					securityUserDivBranch.setUsrID(securityUser.getUsrID());
+				}
+				if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					securityUserDivBranch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (securityUserDivBranch.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				deleteRecord = true;
+			}
+
+			SecurityUserDivBranch tempDetail = new SecurityUserDivBranch();
+			BeanUtils.copyProperties(securityUserDivBranch, tempDetail);
+
+			if (approveRec) {
+				securityUserDivBranch.setRoleCode("");
+				securityUserDivBranch.setNextRoleCode("");
+				securityUserDivBranch.setTaskId("");
+				securityUserDivBranch.setNextTaskId("");
+				securityUserDivBranch.setRecordType("");
+				securityUserDivBranch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+
+			}
+			SecurityUserDivBranch recordExist = getSecurityUsersDAO().getSecUserDivBrDetailsById(securityUserDivBranch,
+					type);
+			if (saveRecord) {
+				if (recordExist == null) {
+					getSecurityUsersDAO().saveDivBranchDetails(securityUserDivBranch, type);
+				}
+			}
+
+			if (updateRecord) {
+				if (recordExist != null) {
+					getSecurityUsersDAO().updateDivBranchDetails(securityUserDivBranch, type);
+				}
+			}
+
+			if (deleteRecord) {
+				if (recordExist != null) {
+					getSecurityUsersDAO().deleteDivBranchDetails(securityUserDivBranch, type);
+				}
+			}
+
+			if (saveRecord || updateRecord || deleteRecord) {
+				if (!securityUserDivBranch.isWorkflow()) {
+					auditDetail.setModelData(securityUserDivBranch);
+				} else {
+					auditDetail.setModelData(tempDetail);
+				}
+				list.add(auditDetail);
+			}
+		}
+
+		logger.debug("Leaving ");
+		return list;
 	}
 	//	/**
 	//	 * getApprovedSecurityUsersById fetch the details by using SecurityUsersDAO's getSecurityUsersById method .
@@ -416,6 +524,11 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 		if (CollectionUtils.isNotEmpty(reportingmangerlist)) {
 			auditDetails = getAuditUserReportingmanagers(securityUser, auditTranType, method, usrLanguage, false);
 			securityUser.getAuditDetailMap().put("reportingManagers", auditDetails);
+		}
+
+		List<SecurityUserDivBranch> securityUserDivBranchList = securityUser.getSecurityUserDivBranchList();
+		if (securityUserDivBranchList != null && !securityUserDivBranchList.isEmpty()) {
+			auditDetails = getAuditUserDivBranchs(securityUser, auditTranType, method, usrLanguage, false);
 		}
 
 		for (AuditDetail detail : auditDetails) {
@@ -1194,6 +1307,14 @@ public class SecurityUserServiceImpl extends GenericService<SecurityUser> implem
 
 	public void setReportingManagerDAO(ReportingManagerDAO reportingManagerDAO) {
 		this.reportingManagerDAO = reportingManagerDAO;
+	}
+
+	public SecurityUserDAO getSecurityUsersDAO() {
+		return securityUsersDAO;
+	}
+
+	public void setSecurityUsersDAO(SecurityUserDAO securityUsersDAO) {
+		this.securityUsersDAO = securityUsersDAO;
 	}
 
 }

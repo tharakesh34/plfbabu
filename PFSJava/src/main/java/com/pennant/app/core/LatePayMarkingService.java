@@ -239,7 +239,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return custEODEvent;
 	}
 
-	private FinEODEvent findLatePay(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Date valueDate)
+	public FinEODEvent findLatePay(FinEODEvent finEODEvent, CustEODEvent custEODEvent, Date valueDate)
 			throws Exception {
 
 		FinanceMain finMain = finEODEvent.getFinanceMain();

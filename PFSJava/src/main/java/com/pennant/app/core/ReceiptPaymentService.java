@@ -93,12 +93,16 @@ public class ReceiptPaymentService extends ServiceHelper {
 							.get(finEODEvent.getIdxPresentment());
 
 					BigDecimal pftDue = sch.getProfitSchd().subtract(sch.getSchdPftPaid());
-					BigDecimal tdsDue = receiptCalculator.getTDS(pftDue);
+
+					BigDecimal tdsDue = BigDecimal.ZERO;
+					if (sch.isTDSApplicable()) {
+						tdsDue = receiptCalculator.getTDS(pftDue);
+					}
 
 					BigDecimal priDue = sch.getPrincipalSchd().subtract(sch.getSchdPriPaid());
 					BigDecimal feeDue = sch.getFeeSchd().subtract(sch.getSchdFeePaid());
-
 					BigDecimal schAmtDue = pftDue.subtract(tdsDue).add(priDue).add(feeDue);
+
 					if (schAmtDue.compareTo(BigDecimal.ZERO) <= 0) {
 						continue;
 					}

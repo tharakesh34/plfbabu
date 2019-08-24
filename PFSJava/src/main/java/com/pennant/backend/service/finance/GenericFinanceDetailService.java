@@ -943,6 +943,11 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					documentDetails.setRecordType("");
 					documentDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
+				if (approveRec && StringUtils.equals(documentDetails.getRecordStatus(),
+						PennantConstants.RCD_STATUS_APPROVED)) {
+					documentDetails.setRecordType("");
+				}
+
 				if (saveRecord) {
 					if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 						documentDetails.setReferenceId(financeMain.getFinReference());

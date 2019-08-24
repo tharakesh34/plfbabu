@@ -10,7 +10,6 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
@@ -111,7 +110,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			getAuditHeaderDAO().addAudit(auditHeader);
 		}
-		
+
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(customerCardSalesInfo);
@@ -147,15 +146,12 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
-		/*int count = getCustomerCardSalesInfoDAO().getCount(customerCardSalesInfo.getMerchantName());
-		if (count <= 0) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "BankCode";
-			valueParm[1] = customerCardSalesInfo.getMerchantName();
-			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
-			auditDetail.setErrorDetail(errorDetail);
-			return auditDetail;
-		}*/
+		/*
+		 * int count = getCustomerCardSalesInfoDAO().getCount(customerCardSalesInfo.getMerchantName()); if (count <= 0)
+		 * { String[] valueParm = new String[2]; valueParm[0] = "BankCode"; valueParm[1] =
+		 * customerCardSalesInfo.getMerchantName(); errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "",
+		 * valueParm), "EN"); auditDetail.setErrorDetail(errorDetail); return auditDetail; }
+		 */
 
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;
@@ -177,5 +173,5 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
 		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
-	
+
 }

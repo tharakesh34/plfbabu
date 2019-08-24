@@ -290,9 +290,17 @@ public class AgreementDetail {
 	private String totalExpense = "0.00";
 
 	/**
-	 * Provides current customers BPI Amount.
+	 * Provides current customers BPI Amount When Bpi Treatment Include to Deduct From disbursement .
 	 */
 	private String BPIAmount = "0.00";
+	/**
+	 * Provides BPI Amount Irrespective of Bpi Treatment.
+	 */
+	private String bpiAmt = "0.00";
+	/**
+	 * Provides Van Code For Clix.
+	 */
+	private String vanCode = "";
 
 	/**
 	 * Provides Sum current Loan fee .
@@ -9448,6 +9456,22 @@ public class AgreementDetail {
 
 	public void setPdVerification(List<VerificationDetail> pdVerification) {
 		this.pdVerification = pdVerification;
+	}
+
+	public String getBpiAmt() {
+		return bpiAmt;
+	}
+
+	public void setBpiAmt(String bpiAmt) {
+		this.bpiAmt = bpiAmt;
+	}
+
+	public String getVanCode() {
+		return vanCode;
+	}
+
+	public void setVanCode(String vanCode) {
+		this.vanCode = vanCode;
 	}
 
 	public class KycDetail {

@@ -93,6 +93,7 @@ import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
+import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
@@ -182,7 +183,6 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
@@ -246,6 +246,7 @@ import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
+import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditFinancialService;
 import com.pennant.backend.service.handlinstruction.HandlingInstructionService;
 import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.legal.LegalDetailService;
@@ -400,6 +401,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private NotificationService notificationService;
+	private FinExcessAmountDAO finExcessAmountDAO;
 	private SubventionDetailDAO subventionDetailDAO;
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
@@ -407,6 +409,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
+
+	@Autowired
+	private CreditFinancialService creditFinancialService;
+	private CreditReviewDetailDAO creditReviewDetailDAO;
 
 	private long tempWorkflowId;
 
@@ -2799,7 +2805,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				fee.setInstructionUID(serviceUID);
 			}
 			auditDetails.addAll(
-					getFinFeeDetailService().saveOrUpdate(finFeeDetails, tableType.getSuffix(), auditTranType, isWIF));
+					finFeeDetailService.saveOrUpdate(finFeeDetails, tableType.getSuffix(), auditTranType, isWIF));
 		}
 
 		// Finance Fee Receipts
@@ -2869,6 +2875,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Saving the reasons
 		saveReasonDetails(financeDetail);
+
+		if (financeDetail.getCreditReviewData() != null) {
+			creditFinancialService.saveOrUpdate(financeDetail, auditHeader, tableType.getSuffix());
+		}
 
 		if (!isWIF) {
 			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
@@ -3099,7 +3109,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save LV Initiation details
 		// =======================================
-		if (financeDetail.isLvInitTab()&& financeDetail.getLvVerification() != null) {
+		if (financeDetail.isLvInitTab() && financeDetail.getLvVerification() != null) {
 			Verification verification = financeDetail.getLvVerification();
 			verification.setVerificationType(VerificationType.LV.getKey());
 			adtVerifications
@@ -3117,7 +3127,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save RCU Initiation details
 		// =======================================
-		if (financeDetail.isRcuInitTab()&& financeDetail.getRcuVerification() != null) {
+		if (financeDetail.isRcuInitTab() && financeDetail.getRcuVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.RCU, auditTranType, true));
 		}
@@ -3137,13 +3147,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// save PD Initiation details
 		// =======================================
-		if (financeDetail.isPdInitTab() && financeDetail.getPdVerification()!=null) {
+		if (financeDetail.isPdInitTab() && financeDetail.getPdVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, true));
 		}
 		//  save pd Approval details
 		// =======================================
-		if (financeDetail.isPdApprovalTab() && financeDetail.getPdVerification()!=null) {
+		if (financeDetail.isPdApprovalTab() && financeDetail.getPdVerification() != null) {
 			adtVerifications
 					.addAll(verificationService.saveOrUpdate(financeDetail, VerificationType.PD, auditTranType, false));
 		}
@@ -3723,6 +3733,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// FIXME : DataSet Removal to be worked on if it requires in future
 		}
 
+		creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
+
 		// Finance Deletion
 		getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 
@@ -3981,6 +3993,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
+			creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
 			getFinanceMainDAO().delete(financeMain, TableType.MAIN_TAB, isWIF, true);
 			listDeletion(finScheduleData, moduleDefiner, "", isWIF);
 			getFinServiceInstructionDAO().deleteList(finScheduleData.getFinReference(), moduleDefiner, "");
@@ -4069,13 +4082,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					financeMain.setLinkedFinRef(financeMain.getFinReference() + "_DP");
 				}
 				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, isWIF);
-				if (financeMain.getOldFinReference() != null && auditHeader.getApiHeader() != null
-						&& StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
-					FinanceMainExtension finExtension = new FinanceMainExtension();
-					finExtension.setFinreference(financeMain.getFinReference());
-					finExtension.setHostreference(financeMain.getOldFinReference());
-					finExtension.setOldhostreference(financeMain.getExtReference());
-					getFinanceMainDAO().saveHostRef(finExtension);
+
+				//Credit Review Details Saving
+				if (financeDetail.getCreditReviewData() != null) {
+					creditFinancialService.doApprove(financeDetail, auditHeader, "");
 				}
 
 				// Setting BPI Paid amount to Schedule details
@@ -6126,17 +6136,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		if (isAutoReject) {
 			financeMain = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
-			//TODO for API Fix me
-			if(apiCall) {
-				if(financeMain == null) {
-					financeMain=financeDetail.getFinScheduleData().getFinanceMain();
+			//TODO for API Fix me Issue in Reject Loan 
+			if (apiCall) {
+				if (financeMain == null) {
+					financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 				}
 				financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 				financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
 				financeMain.setNextTaskId("");
 				financeMain.setNextRoleCode("");
 			}
-			
+
 			FinScheduleData finScheduleData = new FinScheduleData();
 			finScheduleData.setFinanceMain(financeMain);
 			finScheduleData.setFinReference(financeMain.getFinReference());
@@ -6151,11 +6161,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return auditHeader;
 			}
 		}
+		String tranType = PennantConstants.TRAN_DEL;
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		financeMain.setFinIsActive(false);
 		//TODO for API Fix me
-		FinanceMain financeMainAvl = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp", false);
-		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl!=null) {
+		FinanceMain financeMainAvl = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp",
+				false);
+		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl != null) {
 			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
 		}
 
@@ -10920,7 +10932,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						.setNextGrcPftRvwDate(FrequencyUtil.getNextDate(finGrcRvwFrq, 1, financeMain.getFinStartDate(),
 								"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 			}
-			
 
 			financeMain.setAllowGrcCpz(financeType.isFinGrcIsIntCpz());
 			financeMain.setGrcCpzFrq(financeType.getFinGrcCpzFrq());
@@ -11403,6 +11414,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	@Autowired(required = false)
@@ -11437,6 +11449,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setBaseRateCodeDAO(BaseRateCodeDAO baseRateCodeDAO) {
 		this.baseRateCodeDAO = baseRateCodeDAO;
+	}
+
+	public CreditReviewDetailDAO getCreditReviewDetailDAO() {
+		return creditReviewDetailDAO;
+	}
+
+	public void setCreditReviewDetailDAO(CreditReviewDetailDAO creditReviewDetailDAO) {
+		this.creditReviewDetailDAO = creditReviewDetailDAO;
 	}
 
 }

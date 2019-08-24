@@ -105,4 +105,8 @@ public interface CustomerDetailsService {
 
 	Customer checkCustomerByID(long custID, String type);
 
+	String getEIDNumberById(String eidNumber, String custctgCode, String type);
+
+	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
+
 }

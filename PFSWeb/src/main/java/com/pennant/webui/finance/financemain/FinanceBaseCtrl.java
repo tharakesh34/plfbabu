@@ -4020,8 +4020,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)
 						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
-							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") },
-							new String[] {}));
+							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
 
 				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),

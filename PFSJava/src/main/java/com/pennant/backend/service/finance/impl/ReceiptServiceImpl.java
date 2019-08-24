@@ -3361,10 +3361,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				return receiptData;
 			}
 
-			if (!(fsi.getValueDate().compareTo(fsi.getReceivedDate()) == 0)) {
-				finScheduleData = setErrorToFSD(finScheduleData, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
-				return receiptData;
-			}
+			/*
+			 * if (!(fsi.getValueDate().compareTo(fsi.getReceivedDate()) == 0)) { finScheduleData =
+			 * setErrorToFSD(finScheduleData, "RU0047", "[VALUEDATE] [RECEIVEDDATE]"); return receiptData; }
+			 */
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
 				if (fsi.getDepositDate() == null) {
@@ -3840,10 +3840,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (rch.getValueDate() == null) {
-			rch.setValueDate(rch.getReceiptDate());
+			rch.setValueDate(fsi.getValueDate());
 		}
 
-		fsi.setValueDate(rch.getValueDate());
 		String finReference = fsi.getFinReference();
 
 		Date appDate = DateUtility.getAppDate();
@@ -4124,7 +4123,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setReceiptDate(rcd.getReceivedDate());
 		rcd.setValueDate(rch.getValueDate());
 		rch.setRemarks(rcd.getRemarks());
-		rch.setValueDate(rcd.getReceivedDate());
+		rch.setValueDate(fsi.getValueDate());
 		receiptData.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 		if (StringUtils.equals(fsi.getReqType(), RepayConstants.REQTYPE_INQUIRY)) {

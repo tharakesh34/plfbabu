@@ -6711,8 +6711,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)
 						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
-							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") },
-							new String[] {}));
+							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
 
 				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),

@@ -558,8 +558,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 				// No need to check If the record coming from Payment
 				// Instructions or Disbursement Instructions or Insurance
 				// payments
-				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())
-						|| DisbursementConstants.CHANNEL_INSURANCE.equals(finAdvancePayments.getChannel())) {
+				if (DisbursementConstants.CHANNEL_PAYMENT.equals(finAdvancePayments.getChannel())) {
 					isCovenantCheckNotReq = true;
 				} else {
 					for (String rpymethod : repaymethod) {

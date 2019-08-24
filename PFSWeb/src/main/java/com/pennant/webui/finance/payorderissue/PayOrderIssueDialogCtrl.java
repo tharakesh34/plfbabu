@@ -125,7 +125,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	protected Button btnCMSTest;
 
 	// not auto wired variables
-	private PayOrderIssueHeader payOrderIssueHeader;
+	public PayOrderIssueHeader payOrderIssueHeader;
 	private transient PayOrderIssueListCtrl payOrderIssueListCtrl;
 
 	private transient boolean validationOn;

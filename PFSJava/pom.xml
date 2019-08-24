@@ -227,6 +227,10 @@
 			<groupId>com.pennanttech.pennapps.pff</groupId>
 			<artifactId>account-updater</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.pennanttech.pennapps</groupId>
+			<artifactId>pennapps-spreadsheets</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -91,6 +91,7 @@ public class CustomerEligibilityCheck implements Serializable {
 	private String mortgageSts;
 	private String mainCollateralType;
 	private String reqFinType;
+	private String recordStatus;
 
 	private boolean ddaModifiedCheck;
 	private BigDecimal refundAmount;
@@ -876,6 +877,14 @@ public class CustomerEligibilityCheck implements Serializable {
 
 	public void setNeftAvailable(boolean neftAvailable) {
 		this.neftAvailable = neftAvailable;
+	}
+
+	public String getRecordStatus() {
+		return recordStatus;
+	}
+
+	public void setRecordStatus(String recordStatus) {
+		this.recordStatus = recordStatus;
 	}
 
 }

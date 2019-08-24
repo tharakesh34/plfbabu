@@ -3131,7 +3131,12 @@ public class AgreementGeneration implements Serializable {
 			scheduleData.setSchDate(DateUtility.formatToLongDate(finSchDetail.getSchDate()));
 			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI) && bpiAmtReq) {
 				BPIAmount = finSchDetail.getRepayAmount();
+				//Provides current customers BPI Amount When Bpi Treatment Include to Deduct From disbursement .
 				agreement.setBPIAmount(PennantApplicationUtil.amountFormate(BPIAmount, formatter));
+			}
+			if (StringUtils.equals(finSchDetail.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+				// Provides BPI Amount Irrespective of Bpi Treatment.
+				agreement.setBpiAmt(PennantApplicationUtil.amountFormate(finSchDetail.getRepayAmount(), formatter));
 			}
 			scheduleData.setSchdPft(PennantApplicationUtil.amountFormate(finSchDetail.getProfitSchd(), formatter));
 			scheduleData.setSchdPri(PennantApplicationUtil.amountFormate(finSchDetail.getPrincipalSchd(), formatter));
@@ -3510,6 +3515,7 @@ public class AgreementGeneration implements Serializable {
 			}
 			agreement.setContractDate(DateUtility.formatToLongDate(main.getFinContractDate()));
 			agreement.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAssetValue(), formatter));
+			agreement.setVanCode(main.getVanCode());
 			String finAmount = NumberToEnglishWords.getAmountInText(
 					PennantApplicationUtil.formateAmount(main.getFinAmount(), CurrencyUtil.getFormat(main.getFinCcy())),
 					main.getFinCcy());

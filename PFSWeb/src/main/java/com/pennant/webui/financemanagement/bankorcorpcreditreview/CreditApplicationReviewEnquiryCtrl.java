@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,9 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
+import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -99,9 +103,12 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
+import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
+import com.pennant.webui.finance.financemain.SpreadsheetCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.incomeexpensedetail.dao.IncomeExpenseDetailDAO;
@@ -230,6 +237,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
 	private String eligibilityMethods = "";
+	
+	//Spread Sheet changes
+	protected CreditReviewDetails creditReviewDetails;
+	protected CreditReviewData creditReviewData;
+	protected ArrayList<Object> finBasicDetails;
+	private transient SpreadsheetCtrl spreadSheetCtrl;
+	private FinanceMainBaseCtrl financeMainBaseCtrl = null;
+	List<CustomerExtLiability> extLiabilities = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -391,6 +406,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					firstRepay = (BigDecimal) arguments.get("firstRepay");
 					extendedDataMap.put("EXT_FIRSTREPAY", unFormat(firstRepay.toString()));
 				}
+				
+				if (arguments.containsKey("creditReviewDetails")) {
+					creditReviewDetails = (CreditReviewDetails) arguments.get("creditReviewDetails");
+				}
+				if (arguments.containsKey("creditReviewData")) {
+					creditReviewData = (CreditReviewData) arguments.get("creditReviewData");
+				}
+				
+				if (arguments.containsKey("financeMainBaseCtrl")) {
+					this.financeMainBaseCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
+				}
+				
+				if (arguments.containsKey("externalLiabilities")) {
+					extLiabilities = (List<CustomerExtLiability>) arguments.get("externalLiabilities");
+				}
+				
+				this.finBasicDetails = (ArrayList<Object>) arguments.get("finHeaderList");
 
 				//School Funding Extended fields data setting
 				if (this.toYear.getValue() > 0 && this.custID.getValue() > 0) {
@@ -427,7 +459,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			}
 
 			// For Workflow
-			if (arguments.containsKey("creditReviewDetails")) {
+			if (!arguments.containsKey("creditReviewDetails")) {
 				if (arguments.containsKey("creditApplicationReviewListCtrl")) {
 					creditApplicationReviewListCtrl = (CreditApplicationReviewListCtrl) arguments
 							.get("creditApplicationReviewListCtrl");
@@ -1025,7 +1057,68 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			tabPanel.setParent(this.tabpanelsBoxIndexCenter);
 			render(fcrc, setListToTab("tabPanel_" + categoryId, tabPanel, fcrc));
 		}
+		// Code for Excel sheet on tab
+				Tab tab = new Tab();
+				tab.setId("tab_" + 5);//categoryid fix me
+				tab.setLabel("Banking");
+				tab.setParent(this.tabsIndexCenter);
+				Tabpanel tabPanel = new Tabpanel();
+				tabPanel.setId("tabPanel_" + 5);
+				tabPanel.setParent(this.tabpanelsBoxIndexCenter);
+				appendCreditReviewDetailTab(false, tabPanel);
+				logger.debug("Leaving");
 		logger.debug("Leaving");
+	}
+	
+	public void appendCreditReviewDetailTab(boolean onLoad, Tabpanel tabPanel) {
+
+		logger.debug(Literal.ENTERING);
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		final HashMap<String, Object> btMap = new HashMap<String, Object>();
+		map.put("roleCode", getRole());
+		map.put("financeMainDialogCtrl", financeMainBaseCtrl);
+		map.put("finHeaderList", getFinBasicDetails());
+		map.put("financeDetail", getFinanceDetail());
+		map.put("isFinanceProcess", true);
+		map.put("ccyFormatter",
+				CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy()));
+		map.put("creditReviewDetails", creditReviewDetails);
+		map.put("creditReviewData", creditReviewData);
+		map.put("externalLiabilities", extLiabilities);
+		btMap.put("EXT_MNTHLY_OBL", this.dataMap.get("EXT_EMI_CNSRD"));
+		Map<String, String> custWiseDataMap = new HashMap<>();
+
+		ArrayList<Long> custIdsList = new ArrayList<>(custIds);
+		custIdsList.add(0, this.custID.getValue());
+		custIds = new LinkedHashSet<>(custIdsList);
+
+		int i = 2;
+		for (Long custId : custIds) {
+			custWiseDataMap = this.creditReviewSummaryData.setDataMap1(custId, Integer.parseInt(maxAuditYear),
+					noOfYears, true, extendedDataMap, listOfFinCreditRevCategory);
+			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_FNL_CSH_PFT_INCSRD"));
+			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)).concat("_PRE"),
+					custWiseDataMap.get("Y1_FNL_CSH_PFT_INCSRD"));
+			btMap.put("OTHR_INC_ELG_CAL_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_OTHR_INC_ELG_CAL"));
+			btMap.put("TOT_REV_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_TOT_REV"));
+			btMap.put("GRS_PFT_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_GRS_PFT"));
+			btMap.put("GRS_PFT_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_GRS_PFT"));
+
+			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
+			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
+			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
+			if (i == 0) {
+				break;
+			}
+			i = i - 1;
+		}
+		custIds.remove(this.custID.getValue());
+		map.put("btMap", btMap);
+
+		map.put("userRole", getRole());
+		map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
+		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul", tabPanel, map);
 	}
 
 	/**
@@ -1928,4 +2021,19 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.incomeExpenseDetailDAO = incomeExpenseDetailDAO;
 	}
 
+	public FinanceDetail getFinanceDetail() {
+		return financeDetail;
+	}
+
+	public void setFinanceDetail(FinanceDetail financeDetail) {
+		this.financeDetail = financeDetail;
+	}
+
+	public ArrayList<Object> getFinBasicDetails() {
+		return finBasicDetails;
+	}
+
+	public void setFinBasicDetails(ArrayList<Object> finBasicDetails) {
+		this.finBasicDetails = finBasicDetails;
+	}
 }

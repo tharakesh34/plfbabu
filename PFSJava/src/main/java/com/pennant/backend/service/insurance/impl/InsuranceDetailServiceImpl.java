@@ -376,13 +376,16 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setValueDate(DateUtility.getAppDate());
 		aeEvent.setBranch(details.getUserDetails().getBranchCode());// FIXME
 																	// Branch
-																	// code(GDP)
 		aeEvent.setCcy(details.getPaymentCCy());
 		aeEvent.setCcy("INR");
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
 		}
+
+		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(details.getFinReference());
+		amountCodes.setFinType(financeMain.getFinType());
 
 		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCode(details.getProviderId());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());

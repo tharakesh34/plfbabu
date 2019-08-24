@@ -223,7 +223,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private String monthlyIncome = SysParamUtil.getValueAsString(SMTParameterConstants.MONTHLY_INCOME_REQ); // FIXME
-	private int configDay = SysParamUtil.getValueAsInt(SMTParameterConstants.BANKINFO_DAYS); // FIXME
+	private String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS); // FIXME
 
 	/**
 	 * default constructor.<br>
@@ -515,12 +515,30 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		Label label;
 
 		int balCount = 0;
-		for (int j = 1; j <= configDay; j++) {
+		for (String day : configDay.split(",")) {
+
+			int j = 0;
+			try {
+				j = Integer.parseInt(StringUtils.trim(day));
+			} catch (NumberFormatException e) {
+				continue;
+			}
+
 			balCount++;
 			row = new Row();
 			//Day
 			label = new Label();
-			label.setValue(j + "0th");
+
+			if (j == 1) {
+				label.setValue(j + "st");
+			} else if (j == 2) {
+				label.setValue(j + "nd");
+			} else if (j == 3) {
+				label.setValue(j + "rd");
+			} else {
+				label.setValue(j + "th");
+			}
+
 			hbox = new Hbox();
 			space = new Space();
 			space.setSpacing("2px");
@@ -534,7 +552,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			box.setScale(2);
 			if (bankInfoDetail.getBankInfoSubDetails().size() > 0) {
 				box.setValue(PennantApplicationUtil
-						.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(j - 1).getBalance(), 0));
+						.formateAmount(bankInfoDetail.getBankInfoSubDetails().get(balCount - 1).getBalance(), 0));
 			} else {
 				box.setValue(BigDecimal.ZERO);
 			}
@@ -1158,6 +1176,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (StringUtils.isBlank(bankInfoDetail.getRecordType())) {
 				bankInfoDetail.setVersion(bankInfoDetail.getVersion() + 1);
 				bankInfoDetail.setRecordType(PennantConstants.RCD_UPD);
+				bankInfoDetail.setNewRecord(true);
 			}
 
 			if (bankInfoDetail.getRecordType().equals(PennantConstants.RCD_ADD) && bankInfoDetail.isNewRecord()) {
@@ -1461,7 +1480,17 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			id = id.replaceAll("\\d", "");
 			if (StringUtils.equals(id, listcellId)) {
-				for (int i = 1; i <= this.configDay; i++) {
+
+				int i = 0;
+				for (String day : configDay.split(",")) {
+
+					try {
+						Integer.parseInt(StringUtils.trim(day));
+					} catch (NumberFormatException e) {
+						logger.error(Literal.EXCEPTION, e);
+						continue;
+					}
+					i++;
 					//Label day = (Label) listcell.getFellowIfAny("day"+i);
 					CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
 							.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
@@ -2133,6 +2162,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				if (StringUtils.isBlank(aCustomerBankInfo.getRecordType())) {
 					aCustomerBankInfo.setVersion(aCustomerBankInfo.getVersion() + 1);
 					aCustomerBankInfo.setRecordType(PennantConstants.RCD_UPD);
+					aCustomerBankInfo.setNewRecord(true);
 				}
 
 				if (aCustomerBankInfo.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {

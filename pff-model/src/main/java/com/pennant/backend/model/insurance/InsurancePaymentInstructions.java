@@ -3,9 +3,11 @@ package com.pennant.backend.model.insurance;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -46,6 +48,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 	private InsurancePaymentInstructions befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private String finReference;
 
 	@Override
 	public boolean isNew() {
@@ -58,6 +61,12 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 		detailsMap.put("id_totPayAmount", getPaymentAmount());// Total payment amount to the  partner after  adjusting the receivables
 		detailsMap.put("id_partnerPremiumAmt", getPartnerPremiumAmt());// Total payment amount to the  partner after  adjusting the receivables
 		return detailsMap;
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("finReference");
+		return excludeFields;
 	}
 
 	public long getId() {
@@ -290,6 +299,14 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity impleme
 
 	public void setPartnerPremiumAmt(BigDecimal partnerPremiumAmt) {
 		this.partnerPremiumAmt = partnerPremiumAmt;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
 	}
 
 }

@@ -277,6 +277,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean pdApprovalTab = false;
 	private boolean pdInitTab = false;
 
+	private Date appDate = null; //For Custom Deviations	
+	private CreditReviewData creditReviewData; //For Credit Review Details
+
 	public FinanceDetail() {
 		super();
 	}
@@ -1377,5 +1380,21 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setPdInitTab(boolean pdInitTab) {
 		this.pdInitTab = pdInitTab;
+	}
+
+	public CreditReviewData getCreditReviewData() {
+		return creditReviewData;
+	}
+
+	public void setCreditReviewData(CreditReviewData creditReviewData) {
+		this.creditReviewData = creditReviewData;
+	}
+
+	public Date getAppDate() {
+		return appDate;
+	}
+
+	public void setAppDate(Date appDate) {
+		this.appDate = appDate;
 	}
 }

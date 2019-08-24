@@ -295,7 +295,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 	@Override
 	public void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction,
-			long presentmentId, long partnerBankId, LoggedInUser userDetails, boolean isPDC) throws Exception {
+			long presentmentId, long partnerBankId, LoggedInUser userDetails, boolean isPDC, String presentmentRef,
+			String partnerBankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -308,7 +309,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		} else if ("Submit".equals(userAction)) {
 			submitPresentments(excludeList, includeList, presentmentId, partnerBankId);
 		} else if ("Approve".equals(userAction)) {
-			approvePresentments(excludeList, presentmentId, userDetails, isPDC);
+			approvePresentments(excludeList, presentmentId, userDetails, isPDC, presentmentRef, partnerBankAccNo);
 		} else if ("Resubmit".equals(userAction)) {
 			resubmitPresentments(presentmentId, partnerBankId);
 		} else if ("Cancel".equals(userAction)) {
@@ -349,7 +350,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	private void approvePresentments(List<Long> excludeList, long presentmentId, LoggedInUser userDetails,
-			boolean isPDC) throws Exception {
+			boolean isPDC, String presentmentRef, String bankAccNo) throws Exception {
 
 		if (excludeList != null && !excludeList.isEmpty()) {
 			updatePresentmentIdAsZero(excludeList);
@@ -370,7 +371,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			}
 		}
 
-		processDetails(presentmentId, userDetails, isPDC);
+		processDetails(presentmentId, userDetails, isPDC, presentmentRef, bankAccNo);
 	}
 
 	private void cancelPresentments(long presentmentId) {
@@ -463,7 +464,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	// Processing the presentment details
-	public void processDetails(long presentmentId, LoggedInUser userDetails, boolean isPDC) throws Exception {
+	public void processDetails(long presentmentId, LoggedInUser userDetails, boolean isPDC, String presentmentRef,
+			String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> idList = new ArrayList<Long>();
@@ -501,7 +503,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 			// Storing the presentment data into bajaj inteface tables
 
 			try {
-				getPresentmentRequest().sendReqest(idList, idExcludeEmiList, presentmentId, isError, isPDC);
+				getPresentmentRequest().sendReqest(idList, idExcludeEmiList, presentmentId, isError, isPDC,
+						presentmentRef, bankAccNo);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				throw e;

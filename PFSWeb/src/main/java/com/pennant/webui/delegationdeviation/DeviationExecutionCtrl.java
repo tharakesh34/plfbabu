@@ -12,6 +12,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.delegationdeviation.DeviationConfigService;
@@ -153,6 +155,8 @@ public class DeviationExecutionCtrl {
 			return;
 		}
 
+		financeDetail.setAppDate(DateUtility.getAppDate());
+
 		delegators = deviationHelper
 				.getWorkflowRoles(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
 
@@ -164,9 +168,11 @@ public class DeviationExecutionCtrl {
 		// *** Co-applicant's details. ***
 		CustomerDetails customer;
 
-		for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
-			customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
-			coApplicant.setCustomerDetails(customer);
+		if (CollectionUtils.isNotEmpty(aFinanceDetail.getJountAccountDetailList())) {
+			for (JointAccountDetail coApplicant : aFinanceDetail.getJountAccountDetailList()) {
+				customer = customerDetailsService.getCustomerDetailsById(coApplicant.getCustID(), true, "_AView");
+				coApplicant.setCustomerDetails(customer);
+			}
 		}
 
 		//Setting the collateral setup list

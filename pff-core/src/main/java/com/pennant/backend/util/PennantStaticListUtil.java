@@ -311,12 +311,12 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> taxtTypeList;
 	private static ArrayList<ValueLabel> downloadTypeList;
 	private static ArrayList<ValueLabel> vanAllocationMethods;
-   
+
 	//GST Customers
 	private static ArrayList<ValueLabel> frequencyType;
 	private static ArrayList<ValueLabel> frequency;
 	private static ArrayList<ValueLabel> year;
-	
+
 	/**
 	 * Gets the list of applications.
 	 * 
@@ -1144,10 +1144,9 @@ public class PennantStaticListUtil {
 		return stepTypes;
 	}
 
-	public static ArrayList<ValueLabel> getODCCalculatedOn() {
-
+	public static List<ValueLabel> getODCCalculatedOn() {
 		if (overDueCalOnList == null) {
-			overDueCalOnList = new ArrayList<ValueLabel>(3);
+			overDueCalOnList = new ArrayList<>(4);
 			overDueCalOnList
 					.add(new ValueLabel(FinanceConstants.ODCALON_STOT, Labels.getLabel("label_ScheduleTotalBalance")));
 			overDueCalOnList.add(
@@ -2810,8 +2809,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ScheduleMethod_NoPayment")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFT,
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfit")));
-			/*schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
-					Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));*/
+			/*
+			 * schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
+			 * Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));
+			 */
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,
 					Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
 			if (SysParamUtil.isAllowed("ALW_CONST_PRINCIPLE_SCHD_METHOD")) {
@@ -3728,7 +3729,7 @@ public class PennantStaticListUtil {
 
 		if (accountMapping == null) {
 			accountMapping = new ArrayList<ValueLabel>(3);
-			accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			//accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
 			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
 			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
@@ -5082,26 +5083,26 @@ public class PennantStaticListUtil {
 		}
 		return vanAllocationMethods;
 	}
+
 	// GST Customers 
 	public static ArrayList<ValueLabel> getfrequencyType() {
-		if(frequencyType == null){
-			frequencyType=new ArrayList<ValueLabel>(3);
-			frequencyType.add(new ValueLabel("Monthly",Labels.getLabel("label_CustomerDialog_GstMonth.value")));
-			frequencyType.add(new ValueLabel("Quarterly",Labels.getLabel("label_CustomerDialog_GstQuarter.value")));
-			frequencyType.add(new ValueLabel("Yearly",Labels.getLabel("label_CustomerDialog_GstYearly.value")));
+		if (frequencyType == null) {
+			frequencyType = new ArrayList<ValueLabel>(3);
+			frequencyType.add(new ValueLabel("Monthly", Labels.getLabel("label_CustomerDialog_GstMonth.value")));
+			frequencyType.add(new ValueLabel("Quarterly", Labels.getLabel("label_CustomerDialog_GstQuarter.value")));
+			frequencyType.add(new ValueLabel("Yearly", Labels.getLabel("label_CustomerDialog_GstYearly.value")));
 		}
 		return frequencyType;
 	}
-	
+
 	public static ArrayList<ValueLabel> getYear() {
-		if(year == null){
-			year=new ArrayList<ValueLabel>(1);
-			year.add(new ValueLabel("2019",Labels.getLabel("label_CustomerDialog_GstYear.value")));
+		if (year == null) {
+			year = new ArrayList<ValueLabel>(1);
+			year.add(new ValueLabel("2019", Labels.getLabel("label_CustomerDialog_GstYear.value")));
 		}
 		return year;
 	}
-	
-	
+
 	public static ArrayList<ValueLabel> getfrequency(String ch) {
 		frequency = new ArrayList<ValueLabel>(12);
 		if (StringUtils.isNotEmpty(ch)) {
@@ -5129,5 +5130,5 @@ public class PennantStaticListUtil {
 		}
 		return frequency;
 	}
-  
+
 }

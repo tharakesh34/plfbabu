@@ -1331,8 +1331,8 @@ public class ReceiptCalculator implements Serializable {
 	public FinReceiptData changeAllocations(FinReceiptData receiptData) {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		setReceiptCategory(rch.getReceiptPurpose());
-
-		allocated = rch.getAllocationsSummary();
+		Cloner cloner = new Cloner();
+		allocated = cloner.deepClone(rch.getAllocations());
 		if (StringUtils.equals(rch.getAllocationType(), RepayConstants.ALLOCATIONTYPE_AUTO)) {
 			receiptData = setXcessPayables(receiptData);
 			receiptData = recalAutoAllocation(receiptData, rch.getValueDate(), false);
@@ -3490,7 +3490,7 @@ public class ReceiptCalculator implements Serializable {
 
 		// In Process, Current Dues and Balances
 		sumAlloc.setInProcess(sumAlloc.getInProcess().add(tempAlloc.getInProcess()));
-		sumAlloc.setBalance(sumAlloc.getTotalDue().subtract(sumAlloc.getTotalPaid()));
+		sumAlloc.setBalance(sumAlloc.getTotalDue().subtract(sumAlloc.getTotalPaid().add(sumAlloc.getWaivedAmount())));
 
 		// Un wanted fields for summary. can be deleted if not useful after
 		// thourough confirmation
@@ -3523,22 +3523,23 @@ public class ReceiptCalculator implements Serializable {
 				continue;
 			}
 			BigDecimal due = rad.getTotalDue();
-
-			if (waivedForAdjustment.compareTo(due) >= 0) {
-				waivedNow = rad.getTotalDue();
-				rad.setWaivedAmount(waivedNow);
+			if (waivedForAdjustment.compareTo(BigDecimal.ZERO) > 0) {
+				if (waivedForAdjustment.compareTo(due) >= 0) {
+					waivedNow = rad.getTotalDue();
+					rad.setWaivedAmount(waivedNow);
+					waivedForAdjustment = waivedForAdjustment.subtract(waivedNow);
+				} else {
+					waivedNow = waivedForAdjustment;
+					rad.setWaivedAmount(waivedNow);
+					waivedForAdjustment = BigDecimal.ZERO;
+				}
 				due = due.subtract(waivedNow);
-				paidForAdjustment = paidForAdjustment.subtract(rad.getTotalDue());
-			} else {
-				waivedNow = waivedForAdjustment;
-				rad.setWaivedAmount(waivedNow);
-				waivedForAdjustment = BigDecimal.ZERO;
 			}
 			if (due.compareTo(BigDecimal.ZERO) <= 0) {
-				break;
+				continue;
 			}
-			if (paidForAdjustment.compareTo(rad.getTotalDue()) >= 0) {
-				paidNow = rad.getTotalDue();
+			if (paidForAdjustment.compareTo(due) >= 0) {
+				paidNow = due;
 				rad.setTotalPaid(paidNow);
 				rad.setPaidAmount(paidNow);
 
@@ -3548,7 +3549,7 @@ public class ReceiptCalculator implements Serializable {
 				calAllocationGST(receiptData.getFinanceDetail(), paidNow, rad,
 						FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 
-				paidForAdjustment = paidForAdjustment.subtract(rad.getTotalDue());
+				paidForAdjustment = paidForAdjustment.subtract(paidNow);
 			} else {
 				paidNow = paidForAdjustment;
 				rad.setTotalPaid(paidNow);
@@ -3570,7 +3571,7 @@ public class ReceiptCalculator implements Serializable {
 
 			}
 		}
-
+		rch.setAllocations(radList);
 		return receiptData;
 	}
 

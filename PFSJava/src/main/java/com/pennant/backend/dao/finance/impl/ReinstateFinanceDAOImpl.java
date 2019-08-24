@@ -163,15 +163,19 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				" T3.FinTypeDesc LovDescFinTypeName, T1.FinBranch, T4.BranchDesc LovDescFinBranchName, T1.FinCcy,  ");
 		selectSql.append(
 				" FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, T7.UsrLogin RejectedBy, T1.LastMntOn RejectedOn, ");
-		selectSql.append(" T8.Activity RejectStatus, T8.Remarks RejectRemarks ");
-		selectSql.append(" ,T1.ScheduleMethod, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.ProfitDaysBasis, T3.Product ");
+		selectSql.append(" T9.Activity RejectStatus, T9.Remarks RejectRemarks ");
+		selectSql
+				.append(" ,T1.ScheduleMethod, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.ProfitDaysBasis, T3.Product ");
 		selectSql.append(" From RejectFinanceMain T1 LEFT OUTER JOIN  ");
 		selectSql.append(" Customers T2 ON T1.CustID = T2.CustID LEFT OUTER JOIN  ");
 		selectSql.append(" RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN  ");
 		selectSql.append(" RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN  ");
 		selectSql.append(" BMTRejectCodes T6 ON T1.RejectStatus = T6.RejectCode LEFT OUTER JOIN  ");
 		selectSql.append(" SecUsers T7 ON T1.LastMntBy = T7.UsrID LEFT OUTER JOIN");
-		selectSql.append(" reasonheader T8 ON T8.reference = T1.finreference Where FinReference = :FinReference ");
+		selectSql.append(
+				" (SELECT REFERENCE,MAX(ID) AS ID FROM PLF.REASONHEADER GROUP BY REFERENCE)  T8 ON T8.REFERENCE = T1.FINREFERENCE");
+		selectSql.append(
+				" LEFT JOIN PLF.REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
 
 		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);
 		RowMapper<ReinstateFinance> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReinstateFinance.class);

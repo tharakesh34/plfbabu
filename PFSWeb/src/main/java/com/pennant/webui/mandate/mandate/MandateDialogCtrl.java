@@ -987,6 +987,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(isReadOnly("MandateDialog_ApprovalID"), this.approvalID);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.status);
 		readOnlyComponent(isReadOnly("MandateDialog_Status"), this.reason);
+		readOnlyComponent(isReadOnly("MandateDialog_InputDate"), this.inputDate);
 		readOnlyComponent(true, this.umrNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
@@ -1400,7 +1401,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// InputDate
 		try {
-			aMandate.setInputDate(DateUtility.getAppDate());
+			
+			aMandate.setInputDate(DateUtility.getDate(
+					DateUtility.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

@@ -59,7 +59,8 @@ public interface PresentmentDetailService {
 			String type);
 
 	void updatePresentmentDetails(List<Long> excludeList, List<Long> includeList, String userAction, long presentmentId,
-			long partnerBankId, LoggedInUser loggedInUser, boolean isPDC) throws Exception;
+			long partnerBankId, LoggedInUser loggedInUser, boolean isPDC, String presentmentRef,
+			String partnerBankAccNum) throws Exception;
 
 	PresentmentDetail presentmentCancellation(String presentmentRef, String bounceCode) throws Exception;
 

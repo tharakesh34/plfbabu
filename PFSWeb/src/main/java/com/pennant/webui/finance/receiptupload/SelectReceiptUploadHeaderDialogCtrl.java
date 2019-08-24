@@ -806,10 +806,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setValueDate(dateValue);
 			} else {
-				if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
-						|| StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_DD)) {
+				
 					setErrorToRUD(rud, "RU0040", "Blanks in [VALUEDATE] ");
-				}
 			}
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [VALUEDATE] ");
@@ -835,11 +833,11 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 		try {
 			if (StringUtils.isNotBlank(strValueDate) && StringUtils.isNotBlank(strReceivedDate)
-					&& !(strReceivedDate.compareTo(strValueDate) == 0)) {
-				setErrorToRUD(rud, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
+					&& !(strReceivedDate.compareTo(strValueDate) >= 0)) {
+				setErrorToRUD(rud, "RU0008", "");
 			}
 		} catch (Exception e) {
-			setErrorToRUD(rud, "RU0047", "[VALUEDATE] [RECEIVEDDATE]");
+			setErrorToRUD(rud, "RU0008", "");
 		}
 		// Receipt Mode
 		strValue = getCellStringValue(rchRow, 10);

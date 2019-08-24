@@ -57,6 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinTypeReceiptModesDAO;
@@ -99,6 +100,7 @@ import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceRuleCode;
@@ -417,7 +419,12 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 	 */
 	@Override
 	public FinanceType getOrgFinanceTypeById(String finType) {
-		return getFinanceTypeDAO().getOrgFinanceTypeByID(finType, "_ORGView");
+		FinanceType financeTypeDetails = getFinanceTypeDAO().getOrgFinanceTypeByID(finType, "_ORGView");
+		if (financeTypeDetails.isAlwVan() && SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)) {
+			financeTypeDetails.setFinTypePartnerBankList(getFinTypePartnerBankService()
+					.getFinTypePartnerBanksList(financeTypeDetails.getFinType(), "_AView"));
+		}
+		return financeTypeDetails;
 	}
 
 	/**

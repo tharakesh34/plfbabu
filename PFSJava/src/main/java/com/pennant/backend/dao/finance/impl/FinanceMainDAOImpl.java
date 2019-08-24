@@ -4958,4 +4958,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
+	@Override
+	public FinanceMain getFinanceDetailsForInsurance(String finReference, String type) {
+		logger.debug("Entering");
+
+		FinanceMain financeMain = new FinanceMain();
+		financeMain.setId(finReference);
+
+		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinType, Finccy ");
+		selectSql.append(" From FinanceMain");
+
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeMain);
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		try {
+			financeMain = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			financeMain = null;
+		}
+		logger.debug("Leaving");
+		return financeMain;
+	}
 }

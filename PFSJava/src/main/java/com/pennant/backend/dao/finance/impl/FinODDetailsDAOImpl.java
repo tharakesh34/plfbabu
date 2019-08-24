@@ -189,7 +189,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		logger.debug("Leaving");
 	}
 
-	
 	//FIXME: PV 09AUG19. Doubt. How come both paid and balance are setting with addition.
 	//Need to see impact on fields LpCurCpzBal
 	@Override
@@ -370,7 +369,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		return finODDetails;
 	}
 
-	
 	//FIXME: PV. Not used any where. Seems wrong query too. 
 	@Override
 	public Date getFinDueFromDate(String finReference) {

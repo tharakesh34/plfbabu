@@ -230,6 +230,7 @@ import com.pennant.backend.model.finance.CAFFacilityType;
 import com.pennant.backend.model.finance.CashDenomination;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
@@ -522,6 +523,7 @@ public class PennantJavaUtil {
 	private static String insuranceDetails = "INSURANCE_DETAILS";
 	private static String ReceiptProcessWF = "RECEIPT_PROCESS";
 	private final static String WF_VERIFICATION_PD = "VERIFICATION_PD";
+	private final static String WF_RECEIPTUPLOAD = "RECEIPTUPLOAD";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -1154,15 +1156,11 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
 						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
 						new String[] { "CustID", "bankName" }, null, 300));
-		ModuleUtil.register("CustomerGST",
-				new ModuleMapping("CustomerGST", CustomerGST.class,
-						new String[] { "CustomerGST", "CustomerGST_AView" }, null,
-						new String[] { "gstNumber" },null, 300));
-		
-		ModuleUtil.register("CustomerGSTDetails",
-				new ModuleMapping("CustomerGSTDetails", CustomerGSTDetails.class,
-						new String[] { "CustomerGSTDetails", "CustomerGSTDetails_AView" }, null,
-						null, null, 300));
+		ModuleUtil.register("CustomerGST", new ModuleMapping("CustomerGST", CustomerGST.class,
+				new String[] { "CustomerGST", "CustomerGST_AView" }, null, new String[] { "gstNumber" }, null, 300));
+
+		ModuleUtil.register("CustomerGSTDetails", new ModuleMapping("CustomerGSTDetails", CustomerGSTDetails.class,
+				new String[] { "CustomerGSTDetails", "CustomerGSTDetails_AView" }, null, null, null, 300));
 
 		ModuleUtil.register("CustEmployeeDetail",
 				new ModuleMapping("CustEmployeeDetail", CustEmployeeDetail.class,
@@ -3072,7 +3070,7 @@ public class PennantJavaUtil {
 		// Receipt Upload
 		ModuleUtil.register("ReceiptUploadHeader",
 				new ModuleMapping("ReceiptUploadHeader", ReceiptUploadHeader.class,
-						new String[] { "ReceiptUploadHeader", "ReceiptUploadHeader_AVIEW" }, masterWF,
+						new String[] { "ReceiptUploadHeader", "ReceiptUploadHeader_AVIEW" }, WF_RECEIPTUPLOAD,
 						new String[] { "uploadHeaderId", "FileName" }, null, 600));
 
 		ModuleUtil.register("ReleaseLock", new ModuleMapping("ReleaseLock", FinanceMain.class,
@@ -3247,19 +3245,19 @@ public class PennantJavaUtil {
 				new ModuleMapping("ChannelTypes", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "CHANNEL" } }, 400));
-		
-		/*LovFieldDetails Module mappings*/
-		
+
+		/* LovFieldDetails Module mappings */
+
 		ModuleUtil.register("AssetCalc",
 				new ModuleMapping("AssetCalc", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "ASSETCALC" } }, 400));
-		
+
 		ModuleUtil.register("BankCode",
 				new ModuleMapping("BankCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "BANKCODE" } }, 400));
-		
+
 		ModuleUtil.register("CreditArea",
 				new ModuleMapping("CreditArea", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
@@ -3269,19 +3267,18 @@ public class PennantJavaUtil {
 				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "INDUSTRYCODE" } }, 400));
-		
+
 		ModuleUtil.register("OtherBank",
 				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "OTHERBANK" } }, 400));
-		
+
 		ModuleUtil.register("RelationShipArea",
 				new ModuleMapping("IndustryCode", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "RELATIONSHPAREA" } }, 400));
-		/*LovFieldDetails Module mappings*/
-		
-		
+		/* LovFieldDetails Module mappings */
+
 		ModuleUtil.register("OtherBank",
 				new ModuleMapping("OtherBank", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
@@ -3291,7 +3288,7 @@ public class PennantJavaUtil {
 				new ModuleMapping("RealationShipArea", LovFieldDetail.class, new String[] { "RMTLovFieldDetail_AView" },
 						masterWF, new String[] { "FieldCodeId", "FieldCodeValue", "ValueDesc" },
 						new Object[][] { { "IsActive", "0", 1 }, { "FieldCode", "0", "RELATIONSHPAREA" } }, 400));
-		
+
 		ModuleUtil.register("ConsumerProduct",
 				new ModuleMapping("ConsumerProduct", ConsumerProduct.class,
 						new String[] { "CD_PRODUCTS", "CD_PRODUCTS_AView" }, masterWF,
@@ -3382,12 +3379,17 @@ public class PennantJavaUtil {
 				new ModuleMapping("CustCardSales", CustCardSales.class,
 						new String[] { "CustCardSales", "CustCardSales_AView" }, masterWF,
 						new String[] { "Id, MerchantId" }, null, 600));
-		
+
 		ModuleUtil.register("CustCardSalesDetails",
 				new ModuleMapping("CustCardSalesDetails", CustCardSalesDetails.class,
 						new String[] { "CustCardSalesDetails", "CustCardSalesDetails_AView" }, masterWF,
 						new String[] { "Id", "CardSalesId" }, null, 600));
-		
+
+		ModuleUtil.register("CreditReviewData",
+				new ModuleMapping("CreditReviewData", CreditReviewData.class,
+						new String[] { "CreditReviewData", "CreditReviewData" }, null, new String[] { "FinReference" },
+						null, 600));
+
 		registerCustomModules();
 	}
 

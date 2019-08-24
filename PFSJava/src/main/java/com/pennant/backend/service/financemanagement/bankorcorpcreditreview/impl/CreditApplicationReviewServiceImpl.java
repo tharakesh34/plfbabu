@@ -15,12 +15,15 @@ import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
+import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditReviewSummaryDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
@@ -51,6 +54,8 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	List<CustomerDocument> docsList;
 	private CreditReviewSummaryEntryValidation creditReviewSummaryEntryValidation;
 	private String excludeFields = "auditYear,remarks,creditRevCode, ";
+
+	private CreditReviewDetailDAO creditReviewDetailDAO;
 
 	public CreditApplicationReviewServiceImpl() {
 		super();
@@ -1554,17 +1559,27 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		return this.creditApplicationReviewDAO.getFinCreditRevSubCategoryByCategoryId(categoryId);
 	}
 
+	@Override
+	public CreditReviewData getCreditReviewDataByRef(String finReference, String templateName, int templateVersion) {
+		return getCreditReviewDetailDAO().getCreditReviewData(finReference, templateName, templateVersion);
+	}
+
+	@Override
+	public CreditReviewDetails getCreditReviewDetailsByRef(CreditReviewDetails creditReviewDetail) {
+		return getCreditReviewDetailDAO().getCreditReviewDetails(creditReviewDetail);
+	}
+
+	@Override
+	public FinCreditReviewDetails getNewCreditReviewDetails() {
+		return getCreditApplicationReviewDAO().getNewCreditReviewDetails();
+	}
+
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	@Override
-	public FinCreditReviewDetails getNewCreditReviewDetails() {
-		return getCreditApplicationReviewDAO().getNewCreditReviewDetails();
 	}
 
 	public FinCreditRevSubCategoryService getFinCreditRevSubCategoryService() {
@@ -1613,6 +1628,14 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 
 	public CustomerDocumentService getCustomerDocumentService() {
 		return customerDocumentService;
+	}
+
+	public CreditReviewDetailDAO getCreditReviewDetailDAO() {
+		return creditReviewDetailDAO;
+	}
+
+	public void setCreditReviewDetailDAO(CreditReviewDetailDAO creditReviewDetailDAO) {
+		this.creditReviewDetailDAO = creditReviewDetailDAO;
 	}
 
 }

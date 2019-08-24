@@ -607,7 +607,7 @@
 				rightName="menuItem_FinanceManagement_ReSchedule" />
 			<menuItem id="menu_Item_UnPlannedEmi" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menuItem_FinanceManagement_UnPlannedEmi" />
-			<!-- <menuItem id="menu_Item_IjaraBulkRate" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul"
+			<!-- <menuItem id="menu_Item_IjaraBulkRate" zulNavigation="/WEB-INF/pages/FinanceManagement/BulkRateChange/BulkRateChangeList.zul" 
 				rightName="menuItem_FinanceManagement_BulkRateChange" /> -->
 			<menuItem id="menu_Item_FeeWaivers" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menu_Item_FeeWaiverHeader" />
@@ -847,7 +847,7 @@
 				rightName="menuItem_Enquiry_ChequeDetailEnquiry" />
 			<!-- Loan Closure Enquiry -->
 			<menuItem id="menu_Item_LoanClosureEnquiry" zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/SelectLoanClosureEnquiryList.zul"
-				rightName="" />
+				rightName="menuItem_LoanClosureEnquiry" />
 		</menu>
 		<menu id="menu_Category_Verification_Enquiry">
 			<menuItem id="menu_Item_FieldInvestigation_Enquiry" zulNavigation="/WEB-INF/pages/Verification/FieldInvestigation/FieldInvestigationList.zul?module=ENQ"

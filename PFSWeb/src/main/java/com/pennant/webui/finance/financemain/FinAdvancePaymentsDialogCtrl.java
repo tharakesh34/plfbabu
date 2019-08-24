@@ -1374,21 +1374,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 				this.partnerBankID.setAttribute("partnerBankId", partnerBank.getPartnerBankID());
 				this.finAdvancePayments.setPartnerbankCode(partnerBank.getPartnerBankCode());
 				this.finAdvancePayments.setPartnerBankName(partnerBank.getPartnerBankName());
-
-				if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED) && financeMainDialogCtrl != null
-						&& financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
-					FinanceMainBaseCtrl finMainbaseCtr = (FinanceMainBaseCtrl) financeMainDialogCtrl;
-					PartnerBank bank = getPartnerBankService()
-							.getApprovedPartnerBankById(partnerBank.getPartnerBankID());
-					if (bank != null && financeMain != null) {
-						if (bank.getVanCode() != null) {
-							finMainbaseCtr.vanCode.setValue(
-									StringUtils.trimToEmpty(bank.getVanCode()).concat(financeMain.getFinReference()));
-						} else {
-							finMainbaseCtr.vanCode.setValue(StringUtils.trimToEmpty(financeMain.getFinReference()));
-						}
-					}
-				}
+				//Van Related Code Removed
 			}
 		}
 
@@ -1599,8 +1585,15 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 							getFinAdvancePaymentsListCtrl()
 									.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
 						} else {
-							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
-									null);
+							if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+								getPayOrderIssueDialogCtrl()
+										.doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails, null);
+							} else {
+								getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(
+										this.finAdvancePaymentsDetails,
+										getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+							}
+
 						}
 						closeDialog();
 					}
@@ -1729,8 +1722,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 					if (this.moduleType.equals("LOAN")) {
 						getFinAdvancePaymentsListCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails);
 					} else {
-						getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
-								null);
+						if (!SysParamUtil.isAllowed(SMTParameterConstants.INSURANCE_INST_ON_DISB)) {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									null);
+						} else {
+							getPayOrderIssueDialogCtrl().doFillFinAdvancePaymentsDetails(this.finAdvancePaymentsDetails,
+									getPayOrderIssueDialogCtrl().payOrderIssueHeader.getvASRecordings());
+						}
 					}
 					closeDialog();
 				}

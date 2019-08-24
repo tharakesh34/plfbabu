@@ -639,8 +639,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		selectSql.append(
 				" TranDesc,RevTranCode,DrOrCr,Account, ShadowPosting, PostAmount,AmountType,PostStatus,ErrorId, ");
 		selectSql.append(
-				" ErrorMsg, AcCcy, TranOrderId, PostToSys,ExchangeRate,PostBranch, AppDate, AppValueDate, UserBranch ");
-		selectSql.append(" FROM Postings ");
+				" ErrorMsg, AcCcy, TranOrderId,PostBranch, AppDate, AppValueDate, UserBranch, 'Insurance Payment' as LovDescEventCodeName ");
+		selectSql.append(" FROM Postings");
 		selectSql.append(" Where LInkedTraniD in (Select linkedTranid from InsurancePaymentInstructions where id in (");
 		selectSql.append(" select paymentinsid from vasrecording where PRIMARYlinkref = :finReference) )");
 

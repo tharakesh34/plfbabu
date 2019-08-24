@@ -3985,20 +3985,20 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)) {
 			isPftCpzFromReset = true;
 		}
-		
+
 		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 		FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
 		int sdSize = schdDetails.size();
 		for (int i = 0; i < sdSize; i++) {
 			curSchd = schdDetails.get(i);
 			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
-				
+
 				if (isPftCpzFromReset && curSchd.isCpzOnSchDate() && curSchd.isRepayOnSchDate()) {
 					finMain.setPftCpzFromReset(BigDecimal.ZERO);
 				} else {
 					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
 				}
-				
+
 				continue;
 			}
 
@@ -4507,7 +4507,7 @@ public class ScheduleCalculator {
 								curSchd.setCpzOnSchDate(false);
 							}
 						}
-						
+
 					} else if (StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 						if (!finMain.isAllowRepayCpz()
 								|| !FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), curSchDate)) {
@@ -4527,7 +4527,6 @@ public class ScheduleCalculator {
 					} else {
 						curSchd.setCpzAmount(curSchd.getProfitBalance());
 					}
-					
 				} else {
 					curSchd.setCpzAmount(BigDecimal.ZERO);
 				}
@@ -4768,7 +4767,7 @@ public class ScheduleCalculator {
 				finMain.setPftCpzFromReset(BigDecimal.ZERO);
 			}
 
-			if (curSchd.getPresentmentId()<=0) {
+			if (curSchd.getPresentmentId() <= 0) {
 				curSchd.setPrincipalSchd(cpzDue);
 			}
 
@@ -4808,7 +4807,7 @@ public class ScheduleCalculator {
 					}
 				}
 			}
-			
+
 			// curSchd.setPrincipalSchd(curSchd.getSchdPriPaid());
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 
@@ -4955,7 +4954,7 @@ public class ScheduleCalculator {
 		return curSchd;
 
 	}
-	
+
 	private BigDecimal getCpzFromLastRepayFrq(FinScheduleData finScheduleData, int iCur, int iPrv, Date evtFromDate) {
 		BigDecimal cpzAmount = BigDecimal.ZERO;
 		String frq = finScheduleData.getFinanceMain().getRepayFrq();

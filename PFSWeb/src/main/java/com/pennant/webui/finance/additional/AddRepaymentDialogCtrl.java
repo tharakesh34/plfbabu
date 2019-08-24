@@ -934,9 +934,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void onChange$cbSchdMthd(Event event) {
 		logger.debug("Entering" + event.toString());
 		overrideCount = 0;
-		
+
 		String schdMthd = this.cbSchdMthd.getSelectedItem().getValue().toString();
-		
+
 		this.wIAmount.setMandatory(false);
 		if (StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFT)
 				|| StringUtils.equals(schdMthd, CalculationConstants.SCHMTHD_PFTCPZ)

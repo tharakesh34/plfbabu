@@ -23,6 +23,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
+import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
@@ -39,7 +40,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 	@Override
 	public void sendReqest(List<Long> idList, List<Long> idExcludeEmiList, long presentmentId, boolean isError,
-			boolean isPDC) throws Exception {
+			boolean isPDC, String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		boolean isBatchFail = false;
@@ -92,7 +93,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 					String alwPresentmentDwnld = SysParamUtil
 							.getValueAsString(InterfaceConstants.ALLOW_PRESENTMENT_DOWNLOAD);
 					if ("Y".equalsIgnoreCase(alwPresentmentDwnld)) {
-						prepareRequestFile(presentmentId);
+						prepareRequestFile(presentmentId, presentmentRef, bankAccNo);
 					}
 				}
 			}
@@ -111,7 +112,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 	 * 
 	 * @throws Exception
 	 */
-	public void prepareRequestFile(long presentmentId) throws Exception {
+	public void prepareRequestFile(long presentmentId, String presentmentRef, String bankAccNo) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -126,6 +127,13 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Map<String, Object> filterMap = new HashMap<>();
 			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
+			Map<String, Object> parameterMap = new HashMap<>();
+			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
+			parameterMap.put("DepositeDate", DateUtil.getSysDate("dd-MMM-yy"));
+			parameterMap.put("despositslipid", presentmentRef);
+			parameterMap.put("clientCode", "VEHCLIX162");
+			parameterMap.put("AccountNo", bankAccNo);
+			dataEngine.setParameterMap(parameterMap);
 
 			if (smtPaymentModeConfig != null) {
 				dataEngine.exportData(smtPaymentModeConfig);

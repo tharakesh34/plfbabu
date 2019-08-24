@@ -2305,6 +2305,7 @@
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
 	</bean>
 
 	<bean id="creditReviewSummaryEntryValidation"
@@ -3421,6 +3422,9 @@
 		<!-- Payments process service -->
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
+
+		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />		
+
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -11171,4 +11175,27 @@
 	</bean>
 
 
+	<!-- Credit Review Details -->	
+	<bean id="creditFinancialService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="creditFinancialServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="creditFinancialServiceTarget" class="com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditFinancialServiceImpl"/>
+
+	<bean id="creditReviewDetailDAO" class="com.pennant.backend.dao.finance.impl.CreditReviewDetailDAOImpl" parent="sequenceDao" />
+	
 </beans>

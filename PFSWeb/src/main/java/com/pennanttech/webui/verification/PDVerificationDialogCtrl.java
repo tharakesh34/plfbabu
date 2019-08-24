@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -702,12 +703,17 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	}
 
 	private void setVerifications() {
+
 		if (initType) {
+
 			List<CustomerAddres> addressesList = new ArrayList<CustomerAddres>();
-			List<JointAccountDetail> jointAccountDetailsList = new ArrayList<JointAccountDetail>();
-			for (CustomerAddres addresses : financeDetail.getCustomerDetails().getAddressList()) {
-				if (addresses.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					addressesList.add(addresses);
+			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+
+			if (customerDetails != null && CollectionUtils.isNotEmpty(customerDetails.getAddressList())) {
+				for (CustomerAddres addresses : customerDetails.getAddressList()) {
+					if (addresses.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						addressesList.add(addresses);
+					}
 				}
 			}
 
@@ -717,6 +723,7 @@ public class PDVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		} else {
 			this.verification.setVerifications(getOldVerifications(null));
 		}
+
 		renderPDVerificationList();
 	}
 

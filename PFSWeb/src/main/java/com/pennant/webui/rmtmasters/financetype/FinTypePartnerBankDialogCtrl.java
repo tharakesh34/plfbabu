@@ -45,6 +45,7 @@ package com.pennant.webui.rmtmasters.financetype;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -842,26 +843,34 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 		errParm[2] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_Purpose.value") + ":" + valueParm[2];
 
 		List<FinTypePartnerBank> existingList = getFinTypePartnerBankListCtrl().getFinTypePartnerBankList();
-
-		if (existingList != null && existingList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(existingList)) {
 			for (int i = 0; i < existingList.size(); i++) {
-				FinTypePartnerBank finTypePartnerBank = existingList.get(i);
+				FinTypePartnerBank oldFinTypePartnerBank = existingList.get(i);
 
-				if (StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS, finTypePartnerBank.getPurpose())
-						&& StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS, aFinTypePartnerBank.getPurpose())
-						&& (finTypePartnerBank.isVanApplicable() && aFinTypePartnerBank.isVanApplicable())) {
+				if (SysParamUtil.isAllowed(SMTParameterConstants.VAN_REQUIRED)
+						&& StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS,
+								oldFinTypePartnerBank.getPurpose())
+						&& StringUtils.equals(AccountConstants.PARTNERSBANK_RECEIPTS,
+								aFinTypePartnerBank.getPurpose())) {
 					// Both Current and Existing list rating same
-					if (aFinTypePartnerBank.isNew()) {
-						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
-								getUserWorkspace().getUserLanguage()));
-						return auditHeader;
+					if ((oldFinTypePartnerBank.isVanApplicable() && aFinTypePartnerBank.isVanApplicable())) {
+						if (aFinTypePartnerBank.isNew()) {
+							valueParm[0] = String.valueOf(aFinTypePartnerBank.isVanApplicable());
+							errParm[0] = PennantJavaUtil.getLabel("label_FinTypePartnerBankDialog_VanApplicable.value")
+									+ ":" + valueParm[0];
+							auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+									new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
+									getUserWorkspace().getUserLanguage()));
+							return auditHeader;
+						}
 					}
+				}
 
-				if (StringUtils.equals(finTypePartnerBank.getPaymentMode(), aFinTypePartnerBank.getPaymentMode())
-						&& finTypePartnerBank.getPartnerBankID() == aFinTypePartnerBank.getPartnerBankID()
-						&& StringUtils.equals(finTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
+				if (StringUtils.equals(oldFinTypePartnerBank.getPaymentMode(), aFinTypePartnerBank.getPaymentMode())
+						&& oldFinTypePartnerBank.getPartnerBankID() == aFinTypePartnerBank.getPartnerBankID()
+						&& StringUtils.equals(oldFinTypePartnerBank.getPurpose(), aFinTypePartnerBank.getPurpose())) {
 					// Both Current and Existing list rating same
+
 					if (aFinTypePartnerBank.isNew()) {
 						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm),
@@ -895,12 +904,11 @@ public class FinTypePartnerBankDialogCtrl extends GFCBaseCtrl<FinTypePartnerBank
 						}
 					} else {
 						if (!PennantConstants.TRAN_UPD.equals(tranType)) {
-							finTypePartnerBankList.add(finTypePartnerBank);
+							finTypePartnerBankList.add(oldFinTypePartnerBank);
 						}
 					}
-					}
 				} else {
-					finTypePartnerBankList.add(finTypePartnerBank);
+					finTypePartnerBankList.add(oldFinTypePartnerBank);
 				}
 			}
 		}

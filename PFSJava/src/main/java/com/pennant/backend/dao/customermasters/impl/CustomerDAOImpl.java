@@ -2328,4 +2328,95 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Leaving");
 		return customer;
 	}
+
+	/**
+	 * Fetch the Record Customers details by key field
+	 * 
+	 * @param id
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Customer
+	 */
+	@Override
+	public String getCustomerByCRCPR(final String custCRCPR, final String custCtgCode, String type) {
+		logger.debug("Entering");
+
+		String custCIF = null;
+		WIFCustomer customer = new WIFCustomer();
+		customer.setCustCRCPR(custCRCPR);
+		customer.setCustCtgCode(custCtgCode);
+
+		StringBuilder selectSql = new StringBuilder(" SELECT CustCIF ");
+		selectSql.append(" FROM Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustCRCPR =:CustCRCPR");
+		selectSql.append(" And   custCtgCode =:custCtgCode");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
+
+		try {
+			custCIF = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			custCIF = null;
+		}
+		logger.debug("Leaving");
+		return custCIF;
+	}
+
+	@Override
+	public boolean isDuplicateCif(long custId, String cif, String custCtgCode) {
+		logger.debug(Literal.ENTERING);
+
+		boolean exists = false;
+
+		// Prepare the parameter source.
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustID", custId);
+		paramSource.addValue("CustCIF", cif);
+		paramSource.addValue("custCtgCode", custCtgCode);
+
+		// Check whether the document id exists for another customer.
+		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
+				"CustID != :CustID and CustCIF = :CustCIF and custCtgCode = :custCtgCode");
+
+		logger.trace(Literal.SQL + sql);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
+
+	@Override
+	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
+		logger.debug(Literal.ENTERING);
+
+		boolean exists = false;
+
+		// Prepare the parameter source.
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustID", custId);
+		paramSource.addValue("CustCRCPR", custCRCPR);
+		paramSource.addValue("custCtgCode", custCtgCode);
+
+		// Check whether the document id exists for another customer.
+		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
+				"CustID != :CustID and CustCRCPR = :CustCRCPR and custCtgCode = :custCtgCode");
+
+		logger.trace(Literal.SQL + sql);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }

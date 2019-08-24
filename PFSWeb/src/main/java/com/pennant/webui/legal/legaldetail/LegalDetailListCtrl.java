@@ -183,6 +183,11 @@ public class LegalDetailListCtrl extends GFCBaseListCtrl<LegalDetail> {
 					whereClause.append(role);
 					whereClause.append(",%')");
 				}
+
+				whereClause.append(" ) AND ( ");
+				whereClause.append("(");
+				whereClause.append(getUsrFinAuthenticationQry(true));
+				whereClause.append(")");
 			}
 
 			this.searchObject.addWhereClause(whereClause.toString());

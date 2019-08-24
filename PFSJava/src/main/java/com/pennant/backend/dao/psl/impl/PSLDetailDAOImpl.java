@@ -154,7 +154,7 @@ public class PSLDetailDAOImpl extends BasicDao<PSLDetail> implements PSLDetailDA
 		sql.append(
 				" RecordType = :RecordType, WorkflowId = :WorkflowId, LoanPurpose = :LoanPurpose, EligibleAmount = :EligibleAmount");
 		sql.append(" where finReference = :finReference ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		//	sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());

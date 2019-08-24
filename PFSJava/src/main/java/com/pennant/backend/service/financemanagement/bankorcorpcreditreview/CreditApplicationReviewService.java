@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDocument;
+import com.pennant.backend.model.finance.CreditReviewData;
+import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevType;
@@ -74,4 +76,8 @@ public interface CreditApplicationReviewService {
 
 	List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode,
 			List<Long> eligibilityIds);
+
+	CreditReviewData getCreditReviewDataByRef(String finReference, String templateName, int templateVersion);
+
+	CreditReviewDetails getCreditReviewDetailsByRef(CreditReviewDetails creditReviewDetail);
 }

@@ -46,6 +46,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineImport;
+import com.pennanttech.dataengine.ProcessRecord;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -58,6 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
+import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -123,6 +125,13 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			dataEngine = new DataEngineImport(dataSource, getUserDetails().getUserId(), App.DATABASE.name(), true,
 					DateUtility.getAppDate(), status);
 			dataEngine.setMedia(getMedia());
+			try {
+				if (configName.equals("PRESENTMENT_RESPONSE_PDC")) {
+					dataEngine.setProcessRecord((ProcessRecord) SpringBeanUtil.getBean("customPresentmentExtact"));
+				}
+			} catch (Exception e) {
+				//
+			}
 			dataEngine.importData(configName);
 
 			do {
@@ -394,11 +403,20 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 						if (presentmentImportProcess != null) {
 							presentmentRef = presentmentImportProcess.getPresentmentRef(rs.getString("BATCHID"));
 							status = presentmentImportProcess.getStatus(rs.getString("STATUS"));
+							reasonCode = presentmentImportProcess.getReasonCode(rs.getString("REASONCODE"));
+							if ((status == null || status.equals(""))
+									&& (reasonCode != null && !reasonCode.equals(""))) {
+								status = "F";
+							} else if ((status == null || status.equals(""))
+									&& (reasonCode == null || reasonCode.equals(""))) {
+								status = "S";
+							}
 						} else {
 							presentmentRef = rs.getString("BATCHID");
 							status = rs.getString("STATUS");
+							reasonCode = rs.getString("REASONCODE");
 						}
-						reasonCode = rs.getString("REASONCODE");
+
 						reasonCode = StringUtils.trimToEmpty(reasonCode);
 
 						// Validate presentment response, if on exists.

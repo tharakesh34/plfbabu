@@ -82,6 +82,7 @@ import com.pennant.backend.dao.customermasters.CustEmployeeDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerBalanceSheetDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerDocumentDAO;
@@ -89,6 +90,7 @@ import com.pennant.backend.dao.customermasters.CustomerEMailDAO;
 import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGroupDAO;
+import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.customermasters.CustomerPRelationDAO;
 import com.pennant.backend.dao.customermasters.CustomerPhoneNumberDAO;
@@ -121,6 +123,8 @@ import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
 import com.pennant.backend.model.customermasters.CoreCustomer;
 import com.pennant.backend.model.customermasters.CorporateCustomerDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.CustEmployeeDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -132,11 +136,14 @@ import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.CustomerRating;
 import com.pennant.backend.model.customermasters.DirectorDetail;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
@@ -162,6 +169,7 @@ import com.pennant.backend.service.customermasters.validation.CorporateCustomerV
 import com.pennant.backend.service.customermasters.validation.CustomerAddressValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerBalanceSheetValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerBankInfoValidation;
+import com.pennant.backend.service.customermasters.validation.CustomerCardSalesValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerChequeInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerDirectorValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerDocumentValidation;
@@ -189,6 +197,8 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.dao.customer.income.IncomeDetailDAO;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
@@ -2650,6 +2660,300 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
+	private ErrorDetail validateCardSalesListData(List<CustCardSales> cardSaleDetailsList,
+			CustCardSales aCustCardSales) {
+		logger.debug(Literal.ENTERING);
+		ErrorDetail errorDetail = new ErrorDetail();
+		int count = 0;
+		if (cardSaleDetailsList.size() > 0) {
+			for (int j = 0; j < cardSaleDetailsList.size(); j++) {
+				if (aCustCardSales.getMerchantId().equals(cardSaleDetailsList.get(j).getMerchantId())) {
+					count++;
+					String[] valueParm = new String[2];
+					valueParm[0] = "Merchant Id";
+					valueParm[1] = "Cust Id";
+					if (count > 1) {
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+					}
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetail;
+	}
+
+	private ErrorDetail validateCardSalesData(List<CustCardSales> cardSaleDetailsList, CustCardSales aCustCardSales) {
+		logger.debug(Literal.ENTERING);
+		ErrorDetail errorDetail = new ErrorDetail();
+		if (cardSaleDetailsList.size() > 0) {
+			for (int j = 0; j < cardSaleDetailsList.size(); j++) {
+				if (aCustCardSales.getMerchantId().equals(cardSaleDetailsList.get(j).getMerchantId())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Merchant Id";
+					valueParm[1] = "Cust Id";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30570", "", valueParm));
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetail;
+	}
+
+	private ErrorDetail validateExtLiabilitiesPayments(CustomerExtLiability liability) {
+		logger.debug(Literal.ENTERING);
+		//List grater than tenure
+		ErrorDetail errorDetail = new ErrorDetail();
+		if (liability.getExtLiabilitiesPayments().size() > liability.getTenure()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "No of instalment Details ";
+			valueParm[1] = "Tenure";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
+			return errorDetail;
+		}
+		//EMIType invalidate validation
+		String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
+		List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
+				liability.getTenure());
+		if (CollectionUtils.isNotEmpty(paymentDetails)) {
+			for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
+				int emiCount = 0;
+				for (int j = 0; j < paymentDetails.size(); j++) {
+					if (liability.getExtLiabilitiesPayments().get(i).getEMIType()
+							.equals((paymentDetails.get(j).getEMIType()))) {
+						emiCount++;
+					}
+				}
+				if (emiCount == 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Emi Type";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm));
+					return errorDetail;
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+		return errorDetail;
+	}
+
+	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
+		Date dtStartDate = DateUtility.addMonths(startDate, 1);
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
+		return months;
+	}
+
+	private List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate, int noOfMonths) {
+		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
+		if (startDate == null || endDate == null) {
+			return list;
+		}
+
+		Date tempStartDate = (Date) startDate.clone();
+		Date tempEndDate = (Date) endDate.clone();
+
+		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
+			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
+			temp.setEMIType(key);
+			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			list.add(temp);
+		}
+
+		return list;
+	}
+
+	private AuditDetail validateBankInfoDetail(CustomerBankInfo custBankInfo, AuditDetail auditDetail) {
+
+		if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (BankInfoDetail detail : custBankInfo.getBankInfoDetails()) {
+				if (detail.getMonthYear() == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:MonthYear";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getDebitAmt() == null || detail.getDebitAmt().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:DebitAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getDebitNo() <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:DebitNo";
+					valueParm[0] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getCreditAmt() == null || detail.getCreditAmt().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:CreditAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getCreditNo() <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:CreditNo";
+					valueParm[0] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getBounceIn() == null || detail.getBounceIn().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BounceIn";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getBounceOut() == null || detail.getBounceOut().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BounceOut";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (CollectionUtils.isEmpty(detail.getBankInfoSubDetails())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:BankInfoSubDetails";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				} else {
+					if (detail.getBankInfoSubDetails().size() != SysParamUtil.getValueAsInt("BANKINFO_DAYS")) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "BankInfoSubDetails";
+						valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+
+					} else {
+						for (BankInfoSubDetail subDetail : detail.getBankInfoSubDetails()) {
+							if (subDetail.getDay() <= 0) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "BankInfoSubDetails:Day";
+								valueParm[0] = "Zero";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+							if (subDetail.getBalance() == null
+									|| subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "BankInfoSubDetails:Balance";
+								valueParm[1] = "Zero";
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
+						}
+					}
+				}
+
+			}
+		}
+		return auditDetail;
+	}
+
+	private AuditDetail validateCardMnthInfoDetail(CustCardSales custCardSalesInfo, AuditDetail auditDetail) {
+
+		if (CollectionUtils.isNotEmpty(custCardSalesInfo.getCustCardMonthSales())) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (CustCardSalesDetails detail : custCardSalesInfo.getCustCardMonthSales()) {
+				if (detail.getMonth() != null && !detail.getMonth().equals("")) {
+					if (detail.getMonth().after(SysParamUtil.getAppDate())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = "custCardSalesDetails:Month";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30527", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+				if (detail.getSalesAmount() == null || detail.getSalesAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "custCardSalesDetails:SalesAmount";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				/*
+				 * if (detail.getNoOfSettlements() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:NoOfSettlements"; valueParm[0] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalNoOfCredits() <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalNoOfCredits";
+				 * valueParm[0] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
+				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
+				 * (detail.getTotalCreditValue()== null || detail.getTotalCreditValue().compareTo(BigDecimal.ZERO) <= 0)
+				 * { String[] valueParm = new String[2]; valueParm[0] = "custCardSalesDetails:TotalCreditValue";
+				 * valueParm[1] = "Zero"; errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "",
+				 * valueParm)); auditDetail.setErrorDetail(errorDetail); return auditDetail; } if
+				 * (detail.getTotalNoOfDebits() <= 0) { String[] valueParm = new String[2]; valueParm[0] =
+				 * "custCardSalesDetails:TotalNoOfDebits"; valueParm[0] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getTotalDebitValue()== null
+				 * || detail.getTotalDebitValue().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:TotalDebitValue"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getInwardBounce()==null ||
+				 * detail.getInwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:InwardBounce"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; } if (detail.getOutwardBounce()== null
+				 * ||detail.getOutwardBounce().compareTo(BigDecimal.ZERO) <= 0) { String[] valueParm = new String[2];
+				 * valueParm[0] = "custCardSalesDetails:OutwardBounce"; valueParm[1] = "Zero"; errorDetail =
+				 * ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+				 * auditDetail.setErrorDetail(errorDetail); return auditDetail; }
+				 */
+			}
+		}
+		return auditDetail;
+	}
+
+	private AuditDetail validateGstInfoDetail(CustomerGST customerGSTInfo, AuditDetail auditDetail) {
+
+		if (CollectionUtils.isNotEmpty(customerGSTInfo.getCustomerGSTDetailslist())) {
+			ErrorDetail errorDetail = new ErrorDetail();
+			for (CustomerGSTDetails detail : customerGSTInfo.getCustomerGSTDetailslist()) {
+				if (detail.getFrequancy() == null) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "gstInfoDetails:Frequency";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getHeaderId() == Long.MIN_VALUE) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "gstInfoDetails:GSTNumber ";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+				if (detail.getSalAmount() == null || detail.getSalAmount().compareTo(BigDecimal.ZERO) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "bankInfoDetails:GstAmt";
+					valueParm[1] = "Zero";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				}
+
+			}
+		}
+		return auditDetail;
+	}
+
 	private ErrorDetail validateDatesWithDefaults(Date date, String label) {
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (date != null) {
@@ -4511,6 +4815,187 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 	}
 
+	private List<AuditDetail> processingCardSalesInfoList(List<AuditDetail> auditDetails, String type, long custId) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustCardSales customerCardSalesInfo = (CustCardSales) auditDetails.get(i).getModelData();
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				customerCardSalesInfo.setRoleCode("");
+				customerCardSalesInfo.setNextRoleCode("");
+				customerCardSalesInfo.setTaskId("");
+				customerCardSalesInfo.setNextTaskId("");
+			}
+
+			customerCardSalesInfo.setWorkflowId(0);
+			customerCardSalesInfo.setCustID(custId);
+
+			if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)
+					&& !approveRec) {
+				deleteRecord = true;
+			} else if (customerCardSalesInfo.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerCardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerCardSalesInfo.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = customerCardSalesInfo.getRecordType();
+				recordStatus = customerCardSalesInfo.getRecordStatus();
+				customerCardSalesInfo.setRecordType("");
+				customerCardSalesInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				customerCardSalesInfoDAO.save(customerCardSalesInfo, type);
+			}
+
+			if (updateRecord) {
+				customerCardSalesInfoDAO.update(customerCardSalesInfo, type);
+			}
+
+			if (deleteRecord) {
+				customerCardSalesInfoDAO.delete(customerCardSalesInfo, type);
+			}
+
+			if (approveRec) {
+				customerCardSalesInfo.setRecordType(rcdType);
+				customerCardSalesInfo.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerCardSalesInfo);
+
+			//Bank Info Details
+			List<AuditDetail> details = customerCardSalesInfo.getAuditDetailMap().get("CustCardSalesDetails");
+			if (details != null) {
+				details = processingCardSaleInfoDetailList(details, type, customerCardSalesInfo.getId());
+			}
+		}
+
+		return auditDetails;
+
+	}
+
+	private List<AuditDetail> processingCardSaleInfoDetailList(List<AuditDetail> auditDetails, String type,
+			long merchantId) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustCardSalesDetails custCardMonthSales = (CustCardSalesDetails) auditDetails.get(i).getModelData();
+			if (merchantId != Long.MIN_VALUE) {
+				custCardMonthSales.setCardSalesId(merchantId);
+			}
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				custCardMonthSales.setRoleCode("");
+				custCardMonthSales.setNextRoleCode("");
+				custCardMonthSales.setTaskId("");
+				custCardMonthSales.setNextTaskId("");
+			}
+
+			custCardMonthSales.setWorkflowId(0);
+
+			if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (custCardMonthSales.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					custCardMonthSales.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					custCardMonthSales.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					custCardMonthSales.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (custCardMonthSales.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (custCardMonthSales.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (merchantId != Long.MIN_VALUE) {
+				if (approveRec) {
+					rcdType = custCardMonthSales.getRecordType();
+					recordStatus = custCardMonthSales.getRecordStatus();
+					custCardMonthSales.setRecordType("");
+					custCardMonthSales.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				}
+				if (saveRecord) {
+					customerCardSalesInfoDAO.save(custCardMonthSales, type);
+				}
+
+				if (updateRecord) {
+					customerCardSalesInfoDAO.update(custCardMonthSales, type);
+				}
+
+				if (deleteRecord) {
+					customerCardSalesInfoDAO.delete(custCardMonthSales, type);
+				}
+
+				if (approveRec) {
+					custCardMonthSales.setRecordType(rcdType);
+					custCardMonthSales.setRecordStatus(recordStatus);
+				}
+			}
+			auditDetails.get(i).setModelData(custCardMonthSales);
+		}
+		return auditDetails;
+	}
+
 	/**
 	 * Method For Preparing List of AuditDetails for Customer Bank Information
 	 * 
@@ -4694,10 +5179,35 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerExtLiability.setRecordStatus(recordStatus);
 			}
 			auditDetails.get(i).setModelData(customerExtLiability);
+			processingExtLiabilittySubDetailList(customerExtLiability, type, customerExtLiability.getId());
+
 		}
 
 		return auditDetails;
 
+	}
+
+	private void processingExtLiabilittySubDetailList(CustomerExtLiability customerExtLiability, String type,
+			long liabilityId) {
+		for (ExtLiabilityPaymentdetails installmentDetails : customerExtLiability.getExtLiabilitiesPayments()) {
+			installmentDetails.setLiabilityId(liabilityId);
+			installmentDetails.setEMIType(installmentDetails.getEMIType());
+			installmentDetails.setVersion(installmentDetails.getVersion());
+			installmentDetails.setWorkflowId(installmentDetails.getWorkflowId());
+			installmentDetails.setInstallmentCleared(installmentDetails.isInstallmentCleared());
+		}
+		if (type.isEmpty()) {
+			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "_Temp");
+		} else {
+			if (!customerExtLiability.isNewRecord()) {
+				customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), type);
+			}
+		}
+		if (!StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
+				&& !StringUtils.equals(customerExtLiability.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
+			customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), type);
+			customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), type);
+		}
 	}
 
 	/**
@@ -5019,6 +5529,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			deleteList(custDetails, tableType);
 			getCustomerBankInfoDAO().deleteByCustomer(custDetails.getCustID(), tableType);
 		}
+		if (custDetails.getCustomerGstList() != null && custDetails.getCustomerGstList().size() > 0) {
+			CustomerGST custGST = new CustomerGST();
+			String[] fields = PennantJavaUtil.getFieldDetails(custGST, custGST.getExcludeFields());
+			for (int i = 0; i < custDetails.getCustomerGstList().size(); i++) {
+				CustomerGST customerGST = custDetails.getCustomerGstList().get(i);
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerGST.getBefImage(),
+						customerGST));
+			}
+			//delete Customer gst details
+			deletegstList(custDetails, tableType);
+			getCustomerGstDetailDAO().deleteCustomerGSTByCustomer(custDetails.getCustID(), tableType);
+		}
 
 		if (custDetails.getCustomerChequeInfoList() != null && custDetails.getCustomerChequeInfoList().size() > 0) {
 
@@ -5046,6 +5568,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			externalLiabilityDAO.deleteByLinkId(custExtLiability.getLinkId(), tableType);
 		}
 
+		if (custDetails.getCustCardSales() != null && custDetails.getCustCardSales().size() > 0) {
+
+			CustCardSales custCardSalesInfo = new CustCardSales();
+			String[] fields = PennantJavaUtil.getFieldDetails(custCardSalesInfo, custCardSalesInfo.getExcludeFields());
+
+			for (int i = 0; i < custDetails.getCustCardSales().size(); i++) {
+				CustCardSales customerBankInfo = custDetails.getCustCardSales().get(i);
+				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+						customerBankInfo.getBefImage(), customerBankInfo));
+			}
+			//CardSaleInfodetails
+			deleteCustCardMonthSalesList(custDetails, tableType);
+			customerCardSalesInfoDAO.deleteByCustomer(custDetails.getCustID(), tableType);
+		}
+
 		// Extended field Render Details.
 		List<AuditDetail> extendedDetails = custDetails.getAuditDetailMap().get("ExtendedFieldDetails");
 		if (extendedDetails != null && extendedDetails.size() > 0) {
@@ -5054,6 +5591,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		return auditList;
+	}
+
+	private void deletegstList(CustomerDetails custDetails, String tableType) {
+		List<CustomerGST> customerGSTList = custDetails.getCustomerGstList();
+		for (CustomerGST customerGST : customerGSTList) {
+			if (customerGST.getCustomerGSTDetailslist() != null) {
+				for (int i = 0; i < customerGST.getCustomerGSTDetailslist().size(); i++) {
+					CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
+					customerGSTDetails.setHeaderId(customerGST.getId());
+					/*
+					 * String[] fields = PennantJavaUtil.getFieldDetails(bankInfoDetail,
+					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
+					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
+					 */
+					getCustomerGstDetailDAO().delete(customerGSTDetails, tableType);
+				}
+			}
+		}
 	}
 
 	private void deleteList(CustomerDetails custDetails, String tableType) {
@@ -5068,6 +5623,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
 					getCustomerBankInfoDAO().delete(bankInfoDetail, tableType);
+				}
+			}
+		}
+	}
+
+	private void deleteCustCardMonthSalesList(CustomerDetails custDetails, String tableType) {
+		List<CustCardSales> custCardSalesInfoList = custDetails.getCustCardSales();
+		for (CustCardSales customerCardSalesInfo : custCardSalesInfoList) {
+			if (customerCardSalesInfo.getCustCardMonthSales() != null) {
+				for (int i = 0; i < customerCardSalesInfo.getCustCardMonthSales().size(); i++) {
+					CustCardSalesDetails cardMnthSaleInfoDetail = customerCardSalesInfo.getCustCardMonthSales().get(i);
+					customerCardSalesInfoDAO.delete(cardMnthSaleInfoDetail, tableType);
 				}
 			}
 		}
@@ -5143,6 +5710,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.addAll(auditDetailMap.get("CustomerBankInfo"));
 		}
 
+		if (customerDetails.getCustomerGstList() != null) {
+			auditDetailMap.put("CustomerGST", setCustomerGSTAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustomerGST"));
+		}
+
 		if (customerDetails.getCustomerChequeInfoList() != null
 				&& customerDetails.getCustomerChequeInfoList().size() > 0) {
 			auditDetailMap.put("CustomerChequeInfo",
@@ -5164,6 +5736,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
+		if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
+			auditDetailMap.put("CustCardSales",
+					setCardSalesInformationAuditData(customerDetails, auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("CustCardSales"));
+		}
+
+		if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
+			for (int i = 0; i < customerDetails.getCustCardSales().size(); i++) {
+				auditDetailMap.put("CustCardSalesDetails", setCardMonthSalesInfoDetailAuditData(
+						customerDetails.getCustCardSales().get(i), auditTranType, method));
+				auditDetails.addAll(auditDetailMap.get("CustCardSalesDetails"));
+			}
+		}
 		customerDetails.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(customerDetails);
 		auditHeader.setAuditDetails(auditDetails);
@@ -5745,9 +6330,213 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (bankInfo.getBankInfoDetails() != null && bankInfo.getBankInfoDetails().size() > 0) {
 				bankInfo.getAuditDetailMap().put("BankInfoDetail",
 						setBankInfoDetailAuditData(bankInfo, auditTranType, method));
-				// auditDetails.addAll(bankInfo.getAuditDetailMap().get("BankInfoDetail"));
+				//auditDetails.addAll(bankInfo.getAuditDetailMap().get("BankInfoDetail"));
 			}
 
+		}
+
+		return auditDetails;
+	}
+
+	private List<AuditDetail> setCardSalesInformationAuditData(CustomerDetails customerDetails, String auditTranType,
+			String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		CustCardSales custCardSales = new CustCardSales();
+		String[] fields = PennantJavaUtil.getFieldDetails(custCardSales, custCardSales.getExcludeFields());
+
+		for (int i = 0; i < customerDetails.getCustCardSales().size(); i++) {
+			CustCardSales custCardSalesData = customerDetails.getCustCardSales().get(i);
+
+			if (StringUtils.isEmpty(custCardSalesData.getRecordType())) {
+				continue;
+			}
+
+			custCardSalesData.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (custCardSalesData.getCustID() <= 0) {
+				custCardSalesData.setCustID(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				custCardSalesData.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				custCardSalesData.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				custCardSalesData.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && (isRcdType)) {
+				custCardSalesData.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| custCardSalesData.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			custCardSalesData.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			custCardSalesData.setLoginDetails(customerDetails.getUserDetails());
+			custCardSalesData.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					custCardSalesData.getBefImage(), custCardSalesData));
+
+			//Audit Card Sales Info Details
+			if (custCardSalesData.getCustCardMonthSales() != null
+					&& custCardSalesData.getCustCardMonthSales().size() > 0) {
+				custCardSalesData.getAuditDetailMap().put("CustCardSalesDetails",
+						setCardMonthSalesInfoDetailAuditData(custCardSalesData, auditTranType, method));
+			}
+
+		}
+
+		return auditDetails;
+	}
+
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCustomerGSTAuditData(CustomerDetails customerDetails, String auditTranType,
+			String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		// CustomerBankInfo custBankInfo = new CustomerBankInfo();
+		CustomerGST customerGSTdt = new CustomerGST();
+		String[] fields = PennantJavaUtil.getFieldDetails(customerGSTdt, customerGSTdt.getExcludeFields());
+
+		for (int i = 0; i < customerDetails.getCustomerGstList().size(); i++) {
+			CustomerGST customerGST = customerDetails.getCustomerGstList().get(i);
+
+			if (StringUtils.isEmpty(customerGST.getRecordType())) {
+				continue;
+			}
+
+			customerGST.setWorkflowId(customerDetails.getCustomer().getWorkflowId());
+			if (customerGST.getCustId() <= 0) {
+				customerGST.setCustId(customerDetails.getCustID());
+			}
+
+			boolean isRcdType = false;
+
+			if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerDetails.getCustomer().isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerGST.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && isRcdType) {
+				customerGST.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			customerGST.setRecordStatus(customerDetails.getCustomer().getRecordStatus());
+			customerGST.setLastMntOn(customerDetails.getCustomer().getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerGST.getBefImage(),
+					customerGST));
+
+			// Audit Bank Info Details
+			if (customerGST.getCustomerGSTDetailslist() != null && customerDetails.getCustomerGstList().size() > 0) {
+				customerGST.getAuditDetailMap().put("CustomerGSTDetails",
+						setCustomerGSTDetailsAuditData(customerGST, auditTranType, method));
+			}
+
+		}
+
+		return auditDetails;
+	}
+
+	/**
+	 * Methods for Creating List of Audit Details with detailed fields
+	 * 
+	 * @param customerDetails
+	 * @param auditTranType
+	 * @param method
+	 * @return
+	 */
+	private List<AuditDetail> setCustomerGSTDetailsAuditData(CustomerGST customerGST, String auditTranType,
+			String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		//BankInfoDetail bankInfoDetail = new BankInfoDetail();
+		CustomerGSTDetails customerGSTDetail = new CustomerGSTDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(customerGSTDetail, customerGSTDetail.getExcludeFields());
+
+		for (int i = 0; i < customerGST.getCustomerGSTDetailslist().size(); i++) {
+
+			CustomerGSTDetails customerGSTDetails = customerGST.getCustomerGSTDetailslist().get(i);
+			customerGSTDetails.setRecordStatus(customerGST.getRecordStatus());
+
+			if (StringUtils.isEmpty(customerGSTDetails.getRecordType())) {
+				continue;
+			}
+
+			customerGSTDetails.setWorkflowId(customerGST.getWorkflowId());
+
+			boolean isRcdType = false;
+
+			if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (customerGST.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && (isRcdType)) {
+				customerGSTDetails.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			//	auditTranType.setRecordStatus(custBankInfo.getRecordStatus());
+			//auditTranType.setLastMntOn(custBankInfo.getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
+					customerGSTDetails.getBefImage(), customerGSTDetails));
 		}
 
 		return auditDetails;
@@ -5810,6 +6599,61 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			auditDetails
 					.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], bankInfo.getBefImage(), bankInfo));
+		}
+
+		return auditDetails;
+	}
+
+	private List<AuditDetail> setCardMonthSalesInfoDetailAuditData(CustCardSales custCardSalesInfo,
+			String auditTranType, String method) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		CustCardSalesDetails custCardMonthSalesInfoDetail = new CustCardSalesDetails();
+		String[] fields = PennantJavaUtil.getFieldDetails(custCardMonthSalesInfoDetail,
+				custCardMonthSalesInfoDetail.getExcludeFields());
+
+		for (int i = 0; i < custCardSalesInfo.getCustCardMonthSales().size(); i++) {
+			CustCardSalesDetails cardSalesInfo = custCardSalesInfo.getCustCardMonthSales().get(i);
+
+			if (StringUtils.isEmpty(cardSalesInfo.getRecordType())) {
+				continue;
+			}
+
+			cardSalesInfo.setWorkflowId(custCardSalesInfo.getWorkflowId());
+
+			boolean isRcdType = false;
+
+			if (cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				cardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				isRcdType = true;
+			} else if (cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				cardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (custCardSalesInfo.isWorkflow()) {
+					isRcdType = true;
+				}
+			} else if (cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				cardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			}
+
+			if (("saveOrUpdate".equals(method) || "Validate".equals(method)) && (isRcdType)) {
+				cardSalesInfo.setNewRecord(true);
+			}
+
+			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
+				if (cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					auditTranType = PennantConstants.TRAN_ADD;
+				} else if (cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| cardSalesInfo.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					auditTranType = PennantConstants.TRAN_DEL;
+				} else {
+					auditTranType = PennantConstants.TRAN_UPD;
+				}
+			}
+
+			cardSalesInfo.setRecordStatus(custCardSalesInfo.getRecordStatus());
+			cardSalesInfo.setLastMntOn(custCardSalesInfo.getLastMntOn());
+
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cardSalesInfo.getBefImage(),
+					cardSalesInfo));
 		}
 
 		return auditDetails;
@@ -6404,9 +7248,194 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	}
 
-	@Override
-	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
-		return customerDAO.isDuplicateCrcpr(custId, custCRCPR, custCtgCode);
+	/**
+	 * 
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @param custId
+	 * @return
+	 */
+	private List<AuditDetail> processingCustomerGSTList(List<AuditDetail> auditDetails, String type, long custId) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustomerGST customerGST = (CustomerGST) auditDetails.get(i).getModelData();
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				customerGST.setRoleCode("");
+				customerGST.setNextRoleCode("");
+				customerGST.setTaskId("");
+				customerGST.setNextTaskId("");
+			}
+			customerGST.setWorkflowId(0);
+			customerGST.setCustId(custId);
+
+			if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (customerGST.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerGST.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerGST.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerGST.setRecordType(PennantConstants.RCD_UPD);
+				}
+
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerGST.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerGST.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = customerGST.getRecordType();
+				recordStatus = customerGST.getRecordStatus();
+				customerGST.setRecordType("");
+				customerGST.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				customerGstDetailDAO.save(customerGST, type);
+			}
+
+			if (updateRecord) {
+				customerGstDetailDAO.update(customerGST, type);
+			}
+
+			if (deleteRecord) {
+				customerGstDetailDAO.delete(customerGST, type);
+			}
+
+			if (approveRec) {
+				customerGST.setRecordType(rcdType);
+				customerGST.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerGST);
+
+			//Bank Info Details
+			List<AuditDetail> details = customerGST.getAuditDetailMap().get("CustomerGSTDetails");
+			if (details != null) {
+				details = processingCustomerGstDetailList(details, type, customerGST.getId());
+			}
+
+		}
+
+		return auditDetails;
+
+	}
+
+	/**
+	 * Method For Preparing List of AuditDetails for Bank Information Details
+	 * 
+	 * @param auditDetails
+	 * @param type
+	 * @return
+	 */
+	private List<AuditDetail> processingCustomerGstDetailList(List<AuditDetail> auditDetails, String type, long id) {
+
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+
+			CustomerGSTDetails customerGSTDetails = (CustomerGSTDetails) auditDetails.get(i).getModelData();
+			customerGSTDetails.setHeaderId(id);
+
+			saveRecord = false;
+			updateRecord = false;
+			deleteRecord = false;
+			approveRec = false;
+			String rcdType = "";
+			String recordStatus = "";
+			if (StringUtils.isEmpty(type)) {
+				approveRec = true;
+				customerGSTDetails.setRoleCode("");
+				customerGSTDetails.setNextRoleCode("");
+				customerGSTDetails.setTaskId("");
+				customerGSTDetails.setNextTaskId("");
+			}
+
+			customerGSTDetails.setWorkflowId(0);
+
+			if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN) && !approveRec) {
+				deleteRecord = true;
+			} else if (customerGSTDetails.isNewRecord() && !approveRec) {
+				saveRecord = true;
+				if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					customerGSTDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				}
+
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (approveRec) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				updateRecord = true;
+			} else if (customerGSTDetails.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (approveRec) {
+					deleteRecord = true;
+				} else if (customerGSTDetails.isNew()) {
+					saveRecord = true;
+				} else {
+					updateRecord = true;
+				}
+			}
+			if (approveRec) {
+				rcdType = customerGSTDetails.getRecordType();
+				recordStatus = customerGSTDetails.getRecordStatus();
+				customerGSTDetails.setRecordType("");
+				customerGSTDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+			if (saveRecord) {
+				customerGstDetailDAO.save(customerGSTDetails, type);
+			}
+
+			if (updateRecord) {
+				customerGstDetailDAO.update(customerGSTDetails, type);
+			}
+
+			if (deleteRecord) {
+				customerGstDetailDAO.delete(customerGSTDetails, type);
+			}
+
+			if (approveRec) {
+				customerGSTDetails.setRecordType(rcdType);
+				customerGSTDetails.setRecordStatus(recordStatus);
+			}
+			auditDetails.get(i).setModelData(customerGSTDetails);
+		}
+		return auditDetails;
 	}
 
 	@Override
@@ -6517,8 +7546,32 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return getCustomerDAO().checkCustomerByID(custID, type);
 	}
 
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
+	}
+
+	public CustomerCardSalesValidation getCustomerCardSalesValidation() {
+		if (customerCardSalesValidation == null) {
+			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
+		}
+		return this.customerCardSalesValidation;
+	}
+
+	public void setCustomerCardSalesValidation(CustomerCardSalesValidation customerCardSalesValidation) {
+		if (customerCardSalesValidation == null) {
+			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
+		}
+		this.customerCardSalesValidation = customerCardSalesValidation;
+	}
+
 	@Override
 	public String getEIDNumberById(String eidNumber, String custCtgCode, String type) {
 		return getCustomerDAO().getCustomerByCRCPR(eidNumber, custCtgCode, type);
 	}
+
+	@Override
+	public boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode) {
+		return customerDAO.isDuplicateCrcpr(custId, custCRCPR, custCtgCode);
+	}
+
 }

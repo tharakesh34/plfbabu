@@ -1839,8 +1839,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				boolean alwGrcRepay = false;
 				// Allow Grace Repay if Schedule Method is Profit Payment
 				if (main.isAllowGrcPeriod()
-						&& (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd()) || StringUtils
-								.equals(CalculationConstants.SCHMTHD_PFTCPZ, main.getGrcSchdMthd()))) {
+						&& (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, main.getGrcSchdMthd())
+								|| StringUtils.equals(CalculationConstants.SCHMTHD_PFTCPZ, main.getGrcSchdMthd()))) {
 					alwGrcRepay = true;
 				}
 

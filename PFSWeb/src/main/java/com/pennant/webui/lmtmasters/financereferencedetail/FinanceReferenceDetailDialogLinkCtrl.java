@@ -609,7 +609,8 @@ public class FinanceReferenceDetailDialogLinkCtrl extends GFCBaseCtrl<FinanceRef
 				// Set checked values
 				this.mandInputInStage.setValue(getCheckedValues(listboxmandInputInStage));
 				// then check for empty
-				if (this.mandInputInStage.getValue() == null || StringUtils.isEmpty(this.mandInputInStage.getValue())) {
+				if ((this.mandInputInStage.getValue() == null || StringUtils.isEmpty(this.mandInputInStage.getValue()))
+						&& financeReferenceDetail.getFinRefType() != FinanceConstants.PROCEDT_FINANCETABS) {
 					throw new WrongValueException(this.listboxmandInputInStage,
 							Labels.getLabel("FIELD_NO_EMPTY", new String[] { this.mandInputInStage.getLeft() }));
 				}

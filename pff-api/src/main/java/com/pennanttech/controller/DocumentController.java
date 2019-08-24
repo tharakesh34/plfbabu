@@ -86,7 +86,7 @@ public class DocumentController {
 		DocumentDetails response;
 		try {
 			DocumentType documentType = documentService.getApprovedDocumentTypeById(docCategory);
-			//validate given docCategory  is valid or not.
+			// validate given docCategory is valid or not.
 			if (documentType == null) {
 				response = new DocumentDetails();
 				String[] valueParm = new String[1];
@@ -111,7 +111,7 @@ public class DocumentController {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
 			return response;
 		}
-		//setting byte data.
+		// setting byte data.
 		if (StringUtils.isBlank(response.getDocUri()) && response.getDocImage() == null) {
 			if (response.getDocRefId() != Long.MIN_VALUE) {
 				DocumentManager documentManager = documentManagerDAO.getById(response.getDocRefId());
@@ -120,7 +120,7 @@ public class DocumentController {
 				}
 			}
 		}
-		//preparing successive response
+		// preparing successive response
 		response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 
 		logger.debug(Literal.LEAVING);

@@ -356,7 +356,8 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		updateSql.append(" OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy, ");
 		updateSql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		updateSql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId,");
-		updateSql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber,");
+		updateSql.append(
+				" RecordType = :RecordType, WorkflowId = :WorkflowId,InputDate = :InputDate, BarCodeNumber = :BarCodeNumber,");
 		updateSql.append(" SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId,");
 		updateSql.append(" EntityCode = :EntityCode , PartnerBankId =:PartnerBankId");
 		updateSql.append(" Where MandateID =:MandateID");
