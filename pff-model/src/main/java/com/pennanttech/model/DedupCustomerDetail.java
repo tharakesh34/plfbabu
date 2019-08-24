@@ -101,7 +101,7 @@ public class DedupCustomerDetail implements java.io.Serializable {
 	private List<CustomerEMail> customerEMailList;
 	// added customer dedupe class for preparing the request data
 	List<CustomerDedup> customerDedupList;
-		
+
 	@XmlElement
 	private WSReturnStatus returnStatus = null;
 

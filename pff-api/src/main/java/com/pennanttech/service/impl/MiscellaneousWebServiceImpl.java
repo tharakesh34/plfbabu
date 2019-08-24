@@ -163,6 +163,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 		}
 
 	}
+
 	@Autowired
 	public void setMiscellaneousController(MiscellaneousServiceController miscellaneousController) {
 		this.miscellaneousController = miscellaneousController;
@@ -172,8 +173,7 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	public void setjVPostingService(JVPostingService jVPostingService) {
 		this.jVPostingService = jVPostingService;
 	}
-	
-	
+
 	@Autowired
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
@@ -183,7 +183,5 @@ public class MiscellaneousWebServiceImpl implements MiscellaneousRestService, Mi
 	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
 		this.checkListDetailDAO = checkListDetailDAO;
 	}
-
-	
 
 }

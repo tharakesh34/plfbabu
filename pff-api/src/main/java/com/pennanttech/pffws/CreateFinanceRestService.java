@@ -70,9 +70,8 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/moveLoanStage")
 	WSReturnStatus moveLoanStage(MoveLoanStageRequest moveLoanStageRequest) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/getLoansStatus")
 	List<LoanStatus> getLoansStatus(LoanStatusDetails loanStatusDetails) throws ServiceException;
 }
-

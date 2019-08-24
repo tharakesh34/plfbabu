@@ -206,7 +206,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finReference = null;
 
 		try {
-		
+
 			// financeMain details
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
@@ -2989,7 +2989,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		} else {
 			FinanceMain dbFinanceMain = financeDetailService
 					.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
-			if (null != dbFinanceMain && !StringUtils.equals(dbFinanceMain.getRecordStatus(),PennantConstants.RCD_STATUS_REJECTED)) {
+			if (null != dbFinanceMain
+					&& !StringUtils.equals(dbFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_REJECTED)) {
 				financeMain.setFinReference(dbFinanceMain.getFinReference());
 				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
 				financeMain.setCustID(dbFinanceMain.getCustID());

@@ -947,13 +947,17 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	}
 
 	@Override
-	public List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType,String stage,String type ) {
+	public List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType, String stage, String type) {
 		FinanceReferenceDetail financeReferenceDetail = new FinanceReferenceDetail();
 		financeReferenceDetail.setFinType(finType);
-		StringBuilder selectSql = new StringBuilder("SELECT finrefdetailid, fintype, lovdescfintypedescname, finreftype, finrefid, ");
-		selectSql.append("lovdescrefdesc, isactive, showinstage, mandinputinstage, allowinputinstage, allowdeviation, allowwaiver, allowpostpone,");
-		selectSql.append(" allowexpire, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid,");
-		selectSql.append(" lovdescisremarksallowed, lovdesccheckmincount, lovdesccheckmaxcount, override, overridevalue, lovdescelgrulevalue, lovdescrulereturntype, finevent, alerttype ");
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT finrefdetailid, fintype, lovdescfintypedescname, finreftype, finrefid, ");
+		selectSql.append(
+				"lovdescrefdesc, isactive, showinstage, mandinputinstage, allowinputinstage, allowdeviation, allowwaiver, allowpostpone,");
+		selectSql.append(
+				" allowexpire, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid,");
+		selectSql.append(
+				" lovdescisremarksallowed, lovdesccheckmincount, lovdesccheckmaxcount, override, overridevalue, lovdescelgrulevalue, lovdescrulereturntype, finevent, alerttype ");
 		selectSql.append("FROM lmtfinrefdetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where FinType =:FinType ");
@@ -967,7 +971,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		
+
 	}
 
 }

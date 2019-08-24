@@ -42,7 +42,7 @@ public class CustCardSales extends AbstractWorkflowEntity {
 		excludeFields.add("sourceId");
 		return excludeFields;
 	}
-	
+
 	public long getCustID() {
 		return custID;
 	}

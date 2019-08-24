@@ -94,12 +94,11 @@ public class CustomerController {
 	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AgreementGeneration agreementGeneration;
-    private CreditApplicationReviewService creditApplicationReviewService;
-   
+	private CreditApplicationReviewService creditApplicationReviewService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
-	
+
 	// create a script engine manager
 	ScriptEngineManager factory = new ScriptEngineManager();
 
@@ -502,7 +501,7 @@ public class CustomerController {
 					curCustBankInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustBankInfo.setVersion(1);
-					if(CollectionUtils.isNotEmpty(curCustBankInfo.getBankInfoDetails())){
+					if (CollectionUtils.isNotEmpty(curCustBankInfo.getBankInfoDetails())) {
 						for (BankInfoDetail bankInfoDetail : curCustBankInfo.getBankInfoDetails()) {
 							bankInfoDetail.setNewRecord(true);
 							bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -527,7 +526,7 @@ public class CustomerController {
 				}
 			}
 		}
-		
+
 		// customer Gst information
 		List<CustomerGST> CustomerGSTInfoList = customerDetails.getCustomerGstList();
 		if (CustomerGSTInfoList != null) {
@@ -661,7 +660,7 @@ public class CustomerController {
 					curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					curCustCardSalesInfo.setVersion(1);
-					if(CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())){
+					if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
 						for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo.getCustCardMonthSales()) {
 							cardsalesInfoDetail.setNewRecord(true);
 							cardsalesInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -678,7 +677,7 @@ public class CustomerController {
 								curCustCardSalesInfo.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 								curCustCardSalesInfo.setVersion(prvCustomerBankInfo.getVersion() + 1);
 								curCustCardSalesInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-								if(CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())){
+								if (CollectionUtils.isNotEmpty(curCustCardSalesInfo.getCustCardMonthSales())) {
 									for (CustCardSalesDetails cardsalesInfoDetail : curCustCardSalesInfo
 											.getCustCardMonthSales()) {
 										if (curCustCardSalesInfo.getId() == prvCustomerBankInfo.getId()) {
@@ -689,12 +688,12 @@ public class CustomerController {
 										}
 									}
 								}
-							
+
 							}
 							// copy properties
 							BeanUtils.copyProperties(curCustCardSalesInfo, prvCustomerBankInfo);
 						}
-						
+
 					}
 				}
 			}
@@ -989,7 +988,7 @@ public class CustomerController {
 				custBankInfo.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
-		
+
 		// customer GST information
 		List<CustomerGST> customerGSTInfoList = customerDetails.getCustomerGstList();
 		if (customerGSTInfoList != null) {
@@ -1016,7 +1015,7 @@ public class CustomerController {
 				customerExtLiability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			}
 		}
-		
+
 		// customer Card Sales information
 		List<CustCardSales> customerCardSalesInfoList = customerDetails.getCustCardSales();
 		if (customerCardSalesInfoList != null) {
@@ -1700,13 +1699,10 @@ public class CustomerController {
 						.getLovDescCreditReviewSummaryEntries()) {
 					String subCategory = finCreditReviewSummary.getSubCategoryCode();
 					/*
-					 * for(int i=0;i<listOfFinCreditRevSubCategory.size();i++){
-					 * FinCreditRevSubCategory
-					 * oneFinCreditRevSubCategory=listOfFinCreditRevSubCategory.
-					 * get(i); if(StringUtils.equals(finCreditReviewSummary.
-					 * getSubCategoryCode(),
-					 * oneFinCreditRevSubCategory.getSubCategoryCode())){
-					 * oneFinCreditRevSubCategory.setSubCategoryCode(
+					 * for(int i=0;i<listOfFinCreditRevSubCategory.size();i++){ FinCreditRevSubCategory
+					 * oneFinCreditRevSubCategory=listOfFinCreditRevSubCategory. get(i);
+					 * if(StringUtils.equals(finCreditReviewSummary. getSubCategoryCode(),
+					 * oneFinCreditRevSubCategory.getSubCategoryCode())){ oneFinCreditRevSubCategory.setSubCategoryCode(
 					 * finCreditReviewSummary.getSubCategoryCode()); } }
 					 */
 
@@ -1751,15 +1747,11 @@ public class CustomerController {
 													SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT)));
 
 							/*
-							 * if ("CHECK".equals(creditReviewSummary.
-							 * getSubCategoryCode())) { if
-							 * (creditReviewSummary.getItemValue().compareTo(
-							 * BigDecimal.ZERO) != 0 &&
-							 * userAction.getSelectedItem().getValue().toString(
-							 * ) .equals(PennantConstants.RCD_STATUS_APPROVED))
-							 * { MessageUtil
-							 * .showError("Total Assets and Total Liabilities & Net Worth not Matched.."
-							 * ); return; } }
+							 * if ("CHECK".equals(creditReviewSummary. getSubCategoryCode())) { if
+							 * (creditReviewSummary.getItemValue().compareTo( BigDecimal.ZERO) != 0 &&
+							 * userAction.getSelectedItem().getValue().toString( )
+							 * .equals(PennantConstants.RCD_STATUS_APPROVED)) { MessageUtil
+							 * .showError("Total Assets and Total Liabilities & Net Worth not Matched.." ); return; } }
 							 */
 
 							listOfCreditReviewSummary.add(creditReviewSummary);
@@ -1785,8 +1777,7 @@ public class CustomerController {
 				logger.error("Exception", e);
 				APIErrorHandlerService.logUnhandledException(e);
 				/*
-				 * response = new WSReturnStatus(); return
-				 * APIErrorHandlerService.getFailedStatus();
+				 * response = new WSReturnStatus(); return APIErrorHandlerService.getFailedStatus();
 				 */
 			}
 
@@ -1795,8 +1786,7 @@ public class CustomerController {
 		logger.debug("LEAVING");
 
 	}
-	
-	
+
 	/**
 	 * This method for set the data according to the formulae.<br>
 	 * 
@@ -1896,12 +1886,13 @@ public class CustomerController {
 		}
 		return formatedFormula;
 	}
+
 	/**
 	 * set default values zero for Extended Fields to remove exceptions in console and work performance
 	 * 
 	 * @return
 	 */
-	
+
 	public Map<String, BigDecimal> setExtValuesMap(Map<String, BigDecimal> extValuesMap) {
 		extValuesMap.put("EXT_CREDITTRANNO", BigDecimal.ZERO);
 		extValuesMap.put("EXT_CREDITTRANAMT", BigDecimal.ZERO);
@@ -1940,6 +1931,7 @@ public class CustomerController {
 				String.valueOf(finCreditReviewDetails.getCustomerId()), null, null, auditDetail,
 				finCreditReviewDetails.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2004,6 +1996,7 @@ public class CustomerController {
 	public void setAgreementGeneration(AgreementGeneration agreementGeneration) {
 		this.agreementGeneration = agreementGeneration;
 	}
+
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}

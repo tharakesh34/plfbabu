@@ -46,21 +46,15 @@
 
 			</north>
 			<center border="none" autoscroll="false">
-				<tabbox width="100%" height="100%" style="border:none;"
-					id="tabBoxIndexCenter">
+				<tabbox width="100%" height="100%" style="border:none;" id="tabBoxIndexCenter">
 					<tabs id="tabsIndexCenter" style="border:none;">
-						<tab id="tab_BasicDetails" visible="true"
-							style="border:none;"
-							label="${c:l('label_ReInitiateFinance_BasicDetails.value')}" />
+						<tab id="tab_BasicDetails" visible="true" style="border:none;" label="${c:l('label_ReInitiateFinance_BasicDetails.value')}" />
 					</tabs>
 					<tabpanels id="tabpanelsBoxIndexCenter">
-						<tabpanel id="tabPanel_dialogWindow"
-							style="overflow:auto;border:none;">
+						<tabpanel id="tabPanel_dialogWindow" style="overflow:auto;border:none;">
 
-							<groupbox id="gb_basicDetails"
-								sclass="gb-dialog">
-								<grid sclass="GridLayoutNoBorder"
-									fixedLayout="true" style="border:0px">
+							<groupbox id="gb_basicDetails" sclass="gb-dialog">
+								<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 									<columns>
 										<column width="225px" />
 										<column />
@@ -69,23 +63,17 @@
 									</columns>
 									<rows>
 										<row visible="true">
-											<label
-												id="label_ReinstateFinanceDialog_FinReference"
-												value="${c:l('label_ReinstateFinanceDialog_FinReference.value')}" />
+											<label id="label_ReinstateFinanceDialog_FinReference" value="${c:l('label_ReinstateFinanceDialog_FinReference.value')}" />
 											<hbox>
-												<extendedcombobox
-													id="finReference" />
+												<extendedcombobox id="finReference" />
 											</hbox>
 										</row>
 									</rows>
 								</grid>
-								<groupbox id="gb_financeDetails"
-									sclass="gb-dialog" visible="false">
-									<caption
-										label="${c:l('gp_ReinstateFinanceDetails')}">
+								<groupbox id="gb_financeDetails" sclass="gb-dialog" visible="false">
+									<caption label="${c:l('gp_ReinstateFinanceDetails')}">
 									</caption>
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
 											<column width="220px" />
 											<column />
@@ -94,85 +82,50 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_CustCIF"
-													value="${c:l('label_ReinstateFinanceDialog_CustCIF.value')}" />
+												<label id="label_ReinstateFinanceDialog_CustCIF" value="${c:l('label_ReinstateFinanceDialog_CustCIF.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="custCIF" />
-													<label
-														id="custShortName"
-														style="margin-left:10px;display:inline-block;padding-top:4px;" />
+													<space spacing="2px" />
+													<textbox id="custCIF" />
+													<label id="custShortName" style="margin-left:10px;display:inline-block;padding-top:4px;" />
 												</hbox>
-												<label
-													id="label_ReinstateFinanceDialog_FinType"
-													value="${c:l('label_ReinstateFinanceDialog_FinType.value')}" />
-												<extendedcombobox
-													id="finType" />
+												<label id="label_ReinstateFinanceDialog_FinType" value="${c:l('label_ReinstateFinanceDialog_FinType.value')}" />
+												<extendedcombobox id="finType" />
 											</row>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_FinBranch"
-													value="${c:l('label_ReinstateFinanceDialog_FinBranch.value')}" />
-												<extendedcombobox
-													id="finBranch" />
-												<label
-													id="label_ReinstateFinanceDialog_FinCcy"
-													value="${c:l('label_ReinstateFinanceDialog_FinCcy.value')}" />
-												<extendedcombobox
-													id="finCcy" />
+												<label id="label_ReinstateFinanceDialog_FinBranch" value="${c:l('label_ReinstateFinanceDialog_FinBranch.value')}" />
+												<extendedcombobox id="finBranch" />
+												<label id="label_ReinstateFinanceDialog_FinCcy" value="${c:l('label_ReinstateFinanceDialog_FinCcy.value')}" />
+												<extendedcombobox id="finCcy" />
 											</row>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_FinAmount"
-													value="${c:l('label_ReinstateFinanceDialog_FinAmount.value')}" />
-												<currencyBox
-													id="finAmount" />
-												<label
-													id="label_ReinstateFinanceDialog_TotDownpayment"
-													value="${c:l('label_ReinstateFinanceDialog_TotDownpayment.value')}" />
-												<currencyBox
-													id="totDownpayment" />
+												<label id="label_ReinstateFinanceDialog_FinAmount" value="${c:l('label_ReinstateFinanceDialog_FinAmount.value')}" />
+												<currencyBox id="finAmount" />
+												<label id="label_ReinstateFinanceDialog_TotDownpayment" value="${c:l('label_ReinstateFinanceDialog_TotDownpayment.value')}" />
+												<currencyBox id="totDownpayment" />
 											</row>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_FinStartDate"
-													value="${c:l('label_ReinstateFinanceDialog_FinStartDate.value')}" />
+												<label id="label_ReinstateFinanceDialog_FinStartDate" value="${c:l('label_ReinstateFinanceDialog_FinStartDate.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<datebox
-														id="finStartDate" width="120px" />
+													<space spacing="2px" />
+													<datebox id="finStartDate" width="120px" />
 												</hbox>
-												<label
-													id="label_ReinstateFinanceDialog_MaturityDate"
-													value="${c:l('label_ReinstateFinanceDialog_MaturityDate.value')}" />
+												<label id="label_ReinstateFinanceDialog_MaturityDate" value="${c:l('label_ReinstateFinanceDialog_MaturityDate.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<datebox
-														id="maturityDate" width="120px" />
+													<space spacing="2px" />
+													<datebox id="maturityDate" width="120px" />
 												</hbox>
 											</row>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_TotProfit"
-													value="${c:l('label_ReinstateFinanceDialog_TotProfit.value')}" />
-												<currencyBox
-													id="totProfit" />
+												<label id="label_ReinstateFinanceDialog_TotProfit" value="${c:l('label_ReinstateFinanceDialog_TotProfit.value')}" />
+												<currencyBox id="totProfit" />
 											</row>
 										</rows>
 									</grid>
 								</groupbox>
-								<groupbox id="gb_RejectDetails"
-									sclass="gb-dialog" visible="false">
-									<caption
-										label="${c:l('gp_RejectFinanceDetails')}">
+								<groupbox id="gb_RejectDetails" sclass="gb-dialog" visible="false">
+									<caption label="${c:l('gp_RejectFinanceDetails')}">
 									</caption>
-									<grid sclass="GridLayoutNoBorder"
-										fixedLayout="true" style="border:0px">
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 										<columns>
 											<column width="220px" />
 											<column />
@@ -181,45 +134,27 @@
 										</columns>
 										<rows>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_RejectedBy"
-													value="${c:l('label_ReinstateFinanceDialog_RejectedBy.value')}" />
+												<label id="label_ReinstateFinanceDialog_RejectedBy" value="${c:l('label_ReinstateFinanceDialog_RejectedBy.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="rejectedBy" />
+													<space spacing="2px" />
+													<textbox id="rejectedBy" />
 												</hbox>
-												<label
-													id="label_ReinstateFinanceDialog_RejectedOn"
-													value="${c:l('label_ReinstateFinanceDialog_RejectedOn.value')}" />
+												<label id="label_ReinstateFinanceDialog_RejectedOn" value="${c:l('label_ReinstateFinanceDialog_RejectedOn.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<datebox
-														id="rejectedOn" />
+													<space spacing="2px" />
+													<datebox id="rejectedOn" />
 												</hbox>
 											</row>
 											<row>
-												<label
-													id="label_ReinstateFinanceDialog_RejectSts"
-													value="${c:l('label_ReinstateFinanceDialog_RejectSts.value')}" />
+												<label id="label_ReinstateFinanceDialog_RejectSts" value="${c:l('label_ReinstateFinanceDialog_RejectSts.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="rejectSts" multiline="true" rows="4"
-														style="overflow:auto;" width="260px" />
+													<space spacing="2px" />
+													<textbox id="rejectSts" multiline="true" rows="4" style="overflow:auto;" width="260px" />
 												</hbox>
-												<label
-													id="label_ReinstateFinanceDialog_RejectRemarks"
-													value="${c:l('label_ReinstateFinanceDialog_RejectRemarks.value')}" />
+												<label id="label_ReinstateFinanceDialog_RejectRemarks" value="${c:l('label_ReinstateFinanceDialog_RejectRemarks.value')}" />
 												<hbox>
-													<space
-														spacing="2px" />
-													<textbox
-														id="rejectRemarks" multiline="true" rows="4"
-														style="overflow:auto;" width="260px" />
+													<space spacing="2px" />
+													<textbox id="rejectRemarks" multiline="true" rows="4" style="overflow:auto;" width="260px" />
 												</hbox>
 											</row>
 										</rows>

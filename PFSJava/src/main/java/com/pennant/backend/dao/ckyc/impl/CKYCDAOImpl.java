@@ -1271,7 +1271,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	public List<CustomerDocument> getPofAddr(long custId) {
 		CustomerDocument customerDocument = new CustomerDocument();
 		customerDocument.setCustID(custId);
-		customerDocument.setLovDescCustDocCategory("pan"+"%");
+		customerDocument.setLovDescCustDocCategory("pan" + "%");
 
 		StringBuilder selectPoA = new StringBuilder(
 				" SELECT lovdesccustdoccategory ,custDocIssuedCountry , custDocIssuedOn from customerdocuments_aview ");

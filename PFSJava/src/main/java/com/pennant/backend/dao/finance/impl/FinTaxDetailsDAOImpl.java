@@ -89,14 +89,14 @@ public class FinTaxDetailsDAOImpl extends SequenceDao<FinTaxDetails> implements 
 				" Select FinTaxID, FeeID, PaidCGST, PaidIGST, PaidUGST, PaidSGST, PaidTGST, NETCGST, NETIGST, NETUGST, NETSGST, NETTGST,");
 		selectSql.append(
 				" RemFeeCGST, RemFeeIGST, RemFeeUGST, RemFeeSGST, RemFeeTGST, ActualCGST, ActualIGST, ActualUGST, ActualSGST, ActualTGST,");
-		selectSql.append(
-				" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST,");
+		selectSql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedTGST,");
 
 		if (StringUtils.trimToEmpty(tableType).contains("View")) {
 			selectSql.append("  ");
 		}
 
-		selectSql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM FinTaxDetails");
 		selectSql.append(StringUtils.trimToEmpty(tableType));
 		selectSql.append(" WHERE  FeeID = :FeeID ");
@@ -132,10 +132,12 @@ public class FinTaxDetailsDAOImpl extends SequenceDao<FinTaxDetails> implements 
 				" NetCGST = :NetCGST, NetIGST = :NetIGST, NetUGST = :NetUGST, NetSGST = :NetSGST, NetTGST = :NetTGST,");
 		updateSql.append(
 				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedUGST = :WaivedUGST, WaivedIGST = :WaivedIGST, WaivedTGST = :WaivedTGST,");
-		updateSql.append(" RemFeeCGST = :RemFeeCGST, RemFeeIGST = :RemFeeIGST, RemFeeUGST = :RemFeeUGST, RemFeeSGST = :RemFeeSGST, RemFeeTGST = :RemFeeTGST,");
+		updateSql.append(
+				" RemFeeCGST = :RemFeeCGST, RemFeeIGST = :RemFeeIGST, RemFeeUGST = :RemFeeUGST, RemFeeSGST = :RemFeeSGST, RemFeeTGST = :RemFeeTGST,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus = :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql.append(
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where FinTaxID = :FinTaxID");
 
 		logger.debug("updateSql: " + updateSql.toString());

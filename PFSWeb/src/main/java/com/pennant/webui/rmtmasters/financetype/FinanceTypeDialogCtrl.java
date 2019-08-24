@@ -468,7 +468,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Space space_vaAllocationMethod;
 
 	//Sanction Check
-	protected Checkbox sanctionAmount; 
+	protected Checkbox sanctionAmount;
 	protected Checkbox sanctionAmountOverride;
 	protected Row row_sanction;
 
@@ -1679,7 +1679,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.sanctionAmountOverride.setChecked(aFinanceType.isAlwSanctionAmtOverride());
 			checkSanctionAmountChecked();
 		}
-		
+
 		// Advance EMI Details
 
 		this.autoRejectionDays.setValue(aFinanceType.getAutoRejectionDays());
@@ -2237,7 +2237,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		try {
 			if (!isOverdraft) {
-			aFinanceType.setAllowRevolving(this.allowRevolving.isChecked());
+				aFinanceType.setAllowRevolving(this.allowRevolving.isChecked());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -4672,7 +4672,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finSuspTrigger.setDisabled(isTrue);
 		this.finSuspRemarks.setReadonly(isTrue);
 		this.btnNew_FinTypeAccount.setVisible(!isTrue);
-		
+
 		if (!isOverdraft) {
 			this.putCallRequired.setDisabled(isTrue);
 			// tasks # >>Start Advance EMI and DSF
@@ -5686,6 +5686,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onCheck$tDSApplicable(Event event) {
 		checkTDSApplicableChecked();
 	}

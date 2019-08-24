@@ -164,13 +164,15 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		super.doAddFilters();
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
+			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
+					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
 			whereClause.append("AND ( ");
 			whereClause.append(getUsrFinAuthenticationQry(false));
 			whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
-			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND (RecordType IS NULL   OR RecordType='' )");
+			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
+					+ "' AND (RecordType IS NULL   OR RecordType='' )");
 		}
 	}
 
@@ -360,7 +362,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Filter[] filters = new Filter[1];
 		filters[0] = new Filter("BranchCode", getUserWorkspace().getLoggedInUser().getBranchCode(), Filter.OP_EQUAL);
-		
+
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
 			//Calling MultiSelection ListBox From DB
@@ -371,7 +373,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			}
 
 		} else {
-			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch", this.finBranch.getValue(), filters);
+			Object dataObject = ExtendedSearchListBox.show(this.window_ReceiptEnquiryList, "Branch",
+					this.finBranch.getValue(), filters);
 			if (dataObject instanceof String) {
 				this.finBranch.setValue("");
 			} else {

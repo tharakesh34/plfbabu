@@ -11,15 +11,15 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
  */
 public class CsrfRequestMatcher implements RequestMatcher {
 	private Pattern excludedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
-	private Pattern excludedUrls = Pattern.compile("^(.*/zkau/web.*|.*/zkau/upload.*|.*/zkau/dropupload.*|.*/Charts.*)$");
+	private Pattern excludedUrls = Pattern
+			.compile("^(.*/zkau/web.*|.*/zkau/upload.*|.*/zkau/dropupload.*|.*/Charts.*)$");
 
 	public CsrfRequestMatcher() {
 		super();
 	}
 
 	/**
-	 * Decides whether the rule implemented by the strategy matches the supplied
-	 * request.
+	 * Decides whether the rule implemented by the strategy matches the supplied request.
 	 *
 	 * @param request
 	 *            the request to check for a match

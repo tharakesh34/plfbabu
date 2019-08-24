@@ -1132,7 +1132,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		}
 
 		// Document Details Saving
-		
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.LV_DOCUMENT_MANDATORY)
 				&& this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("submit")) {
 			if (documentDetailDialogCtrl != null

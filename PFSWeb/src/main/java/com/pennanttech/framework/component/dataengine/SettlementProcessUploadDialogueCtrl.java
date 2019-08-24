@@ -140,8 +140,8 @@ public class SettlementProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 		@Override
 		public void run() {
 			try {
-				settlementProcessUploadResponce.settlementFileUploadProcessResponseFile(this.userId, status, file, media,
-						false);
+				settlementProcessUploadResponce.settlementFileUploadProcessResponseFile(this.userId, status, file,
+						media, false);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
@@ -212,4 +212,3 @@ public class SettlementProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 		this.settlementProcessUploadResponce = settlementProcessUploadResponce;
 	}
 }
-

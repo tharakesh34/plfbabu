@@ -211,14 +211,16 @@ public class LatePayDueCreationService extends ServiceHelper {
 					// Calculate LPI GST Amount
 					if (finPftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0 && lpiFeeType != null
 							&& lpiFeeType.isTaxApplicable() && lpiFeeType.isAmortzReq()) {
-						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLpiAmount(), lpiFeeType.getTaxComponent());
+						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLpiAmount(),
+								lpiFeeType.getTaxComponent());
 						finPftDetail.setGstLpiAmount(gstAmount);
 					}
 
 					// Calculate LPP GST Amount
 					if (finPftDetail.getLppAmount().compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null
 							&& lppFeeType.isTaxApplicable() && lppFeeType.isAmortzReq()) {
-						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLppAmount(), lppFeeType.getTaxComponent());
+						BigDecimal gstAmount = getTotalTaxAmount(taxPercmap, finPftDetail.getLppAmount(),
+								lppFeeType.getTaxComponent());
 						finPftDetail.setGstLppAmount(gstAmount);
 					}
 				}
@@ -285,7 +287,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 					taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
 				}
 
-				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPIAmz(), lpiFeeType.getTaxComponent());
+				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPIAmz(),
+						lpiFeeType.getTaxComponent());
 				taxDetail.setFinReference(finPftDetail.getFinReference());
 				taxDetail.setTaxFor("LPI");
 				taxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPIAmz());
@@ -321,7 +324,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 					taxPercmap = GSTCalculator.getTaxPercentages(gstExecutionMap, main.getFinCcy());
 				}
 
-				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(), lppFeeType.getTaxComponent());
+				FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, aeEvent.getAeAmountCodes().getdGSTLPPAmz(),
+						lppFeeType.getTaxComponent());
 				taxDetail.setFinReference(finPftDetail.getFinReference());
 				taxDetail.setTaxFor("LPP");
 				taxDetail.setAmount(aeEvent.getAeAmountCodes().getdLPPAmz());
@@ -398,7 +402,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 				// GST Invoice Generation
 				if (addGSTInvoice) {
-					
+
 					List<FinFeeDetail> feesList = prepareFeesList(lppFeeType, null, taxPercmap, calGstMap, aeEvent);
 
 					if (CollectionUtils.isNotEmpty(feesList)) {
@@ -578,7 +582,6 @@ public class LatePayDueCreationService extends ServiceHelper {
 		}
 	}
 
-
 	/**
 	 * Method for Calculating Total GST Amount with the Requested Amount
 	 */
@@ -603,7 +606,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 		return gstAmount;
 	}
 
-	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount, String taxType) {
+	private FinODAmzTaxDetail getTaxDetail(Map<String, BigDecimal> taxPercmap, BigDecimal actTaxAmount,
+			String taxType) {
 
 		BigDecimal cgstPerc = taxPercmap.get(RuleConstants.CODE_CGST);
 		BigDecimal sgstPerc = taxPercmap.get(RuleConstants.CODE_SGST);
@@ -626,13 +630,13 @@ public class LatePayDueCreationService extends ServiceHelper {
 			taxDetail.setSGST(sgstAmount);
 			totalGST = totalGST.add(sgstAmount);
 		}
-		
+
 		if (ugstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal ugstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, ugstPerc, totalGSTPerc);
 			taxDetail.setUGST(ugstAmount);
 			totalGST = totalGST.add(ugstAmount);
 		}
-	
+
 		if (igstPerc.compareTo(BigDecimal.ZERO) > 0) {
 			BigDecimal igstAmount = GSTCalculator.calGstTaxAmount(actTaxAmount, igstPerc, totalGSTPerc);
 			taxDetail.setIGST(igstAmount);
@@ -640,7 +644,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		}
 
 		taxDetail.setTotalGST(totalGST);
-		
+
 		return taxDetail;
 	}
 

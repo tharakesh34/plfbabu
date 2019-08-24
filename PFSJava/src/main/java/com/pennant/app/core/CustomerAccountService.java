@@ -45,114 +45,82 @@ public class CustomerAccountService extends ServiceHelper {
 	 * @throws Exception
 	 */
 	public void processCustomerAccountUpdate() throws Exception {
-		/*logger.debug(" Entering ");
-
-		Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
-		Map<String, AccountsHistory> accountHistMap = new HashMap<String, AccountsHistory>(1);
-		Map<String, AccountType> accountTypeMap = new HashMap<String, AccountType>(1);
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
-		sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T1.PostBranch, T1.AccountType ");
-		sb.append(" FROM Postings T1 ");
-		sb.append(" WHERE postCategory=? AND PostStatus = ?");
-
-		Connection connection = null;
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-
-		try {
-			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(sb.toString());
-			sqlStatement.setInt(1, AccountConstants.POSTING_CATEGORY_EOD);
-			sqlStatement.setString(2, AccountConstants.POSTINGS_SUCCESS);
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-
-				ReturnDataSet posting = getReturnDataSet(resultSet);
-
-				if (posting.getPostAmount().compareTo(BigDecimal.ZERO) == 0) {
-					continue;
-				}
-
-				String acTypeKey = posting.getAccountType();
-				AccountType accountType = new AccountType();
-
-				if (!accountTypeMap.containsKey(acTypeKey)) {
-					accountType = accountTypeDAO.getAccountTypeById(acTypeKey, "");
-					accountTypeMap.put(acTypeKey, accountType);
-				} else {
-					accountType = accountTypeMap.get(acTypeKey);
-				}
-
-				prepareAccounts(accountMap, posting, accountType);
-				PrepareAccountsHist(accountHistMap, posting);
-			}
-
-			//Update Accounts
-			for (Entry<String, Accounts> account : accountMap.entrySet()) {
-				accountsDAO.saveOrUpdate(account.getValue(), "");
-			}
-
-			//Update Accounts History
-			for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
-				accountsHistoryDAO.saveOrUpdate(accountHist.getValue());
-			}
-
-			resultSet.close();
-			sqlStatement.close();
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			DataSourceUtils.releaseConnection(connection, dataSource);
-		}
-
-		getPostingsDAO().updatePostCtg();
-
-		logger.debug(" Leaving ");*/
+		/*
+		 * logger.debug(" Entering ");
+		 * 
+		 * Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1); Map<String, AccountsHistory>
+		 * accountHistMap = new HashMap<String, AccountsHistory>(1); Map<String, AccountType> accountTypeMap = new
+		 * HashMap<String, AccountType>(1);
+		 * 
+		 * StringBuilder sb = new StringBuilder();
+		 * sb.append(" SELECT T1.PostDate, T1.ValueDate, T1.AppDate, T1.AppValueDate, T1.CustAppDate, ");
+		 * sb.append(" T1.DrOrCr, T1.Account, T1.ShadowPosting, T1.PostAmount, T1.AcCcy, T1.PostBranch, T1.AccountType "
+		 * ); sb.append(" FROM Postings T1 "); sb.append(" WHERE postCategory=? AND PostStatus = ?");
+		 * 
+		 * Connection connection = null; ResultSet resultSet = null; PreparedStatement sqlStatement = null;
+		 * 
+		 * try { connection = DataSourceUtils.doGetConnection(dataSource); sqlStatement =
+		 * connection.prepareStatement(sb.toString()); sqlStatement.setInt(1, AccountConstants.POSTING_CATEGORY_EOD);
+		 * sqlStatement.setString(2, AccountConstants.POSTINGS_SUCCESS); resultSet = sqlStatement.executeQuery(); while
+		 * (resultSet.next()) {
+		 * 
+		 * ReturnDataSet posting = getReturnDataSet(resultSet);
+		 * 
+		 * if (posting.getPostAmount().compareTo(BigDecimal.ZERO) == 0) { continue; }
+		 * 
+		 * String acTypeKey = posting.getAccountType(); AccountType accountType = new AccountType();
+		 * 
+		 * if (!accountTypeMap.containsKey(acTypeKey)) { accountType = accountTypeDAO.getAccountTypeById(acTypeKey, "");
+		 * accountTypeMap.put(acTypeKey, accountType); } else { accountType = accountTypeMap.get(acTypeKey); }
+		 * 
+		 * prepareAccounts(accountMap, posting, accountType); PrepareAccountsHist(accountHistMap, posting); }
+		 * 
+		 * //Update Accounts for (Entry<String, Accounts> account : accountMap.entrySet()) {
+		 * accountsDAO.saveOrUpdate(account.getValue(), ""); }
+		 * 
+		 * //Update Accounts History for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
+		 * accountsHistoryDAO.saveOrUpdate(accountHist.getValue()); }
+		 * 
+		 * resultSet.close(); sqlStatement.close();
+		 * 
+		 * } catch (Exception e) { logger.error("Exception: ", e); throw e; } finally {
+		 * DataSourceUtils.releaseConnection(connection, dataSource); }
+		 * 
+		 * getPostingsDAO().updatePostCtg();
+		 * 
+		 * logger.debug(" Leaving ");
+		 */
 
 	}
 
 	public void processCustomerAccountHstyDetails() throws Exception {
-		/*logger.debug(" Entering ");
-
-		List<AccountHistoryDetail> accHstyDetailList = new ArrayList<>();
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(" Select T1.Account AccountID, T1.PostDate, T1.EntityCode, T1.PostBranch, T2.BranchProvince, ");
-		sb.append(" SUM(Case When DrOrCr = 'D' Then PostAmount * -1 Else 0 End) TodayDebits,  ");
-		sb.append(" SUM(Case When DrOrCr = 'C' Then PostAmount Else 0 End) TodayCredits,0 TodayNet, ");
-		sb.append(" 0 ShadowBalance, 0 AcBalance, 0 OpeningBalance from Postings T1  ");
-		sb.append(" Inner Join RMTBranches T2 On  T1.PostBranch = T2.BranchCode ");
-		sb.append(" Where T1.PostDate = ? ");
-		sb.append(" Group BY T1.Account, T1.PostDate,T1.EntityCode, T1.PostBranch, T2.BranchProvince ");
-
-		Connection connection = null;
-		ResultSet resultSet = null;
-		PreparedStatement sqlStatement = null;
-		try {
-			connection = DataSourceUtils.doGetConnection(dataSource);
-			sqlStatement = connection.prepareStatement(sb.toString());
-			sqlStatement.setDate(1, (Date) DateUtility.getAppDate());
-			resultSet = sqlStatement.executeQuery();
-			while (resultSet.next()) {
-				accHstyDetailList.add(getAccountHistoryDetail(resultSet));
-			}
-			accountsHistoryDAO.save(accHstyDetailList);
-			accountsHistoryDAO.update(accHstyDetailList);
-			accountsHistoryDAO.updateCurrAccHstyDetails(accHstyDetailList);
-			//accountsHistoryDAO.updateFields();
-
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} finally {
-			DataSourceUtils.releaseConnection(connection, dataSource);
-		}
-
-		logger.debug(" Leaving ");*/
+		/*
+		 * logger.debug(" Entering ");
+		 * 
+		 * List<AccountHistoryDetail> accHstyDetailList = new ArrayList<>();
+		 * 
+		 * StringBuilder sb = new StringBuilder();
+		 * sb.append(" Select T1.Account AccountID, T1.PostDate, T1.EntityCode, T1.PostBranch, T2.BranchProvince, ");
+		 * sb.append(" SUM(Case When DrOrCr = 'D' Then PostAmount * -1 Else 0 End) TodayDebits,  ");
+		 * sb.append(" SUM(Case When DrOrCr = 'C' Then PostAmount Else 0 End) TodayCredits,0 TodayNet, ");
+		 * sb.append(" 0 ShadowBalance, 0 AcBalance, 0 OpeningBalance from Postings T1  ");
+		 * sb.append(" Inner Join RMTBranches T2 On  T1.PostBranch = T2.BranchCode ");
+		 * sb.append(" Where T1.PostDate = ? ");
+		 * sb.append(" Group BY T1.Account, T1.PostDate,T1.EntityCode, T1.PostBranch, T2.BranchProvince ");
+		 * 
+		 * Connection connection = null; ResultSet resultSet = null; PreparedStatement sqlStatement = null; try {
+		 * connection = DataSourceUtils.doGetConnection(dataSource); sqlStatement =
+		 * connection.prepareStatement(sb.toString()); sqlStatement.setDate(1, (Date) DateUtility.getAppDate());
+		 * resultSet = sqlStatement.executeQuery(); while (resultSet.next()) {
+		 * accHstyDetailList.add(getAccountHistoryDetail(resultSet)); } accountsHistoryDAO.save(accHstyDetailList);
+		 * accountsHistoryDAO.update(accHstyDetailList); accountsHistoryDAO.updateCurrAccHstyDetails(accHstyDetailList);
+		 * //accountsHistoryDAO.updateFields();
+		 * 
+		 * } catch (Exception e) { logger.error("Exception: ", e); throw e; } finally {
+		 * DataSourceUtils.releaseConnection(connection, dataSource); }
+		 * 
+		 * logger.debug(" Leaving ");
+		 */
 
 	}
 

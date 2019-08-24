@@ -37,7 +37,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 import com.pennanttech.pff.settlementprocess.webui.SettlementProcessUploadResponce;
 
-public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<SettlementProcess> {
+public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<SettlementProcess> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SettlementProcessDownloadListCtrl.class);
 
@@ -58,9 +58,10 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 	private long userId;
 	private DataEngineStatus SETTLEMENT_REQUEST_DOWNLOAD = new DataEngineStatus(
 			PennantConstants.SETTLEMENT_REQUEST_DOWNLOAD);
-	
+
 	@Autowired(required = false)
 	private SettlementProcessUploadResponce settlementProcessUploadResponce;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -84,8 +85,8 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
-		setPageComponents(window_SettlementProcessDownLoad, borderLayout_SettlementProcessDownload,
-				listBoxFileDownload, pagingFileDownloadList);
+		setPageComponents(window_SettlementProcessDownLoad, borderLayout_SettlementProcessDownload, listBoxFileDownload,
+				pagingFileDownloadList);
 		this.userId = getUserWorkspace().getLoggedInUser().getUserId();
 		setItemRender(new FileDownloadListModelItemRenderer());
 
@@ -134,10 +135,11 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 
 			Button downloadButt = (Button) event.getOrigin().getTarget();
 			SettlementProcess settlementData = (SettlementProcess) downloadButt.getAttribute("object");
-			
+
 			try {
 				try {
-					Thread thread = new Thread(new ProcessData(this.userId, SETTLEMENT_REQUEST_DOWNLOAD, settlementData.getRequestBatchId(), settlementData));
+					Thread thread = new Thread(new ProcessData(this.userId, SETTLEMENT_REQUEST_DOWNLOAD,
+							settlementData.getRequestBatchId(), settlementData));
 					thread.start();
 				} catch (Exception e) {
 					MessageUtil.showError(e);
@@ -147,7 +149,7 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 				MessageUtil.showError(e);
 				return;
 			}
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e.getMessage());
 		}
@@ -170,14 +172,15 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 		@Override
 		public void run() {
 			try {
-				settlementProcessUploadResponce.settlementFileDownload(this.userId, getUserWorkspace().getLoggedInUser().getUserName(), this.Id);
+				settlementProcessUploadResponce.settlementFileDownload(this.userId,
+						getUserWorkspace().getLoggedInUser().getUserName(), this.Id);
 			} catch (Exception e) {
 				logger.error("Exception:", e);
 			}
 		}
 
 	}
-	
+
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
@@ -223,16 +226,16 @@ public class SettlementProcessDownloadListCtrl  extends GFCBaseListCtrl<Settleme
 	}
 
 	public void onTimer$timer(Event event) {
-		/*if (pagingFileDownloadList.getActivePage() == 0) {
-			Events.postEvent("onCreate", this.window_SettlementProcessDownLoad, event);
-			searchObject.clearFields();
-		}*/
+		/*
+		 * if (pagingFileDownloadList.getActivePage() == 0) { Events.postEvent("onCreate",
+		 * this.window_SettlementProcessDownLoad, event); searchObject.clearFields(); }
+		 */
 	}
 
 	public void setSettlementProcessUploadResponce(SettlementProcessUploadResponce settlementProcessUploadResponce) {
 		this.settlementProcessUploadResponce = settlementProcessUploadResponce;
 	}
-	
+
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
 		this.dataEngineConfig = dataEngineConfig;
 	}

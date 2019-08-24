@@ -5353,12 +5353,11 @@
 	<bean id="ledgerDownloadCtrl" class="com.pennant.webui.applicationmaster.download.LedgerDownloadProcessCtrl"
 		parent="basisListCtrl" scope="prototype">
 	</bean>
-	
+
 	<!--============ CKYC Download/ Upload ============== -->
-	
-	<bean id="ckycCtrl"
-		class="com.pennant.webui.applicationmaster.download.CKYCProcessCtrl"
-		parent="basisListCtrl" scope="prototype">
+
+	<bean id="ckycCtrl" class="com.pennant.webui.applicationmaster.download.CKYCProcessCtrl" parent="basisListCtrl"
+		scope="prototype">
 		<property name="ckycService" ref="ckycService"></property>
 
 	</bean>
@@ -5367,25 +5366,26 @@
 	<bean id="customerDownloadListCtrl" class="com.pennant.webui.filedownload.CustomerDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
-	</bean>	
-	<!--============ Collateral  Download ============== -->
+	</bean>
+	<!--============ Collateral Download ============== -->
 
 	<bean id="collateralDownloadListCtrl" class="com.pennant.webui.filedownload.CollateralDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
-	</bean>	
+	</bean>
 	<bean id="limitDownloadListCtrl" class="com.pennant.webui.filedownload.LimitDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
-	</bean>	
-	
+	</bean>
+
 	<!-- InstrumentwiseLimit -->
 	<bean id="instrumentwiseLimitListCtrl" class="com.pennant.webui.applicationmaster.instrumentwiselimit.InstrumentwiseLimitListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
 	</bean>
-	<bean id="instrumentwiseLimitDialogCtrl" class="com.pennant.webui.applicationmaster.instrumentwiselimit.InstrumentwiseLimitDialogCtrl" parent="basisCtrl" scope="prototype">
-		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService"/>
+	<bean id="instrumentwiseLimitDialogCtrl" class="com.pennant.webui.applicationmaster.instrumentwiselimit.InstrumentwiseLimitDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="instrumentwiseLimitService" ref="instrumentwiseLimitService" />
 	</bean>
-	
+
 	<!-- CustomerPaymentTransactions -->
 	<bean id="customerPaymentTxnsListCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl"
 		parent="basisListCtrl" scope="prototype">
@@ -5393,22 +5393,22 @@
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="customerDAO" ref="customerDAO" />
 	</bean>
-	
-	<bean id="customerPaymentTxnsDialogCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl" parent="basisCtrl"
-		scope="prototype">
+
+	<bean id="customerPaymentTxnsDialogCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 	</bean>
-	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl" parent="basisCtrl"
-		scope="prototype">
+	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
 		<property name="customerGstService" ref="customerGstService" />
-	</bean>	
+	</bean>
 
 	<bean id="customerCardSalesInfoDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerCardSalesInfoDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-	</bean>	
-	
+	</bean>
+
 	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype">
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 	</bean>

@@ -430,7 +430,8 @@ public class RepaymentProcessUtil {
 		amountCodes.setBusinessvertical(financeMain.getBusinessVerticalCode());
 		amountCodes.setEntitycode(financeMain.getEntityCode());
 
-		if (StringUtils.isNotBlank(financeMain.getPromotionCode()) && (financeMain.getPromotionSeqId()!=null && financeMain.getPromotionSeqId() == 0)) {
+		if (StringUtils.isNotBlank(financeMain.getPromotionCode())
+				&& (financeMain.getPromotionSeqId() != null && financeMain.getPromotionSeqId() == 0)) {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getPromotionCode(),
 					AccountEventConstants.ACCEVENT_REPAY, FinanceConstants.MODULEID_PROMOTION));
 		} else {

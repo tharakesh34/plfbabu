@@ -25,6 +25,6 @@ public interface CustomerGstService {
 
 	int getVersion(long id);
 
-	AuditDetail doValidations(CustomerGST customerGST,String recordType);
+	AuditDetail doValidations(CustomerGST customerGST, String recordType);
 
 }

@@ -76,40 +76,26 @@ public class AccountProcessUtil implements Serializable {
 
 	public void procAccountUpdate(List<ReturnDataSet> dataSets) {
 
-		/*Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1);
-		Map<String, AccountsHistory> accountHistMap = new HashMap<String, AccountsHistory>(1);
-		Map<String, AccountType> accountTypeMap = new HashMap<String, AccountType>(1);
-
-		for (int i = 0; i < dataSets.size(); i++) {
-			ReturnDataSet posting = dataSets.get(i);
-			if (posting.getPostAmount().compareTo(BigDecimal.ZERO) <= 0) {
-				continue;
-			}
-			String acTypeKey = posting.getAccountType();
-			AccountType accountType = new AccountType();
-
-			if (!accountTypeMap.containsKey(acTypeKey)) {
-				accountType = accountTypeDAO.getAccountTypeById(acTypeKey, "");
-				if (accountType == null) {
-					logger.debug("AccountType Conguration Missing For: " + acTypeKey);
-				}
-				accountTypeMap.put(acTypeKey, accountType);
-			} else {
-				accountType = accountTypeMap.get(acTypeKey);
-			}
-			prepareAccounts(accountMap, posting, accountType);
-			PrepareAccountsHist(accountHistMap, posting);
-		}
-
-		//Update Accounts
-		for (Entry<String, Accounts> account : accountMap.entrySet()) {
-			accountsDAO.saveOrUpdate(account.getValue(), "");
-		}
-
-		//Update Accounts History
-		for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
-			accountsHistoryDAO.saveOrUpdate(accountHist.getValue());
-		}*/
+		/*
+		 * Map<String, Accounts> accountMap = new HashMap<String, Accounts>(1); Map<String, AccountsHistory>
+		 * accountHistMap = new HashMap<String, AccountsHistory>(1); Map<String, AccountType> accountTypeMap = new
+		 * HashMap<String, AccountType>(1);
+		 * 
+		 * for (int i = 0; i < dataSets.size(); i++) { ReturnDataSet posting = dataSets.get(i); if
+		 * (posting.getPostAmount().compareTo(BigDecimal.ZERO) <= 0) { continue; } String acTypeKey =
+		 * posting.getAccountType(); AccountType accountType = new AccountType();
+		 * 
+		 * if (!accountTypeMap.containsKey(acTypeKey)) { accountType = accountTypeDAO.getAccountTypeById(acTypeKey, "");
+		 * if (accountType == null) { logger.debug("AccountType Conguration Missing For: " + acTypeKey); }
+		 * accountTypeMap.put(acTypeKey, accountType); } else { accountType = accountTypeMap.get(acTypeKey); }
+		 * prepareAccounts(accountMap, posting, accountType); PrepareAccountsHist(accountHistMap, posting); }
+		 * 
+		 * //Update Accounts for (Entry<String, Accounts> account : accountMap.entrySet()) {
+		 * accountsDAO.saveOrUpdate(account.getValue(), ""); }
+		 * 
+		 * //Update Accounts History for (Entry<String, AccountsHistory> accountHist : accountHistMap.entrySet()) {
+		 * accountsHistoryDAO.saveOrUpdate(accountHist.getValue()); }
+		 */
 
 	}
 

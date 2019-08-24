@@ -99,7 +99,8 @@ public interface DedupParmService {
 	List<CustomerDedup> getCustomerDedup(CustomerDedup customerDedup, List<DedupParm> dedupParmList)
 			throws InterfaceException;
 
-	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail, String finType, String ref) throws InterfaceException;
+	List<CustomerDedup> getDedupCustomerDetails(CustomerDetails detail, String finType, String ref)
+			throws InterfaceException;
 
 	List<CollateralSetup> queryExecution(String query, Map<String, Object> fielValueMap);
 }

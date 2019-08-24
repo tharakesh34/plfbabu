@@ -1,6 +1,5 @@
 package com.pennant.backend.service.customermasters;
 
-
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -22,11 +21,11 @@ public interface CustomerBankInfoService {
 
 	int getVersion(long id);
 
-	AuditDetail doValidations(CustomerBankInfo customerBankInfo,String recordType);
+	AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType);
 
 	CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId);
-	
+
 	List<BankInfoDetail> getBankInfoDetailById(long id);
-	
+
 	List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear);
 }

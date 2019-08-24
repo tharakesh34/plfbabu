@@ -38,7 +38,7 @@ public abstract class SoapClient<T> {
 
 	@Autowired
 	private InterfaceLoggingDAO interfaceLoggingDAO;
-	
+
 	/**
 	 * Set the properties.
 	 */
@@ -59,46 +59,45 @@ public abstract class SoapClient<T> {
 		}
 	}
 
-	
 	protected SoapServiceDetail processMessage(SoapServiceDetail serviceDetail) {
-		InterfaceLogDetail logDetail =null;
+		InterfaceLogDetail logDetail = null;
 		String url = App.getProperty(serviceDetail.getServiceUrl());
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
 			url = StringUtils.trimToEmpty(url) + serviceDetail.getServiceEndPoint();
 		}
-		
+
 		if (StringUtils.isEmpty(url)) {
 			throw new InterfaceException("8905", "Invalid URL Configuration");
 		}
 		String errorCode = "0000";
 		String errorDesc = null;
 		String status = InterfaceConstants.STATUS_SUCCESS;
-		
+
 		try {
-			SOAPMessage request= getSoapMessage(serviceDetail);
-			ByteArrayOutputStream soapRequest= new ByteArrayOutputStream();
+			SOAPMessage request = getSoapMessage(serviceDetail);
+			ByteArrayOutputStream soapRequest = new ByteArrayOutputStream();
 			request.writeTo(soapRequest);
-			logger.debug(serviceDetail.getServiceName()+ " Request " + soapRequest.toString());
+			logger.debug(serviceDetail.getServiceName() + " Request " + soapRequest.toString());
 			serviceDetail.setRequestString(soapRequest.toString());
-			logDetail = logData(serviceDetail,url);
+			logDetail = logData(serviceDetail, url);
 
 			SOAPMessage response = executeMessage(request, url);
-			ByteArrayOutputStream soapResposne= new ByteArrayOutputStream();
+			ByteArrayOutputStream soapResposne = new ByteArrayOutputStream();
 			response.writeTo(soapResposne);
-			logger.debug(serviceDetail.getServiceName()+ " Response" + soapResposne.toString());
+			logger.debug(serviceDetail.getServiceName() + " Response" + soapResposne.toString());
 			serviceDetail.setResponseString(soapResposne.toString());
 			serviceDetail = getResponse(response, serviceDetail);
-		}catch (InterfaceException e) {
+		} catch (InterfaceException e) {
 			status = InterfaceConstants.STATUS_FAILED;
 			errorCode = e.getErrorCode();
 			errorDesc = e.getErrorMessage();
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			status = InterfaceConstants.STATUS_FAILED;
 			errorCode = "8904";
 			errorDesc = e.getMessage();
 			throw new InterfaceException("8904", e.getMessage());
-		}finally {
+		} finally {
 			if (logDetail != null) {
 				logDetail.setResponse(
 						StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getResponseString()), 1000));
@@ -109,11 +108,11 @@ public abstract class SoapClient<T> {
 				updateResponse(logDetail);
 			}
 		}
-			
+
 		return serviceDetail;
 	}
 
-	private InterfaceLogDetail logData(SoapServiceDetail serviceDetail,String url){
+	private InterfaceLogDetail logData(SoapServiceDetail serviceDetail, String url) {
 		logger.debug(Literal.ENTERING);
 		InterfaceLogDetail logDetail = new InterfaceLogDetail();
 		logDetail.setReference(serviceDetail.getReference());
@@ -121,16 +120,15 @@ public abstract class SoapClient<T> {
 		logDetail.setEndPoint(url);
 		logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
 		logDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
-		
+
 		if (interfaceLoggingDAO != null) {
 			interfaceLoggingDAO.save(logDetail);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return logDetail;
 	}
-	
-	
+
 	public SOAPMessage getSoapMessage(SoapServiceDetail serviceDetail) {
 		try {
 			logger.debug(Literal.ENTERING);
@@ -149,17 +147,16 @@ public abstract class SoapClient<T> {
 		}
 	}
 
-	
-	
 	@SuppressWarnings("unchecked")
 	public SoapServiceDetail getResponse(SOAPMessage response, SoapServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(serviceDetail.getResponceData().getClass());
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			serviceDetail.setResponceData((T) unmarshaller.unmarshal(response.getSOAPBody().extractContentAsDocument()));
+			serviceDetail
+					.setResponceData((T) unmarshaller.unmarshal(response.getSOAPBody().extractContentAsDocument()));
 		} catch (Exception e) {
- 			logger.error("Error", e);
+			logger.error("Error", e);
 			e.printStackTrace();
 			throw new InterfaceException("8903", e.getMessage());
 		}
@@ -167,13 +164,13 @@ public abstract class SoapClient<T> {
 		return serviceDetail;
 	}
 
-	private SOAPMessage executeMessage(SOAPMessage message, String url){
+	private SOAPMessage executeMessage(SOAPMessage message, String url) {
 		logger.debug(Literal.ENTERING);
-		SOAPMessage response =null;
+		SOAPMessage response = null;
 		try {
 			SOAPConnectionFactory sfc = SOAPConnectionFactory.newInstance();
 			SOAPConnection connection = sfc.createConnection();
-			
+
 			URL endpoint = new URL(null, url, new URLStreamHandler() {
 				@Override
 				protected URLConnection openConnection(URL url) throws IOException {
@@ -182,22 +179,21 @@ public abstract class SoapClient<T> {
 					// Connection settings
 					connection.setConnectTimeout(connTimeout);
 					connection.setReadTimeout(readTimeout);
-					return(connection);
+					return (connection);
 				}
 			});
-			
-			response = connection.call(message,endpoint);
-			
+
+			response = connection.call(message, endpoint);
+
 		} catch (Exception e) {
 			logger.error("Error", e);
 			throw new InterfaceException("8900", e.getMessage());
-	
+
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
-
 
 	protected void updateResponse(InterfaceLogDetail logDetail) {
 		logger.debug(Literal.ENTERING);

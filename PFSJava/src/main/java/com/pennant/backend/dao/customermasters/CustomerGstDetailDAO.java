@@ -20,9 +20,9 @@ public interface CustomerGstDetailDAO {
 	public CustomerGST getCustomerGstByCustId(CustomerGST customerGST, String type);
 
 	CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type);
-	
+
 	CustomerGST getCustomerGstByCustId(long id, String type);
-	
+
 	// CustomerGSTDetails
 	void delete(CustomerGSTDetails customerGSTDetails, String type);
 
@@ -40,5 +40,4 @@ public interface CustomerGstDetailDAO {
 
 	void saveCustomerGSTDetailsBatch(List<CustomerGSTDetails> customerGSTDetailsList, String type);
 
-	
 }

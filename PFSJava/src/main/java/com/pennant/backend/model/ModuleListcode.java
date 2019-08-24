@@ -54,8 +54,7 @@ public class ModuleListcode implements Serializable {
 	private String[] fieldHeading;
 	private List<ValueLabel> valueLabels;
 
-	public ModuleListcode(String listCode, String moduleListName, List<ValueLabel> valueLabels,
-			String[] fieldHeading) {
+	public ModuleListcode(String listCode, String moduleListName, List<ValueLabel> valueLabels, String[] fieldHeading) {
 		this.listCode = listCode;
 		this.moduleListName = moduleListName;
 		this.fieldHeading = fieldHeading;

@@ -180,11 +180,11 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
-			
+
 			if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
-			
+
 			if (arguments.containsKey("CustCardSalesList")) {
 				CustCardSalesList = (List<CustCardSales>) arguments.get("CustomerCardSalesInfoList");
 			}
@@ -289,7 +289,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 		Listcell listCell;
 		Hbox hbox;
 		Space space;
-		
+
 		// Month 
 		listCell = new Listcell();
 		Datebox month = new Datebox();
@@ -857,8 +857,10 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			Date monthYearValue = monthYear.getValue();
 			if (!monthYear.isDisabled()) {
 				if (monthYearValue == null) {
-					/*throw new WrongValueException(monthYear,
-							Labels.getLabel("FIELD_IS_MAND", new String[] { "Month" }));*/
+					/*
+					 * throw new WrongValueException(monthYear, Labels.getLabel("FIELD_IS_MAND", new String[] { "Month"
+					 * }));
+					 */
 				} else {
 					monthYearValue.setDate(1);
 					if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
@@ -892,39 +894,39 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			Hbox hbox3 = (Hbox) getComponent(listitem, "NoOfSettlements");
 			Intbox noOfSettlements = (Intbox) hbox3.getLastChild();
 			Clients.clearWrongValue(noOfSettlements);
-			/*if (!noOfSettlements.isReadonly() && noOfSettlements.getValue() == null) {
-				throw new WrongValueException(noOfSettlements,
-						Labels.getLabel("FIELD_IS_MAND", new String[] { "No Of Settlements" }));
-			} else if (!noOfSettlements.isReadonly() && noOfSettlements.getValue() <= 0) {
-				throw new WrongValueException(noOfSettlements,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "No Of Settlements" }));
-			}*/
+			/*
+			 * if (!noOfSettlements.isReadonly() && noOfSettlements.getValue() == null) { throw new
+			 * WrongValueException(noOfSettlements, Labels.getLabel("FIELD_IS_MAND", new String[] { "No Of Settlements"
+			 * })); } else if (!noOfSettlements.isReadonly() && noOfSettlements.getValue() <= 0) { throw new
+			 * WrongValueException(noOfSettlements, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
+			 * "No Of Settlements" })); }
+			 */
 			custCardMonthSales.setNoOfSettlements(noOfSettlements.getValue());
 			break;
 		case "totalNoOfCredits":
 			Hbox hbox4 = (Hbox) getComponent(listitem, "totalNoOfCredits");
 			Intbox totalNoOfCredits = (Intbox) hbox4.getLastChild();
 			Clients.clearWrongValue(totalNoOfCredits);
-			/*if (!totalNoOfCredits.isReadonly() && totalNoOfCredits.getValue() == null) {
-				throw new WrongValueException(totalNoOfCredits,
-						Labels.getLabel("FIELD_IS_MAND", new String[] { "Total No Of Credits" }));
-			} else if (!totalNoOfCredits.isReadonly() && totalNoOfCredits.getValue() <= 0) {
-				throw new WrongValueException(totalNoOfCredits,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Total No Of Credits" }));
-			}*/
+			/*
+			 * if (!totalNoOfCredits.isReadonly() && totalNoOfCredits.getValue() == null) { throw new
+			 * WrongValueException(totalNoOfCredits, Labels.getLabel("FIELD_IS_MAND", new String[] {
+			 * "Total No Of Credits" })); } else if (!totalNoOfCredits.isReadonly() && totalNoOfCredits.getValue() <= 0)
+			 * { throw new WrongValueException(totalNoOfCredits, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new
+			 * String[] { "Total No Of Credits" })); }
+			 */
 			custCardMonthSales.setTotalNoOfCredits(totalNoOfCredits.getValue());
 			break;
 		case "totalNoOfDebits":
 			Hbox hbox5 = (Hbox) getComponent(listitem, "totalNoOfDebits");
 			Intbox totalNoOfDebits = (Intbox) hbox5.getLastChild();
 			Clients.clearWrongValue(totalNoOfDebits);
-			/*if (!totalNoOfDebits.isReadonly() && totalNoOfDebits.getValue() == null) {
-				throw new WrongValueException(totalNoOfDebits,
-						Labels.getLabel("FIELD_IS_MAND", new String[] { "Total No Of Debits" }));
-			} else if (!totalNoOfDebits.isReadonly() && totalNoOfDebits.getValue() <= 0) {
-				throw new WrongValueException(totalNoOfDebits,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Total No Of Debits" }));
-			}*/
+			/*
+			 * if (!totalNoOfDebits.isReadonly() && totalNoOfDebits.getValue() == null) { throw new
+			 * WrongValueException(totalNoOfDebits, Labels.getLabel("FIELD_IS_MAND", new String[] { "Total No Of Debits"
+			 * })); } else if (!totalNoOfDebits.isReadonly() && totalNoOfDebits.getValue() <= 0) { throw new
+			 * WrongValueException(totalNoOfDebits, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
+			 * "Total No Of Debits" })); }
+			 */
 			custCardMonthSales.setTotalNoOfDebits(totalNoOfDebits.getValue());
 			break;
 		case "totalCreditValue":
@@ -935,10 +937,11 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			if (totalCreditAmtValue.getValidateValue() != null) {
 				totalCreditValue = totalCreditAmtValue.getValidateValue();
 			}
-			/*if (!(totalCreditAmtValue.isReadonly()) && (totalCreditValue.intValue() <= 0)) {
-				throw new WrongValueException(totalCreditAmtValue,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Total Credit Value" }));
-			}*/
+			/*
+			 * if (!(totalCreditAmtValue.isReadonly()) && (totalCreditValue.intValue() <= 0)) { throw new
+			 * WrongValueException(totalCreditAmtValue, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
+			 * "Total Credit Value" })); }
+			 */
 			custCardMonthSales.setTotalCreditValue(PennantAppUtil.unFormateAmount(totalCreditValue, 2));
 			break;
 		case "totalDebitValue":
@@ -949,10 +952,11 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			if (totalDebitAmtValue.getValidateValue() != null) {
 				totalDebitValue = totalDebitAmtValue.getValidateValue();
 			}
-			/*if (!(totalDebitAmtValue.isReadonly()) && (totalDebitValue.intValue() <= 0)) {
-				throw new WrongValueException(totalDebitAmtValue,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Total Debit Value" }));
-			}*/
+			/*
+			 * if (!(totalDebitAmtValue.isReadonly()) && (totalDebitValue.intValue() <= 0)) { throw new
+			 * WrongValueException(totalDebitAmtValue, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
+			 * "Total Debit Value" })); }
+			 */
 			custCardMonthSales.setTotalDebitValue(PennantAppUtil.unFormateAmount(totalDebitValue, 2));
 			break;
 		case "inwardBounce":
@@ -963,10 +967,10 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			if (bounceIn.getValidateValue() != null) {
 				inwardBounce = bounceIn.getValidateValue();
 			}
-			/*if (!(bounceIn.isReadonly()) && (inwardBounce.intValue() <= 0)) {
-				throw new WrongValueException(bounceIn,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Inward Bounce" }));
-			}*/
+			/*
+			 * if (!(bounceIn.isReadonly()) && (inwardBounce.intValue() <= 0)) { throw new WrongValueException(bounceIn,
+			 * Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Inward Bounce" })); }
+			 */
 			custCardMonthSales.setInwardBounce(PennantAppUtil.unFormateAmount(inwardBounce, 2));
 			break;
 		case "outwardBounce":
@@ -977,10 +981,11 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 			if (bounceOut.getValidateValue() != null) {
 				bounceInOut = bounceOut.getValidateValue();
 			}
-			/*if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() <= 0)) {
-				throw new WrongValueException(bounceOut,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Outward Bounce" }));
-			}*/
+			/*
+			 * if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() <= 0)) { throw new
+			 * WrongValueException(bounceOut, Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] {
+			 * "Outward Bounce" })); }
+			 */
 			custCardMonthSales.setOutwardBounce(PennantAppUtil.unFormateAmount(bounceInOut, 2));
 			break;
 		default:
@@ -1101,7 +1106,7 @@ public class CustomerCardSalesInfoDialogCtrl extends GFCBaseCtrl<CustCardSales> 
 	 */
 	private void doSetLOVValidation() {
 		logger.debug(Literal.ENTERING);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

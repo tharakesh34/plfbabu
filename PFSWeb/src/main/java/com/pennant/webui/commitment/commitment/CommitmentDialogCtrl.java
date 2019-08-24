@@ -767,8 +767,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		// Limit Header
 		long headerId = 0;
-		LimitHeader limitHeader = getCommitmentService()
-				.getLimitHeaderByCustomerId(customerDetails.getCustID());
+		LimitHeader limitHeader = getCommitmentService().getLimitHeaderByCustomerId(customerDetails.getCustID());
 		if (limitHeader != null) {
 			headerId = limitHeader.getHeaderId();
 			limitHeader.setCustFullName(PennantApplicationUtil.getFullName(limitHeader.getCustFName(),
@@ -1168,9 +1167,10 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		this.btnSearchCommitmentFlags.setDisabled(isReadOnly("CommitmentDialog_CommitmentFlags"));
 
-		/*setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount, this.space_OpenAccount,
-				this.label_OpenAccount, this.hlayout_OpenAccount, null);
-*/		setAccountBoxAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.cmtAccount, null);
+		/*
+		 * setComponentAccessType("CommitmentDialog_OpenAccount", tempReadOnly, this.openAccount,
+		 * this.space_OpenAccount, this.label_OpenAccount, this.hlayout_OpenAccount, null);
+		 */ setAccountBoxAccess("CommitmentDialog_CmtAccount", tempReadOnly, this.cmtAccount, null);
 
 		setComponentAccessType("CommitmentDialog_CmtPftRateMin", tempReadOnly, this.cmtPftRateMin,
 				this.space_CmtPftRateMin, this.label_CmtPftRateMin, this.hlayout_CmtPftRateMin, null);
@@ -1691,8 +1691,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 				}
 			}
 			if (this.cmtAmount.getValidateValue() != null) {
-			aCommitment.setCmtAmount(
-					PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValidateValue(), defaultCCYDecPos));
+				aCommitment.setCmtAmount(
+						PennantApplicationUtil.unFormateAmount(this.cmtAmount.getValidateValue(), defaultCCYDecPos));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);

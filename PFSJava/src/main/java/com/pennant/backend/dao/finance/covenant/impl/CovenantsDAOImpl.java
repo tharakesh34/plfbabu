@@ -366,7 +366,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	@Override
 	public void deleteDocuments(Covenant covenant, TableType tableType) {
 		logger.debug(Literal.ENTERING);

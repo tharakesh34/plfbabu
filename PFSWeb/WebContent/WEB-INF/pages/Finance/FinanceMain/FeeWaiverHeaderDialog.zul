@@ -83,27 +83,27 @@
 								<listheader id="listheader_Type" label="${c:l('listheader_Type.label')}" sort="none" hflex="min" />
 								<listheader id="listheader_ReceivableAmount" label="${c:l('listheader_Amount.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
-									
-								<listheader id="listheader_AmountGST" label="${c:l('listheader_AmountGST.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
+
+								<listheader id="listheader_AmountGST" label="${c:l('listheader_AmountGST.label')}" sort="none" hflex="min"
+									style="text-align:right;" />
 								<listheader id="listheader_TotDueAmount" label="${c:l('listheader_TotDueAmount.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
-									
+
 								<listheader id="listheader_RecivedAmount" label="${c:l('listheader_Recived.label')}" sort="none"
-									hflex="min" style="text-align:right;"/>
+									hflex="min" style="text-align:right;" />
 								<listheader id="listheader_WaivedAmount" label="${c:l('listheader_Waived.label')}" sort="none" hflex="min"
 									style="text-align:right;" visible="false" />
 								<listheader id="listheader_BalanceAmount" label="${c:l('listheader_BalanceAmount.label')}" sort="none"
 									hflex="min" style="text-align:right;" visible="false" />
 								<listheader id="listheader_CurrentWaivedAmount" label="${c:l('listheader_CurrentWaived.label')}"
 									sort="none" hflex="min" style="text-align:right;" />
-									
-								<listheader id="listheader_DueWaivedAmount" label="${c:l('listheader_DueWaived.label')}"
-									sort="none" hflex="min" style="text-align:right;" />
-								<listheader id="listheader_GSTWaivedAmount" label="${c:l('listheader_GSTWaived.label')}"
-									sort="none" hflex="min" style="text-align:right;" />
-								
-									
+
+								<listheader id="listheader_DueWaivedAmount" label="${c:l('listheader_DueWaived.label')}" sort="none"
+									hflex="min" style="text-align:right;" />
+								<listheader id="listheader_GSTWaivedAmount" label="${c:l('listheader_GSTWaived.label')}" sort="none"
+									hflex="min" style="text-align:right;" />
+
+
 								<listheader id="listheader_NetBalance" label="${c:l('listheader_NetBalance.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 							</listhead>

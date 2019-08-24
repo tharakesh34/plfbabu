@@ -410,7 +410,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
 
-	@Autowired
+	@Autowired(required = false)
 	private CreditFinancialService creditFinancialService;
 	private CreditReviewDetailDAO creditReviewDetailDAO;
 
@@ -2876,7 +2876,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Saving the reasons
 		saveReasonDetails(financeDetail);
 
-		if (financeDetail.getCreditReviewData() != null) {
+		if (financeDetail.getCreditReviewData() != null && creditFinancialService != null) {
 			creditFinancialService.saveOrUpdate(financeDetail, auditHeader, tableType.getSuffix());
 		}
 
@@ -4084,7 +4084,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				getFinanceMainDAO().save(financeMain, TableType.MAIN_TAB, isWIF);
 
 				//Credit Review Details Saving
-				if (financeDetail.getCreditReviewData() != null) {
+				if (financeDetail.getCreditReviewData() != null && creditFinancialService != null) {
 					creditFinancialService.doApprove(financeDetail, auditHeader, "");
 				}
 

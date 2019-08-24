@@ -9,9 +9,9 @@ public class CacheQueries {
 	public static final String DELETE_CACHE_STATUS;
 	public static final String SELECT_CACHE_STATUS_NODE_COUNT;
 	public static final String UPDATE_CACHE_PARAM;
-	
+
 	private CacheQueries() {
-		
+
 	}
 
 	static {

@@ -2,26 +2,20 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_ReceiptNotificationCtrl"
-			apply="${receiptNotificationCtrl}" border="none" width="100%">
+		<window id="window_ReceiptNotificationCtrl" apply="${receiptNotificationCtrl}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
 				<toolbar align="center" sclass="toolbar-center">
-							<label
-								value="${c:l('window_ReceiptNotification.title')}"
-								sclass="label-heading" />
+					<label value="${c:l('window_ReceiptNotification.title')}" sclass="label-heading" />
 				</toolbar>
 			</div>
 			<borderlayout id="borderLayout_ReceiptNotification">
 				<north border="none" />
 				<center border="none">
-					<div style="border:1px;"	vflex="1">
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px;margin:10px;">
+					<div style="border:1px;" vflex="1">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;margin:10px;">
 							<columns>
 								<column width="10%" />
 								<column width="35%" />
@@ -30,22 +24,21 @@
 							</columns>
 							<rows>
 								<row>
-								<label
-										id="label_ReceiptNotification" value="${c:l('label_ReceiptNotification.value')}" />
+									<label id="label_ReceiptNotification" value="${c:l('label_ReceiptNotification.value')}" />
 									<hbox>
 										<space spacing="2px" />
-										<button id="btnSendNotification" label="${c:l('label_ReceiptNotification_btnSendNotification.value')}"/>
+										<button id="btnSendNotification" label="${c:l('label_ReceiptNotification_btnSendNotification.value')}" />
 									</hbox>
 								</row>
 							</rows>
 						</grid>
-						<separator/>
-						
+						<separator />
+
 					</div>
 				</center>
 
 				<south border="none">
-					<paging id="pagingReceiptNotification"/>
+					<paging id="pagingReceiptNotification" />
 				</south>
 			</borderlayout>
 		</window>

@@ -1161,6 +1161,4 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return listResponse;
 	}
 
-
-
 }

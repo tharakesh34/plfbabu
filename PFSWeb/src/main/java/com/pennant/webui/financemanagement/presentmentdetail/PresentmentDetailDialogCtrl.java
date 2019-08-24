@@ -581,7 +581,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		try {
 			boolean isPDC = MandateConstants.TYPE_PDC.equals(aPresentmentHeader.getMandateType());
 			this.presentmentDetailService.updatePresentmentDetails(excludeList, afterIncludeList, userAction,
-					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser(), isPDC, presentmentHeader.getReference(), presentmentHeader.getPartnerAcctNumber());
+					aPresentmentHeader.getId(), partnerBankId, getUserWorkspace().getLoggedInUser(), isPDC,
+					presentmentHeader.getReference(), presentmentHeader.getPartnerAcctNumber());
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);

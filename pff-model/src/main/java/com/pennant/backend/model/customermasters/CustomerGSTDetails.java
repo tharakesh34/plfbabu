@@ -22,7 +22,7 @@ public class CustomerGSTDetails extends AbstractWorkflowEntity implements Entity
 	private static final long serialVersionUID = 1L;
 	@XmlElement(name = "gstId")
 	private long id = Long.MIN_VALUE;
-	
+
 	private long headerId;
 
 	@XmlElement

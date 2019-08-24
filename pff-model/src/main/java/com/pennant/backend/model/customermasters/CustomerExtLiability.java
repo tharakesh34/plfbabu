@@ -76,7 +76,7 @@ public class CustomerExtLiability extends AbstractWorkflowEntity {
 	private String sourceId;
 	private String inputSource;
 	private int custType = 1;
-	
+
 	@XmlElementWrapper(name = "extLiabilitiesPayments")
 	@XmlElement(name = "extLiabilitiesPayment")
 	private List<ExtLiabilityPaymentdetails> extLiabilitiesPayments = new ArrayList<>();

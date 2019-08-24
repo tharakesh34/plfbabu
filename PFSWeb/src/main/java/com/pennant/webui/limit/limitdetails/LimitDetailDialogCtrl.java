@@ -169,7 +169,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	protected Label label_Remarks;
 	protected Hbox hlayout_Remarks;
 	protected Space space_Remarks;
-	protected Checkbox active; 
+	protected Checkbox active;
 	protected Space space_Active;
 	protected Checkbox validateMaturityDate;
 	protected Space space_ValidateMaturityDate;
@@ -186,7 +186,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	protected Listheader listheader_LimitCondition;
 	protected Listheader listheader_ExternalReference;
 	protected Listheader listheader_Tenor;
-	
+
 	private String limitType;
 	private Label limiDialogRuleValue;
 	private Label window_LimitHeaderDialog_title;
@@ -502,6 +502,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		setLimitstatus(limitDetails);
 		logger.debug("Leaving" + event.toString());
 	}
+
 	//===================
 	public void onClickBankAggrmt(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
@@ -542,8 +543,6 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		setLimitstatus(limitDetails);
 		logger.debug("Leaving" + event.toString());
 	}
-	
-	
 
 	// ****************************************************************+
 	// ************************ GUI operations ************************+
@@ -714,13 +713,13 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		}
 		this.limitStructureCode.setFilters(filters);
 		this.remarks.setMaxlength(1000);
-		
+
 		boolean isVisible = SysParamUtil.isAllowed(SMTParameterConstants.LIMIT_ADDTNAL_FIELDS_REQ);
 		this.listheader_BankingArrangement.setVisible(isVisible);
 		this.listheader_LimitCondition.setVisible(isVisible);
 		this.listheader_ExternalReference.setVisible(isVisible);
 		this.listheader_Tenor.setVisible(isVisible);
-		
+
 		setStatusDetails();
 		logger.debug("Leaving");
 	}
@@ -767,7 +766,6 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.recordStatus.setValue(aLimitHeader.getRecordStatus());
 		this.currency.setValue(aLimitHeader.getLimitCcy());
 		this.currency.setDescription(aLimitHeader.getCcyDesc());
-		
 
 		doFillLimitDetailslistbox(aLimitHeader.getCustomerLimitDetailsList());
 		logger.debug("Leaving");
@@ -1119,7 +1117,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				limitSanctioned.setMaxlength(21);
 				limitSanctioned.setId("Amount_" + strdId);
 				limitSanctioned.addForward("onChange", self, "onClickSanctionedAmount");
-				limitSanctioned.setValue(PennantApplicationUtil.formateAmount(limitDetails.getLimitSanctioned(), ccyFormat));
+				limitSanctioned
+						.setValue(PennantApplicationUtil.formateAmount(limitDetails.getLimitSanctioned(), ccyFormat));
 				limitSanctioned.setFormat(PennantApplicationUtil.getAmountFormate(0));
 				limitSanctioned.setScale(0);
 
@@ -1162,9 +1161,9 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				Combobox bnkAggrmt = new Combobox();
 				bnkAggrmt.setId("BankingArrangement_" + strdId);
 				bnkAggrmt.addForward("onClick", self, "onClickBankAggrmt");
-				fillComboBox(bnkAggrmt, limitDetails.getBankingArrangement(), PennantStaticListUtil.getBankingArrangement(),
-						"");
-					bnkAggrmt.setStyle("background:none;");
+				fillComboBox(bnkAggrmt, limitDetails.getBankingArrangement(),
+						PennantStaticListUtil.getBankingArrangement(), "");
+				bnkAggrmt.setStyle("background:none;");
 				bnkAggrmt.setParent(lc);
 				bnkAggrmt.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				lc.setParent(item);
@@ -1177,7 +1176,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				fillComboBox(lmtCondition, limitDetails.getLimitCondition(), PennantStaticListUtil.getLimitCondition(),
 						"");
 
-	            lmtCondition.setStyle("background:none;");
+				lmtCondition.setStyle("background:none;");
 				lmtCondition.setParent(lc);
 				lmtCondition.setDisabled(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				lc.setParent(item);
@@ -1204,7 +1203,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				tenor.setReadonly(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
 				tenor.setWidth("100px");
 				lc.setParent(item);
-				
+
 				item.setAttribute("DATA", limitDetails);
 				this.listBoxLimitDetail.appendChild(item);
 			}
@@ -1494,8 +1493,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			Combobox actulOrReserved = (Combobox) item.getFellowIfAny("ActulOrReserved_" + strdId);
 			Combobox bnkAggrmt = (Combobox) item.getFellowIfAny("BankingArrangement_" + strdId);
 			Combobox lmtCondition = (Combobox) item.getFellowIfAny("LimitCondition_" + strdId);
-			Textbox reference =  (Textbox) item.getFellowIfAny("ExternalReference_" + strdId);
-			Intbox tenor =  (Intbox) item.getFellowIfAny("Tenor_" + strdId);
+			Textbox reference = (Textbox) item.getFellowIfAny("ExternalReference_" + strdId);
+			Intbox tenor = (Intbox) item.getFellowIfAny("Tenor_" + strdId);
 			expireDate.setErrorMessage("");
 			amountBox.setErrorMessage("");
 			actulOrReserved.setErrorMessage("");
@@ -1505,7 +1504,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 
 			BigDecimal sactioned = amountBox.getValue();
 			if (sactioned != null) {
-				limit.setLimitSanctioned(PennantApplicationUtil.unFormateAmount(sactioned, CurrencyUtil.getFormat(limitCccy)));
+				limit.setLimitSanctioned(
+						PennantApplicationUtil.unFormateAmount(sactioned, CurrencyUtil.getFormat(limitCccy)));
 			}
 
 			limit.setLimitCheck(limitCheck.isChecked());
@@ -1515,7 +1515,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				checkMethod = actulOrReserved.getSelectedItem().getValue();
 			}
 			limit.setLimitChkMethod(checkMethod);
-			
+
 			limit.setBankingArrangement(bnkAggrmt.getSelectedItem().getValue());
 			limit.setLimitCondition(lmtCondition.getSelectedItem().getValue());
 			limit.setExternalRef(reference.getValue());

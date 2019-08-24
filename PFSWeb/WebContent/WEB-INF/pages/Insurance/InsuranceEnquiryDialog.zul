@@ -105,8 +105,7 @@
 											</hbox>
 										</row>
 										<row>
-											<label
-												value="${c:l('label_InsuranceDialog_BFLStatus.value')}" />
+											<label value="${c:l('label_InsuranceDialog_BFLStatus.value')}" />
 											<hbox>
 												<space spacing="2px" />
 												<textbox id="bflStatus" readonly="true" />
@@ -393,26 +392,20 @@
 											</hbox>
 										</row>
 										<row>
-											<label
-												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp1.value')}" />
+											<label value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp1.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<datebox id="dispatchDateAttemt1"
-													width="180px" disabled="true" />
+												<datebox id="dispatchDateAttemt1" width="180px" disabled="true" />
 											</hbox>
-											<label
-												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp2.value')}" />
+											<label value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp2.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<datebox
-													id="dispatchDateAttemt2" width="180px" disabled="true" />
+												<datebox id="dispatchDateAttemt2" width="180px" disabled="true" />
 											</hbox>
-											<label
-												value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp3.value')}" />
+											<label value="${c:l('label_InsuranceEnquiryDialog_DispatchDateAttemp3.value')}" />
 											<hbox>
 												<space spacing="2px" />
-												<datebox
-													id="dispatchDateAttemt3" width="180px" disabled="true" />
+												<datebox id="dispatchDateAttemt3" width="180px" disabled="true" />
 											</hbox>
 										</row>
 									</rows>

@@ -806,8 +806,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 				dateValue = DateUtility.parse(strValue, DateFormat.LONG_DATE.getPattern());
 				rud.setValueDate(dateValue);
 			} else {
-				
-					setErrorToRUD(rud, "RU0040", "Blanks in [VALUEDATE] ");
+
+				setErrorToRUD(rud, "RU0040", "Blanks in [VALUEDATE] ");
 			}
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [VALUEDATE] ");

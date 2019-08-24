@@ -174,9 +174,9 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
 		try {
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		}catch (DuplicateKeyException e) {
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 		logger.debug("Leaving");
@@ -253,7 +253,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 	@Override
 	public CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type) {
-		
+
 		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append(" SELECT Id, CustId, GstNumber, Frequencytype,");
@@ -266,8 +266,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGST);
-		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(CustomerGST.class);
+		RowMapper<CustomerGST> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerGST.class);
 		try {
 			customerGST = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
@@ -276,7 +275,7 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		}
 		logger.debug("Leaving");
 		return customerGST;
-		
+
 	}
 
 	@Override

@@ -10,6 +10,4 @@ public class CustomerGSTListCtrl extends GFCBaseListCtrl<CustomerAddres> {
 	 */
 	private static final long serialVersionUID = -6542330132976988807L;
 
-	
-
 }

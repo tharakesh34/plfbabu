@@ -109,7 +109,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 	@Override
 	public void delete(long headerId, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		StringBuilder sql = new StringBuilder(" Delete from TAX_DETAILS");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where ReferenceId = :ReferenceId");

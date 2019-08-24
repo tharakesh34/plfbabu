@@ -58,7 +58,8 @@ import javax.xml.bind.annotation.XmlType;
 		"lastDisbDate", "firstEmiAmount", "nextSchDate", "nextRepayAmount", "futureInst", "futureTenor",
 		"firstInstDate", "paidTotal", "schdPriPaid", "schdPftPaid", "finLastRepayDate", "totalOutStanding",
 		"outStandPrincipal", "outStandProfit", "totalOverDue", "overDuePrincipal", "overDueProfit", "overDueInstlments",
-		"overDueCharges","totalOverDueIncCharges","finODDetail", "advPaymentAmount", "finStatus", "fullyDisb", "sanctionAmt", "utilizedAmt", "availableAmt" })
+		"overDueCharges", "totalOverDueIncCharges", "finODDetail", "advPaymentAmount", "finStatus", "fullyDisb",
+		"sanctionAmt", "utilizedAmt", "availableAmt" })
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceSummary implements Serializable {
@@ -131,7 +132,7 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal overDueCharges = BigDecimal.ZERO;
 	@XmlElement(name = "overdueTotalIncludeCharges")
 	private BigDecimal totalOverDueIncCharges = BigDecimal.ZERO;
-	
+
 	private BigDecimal earnedPrincipal = BigDecimal.ZERO;
 	private BigDecimal earnedProfit = BigDecimal.ZERO;
 	private BigDecimal totalEarned = BigDecimal.ZERO;

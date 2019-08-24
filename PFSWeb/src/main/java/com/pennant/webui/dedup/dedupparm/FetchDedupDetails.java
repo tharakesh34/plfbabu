@@ -34,11 +34,11 @@ public class FetchDedupDetails {
 
 	private String FINDEDUPLABELSPBG = "CustCIF,CustCRCPR,CustShrtName,MobileNumber,DupReference,StartDate,"
 			+ "FinanceAmount,FinanceType,ProfitAmount,StageDesc,DedupeRule,OverrideUser";
-	
+
 	private CustomerDetails customerDetails;
 	private FinanceDetail financeDetail;
 	private List<FinanceDedup> financeDedupList;
-	
+
 	private static DedupParmService dedupParmService;
 	private static MasterDefService masterDefService;
 
@@ -53,7 +53,8 @@ public class FetchDedupDetails {
 
 	public static FinanceDetail getLoanDedup(String userRole, FinanceDetail aFinanceDetail, Component parent,
 			String curLoginUser) {
-		return new FetchDedupDetails(userRole, aFinanceDetail, parent, curLoginUser, masterDefService).getFinanceDetail();
+		return new FetchDedupDetails(userRole, aFinanceDetail, parent, curLoginUser, masterDefService)
+				.getFinanceDetail();
 	}
 
 	/**
@@ -63,7 +64,8 @@ public class FetchDedupDetails {
 	 * @param aCustomerDetails
 	 * @param parent
 	 */
-	private FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails, Component parent, DedupParmService dedupParmService) {
+	private FetchDedupDetails(String userRole, CustomerDetails aCustomerDetails, Component parent,
+			DedupParmService dedupParmService) {
 		super();
 
 		setCustomerDetails(aCustomerDetails);
@@ -112,7 +114,8 @@ public class FetchDedupDetails {
 	 * @param parent
 	 */
 	@SuppressWarnings("unchecked")
-	private FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String curLoginUser, MasterDefService masterDefService) {
+	private FetchDedupDetails(String userRole, FinanceDetail aFinanceDetail, Component parent, String curLoginUser,
+			MasterDefService masterDefService) {
 		super();
 
 		//Data Preparation for Rule Executions

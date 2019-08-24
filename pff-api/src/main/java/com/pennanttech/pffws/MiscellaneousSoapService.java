@@ -28,10 +28,9 @@ public interface MiscellaneousSoapService {
 	@WebResult(name = "EligibilityDetailResponse")
 	EligibilityDetailResponse createEligibilityDetail(
 			@WebParam(name = "eligibilityDetail") EligibilityDetail eligibilityDetail) throws ServiceException;
-	
+
 	@WebResult(name = "CheckListResponse")
 	List<CheckListResponse> getCheckList(
-			@WebParam(name = "loanTypeMiscRequest")LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
-	
+			@WebParam(name = "loanTypeMiscRequest") LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;
 
 }

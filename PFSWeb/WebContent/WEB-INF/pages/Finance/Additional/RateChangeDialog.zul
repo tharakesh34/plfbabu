@@ -79,13 +79,12 @@
 								<label id="label_RateChangeDialog_BaseRate" value="${c:l('label_RateChangeDialog_BaseRate.value')}" />
 								<ratebox id="rate" />
 							</row>
-							
-							<row id="baseRateRvwFrqRow" visible="false"> 
-								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq"
-									value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
+
+							<row id="baseRateRvwFrqRow" visible="false">
+								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq" value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
 								<frequencybox id="bRRepayRvwFrq" />
 							</row>
-							
+
 							<row id="recalTypeRow" visible="true">
 								<label id="label_RateChangeDialog_ReCalType" value="${c:l('label_RateChangeDialog_RecalType.value')}" />
 								<hbox>

@@ -219,7 +219,7 @@ public class FinFeeGSTDetailsDialogCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			BigDecimal cessAmount = BigDecimal.ZERO;
 			if (finFeeDetail.getTaxHeader() != null) {
 				List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
-				
+
 				for (Taxes taxes : taxDetails) {
 					if (StringUtils.isNotBlank(taxes.getTaxType())
 							&& StringUtils.equals(taxes.getTaxType(), RuleConstants.CODE_CESS)) {

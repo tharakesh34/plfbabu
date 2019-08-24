@@ -322,8 +322,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<FinAdvancePayment
 			FinanceDisbursement financeDisbursement) {
 		logger.debug("Entering");
 
-		this.customerPaymentTxn_finType
-				.setValue(financeMain.getFinType() + " - " + financeMain.getFinType());
+		this.customerPaymentTxn_finType.setValue(financeMain.getFinType() + " - " + financeMain.getFinType());
 		this.customerPaymentTxn_finCcy
 				.setValue(financeMain.getFinCcy() + " - " + CurrencyUtil.getCcyDesc(financeMain.getFinCcy()));
 

@@ -422,14 +422,12 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF");
 		sql.append(", REJECTREASON = :REJECTREASON");
 
-		
 		if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbursement.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbursement.getPaymentType())) {
 			sql.append(", LLREFERENCENO = :LLREFERENCENO, LLDATE = :LLDATE");
 			paramMap.addValue("LLREFERENCENO", disbursement.getLlReferenceNo());
 			paramMap.addValue("LLDATE", disbursement.getClearingDate());
 		}
-		 
 
 		sql.append("  Where PAYMENTID = :PAYMENTID");
 

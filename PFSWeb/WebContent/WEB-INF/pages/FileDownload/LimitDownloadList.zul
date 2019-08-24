@@ -4,8 +4,7 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_LimitDownloadList" apply="${limitDownloadListCtrl}" border="none"
-			width="100%">
+		<window id="window_LimitDownloadList" apply="${limitDownloadListCtrl}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px">
 				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 					<!-- COMMON BUTTONS -->
@@ -84,9 +83,9 @@
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxLimitDownload" fixedLayout="true" span="true" width="100%" height="100%"
-							multiple="false" sizedByContent="true">
-						<listhead sizable="true">
+						<listbox id="listBoxLimitDownload" fixedLayout="true" span="true" width="100%" height="100%" multiple="false"
+							sizedByContent="true">
+							<listhead sizable="true">
 								<listheader id="listHeader_CheckBox_Name" hflex="min" align="center" />
 								<listheader id="listheader_Id" label="${c:l('listheader_IdORGrp.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_Name" label="${c:l('listheader_CustORGrpName.label')}" sort="auto" hflex="min" />

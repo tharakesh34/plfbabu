@@ -539,7 +539,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 					this.ugst.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.ugst.setValue(PennantApplicationUtil.formateAmount(finTaxDetails.getNetUGST(), formatter));
-					
+
 					List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
 					BigDecimal cessAmount = BigDecimal.ZERO;
 					for (Taxes taxes : taxDetails) {
@@ -550,7 +550,6 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 					}
 					this.cess.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 					this.cess.setValue(PennantApplicationUtil.formateAmount(cessAmount, formatter));
-
 
 					BigDecimal totalGstAmount = BigDecimal.ZERO;
 					totalGstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())

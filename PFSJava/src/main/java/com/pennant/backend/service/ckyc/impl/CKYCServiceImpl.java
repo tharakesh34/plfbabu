@@ -111,10 +111,8 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				}
 
 				/*
-				 * List<CKYCDtl70> ckycDtl70 = new ArrayList<>(); if (ckyc70 !=
-				 * null && !ckyc70.isEmpty()) { for (CKYCDtl70 ckycDtls70 :
-				 * ckyc70) {
-				 * ckycDtls70.setBranchCode(ckycdtl20.getBranchCode());
+				 * List<CKYCDtl70> ckycDtl70 = new ArrayList<>(); if (ckyc70 != null && !ckyc70.isEmpty()) { for
+				 * (CKYCDtl70 ckycDtls70 : ckyc70) { ckycDtls70.setBranchCode(ckycdtl20.getBranchCode());
 				 * ckycDtl70.add(ckycDtls70);
 				 * 
 				 * } }
@@ -513,8 +511,8 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 												if (folder.exists()) {
 													byte barr[] = ckycdtl70.getCustDocImage();
 													FileOutputStream fout = new FileOutputStream(
-															folder.getPath() + "/" + ckycdtl20.getCustCif()
-																	+ "_" + rowNo + "_" + ckycdtl70.getImgFolderNm());
+															folder.getPath() + "/" + ckycdtl20.getCustCif() + "_"
+																	+ rowNo + "_" + ckycdtl70.getImgFolderNm());
 													fout.write(barr);
 												}
 											}
@@ -921,60 +919,47 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				 * 
 				 * ckycDtl20.setJuriaddrsamepmtorLocalFlag("");
 				 * 
-				 * if (StringUtils.equalsIgnoreCase(ckycDtl20.
-				 * getJuriaddrsamepmtorLocalFlag(), "01") && addrpmtFlag) {
+				 * if (StringUtils.equalsIgnoreCase(ckycDtl20. getJuriaddrsamepmtorLocalFlag(), "01") && addrpmtFlag) {
 				 * ckycDtl20.setJuriAddrType(ckycDtl20.getPmtAddrType());
 				 * ckycDtl20.setJuriAddrLine1(ckycDtl20.getPmtAddrLine1());
 				 * ckycDtl20.setJuriAddrLine2(ckycDtl20.getPmtAddrLine2());
 				 * ckycDtl20.setJuriAddrLine3(ckycDtl20.getPmtAddrLine3());
 				 * ckycDtl20.setJuriAddrCity(ckycDtl20.getPmtAddrCity());
-				 * ckycDtl20.setJuriAddrProvince(ckycDtl20.getPmtAddrProvince())
-				 * ;
+				 * ckycDtl20.setJuriAddrProvince(ckycDtl20.getPmtAddrProvince()) ;
 				 * ckycDtl20.setJuriAddrCountry(ckycDtl20.getPmtAddrCountry());
 				 * ckycDtl20.setJuriAddrZip(ckycDtl20.getJuriAddrZip());
-				 * ckycDtl20.setJuriPofAddrsubmit(ckycDtl20.getPmtPofAddrsubmit(
-				 * ));
+				 * ckycDtl20.setJuriPofAddrsubmit(ckycDtl20.getPmtPofAddrsubmit( ));
 				 * 
-				 * } else if (StringUtils.equalsIgnoreCase(ckycDtl20.
-				 * getJuriaddrsamepmtorLocalFlag(), "02") && addrLocalFlag) { {
-				 * ckycDtl20.setJuriAddrType(ckycDtl20.getLocalAddrType());
+				 * } else if (StringUtils.equalsIgnoreCase(ckycDtl20. getJuriaddrsamepmtorLocalFlag(), "02") &&
+				 * addrLocalFlag) { { ckycDtl20.setJuriAddrType(ckycDtl20.getLocalAddrType());
 				 * ckycDtl20.setJuriAddrLine1(ckycDtl20.getLocalAddrLine1());
 				 * ckycDtl20.setJuriAddrLine2(ckycDtl20.getLocalAddrLine2());
 				 * ckycDtl20.setJuriAddrLine3(ckycDtl20.getLocalAddrLine3());
 				 * ckycDtl20.setJuriAddrCity(ckycDtl20.getLocalAddrCity());
-				 * ckycDtl20.setJuriAddrProvince(ckycDtl20.getLocalAddrProvince(
-				 * ));
-				 * ckycDtl20.setJuriAddrCountry(ckycDtl20.getLocalAddrCountry())
-				 * ; ckycDtl20.setJuriAddrZip(ckycDtl20.getJuriAddrZip());
-				 * ckycDtl20.setJuriPofAddrsubmit(ckycDtl20.
+				 * ckycDtl20.setJuriAddrProvince(ckycDtl20.getLocalAddrProvince( ));
+				 * ckycDtl20.setJuriAddrCountry(ckycDtl20.getLocalAddrCountry()) ;
+				 * ckycDtl20.setJuriAddrZip(ckycDtl20.getJuriAddrZip()); ckycDtl20.setJuriPofAddrsubmit(ckycDtl20.
 				 * getLocalPofAddrsubmit());
 				 * 
 				 * } }
 				 * 
-				 * else { if (StringUtils.equalsIgnoreCase(App.getProperty(
-				 * "Jurisdiction.Resident/Business"),
-				 * custAdd.getCustAddrType())) {
-				 * ckycDtl20.setJuriAddrType("01"); addrJuriFlag = true; } else
-				 * if (StringUtils.equalsIgnoreCase(App.getProperty(
-				 * "Jurisdiction.Residential"), custAdd.getCustAddrType())) {
-				 * ckycDtl20.setJuriAddrType("02"); addrJuriFlag = true; } else
-				 * if (StringUtils.equalsIgnoreCase(App.getProperty(
-				 * "Jurisdiction.Business"), custAdd.getCustAddrType())) {
-				 * ckycDtl20.setJuriAddrType("03"); addrJuriFlag = true; } else
-				 * if (StringUtils.equalsIgnoreCase(App.getProperty(
-				 * "Jurisdiction.RegisteredOffice"), custAdd.getCustAddrType()))
-				 * { ckycDtl20.setJuriAddrType("04"); addrJuriFlag = true; }
-				 * else if (StringUtils.equalsIgnoreCase(App.getProperty(
-				 * "Jurisdiction.Unspecified"), custAdd.getCustAddrType())) {
-				 * ckycDtl20.setJuriAddrType("05"); addrJuriFlag = true; }
+				 * else { if (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Resident/Business"),
+				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("01"); addrJuriFlag = true; } else if
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Residential"),
+				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("02"); addrJuriFlag = true; } else if
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Business"), custAdd.getCustAddrType()))
+				 * { ckycDtl20.setJuriAddrType("03"); addrJuriFlag = true; } else if
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.RegisteredOffice"),
+				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("04"); addrJuriFlag = true; } else if
+				 * (StringUtils.equalsIgnoreCase(App.getProperty( "Jurisdiction.Unspecified"),
+				 * custAdd.getCustAddrType())) { ckycDtl20.setJuriAddrType("05"); addrJuriFlag = true; }
 				 * ckycDtl20.setJuriAddrLine1(custAdd.getCustAddrLine1());
 				 * ckycDtl20.setJuriAddrLine2(custAdd.getCustAddrLine2());
 				 * ckycDtl20.setJuriAddrLine3(custAdd.getCustAddrLine3());
 				 * ckycDtl20.setJuriAddrCity(custAdd.getCustAddrCity());
 				 * ckycDtl20.setJuriAddrProvince(custAdd.getCustAddrProvince());
 				 * ckycDtl20.setJuriAddrCountry(custAdd.getCustAddrCountry());
-				 * ckycDtl20.setJuriAddrZip(custAdd.getCustAddrZIP());
-				 * ckycDtl20.setJuriPofAddrsubmit(""); size++; } }
+				 * ckycDtl20.setJuriAddrZip(custAdd.getCustAddrZIP()); ckycDtl20.setJuriPofAddrsubmit(""); size++; } }
 				 */else {
 					size++;
 				}

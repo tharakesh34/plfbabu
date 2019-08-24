@@ -364,7 +364,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 						//rowMap.put("AdditionalField1", benfName);
 					} else {
 						//rowMap.put("AdditionalField1",
-								//benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
+						//benfName + "," + StringUtils.trimToEmpty(benfBank) + "," + benfAccount);
 					}
 
 					if (DisbursementTypes.IMPS.name().equals(type)) {

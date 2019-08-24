@@ -89,9 +89,9 @@ public class ReportCreationUtil {
 				logger.debug("Leaving");
 				return buf;
 			}
-		}catch (Exception e) {
-		logger.error(Literal.EXCEPTION, e);
-	}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
 		logger.debug(Literal.LEAVING);
 		return null;
 

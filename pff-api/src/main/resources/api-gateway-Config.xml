@@ -632,8 +632,8 @@
 	<!-- Document Soap Container -->
 	<jaxws:endpoint id="documentSoapService" implementor="#wsDocumentService" address="/documentSoap"
 		publish="false" />
-		
-		<bean id="wsTransactionMappingService" class="com.pennanttech.service.impl.TransactionMappingWebServiceImpl" />
+
+	<bean id="wsTransactionMappingService" class="com.pennanttech.service.impl.TransactionMappingWebServiceImpl" />
 
 	<!-- TransactionMapping Rest Container -->
 	<jaxrs:server id="transactionMappingRestService" address="/transactionMappingRest" publish="true">
@@ -658,5 +658,5 @@
 
 	<!-- TransactionMapping Soap Container -->
 	<jaxws:endpoint id="transactionMappingSoapService" implementor="#wsTransactionMappingService" address="/transactionMappingSoap"
-		publish="false" />	
+		publish="false" />
 </beans>

@@ -237,7 +237,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
 	private String eligibilityMethods = "";
-	
+
 	//Spread Sheet changes
 	protected CreditReviewDetails creditReviewDetails;
 	protected CreditReviewData creditReviewData;
@@ -406,22 +406,22 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					firstRepay = (BigDecimal) arguments.get("firstRepay");
 					extendedDataMap.put("EXT_FIRSTREPAY", unFormat(firstRepay.toString()));
 				}
-				
+
 				if (arguments.containsKey("creditReviewDetails")) {
 					creditReviewDetails = (CreditReviewDetails) arguments.get("creditReviewDetails");
 				}
 				if (arguments.containsKey("creditReviewData")) {
 					creditReviewData = (CreditReviewData) arguments.get("creditReviewData");
 				}
-				
+
 				if (arguments.containsKey("financeMainBaseCtrl")) {
 					this.financeMainBaseCtrl = (FinanceMainBaseCtrl) arguments.get("financeMainBaseCtrl");
 				}
-				
+
 				if (arguments.containsKey("externalLiabilities")) {
 					extLiabilities = (List<CustomerExtLiability>) arguments.get("externalLiabilities");
 				}
-				
+
 				this.finBasicDetails = (ArrayList<Object>) arguments.get("finHeaderList");
 
 				//School Funding Extended fields data setting
@@ -1058,18 +1058,18 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			render(fcrc, setListToTab("tabPanel_" + categoryId, tabPanel, fcrc));
 		}
 		// Code for Excel sheet on tab
-				Tab tab = new Tab();
-				tab.setId("tab_" + 5);//categoryid fix me
-				tab.setLabel("Banking");
-				tab.setParent(this.tabsIndexCenter);
-				Tabpanel tabPanel = new Tabpanel();
-				tabPanel.setId("tabPanel_" + 5);
-				tabPanel.setParent(this.tabpanelsBoxIndexCenter);
-				appendCreditReviewDetailTab(false, tabPanel);
-				logger.debug("Leaving");
+		Tab tab = new Tab();
+		tab.setId("tab_" + 5);//categoryid fix me
+		tab.setLabel("Banking");
+		tab.setParent(this.tabsIndexCenter);
+		Tabpanel tabPanel = new Tabpanel();
+		tabPanel.setId("tabPanel_" + 5);
+		tabPanel.setParent(this.tabpanelsBoxIndexCenter);
+		appendCreditReviewDetailTab(false, tabPanel);
+		logger.debug("Leaving");
 		logger.debug("Leaving");
 	}
-	
+
 	public void appendCreditReviewDetailTab(boolean onLoad, Tabpanel tabPanel) {
 
 		logger.debug(Literal.ENTERING);

@@ -899,7 +899,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAssetValue.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAssetValue(), formatter));
 			this.profitSuspense.setChecked(getFinScheduleData().isFinPftSuspended());
 			this.finSuspDate.setValue(getFinScheduleData().getFinSuspDate());
-			
+
 			if (!aFinanceType.isFinCommitmentReq()) {
 				this.row_commitment.setVisible(true);
 			}
@@ -1584,7 +1584,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("fromApproved", fromApproved);
 		return map;
 	}
-	
+
 	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 		this.collateralRef.setErrorMessage("");
@@ -1594,8 +1594,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					new String[] { Labels.getLabel("label_FinanceMainDialog_CommitRef.value") }));
 		}
 
-		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(this.collateralRef.getValue(),
-				"", true);
+		Commitment aCommitment = commitmentService.getCommitmentByCmtRef(this.collateralRef.getValue(), "", true);
 
 		if (aCommitment == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -1614,6 +1613,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	private Tab getTab(String id) {
 		return (Tab) tabsIndexCenter.getFellowIfAny(getTabID(id));
 	}

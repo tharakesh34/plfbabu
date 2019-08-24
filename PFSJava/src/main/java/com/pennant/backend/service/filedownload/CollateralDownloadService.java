@@ -4,6 +4,5 @@ import java.util.List;
 
 public interface CollateralDownloadService {
 
-
 	boolean processDownload(List<String> collateralRef) throws Exception;
 }

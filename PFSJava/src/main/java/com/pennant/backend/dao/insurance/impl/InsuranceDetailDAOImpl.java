@@ -388,7 +388,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		logger.debug(Literal.LEAVING);
 
 	}
-	
+
 	@Override
 	public void updateLinkTranId(long id, long linkedTranId) {
 

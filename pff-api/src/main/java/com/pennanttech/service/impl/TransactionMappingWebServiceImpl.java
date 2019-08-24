@@ -18,10 +18,8 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class TransactionMappingWebServiceImpl implements TransactionMappingRestService, TransactionMappingSoapervice {
 
 	private static final Logger logger = Logger.getLogger(TransactionMappingWebServiceImpl.class);
-	
-	private TransactionMappingDAO transactionMappingDAO;
 
-	
+	private TransactionMappingDAO transactionMappingDAO;
 
 	/**
 	 * Method for authentication in PLF system.
@@ -75,6 +73,7 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 		return APIErrorHandlerService.getSuccessStatus();
 
 	}
+
 	private WSReturnStatus validateTransactionMappingRequest(TransactionMappingRequest transactionMappingRequest) {
 		logger.debug(Literal.ENTERING);
 		if (StringUtils.isBlank(transactionMappingRequest.getMobileNumber())) {
@@ -94,12 +93,12 @@ public class TransactionMappingWebServiceImpl implements TransactionMappingRestS
 			valueParm[1] = "Zero";
 			return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 		}
-		
 
 		logger.debug(Literal.LEAVING);
 		return null;
 
 	}
+
 	@Autowired
 	public void setTransactionMappingDAO(TransactionMappingDAO transactionMappingDAO) {
 		this.transactionMappingDAO = transactionMappingDAO;

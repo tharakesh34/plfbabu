@@ -158,6 +158,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
 	private RepaymentPostingsUtil repaymentPostingsUtil;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
+
 	public ReceiptCancellationServiceImpl() {
 		super();
 	}
@@ -1090,7 +1091,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				List<ManualAdviseMovements> receivableAdvMovements = new ArrayList<ManualAdviseMovements>();
 				List<ManualAdviseMovements> payableMovements = new ArrayList<>();
 				List<ManualAdviseMovements> waiverAdvMovements = new ArrayList<>();
-				
+
 				if (CollectionUtils.isNotEmpty(advMovements)) {
 					isRcdFound = true;
 					for (ManualAdviseMovements movement : advMovements) {

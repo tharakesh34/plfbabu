@@ -323,7 +323,7 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//

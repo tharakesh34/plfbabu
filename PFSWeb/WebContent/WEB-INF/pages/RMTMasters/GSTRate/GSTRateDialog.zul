@@ -2,63 +2,40 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_GSTRateDialog" border="normal"
-		apply="${gstRateDialogCtrl}" width="100%" height="100%"
+	<window id="window_GSTRateDialog" border="normal" apply="${gstRateDialogCtrl}" width="100%" height="100%"
 		sizable="false">
 
 		<borderlayout id="borderlayoutGSTRate">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew"
-								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnEdit"
-								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete"
-								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnSave"
-								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnCancel"
-								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnNotes"
-								tooltiptext="${c:l('btnNotes.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_GSTRateDialog.title')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_GSTRateDialog.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" visible="false" />
-							<button id="btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -66,8 +43,7 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="15%" />
 							<column width="35%" />
@@ -76,59 +52,45 @@
 						</columns>
 						<rows>
 							<row id="row0">
-								<label id="label_FromState"
-									value="${c:l('label_GSTRateDialog_FromState.value')}" />
+								<label id="label_FromState" value="${c:l('label_GSTRateDialog_FromState.value')}" />
 
 								<hbox>
 									<extendedcombobox id="fromState" />
 								</hbox>
-								<label id="label_ToState"
-									value="${c:l('label_GSTRateDialog_ToState.value')}" />
+								<label id="label_ToState" value="${c:l('label_GSTRateDialog_ToState.value')}" />
 
 								<hbox>
 									<extendedcombobox id="toState" />
 								</hbox>
 							</row>
 							<row id="row1">
-								<label id="label_TaxType"
-									value="${c:l('label_GSTRateDialog_TaxType.value')}" />
+								<label id="label_TaxType" value="${c:l('label_GSTRateDialog_TaxType.value')}" />
 								<hbox>
-									<space id="space_TaxType"
-										spacing="2px" sclass="mandatory" />
+									<space id="space_TaxType" spacing="2px" sclass="mandatory" />
 									<combobox id="taxType" width="162px" />
 								</hbox>
-								<label id="label_CalcType"
-									value="${c:l('label_GSTRateDialog_CalcType.value')}" />
+								<label id="label_CalcType" value="${c:l('label_GSTRateDialog_CalcType.value')}" />
 								<hbox>
-									<space id="space_calcType"
-										spacing="2px" sclass="mandatory" />
-									<combobox id="calcType"
-										width="162px" />
+									<space id="space_calcType" spacing="2px" sclass="mandatory" />
+									<combobox id="calcType" width="162px" />
 								</hbox>
 							</row>
-							<row id="row2" >
-								<label id="label_Amount"
-									value="${c:l('label_GSTRateDialog_AmountOrPercentage.value')}" visible="false" />
+							<row id="row2">
+								<label id="label_Amount" value="${c:l('label_GSTRateDialog_AmountOrPercentage.value')}" visible="false" />
 								<hbox>
-									<space id="space_Amount"
-										spacing="2px" sclass="mandatory" visible="false" />
-									<currencyBox id="amount"
-										width="162px" visible="false"  />
-									<decimalbox id="percentage"
-										width="162px" maxlength="7" visible="false" />
+									<space id="space_Amount" spacing="2px" sclass="mandatory" visible="false" />
+									<currencyBox id="amount" width="162px" visible="false" />
+									<decimalbox id="percentage" width="162px" maxlength="7" visible="false" />
 								</hbox>
-								<label id="label_CalcOn"
-									value="${c:l('label_GSTRateDialog_CalcOn.value')}" visible="false" />
+								<label id="label_CalcOn" value="${c:l('label_GSTRateDialog_CalcOn.value')}" visible="false" />
 								<hbox>
-									<space id="space_CalcOn"
-										spacing="2px" sclass="mandatory" visible="false"/>
-									<combobox id="calcOn" width="162px" visible="false"/>
+									<space id="space_CalcOn" spacing="2px" sclass="mandatory" visible="false" />
+									<combobox id="calcOn" width="162px" visible="false" />
 								</hbox>
 							</row>
 							<row id="row3">
-								<label id="label_Active"
-									value="${c:l('label_GSTRateDialog_Active.value')}" />
-								<checkbox id="active" checked="true" value="true"  />
+								<label id="label_Active" value="${c:l('label_GSTRateDialog_Active.value')}" />
+								<checkbox id="active" checked="true" value="true" />
 							</row>
 						</rows>
 					</grid>
@@ -139,9 +101,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

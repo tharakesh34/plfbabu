@@ -48,11 +48,11 @@
 	<bean id="collectionDataDownloadProcess" class="com.pennanttech.pff.process.collection.CollectionDataDownloadProcess">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-	<!-- <bean id="idbInterfaceLoggingDao" class="com.pennanttech.kotak.dao.impl.IDBInterfaceLoggingDaoImpl" parent="sequenceDao" >
-	 </bean> -->
-	 
+
+	<!-- <bean id="idbInterfaceLoggingDao" class="com.pennanttech.kotak.dao.impl.IDBInterfaceLoggingDaoImpl" parent="sequenceDao" 
+		> </bean> -->
+
 	<bean id="extendedFieldMappingUtil" class="com.pennanttech.extendedfield.ExtendedFieldMappingUtil">
 		<property name="dataSource" ref="dataSource" />
-	</bean> 
+	</bean>
 </beans>

@@ -31,7 +31,7 @@ public interface MiscellaneousRestService {
 	@POST
 	@Path(value = "/miscellaneous/CreateEligibility")
 	EligibilityDetailResponse createEligibilityDetail(EligibilityDetail eligibilityDetail) throws ServiceException;
-	
+
 	@GET
 	@Path(value = "/miscellaneous/getCheckList")
 	List<CheckListResponse> getCheckList(LoanTypeMiscRequest loanTypeMiscRequest) throws ServiceException;

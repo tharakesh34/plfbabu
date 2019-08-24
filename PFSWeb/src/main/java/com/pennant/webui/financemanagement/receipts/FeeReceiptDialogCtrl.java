@@ -939,6 +939,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		return validate;
 	}
+
 	/**
 	 * Method for Process Repayment Details
 	 * 

@@ -1545,7 +1545,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				&& (!StringUtils.equals(gstnNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
 			try {
 				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
-				
+
 				if (null != gstinInfo) {
 					StringBuilder msg = new StringBuilder();
 					msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
@@ -1554,7 +1554,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 					msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
 					msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
 
-					if (MessageUtil.confirm(msg.toString(), MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+					if (MessageUtil.confirm(msg.toString(),
+							MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
 						return;
 					}
 				}
@@ -1647,7 +1648,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				try {
 					parenttab.setSelected(true);
 					GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
-					
+
 					if (null != gstinInfo) {
 						StringBuilder msg = new StringBuilder();
 						msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
@@ -1655,7 +1656,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 						msg.append("\n").append(" GSTIN Date :").append(gstinInfo.getRegisterDateStr());
 						msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
 						msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
-						if (MessageUtil.confirm(msg.toString(), MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+						if (MessageUtil.confirm(msg.toString(),
+								MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
 							return;
 						}
 					}

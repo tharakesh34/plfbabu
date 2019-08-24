@@ -483,17 +483,17 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
-		if(!this.mobileNumber1.isReadonly()) {
+		if (!this.mobileNumber1.isReadonly()) {
 			this.mobileNumber1.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber1.value"), true));
 		}
-		
-		if(!this.mobileNumber2.isReadonly()) {
+
+		if (!this.mobileNumber2.isReadonly()) {
 			this.mobileNumber2.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber2.value"), true));
 		}
-		
-		if(!this.mobileNumber3.isReadonly()) {
+
+		if (!this.mobileNumber3.isReadonly()) {
 			this.mobileNumber3.setConstraint(
 					new PTMobileNumberValidator(Labels.getLabel("label_TransactionMapping_MobileNumber3.value"), true));
 		}
@@ -599,7 +599,6 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber1"), this.mobileNumber1);
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber2"), this.mobileNumber2);
 		readOnlyComponent(isReadOnly("TransactionMappingDialog_MobileNumber3"), this.mobileNumber3);
-		
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

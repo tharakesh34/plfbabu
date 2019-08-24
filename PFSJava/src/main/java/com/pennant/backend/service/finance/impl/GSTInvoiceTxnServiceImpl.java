@@ -93,7 +93,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			gstInvoiceTxn.setInvoiceType(invoiceType);
 			gstInvoiceTxn.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
 			gstInvoiceTxn.setInvoiceDate(DateUtility.getAppDate()); //Need to confirm either it is system date or application date
-			
+
 			Entity entity = null;
 			if (StringUtils.isNotBlank(financeMain.getLovDescEntityCode())) {
 				entity = this.entityService.getApprovedEntity(financeMain.getLovDescEntityCode());
@@ -104,7 +104,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			if (entity == null) {
 				return; // write this case as a error message
 			}
-			
+
 			gstInvoiceTxn.setCompanyCode(entity.getEntityCode());
 			gstInvoiceTxn.setCompanyName(entity.getEntityDesc());
 			gstInvoiceTxn.setPanNumber(entity.getPANNumber());
@@ -125,7 +125,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				return; // write this case as a error message
 			}
 
-			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(), fromBranch.getBranchProvince());
+			Province companyProvince = this.provinceService.getApprovedProvinceById(fromBranch.getBranchCountry(),
+					fromBranch.getBranchProvince());
 			// Province companyProvince = this.provinceService.getApprovedProvinceById(entity.getCountry(), entity.getStateCode());
 
 			if (companyProvince != null) {
@@ -228,10 +229,10 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						}
 						gstInvoiceTxn.setCustomerID(cust.getCustCIF());
 						gstInvoiceTxn.setCustomerName(cust.getCustShrtName());
-						
+
 						//Preparing customer Address
 						prepareCustAddress(gstInvoiceTxn, customerAddres);
-						
+
 						break;
 					}
 				}
@@ -249,14 +250,14 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			// Invoice Transaction details preparation for Fee Details if any exists
 			if (CollectionUtils.isNotEmpty(finFeeDetailsList)) { // Fees
 				for (FinFeeDetail feeDetail : finFeeDetailsList) {
-					
+
 					if (!feeDetail.isTaxApplicable() || StringUtils.isBlank(feeDetail.getFeeTypeCode())) {
 						continue;
 					}
 
 					if (origination) {
-						if ((!isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0) ||
-								(isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getWaivedAmount()) == 0)) {
+						if ((!isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getNetAmountOriginal()) == 0)
+								|| (isWaiver && BigDecimal.ZERO.compareTo(feeDetail.getWaivedAmount()) == 0)) {
 							continue;
 						}
 					} else {
@@ -270,7 +271,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 					}
 					FinTaxDetails finTaxDetails = feeDetail.getFinTaxDetails();
 					if (finTaxDetails != null) {
-						
+
 						GSTInvoiceTxnDetails feeTran = new GSTInvoiceTxnDetails();
 						feeTran.setFeeCode(feeDetail.getFeeTypeCode());
 						feeTran.setFeeDescription(feeDetail.getFeeTypeDesc());
@@ -278,9 +279,10 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						feeTran.setIGST_RATE(feeDetail.getIgst());
 						feeTran.setSGST_RATE(feeDetail.getSgst());
 						feeTran.setUGST_RATE(feeDetail.getUgst());
-						
+
 						if (isWaiver) {
-							BigDecimal gstAmount = finTaxDetails.getWaivedCGST().add(finTaxDetails.getWaivedIGST()).add(finTaxDetails.getWaivedSGST()).add(finTaxDetails.getWaivedUGST());
+							BigDecimal gstAmount = finTaxDetails.getWaivedCGST().add(finTaxDetails.getWaivedIGST())
+									.add(finTaxDetails.getWaivedSGST()).add(finTaxDetails.getWaivedUGST());
 							if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
 								continue;
 							}
@@ -295,7 +297,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 							feeTran.setUGST_AMT(finTaxDetails.getWaivedUGST());
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						} else {
-							BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST()).add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
+							BigDecimal gstAmount = finTaxDetails.getNetCGST().add(finTaxDetails.getNetIGST())
+									.add(finTaxDetails.getNetSGST()).add(finTaxDetails.getNetUGST());
 							if (gstAmount.compareTo(BigDecimal.ZERO) <= 0) {
 								continue;
 							}
@@ -306,7 +309,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 							feeTran.setUGST_AMT(finTaxDetails.getNetUGST());
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						}
-						
+
 						gstInvoiceTxnDetails.add(feeTran);
 					}
 				}
@@ -321,9 +324,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 				BigDecimal igstPerc = taxPercmap.get(RuleConstants.CODE_IGST);
 
 				for (ManualAdviseMovements movement : movements) {
-					
+
 					if (movement != null && StringUtils.isNotBlank(movement.getFeeTypeCode())) {
-					
+
 						GSTInvoiceTxnDetails advTran = new GSTInvoiceTxnDetails();
 						advTran.setFeeCode(movement.getFeeTypeCode());
 						advTran.setFeeDescription(movement.getFeeTypeDesc());
@@ -331,49 +334,53 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						advTran.setSGST_RATE(sgstPerc);
 						advTran.setIGST_RATE(igstPerc);
 						advTran.setUGST_RATE(ugstPerc);
-						
+
 						if (isWaiver) {
-							
-							BigDecimal gstAmount = movement.getWaivedCGST().add(movement.getWaivedIGST()).add(movement.getWaivedSGST()).add(movement.getWaivedUGST());
-							
-							if (BigDecimal.ZERO.compareTo(movement.getWaivedAmount()) == 0 || BigDecimal.ZERO.compareTo(gstAmount) == 0) {
+
+							BigDecimal gstAmount = movement.getWaivedCGST().add(movement.getWaivedIGST())
+									.add(movement.getWaivedSGST()).add(movement.getWaivedUGST());
+
+							if (BigDecimal.ZERO.compareTo(movement.getWaivedAmount()) == 0
+									|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
 								continue;
 							}
-							
+
 							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
 								advTran.setFeeAmount(movement.getWaivedAmount().subtract(gstAmount)); //Fee Amount with out GST
 							} else {
 								advTran.setFeeAmount(movement.getWaivedAmount()); //Fee Amount with out GST
 							}
-							
+
 							advTran.setCGST_AMT(movement.getWaivedCGST());
 							advTran.setIGST_AMT(movement.getWaivedIGST());
 							advTran.setSGST_AMT(movement.getWaivedSGST());
 							advTran.setUGST_AMT(movement.getWaivedUGST());
-							
+
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						} else {
-							
-							BigDecimal gstAmount = movement.getPaidCGST().add(movement.getPaidIGST()).add(movement.getPaidSGST()).add(movement.getPaidUGST());
-							
-							if (BigDecimal.ZERO.compareTo(movement.getPaidAmount()) == 0 || BigDecimal.ZERO.compareTo(gstAmount) == 0) {
+
+							BigDecimal gstAmount = movement.getPaidCGST().add(movement.getPaidIGST())
+									.add(movement.getPaidSGST()).add(movement.getPaidUGST());
+
+							if (BigDecimal.ZERO.compareTo(movement.getPaidAmount()) == 0
+									|| BigDecimal.ZERO.compareTo(gstAmount) == 0) {
 								continue;
 							}
-							
+
 							if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(movement.getTaxComponent())) {
 								advTran.setFeeAmount(movement.getPaidAmount().subtract(gstAmount)); //Fee Amount with out GST
 							} else {
 								advTran.setFeeAmount(movement.getPaidAmount()); //Fee Amount with out GST
 							}
-							
+
 							advTran.setCGST_AMT(movement.getPaidCGST());
 							advTran.setIGST_AMT(movement.getPaidIGST());
 							advTran.setSGST_AMT(movement.getPaidSGST());
 							advTran.setUGST_AMT(movement.getPaidUGST());
-							
+
 							invoiceAmout = invoiceAmout.add(gstAmount);
 						}
-						
+
 						gstInvoiceTxnDetails.add(advTran);
 					}
 				}
@@ -452,7 +459,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	}
 
 	@Override
-	public void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout, String invoiceType) {
+	public void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout,
+			String invoiceType) {
 		logger.debug(Literal.ENTERING);
 
 		String feeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_EXEMPTED);
@@ -469,7 +477,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		if (StringUtils.isBlank(finReference) || financeMain == null || financeType == null) {
 			return; // write this case as a error message
 		}
-		
+
 		// Tax Details fetching
 		if (financeDetail.getFinanceTaxDetail() == null) {
 			financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
@@ -564,14 +572,16 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		} else {
 
 			if (financeDetail.getCustomerDetails() == null) {
-				financeDetail.setCustomerDetails(this.customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
+				financeDetail.setCustomerDetails(
+						this.customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_AView"));
 			}
-			
+
 			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			
+
 			if (CollectionUtils.isNotEmpty(addressList)) {
 				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+					if (customerAddres.getCustAddrPriority() != Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 						continue;
 					}
 					country = customerAddres.getCustAddrCountry();
@@ -590,7 +600,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 					//Preparing customer Address
 					prepareCustAddress(gstInvoiceTxn, customerAddres);
-					
+
 					break;
 				}
 			}

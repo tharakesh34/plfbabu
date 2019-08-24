@@ -7,7 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
-@XmlType(propOrder = { "finReference", "roleCode", "recordStatus", "nextRoleCode", "returnStatus"})
+
+@XmlType(propOrder = { "finReference", "roleCode", "recordStatus", "nextRoleCode", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoanStatus {
@@ -21,6 +22,7 @@ public class LoanStatus {
 	private String nextRoleCode;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+
 	public String getNextRoleCode() {
 		return nextRoleCode;
 	}
@@ -61,5 +63,4 @@ public class LoanStatus {
 		this.returnStatus = returnStatus;
 	}
 
-	
 }

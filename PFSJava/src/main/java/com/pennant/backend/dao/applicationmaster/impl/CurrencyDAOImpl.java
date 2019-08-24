@@ -179,7 +179,7 @@ public class CurrencyDAOImpl extends BasicDao<Currency> implements CurrencyDAO {
 		try {
 			ccyCode = jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
 		} catch (EmptyResultDataAccessException e) {
-		//	logger.error("Exception: ", e);
+			//	logger.error("Exception: ", e);
 			ccyCode = "";
 		}
 		//logger.debug("Leaving ");

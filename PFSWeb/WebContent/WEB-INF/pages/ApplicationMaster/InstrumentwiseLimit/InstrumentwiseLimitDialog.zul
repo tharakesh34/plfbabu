@@ -2,63 +2,40 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_InstrumentwiseLimitDialog" border="normal"
-		apply="${instrumentwiseLimitDialogCtrl}" width="100%" height="100%"
-		sizable="false">
+	<window id="window_InstrumentwiseLimitDialog" border="normal" apply="${instrumentwiseLimitDialogCtrl}" width="100%"
+		height="100%" sizable="false">
 
 		<borderlayout id="borderlayoutInstrumentwiseLimit">
 			<north>
 				<div sclass="z-toolbar" style="padding:0">
-					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-						width="100%" widths="35%,30%,35%">
+					<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="35%,30%,35%">
 						<!-- COMMON BUTTONS -->
 						<toolbar align="start" sclass="toolbar-start">
-							<button id="btnNew"
-								tooltiptext="${c:l('btnNew.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNew" tooltiptext="${c:l('btnNew.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnEdit"
-								tooltiptext="${c:l('btnEdit.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnEdit" tooltiptext="${c:l('btnEdit.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnDelete"
-								tooltiptext="${c:l('btnDelete.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnDelete" tooltiptext="${c:l('btnDelete.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnSave"
-								tooltiptext="${c:l('btnSave.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnCancel"
-								tooltiptext="${c:l('btnCancel.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnNotes"
-								tooltiptext="${c:l('btnNotes.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 						<!-- SEARCH AREA -->
-						<toolbar align="center"
-							sclass="toolbar-center">
-							<label
-								value="${c:l('window_InstrumentwiseLimitDialog.title')}"
-								sclass="label-heading" />
+						<toolbar align="center" sclass="toolbar-center">
+							<label value="${c:l('window_InstrumentwiseLimitDialog.title')}" sclass="label-heading" />
 						</toolbar>
 						<!-- CRUD BUTTONS -->
 						<toolbar align="end" sclass="toolbar-end">
-							<button id="btnHelp"
-								tooltiptext="${c:l('btnHelp.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnHelp" tooltiptext="${c:l('btnHelp.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" visible="false" />
-							<button id="btnClose"
-								tooltiptext="${c:l('btnClose.tooltiptext')}"
-								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+							<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 						</toolbar>
 					</hbox>
@@ -67,21 +44,17 @@
 			<center border="none" autoscroll="false">
 				<div>
 					<groupbox sclass="gb-dialog" closable="false">
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="250px" />
 								<column />
 							</columns>
 							<rows>
 								<row>
-									<label id="label_InstrumentMode"
-										value="${c:l('label_InstrumentwiseLimitDialog_InstrumentMode.value')}" />
+									<label id="label_InstrumentMode" value="${c:l('label_InstrumentwiseLimitDialog_InstrumentMode.value')}" />
 									<hbox>
-										<space sclass="mandatory"
-											spacing="2px" />
-										<combobox id="instrumentMode"
-											width="162px" />
+										<space sclass="mandatory" spacing="2px" />
+										<combobox id="instrumentMode" width="162px" />
 									</hbox>
 								</row>
 							</rows>
@@ -89,8 +62,7 @@
 					</groupbox>
 					<groupbox sclass="gb-dialog" closable="false">
 						<caption label="Payment Limits" />
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="250px" />
 								<column />
@@ -99,36 +71,25 @@
 							</columns>
 							<rows>
 								<row>
-									<label
-										id="label_PaymentMinAmtperTrans"
-										value="${c:l('label_InstrumentwiseLimitDialog_PaymentMinAmtperTran.value')}" />
-									<currencyBox
-										id="paymentMinAmtperTrans"  width="162px" />
+									<label id="label_PaymentMinAmtperTrans" value="${c:l('label_InstrumentwiseLimitDialog_PaymentMinAmtperTran.value')}" />
+									<currencyBox id="paymentMinAmtperTrans" width="162px" />
 								</row>
 								<row>
-									<label
-										id="label_PaymentMaxAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitDialog_PaymentMaxAmtperTran.value')}" />
-									<currencyBox
-										id="paymentMaxAmtperTran"  width="162px" />
-									<label
-										id="label_PaymentMaxAmtperDay"
-										value="${c:l('label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay.value')}" />
-									<currencyBox
-										id="paymentMaxAmtperDay"  width="162px" />
+									<label id="label_PaymentMaxAmtperTran" value="${c:l('label_InstrumentwiseLimitDialog_PaymentMaxAmtperTran.value')}" />
+									<currencyBox id="paymentMaxAmtperTran" width="162px" />
+									<label id="label_PaymentMaxAmtperDay" value="${c:l('label_InstrumentwiseLimitDialog_PaymentMaxAmtperDay.value')}" />
+									<currencyBox id="paymentMaxAmtperDay" width="162px" />
 								</row>
 								<row id="row_MaxAmtPerInstruction">
-									<label id="label_MaxAmtPerInstructions"
-										value="${c:l('label_InstrumentwiseLimitDialog_MaxAmtPerInstruction.value')}" />
-									<currencyBox id="maxAmtPerInstruction"  width="162px" />
+									<label id="label_MaxAmtPerInstructions" value="${c:l('label_InstrumentwiseLimitDialog_MaxAmtPerInstruction.value')}" />
+									<currencyBox id="maxAmtPerInstruction" width="162px" />
 								</row>
 							</rows>
 						</grid>
 					</groupbox>
 					<groupbox sclass="gb-dialog" closable="false">
 						<caption label="Receipt Limits" />
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
 								<column width="250px" />
 								<column />
@@ -137,23 +98,14 @@
 							</columns>
 							<rows>
 								<row>
-									<label
-										id="label_ReceiptMinAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMinAmtperTran.value')}" />
-									<currencyBox
-										id="receiptMinAmtperTran"  width="162px" />
+									<label id="label_ReceiptMinAmtperTran" value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMinAmtperTran.value')}" />
+									<currencyBox id="receiptMinAmtperTran" width="162px" />
 								</row>
 								<row>
-									<label
-										id="label_ReceiptMaxAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMaxAmtperTran.value')}" />
-									<currencyBox
-										id="receiptMaxAmtperTran"  width="162px" />
-									<label
-										id="label_ReceiptMaxAmtperDay"
-										value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay.value')}" />
-									<currencyBox
-										id="receiptMaxAmtperDay"  width="162px" />
+									<label id="label_ReceiptMaxAmtperTran" value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMaxAmtperTran.value')}" />
+									<currencyBox id="receiptMaxAmtperTran" width="162px" />
+									<label id="label_ReceiptMaxAmtperDay" value="${c:l('label_InstrumentwiseLimitDialog_ReceiptMaxAmtperDay.value')}" />
+									<currencyBox id="receiptMaxAmtperDay" width="162px" />
 								</row>
 							</rows>
 						</grid>
@@ -165,9 +117,7 @@
 					<caption label="${c:l('Action')}" />
 					<hbox width="95%">
 						<radiogroup id="userAction" name="action" />
-						<label id="label_RecordStatus"
-							value="${c:l('label_South_RecordStatus.value')}"
-							sclass="label-status" />
+						<label id="label_RecordStatus" value="${c:l('label_South_RecordStatus.value')}" sclass="label-status" />
 						<label id="recordStatus" />
 					</hbox>
 				</groupbox>

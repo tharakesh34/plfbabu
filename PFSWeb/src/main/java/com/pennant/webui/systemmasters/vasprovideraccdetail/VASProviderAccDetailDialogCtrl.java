@@ -229,7 +229,8 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 		this.bankBranchID.setMandatoryStyle(true);
 		this.bankBranchID.setModuleName("BankBranch");
 		this.bankBranchID.setValueColumn("BankBranchID");
-		this.bankBranchID.setDescColumn("BranchDesc");this.bankBranchID.setValueType(DataType.INT);
+		this.bankBranchID.setDescColumn("BranchDesc");
+		this.bankBranchID.setValueType(DataType.INT);
 		this.bankBranchID.setValueType(DataType.BIGDECIMAL);
 		this.bankBranchID.setValueType(DataType.LONG);
 		this.bankBranchID.setValidateColumns(new String[] { "BankBranchID" });
@@ -449,7 +450,7 @@ public class VASProviderAccDetailDialogCtrl extends GFCBaseCtrl<VASProviderAccDe
 
 		this.partnerBankId.setValue(aVASProviderAccDetail.getPartnerBankCode());
 		this.partnerBankId.setDescription(aVASProviderAccDetail.getPartnerBankName());
-			
+
 		logger.debug(Literal.LEAVING);
 	}
 

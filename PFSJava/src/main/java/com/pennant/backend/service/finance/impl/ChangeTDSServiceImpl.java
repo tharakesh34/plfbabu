@@ -107,7 +107,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 				.getFinScheduleDetails(finMaintainInstruction.getFinReference(), "", false);
 		finScheduleData.setFinanceMain(financeMain);
 		finScheduleData.setFinanceScheduleDetails(finScheduleList);
-		
+
 		TableType tableType = TableType.MAIN_TAB;
 		if (finMaintainInstruction.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
@@ -138,7 +138,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		inst.setMakerAppDate(DateUtility.getAppDate());
 		inst.setMakerSysDate(DateUtility.getSysDate());
 		inst.setLinkedTranId(0);
-		
+
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
 		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
@@ -147,9 +147,9 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
 		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
 		ltdList.add(lowerTaxDeduction);
-		
+
 		finScheduleData.setLowerTaxDeductionDetails(ltdList);
-		
+
 		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinanceConstants.FINSER_EVENT_CHANGETDS,
 				tableType.getSuffix());
 
@@ -157,19 +157,20 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			getFinanceMainDAO().save(financeMain, tableType, false);
 			finMaintainInstruction.setFinMaintainId(
 					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
-			finScheduleData.getLowerTaxDeductionDetails().get(0).setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+			finScheduleData.getLowerTaxDeductionDetails().get(0)
+					.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
 			getLowertaxDeductionDAO().save(finScheduleData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
 			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
 			auditHeader.setAuditReference(String.valueOf(finMaintainInstruction.getFinMaintainId()));
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 			getFinMaintainInstructionDAO().update(finMaintainInstruction, tableType);
-			getLowertaxDeductionDAO().update(finScheduleData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
+			getLowertaxDeductionDAO().update(finScheduleData.getLowerTaxDeductionDetails().get(0),
+					tableType.getSuffix());
 
 		}
 		finServiceInstructionDAO.save(inst, tableType.getSuffix());
-		
-		
+
 		// Add Audit
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -315,20 +316,19 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		getFinServiceInstructionDAO().deleteList(finServiceInstruction.getFinReference(), "",
 				TableType.TEMP_TAB.getSuffix());
 		getFinServiceInstructionDAO().save(finServiceInstruction, "");
-		
 
 		FinanceMain financeMain = new FinanceMain();
 		financeMain.setFinReference(finMaintainInstruction.getFinReference());
 		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
 
 		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
-		
+
 		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
 			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
 				getLowertaxDeductionDAO().delete(deductions, TableType.TEMP_TAB.getSuffix());
 			}
 		}
-		
+
 		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
 			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
 				deductions.setRoleCode(finMaintainInstruction.getRoleCode());
@@ -479,20 +479,20 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		finScheduleData.setFinanceMain(financeMain);
 		finScheduleData.setFinanceScheduleDetails(finScheduleList);
-		
+
 		finScheduleData.setLowerTaxDeductionDetails(
 				getLowertaxDeductionDAO().getLowerTaxDeductionDetails(financeMain.getFinReference(), ""));
-		
+
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
 		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
 		lowerTaxDeduction.setFinReference(financeMain.getFinReference());
 		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
 		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
-        lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
-        lowerTaxDeduction.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
+		lowerTaxDeduction.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
 		ltdList.add(lowerTaxDeduction);
-		
+
 		finScheduleData.getLowerTaxDeductionDetails().addAll(ltdList);
 
 		for (FinanceScheduleDetail schedule : finScheduleData.getFinanceScheduleDetails()) {

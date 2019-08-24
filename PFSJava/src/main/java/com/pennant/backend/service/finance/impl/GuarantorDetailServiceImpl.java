@@ -536,7 +536,7 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 	@Override
 	public List<AuditDetail> doApprove(List<GuarantorDetail> guarantorDetailList, String tableType,
-			String auditTranType, String finSourceId, Object apiHeader,String serviceName) {
+			String auditTranType, String finSourceId, Object apiHeader, String serviceName) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -554,7 +554,8 @@ public class GuarantorDetailServiceImpl extends GenericService<GuarantorDetail> 
 
 				getGuarantorDetailDAO().save(guarantorDetail, tableType);
 			}
-			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null || StringUtils.isNotBlank(serviceName)) {
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null
+					|| StringUtils.isNotBlank(serviceName)) {
 				getGuarantorDetailDAO().delete(guarantorDetail, "_Temp");
 			}
 

@@ -1085,7 +1085,7 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 		}
 
 		// Document Details Saving
-		
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.TV_DOCUMENT_MANDATORY)
 				&& this.userAction.getSelectedItem().getLabel().equalsIgnoreCase("submit")) {
 			if (documentDetailDialogCtrl != null

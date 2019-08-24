@@ -77,7 +77,6 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 	public long save(GSTInvoiceTxn gstInvoiceTxn) {
 		logger.debug(Literal.ENTERING);
 
-
 		if (gstInvoiceTxn.getInvoiceId() <= 0) {
 			gstInvoiceTxn.setInvoiceId(getNextValue("Seq_Gst_Invoice_Txn"));
 			logger.debug("get NextID:" + gstInvoiceTxn.getInvoiceId());

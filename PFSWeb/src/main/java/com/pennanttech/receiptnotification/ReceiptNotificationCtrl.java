@@ -19,10 +19,10 @@ import com.pennanttech.pff.external.eod.ReceiptNotificationService;
 public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements Serializable {
 
 	private static final long serialVersionUID = 433563597371675777L;
-	
+
 	@Autowired(required = false)
 	ReceiptNotificationService receiptNotificationService;
-	
+
 	Logger logger = Logger.getLogger(ReceiptNotificationCtrl.class);
 
 	protected Window window_ReceiptNotificationCtrl;
@@ -63,7 +63,7 @@ public class ReceiptNotificationCtrl extends GFCBaseListCtrl<String> implements 
 	public void onClick$btnSendNotification(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		if(receiptNotificationService!=null){
+		if (receiptNotificationService != null) {
 			String notification = receiptNotificationService.sendReceiptNotifycation(DateUtility.getAppDate());
 			MessageUtil.showMessage(notification);
 		}

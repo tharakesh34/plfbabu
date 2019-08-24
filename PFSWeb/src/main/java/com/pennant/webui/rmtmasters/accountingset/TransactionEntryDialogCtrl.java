@@ -1621,7 +1621,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		String label_SGST = Labels.getLabel("label_TransactionEntryDialog_SGST");
 		String label_UGST = Labels.getLabel("label_TransactionEntryDialog_UGST");
 		String label_IGST = Labels.getLabel("label_TransactionEntryDialog_IGST");
-		
+
 		//CGST
 		feeExtensions[5] = "_CGST_C";
 		feeExtensionLabels[5] = label_CGST;
@@ -1669,7 +1669,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeExtensionLabels[23] = label_IGST;
 		feeExtensions[24] = "_IGST_AF";
 		feeExtensionLabels[24] = label_IGST;
-		
+
 		//Waivers
 		feeExtensions[25] = "_CGST_W";
 		feeExtensionLabels[25] = Labels.getLabel("label_TransactionEntryDialog_W_CGST");
@@ -1678,7 +1678,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		feeExtensions[27] = "_UGST_W";
 		feeExtensionLabels[27] = Labels.getLabel("label_TransactionEntryDialog_W_UGST");
 		feeExtensions[28] = "_IGST_W";
-		feeExtensionLabels[28] = Labels.getLabel("label_TransactionEntryDialog_W_IGST");		
+		feeExtensionLabels[28] = Labels.getLabel("label_TransactionEntryDialog_W_IGST");
 	}
 
 	/**

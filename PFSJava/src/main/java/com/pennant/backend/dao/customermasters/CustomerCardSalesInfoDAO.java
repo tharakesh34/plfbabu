@@ -30,6 +30,6 @@ public interface CustomerCardSalesInfoDAO {
 	void update(CustCardSalesDetails cardSalesInfoSubDetail, String type);
 
 	void delete(CustCardSalesDetails cardSalesInfoSubDetails, String type);
-	
+
 	int getCustomerCardSalesInfoByCustMerchantId(long custId, String merchantId, long Id, String type);
 }

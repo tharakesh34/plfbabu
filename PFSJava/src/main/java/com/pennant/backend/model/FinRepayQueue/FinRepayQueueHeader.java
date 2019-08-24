@@ -39,7 +39,7 @@ public class FinRepayQueueHeader {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-	
+
 	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverUGST = BigDecimal.ZERO;

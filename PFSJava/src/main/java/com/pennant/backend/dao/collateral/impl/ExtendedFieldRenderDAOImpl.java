@@ -605,7 +605,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			});
 		} catch (Exception e) {
 			logger.error(Literal.ENTERING, e);
-			renderMap=new HashMap<String, String>();
+			renderMap = new HashMap<String, String>();
 		}
 
 		logger.debug(Literal.LEAVING);

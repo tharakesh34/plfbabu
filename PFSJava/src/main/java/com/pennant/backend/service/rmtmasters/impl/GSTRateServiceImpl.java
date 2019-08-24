@@ -383,7 +383,7 @@ public class GSTRateServiceImpl extends GenericService<GSTRate> implements GSTRa
 			} else {
 				if (!gstRateDAO.isGSTExist(gSTRate.getFromState(), gSTRate.getToState(), gSTRate.getCalcOn())) {
 					String[] parameters = new String[4];
-					
+
 					parameters[0] = gSTRate.getCalcOn();
 					parameters[1] = PennantJavaUtil.getLabel("label_FromState") + ": " + gSTRate.getFromState();
 					parameters[2] = PennantJavaUtil.getLabel("label_ToState") + ": " + gSTRate.getToState();

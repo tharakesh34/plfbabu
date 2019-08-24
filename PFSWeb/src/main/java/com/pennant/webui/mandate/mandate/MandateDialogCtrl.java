@@ -1401,9 +1401,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		// InputDate
 		try {
-			
-			aMandate.setInputDate(DateUtility.getDate(
-					DateUtility.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
+
+			aMandate.setInputDate(
+					DateUtility.getDate(DateUtility.format(this.inputDate.getValue(), PennantConstants.dateFormat)));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

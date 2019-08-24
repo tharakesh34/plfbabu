@@ -539,7 +539,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		this.jdbcTemplate.update(sql.toString(), source);
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/**
 	 * Fetch the Record VASRecording details by key field
 	 * 
@@ -570,7 +570,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		sql.append(" Where PrimaryLinkRef =:PrimaryLinkRef");
 
 		logger.debug("selectSql: " + sql.toString());
-		
+
 		RowMapper<VASRecording> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(VASRecording.class);
 
 		source = new MapSqlParameterSource();

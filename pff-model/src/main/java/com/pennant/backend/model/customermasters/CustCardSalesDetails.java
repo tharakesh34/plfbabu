@@ -46,7 +46,7 @@ public class CustCardSalesDetails extends AbstractWorkflowEntity {
 		excludeFields.add("keyValue");
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return false;
 	}
@@ -178,5 +178,5 @@ public class CustCardSalesDetails extends AbstractWorkflowEntity {
 	public void setCardSalesId(long cardSalesId) {
 		this.cardSalesId = cardSalesId;
 	}
-	
+
 }

@@ -23,16 +23,16 @@ public class CollateralRevaluationProcessor extends BasicDao<CollateralRevaluati
 		collateral.setTableName(table);
 
 		List<CollateralRevaluation> collData = getCurrentValue(collateral);
-		
+
 		BigDecimal collcurrentValue = BigDecimal.ZERO;
 		for (CollateralRevaluation hsnData : collData) {
 			collcurrentValue = collcurrentValue.add(hsnData.getCurrentValue().multiply(hsnData.getNoOfUnits()));
 		}
-		
+
 		collateral.setCollHSNData(collData);
 		collateral.setUnitPrice(BigDecimal.ZERO);
 		collateral.setNoOfUnits(BigDecimal.ZERO);
-		
+
 		collateral.setCurrentCollateralValue(collcurrentValue);
 
 		BigDecimal osp = collateral.getPos();

@@ -26,8 +26,6 @@ public class IDBInterfaceLogDetail implements Serializable {
 		this.interfaceName = interfaceName;
 	}
 
-	
-
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -56,7 +54,6 @@ public class IDBInterfaceLogDetail implements Serializable {
 		return status;
 	}
 
-	
 	public String getStatusDesc() {
 		return statusDesc;
 	}
@@ -65,7 +62,6 @@ public class IDBInterfaceLogDetail implements Serializable {
 		this.statusDesc = statusDesc;
 	}
 
-	
 	public String getInterfaceInfo() {
 		return interfaceInfo;
 	}

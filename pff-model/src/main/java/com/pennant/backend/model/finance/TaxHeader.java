@@ -70,7 +70,7 @@ public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 	public TaxHeader(long headerId) {
 		this.headerId = headerId;
 	}
-	
+
 	public long getHeaderId() {
 		return headerId;
 	}
@@ -126,7 +126,7 @@ public class TaxHeader extends AbstractWorkflowEntity implements Entity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 

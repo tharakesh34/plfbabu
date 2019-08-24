@@ -173,7 +173,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (arguments.containsKey("CustomerDialogCtrl")) {
 			customerDialogCtrl = (CustomerDialogCtrl) arguments.get("CustomerDialogCtrl");
 			setCustomerDialogCtrl(customerDialogCtrl);
-			customerDedupFromDialog= true;
+			customerDedupFromDialog = true;
 		} else {
 			setCustomerDialogCtrl(null);
 		}
@@ -196,7 +196,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		this.btnNewCustomer.setLabel("PROCEED AS NEW CUSTOMER");
 		this.btnExistingCustomer.setLabel("PROCEED AS EXISTING CUSTOMER");
-		if(customerDedupFromDialog){
+		if (customerDedupFromDialog) {
 			this.btnProceed.setVisible(true);
 			this.btnNewCustomer.setVisible(false);
 			this.btnExistingCustomer.setVisible(false);
@@ -337,13 +337,12 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	public void onClick$btnProceed(Event event) throws Exception {
-		
+
 		Clients.clearWrongValue(this.btnProceed);
-		
+
 		if (StringUtils.isBlank(custCIF)) {
-			throw new WrongValueException(this.btnProceed,
-					"Please select Customer CIF to proceed.");
-		} 
+			throw new WrongValueException(this.btnProceed, "Please select Customer CIF to proceed.");
+		}
 
 		closeDialog();
 		if (this.customerDialogCtrl != null) {
@@ -465,7 +464,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			Listcell lc = new Listcell();
 			if (StringUtils.isNotEmpty(customerDedup.getCustCIF())) {
 				Radio list_radioButton = new Radio();
-				list_radioButton.setValue(customerDedup.getCustCIF() + "," + customerDedup.getCustCtgCode()+","+customerDedup.getCustCoreBank());
+				list_radioButton.setValue(customerDedup.getCustCIF() + "," + customerDedup.getCustCtgCode() + ","
+						+ customerDedup.getCustCoreBank());
 				list_radioButton.addForward("onCheck", self, "onCheck_listCellRadioBtn");
 				list_radioButton.setParent(radioButtonGroup);
 				lc.appendChild(list_radioButton);
@@ -474,7 +474,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			lc = new Listcell(customerDedup.getCustCIF());
 			lc.setParent(item);
-			
+
 			lc = new Listcell(customerDedup.getCustCoreBank());
 			lc.setParent(item);
 
@@ -611,7 +611,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
 	}
-	
+
 	public CustomerDialogCtrl getCustomerDialogCtrl() {
 		return customerDialogCtrl;
 	}

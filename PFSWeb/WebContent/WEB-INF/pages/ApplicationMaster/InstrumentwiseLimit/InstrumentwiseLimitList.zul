@@ -2,8 +2,7 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
 		<window id="window_InstrumentwiseLimitList" apply="${instrumentwiseLimitListCtrl}" border="none" width="100%">
@@ -14,11 +13,9 @@
 					<label value="" />
 					<!-- SEARCH AREA -->
 					<toolbar align="center" sclass="toolbar-center">
-						<button id="button_InstrumentwiseLimitList_InstrumentwiseLimitSearch"
-							label="${c:l('label_Filter')}"
+						<button id="button_InstrumentwiseLimitList_InstrumentwiseLimitSearch" label="${c:l('label_Filter')}"
 							autodisable="button_InstrumentwiseLimitList_InstrumentwiseLimitSearch,print,button_InstrumentwiseLimitList_NewInstrumentwiseLimit,btnRefresh,help"
-							tooltiptext="${c:l('button_InstrumentwiseLimitList_InstrumentwiseLimitSearch.tooltiptext')}"
-							sclass="z-toolbarbutton" />
+							tooltiptext="${c:l('button_InstrumentwiseLimitList_InstrumentwiseLimitSearch.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_InstrumentwiseLimitList_InstrumentwiseLimitSearch,print,button_InstrumentwiseLimitList_NewInstrumentwiseLimit,btnRefresh,help"
 							tooltiptext="${c:l('button_InstrumentwiseLimitList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -53,82 +50,71 @@
 							</columns>
 							<rows>
 								<row>
-									<label id="label_InstrumentwiseLimitList_InstrumentMode"
-										value="${c:l('label_InstrumentwiseLimitList_InstrumentMode.value')}" />
+									<label id="label_InstrumentwiseLimitList_InstrumentMode" value="${c:l('label_InstrumentwiseLimitList_InstrumentMode.value')}" />
 									<listbox id="sortOperator_InstrumentMode" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<combobox id="instrumentMode" width="162px" />
-									<label id="label_InstrumentwiseLimitList_PaymentMinAmtperTrans"
-										value="${c:l('label_InstrumentwiseLimitList_PaymentMinAmtperTrans.value')}" visible="false" />
+									<label id="label_InstrumentwiseLimitList_PaymentMinAmtperTrans" value="${c:l('label_InstrumentwiseLimitList_PaymentMinAmtperTrans.value')}"
+										visible="false" />
 									<listbox id="sortOperator_PaymentMinAmtperTrans" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" visible="false" />
 									<decimalbox id="paymentMinAmtperTrans" width="162px" maxlength="18" visible="false" />
 								</row>
 								<row visible="false">
-									<label id="label_InstrumentwiseLimitList_PaymentMaxAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitList_PaymentMaxAmtperTran.value')}" />
+									<label id="label_InstrumentwiseLimitList_PaymentMaxAmtperTran" value="${c:l('label_InstrumentwiseLimitList_PaymentMaxAmtperTran.value')}" />
 									<listbox id="sortOperator_PaymentMaxAmtperTran" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<decimalbox id="paymentMaxAmtperTran" width="162px" maxlength="18" />
-									<label id="label_InstrumentwiseLimitList_PaymentMaxAmtperDay"
-										value="${c:l('label_InstrumentwiseLimitList_PaymentMaxAmtperDay.value')}" />
+									<label id="label_InstrumentwiseLimitList_PaymentMaxAmtperDay" value="${c:l('label_InstrumentwiseLimitList_PaymentMaxAmtperDay.value')}" />
 									<listbox id="sortOperator_PaymentMaxAmtperDay" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<decimalbox id="paymentMaxAmtperDay" width="162px" maxlength="18" />
 								</row>
 								<row visible="false">
-									<label id="label_InstrumentwiseLimitList_ReceiptMinAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitList_ReceiptMinAmtperTran.value')}" />
+									<label id="label_InstrumentwiseLimitList_ReceiptMinAmtperTran" value="${c:l('label_InstrumentwiseLimitList_ReceiptMinAmtperTran.value')}" />
 									<listbox id="sortOperator_ReceiptMinAmtperTran" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<decimalbox id="receiptMinAmtperTran" width="162px" maxlength="18" />
-									<label id="label_InstrumentwiseLimitList_ReceiptMaxAmtperTran"
-										value="${c:l('label_InstrumentwiseLimitList_ReceiptMaxAmtperTran.value')}" />
+									<label id="label_InstrumentwiseLimitList_ReceiptMaxAmtperTran" value="${c:l('label_InstrumentwiseLimitList_ReceiptMaxAmtperTran.value')}" />
 									<listbox id="sortOperator_ReceiptMaxAmtperTran" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<decimalbox id="receiptMaxAmtperTran" width="162px" maxlength="18" />
 								</row>
 								<row visible="false">
-									<label id="label_InstrumentwiseLimitList_ReceiptMaxAmtperDay"
-										value="${c:l('label_InstrumentwiseLimitList_ReceiptMaxAmtperDay.value')}" />
+									<label id="label_InstrumentwiseLimitList_ReceiptMaxAmtperDay" value="${c:l('label_InstrumentwiseLimitList_ReceiptMaxAmtperDay.value')}" />
 									<listbox id="sortOperator_ReceiptMaxAmtperDay" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<decimalbox id="receiptMaxAmtperDay" width="162px" maxlength="18" />
 								</row>
 								<row>
-									<label id="label_InstrumentwiseLimitList_RecordStatus"
-										value="${c:l('label_InstrumentwiseLimitList_RecordStatus.value')}" />
+									<label id="label_InstrumentwiseLimitList_RecordStatus" value="${c:l('label_InstrumentwiseLimitList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
 									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_InstrumentwiseLimitList_RecordType"
-										value="${c:l('label_InstrumentwiseLimitList_RecordType.value')}" />
+									<label id="label_InstrumentwiseLimitList_RecordType" value="${c:l('label_InstrumentwiseLimitList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
 								</row>
 							</rows>
 						</grid>
-						<listbox id="listBoxInstrumentwiseLimit" emptyMessage="${c:l('listbox.emptyMessage')}"
-							sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
-							multiple="false">
+						<listbox id="listBoxInstrumentwiseLimit" emptyMessage="${c:l('listbox.emptyMessage')}" sizedByContent="true"
+							span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false">
 							<listhead sizable="true">
-								<listheader id="listheader_InstrumentMode"
-									label="${c:l('listheader_InstrumentMode.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_PaymentMinAmtperTrans"
-									label="${c:l('listheader_PaymentMinAmtperTrans.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_PaymentMaxAmtperTran"
-									label="${c:l('listheader_PaymentMaxAmtperTran.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_PaymentMaxAmtperDay"
-									label="${c:l('listheader_PaymentMaxAmtperDay.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_ReceiptMinAmtperTran"
-									label="${c:l('listheader_ReceiptMinAmtperTran.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_ReceiptMaxAmtperTran"
-									label="${c:l('listheader_ReceiptMaxAmtperTran.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_ReceiptMaxAmtperDay"
-									label="${c:l('listheader_ReceiptMaxAmtperDay.label')}" sort="auto" hflex="min" align="right" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto"
+								<listheader id="listheader_InstrumentMode" label="${c:l('listheader_InstrumentMode.label')}" sort="auto"
 									hflex="min" />
+								<listheader id="listheader_PaymentMinAmtperTrans" label="${c:l('listheader_PaymentMinAmtperTrans.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_PaymentMaxAmtperTran" label="${c:l('listheader_PaymentMaxAmtperTran.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_PaymentMaxAmtperDay" label="${c:l('listheader_PaymentMaxAmtperDay.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_ReceiptMinAmtperTran" label="${c:l('listheader_ReceiptMinAmtperTran.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_ReceiptMaxAmtperTran" label="${c:l('listheader_ReceiptMaxAmtperTran.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_ReceiptMaxAmtperDay" label="${c:l('listheader_ReceiptMaxAmtperDay.label')}"
+									sort="auto" hflex="min" align="right" />
+								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
+								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

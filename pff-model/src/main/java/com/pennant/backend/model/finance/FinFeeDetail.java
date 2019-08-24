@@ -130,7 +130,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal calculatedOn = BigDecimal.ZERO;
 	private boolean refundable;
 	private boolean alwPreIncomization;
-	
+
 	private boolean taxApplicable;
 	private String taxComponent;
 	private BigDecimal feeAmz;
@@ -140,12 +140,12 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private BigDecimal cgst = BigDecimal.ZERO;
 	private boolean feeModified = false;
 	private Long instructionUID;
-	
+
 	private long referenceId = 0; //For Receipt Fees
-	
+
 	//Waivers Gst values
 	private BigDecimal waivedGST = BigDecimal.ZERO;
-	
+
 	@SuppressWarnings("unused")
 	private FinFeeDetail validateFinFeeDetail = this;
 	private transient List<FinFeeScheduleDetail> finFeeScheduleDetailList = new ArrayList<>(1);
@@ -726,7 +726,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	public void setActPercentage(BigDecimal actPercentage) {
 		this.actPercentage = actPercentage;
 	}
-	
+
 	public long getReferenceId() {
 		return referenceId;
 	}

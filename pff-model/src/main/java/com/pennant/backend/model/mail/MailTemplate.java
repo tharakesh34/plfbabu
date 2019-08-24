@@ -90,7 +90,7 @@ public class MailTemplate extends AbstractWorkflowEntity {
 	private List<String> emailIds = new ArrayList<>();
 	private List<String> mobileNumbers = new ArrayList<>();
 	private Map<String, byte[]> attchments = new HashMap<>();
-	
+
 	private String notificationData;
 
 	public MailTemplate() {

@@ -5,8 +5,8 @@
 <zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_CustomerCardSalesInfoDialog" border="normal" apply="${customerCardSalesInfoDialogCtrl}" width="100%"
-		height="100%" sizable="false">
+	<window id="window_CustomerCardSalesInfoDialog" border="normal" apply="${customerCardSalesInfoDialogCtrl}"
+		width="100%" height="100%" sizable="false">
 		<borderlayout id="borderlayoutCustomerBankInfo">
 			<north>
 				<div sclass="z-toolbar">
@@ -55,7 +55,7 @@
 									<button id="btnSearchPRCustid" image="/images/icons/LOVSearch.png" />
 									<space spacing="2px" />
 									<label id="custShrtName" width="150px" />
-								</hbox>	
+								</hbox>
 							</row>
 							<row>
 								<label id="label_CustomerCardSalesInfoDialog_MerchantId" value="${c:l('label_CustomerCardSalesInfoDialog_MerchantId.value')}" />
@@ -76,12 +76,14 @@
 						<listhead sizable="true" id="listHead_CardMonthSales">
 							<listheader id="listheader_Month" label="${c:l('listheader_Month.label')}" sort="auto" hflex="min" />
 							<listheader id="lRistheader_SalesAmount" label="${c:l('listheader_SalesAmount.label')}" sort="auto" />
-							<listheader id="listheader_NoOfSettlements" label="${c:l('listheader_NoOfSettlements.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_NoOfSettlements" label="${c:l('listheader_NoOfSettlements.label')}" sort="auto"
+								hflex="min" />
 							<listheader id="listheader_TotalNoOfCredits" align="center" label="${c:l('listheader_TotalNoOfCredits.label')}"
 								sort="auto" hflex="min" />
 							<listheader id="listheader_TotalCreditValue" align="center" label="${c:l('listheader_TotalCreditValue.label')}"
 								sort="auto" hflex="min" />
-							<listheader id="listheader_TotalNoOfDebits" label="${c:l('listheader_TotalNoOfDebits.label')}" sort="auto" hflex="min" />
+							<listheader id="listheader_TotalNoOfDebits" label="${c:l('listheader_TotalNoOfDebits.label')}" sort="auto"
+								hflex="min" />
 							<listheader id="lRistheader_TotalDebitValue" align="center" label="${c:l('listheader_TotalDebitValue.label')}"
 								sort="auto" hflex="min" />
 							<listheader id="listheader_InwardBounce" align="center" label="${c:l('listheader_InwardBounce.label')}"

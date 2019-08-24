@@ -167,7 +167,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 	protected Row row_TDS3;
 	private FinanceDetail financeDetail = null;
 	boolean istdsAllowToModify = false;
-	protected transient Date previousLTDEndDate  ; 
+	protected transient Date previousLTDEndDate;
 
 	private List<LowerTaxDeduction> oldLowerTaxDeductionDetail = new ArrayList<LowerTaxDeduction>();
 
@@ -434,9 +434,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			finMaintainInstruction.setTdsEndDate(null);
 			finMaintainInstruction.setTdsLimit(BigDecimal.ZERO);
 		}
-		
-		
-		if (this.tDSApplicable.isChecked()  && istdsAllowToModify) {
+
+		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
 			lowerTxDeduction.setFinReference(this.financeMain.getFinReference());
@@ -454,12 +453,12 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
-			if(DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate)<=0) {
-				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH",
-						new String[] { "Previous LTD End Date",
-								Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));			}
-			
+
+			if (DateUtility.compare(this.tdsStartDate.getValue(), previousLTDEndDate) <= 0) {
+				throw new WrongValueException(this.tdsStartDate, Labels.getLabel("FRQ_DATE_MISMATCH", new String[] {
+						"Previous LTD End Date", Labels.getLabel("label_FinanceMainDialog_tDSStartDate.value") }));
+			}
+
 			try {
 				lowerTxDeduction.setEndDate(this.tdsEndDate.getValue());
 			} catch (WrongValueException we) {
@@ -496,7 +495,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			}
 			getFinanceDetail().getFinScheduleData().setLowerTaxDeductionDetails(ltDetails);
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -511,7 +510,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
 	}
-	
+
 	private void resetLowerTaxDeductionDetail(FinScheduleData aFinScheduleData) {
 		logger.debug(Literal.ENTERING);
 
@@ -550,7 +549,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
 
 	/**
 	 * Set the workFlow Details List to Object
@@ -775,39 +773,34 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		 * this.installmentDate .setValue(changeTDSService.getInstallmentDate(financeMain. getFinReference(),
 		 * DateUtility.getAppDate())); this.recordStatus.setValue(finMaintainInstruction.getRecordStatus());
 		 */
-		/*if (StringUtils.equals(finMaintainInstruction.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
-			this.eventHistory.setVisible(true);
-			this.eventHistoryCaption.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_TDSDetails"));
-			this.currentTDS.setLabel(Labels.getLabel("label_ScheduleDetailDialog_CurrentTDS"));
-			this.newTDS.setLabel(Labels.getLabel("label_ScheduleDetailDialog_NewTDS"));
+		/*
+		 * if (StringUtils.equals(finMaintainInstruction.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)) {
+		 * this.eventHistory.setVisible(true);
+		 * this.eventHistoryCaption.setLabel(Labels.getLabel("listheader_ScheduleDetailDialog_TDSDetails"));
+		 * this.currentTDS.setLabel(Labels.getLabel("label_ScheduleDetailDialog_CurrentTDS"));
+		 * this.newTDS.setLabel(Labels.getLabel("label_ScheduleDetailDialog_NewTDS"));
+		 * 
+		 * Listitem item = new Listitem(); Listcell lc; lc = new
+		 * Listcell(String.valueOf(financeMain.isTDSApplicable())); lc.setParent(item); lc = new
+		 * Listcell(String.valueOf(finMaintainInstruction.istDSApplicable())); lc.setParent(item);
+		 * listBoxEventHistory.appendChild(item); }
+		 */
 
-			Listitem item = new Listitem();
-			Listcell lc;
-			lc = new Listcell(String.valueOf(financeMain.isTDSApplicable()));
-			lc.setParent(item);
-			lc = new Listcell(String.valueOf(finMaintainInstruction.istDSApplicable()));
-			lc.setParent(item);
-			listBoxEventHistory.appendChild(item);
-		}*/
-
-		
 		if (getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails() != null
 				&& getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().size() == 1) {
 			this.previousLTDEndDate = getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().get(0)
 					.getEndDate();
 		}
-		
-		/*Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(),
-				new Comparator<LowerTaxDeduction>() {
-					public int compare(LowerTaxDeduction o1, LowerTaxDeduction o2) {
-						return DateUtility.compare(o1.getEndDate(), o2.getEndDate());
-					}
-				});*/
+
+		/*
+		 * Collections.sort(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails(), new
+		 * Comparator<LowerTaxDeduction>() { public int compare(LowerTaxDeduction o1, LowerTaxDeduction o2) { return
+		 * DateUtility.compare(o1.getEndDate(), o2.getEndDate()); } });
+		 */
 		doFillListbox(getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails());
 		logger.debug("Leaving");
 	}
-	
-	
+
 	private void doFillListbox(List<LowerTaxDeduction> list) {
 		this.listBoxTdsDetails.getItems().clear();
 		if (list == null || list.isEmpty()) {
@@ -822,8 +815,8 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			lc.setParent(item);
 			lc = new Listcell(DateUtility.formatToLongDate(lowerTaxDeduction.getEndDate()));
 			lc.setParent(item);
-			lc = new Listcell(PennantApplicationUtil.amountFormate(lowerTaxDeduction.getLimitAmt(),
-					CurrencyUtil.getFormat("")));
+			lc = new Listcell(
+					PennantApplicationUtil.amountFormate(lowerTaxDeduction.getLimitAmt(), CurrencyUtil.getFormat("")));
 			lc.setParent(item);
 			this.listBoxTdsDetails.appendChild(item);
 
@@ -1024,7 +1017,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		logger.debug(Literal.ENTERING);
 		BigDecimal tdsPerc = BigDecimal.ZERO;
 		if (this.tdsPercentage.getValue() != null) {
-			 tdsPerc = this.tdsPercentage.getValue();
+			tdsPerc = this.tdsPercentage.getValue();
 		}
 		if (tdsPerc.compareTo(this.tdsPercentage.getValue()) != 0) {
 			if (!this.tdsStartDate.isDisabled()) {

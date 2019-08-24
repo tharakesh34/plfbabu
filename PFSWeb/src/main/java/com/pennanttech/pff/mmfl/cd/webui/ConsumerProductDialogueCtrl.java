@@ -441,7 +441,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 								PennantRegularExpressions.REGEX_DESCRIPTION, true));
 			}
 		}
-		
+
 		if (!this.assetDescription.isReadonly()) {
 			this.assetDescription
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_ProductList_AssetDescription.value"),

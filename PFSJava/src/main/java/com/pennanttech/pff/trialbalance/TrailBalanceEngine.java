@@ -460,14 +460,11 @@ public class TrailBalanceEngine extends DataEngineExport {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("FinanceEndDate", getFinanceEndDate());
 		paramMap.addValue("EntityCode", entityCode);
-		
-		
+
 		StringBuilder sql = new StringBuilder();
 
-		 sql = getProfiTLossBalanceQuery();
+		sql = getProfiTLossBalanceQuery();
 
-		
-		
 		try {
 			logger.trace(Literal.SQL + sql.toString());
 			int count = parameterJdbcTemplate.update(sql.toString(), paramMap);
@@ -614,8 +611,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		
-		
+
 		if (Database.ORACLE.equals(App.Database.ORACLE)) {
 			sql.append(" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (");
 			if (stateWiseReport) {
@@ -894,9 +890,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	/**
-	 * Second last row shall be the sum of balances of income (Account type
-	 * group code) minus sum of balances of expense (Account type group code)
-	 * ledgers for the previous financial year
+	 * Second last row shall be the sum of balances of income (Account type group code) minus sum of balances of expense
+	 * (Account type group code) ledgers for the previous financial year
 	 */
 	private void addFinancialSummary(BigDecimal profitLossAmt) {
 		logger.debug(Literal.ENTERING);

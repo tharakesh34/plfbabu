@@ -39,7 +39,8 @@ public class DealerGroupDAOImpl extends SequenceDao<DealerGroup> implements Deal
 		sql.append(" , RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :dealerGroupId, :dealerCode, :dealerCategoryId, :active, :channel");
-		sql.append(" , :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
+		sql.append(
+				" , :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
 		sql.append(" , :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.

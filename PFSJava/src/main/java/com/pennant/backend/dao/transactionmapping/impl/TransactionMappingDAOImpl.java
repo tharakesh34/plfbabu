@@ -36,7 +36,8 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 			sql.append(", Active, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
 			sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 			sql.append(" values");
-			sql.append("(:Id, :posId, :DealerCode, :DealerName, :mid, :tid, :MobileNumber1, :MobileNumber2, :MobileNumber3");
+			sql.append(
+					"(:Id, :posId, :DealerCode, :DealerName, :mid, :tid, :MobileNumber1, :MobileNumber2, :MobileNumber3");
 			sql.append(", :Active, :Version , :LastMntBy, :LastMntOn, :RecordStatus");
 			sql.append(", :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -117,8 +118,10 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 
 		try {
 			StringBuilder sql = new StringBuilder("Select Id");
-			sql.append(", POSId, DealerCode, DealerName, MID, TID, MobileNumber1, MobileNumber2, MobileNumber3, Active");
-			sql.append(", Version, LastMntBy, LastMntOn,RecordStatus,RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+			sql.append(
+					", POSId, DealerCode, DealerName, MID, TID, MobileNumber1, MobileNumber2, MobileNumber3, Active");
+			sql.append(
+					", Version, LastMntBy, LastMntOn,RecordStatus,RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 			sql.append(" from  TransactionMapping");
 			sql.append(type);
 			sql.append(" where Id=:id");
@@ -214,7 +217,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 		mapSqlParameterSource.addValue("MOBILENUMBER3", mobileNumber);
 
 		StringBuilder selectSql = new StringBuilder();
-		
+
 		selectSql.append("SELECT COUNT(*) FROM TransactionMapping");
 		selectSql.append(" WHERE( (MID = :MID AND PosId = :PosId) AND");
 		selectSql.append(

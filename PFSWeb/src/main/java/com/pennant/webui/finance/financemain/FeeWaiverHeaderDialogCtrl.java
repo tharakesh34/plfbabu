@@ -1175,7 +1175,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 
-				if (PennantApplicationUtil.unFormateAmount(detail.getBalanceAmount(), ccyFormatter).compareTo(amount) == -1) {
+				if (PennantApplicationUtil.unFormateAmount(detail.getBalanceAmount(), ccyFormatter)
+						.compareTo(amount) == -1) {
 
 					throw new WrongValueException(currWaivedAmt,
 							Labels.getLabel("label_FeeWaiverHeaderDialog_currWaiverAmountErrorMsg.value"));

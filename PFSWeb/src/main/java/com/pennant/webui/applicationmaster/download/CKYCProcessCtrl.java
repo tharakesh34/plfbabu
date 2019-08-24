@@ -127,7 +127,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 					rowNo = words[1];
 					ckycNo = words[18];
 					if (rowNo != null && ckycNo != null && batchNo != null && ckycNo != null && !ckycNo.isEmpty()) {
-						 ckycService.updateCkycNo(ckycNo, batchNo, rowNo);
+						ckycService.updateCkycNo(ckycNo, batchNo, rowNo);
 					}
 
 				}

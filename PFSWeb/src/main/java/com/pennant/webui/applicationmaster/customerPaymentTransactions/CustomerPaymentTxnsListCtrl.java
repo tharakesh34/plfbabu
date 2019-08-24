@@ -106,7 +106,6 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 	private transient FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private transient CustomerDAO customerDAO;
 
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -190,8 +189,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 		FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(finAdvancePayments.getFinReference());
 		Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
 		financeMain.setLovDescCustCIF(customer.getCustCIF());
-		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments,
-				"_View");
+		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "_View");
 
 		StringBuffer whereCond = new StringBuffer();
 		whereCond.append("  AND  Id = ");

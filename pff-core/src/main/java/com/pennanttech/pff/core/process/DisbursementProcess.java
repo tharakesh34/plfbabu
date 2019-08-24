@@ -4,6 +4,6 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 
 public interface DisbursementProcess {
 	void process(FinAdvancePayments finAdvancePayments);
-	
+
 	void updateStatus(Object... params);
 }

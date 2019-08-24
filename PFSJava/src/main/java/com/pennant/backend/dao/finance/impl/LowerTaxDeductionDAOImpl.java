@@ -60,7 +60,8 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 		sql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
 		sql.append(" RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :Id, :seqno, :finReference, :FinMaintainId, :startDate, :endDate, :percentage, :limitAmt, :version,");
+		sql.append(
+				" :Id, :seqno, :finReference, :FinMaintainId, :startDate, :endDate, :percentage, :limitAmt, :version,");
 		sql.append(" :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId,");
 		sql.append(" :RecordType, :WorkflowId)");
 
@@ -130,8 +131,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 			logger.debug(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
-	
-		
+
 	}
 
 }

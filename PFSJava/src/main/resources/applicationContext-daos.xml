@@ -3423,7 +3423,7 @@
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
 
-		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />		
+		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
 
 	</bean>
 
@@ -11033,8 +11033,8 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	
-	
+
+
 	<!--============ Customer GST Details ============== -->
 	<bean id="customerGstDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerGstDetailDAOImpl"
 		parent="sequenceDao" />
@@ -11061,7 +11061,7 @@
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
-	
+
 	<!-- GSTNValidationService -->
 	<bean id="gstnValidationService" class="com.pennant.backend.service.gstn.validation.impl.GSTNValidationServiceImpl" />
 	<bean id="customerDownloadService" class="com.pennant.backend.service.filedownload.impl.CustomerDownloadServiceImpl" />
@@ -11091,7 +11091,7 @@
 	<!-- Drawing power check validation -->
 	<bean id="drawingPowerService" class="com.pennant.backend.service.drawingpower.DrawingPowerServiceImpl">
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="financeProfitDetailDAO" ref="profitDetailsDAO"/>
+		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 	</bean>
 
 	<!-- CMS -->
@@ -11125,7 +11125,7 @@
 
 	<bean id="customerCardSalesInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl"
 		parent="sequenceDao" />
-		
+
 	<bean id="customerCardSalesInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -11148,8 +11148,8 @@
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
-	</bean>	
-	
+	</bean>
+
 	<bean id="taxHeaderDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -11175,7 +11175,7 @@
 	</bean>
 
 
-	<!-- Credit Review Details -->	
+	<!-- Credit Review Details -->
 	<bean id="creditFinancialService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
@@ -11194,8 +11194,8 @@
 		</property>
 	</bean>
 
-	<bean name="creditFinancialServiceTarget" class="com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditFinancialServiceImpl"/>
+	<bean name="creditFinancialServiceTarget" class="com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditFinancialServiceImpl" />
 
 	<bean id="creditReviewDetailDAO" class="com.pennant.backend.dao.finance.impl.CreditReviewDetailDAOImpl" parent="sequenceDao" />
-	
+
 </beans>

@@ -36,8 +36,6 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-	
-
 	public void onClick$btnStartLedgerFile(ForwardEvent event) throws Exception {
 		if (ledgerDownloadService != null) {
 			ledgerDownloadService.downloadLedgerData();

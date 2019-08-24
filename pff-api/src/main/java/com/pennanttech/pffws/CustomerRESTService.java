@@ -186,7 +186,7 @@ public interface CustomerRESTService {
 	@Path("/customerService/deleteCustomerGstInformation")
 	WSReturnStatus deleteCustomerGstInformation(
 			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
-	
+
 	@POST
 	@Path("/customerService/addCustomerAccountBehaviour")
 	public CustomerChequeInfoDetail addCustomerAccountBehaviour(
@@ -251,7 +251,7 @@ public interface CustomerRESTService {
 	@POST
 	@Path("/customerService/dedupCustomer")
 	public ProspectCustomerDetails getDedupCustomer(ProspectCustomerDetails prospectCustomerDetails);
-	
+
 	@POST
 	@Path("/customerService/addCreditReviewDetails")
 	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData);

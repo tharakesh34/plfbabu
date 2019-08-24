@@ -598,8 +598,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 				//Allow revolving checking
 			} else if (finMain.isAllowRevolving()) {
-				BigDecimal avalLimit = finMain.getFinAssetValue()
-						.subtract(finMain.getFinCurrAssetValue()).add(finMain.getFinRepaymentAmount());
+				BigDecimal avalLimit = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue())
+						.add(finMain.getFinRepaymentAmount());
 				BigDecimal disbursementAmt = PennantApplicationUtil.unFormateAmount(this.disbAmount.getActualValue(),
 						formatter);
 				if (disbursementAmt.compareTo(avalLimit) > 0) {
@@ -613,8 +613,6 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 
-		
-		
 		try {
 			if (isValidComboValue(this.cbSchdMthd, Labels.getLabel("label_AddDisbursementDialog_SchdMthd.value"))
 					&& this.cbSchdMthd.getSelectedIndex() != 0) {

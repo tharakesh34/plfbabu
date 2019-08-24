@@ -397,6 +397,7 @@ public class CollateralDownloadListCtrl extends GFCBaseListCtrl<CollateralSetup>
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	public CollateralDownloadService getCollateralDownloadService() {
 		return collateralDownloadService;
 	}

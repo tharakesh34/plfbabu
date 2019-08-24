@@ -62,10 +62,8 @@ public class PaymentsProcessService extends GenericService<FinanceDetail> {
 			for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
 				this.finAdvancePaymentsService.updateStatus(finAdvancePayment, "");
 				/*
-				 * if (DisbursementConstants.STATUS_REJECTED.equals(
-				 * finAdvancePayment.getStatus())) {
-				 * this.finAdvancePaymentsService.Update(paymentId,
-				 * linkedTranId); }
+				 * if (DisbursementConstants.STATUS_REJECTED.equals( finAdvancePayment.getStatus())) {
+				 * this.finAdvancePaymentsService.Update(paymentId, linkedTranId); }
 				 */
 			}
 		} catch (InterfaceException e) {

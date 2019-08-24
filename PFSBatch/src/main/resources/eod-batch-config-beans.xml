@@ -419,7 +419,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
-	
+
 	<bean id="assignmentDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDAOImpl" parent="sequenceDao" />
 	<bean id="assignmentDealDAO" class="com.pennant.backend.dao.applicationmaster.impl.AssignmentDealDAOImpl" parent="sequenceDao" />
 
@@ -836,10 +836,10 @@
 		<constructor-arg ref="ruleExecutionUtil" />
 		<constructor-arg ref="gstRateDAO" />
 	</bean>
-	
+
 	<!-- GST FinTaxDetails -->
 	<bean id="finTaxDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinTaxDetailsDAOImpl" parent="sequenceDao" />
-	
+
 	<!-- GSTRate -->
 	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl" parent="sequenceDao" />
 

@@ -161,9 +161,9 @@ public class ExtendedFieldDetailsValidation {
 		case ExtendedFieldConstants.FIELDTYPE_TIME:
 			Date dateValue = null;
 			try {
-				SimpleDateFormat sdf=new SimpleDateFormat(PennantConstants.APIDateFormatter);
+				SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
 				sdf.setLenient(false);
-				Date date1=sdf.parse(fieldValue);
+				Date date1 = sdf.parse(fieldValue);
 				dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
 			} catch (Exception e) {
 				String[] valueParm = new String[2];

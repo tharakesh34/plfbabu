@@ -27,13 +27,13 @@
 								<column width="35%" />
 							</columns>
 							<rows>
-							     <row id="rowInstrumentType">
-								     <label value="${c:l('label_ImportPresentmentDetails_InstrumentType.value')}"/>
-								     <hbox>
-								        <space spacing="2px" sclass="mandatory" id="space_instrumentType" />
-						 		        <combobox id="instrumentType" width="350px"/>
-								     </hbox>
-								 </row>
+								<row id="rowInstrumentType">
+									<label value="${c:l('label_ImportPresentmentDetails_InstrumentType.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_instrumentType" />
+										<combobox id="instrumentType" width="350px" />
+									</hbox>
+								</row>
 								<row id="row1">
 									<label value="${c:l('label_ImportPresentmentDetails_Filename.value')}" />
 									<hbox>
@@ -53,7 +53,7 @@
 					<grid id="grid_Default" style="overflow: visible !important" visible="false">
 						<columns>
 							<column width="90%" />
-						</columns> 
+						</columns>
 						<rows>
 							<row id="defaultPanelRow" style="overflow: visible !important" />
 						</rows>

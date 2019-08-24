@@ -117,5 +117,4 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 		this.finMaintainId = finMaintainId;
 	}
 
-	
 }

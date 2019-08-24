@@ -145,7 +145,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Update CUSTCARDSALES");
- 		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set MerchantId = :MerchantId");
 		sql.append(", Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
 		sql.append(", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
@@ -166,7 +166,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 	@Override
 	public int getVersion(long id) {
-		
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("BankId", id);
 
@@ -216,7 +216,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 	public List<CustCardSalesDetails> getCardSalesInfoSubDetailById(long CardSaleId, String type) {
 		CustCardSalesDetails cardMonthSalesInfo = new CustCardSalesDetails();
 		cardMonthSalesInfo.setCardSalesId(CardSaleId);
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT Id, CardSalesId, Month, SalesAmount, NoOfSettlements, TotalNoOfCredits, TotalNoOfDebits");
 		sql.append(", TotalCreditValue, TotalDebitValue, InwardBounce, OutwardBounce");
@@ -240,7 +240,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 	@Override
 	public long save(CustCardSalesDetails custCardMnthSaleInfo, String type) {
 		StringBuilder sql = new StringBuilder();
-		if(custCardMnthSaleInfo.getId() == Long.MIN_VALUE) {
+		if (custCardMnthSaleInfo.getId() == Long.MIN_VALUE) {
 			custCardMnthSaleInfo.setId(getNextValue("SEQCUSTCARDSALESDETAILS"));
 		}
 		sql.append(" Insert Into CUSTCARDSALESDETAILS");
@@ -249,7 +249,8 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(", TotalCreditValue, TotalDebitValue, InwardBounce, OutwardBounce");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(:Id, :CardSalesId, :Month, :SalesAmount, :NoOfSettlements, :TotalNoOfCredits, :TotalNoOfDebits");
+		sql.append(
+				" Values(:Id, :CardSalesId, :Month, :SalesAmount, :NoOfSettlements, :TotalNoOfCredits, :TotalNoOfDebits");
 		sql.append(", :TotalCreditValue, :TotalDebitValue, :InwardBounce, :OutwardBounce");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
@@ -258,7 +259,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custCardMnthSaleInfo);
 
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		
+
 		return custCardMnthSaleInfo.getId();
 	}
 
@@ -301,13 +302,13 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}
-	
+
 	@Override
 	public int getCustomerCardSalesInfoByCustMerchantId(long custId, String merchantId, long Id, String type) {
 		CustCardSales customerCardSalesInfo = new CustCardSales();
 		customerCardSalesInfo.setCustID(custId);
 		customerCardSalesInfo.setMerchantId(merchantId);
-		
+
 		StringBuilder sql = new StringBuilder("SELECT COUNT(*)");
 		sql.append(" From CUSTCARDSALES");
 		sql.append(StringUtils.trimToEmpty(type));

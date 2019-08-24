@@ -184,14 +184,11 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * DedupParams/DedupParams_Temp by using DedupParmDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow
-	 * Configuration. by using DedupParmDAO's update method 3) Audit the record
-	 * in to AuditHeader and AdtDedupParams by using
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table DedupParams/DedupParams_Temp by
+	 * using DedupParmDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using DedupParmDAO's update method 3) Audit the record in to AuditHeader and AdtDedupParams by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
@@ -226,12 +223,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table DedupParams by using DedupParmDAO's delete method with type as
-	 * Blank 3) Audit the record in to AuditHeader and AdtDedupParams by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * DedupParams by using DedupParmDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -256,8 +251,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * getDedupParmById fetch the details by using DedupParmDAO's
-	 * getDedupParmById method.
+	 * getDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method.
 	 * 
 	 * @param id
 	 *            (String)
@@ -271,9 +265,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * getApprovedDedupParmById fetch the details by using DedupParmDAO's
-	 * getDedupParmById method . with parameter id and type as blank. it fetches
-	 * the approved records from the DedupParams.
+	 * getApprovedDedupParmById fetch the details by using DedupParmDAO's getDedupParmById method . with parameter id
+	 * and type as blank. it fetches the approved records from the DedupParams.
 	 * 
 	 * @param id
 	 *            (String)
@@ -665,8 +658,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * This doSetIsNewrecord is used to set new record or not if is new record
-	 * insert otherwise updated.
+	 * This doSetIsNewrecord is used to set new record or not if is new record insert otherwise updated.
 	 */
 	private void doSetIsNewRecord(List<FinanceDedup> excdFinDedupList, List<FinanceDedup> newFinDedupList) {
 
@@ -743,19 +735,15 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getDedupParmDAO().delete with parameters dedupParm,"" b) NEW Add
-	 * new record in to main table by using getDedupParmDAO().save with
-	 * parameters dedupParm,"" c) EDIT Update record in the main table by using
-	 * getDedupParmDAO().update with parameters dedupParm,"" 3) Delete the
-	 * record from the workFlow table by using getDedupParmDAO().delete with
-	 * parameters dedupParm,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow 5) Audit the record in to AuditHeader and AdtDedupParams by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getDedupParmDAO().delete with
+	 * parameters dedupParm,"" b) NEW Add new record in to main table by using getDedupParmDAO().save with parameters
+	 * dedupParm,"" c) EDIT Update record in the main table by using getDedupParmDAO().update with parameters
+	 * dedupParm,"" 3) Delete the record from the workFlow table by using getDedupParmDAO().delete with parameters
+	 * dedupParm,"_Temp" 4) Audit the record in to AuditHeader and AdtDedupParams by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtDedupParams by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -812,13 +800,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getDedupParmDAO().delete with parameters
-	 * dedupParm,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getDedupParmDAO().delete with parameters dedupParm,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtDedupParams by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -845,12 +830,10 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation. 5) for any mismatch conditions Fetch the error details from
-	 * getDedupParmDAO().getErrorDetail with Error ID and language as
-	 * parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
+	 * for any mismatch conditions Fetch the error details from getDedupParmDAO().getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -897,15 +880,15 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				}
 			} else { // with work flow
 				if (dedupParm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
-					// is new
+																							// is new
 					if (befDedupParm != null || tempDedupParm != null) { // if
-																			// records
+																				// records
 																			// already
 																			// exists
 																			// in
-						// the main table
+																			// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -938,7 +921,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 			} else {
 
 				if (tempDedupParm == null) { // if records not exists in the
-												// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -1104,8 +1087,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Preparation of BlackList Customers Data from Already
-	 * overridden Data in case of rules Deletion from Process editor
+	 * Method for Preparation of BlackList Customers Data from Already overridden Data in case of rules Deletion from
+	 * Process editor
 	 * 
 	 * @param overrideBlackList
 	 * @return
@@ -1422,8 +1405,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Preparation of PoliceCase Customers Data from Already
-	 * overridden Data in case of rules Deletion from Process editor
+	 * Method for Preparation of PoliceCase Customers Data from Already overridden Data in case of rules Deletion from
+	 * Process editor
 	 * 
 	 * @param overridePoliceCaseList
 	 * @return
@@ -1510,8 +1493,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	/**
-	 * Method for Resetting Override condition based on Process Editor
-	 * Configuration
+	 * Method for Resetting Override condition based on Process Editor Configuration
 	 * 
 	 * @param policeCase
 	 * @param queryCodeList
@@ -1567,7 +1549,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 				throw new InterfaceException("9999", Labels.getLabel("Dedupe_other_system_Process_Error"));
 			} else {
 				throw new InterfaceException("9999", e.getMessage());
-			}	
+			}
 		}
 
 		List<CustomerDedup> customerDedup = getDedupData(response, details);
@@ -1583,7 +1565,7 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 
 	private List<CustomerDedup> getDedupData(DedupCustomerResponse response, CustomerDetails details) {
 		logger.debug("Entering");
-		
+
 		List<CustomerDedup> custDedupList = new ArrayList<>();
 		if (response != null && response.getDedupCustomerDetails() != null) {
 			logger.debug("Response dedup list :" + response.getDedupCustomerDetails().size());

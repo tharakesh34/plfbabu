@@ -8,7 +8,7 @@ public class InterfaceConstants {
 	public static final String STATUS_PROGRESS = "PROGRESS";
 	public static final String STATUS_FAILED = "FAILED";
 	public static final String STATUS_SUCCESS = "SUCCESS";
-	
+
 	public static final String INTFACE_ERROR_CD = "99999";
 	public static final boolean INDIAN_IMPLEMENTATION = true;
 	public static final boolean NIYOGIN = false;
@@ -143,7 +143,7 @@ public class InterfaceConstants {
 
 	public static final String PANNUMBER = "PANNUMBER";
 	public static final String ALLOW_PRESENTMENT_DOWNLOAD = "ALLOW_PRESENTMENT_DOWNLOAD";
-	
+
 	public static final String CustCtgCode_I = "I";
 	public static final String CustCtgCode_C = "C";
 }

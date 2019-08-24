@@ -267,7 +267,7 @@ public class GSTRateDAOImpl extends SequenceDao<GSTRate> implements GSTRateDAO {
 		}
 
 		logger.debug(Literal.LEAVING);
-		
+
 		return exists;
 	}
 

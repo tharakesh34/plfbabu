@@ -18,9 +18,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class CacheStats implements Serializable{
+public class CacheStats implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private String clusterName;
 	private int clusterSize = 0;
 	private String clusterNode;

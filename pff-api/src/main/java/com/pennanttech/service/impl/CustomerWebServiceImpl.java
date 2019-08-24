@@ -112,6 +112,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 
 	private CreditApplicationReviewService creditApplicationReviewService;
+
 	/**
 	 * Method for create customer in PLF system.
 	 * 
@@ -1527,7 +1528,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		AuditHeader auditHeader = getAuditHeader(customerBankInfoDetail.getCustomerBankInfo(),
 				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),PennantConstants.RECORD_TYPE_NEW);
+		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),
+				PennantConstants.RECORD_TYPE_NEW);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1584,7 +1586,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 				PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),PennantConstants.RECORD_TYPE_UPD);
+		AuditDetail auditDetail = customerBankInfoService.doValidations(customerBankInfoDetail.getCustomerBankInfo(),
+				PennantConstants.RECORD_TYPE_UPD);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -1692,6 +1695,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Method for create CustomerGstInfoDetail in PLF system.
 	 * 
@@ -1749,6 +1753,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 
 	}
+
 	/**
 	 * Method for update CustomerGstInfoDetail in PLF system.
 	 * 
@@ -1844,6 +1849,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		return response;
 	}
+
 	/**
 	 * delete CustomerGstInfoDetail.
 	 * 
@@ -1890,7 +1896,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
-	
 
 	/**
 	 * Method for create CustomerAccountBehaviour in PLF system.
@@ -2602,6 +2607,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
+
 	/**
 	 * add CreditReviewDetails.
 	 * 
@@ -2611,88 +2617,88 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
-		Customer customer=null;
-		if(StringUtils.isBlank(finCreditReviewDetailsData.getCif())){
+		Customer customer = null;
+		if (StringUtils.isBlank(finCreditReviewDetailsData.getCif())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Cif";
-			return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		} else {
-			 customer = customerDetailsService.getCustomerByCIF(finCreditReviewDetailsData.getCif());
-			
+			customer = customerDetailsService.getCustomerByCIF(finCreditReviewDetailsData.getCif());
+
 			if (customer == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finCreditReviewDetailsData.getCif();
-				APIErrorHandlerService.getFailedStatus("90101", valueParm);			
+				APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
 		}
-		for(FinCreditReviewDetails detail:finCreditReviewDetailsData.getFinCreditReviewDetails()){
-			if(customer!=null){
-			detail.setCreditRevCode(customer.getCustCtgCode());
-			detail.setCustomerId(customer.getCustID());
+		for (FinCreditReviewDetails detail : finCreditReviewDetailsData.getFinCreditReviewDetails()) {
+			if (customer != null) {
+				detail.setCreditRevCode(customer.getCustCtgCode());
+				detail.setCustomerId(customer.getCustID());
 			}
-			if(StringUtils.isBlank(detail.getCurrency())){
+			if (StringUtils.isBlank(detail.getCurrency())) {
 				detail.setCurrency("INR");
 			}
-			if(StringUtils.isBlank(detail.getAuditYear())){
+			if (StringUtils.isBlank(detail.getAuditYear())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Audit Year";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(detail.getBankName())){
+			if (StringUtils.isBlank(detail.getBankName())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Bank Name";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(detail.getAuditors())){
+			if (StringUtils.isBlank(detail.getAuditors())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Auditors";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(detail.getLocation())){
+			if (StringUtils.isBlank(detail.getLocation())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Location";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(String.valueOf(detail.getAuditedDate()))){
+			if (StringUtils.isBlank(String.valueOf(detail.getAuditedDate()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Audited Date";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(String.valueOf(detail.isQualified()))){
+			if (StringUtils.isBlank(String.valueOf(detail.isQualified()))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Qualified";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
-			if(StringUtils.isBlank(detail.getAuditType())){
+			if (StringUtils.isBlank(detail.getAuditType())) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "AuditType";
-				return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			} else if (!StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_AUDITED)
 					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_UNAUDITED)
 					&& !StringUtils.equals(detail.getAuditType(), FacilityConstants.CREDITREVIEW_MNGRACNTS)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "AuditType";
 				valueParm[1] = FacilityConstants.CREDITREVIEW_AUDITED + "," + FacilityConstants.CREDITREVIEW_UNAUDITED
-						+ "," + FacilityConstants.CREDITREVIEW_MNGRACNTS ;
+						+ "," + FacilityConstants.CREDITREVIEW_MNGRACNTS;
 				return APIErrorHandlerService.getFailedStatus("90281", valueParm);
 
 			}
-			for(FinCreditReviewSummary summaryDetail:detail.getCreditReviewSummaryEntries()){
-				if(StringUtils.isBlank(String.valueOf(summaryDetail.getSubCategoryCode()))){
+			for (FinCreditReviewSummary summaryDetail : detail.getCreditReviewSummaryEntries()) {
+				if (StringUtils.isBlank(String.valueOf(summaryDetail.getSubCategoryCode()))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "SubCategory Code";
-					return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				}
-				if(StringUtils.isBlank(String.valueOf(summaryDetail.getItemValue()))){
+				if (StringUtils.isBlank(String.valueOf(summaryDetail.getItemValue()))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "Item Value";
-					return APIErrorHandlerService.getFailedStatus("90502", valueParm);	
+					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				}
 			}
-			
+
 		}
 		customerController.doAddCreditReviewDetails(finCreditReviewDetailsData);
-		
+
 		logger.debug(Literal.LEAVING);
 
 		return null;
@@ -2807,9 +2813,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
-		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()),
-				String.valueOf(aCustomerGST.getCustId()), null, null, auditDetail,
-				aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
+				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -3043,10 +3048,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setCustomerCategoryDAO(CustomerCategoryDAO customerCategoryDAO) {
 		this.customerCategoryDAO = customerCategoryDAO;
 	}
+
 	@Autowired
 	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
 		this.creditApplicationReviewService = creditApplicationReviewService;
 	}
+
 	@Autowired
 	public void setCustomerGstService(CustomerGstService customerGstService) {
 		this.customerGstService = customerGstService;

@@ -28,11 +28,11 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 
 		return excludeFields;
 	}
-	
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
-	
+
 	public boolean isNewRecord() {
 		return newRecord;
 	}
@@ -40,7 +40,7 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
 	}
-	
+
 	public long getId() {
 		return id;
 	}
@@ -88,7 +88,7 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getLovValue() {
 		return lovValue;
 	}

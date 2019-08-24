@@ -54,7 +54,7 @@ public interface CreateFinanceSoapService {
 	@WebResult(name = "finance")
 	WSReturnStatus moveLoanStage(@WebParam(name = "finance") MoveLoanStageRequest moveLoanStageRequest)
 			throws ServiceException;
-	
+
 	@WebResult(name = "finance")
 	List<LoanStatus> getLoansStatus(@WebParam(name = "finance") LoanStatusDetails loanStatusDetails)
 			throws ServiceException;

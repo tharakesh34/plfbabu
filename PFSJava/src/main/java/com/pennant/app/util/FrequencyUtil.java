@@ -136,8 +136,9 @@ public class FrequencyUtil implements Serializable {
 	public static ArrayList<ValueLabel> getFrequency() {
 		ArrayList<ValueLabel> frequencyCode = new ArrayList<ValueLabel>();
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_YEARLY, Labels.getLabel("label_Select_Yearly")));
-		
-		String brInrtRvwFrqDayValReq = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ);
+
+		String brInrtRvwFrqDayValReq = SysParamUtil
+				.getValueAsString(SMTParameterConstants.ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ);
 		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
 			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_2YEARLY, Labels.getLabel("label_Select_2Yearly")));
 			frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_3YEARLY, Labels.getLabel("label_Select_3Yearly")));
@@ -154,7 +155,7 @@ public class FrequencyUtil implements Serializable {
 		frequencyCode.add(new ValueLabel(FrequencyCodeTypes.FRQ_DAILY, Labels.getLabel("label_Select_Daily")));
 		return frequencyCode;
 	}
-	
+
 	public static String getRepayFrequencyLabel(String frequency) {
 		String repayFrequency = "";
 
@@ -840,13 +841,14 @@ public class FrequencyUtil implements Serializable {
 		int count = 1;
 		FrequencyDetails frequencyDetails;
 		Date startDate = baseDate;
-		do{
-			frequencyDetails = getNextDate(frequency, terms, startDate, handlerType, (count == 1 ? includeBaseDate : false));
+		do {
+			frequencyDetails = getNextDate(frequency, terms, startDate, handlerType,
+					(count == 1 ? includeBaseDate : false));
 			days = DateUtility.getDaysBetween(baseDate, frequencyDetails.getNextFrequencyDate());
 			startDate = frequencyDetails.getNextFrequencyDate();
 			count = count + 1;
-		}while (days <= requestedMinDays && requestedMinDays != 0); 
-		
+		} while (days <= requestedMinDays && requestedMinDays != 0);
+
 		return frequencyDetails;
 	}
 

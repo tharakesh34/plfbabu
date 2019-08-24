@@ -247,7 +247,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
+			if (taxHeader != null && (finFeeDetail.isNewRecord()
+					|| (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
@@ -525,7 +526,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
+			if (taxHeader != null && (finFeeDetail.isNewRecord()
+					|| (!finFeeDetail.isNewRecord() && finFeeDetail.getTaxHeaderId() > 0))) {
 				taxHeader.setRecordType(finFeeDetail.getRecordType());
 				taxHeader.setNewRecord(finFeeDetail.isNew());
 				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());

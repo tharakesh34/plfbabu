@@ -191,9 +191,8 @@
 												<hbox>
 													<space id="space_CollRef" spacing="2px" />
 													<textbox id="collateralRef" width="170px" readonly="true" />
-													<button id="btnSearchCommitmentRef"
-															tooltiptext="${c:l('label_FinanceMainDialog_CommitRef.value')}" image="/images/icons/more.png"
-															autodisable="btnSearchCommitmentRef" />
+													<button id="btnSearchCommitmentRef" tooltiptext="${c:l('label_FinanceMainDialog_CommitRef.value')}"
+														image="/images/icons/more.png" autodisable="btnSearchCommitmentRef" />
 												</hbox>
 												<label id="label_FinanceMainDialog_DepriFrq" value="${c:l('label_FinanceMainDialog_DepriFrq.value')}" />
 												<frequencybox id="depreciationFrq" />
@@ -356,16 +355,16 @@
 												</hbox>
 											</row>
 											<row id="row_Van" visible="false">
-													<label	id="label_FinanceMainDialog_VanReq" value="${c:l('label_FinanceMainDialog_VanReq.value')}" />
-													<hbox>
-														<checkbox id="vanReq" disabled="true"/>
-													</hbox>
-													<label id="label_FinanceMainDialog_VanCode" value="${c:l('label_FinanceMainDialog_VanCode.value')}" />
-													<hbox>
-														<space  spacing="2px" />
-														<uppercasebox id="vanCode" width="170px" />
-													</hbox>
-												</row>
+												<label id="label_FinanceMainDialog_VanReq" value="${c:l('label_FinanceMainDialog_VanReq.value')}" />
+												<hbox>
+													<checkbox id="vanReq" disabled="true" />
+												</hbox>
+												<label id="label_FinanceMainDialog_VanCode" value="${c:l('label_FinanceMainDialog_VanCode.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<uppercasebox id="vanCode" width="170px" />
+												</hbox>
+											</row>
 										</rows>
 									</grid>
 								</groupbox>

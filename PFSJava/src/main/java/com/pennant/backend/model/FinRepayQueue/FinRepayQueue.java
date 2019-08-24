@@ -78,7 +78,7 @@ public class FinRepayQueue {
 	private BigDecimal paidPenaltySGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyUGST = BigDecimal.ZERO;
 	private BigDecimal paidPenaltyIGST = BigDecimal.ZERO;
-	
+
 	//Waiver GST
 	private BigDecimal penaltyWaiverCGST = BigDecimal.ZERO;
 	private BigDecimal penaltyWaiverSGST = BigDecimal.ZERO;

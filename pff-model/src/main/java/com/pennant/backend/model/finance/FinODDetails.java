@@ -111,11 +111,11 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal payableAmount = BigDecimal.ZERO;
 
 	private String oDRuleCode;
-	
+
 	private boolean lpCpz = false;
 	private BigDecimal lpCpzAmount = BigDecimal.ZERO;
 	private BigDecimal lpCurCpzBal = BigDecimal.ZERO;
-	
+
 	//OD Penalty Capitalization
 
 	/*

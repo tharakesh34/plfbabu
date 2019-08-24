@@ -156,7 +156,8 @@ public class BaseRateCodeDAOImpl extends BasicDao<BaseRateCode> implements BaseR
 		sql.append(" (BRType, BRTypeDesc, BRTypeIsActive, BRRepayRvwFrq,");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:BRType, :BRTypeDesc, :BRTypeIsActive, :BRRepayRvwFrq, :Version , :LastMntBy, :LastMntOn,:RecordStatus,");
+		sql.append(
+				" values(:BRType, :BRTypeDesc, :BRTypeIsActive, :BRRepayRvwFrq, :Version , :LastMntBy, :LastMntOn,:RecordStatus,");
 		sql.append(" :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Execute the SQL, binding the arguments.

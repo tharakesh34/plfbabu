@@ -118,7 +118,7 @@ public class RepayScheduleDetail implements Serializable {
 	private long repayID = 0;// Only setting from Repay Header
 	private int repaySchID = 0;
 	private Date valueDate;
-	
+
 	// Profit waiver
 	private long waiverId;
 	private long taxHeaderId = 0;

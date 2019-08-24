@@ -69,8 +69,7 @@
 								</hbox>
 							</row>
 							<row>
-								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq"
-									value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
+								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq" value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
 								<frequencybox id="bRRepayRvwFrq" />
 							</row>
 							<row>

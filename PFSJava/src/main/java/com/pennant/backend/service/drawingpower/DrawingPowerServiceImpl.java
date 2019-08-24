@@ -53,8 +53,8 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		BigDecimal availableLimit = BigDecimal.ZERO;
 		if (financeType.isAllowRevolving()) {
-			availableLimit = financeMain.getFinAssetValue()
-					.subtract(financeMain.getFinCurrAssetValue()).add(financeMain.getFinRepaymentAmount());
+			availableLimit = financeMain.getFinAssetValue().subtract(financeMain.getFinCurrAssetValue())
+					.add(financeMain.getFinRepaymentAmount());
 
 			logger.debug("Available Amt " + disbAmt);
 			if (disbAmt.compareTo(availableLimit) > 0) {
@@ -68,18 +68,18 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	@Override
 	public String doDrawingPowerCheck(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
 
 		if (!financeType.isAlwSanctionAmt()) {
-			
+
 			logger.debug("AlwSanctionAmt " + 0);
 			return null;
 		}
 
 		BigDecimal checkingAmt = financeMain.getFinAssetValue();
-		
+
 		logger.debug("checkingAmt " + checkingAmt);
 		BigDecimal totOutStanding = BigDecimal.ZERO;
 
@@ -120,14 +120,14 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		}
 
 		logger.debug("totOutStanding " + totOutStanding);
-		
+
 		if (financeMain.isAllowDrawingPower()) {
 			if (drawingPower != null) {
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
 				if ((drawingPowerAmt.compareTo(BigDecimal.ZERO) > 0) && (checkingAmt.compareTo(drawingPowerAmt)) > 0) {
 					checkingAmt = drawingPowerAmt;
 				}
-				
+
 				logger.debug("drawingPowerAmt " + drawingPowerAmt);
 			}
 		}
@@ -141,7 +141,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			}
 			return msg;
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

@@ -124,7 +124,7 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 						customerGSTDetails.setHeaderId(customerGST.getId());
 						getCustomerGstDetailDAO().save(customerGSTDetails, "");
 					}
-			
+
 				}
 
 			} else {
@@ -179,10 +179,8 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -199,10 +197,9 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getAcademicDAO().getErrorDetail with Error ID and language as parameters.
-	 * if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getAcademicDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -214,7 +211,6 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 		// Get the model object.
 		CustomerGST customerGST = (CustomerGST) auditDetail.getModelData();
 
-		
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug("Leaving");

@@ -536,7 +536,7 @@ public class GSTRateDialogCtrl extends GFCBaseCtrl<GSTRate> {
 			this.label_CalcOn.setVisible(true);
 			this.space_CalcOn.setVisible(true);
 		}
-		
+
 	}
 
 	/**

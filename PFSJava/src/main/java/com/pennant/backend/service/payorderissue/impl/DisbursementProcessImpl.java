@@ -93,12 +93,9 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 				}
 
 				/*
-				 * Bug On 19-08-2017 with the mail subject Issue in Posting
-				 * after Disbursement cancellation AEEvent aeEvent = new
-				 * AEEvent();
-				 * aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
-				 * aeEvent.setReturnDataSet(list); aeEvent =
-				 * postingsPreparationUtil.processPostings(aeEvent);
+				 * Bug On 19-08-2017 with the mail subject Issue in Posting after Disbursement cancellation AEEvent
+				 * aeEvent = new AEEvent(); aeEvent.setLinkedTranId(disbursement.getLinkedTranId());
+				 * aeEvent.setReturnDataSet(list); aeEvent = postingsPreparationUtil.processPostings(aeEvent);
 				 */
 
 				disbursement.setStatus(DisbursementConstants.STATUS_REJECTED);
@@ -140,13 +137,13 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	@Override
 	public void updateStatus(Object... params) {
 		logger.debug(Literal.ENTERING);
-		
+
 		String channel = (String) params[0];
 		long paymentId = (Long) params[1];
 		String status = (String) params[2];
 		String rejectReason = (String) params[3];
 		String tranReference = (String) params[4];
-		
+
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setPaymentId(paymentId);
 		finAdvancePayments = this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");

@@ -160,7 +160,7 @@
 													</hlayout>
 												</row>
 												<row id="row3">
-													<label id="label_OpenAccount" value="${c:l('label_CommitmentDialog_OpenAccount.value')}" visible="false"/>
+													<label id="label_OpenAccount" value="${c:l('label_CommitmentDialog_OpenAccount.value')}" visible="false" />
 													<hlayout id="hlayout_OpenAccount" spacing="2px" visible="false">
 														<space id="space_OpenAccount" spacing="2px" />
 														<checkbox id="openAccount" />

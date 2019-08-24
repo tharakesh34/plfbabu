@@ -122,7 +122,6 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	protected Datebox nextReviewDate;
 	protected Textbox depositorCif;
 
-
 	protected Listbox sortOperator_CollateralRef;
 	protected Listbox sortOperator_DepositorCif;
 	protected Listbox sortOperator_CollateralType;

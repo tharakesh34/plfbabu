@@ -249,7 +249,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				checkList = getFinanceDetail().getCheckList();
 				moduleCheckList = getFinanceDetail().getFinanceCheckList();
 			}
-			
+
 			prevAnswersMap = doGetPreviowsAnswers(moduleCheckList);
 			prevAnswersMap = doGetPreviowsAnswers(moduleCheckList);
 			doWriteBeanToComponents(checkList, moduleCheckList, true);

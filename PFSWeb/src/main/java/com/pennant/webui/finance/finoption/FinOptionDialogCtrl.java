@@ -101,7 +101,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private boolean isFinOptionNew = false;
 	private boolean newCustomer;
 	private boolean fromLoan;
-	private FinOption finOption; 
+	private FinOption finOption;
 
 	public FinOptionDialogCtrl() {
 		super();
@@ -196,7 +196,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 			logger.error(Literal.EXCEPTION);
 		}
 	}
-	
+
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finOption);
 	}
@@ -616,7 +616,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		if (currentDate.equalsIgnoreCase("8") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addYears(option, 8));
 		}
-		
+
 		if (currentDate.equalsIgnoreCase("B") && !optExcerciseFlag) {
 			nextOption.setValue(DateUtil.addYears(option, 2));
 		}
@@ -1078,14 +1078,14 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		if (isWorkFlowEnabled()) {
-			
+
 			//Notes button
 			if (!fromLoan) {
 				if (StringUtils.isNotBlank(this.finMaintainInstruction.getRecordType())) {
 					this.btnNotes.setVisible(true);
 				}
 			}
-			
+
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
 			}
@@ -1096,9 +1096,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				if (finOption.isNewRecord()) {
 					this.btnCtrl.setBtnStatus_Edit();
 					btnCancel.setVisible(false);
-				} 
+				}
 			}
-			
+
 			this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
 		}
 		logger.debug(Literal.LEAVING);
@@ -1416,6 +1416,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	protected String getReference() {
 		return String.valueOf(financeDetail.getFinScheduleData().getFinReference());
 	}
+
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}

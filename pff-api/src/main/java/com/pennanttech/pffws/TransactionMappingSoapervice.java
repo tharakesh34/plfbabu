@@ -9,8 +9,12 @@ import com.pennanttech.ws.model.transactionMapping.TransactionMappingRequest;
 
 @WebService
 public interface TransactionMappingSoapervice {
-	public WSReturnStatus doAuthentication(@WebParam(name = "transactionMappingRequest") TransactionMappingRequest transactionMappingRequest) throws ServiceException;
-	
-	public WSReturnStatus doMobileAuthentication(@WebParam(name = "transactionMappingRequest") TransactionMappingRequest transactionMappingRequest) throws ServiceException;
-	
+	public WSReturnStatus doAuthentication(
+			@WebParam(name = "transactionMappingRequest") TransactionMappingRequest transactionMappingRequest)
+			throws ServiceException;
+
+	public WSReturnStatus doMobileAuthentication(
+			@WebParam(name = "transactionMappingRequest") TransactionMappingRequest transactionMappingRequest)
+			throws ServiceException;
+
 }

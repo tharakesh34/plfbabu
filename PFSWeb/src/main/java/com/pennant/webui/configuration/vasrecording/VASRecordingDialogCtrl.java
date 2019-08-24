@@ -777,15 +777,15 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
 					getFinVasRecordingDialogCtrl().doFillVasRecordings(this.vasRecordings);
 
-					boolean allowTomodify= false;
-					if(aVASRecording.isNew()){
-						if(aVASRecording.getFee().compareTo(BigDecimal.ZERO) > 0){
+					boolean allowTomodify = false;
+					if (aVASRecording.isNew()) {
+						if (aVASRecording.getFee().compareTo(BigDecimal.ZERO) > 0) {
 							allowTomodify = true;
 						}
 					} else {
 						allowTomodify = true;
 					}
-					
+
 					if (allowTomodify) {
 						FinFeeDetail finFeeDetail = new FinFeeDetail();
 						finFeeDetail.setVasReference(aVASRecording.getVasReference());

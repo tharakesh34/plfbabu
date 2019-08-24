@@ -86,12 +86,9 @@ import com.pennanttech.pennapps.jdbc.search.SearchResult;
 
 /**
  * This class creates a modal window as a dialog in which the user <br>
- * can search and select a branch object. By onClosing this box <b>returns</b>
- * an object or null. <br>
- * The object can returned by selecting and clicking the OK button or by
- * DoubleClicking on an item from the list.<br>
- * Further the count of results can limited by manipulating the value of a table
- * field for the sql where clause.<br>
+ * can search and select a branch object. By onClosing this box <b>returns</b> an object or null. <br>
+ * The object can returned by selecting and clicking the OK button or by DoubleClicking on an item from the list.<br>
+ * Further the count of results can limited by manipulating the value of a table field for the sql where clause.<br>
  */
 public class ExtendedMultipleSearchListBox extends Window implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -150,8 +147,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	/**
-	 * Private Constructor. So it can only be created with the static show()
-	 * method.<br>
+	 * Private Constructor. So it can only be created with the static show() method.<br>
 	 * 
 	 * @param parent
 	 */
@@ -278,8 +274,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 		}
 		/**
 		 * init the model.<br>
-		 * The ResultObject is a helper class that holds the generic list and
-		 * the totalRecord count as int value.
+		 * The ResultObject is a helper class that holds the generic list and the totalRecord count as int value.
 		 */
 
 		logger.debug("Before fetch jdbc Search");
@@ -340,8 +335,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	 * "onPaging" EventListener for the paging component. <br>
 	 * <br>
 	 * Calculates the next page by currentPage and pageSize values. <br>
-	 * Calls the method for refreshing the data with the new rowStart and
-	 * pageSize. <br>
+	 * Calls the method for refreshing the data with the new rowStart and pageSize. <br>
 	 */
 	public void onPaging$paging(ForwardEvent event) throws Exception {
 
@@ -393,8 +387,7 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 	}
 
 	/**
-	 * Refreshes the list by calling the DAO methode with the modified search
-	 * object. <br>
+	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
 	 * @param so
 	 *            SearchObject, holds the entity and properties to search. <br>
@@ -418,8 +411,8 @@ public class ExtendedMultipleSearchListBox extends Window implements Serializabl
 				if (object instanceof String) {
 					filters[i] = new Filter(fieldString[i], "%" + object + "%", Filter.OP_LIKE);
 				} else {
-						filters[i] = new Filter(fieldString[i], object, Filter.OP_EQUAL);
-					
+					filters[i] = new Filter(fieldString[i], object, Filter.OP_EQUAL);
+
 				}
 
 			}

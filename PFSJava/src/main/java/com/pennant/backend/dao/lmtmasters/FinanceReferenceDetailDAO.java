@@ -105,6 +105,6 @@ public interface FinanceReferenceDetailDAO {
 	List<Long> getRefIdListByRefType(String financeType, String finEvent, String roleCode, int finRefType);
 
 	boolean resendNotification(String finType, String finEvent, String role, List<String> templateTyeList);
-	
-	List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType,String stage,String type );
+
+	List<FinanceReferenceDetail> getFinanceRefListByFinType(String finType, String stage, String type);
 }

@@ -651,7 +651,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		} else {
 			onChangeInstallmentList();
 		}
-		
+
 		this.recordStatus.setValue(liability.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -1705,7 +1705,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 			if ((this.finDate.getValue() != null && !this.finDate.getValue().equals(""))) {
 				listBoxInstallmentDetails.getItems().clear();
 				int noOfmonths = 0;
-				if(this.noOfInstallmentMonths.getValue() != null) {
+				if (this.noOfInstallmentMonths.getValue() != null) {
 					noOfmonths = this.noOfInstallmentMonths.getValue() == 0 ? this.totalTenure.getValue()
 							: this.noOfInstallmentMonths.getValue();
 				}
@@ -1726,7 +1726,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 				}
 
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 	}
@@ -1786,8 +1786,7 @@ public class CustomerExtLiabilityDialogCtrl extends GFCBaseCtrl<CustomerExtLiabi
 		List<ExtLiabilityPaymentdetails> data = new ArrayList<>();
 		for (Listitem listitem : listBoxInstallmentDetails.getItems()) {
 
-			ExtLiabilityPaymentdetails installmentDetails = (ExtLiabilityPaymentdetails) listitem
-					.getAttribute("data");
+			ExtLiabilityPaymentdetails installmentDetails = (ExtLiabilityPaymentdetails) listitem.getAttribute("data");
 
 			Checkbox installmentCleared = (Checkbox) getComponent(listitem, "installmentCheck");
 			installmentDetails.setInstallmentCleared(installmentCleared.isChecked());

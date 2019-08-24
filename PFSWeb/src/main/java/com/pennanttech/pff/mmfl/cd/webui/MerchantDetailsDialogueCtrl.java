@@ -433,7 +433,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			merchantDetails.setChannel(this.txtchannel.getValue());
 		} catch (WrongValueException we) {
@@ -646,12 +646,12 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 			this.pincode.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_MerchantDetails_Pincode.value"), null, true, true));
 		}
-		
+
 		if (!this.posId.isReadonly()) {
 			this.posId.setConstraint(
 					new PTNumberValidator(Labels.getLabel("label_MerchantDetails_POSId.value"), true, false));
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

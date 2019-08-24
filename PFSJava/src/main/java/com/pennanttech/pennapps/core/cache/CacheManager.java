@@ -87,20 +87,20 @@ public class CacheManager {
 		} else {
 			throw new FactoryException("CacheManager", new Exception("Cache manager already started"));
 		}
-		
+
 		log.trace(Literal.LEAVING);
 	}
 
 	public void stop() {
 		log.trace(Literal.ENTERING);
-		
+
 		if (enabled) {
 			cacheManager.stop();
 			enabled = false;
 			caches.clear();
 			cacheManager = null;
 		}
-		
+
 		log.trace(Literal.LEAVING);
 	}
 
@@ -129,12 +129,11 @@ public class CacheManager {
 
 	public static void verifyCache() {
 		log.trace(Literal.ENTERING);
-		
+
 		if (!enabled) {
 			activated = false;
 			return;
 		}
-		
 
 		if (cacheManager.getClusterSize() == nodes) {
 			if (!activated) {
@@ -154,7 +153,6 @@ public class CacheManager {
 			activated = false;
 		}
 
-	
 		log.trace(Literal.LEAVING);
 	}
 

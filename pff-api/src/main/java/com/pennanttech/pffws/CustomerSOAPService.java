@@ -176,6 +176,7 @@ public interface CustomerSOAPService {
 	@WebResult(name = "customer")
 	public ProspectCustomerDetails getDedupCustomer(
 			@WebParam(name = "customerDetails") ProspectCustomerDetails prospectCustomerDetails);
+
 	@WebResult(name = "customer")
 	public WSReturnStatus addCreditReviewDetails(
 			@WebParam(name = "customerDetails") FinCreditReviewDetailsData finCreditReviewDetailsData);

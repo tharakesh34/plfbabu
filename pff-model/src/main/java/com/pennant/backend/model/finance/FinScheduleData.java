@@ -191,7 +191,7 @@ public class FinScheduleData implements Serializable {
 
 	//GST Tax Map
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
-	
+
 	private List<LowerTaxDeduction> lowerTaxDeductionDetails = new ArrayList<>();
 
 	@XmlElement(name = "hostReference")

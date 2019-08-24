@@ -12,5 +12,6 @@ public interface GSTInvoiceTxnService {
 	void gstInvoicePreparation(long linkedTranId, FinanceDetail financeDetail, List<FinFeeDetail> finFeeDetailsList,
 			List<ManualAdviseMovements> movements, String invoiceType, boolean origination, boolean isWaiver);
 
-	void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout, String invoiceType);
+	void createProfitScheduleInovice(long linkedTranId, FinanceDetail financeDetail, BigDecimal invoiceAmout,
+			String invoiceType);
 }

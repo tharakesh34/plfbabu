@@ -11,76 +11,76 @@
 
 			<borderlayout id="borderlayoutFinPostings">
 				<center border="none" id="divCenter">
-				<div style="border:none;">
-					<groupbox id="finBasicdetails" zclass="null" />
-					<vlayout width="100%">
-						<grid id="grid_postings" sclass="GridLayoutNoBorder" fixedLayout="true"
-							style="padding-left:20px;padding-bottom:5px;padding-top:0px;">
-							<columns>
-								<column width="190px" />
-								<column />
-								<column width="190px" />
-								<column />
-							</columns>
-							<rows>
-								<row visible="true">
-									<label id="label_showAccruals" value="${c:l('label_PostingsEnquiryDialog_ShowAccrual.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="showAccrual" checked="false" disabled="false" />
-									</hbox>
-									<label id="label_showZeroCals" value="${c:l('label_PostingsEnquiryDialog_ShowZeroCal.value')}" />
-									<hbox>
-										<space spacing="2px" />
-										<checkbox id="showZeroCals" checked="false" disabled="false" />
-									</hbox>
-								</row>
-								<row>
-									<label id="label_PostingsEnquiryDialog_PostingGroup" value="${c:l('label_PostingsEnquiryDialog_PostingGroup')}" />
-									<hbox>
-										<combobox id="postingGroup" width="195px" />
-									</hbox>
-								</row>
-								<row spans="2">
-									<label value=" " />
-								</row>
-								<row spans="2">
-									<label value=" " />
-								</row>
-							</rows>
-						</grid>
-						<toolbar id="toolbar_printButton">
-							<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
-								<button id="btnPrintAccounting" label="${c:l('label_Print')}" />
-							</hbox>
-						</toolbar>
-						<listbox id="listBoxFinPostings" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
-							sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
-							multiple="false">
-							<listhead sizable="true">
-								<listheader id="listheader_Acc_FinEvent" label="${c:l('listheader_Acc_FinEvent.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_PostDate" label="${c:l('listheader_Acc_PostDate.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_ValueDate" label="${c:l('listheader_Acc_ValueDate.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_TranDesc" label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_DebitOrCredit" label="${c:l('listheader_Acc_DebitOrCredit.label')}"
-									sort="false" hflex="min" />
-								<listheader id="listheader_Acc_TranCode" label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
-									hflex="min" />
-								<listheader id="listheader_Acc_Amount" label="${c:l('listheader_Acc_Amount.label')}" sort="false"
-									hflex="min" />
-							</listhead>
-						</listbox>
-					</vlayout>
+					<div style="border:none;">
+						<groupbox id="finBasicdetails" zclass="null" />
+						<vlayout width="100%">
+							<grid id="grid_postings" sclass="GridLayoutNoBorder" fixedLayout="true"
+								style="padding-left:20px;padding-bottom:5px;padding-top:0px;">
+								<columns>
+									<column width="190px" />
+									<column />
+									<column width="190px" />
+									<column />
+								</columns>
+								<rows>
+									<row visible="true">
+										<label id="label_showAccruals" value="${c:l('label_PostingsEnquiryDialog_ShowAccrual.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="showAccrual" checked="false" disabled="false" />
+										</hbox>
+										<label id="label_showZeroCals" value="${c:l('label_PostingsEnquiryDialog_ShowZeroCal.value')}" />
+										<hbox>
+											<space spacing="2px" />
+											<checkbox id="showZeroCals" checked="false" disabled="false" />
+										</hbox>
+									</row>
+									<row>
+										<label id="label_PostingsEnquiryDialog_PostingGroup" value="${c:l('label_PostingsEnquiryDialog_PostingGroup')}" />
+										<hbox>
+											<combobox id="postingGroup" width="195px" />
+										</hbox>
+									</row>
+									<row spans="2">
+										<label value=" " />
+									</row>
+									<row spans="2">
+										<label value=" " />
+									</row>
+								</rows>
+							</grid>
+							<toolbar id="toolbar_printButton">
+								<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
+									<button id="btnPrintAccounting" label="${c:l('label_Print')}" />
+								</hbox>
+							</toolbar>
+							<listbox id="listBoxFinPostings" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
+								sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
+								multiple="false">
+								<listhead sizable="true">
+									<listheader id="listheader_Acc_FinEvent" label="${c:l('listheader_Acc_FinEvent.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_PostDate" label="${c:l('listheader_Acc_PostDate.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_ValueDate" label="${c:l('listheader_Acc_ValueDate.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_TranDesc" label="${c:l('listheader_Acc_EntryDesc.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_DebitOrCredit" label="${c:l('listheader_Acc_DebitOrCredit.label')}"
+										sort="false" hflex="min" />
+									<listheader id="listheader_Acc_TranCode" label="${c:l('listheader_Acc_TranCode.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_RevTranCode" label="${c:l('listheader_Acc_RevTranCode.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_AccountNo" label="${c:l('listheader_Acc_AccountNo.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_AcCcy" label="${c:l('listheader_Acc_AcCcy.label')}" sort="false"
+										hflex="min" />
+									<listheader id="listheader_Acc_Amount" label="${c:l('listheader_Acc_Amount.label')}" sort="false"
+										hflex="min" />
+								</listhead>
+							</listbox>
+						</vlayout>
 					</div>
 				</center>
 			</borderlayout>

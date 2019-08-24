@@ -56,9 +56,7 @@ import com.rits.cloning.Cloner;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/CustomerMaster/Customer/CustomerGstDetailsDialog.zul file.
- * <br>
+ * This is the controller class for the /WEB-INF/pages/CustomerMaster/Customer/CustomerGstDetailsDialog.zul file. <br>
  * ************************************************************<br>
  */
 
@@ -168,8 +166,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -221,11 +218,11 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 			if (arguments.containsKey("isFinanceProcess")) {
 				isFinanceProcess = (Boolean) arguments.get("isFinanceProcess");
 			}
-			
+
 			if (getCustomerDialogCtrl() != null && !isFinanceProcess) {
 				workflow = getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow();
 			}
-			
+
 			doLoadWorkFlow(this.customerGst.isWorkflow(), this.customerGst.getWorkflowId(),
 					this.customerGst.getNextTaskId());
 			doCheckRights();
@@ -312,7 +309,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		custId = acustomerGST.getCustId();
 		fillComboBox(this.frequencyType, acustomerGST.getFrequencytype(), PennantStaticListUtil.getfrequencyType(), "");
 
-		if (acustomerGST.isNew()&& !fromDouble) {
+		if (acustomerGST.isNew() && !fromDouble) {
 			this.frequencyType.setSelectedIndex(1);
 		}
 		frequencyList = PennantStaticListUtil.getfrequency(this.frequencyType.getSelectedItem().getValue());
@@ -337,7 +334,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		logger.debug(Literal.ENTERING);
 
 		this.listBoxCustomerGst.getItems().clear();
-		
+
 		int size = getCustomerGSTDetailsList().size();
 		for (int i = 0; i < size; i++) {
 			if (!StringUtils.equals(getCustomerGSTDetailsList().get(i).getRecordType(),
@@ -387,7 +384,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 			throw new WrongValuesException(wvea);
 		}
 		acustomerGST.setRecordStatus(this.recordStatus.getValue());
-	
+
 		setCustomerGst(acustomerGST);
 		logger.debug("Leaving");
 	}
@@ -751,7 +748,7 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 
 		this.button_CustomerGst_New.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnNew"));
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnSave"));
-  
+
 		logger.debug("Leaving");
 	}
 
@@ -1008,10 +1005,10 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		Button button = new Button();
 		button.setSclass("z-toolbarbutton");
 		button.setLabel("Delete");
-		if(isFinanceProcess){
+		if (isFinanceProcess) {
 			button.setVisible(false);
-		}else{
-		button.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnSave"));
+		} else {
+			button.setVisible(getUserWorkspace().isAllowed("button_CustomerGstDetailsDialog_btnSave"));
 		}
 		button.addForward("onClick", self, "onClickCustGstDetailButtonDelete", listItem);
 		hbox.appendChild(space);
@@ -1141,21 +1138,16 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		logger.debug("Entering");
 		/*
 		 * this.custAddrType.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value"),
-		 * null, true, true));
+		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrType.value"), null, true, true));
 		 * 
 		 * this.custAddrCountry.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"),
-		 * null, true, true));
+		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrCountry.value"), null, true, true));
 		 * 
 		 * this.custAddrProvince.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"),
-		 * null, true, true));
+		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrProvince.value"), null, true, true));
 		 * 
-		 * if (!PennantConstants.CITY_FREETEXT) {
-		 * this.custAddrCity.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"),
-		 * null, true, true)); }
+		 * if (!PennantConstants.CITY_FREETEXT) { this.custAddrCity.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_CustomerAddresDialog_CustAddrCity.value"), null, true, true)); }
 		 */
 
 		logger.debug("Leaving");

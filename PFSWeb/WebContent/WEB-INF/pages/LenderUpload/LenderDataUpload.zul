@@ -2,38 +2,25 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul"
-	xmlns:h="http://www.w3.org/1999/xhtml"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 	<window>
-		<window id="window_LenderDataImportList"
-			apply="${lenderDataImportList}" border="none" width="100%">
+		<window id="window_LenderDataImportList" apply="${lenderDataImportList}" border="none" width="100%">
 			<div sclass="z-toolbar" style="padding:0px" height="28px">
-				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
-					width="100%" widths="30%,40%,30%">
+				<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
 
 					<!-- COMMON BUTTONS -->
 					<!-- SEARCH AREA -->
-					<toolbar align="start"  sclass="toolbar-start">
-					<button id="btnSave" label="IMPORT"
-						tooltiptext="Import presentment file data."
-						autodisable="btnSave,btnUpload,btnRefresh" />
-				</toolbar>
-				<toolbar align="center" sclass="toolbar-center">
-							<label
-								value="${c:l('window_LenderDataImportList.title')}"
-								sclass="label-heading" />
-				</toolbar>
-				<toolbar align="end" sclass="toolbar-end">
-					<button id="btndownload" height="24px" visible="false"
-							label="${c:l('label_LenderDataImportList_btndownload.value')}"
-							/>
-					<button id="btnRefresh"
-						label="${c:l('btnRefresh.label')}"
-						tooltiptext="${c:l('btnRefresh.tooltiptext')}"
-						autodisable="btnSave,btnUpload,btnRefresh"
-						sclass="z-toolbarbutton" />
+					<toolbar align="start" sclass="toolbar-start">
+						<button id="btnSave" label="IMPORT" tooltiptext="Import presentment file data." autodisable="btnSave,btnUpload,btnRefresh" />
+					</toolbar>
+					<toolbar align="center" sclass="toolbar-center">
+						<label value="${c:l('window_LenderDataImportList.title')}" sclass="label-heading" />
+					</toolbar>
+					<toolbar align="end" sclass="toolbar-end">
+						<button id="btndownload" height="24px" visible="false" label="${c:l('label_LenderDataImportList_btndownload.value')}" />
+						<button id="btnRefresh" label="${c:l('btnRefresh.label')}" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
+							autodisable="btnSave,btnUpload,btnRefresh" sclass="z-toolbarbutton" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
@@ -42,9 +29,8 @@
 			<borderlayout id="borderLayout_LenderDataImportList">
 				<north border="none" />
 				<center border="none">
-					<div style="border:1px;"	vflex="1">
-						<grid sclass="GridLayoutNoBorder"
-							fixedLayout="true" style="border:0px;margin:10px;">
+					<div style="border:1px;" vflex="1">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;margin:10px;">
 							<columns>
 								<column width="10%" />
 								<column width="35%" />
@@ -53,8 +39,7 @@
 							</columns>
 							<rows>
 								<row>
-									<label
-										id="label_LenderDataImportList_FileName" value="${c:l('label_LenderDataImportList_FileName.value')}" />
+									<label id="label_LenderDataImportList_FileName" value="${c:l('label_LenderDataImportList_FileName.value')}" />
 									<hbox>
 										<space spacing="2px" />
 										<uppercasebox id="fileName" readonly="true" width="150px" style="overflow: hidden;" />
@@ -63,7 +48,7 @@
 								</row>
 							</rows>
 						</grid>
-						<separator/>
+						<separator />
 						<grid id="statusGrid" style="border-style : none;" visible="false">
 							<columns>
 								<column width="50%" />
@@ -74,8 +59,7 @@
 								<row style="vertical-align: top;">
 									<groupbox mold="3d" height="150px" width="100%" contentStyle="overflow:auto;">
 										<caption label="Lender Data Upload Details" />
-										<grid
-											style="border-style : none;">
+										<grid style="border-style : none;">
 											<columns>
 												<column width="10%" />
 												<column width="2%" />
@@ -83,12 +67,11 @@
 											</columns>
 											<rows>
 												<row>
-													<label
-														id="label_LenderDataImportList_TotalLenders" value="${c:l('label_LenderDataImportList_TotalLenders.value')}" />
+													<label id="label_LenderDataImportList_TotalLenders" value="${c:l('label_LenderDataImportList_TotalLenders.value')}" />
 													<label value=":" />
 													<label id="totalCount" />
 												</row>
-			
+
 												<row>
 													<label id="label_LenderDataImportList_SuccessLenders" value="${c:l('label_LenderDataImportList_SuccessLenders.value')}" />
 													<label value=":" />
@@ -109,7 +92,7 @@
 				</center>
 
 				<south border="none">
-					<paging id="pagingLenderDataImportList"/>
+					<paging id="pagingLenderDataImportList" />
 				</south>
 			</borderlayout>
 		</window>

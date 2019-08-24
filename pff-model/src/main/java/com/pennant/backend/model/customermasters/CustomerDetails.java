@@ -77,7 +77,7 @@ import com.pennant.backend.model.customermasters.CustomerGST;
 		"primaryRelationOfficer", "customer", "employmentDetailsList", "addressList", "customerPhoneNumList",
 		"customerEMailList", "customerIncomeList", "customerDocumentsList", "customerBankInfoList",
 		"customerChequeInfoList", "customerExtLiabilityList", "dedupReq", "extendedDetails", "balckListCustomers",
-		"blackListReq", "returnStatus", "customerDedupList","customerGstLists" })
+		"blackListReq", "returnStatus", "customerDedupList", "customerGstLists" })
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.NONE)
 public class CustomerDetails implements java.io.Serializable {

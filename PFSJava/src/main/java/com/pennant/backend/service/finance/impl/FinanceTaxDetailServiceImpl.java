@@ -745,8 +745,7 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	public boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif) {
 		return this.financeMainDAO.isFinReferenceExitsinLQ(finReference, tempTab, wif);
 	}
-	
-	
+
 	@Override
 	public CustomerAddres getHighPriorityCustAddr(final long id) {
 		return customerAddresDAO.getHighPriorityCustAddr(id, "_AView");
@@ -825,12 +824,13 @@ public class FinanceTaxDetailServiceImpl extends GenericService<FinanceTaxDetail
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
 	}
+
 	public CustomerAddresDAO getCustomerAddresDAO() {
 		return customerAddresDAO;
 	}
 
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
-	}	
+	}
 
 }

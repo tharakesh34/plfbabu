@@ -823,8 +823,8 @@ public class CustomerDetailsController {
 		logger.debug("Entering");
 		CustomerDetails response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(cif);
-		List<BankInfoDetail>  bankInfoDetailList=null;
-		List<BankInfoSubDetail> bankInfoSubDetailList=null;
+		List<BankInfoDetail> bankInfoDetailList = null;
+		List<BankInfoSubDetail> bankInfoSubDetailList = null;
 		try {
 			List<CustomerBankInfo> customerBankInfoList = customerBankInfoService
 					.getApprovedBankInfoByCustomerId(customer.getCustID());
@@ -989,19 +989,20 @@ public class CustomerDetailsController {
 		try {
 			CustomerBankInfo curCustBankInfo = customerBankInfoService
 					.getCustomerBankInfoById(customerBankInfo.getBankId());
-			List<BankInfoDetail> bankInfoDetailList=customerBankInfoService.getBankInfoDetailById(curCustBankInfo.getBankId());
+			List<BankInfoDetail> bankInfoDetailList = customerBankInfoService
+					.getBankInfoDetailById(curCustBankInfo.getBankId());
 			List<BankInfoSubDetail> bnkInfoSubDetailList = new ArrayList<>();
 			if (curCustBankInfo != null && !bankInfoDetailList.isEmpty() && bankInfoDetailList != null) {
 				for (BankInfoDetail bankInfoDetail : bankInfoDetailList) {
-					 bnkInfoSubDetailList = customerBankInfoService
-							.getBankInfoSubDetailById(bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear());
+					bnkInfoSubDetailList = customerBankInfoService.getBankInfoSubDetailById(bankInfoDetail.getBankId(),
+							bankInfoDetail.getMonthYear());
 					if (bnkInfoSubDetailList != null) {
 						bankInfoDetail.setBankInfoSubDetails(bnkInfoSubDetailList);
 					}
 				}
 
 				curCustBankInfo.setBankInfoDetails(bankInfoDetailList);
-		
+
 			}
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			curCustBankInfo.setUserDetails(userDetails);
@@ -1036,7 +1037,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
+
 	/**
 	 * get CustomerGstInformation By the Customer Id
 	 * 
@@ -1081,7 +1082,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
+
 	/**
 	 * Method for create Customer CustomerGstInfoDetail in PLF system.
 	 * 
@@ -1139,7 +1140,6 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
 
 	/**
 	 * Method for update CustomerGSTInformation in PLF system.
@@ -1192,7 +1192,7 @@ public class CustomerDetailsController {
 		logger.debug("Leaving");
 		return response;
 	}
-	
+
 	/**
 	 * delete the CustomerGSTInformation.
 	 * 
@@ -1239,9 +1239,7 @@ public class CustomerDetailsController {
 		return response;
 
 	}
-	
-	
-	
+
 	/**
 	 * get CustomerAccountBehaviour By the cif
 	 * 
@@ -1873,10 +1871,10 @@ public class CustomerDetailsController {
 	 */
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
-		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()),
-				String.valueOf(aCustomerGST.getCustId()), null, null, auditDetail,
-				aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
+				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -2031,6 +2029,5 @@ public class CustomerDetailsController {
 	public void setCustomerGstService(CustomerGstService customerGstService) {
 		this.customerGstService = customerGstService;
 	}
-	
 
 }

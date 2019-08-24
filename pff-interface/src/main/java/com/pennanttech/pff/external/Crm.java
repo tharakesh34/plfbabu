@@ -8,5 +8,5 @@ public interface Crm {
 	public CustomerDetails create(final CustomerDetails customer) throws InterfaceException;
 
 	public CustomerDetails update(final CustomerDetails customer) throws InterfaceException;
-	
+
 }

@@ -16,9 +16,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerGstInfoValidation {
 	private CustomerGstDetailDAO customerGstDetailDAO;
-	
-	
-	
+
 	public CustomerGstInfoValidation(CustomerGstDetailDAO customerGstDetailDAO) {
 		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
@@ -30,7 +28,6 @@ public class CustomerGstInfoValidation {
 	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
 		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
-	
 
 	public AuditHeader gstInfoValidation(AuditHeader auditHeader, String method) {
 
@@ -39,6 +36,7 @@ public class CustomerGstInfoValidation {
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		return auditHeader;
 	}
+
 	public List<AuditDetail> gstInfoListValidation(List<AuditDetail> auditDetails, String method, String usrLanguage) {
 
 		if (auditDetails != null && auditDetails.size() > 0) {
@@ -58,20 +56,19 @@ public class CustomerGstInfoValidation {
 		CustomerGST tempcustomerGST = null;
 		if (customerGST.isWorkflow()) {
 			//tempcustomerGST = getCustomerGstDetailDAO().getCustomerGstByCustId(customerGST, "_Temp");
-			tempcustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST,"_Temp");
+			tempcustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST, "_Temp");
 		}
 
-		CustomerGST befCustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST,"");
-		if(befCustomerGST!=null){
-		customerGST.setId(befCustomerGST.getId());
+		CustomerGST befCustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST, "");
+		if (befCustomerGST != null) {
+			customerGST.setId(befCustomerGST.getId());
 		}
-		
+
 		CustomerGST oldCustomerBankInfo = customerGST.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
-		
-		
+
 		valueParm[0] = StringUtils.trimToEmpty(customerGST.getLovDescCustCIF());
 		valueParm[1] = customerGST.getGstNumber();
 
@@ -131,8 +128,7 @@ public class CustomerGstInfoValidation {
 			}
 		}
 		int count = getCustomerGstDetailDAO().getCustomerGstInfoByCustGstNumber(customerGST.getId(),
-				customerGST.getCustId(), customerGST.getGstNumber(),
-				"_View");
+				customerGST.getCustId(), customerGST.getGstNumber(), "_View");
 		if (count != 0) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 		}

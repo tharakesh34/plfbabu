@@ -854,7 +854,8 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 				getJountAccountDetailDAO().save(jointAccountDetail, tableType);
 			}
 
-			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null || StringUtils.isNotBlank(serviceName)) {
+			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null
+					|| StringUtils.isNotBlank(serviceName)) {
 				getJountAccountDetailDAO().delete(jointAccountDetail, "_Temp");
 			}
 

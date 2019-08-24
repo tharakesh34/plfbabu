@@ -64,10 +64,8 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	@Override
 	public List<BankInfoSubDetail> getBankInfoSubDetailById(long id, Date monthYear) {
 		// TODO Auto-generated method stub
-		 return getCustomerBankInfoDAO().getBankInfoSubDetailById(id,monthYear, "_AView");
+		return getCustomerBankInfoDAO().getBankInfoSubDetailById(id, monthYear, "_AView");
 	}
-
-
 
 	@Override
 	public CustomerBankInfo getSumOfAmtsCustomerBankInfoByCustId(Set<Long> custId) {
@@ -115,7 +113,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			if (customerBankInfo.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerBankInfo.setRecordType("");
-				long id =getCustomerBankInfoDAO().save(customerBankInfo, "");
+				long id = getCustomerBankInfoDAO().save(customerBankInfo, "");
 				customerBankInfo.setBankId(id);
 				//BankInfoDetails
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
@@ -127,7 +125,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 						customerBankInfoDAO.save(bankInfoDetail, "");
 						customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), "");
 					}
-					
+
 				}
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -201,7 +199,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustomerBankInfo customerBankInfo , String recordType) {
+	public AuditDetail doValidations(CustomerBankInfo customerBankInfo, String recordType) {
 
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();

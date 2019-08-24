@@ -117,8 +117,7 @@ import com.pennanttech.pff.model.mandate.MandateData;
 
 /**
  * ************************************************************<br>
- * This is the controller class for the
- * /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
+ * This is the controller class for the /WEB-INF/pages/Mandate/MandateRegistration.zul file.<br>
  * ************************************************************<br>
  * 
  */
@@ -201,8 +200,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -279,8 +277,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * Filling the MandateIdMap details and based on checked and unchecked
-	 * events of listCellCheckBox.
+	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
@@ -306,8 +303,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * Filling the MandateIdMap details based on checked and unchecked events of
-	 * listCellCheckBox.
+	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
 	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
@@ -365,8 +361,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 					PennantAppUtil.getlabelDesc(mandate.getAccType(), PennantStaticListUtil.getAccTypeList()));
 			lc.setParent(item);
 			if (mandate.getMaxLimit() != null) {
-				lc = new Listcell(
-						PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),CurrencyUtil.getFormat(mandate.getMandateCcy())));
+				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
+						CurrencyUtil.getFormat(mandate.getMandateCcy())));
 			} else {
 				lc = new Listcell(PennantApplicationUtil.amountFormate(mandate.getMaxLimit(),
 						CurrencyUtil.getFormat(mandate.getMandateCcy())));
@@ -431,8 +427,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -582,8 +577,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -622,8 +616,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
