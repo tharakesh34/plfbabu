@@ -165,4 +165,10 @@
 		</createTable>
 	</changeSet>
 	
+	<changeSet id="12" author="Kesav">
+		<addColumn tableName="AdtCustomerBankInfo">
+			<column name="AccountOpeningDate" type="datetime"/>
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>
