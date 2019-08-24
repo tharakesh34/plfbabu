@@ -4115,14 +4115,14 @@
 				t2.enddate,
 				t1.finevent,
 				t5.productcategory
-		   FROM plf.lmtfinanceworkflowdef t1
-			 LEFT JOIN plf.rmtfinancetypes_aview t2 ON t1.fintype = t2.fintype
-			 JOIN plf.workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
-			 LEFT JOIN plf.caffacilitytypes t4 ON t1.fintype = t4.facilitytype
-			 LEFT JOIN plf.bmtproduct t5 ON t2.fincategory = t5.productcode
-			 LEFT JOIN plf.collateralstructure t6 ON t1.fintype = t6.collateraltype
-			 LEFT JOIN plf.vasstructure t7 ON t1.fintype = t7.productcode
-			 LEFT JOIN plf.commitmenttype t8 ON t1.fintype = t8.typecode
+		   FROM lmtfinanceworkflowdef t1
+			 LEFT JOIN rmtfinancetypes_aview t2 ON t1.fintype = t2.fintype
+			 JOIN workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
+			 LEFT JOIN caffacilitytypes t4 ON t1.fintype = t4.facilitytype
+			 LEFT JOIN bmtproduct t5 ON t2.fincategory = t5.productcode
+			 LEFT JOIN collateralstructure t6 ON t1.fintype = t6.collateraltype
+			 LEFT JOIN vasstructure t7 ON t1.fintype = t7.productcode
+			 LEFT JOIN commitmenttype t8 ON t1.fintype = t8.typecode
 		 </createView>
 	</changeSet>
 	<changeSet id="69" author="pruthvi">
