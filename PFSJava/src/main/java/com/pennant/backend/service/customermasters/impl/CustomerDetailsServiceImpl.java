@@ -4796,23 +4796,32 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * @return
 	 */
 	private void processingBankInfoSubDetailList(BankInfoDetail bankInfoDetail, String type, long bankId) {
+		logger.debug(Literal.ENTERING);
+
 		for (BankInfoSubDetail detail : bankInfoDetail.getBankInfoSubDetails()) {
 			detail.setBankId(bankId);
 			detail.setMonthYear(bankInfoDetail.getMonthYear());
 			detail.setVersion(bankInfoDetail.getVersion());
 			detail.setWorkflowId(bankInfoDetail.getWorkflowId());
 		}
+
 		if (type.isEmpty()) {
 			customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), "_Temp");
+			if (PennantConstants.RECORD_TYPE_UPD.equals(bankInfoDetail.getRecordType())) {
+				customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), type);
+			}
 		} else {
 			if (!bankInfoDetail.isNewRecord()) {
 				customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), type);
 			}
 		}
+
 		if (!StringUtils.equals(bankInfoDetail.getRecordType(), PennantConstants.RECORD_TYPE_CAN)
 				&& !StringUtils.equals(bankInfoDetail.getRecordType(), PennantConstants.RECORD_TYPE_DEL)) {
 			customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), type);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private List<AuditDetail> processingCardSalesInfoList(List<AuditDetail> auditDetails, String type, long custId) {

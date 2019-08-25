@@ -23,7 +23,7 @@ public class RightsPreparation {
 		boolean firstRow = true;
 		String group = "";
 		String role = "";
-		String excelFilePath = "/home/veeraprasad.d/Downloads/Caste_Rights.xls";
+		String excelFilePath = "D:/Rights Preaparation/SubHeadRule.xls";
 
 		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 		Workbook workbook = new HSSFWorkbook(inputStream);

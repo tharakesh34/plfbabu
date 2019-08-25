@@ -97,7 +97,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		selectSql.append(
-				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, ");
+				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
+		selectSql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
@@ -135,9 +137,10 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		selectSql.append(
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
-
 		selectSql.append(
-				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, ");
+				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
+		selectSql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,");
 		}
@@ -254,7 +257,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		insertSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		insertSql.append(
-				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, ");
+				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg,  BankBranch, FromDate,");
+		insertSql.append(
+				" ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
 
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
@@ -264,7 +269,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		insertSql.append(
 				" :CashWithdrawalNo, :CashWithdrawalAmt, :ChqDepositNo, :ChqDepositAmt, :ChqIssueNo, :ChqIssueAmt,");
 		insertSql.append(
-				" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg, :BankBranch, :FromDate, :ToDate, :RepaymentFrom, :NoOfMonthsBanking, :LwowRatio, :CcLimit, :TypeOfBanks,");
+				" :InwardChqBounceNo, :OutwardChqBounceNo, :EodBalMin, :EodBalMax, :EodBalAvg, :BankBranch, :FromDate,");
+		insertSql.append(
+				" :ToDate, :RepaymentFrom, :NoOfMonthsBanking, :LwowRatio, :CcLimit, :TypeOfBanks, :AccountOpeningDate,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -308,7 +315,9 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		updateSql.append(
 				"ChqIssueNo = :ChqIssueNo, ChqIssueAmt = :ChqIssueAmt, InwardChqBounceNo = :InwardChqBounceNo, OutwardChqBounceNo = :OutwardChqBounceNo, EodBalMin = :EodBalMin,");
 		updateSql.append(
-				"EodBalMax = :EodBalMax, EodBalAvg = :EodBalAvg, BankBranch = :BankBranch, FromDate = :FromDate, ToDate = :ToDate, RepaymentFrom = :RepaymentFrom, NoOfMonthsBanking = :NoOfMonthsBanking, LwowRatio = :LwowRatio, CcLimit = :CcLimit, TypeOfBanks = :TypeOfBanks, ");
+				"EodBalMax = :EodBalMax, EodBalAvg = :EodBalAvg, BankBranch = :BankBranch, FromDate = :FromDate, ToDate = :ToDate, RepaymentFrom = :RepaymentFrom,");
+		updateSql.append(
+				" NoOfMonthsBanking = :NoOfMonthsBanking, LwowRatio = :LwowRatio, CcLimit = :CcLimit, TypeOfBanks = :TypeOfBanks, AccountOpeningDate = :AccountOpeningDate,");
 		updateSql.append(" Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
@@ -458,7 +467,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" CreditTranNo, CreditTranAmt, CreditTranAvg, DebitTranNo, DebitTranAmt, CashDepositNo, CashDepositAmt,");
 		selectSql.append(" CashWithdrawalNo, CashWithdrawalAmt, ChqDepositNo, ChqDepositAmt, ChqIssueNo, ChqIssueAmt,");
 		selectSql.append(
-				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg, BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, ");
+				" InwardChqBounceNo, OutwardChqBounceNo, EodBalMin, EodBalMax, EodBalAvg, BankBranch, FromDate, ToDate, RepaymentFrom, NoOfMonthsBanking, LwowRatio, CcLimit, TypeOfBanks, AccountOpeningDate,");
 		if (type.contains("View")) {
 			selectSql.append(" lovDescBankName,lovDescAccountType,lovDescCustCIF,lovDescCustShrtName,");
 		}
@@ -596,11 +605,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
 
-		logger.debug("Leaving");
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
+		logger.debug("Leaving");
 	}
 
 	@Override
@@ -622,7 +631,7 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("AND Version= :Version-1");
+			updateSql.append(" AND Version= :Version-1");
 		}
 
 		logger.debug("updateSql: " + updateSql.toString());

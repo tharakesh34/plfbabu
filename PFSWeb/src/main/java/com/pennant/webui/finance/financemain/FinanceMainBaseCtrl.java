@@ -4549,13 +4549,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						if (this.repayProfitRate.getValue() != null) {
 							roi = this.repayProfitRate.getValue();
 						}
-						creditReviewDetail.setRoi(roi.divide(new BigDecimal(100)));
+						creditReviewDetail.setRoi(roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
 						//creditReviewDetail.setRoi(roi);
 					} else if (this.repayRate.getEffRateValue() != null) {
 						if (this.repayRate.getEffRateValue() != null) {
 							roi = this.repayProfitRate.getValue();
 						}
-						creditReviewDetail.setRoi(this.repayRate.getEffRateValue().divide(new BigDecimal(100)));
+						creditReviewDetail.setRoi(this.repayRate.getEffRateValue().divide(new BigDecimal(100), 9,
+								RoundingMode.HALF_DOWN));
 						//creditReviewDetail.setRoi(this.repayRate.getEffRateValue());
 					}
 					creditReviewDetail.setTenor(this.numberOfTerms_two.intValue());
@@ -20603,7 +20604,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (roi.compareTo(creditReviewDetails.getRoi()) != 0) {
 			fields.append("ROI,");
-			dataMap.put("ROI", roi.divide(new BigDecimal(100)));
+			dataMap.put("ROI", roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
 			//dataMap.put("ROI", roi);
 		}
 

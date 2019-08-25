@@ -74,6 +74,10 @@
 									<extendedcombobox id="accountType" />
 								</hbox>
 							</row>
+							<row id="row_AccountOpeningDate">
+								<label id="label_CustomerBankInfoDialog_AccountOpeningDate" value="${c:l('label_CustomerBankInfoDialog_AccountOpeningDate.value')}" />
+								<datebox id="accountOpeningDate" />
+							</row>
 							<row id="row_salaryAccount">
 								<label id="label_CustomerBankInfoDialog_SalaryAccount" value="${c:l('label_CustomerBankInfoDialog_SalaryAccount.value')}" />
 								<hbox>

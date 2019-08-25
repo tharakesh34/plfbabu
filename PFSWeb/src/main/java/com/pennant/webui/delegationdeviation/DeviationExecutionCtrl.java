@@ -23,6 +23,7 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.delegationdeviation.DeviationConfigService;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
@@ -36,6 +37,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
@@ -48,7 +50,9 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.CheckListDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -175,11 +179,26 @@ public class DeviationExecutionCtrl {
 			}
 		}
 
+		if (CollectionUtils.isNotEmpty(aFinanceDetail.getGurantorsDetailList())) {
+			for (GuarantorDetail guarantorDetail : aFinanceDetail.getGurantorsDetailList()) {
+				if (PennantConstants.RECORD_TYPE_CAN.equals(guarantorDetail.getRecordType())
+						|| PennantConstants.RECORD_TYPE_DEL.equals(guarantorDetail.getRecordType())) {
+					continue;
+				}
+				if (guarantorDetail.isBankCustomer()) {
+					customer = customerDetailsService.getCustomerDetailsById(guarantorDetail.getCustID(), true,
+							"_AView");
+					guarantorDetail.setCustomerDetails(customer);
+				}
+			}
+		}
+
 		//Setting the collateral setup list
 		getCollateralSetupFetchingService().getCollateralSetupList(aFinanceDetail, true);
 
 		// Call the customization hook.
-		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail);
+		String deviationFilePath = SysParamUtil.getValueAsString(SMTParameterConstants.CUSTOM_DEVIATION_FILE_PATH);
+		List<FinanceDeviations> deviations = postDeviationHook.raiseDeviations(aFinanceDetail, deviationFilePath);
 
 		// Remove the deviations that are invalid like duplicate code, invalid delegator etc.
 		deviations = deviationHelper.getValidCustomDeviations(deviations, delegators);

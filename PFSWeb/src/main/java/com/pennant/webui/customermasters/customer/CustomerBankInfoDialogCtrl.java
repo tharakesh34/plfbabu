@@ -115,6 +115,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
@@ -195,6 +196,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	protected Textbox lwowRatio;
 	protected Textbox ccLimit;
 	protected Combobox typeOfBanks;
+	protected Datebox accountOpeningDate;
 
 	//BHFL
 	protected Button button_CustomerBankInfoDialog_btnAccBehaviour;
@@ -406,6 +408,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		this.eodBalAvg.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 		this.eodBalAvg.setScale(finFormatter);
+
+		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.accountOpeningDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -865,6 +871,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setValue(PennantAppUtil.formateAmount(aCustomerBankInfo.getEodBalAvg(), finFormatter));
 		this.bankBranch.setValue(aCustomerBankInfo.getBankBranch());
 		this.fromDate.setValue(aCustomerBankInfo.getFromDate());
+		this.accountOpeningDate.setValue(aCustomerBankInfo.getAccountOpeningDate());
 		this.toDate.setValue(aCustomerBankInfo.getToDate());
 		this.repaymentFrom.setValue(aCustomerBankInfo.getRepaymentFrom());
 		this.NoOfMonthsBanking.setValue(aCustomerBankInfo.getNoOfMonthsBanking());
@@ -1042,6 +1049,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			wve.add(we);
 		}
 		try {
+			aCustomerBankInfo.setAccountOpeningDate((this.accountOpeningDate.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
 			aCustomerBankInfo.setToDate((this.toDate.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1184,7 +1196,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			} else if (bankInfoDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_UPD;
 			} else {
-				bankInfoDetail.setVersion(bankInfoDetail.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
@@ -1498,7 +1509,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					if (balanceValue.getValidateValue() != null) {
 						balance = balanceValue.getValidateValue();
 					}
-					if (!(balanceValue.isReadonly()) && (balance.intValue() <= 0)) {
+					if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
 						throw new WrongValueException(balanceValue,
 								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
 					}
@@ -1638,6 +1649,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.eodBalAvg.setReadonly(true);
 			this.bankBranch.setReadonly(true);
 			this.fromDate.setReadonly(true);
+			this.accountOpeningDate.setReadonly(true);
 			this.toDate.setReadonly(true);
 			this.repaymentFrom.setReadonly(true);
 			this.NoOfMonthsBanking.setReadonly(true);
@@ -1762,6 +1774,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.outwardChqBounceNo.setConstraint("");
 		this.bankBranch.setConstraint("");
 		this.fromDate.setConstraint("");
+		this.accountOpeningDate.setConstraint("");
 		this.toDate.setConstraint("");
 		this.repaymentFrom.setConstraint("");
 		this.NoOfMonthsBanking.setConstraint("");
@@ -1823,6 +1836,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalAvg.setErrorMessage("");
 		this.bankBranch.setErrorMessage("");
 		this.fromDate.setErrorMessage("");
+		this.accountOpeningDate.setErrorMessage("");
 		this.toDate.setErrorMessage("");
 		this.repaymentFrom.setErrorMessage("");
 		this.NoOfMonthsBanking.setErrorMessage("");
@@ -1931,6 +1945,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMin"));
 		this.eodBalMax.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalMax"));
 		this.eodBalAvg.setReadonly(isReadOnly("CustomerBankInfoDialog_EodBalAvg"));
+
+		readOnlyComponent(isReadOnly("CustomerBankInfoDialog_AccountOpeningDate"), this.accountOpeningDate);
 
 		/*
 		 * this.bankBranch.setReadonly(isReadOnly( "CustomerBankInfoDialog_BankBranch"));
@@ -2048,6 +2064,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		this.eodBalMin.setReadonly(true);
 		this.bankBranch.setReadonly(true);
 		this.fromDate.setReadonly(true);
+		this.accountOpeningDate.setReadonly(true);
 		this.toDate.setReadonly(true);
 		this.repaymentFrom.setReadonly(true);
 		this.NoOfMonthsBanking.setReadonly(true);

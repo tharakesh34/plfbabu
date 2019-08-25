@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.Entity;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -126,6 +127,8 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private long custID;
 	private String custShrtName;
 
+	private CustomerDetails customerDetails;
+
 	public GuarantorDetail() {
 		super();
 	}
@@ -149,6 +152,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("validateGuarantor");
 		excludeFields.add("custID");
 		excludeFields.add("custShrtName");
+		excludeFields.add("customerDetails");
 		return excludeFields;
 	}
 
@@ -539,5 +543,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setGuarantorGenderCode(String guarantorGenderCode) {
 		this.guarantorGenderCode = guarantorGenderCode;
+	}
+
+	public CustomerDetails getCustomerDetails() {
+		return customerDetails;
+	}
+
+	public void setCustomerDetails(CustomerDetails customerDetails) {
+		this.customerDetails = customerDetails;
 	}
 }

@@ -125,6 +125,7 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	private String typeOfBanks;
 	@XmlElementWrapper(name = "bankInfoDetails")
 	@XmlElement(name = "bankInfoDetail")
+	private Date accountOpeningDate;
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -536,6 +537,14 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 
 	public void setTypeOfBanks(String typeOfBanks) {
 		this.typeOfBanks = typeOfBanks;
+	}
+
+	public Date getAccountOpeningDate() {
+		return accountOpeningDate;
+	}
+
+	public void setAccountOpeningDate(Date accountOpeningDate) {
+		this.accountOpeningDate = accountOpeningDate;
 	}
 
 }
