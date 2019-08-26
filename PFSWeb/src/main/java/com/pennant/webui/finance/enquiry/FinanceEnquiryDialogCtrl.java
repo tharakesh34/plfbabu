@@ -212,6 +212,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	//protected Decimalbox				finCurAssetValue;
 	protected Combobox finRepayMethod;
 
+	//UD_LOANS START
+	protected Row row_Revolving_DP;
+	protected Checkbox allowRevolving;
+	protected Label label_FinanceTypeDialog_AllowRevolving;
+	protected Hbox hbox_AlwRevolving;
+	
 	protected Label label_profitSuspense;
 	protected Checkbox profitSuspense;
 	protected Datebox finSuspDate;
@@ -923,6 +929,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
 					"");
 
+			//Allow Drawing power, Allow Revolving
+			if (aFinanceMain.isAllowRevolving()) {
+				this.row_Revolving_DP.setVisible(true);
+				this.label_FinanceTypeDialog_AllowRevolving.setVisible(true);
+				this.hbox_AlwRevolving.setVisible(true);
+				this.allowRevolving.setChecked(aFinanceMain.isAllowRevolving());
+			}
+			
 			// Step Finance Details
 			if (aFinanceMain.isStepFinance()) {
 				this.row_stepFinance.setVisible(true);
@@ -2039,6 +2053,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPayBank.setReadonly(true);
 		this.downPaySupl.setReadonly(true);
 		this.downPayAccount.setReadonly(true);
+		this.allowRevolving.setDisabled(true);
 
 	}
 
