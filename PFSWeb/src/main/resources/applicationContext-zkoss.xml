@@ -5396,8 +5396,7 @@
 
 	<bean id="customerPaymentTxnsDialogCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="disbursementInstCtrl" ref="disbursementInstCtrl" />
 	</bean>
 	<bean id="customerGstDetailsDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerGstDetailsDialogCtrl"

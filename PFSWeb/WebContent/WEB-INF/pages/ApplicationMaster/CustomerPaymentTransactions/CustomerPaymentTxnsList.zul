@@ -23,9 +23,6 @@
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
-						<button id="button_CustomerPaymentTxnsList_NewCustomerPaymentTxns" label="${c:l('label_New')}"
-							autodisable="button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch,print,button_CustomerPaymentTxnsList_NewCustomerPaymentTxns,btnRefresh,help"
-							tooltiptext="${c:l('button_CustomerPaymentTxnsList_NewCustomerPaymentTxns.tooltiptext')}" sclass="z-toolbarbutton" />
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
 							autodisable="button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch,print,button_CustomerPaymentTxnsList_NewCustomerPaymentTxns,btnRefresh,help"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
@@ -52,47 +49,36 @@
 							</columns>
 							<rows>
 								<row>
+									<label id="label_CustomerPaymentTxnsList_Finreference"
+										value="${c:l('label_CustomerPaymentTxnsList_Finreference.value')}" />
+									<listbox id="sortOperator_Finreference" width="43px" mold="select" rows="1"
+										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<textbox id="finReference" width="200px" maxlength="50" />
+								
 									<label id="label_CustomerPaymentTxnsList_TransactionModule" value="${c:l('label_CustomerPaymentTxnsList_TransactionModule.value')}" />
 									<listbox id="sortOperator_TransactionModule" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<textbox id="transactionModule" width="200px" maxlength="50" />
-									<label id="label_CustomerPaymentTxnsList_BatchId" value="${c:l('label_CustomerPaymentTxnsList_BatchId.value')}" />
-									<listbox id="sortOperator_BatchId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="batchId" width="200px" maxlength="50" />
 								</row>
 
 								<row>
 									<label id="label_CustomerPaymentTxnsList_PaymentId" value="${c:l('label_CustomerPaymentTxnsList_PaymentId.value')}" />
 									<listbox id="sortOperator_PaymentId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="paymentId" width="200px" maxlength="50" />
-									<label id="label_CustomerPaymentTxnsList_TransactionStatus" value="${c:l('label_CustomerPaymentTxnsList_TransactionStatus.value')}" />
-									<listbox id="sortOperator_TransactionStatus" width="43px" mold="select" rows="1"
-										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<textbox id="transactionStatus" width="200px" maxlength="50" />
+									<longbox id="paymentId" width="200px" maxlength="50" />
 								</row>
 
-								<row>
-									<label id="label_CustomerPaymentTxnsList_RecordStatus" value="${c:l('label_CustomerPaymentTxnsList_RecordStatus.value')}" />
-									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
-									<textbox id="recordStatus" width="100px" maxlength="50" />
-									<label id="label_CustomerPaymentTxnsList_RecordType" value="${c:l('label_CustomerPaymentTxnsList_RecordType.value')}" />
-									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
-									<listbox id="recordType" width="100px" mold="select" />
-								</row>
 							</rows>
 						</grid>
 
 						<listbox id="listBoxCustomerPaymentTxns" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
 							<listhead sizable="true">
+								<listheader id="listheader_FinReference"
+									label="${c:l('listheader_FinReference.label')}" sort="auto" hflex="min" />
+						 
 								<listheader id="listheader_TransactionModule" label="${c:l('listheader_TransactionModule.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_BatchId" label="${c:l('listheader_BatchId.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_PaymentId" label="${c:l('listheader_PaymentId.label')}" sort="auto" hflex="min" />
-								<listheader id="listheader_TransactionStatus" label="${c:l('listheader_TransactionStatus.label')}"
-									sort="auto" hflex="min" />
-								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>
 						</listbox>
 					</div>

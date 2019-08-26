@@ -6300,4 +6300,43 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="160" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+	
+				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_CustomerPaymentTransactions','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SECRIGHTS values ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_CustomerPaymentTransactionsEnquiry','MENU',0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				
+				INSERT INTO SECGROUPS values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CUSTOMER_PAYMENTS_STATUSUPDATE', 'Customer Payments Status Update', 0,1000,CURRENT_TIMESTAMP,'Approved','',null,'','','',0);
+				INSERT INTO SECGROUPS values((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CUSTOMER_PAYMENTS_STATUS_ENQUIRY', 'Customer Payments Status Update Enquiry', 0,1000,CURRENT_TIMESTAMP,'Approved','',null,'','','',0);
+				
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_PAYMENTS_STATUSUPDATE') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_CustomerPaymentTransactions'), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_PAYMENTS_STATUS_ENQUIRY') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_CustomerPaymentTransactionsEnquiry'), 1, 0,1000,CURRENT_TIMESTAMP,'Approved',null,' ',null,null,' ',0);
+				
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'CUSTOMER_PAYMENTS_STATUSUPDATE','Customer Payments Status Update','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+				INSERT INTO SecRoles  VALUES ((select max(roleid)+1 from secroles),1,'CUSTOMER_PAYMENTS_STATUS_ENQUIRY','Customer Payments Status Update Enquiry','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_PAYMENTS_STATUSUPDATE'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_PAYMENTS_STATUSUPDATE'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CUSTOMER_PAYMENTS_STATUS_ENQUIRY'), (Select  RoleID  From SecRoles Where RoleCd='CUSTOMER_PAYMENTS_STATUS_ENQUIRY'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+				
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
+				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Update SeqSecRoleGroups set SeqNo = (Select max(RoleGrpId) from SecRoleGroups);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="161" author="Durgaprasad G">
+		 <createView viewName="PaymentTransaction_View" replaceIfExists="true">
+		 	select FA.FinReference, PT.TranModule, FA.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
+			from PaymentTransaction PT Inner Join FinAdvancePayments FA on PT.PAYMENTID= FA.PAYMENTID;
+		 </createView>
+	</changeSet>
 </databaseChangeLog>

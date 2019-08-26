@@ -834,6 +834,8 @@
 				rightName="menuItem_Enquiry_FinanceTaxDetailEnquiry" />
 			<menuItem id="menu_Item_PaymentInstructionsEnquiry" zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 				rightName="menuItem_payment_PaymentInstructionsEnquiry" />
+			<menuItem id="menu_Item_CustomerPaymentTransactionsEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=E"
+				rightName="menuItem_CustomerPaymentTransactionsEnquiry" />
 			<menuItem id="menu_Item_DMSEnquiry" zulNavigation="/WEB-INF/pages/DmsDocumentDetails/DmsDocumentDetailsList.zul?enqiryModule=Y"
 				rightName="menuItem_DmsDocumentDetails" />
 			<menuItem id="menu_Item_LegalDetailEnquiry" zulNavigation="/WEB-INF/pages/Legal/LegalDetail/LegalDetailListEnquiry.zul?enqiryModule=Y"
@@ -1436,10 +1438,8 @@
 		rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
 	<!-- <menuItem id="menuItem_FinOptionTypeEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinoptionTypes/FinOptionTypeEnquiryList.zul?enqiryModule=Y" 
 		rightName="menuItem_FinOptionTypeEnquiry" /> -->
-
-	<!-- <menuItem id="menu_Item_CustomerPaymentTransactions" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul" 
-		rightName="" /> <menuItem id="menu_Item_CustomerPaymentTxnsUpdate" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsUpdate.zul" 
-		rightName="" /> -->
+ 	<menuItem id="menu_Item_CustomerPaymentTransactions" zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul"
+				rightName="menuItem_CustomerPaymentTransactions" />
 
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 

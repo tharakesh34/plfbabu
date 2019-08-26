@@ -273,6 +273,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.commodity.BrokerCommodityDetail;
@@ -3389,6 +3390,13 @@ public class PennantJavaUtil {
 				new ModuleMapping("CreditReviewData", CreditReviewData.class,
 						new String[] { "CreditReviewData", "CreditReviewData" }, null, new String[] { "FinReference" },
 						null, 600));
+		
+		ModuleUtil.register("PaymentTransaction",
+				new ModuleMapping("PaymentTransaction", PaymentTransaction.class,
+						new String[] { "PaymentTransaction_View", " PaymentTransaction_View" },null,
+						new String[] { "FinReference", "TranReference" }, null, 300));
+		
+	
 
 		registerCustomModules();
 	}

@@ -11,6 +11,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -83,5 +84,19 @@ public class PaymentsProcessService extends GenericService<FinanceDetail> {
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
+	
 
+	/**
+	 * Processing Payments
+	 * @param paymentTransaction
+	 */
+	public void processPayments(PaymentTransaction paymentTransaction) {
+		logger.debug(Literal.ENTERING);
+		if (this.customerPaymentService == null) {
+			logger.debug("CustomerPaymentService is null.");
+			return;
+		}
+		this.customerPaymentService.processPayments(paymentTransaction);
+		logger.debug(Literal.LEAVING);
+	}
 }

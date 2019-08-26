@@ -20,16 +20,16 @@
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  19-12-2017    														*
+ * Creation Date    :  25-08-2019    														*
  *                                                                  						*
- * Modified Date    :  19-12-2017    														*
+ * Modified Date    :  25-08-2019    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 19-12-2017       PENNANT	                 0.1                                            * 
+ * 25-08-2019       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -54,6 +54,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -63,6 +64,7 @@ import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.model.CustomerPaymentTxnsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
@@ -71,7 +73,7 @@ import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
-public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayments> {
+public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransaction> {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(CustomerPaymentTxnsListCtrl.class);
@@ -82,30 +84,30 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 	protected Listbox listBoxCustomerPaymentTxns;
 
 	// List headers
+	protected Listheader listheader_FinReference;
 	protected Listheader listheader_TransactionModule;
-	protected Listheader listheader_BatchId;
 	protected Listheader listheader_PaymentId;
 	protected Listheader listheader_TransactionStatus;
 
 	// checkRights
-	protected Button button_CustomerPaymentTxnsList_NewCustomerPaymentTxns;
 	protected Button button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch;
 
 	// Search Fields
+	protected Textbox finReference;
 	protected Textbox transactionModule;
-	protected Textbox batchId;
-	protected Textbox paymentId;
-	protected Textbox transactionStatus;
+	protected Longbox paymentId;
+	//protected Textbox transactionStatus;
 
+	protected Listbox sortOperator_Finreference;
 	protected Listbox sortOperator_TransactionModule;
-	protected Listbox sortOperator_BatchId;
 	protected Listbox sortOperator_PaymentId;
-	protected Listbox sortOperator_TransactionStatus;
+	//protected Listbox sortOperator_TransactionStatus;
 
 	private transient FinanceMainService financeMainService;
 	private transient FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private transient CustomerDAO customerDAO;
-
+	
+	private boolean enqiryModule= false;
 	/**
 	 * default constructor.<br>
 	 */
@@ -115,13 +117,26 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "FinAdvancePayments";
-		super.pageRightName = "FinAdvancePaymentsList";
-		super.tableName = "FinAdvancePayments_AView";
-		super.queueTableName = "FinAdvancePayments_View";
-		super.enquiryTableName = "FinAdvancePayments_View";
+		super.moduleCode = "PaymentTransaction";
+		super.pageRightName = "PaymentTransactionList";
+		super.tableName = "PaymentTransaction_View";
+		super.queueTableName = "PaymentTransaction_View";
+		super.enquiryTableName = "PaymentTransaction_View";
+		
+		String module = getArgument("module");
+		if("E".equals(module)){
+			enqiryModule = true;
+		}
 	}
-
+ 
+	@Override
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (!enqiryModule) {
+			searchObject.addFilterEqual("tranStatus", "T");
+		}
+	}
+		
 	public void onCreate$window_CustomerPaymentTxnsList(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -131,23 +146,33 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 
 		// Register buttons and fields.
 		registerButton(button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch);
-		registerButton(button_CustomerPaymentTxnsList_NewCustomerPaymentTxns, RIGHT_NOT_ACCESSIBLE, true);
 
-		registerField("transactionRef", listheader_TransactionModule, SortOrder.NONE, transactionModule,
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference,
+				sortOperator_Finreference, Operators.STRING);
+		
+		registerField("tranModule", listheader_TransactionModule, SortOrder.NONE, transactionModule,
 				sortOperator_TransactionModule, Operators.STRING);
-		registerField("finreference", listheader_BatchId, SortOrder.NONE, batchId, sortOperator_BatchId,
-				Operators.STRING);
-		registerField("paymentId", listheader_PaymentId, SortOrder.NONE, paymentId, sortOperator_PaymentId,
-				Operators.STRING);
-		registerField("status", listheader_TransactionStatus, SortOrder.NONE, transactionStatus,
-				sortOperator_TransactionStatus, Operators.STRING);
 
+		registerField("paymentId", listheader_PaymentId, SortOrder.NONE, paymentId, sortOperator_PaymentId,
+				Operators.NUMERIC);
+		
+		registerField("transactionId");
+		registerField("tranStatus");
+		registerField("tranReference");
+		registerField("tranBatch");
+		registerField("statusCode");
+		registerField("statusDesc");
+
+		/*registerField("tranStatus", listheader_TransactionStatus, SortOrder.NONE, transactionStatus,
+				sortOperator_TransactionStatus, Operators.STRING);
+*/
 		doRenderPage();
 		search();
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search button.
+	 * The framework calls this event handler when user clicks the search
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -157,7 +182,8 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh button.
+	 * The framework calls this event handler when user clicks the refresh
+	 * button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -168,8 +194,8 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
-	 * the selected entity.
+	 * The framework calls this event handler when user opens a record to view
+	 * it's details. Show the dialog page with the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -179,43 +205,36 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 		logger.debug("Entering");
 
 		Listitem selectedItem = this.listBoxCustomerPaymentTxns.getSelectedItem();
-		FinAdvancePayments finAdvancePayments = (FinAdvancePayments) selectedItem.getAttribute("finAdvancePayments");
+		PaymentTransaction paymentTransaction = (PaymentTransaction) selectedItem.getAttribute("paymentTransaction");
 
-		if (finAdvancePayments == null) {
+		if (paymentTransaction == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
-		FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(finAdvancePayments.getFinReference());
+		FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(paymentTransaction.getFinReference());
 		Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
 		financeMain.setLovDescCustCIF(customer.getCustCIF());
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setPaymentId(paymentTransaction.getPaymentId());
+		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments,
+				"_View");
 		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "_View");
-
-		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  Id = ");
-		whereCond.append(finAdvancePayments.getId());
-		whereCond.append(" AND  version=");
-		whereCond.append(finAdvancePayments.getVersion());
-
-		if (doCheckAuthority(finAdvancePayments, whereCond.toString())) {
-			if (isWorkFlowEnabled() && finAdvancePayments.getWorkflowId() == 0) {
-				finAdvancePayments.setWorkflowId(getWorkFlowId());
-			}
-			doShowDialogPage(finAdvancePayments, financeMain);
-		} else {
-			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-		}
-
+		
+		paymentTransaction.setFinAdvancePayments(finAdvancePayments);
+		
+		doShowDialogPage(paymentTransaction, financeMain);
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialogPage(FinAdvancePayments finAdvancePayments, FinanceMain financeMain) {
+	private void doShowDialogPage(PaymentTransaction paymentTransaction, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("finAdvancePayments", finAdvancePayments);
+		arg.put("paymentTransaction", paymentTransaction);
 		arg.put("financeMain", financeMain);
 		arg.put("customerPaymentTxnsListCtrl", this);
+		arg.put("enqiryModule", enqiryModule);
 
 		try {
 			Executions.createComponents(
@@ -230,7 +249,8 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<FinAdvancePayme
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button to print the results.
+	 * The framework calls this event handler when user clicks the print button
+	 * to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

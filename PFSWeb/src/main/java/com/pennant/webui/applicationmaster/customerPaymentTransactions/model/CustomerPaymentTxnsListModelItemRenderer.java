@@ -49,14 +49,13 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 
-import com.pennant.backend.model.finance.FinAdvancePayments;
-import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.model.finance.PaymentTransaction;
 
 /**
  * Item renderer for listitems in the listbox.
  * 
  */
-public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRenderer<FinAdvancePayments>, Serializable {
+public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRenderer<PaymentTransaction>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,22 +64,28 @@ public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRendere
 	}
 
 	@Override
-	public void render(Listitem item, FinAdvancePayments finAdvancePayments, int count) throws Exception {
+	public void render(Listitem item, PaymentTransaction transaction, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(finAdvancePayments.getTransactionRef());
+
+		lc = new Listcell(transaction.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(finAdvancePayments.getLlReferenceNo());
+
+		String tranModule = "";
+		if ("DISB".equals(transaction.getTranModule())) {
+			tranModule = "Disbursement";
+		}
+		
+		lc = new Listcell(tranModule);
 		lc.setParent(item);
-		lc = new Listcell(finAdvancePayments.getTransactionRef());
+
+		lc = new Listcell(String.valueOf(transaction.getPaymentId()));
 		lc.setParent(item);
-		lc = new Listcell(finAdvancePayments.getStatus());
+
+		/*lc = new Listcell(transaction.getTranStatus());
 		lc.setParent(item);
-		lc = new Listcell(finAdvancePayments.getRecordStatus());
-		lc.setParent(item);
-		lc = new Listcell(PennantJavaUtil.getLabel(finAdvancePayments.getRecordType()));
-		lc.setParent(item);
-		item.setAttribute("finAdvancePayments", finAdvancePayments);
+*/
+		item.setAttribute("paymentTransaction", transaction);
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPaymentTxnsItemDoubleClicked");
 	}

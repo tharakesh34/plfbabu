@@ -9,11 +9,17 @@ public class PaymentTransaction {
 	private String tranReference;
 	private String tranBatch;
 	private String tranStatus;
+	private long messageId;
+	private long paymentId;
 	private String respReference;
+	private String finReference;
 	private String statusCode;
 	private String statusDesc;
 	private Date transctionInitOn;
 	private Date statusUpdateOn;
+	private PaymentTransaction befImage;
+	
+	private FinAdvancePayments finAdvancePayments;
 
 	public long getTransactionId() {
 		return transactionId;
@@ -93,6 +99,78 @@ public class PaymentTransaction {
 
 	public void setStatusUpdateOn(Date statusUpdateOn) {
 		this.statusUpdateOn = statusUpdateOn;
+	}
+
+	/**
+	 * @return the paymentId
+	 */
+	public long getPaymentId() {
+		return paymentId;
+	}
+
+	/**
+	 * @param paymentId
+	 *            the paymentId to set
+	 */
+	public void setPaymentId(long paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	/**
+	 * @return the messageId
+	 */
+	public long getMessageId() {
+		return messageId;
+	}
+
+	/**
+	 * @param messageId
+	 *            the messageId to set
+	 */
+	public void setMessageId(long messageId) {
+		this.messageId = messageId;
+	}
+
+	/**
+	 * @return the finReference
+	 */
+	public String getFinReference() {
+		return finReference;
+	}
+
+	/**
+	 * @param finReference the finReference to set
+	 */
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	/**
+	 * @return the finAdvancePayments
+	 */
+	public FinAdvancePayments getFinAdvancePayments() {
+		return finAdvancePayments;
+	}
+
+	/**
+	 * @param finAdvancePayments the finAdvancePayments to set
+	 */
+	public void setFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
+		this.finAdvancePayments = finAdvancePayments;
+	}
+
+	/**
+	 * @return the befImage
+	 */
+	public PaymentTransaction getBefImage() {
+		return befImage;
+	}
+
+	/**
+	 * @param befImage the befImage to set
+	 */
+	public void setBefImage(PaymentTransaction befImage) {
+		this.befImage = befImage;
 	}
 
 }

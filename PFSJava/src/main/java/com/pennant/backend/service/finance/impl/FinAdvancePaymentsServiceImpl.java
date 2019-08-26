@@ -74,6 +74,7 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
@@ -83,6 +84,7 @@ import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
+import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
@@ -112,6 +114,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	private CovenantsService covenantsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	protected FinanceDisbursementDAO financeDisbursementDAO;
+	private PaymentsProcessService paymentsProcessService;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
@@ -990,6 +993,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return noValidation;
 	}
 
+	@Override
+	public void processPayments(PaymentTransaction paymentTransaction) {
+		this.paymentsProcessService.processPayments(paymentTransaction);
+	}
+	
 	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
 		return payOrderIssueHeaderDAO;
 	}
@@ -1084,6 +1092,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
+	}
+	 
+	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
+		this.paymentsProcessService = paymentsProcessService;
 	}
 
 }

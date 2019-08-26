@@ -51,6 +51,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
@@ -98,4 +99,6 @@ public interface FinAdvancePaymentsService {
 	void updateStatus(FinAdvancePayments finAdvancePayment, String type);
 
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
+
+	void processPayments(PaymentTransaction paymentTransaction);
 }
