@@ -6281,4 +6281,16 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="157" author="satyanarayana.g" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Id" tableName="MandatesStatus" defaultValue="0"/>
+	</changeSet>
+	
+	<changeSet id="158" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				Update MandatesStatus set Id = 0 where Id is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
