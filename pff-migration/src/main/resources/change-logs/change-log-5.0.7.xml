@@ -4398,4 +4398,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="147" author="Kesava">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOW_CIBIL_REQUEST';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_CIBIL_REQUEST', 'Allow Cibil Request.', 'String', '1', 'N', 1, 0, NULL, NULL, 'Allow Cibil Request.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
