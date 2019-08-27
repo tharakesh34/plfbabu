@@ -3554,7 +3554,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="24" author="murthy.y">
+	<!-- <changeSet id="24" author="murthy.y">
 		<sql>
 			<![CDATA[
 				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_INT', 'Allow Advance Interest ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance Interest ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
@@ -3564,7 +3564,7 @@
 				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS', 'Repayment Terms ?','String', 1, 'Y', 1, 0, null, null, 'Repayment Terms ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
             ]]>
 		</sql>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="24" author="Siva">
 		<createTable tableName="AdvancePaymentDetail">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -3573,7 +3573,7 @@
 			<column name="FinReference" type="varchar(20)">
 				<constraints nullable="false" unique="true" />
 			</column>
-			<column name="InstructionUID" type="bigint" unique="true">
+			<column name="InstructionUID" type="bigint" >
 				<constraints nullable="false" unique="true" />
 			</column>
 			<column name="AdvInt" type="decimal(18,0)" />
@@ -3582,7 +3582,8 @@
 			<column name="AdvEMITds" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
-	<changeSet id="25" author="Siva">
+	
+		<changeSet id="25" author="Siva">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS where sysparmcode = 'ADVINT_TDS_INCZ_UPF';
