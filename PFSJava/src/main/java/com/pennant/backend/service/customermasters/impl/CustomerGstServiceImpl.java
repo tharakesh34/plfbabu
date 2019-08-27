@@ -1,6 +1,8 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +19,7 @@ import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerGstService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerGstServiceImpl extends GenericService<CustomerGST> implements CustomerGstService {
@@ -97,8 +100,7 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 			logger.debug("Leaving");
 			return auditHeader;
 		}
-
-		CustomerGST customerGST = new CustomerGST();
+		CustomerGST customerGST =new CustomerGST() ;
 		BeanUtils.copyProperties((CustomerGST) auditHeader.getAuditDetail().getModelData(), customerGST);
 
 		if (customerGST.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -115,12 +117,17 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 			if (customerGST.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				customerGST.setRecordType("");
-
+		
+				if(getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST,"")==null){
 				getCustomerGstDetailDAO().save(customerGST, "");
+				}
+				
 				// CustomerGSTDetails
 				List<CustomerGSTDetails> customerGSTDetailslist = customerGST.getCustomerGSTDetailslist();
 				if (CollectionUtils.isNotEmpty(customerGSTDetailslist)) {
 					for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+						customerGSTDetails.setRecordType(customerGST.getRecordType());
+						customerGSTDetails.setRecordStatus(customerGST.getRecordStatus());
 						customerGSTDetails.setHeaderId(customerGST.getId());
 						getCustomerGstDetailDAO().save(customerGSTDetails, "");
 					}
@@ -230,29 +237,40 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 		ErrorDetail errorDetail = new ErrorDetail();
 
 		if (StringUtils.equals(recordType, PennantConstants.RECORD_TYPE_NEW)) {
-			for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
-				if (customerGSTDetails.getFrequancy() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Frequency";
-					valueParm[1] = customerGSTDetails.getFrequancy();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-				if (customerGSTDetails.getSalAmount() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Sal Amount";
-					valueParm[1] = customerGSTDetails.getSalAmount().toString();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-				if (customerGSTDetails.getFinancialYear() == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Finacial Year";
-					valueParm[1] = customerGSTDetails.getFinancialYear().toString();
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-				}
-			}
+			  Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_GSTIN));
+		      Matcher matcher = pattern.matcher(customerGST.getGstNumber());
+		      if(!matcher.matches()){
+		    	  String[] valueParm = new String[2];
+					valueParm[0] = "GST Number";
+					valueParm[1] = customerGST.getGstNumber();
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90405", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);  
+		      }else{
+		    	  for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+						if (customerGSTDetails.getFrequancy() == null) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Frequency";
+							valueParm[1] = customerGSTDetails.getFrequancy();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+						if (customerGSTDetails.getSalAmount() == null) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Sal Amount";
+							valueParm[1] = customerGSTDetails.getSalAmount().toString();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+						if (customerGSTDetails.getFinancialYear() == null) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Finacial Year";
+							valueParm[1] = customerGSTDetails.getFinancialYear().toString();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+					} 
+		      }
+			
 		}
 		auditDetail.setErrorDetail(errorDetail);
 		return auditDetail;

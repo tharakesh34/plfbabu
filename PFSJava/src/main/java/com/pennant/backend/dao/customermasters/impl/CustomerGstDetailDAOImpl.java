@@ -250,6 +250,22 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
 		logger.debug("Leaving");
 	}
+	
+	@Override
+	public void delete(long id, String type) {
+		logger.debug("Entering");
+		CustomerGSTDetails customerGSTDetails = new CustomerGSTDetails();
+		customerGSTDetails.setHeaderId(id);
+		StringBuilder deleteSql = new StringBuilder(" Delete From customergstdetails");
+		deleteSql.append(StringUtils.trimToEmpty(type));
+		deleteSql.append(" Where HeaderId= :HeaderId ");
+		logger.debug("deleteSql: " + deleteSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
+
+		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+		logger.debug("Leaving");
+	}
+	
 
 	@Override
 	public CustomerGST getCustomerGSTByGstNumber(CustomerGST customerGST, String type) {

@@ -39,5 +39,7 @@ public interface CustomerGstDetailDAO {
 	int getCustomerGstInfoByCustGstNumber(long id, long custId, String gstNumber, String string);
 
 	void saveCustomerGSTDetailsBatch(List<CustomerGSTDetails> customerGSTDetailsList, String type);
+	
+	void delete(long id, String type);
 
 }

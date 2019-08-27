@@ -1109,7 +1109,7 @@ public class CustomerDetailsController {
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
 			AuditHeader auditHeader = validation
 					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");
-
+		
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CustomerGstInfoDetail();
@@ -1168,8 +1168,9 @@ public class CustomerDetailsController {
 				customerGSTDetails.setVersion(customerGST.getVersion());
 			}
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
-			AuditHeader auditHeader = validation
-					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");
+			/*AuditHeader auditHeader = validation
+					.gstInfoValidation(getAuditHeader(customerGST, PennantConstants.TRAN_WF), "doApprove");*/
+			AuditHeader auditHeader=getAuditHeader(customerGST, PennantConstants.TRAN_WF);
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1213,8 +1214,10 @@ public class CustomerDetailsController {
 			curCustomerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
 			curCustomerGST.setNewRecord(false);
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
-			AuditHeader auditHeader = validation
-					.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
+			AuditHeader auditHeader = getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF);
+			
+			//AuditHeader auditHeader = validation
+					//.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1226,6 +1229,8 @@ public class CustomerDetailsController {
 						.get(APIHeader.API_HEADER_KEY);
 				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
+				
+				getCustomerGstDetailDAO().delete(curCustomerGST.getId(),"");
 				customerGstService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
 			}

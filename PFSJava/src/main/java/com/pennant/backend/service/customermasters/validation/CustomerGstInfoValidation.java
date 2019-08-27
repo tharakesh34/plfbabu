@@ -10,6 +10,7 @@ import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerGST;
+import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -55,16 +56,17 @@ public class CustomerGstInfoValidation {
 		CustomerGST customerGST = (CustomerGST) auditDetail.getModelData();
 		CustomerGST tempcustomerGST = null;
 		if (customerGST.isWorkflow()) {
-			//tempcustomerGST = getCustomerGstDetailDAO().getCustomerGstByCustId(customerGST, "_Temp");
 			tempcustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST, "_Temp");
 		}
 
 		CustomerGST befCustomerGST = getCustomerGstDetailDAO().getCustomerGSTByGstNumber(customerGST, "");
 		if (befCustomerGST != null) {
 			customerGST.setId(befCustomerGST.getId());
+			befCustomerGST = null;
 		}
-
-		CustomerGST oldCustomerBankInfo = customerGST.getBefImage();
+		List<CustomerGSTDetails> customerGSTDetailsdb = getCustomerGstDetailDAO()
+				.getCustomerGSTDetailsByCustomer(customerGST.getId(), "");
+		CustomerGST oldCustomergstkInfo = customerGST.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
@@ -76,16 +78,25 @@ public class CustomerGstInfoValidation {
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("label_CustomerDialog_GSTNumber.value") + "-" + valueParm[1];
 
-		if (customerGST.isNew()) { // for New record or new record into work flow
+		if (customerGST.isNew()) { // for New record or new record into work
+									// flow
 
-			if (!customerGST.isWorkflow()) {// With out Work flow only new records  
-				if (befCustomerGST != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-				}
-			} else { // with work flow
-
-				if (customerGST.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befCustomerGST != null || tempcustomerGST != null) { // if records already exists in the main table
+			if (customerGST.isWorkflow()) {// With out Work flow only new
+											// records
+				// with work flow
+				if (customerGST.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																							// records
+																							// type
+																							// is
+																							// new
+					if (befCustomerGST != null || tempcustomerGST != null) { // if
+																				// records
+																				// already
+																				// exists
+																				// in
+																				// the
+																				// main
+																				// table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -95,48 +106,55 @@ public class CustomerGstInfoValidation {
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!customerGST.isWorkflow()) { // With out Work flow for update and delete
+			// for work flow process records or (Record to update or Delete with
+			// out work flow)
+			if (!customerGST.isWorkflow()) { // With out Work flow for update
+												// and delete
 
-				if (befCustomerGST == null) { // if records not exists in the main table
+				if (befCustomerGST == null) { // if records not exists in the
+												// main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-				} else {
-
-					if (oldCustomerBankInfo != null
-							&& !oldCustomerBankInfo.getLastMntOn().equals(befCustomerGST.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
-						} else {
-							auditDetail.setErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
-						}
-					}
 				}
 			} else {
 
-				if (tempcustomerGST == null) { // if records not exists in the Work flow table 
+				if (tempcustomerGST == null) { // if records not exists in the
+												// Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempcustomerGST != null && oldCustomerBankInfo != null
-						&& !oldCustomerBankInfo.getLastMntOn().equals(tempcustomerGST.getLastMntOn())) {
+				if (tempcustomerGST != null && oldCustomergstkInfo != null
+						&& !oldCustomergstkInfo.getLastMntOn().equals(tempcustomerGST.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
 			}
 		}
+
+		for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+			for (CustomerGSTDetails customerGSTDetailsold : customerGSTDetailsdb) {
+				if (customerGSTDetailsold.getFrequancy().equalsIgnoreCase(customerGSTDetails.getFrequancy())) {
+					errParm[0] = "Frequency";
+					valueParm[0] = customerGSTDetails.getFrequancy();
+
+					auditDetail
+							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+					break;
+				}
+			}
+		}
+
 		int count = getCustomerGstDetailDAO().getCustomerGstInfoByCustGstNumber(customerGST.getId(),
 				customerGST.getCustId(), customerGST.getGstNumber(), "_View");
 		if (count != 0) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
+
 		}
 		auditDetail.setErrorDetail(screenValidations(customerGST));
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerGST.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method))
+				|| !((CustomerGST) auditDetail.getModelData()).isWorkflow()) {
 			customerGST.setBefImage(befCustomerGST);
 		}
 

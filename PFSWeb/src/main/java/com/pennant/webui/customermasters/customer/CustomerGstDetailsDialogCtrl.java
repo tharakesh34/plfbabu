@@ -312,6 +312,9 @@ public class CustomerGstDetailsDialogCtrl extends GFCBaseCtrl<CustomerGST> {
 		if (acustomerGST.isNew() && !fromDouble) {
 			this.frequencyType.setSelectedIndex(1);
 		}
+		if(fromDouble){
+			this.frequencyType.setDisabled(true);	
+		}
 		frequencyList = PennantStaticListUtil.getfrequency(this.frequencyType.getSelectedItem().getValue());
 		this.recordStatus.setValue(acustomerGST.getRecordStatus());
 		if (CollectionUtils.isNotEmpty(acustomerGST.getCustomerGSTDetailslist())) {
