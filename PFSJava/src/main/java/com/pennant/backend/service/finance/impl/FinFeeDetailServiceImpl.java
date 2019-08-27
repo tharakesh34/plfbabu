@@ -1343,6 +1343,20 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 			}
 
+			if (apiRequest) {
+				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
+				finFeeDetail.setActualAmountOriginal(taxableAmount);
+				finFeeDetail.setActualAmountGST(totalGST);
+				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
+					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
+					finFeeDetail.setPaidAmountOriginal(taxableAmount);
+					finFeeDetail.setPaidAmountGST(totalGST);
+				}
+
+			}
+
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
@@ -1402,6 +1416,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					finFeeDetail.setPaidAmountGST(totalGST);
 				}
 			}
+
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 

@@ -332,9 +332,10 @@ public class PresentmentDetailExtractService {
 			if (PennantConstants.CHEQUESTATUS_REALISED.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
 			}
-			if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
+			//COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for Representment
+			/*if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE);
-			}
+			}*/
 			return;
 		}
 
