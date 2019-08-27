@@ -68,9 +68,9 @@
 								</hbox>
 							</row>
 							<row id="rateAmountRow" visible="false">
-								<label id="label_RateChangeDialog_Rate"  sclass="mandatory" value="${c:l('label_RateChangeDialog_Rate.value')}" />
+								<label id="label_RateChangeDialog_Rate" value="${c:l('label_RateChangeDialog_Rate.value')}" />
 								<hbox>
-									<space spacing="2px" id="space_RateAmount" />
+									<space spacing="2px" id="space_RateAmount" sclass="mandatory"/>
 									<decimalbox id="rateChange" visible="false" width="120px" maxlength="15" style="text-align:right">
 									</decimalbox>
 								</hbox>
