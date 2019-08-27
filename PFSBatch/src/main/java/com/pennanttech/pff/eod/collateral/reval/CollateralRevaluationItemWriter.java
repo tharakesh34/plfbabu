@@ -121,6 +121,14 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 
 			customerDetails.setCustID(financeMain.getCustID());
 			customerDetailsService.setCustomerBasicDetails(customerDetails);
+			
+			if (customerDetails.getCustomer() == null) {
+				return;
+			}
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				return;
+			}
 
 			if (hsnData.getCustomerTemplateCode() != null) {
 				Notification notification = new Notification();

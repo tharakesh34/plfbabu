@@ -35,27 +35,32 @@ public class LMSServiceLogAlerts {
 
 		List<LMSServiceLog> lmsServiceLogs = finServiceInstrutionDAO.getLMSServiceLogList(PennantConstants.NO);
 		for (LMSServiceLog lmsServiceLog : lmsServiceLogs) {
-			sendAlert(lmsServiceLog);
+			FinanceDetail financeDetail = new FinanceDetail();
+			CustomerDetails customerDetails = new CustomerDetails();
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(lmsServiceLog.getFinReference(), "_aview",
+					false);
+			financeMain.setUserDetails(new LoggedInUser());
+			financeDetail.setFinReference(lmsServiceLog.getFinReference());
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			customerDetails.setCustID(financeMain.getCustID());
+			customerDetailsService.setCustomerBasicDetails(customerDetails);
+			financeDetail.setCustomerDetails(customerDetails);
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				finServiceInstrutionDAO.updateNotificationFlag("D", lmsServiceLog.getId());
+				continue;
+			} else {
+				sendAlert(lmsServiceLog, financeDetail);
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void sendAlert(LMSServiceLog lmsServiceLog) {
+	private void sendAlert(LMSServiceLog lmsServiceLog, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		CustomerDetails customerDetails = new CustomerDetails();
-
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(lmsServiceLog.getFinReference(), "_aview", false);
-		financeMain.setUserDetails(new LoggedInUser());
-
-		financeDetail.setFinReference(lmsServiceLog.getFinReference());
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-		financeDetail.setCustomerDetails(customerDetails);
-
-		customerDetails.setCustID(financeMain.getCustID());
-		customerDetailsService.setCustomerBasicDetails(customerDetails);
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 
 		financeDetail.setLmsServiceLog(lmsServiceLog);
 

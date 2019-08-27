@@ -340,6 +340,7 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String applicationNo;
 	private String branchProvince;
+	private boolean dnd;
 
 	private String legalconstitution;
 	private String businesscategory;
@@ -1981,5 +1982,12 @@ public class Customer extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+	public boolean isDnd() {
+		return dnd;
+	}
+
+	public void setDnd(boolean dnd) {
+		this.dnd = dnd;
 	}
 }

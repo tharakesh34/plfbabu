@@ -1603,6 +1603,14 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				return;
 			}
 
+			if (customerDetails.getCustomer() == null) {
+				return;
+			}
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				return;
+			}
+			
 			// Customer Email
 			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 			if (CollectionUtils.isEmpty(emailList)) {

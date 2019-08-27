@@ -3002,6 +3002,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				return;
 			}
 
+			if (customerDetails.getCustomer() == null) {
+				return;
+			}
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				return;
+			}
+			
 			// Customer E-mails
 			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 			if (CollectionUtils.isEmpty(emailList)) {

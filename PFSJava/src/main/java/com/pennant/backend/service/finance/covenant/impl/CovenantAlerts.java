@@ -47,11 +47,25 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 
 		covenants = covenantsDAO.getCovenantsAlertList();
 		for (Covenant covenant : covenants) {
-			sendAlert(covenant);
+			FinanceDetail financeDetail = new FinanceDetail();
+			CustomerDetails customerDetails = new CustomerDetails();
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(covenant.getKeyReference(), "_aview", false);
+			financeMain.setUserDetails(new LoggedInUser());
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			financeDetail.setCovenant(covenant);
+			financeDetail.setCustomerDetails(customerDetails);
+			customerDetails.setCustID(financeMain.getCustID());
+			customerDetailsService.setCustomerBasicDetails(customerDetails);
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				continue;
+			} else {
+				sendAlert(covenant, financeDetail);
+			}
 		}
 	}
 
-	private void sendAlert(Covenant covenant) {
+	private void sendAlert(Covenant covenant, FinanceDetail financeDetail) {
 		Date frequencyaDate = covenant.getNextFrequencyDate();
 		int alertDays = covenant.getAlertDays();
 
@@ -69,19 +83,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			return;
 		}
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		CustomerDetails customerDetails = new CustomerDetails();
-
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(covenant.getKeyReference(), "_aview", false);
-		financeMain.setUserDetails(new LoggedInUser());
-
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-		financeDetail.setCovenant(covenant);
-		financeDetail.setCustomerDetails(customerDetails);
-
-		customerDetails.setCustID(financeMain.getCustID());
-		customerDetailsService.setCustomerBasicDetails(customerDetails);
-
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		if (covenant.getCustomerTemplateCode() != null) {
 			Notification notification = new Notification();
 			notification.setKeyReference(covenant.getKeyReference());

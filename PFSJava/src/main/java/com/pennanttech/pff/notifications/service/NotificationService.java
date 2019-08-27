@@ -298,6 +298,10 @@ public class NotificationService {
 			data = vehicleDealer.getDeclaredFieldValues();
 			data.put("vd_recordStatus", vehicleDealer.getRecordStatus());
 		}
+		//For Customers marked as DND true are not allow to Trigger a Mail. 
+		if (customerDetails != null && customerDetails.getCustomer() != null && customerDetails.getCustomer().isDnd()) {
+			return;
+		}
 
 		for (Notifications mailNotification : notifications) {
 			boolean sendNotification = false;

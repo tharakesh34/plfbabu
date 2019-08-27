@@ -128,7 +128,6 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerGST;
-import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerGroup;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
@@ -263,6 +262,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox custSubSector; // autowired
 	protected ExtendedCombobox custSubSegment; // autowired
 	protected Uppercasebox applicationNo; // autowired
+	protected Checkbox dnd;
 
 	/** Customer Employer Fields **/
 	protected ExtendedCombobox empStatus; // autowired
@@ -1246,6 +1246,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					StringUtils.trimToEmpty(aCustomer.getLovDesccustGroupIDName()));
 			this.custGroupId.setAttribute("CustGroupId", aCustomer.getCustGroupID());
 		}
+		this.dnd.setChecked(aCustomer.isDnd());
 
 		doSetSegmentCode(aCustomer.getCustTypeCode());
 		aCustomer.getCustCtgCode();
@@ -1636,6 +1637,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		try {
 			aCustomer.setSalariedCustomer(this.salariedCustomer.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCustomer.setDnd(this.dnd.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -2856,6 +2862,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.custSegment.setReadonly(true);// CustomerDialog_custSegment
 				this.custGroupId.setReadonly(isReadOnly("CustomerDialog_custGroupID"));
 				this.custIsStaff.setDisabled(isReadOnly("CustomerDialog_custIsStaff"));
+				this.dnd.setDisabled(isReadOnly("CustomerDialog_dnd"));
 				this.custStaffID.setReadonly(isReadOnly("CustomerDialog_custStaffID"));
 				this.custDSACode.setReadonly(isReadOnly("CustomerDialog_custDSACode"));
 				this.custDSADept.setReadonly(isReadOnly("CustomerDialog_custDSADept"));
@@ -2970,6 +2977,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custRelatedParty.setReadonly(true);
 		this.custGroupId.setReadonly(true);
 		this.custIsStaff.setDisabled(true);
+		this.dnd.setDisabled(true);
 		this.custStaffID.setReadonly(true);
 		this.custDSACode.setReadonly(true);
 		this.custDSADept.setReadonly(true);

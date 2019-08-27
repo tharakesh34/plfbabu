@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
@@ -47,23 +48,37 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		loadAppDate();
 
 		List<FinOption> finOptions = finOptionDAO.getPutCallAlertList();
+
 		for (FinOption finOption : finOptions) {
-			sendAlert(finOption);
+			FinanceDetail financeDetail = new FinanceDetail();
+			CustomerDetails customerDetails = new CustomerDetails();
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(finOption.getFinReference(), "_aview", false);
+			financeMain.setUserDetails(new LoggedInUser());
+			customerDetails.setCustID(financeMain.getCustID());
+			customerDetailsService.setCustomerBasicDetails(customerDetails);
+			financeDetail.setCustomerDetails(customerDetails);
+			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			if (customerDetails.getCustomer().isDnd()) {
+				continue;
+			} else {
+				sendAlert(finOption, financeDetail);
+			}
 		}
 	}
 
-	private void sendAlert(FinOption finOption) {
-		Date currentOptionDate = finOption.getCurrentOptionDate();
+	private void sendAlert(FinOption finOption, FinanceDetail financeDetail) {
+		Date currentOptionDate = finOption.getCurrentOptionDate();//21-06-2019
 
-		int alertDays = finOption.getAlertDays();
-		int noticePeriodDays = finOption.getNoticePeriodDays();
-		int totalDays = noticePeriodDays + alertDays;
+		int alertDays = finOption.getAlertDays();//7
+		int noticePeriodDays = finOption.getNoticePeriodDays();//20
+		int totalDays = noticePeriodDays + alertDays;//27
 
-		currentOptionDate = DateUtil.getDatePart(currentOptionDate);
-		Date userFrequencyDate = DateUtil.addDays(currentOptionDate, -totalDays);
+		currentOptionDate = DateUtil.getDatePart(currentOptionDate);//21-06-2019
+		Date userFrequencyDate = DateUtil.addDays(currentOptionDate, -totalDays);//25-05-2019
 
-		BigDecimal totalPriBal = finOption.getTotalPriBal();
-		BigDecimal penaltyPaid = finOption.getPenaltyPaid();
+		BigDecimal totalPriBal = finOption.getTotalPriBal();//10000000
+		BigDecimal penaltyPaid = finOption.getPenaltyPaid();//0
 
 		if (totalPriBal == null) {
 			totalPriBal = BigDecimal.ZERO;
@@ -75,7 +90,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		finOption.setTotalAmt(totalPriBal.add(penaltyPaid));
 
-		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);
+		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);//01-06-2019
 
 		if (appDate.compareTo(userFrequencyDate) < 0 || appDate.compareTo(custUserFrequencyDate) < 0) {
 			return;
@@ -87,18 +102,8 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			return;
 		}
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		CustomerDetails customerDetails = new CustomerDetails();
-
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finOption.getFinReference(), "_aview", false);
-		financeMain.setUserDetails(new LoggedInUser());
-
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		financeDetail.setFinOption(finOption);
-		financeDetail.setCustomerDetails(customerDetails);
-
-		customerDetails.setCustID(financeMain.getCustID());
-		customerDetailsService.setCustomerBasicDetails(customerDetails);
 
 		if (finOption.getCustomerTemplateCode() != null) {
 
@@ -111,7 +116,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 				}
 			}
 
-			//Notification for PutCall option to Customer - Start
+			// Notification for PutCall option to Customer - Start
 			Notification putCallNotifyCust = new Notification();
 			putCallNotifyCust.setKeyReference(finOption.getFinReference());
 			putCallNotifyCust.setModule("LOAN");
@@ -123,9 +128,9 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (putCallNotifyId > 0) {
 				updateAlertStatus(putCallNotifyId, finOption);
 			}
-			//Notification for PutCall option to Customer - End
+			// Notification for PutCall option to Customer - End
 
-			//Notification for Interest Review to Customer - Start
+			// Notification for Interest Review to Customer - Start
 			Notification intReviewNotifyCust = new Notification();
 			intReviewNotifyCust.setKeyReference(finOption.getFinReference());
 			intReviewNotifyCust.setModule("LOAN");
@@ -137,9 +142,9 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (intReviewNotifyId > 0) {
 				updateAlertStatus(intReviewNotifyId, finOption);
 			}
-			//Notification for Interest Review to Customer - End
+			// Notification for Interest Review to Customer - End
 
-			//Notification for Asset Review to Customer - Start
+			// Notification for Asset Review to Customer - Start
 			Notification assetReviewNotifyCust = new Notification();
 			assetReviewNotifyCust.setKeyReference(finOption.getFinReference());
 			assetReviewNotifyCust.setModule("LOAN");
@@ -151,7 +156,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (assetReviewNotifyId > 0) {
 				updateAlertStatus(assetReviewNotifyId, finOption);
 			}
-			//Notification for Asset Review to Customer - End
+			// Notification for Asset Review to Customer - End
 
 		} else if (finOption.getUserTemplateCode() != null && finOption.getAlertToRoles() != null) {
 			List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(finOption.getAlertToRoles().split(","));
@@ -162,7 +167,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 				}
 			}
 
-			//Notification for PutCall option to User - Start
+			// Notification for PutCall option to User - Start
 			Notification putCallNotifyUser = new Notification();
 			putCallNotifyUser.setKeyReference(finOption.getFinReference());
 			putCallNotifyUser.setModule("LOAN");
@@ -174,9 +179,9 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (putCallNotifyId > 0) {
 				updateAlertStatus(putCallNotifyId, finOption);
 			}
-			//Notification for PutCall option to User - End
+			// Notification for PutCall option to User - End
 
-			//Notification for Interest Review to User - Start
+			// Notification for Interest Review to User - Start
 			Notification intReviewNotifyUser = new Notification();
 			intReviewNotifyUser.setKeyReference(finOption.getFinReference());
 			intReviewNotifyUser.setModule("LOAN");
@@ -188,9 +193,9 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (intReviewNotifyId > 0) {
 				updateAlertStatus(intReviewNotifyId, finOption);
 			}
-			//Notification for Interest Review to User - End
+			// Notification for Interest Review to User - End
 
-			//Notification for Asset Review to User - Start
+			// Notification for Asset Review to User - Start
 			Notification assetReviewNotifyUser = new Notification();
 			assetReviewNotifyUser.setKeyReference(finOption.getFinReference());
 			assetReviewNotifyUser.setModule("LOAN");
@@ -202,7 +207,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			if (assetReviewNotifyId > 0) {
 				updateAlertStatus(assetReviewNotifyId, finOption);
 			}
-			//Notification for Asset Review to User - End
+			// Notification for Asset Review to User - End
 		}
 	}
 
@@ -250,7 +255,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 	}
 
 	private void loadAppDate() {
-		appDate = DateUtil.getDatePart(DateUtility.getAppDate());
+		appDate = DateUtil.getDatePart(SysParamUtil.getAppDate());
 	}
 
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {

@@ -217,7 +217,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				" CustAddlInt1, CustAddlInt2, CustAddlInt3, CustAddlInt4, CustAddlInt5,DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,");
 		selectSql.append(
 				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger,applicationNo, ");
-
+		selectSql.append(" Dnd,");
 		if (type.contains("View")) {
 			selectSql.append(
 					" lovDescCustTypeCodeName, lovDescCustMaritalStsName, lovDescCustEmpStsName,  lovDescCustStsName,");
@@ -384,7 +384,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		insertSql.append(
 				" DedupFound,SkipDedup,CustTotalExpense,CustBlackListDate,NoOfDependents,CustCRCPR,CustSourceID,");
 		insertSql.append(
-				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo,");
+				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber, SalariedCustomer,ApplicationNo, Dnd,");
 
 		insertSql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -421,7 +421,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		insertSql.append(
 				" :DedupFound,:SkipDedup,:CustTotalExpense,:CustBlackListDate,:NoOfDependents,:CustCRCPR,:CustSourceID,");
 		insertSql.append(
-				" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo,");
+				" :JointCust, :JointCustName, :JointCustDob, :custRelation, :ContactPersonName, :EmailID, :PhoneNumber, :SalariedCustomer, :ApplicationNo, :Dnd,");
 		insertSql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId");
 		insertSql.append(" ,:CasteId, :ReligionId, :SubCategory, :MarginDeviation )");
@@ -524,7 +524,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		updateSql.append(
 				" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(
-				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo");
+				" ,CasteId = :CasteId, ReligionId = :ReligionId, SubCategory = :SubCategory, ApplicationNo = :ApplicationNo, Dnd = :Dnd ");
 		updateSql.append(" Where CustID =:CustID");
 
 		if (!type.endsWith("_Temp")) {
@@ -576,7 +576,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
 		selectSql.append(
 				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
+		selectSql.append(" , CasteId, ReligionId, SubCategory, Dnd");
 		if (type.contains("View")) {
 			selectSql.append(" ,LovDescCustStsName");
 			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
@@ -2018,7 +2018,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		selectSql.append(
 				" JointCust, JointCustName, JointCustDob, custRelation, ContactPersonName, EmailID, PhoneNumber,");
 		selectSql.append(" SalariedCustomer, custSuspSts,custSuspDate, custSuspTrigger ");
-		selectSql.append(" , CasteId, ReligionId, SubCategory, ApplicationNo ");
+		selectSql.append(" , CasteId, ReligionId, SubCategory, ApplicationNo, Dnd ");
 		selectSql.append(" FROM  Customers");
 		selectSql.append(" Where CustGroupID =:CustGroupID");
 
