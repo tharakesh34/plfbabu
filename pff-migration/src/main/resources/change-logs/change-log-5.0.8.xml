@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value="" dbms="oracle" />
 	<property name="add.schema" value="" dbms="postgresql" />
 	<property name="call.substr" value="substring" dbms="mssql" />
@@ -5544,11 +5544,11 @@ UNION ALL
 		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1" />
 	</changeSet>
 
-	  <changeSet id="142" author="Durgaprasad G">
-	  <comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
-		 <dropTable tableName="Seq_Gst_Invoice_Txn_Details"/> 
-	 </changeSet>  
-		 
+	<changeSet id="142" author="Durgaprasad G">
+		<comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
+		<dropTable tableName="Seq_Gst_Invoice_Txn_Details" />
+	</changeSet>
+
 	<changeSet id="143" author="Durgaprasad G">
 		<comment> startValue is result of above query.</comment>
 		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details" startValue="1000" incrementBy="1" />
@@ -5918,32 +5918,32 @@ UNION ALL
 
 
 	<changeSet id="70" author="meena.a">
-	<comment>extra fields added in Limitdetails</comment>
-	<addColumn tableName="Limitdetails">
-		<column name="BankingArrangement" type="char(1)" />
-	</addColumn>
-</changeSet>
+		<comment>extra fields added in Limitdetails</comment>
+		<addColumn tableName="Limitdetails">
+			<column name="BankingArrangement" type="char(1)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="71" author="meena.a">
-	<comment>extra fields added in Limitdetails</comment>
-	<addColumn tableName="Limitdetails">
-		<column name="LimitCondition" type="char(1)" />
-	</addColumn>
-</changeSet>
+		<comment>extra fields added in Limitdetails</comment>
+		<addColumn tableName="Limitdetails">
+			<column name="LimitCondition" type="char(1)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="72" author="meena.a">
-	<comment>extra fields added in Limitdetails</comment>
-	<addColumn tableName="Limitdetails">
-		<column name="ExternalRef" type="varchar(50)" />
-	</addColumn>
-</changeSet>
+		<comment>extra fields added in Limitdetails</comment>
+		<addColumn tableName="Limitdetails">
+			<column name="ExternalRef" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="73" author="meena.a">
-	<comment>extra fields added in Limitdetails</comment>
-	<addColumn tableName="Limitdetails">
-		<column name="Tenor" type="int" />
-	</addColumn>
-</changeSet>
+		<comment>extra fields added in Limitdetails</comment>
+		<addColumn tableName="Limitdetails">
+			<column name="Tenor" type="int" />
+		</addColumn>
+	</changeSet>
 
 
 
@@ -5953,21 +5953,21 @@ UNION ALL
 			<column name="BankingArrangement" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="75" author="meena.a">
 		<comment>extra fields added in Limitdetails_temp</comment>
 		<addColumn tableName="Limitdetails_temp">
 			<column name="LimitCondition" type="char(1)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="76" author="meena.a">
 		<comment>extra fields added in Limitdetails_temp</comment>
 		<addColumn tableName="Limitdetails_temp">
 			<column name="ExternalRef" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="77" author="meena.a">
 		<comment>extra fields added in Limitdetails_temp</comment>
 		<addColumn tableName="Limitdetails_temp">
@@ -5976,7 +5976,7 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="78" author="meena.a">
-		 <createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
+		<createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
 		                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq,T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
 		                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
@@ -5988,7 +5988,7 @@ UNION ALL
 		                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="79_deps" author="meena.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6004,10 +6004,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="79" author="meena.a">
-		 <createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
+		<createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode, T3.GroupName,T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc, COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving,T1.ExpiryDate, T1.LimitSanctioned,  
 				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
 				                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
@@ -6019,7 +6019,7 @@ UNION ALL
 				                     Rules  T4 ON T5.LimitLine = T4.RuleCode and  RuleModule='LMTLINE'
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="79_post" author="meena.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6028,9 +6028,9 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="80" author="meena.a">
-		 <createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
 			  SELECT     T1.DetailId, T1.LimitHeaderId, T1.LimitStructureDetailsID,T5.GroupCode,  T3.GroupName, T5.LimitLine, T4.RuleCodeDesc  LimitLineDesc,COALESCE(T1.Revolving,0)Revolving, COALESCE(T4.Revolving,0)  LimitStructureRevolving ,T1.ExpiryDate, T1.LimitSanctioned,  
 				                      T1.ReservedLimit, T1.UtilisedLimit, T1.LimitCheck, T1.LimitChkMethod,T5.ItemSeq, T5.ItemPriority,T5.ItemLevel,T5.Editable, T5.DisplayStyle, T1.Version, T1.CreatedBy, T1.CreatedOn, T1.LastMntBy, T1.LastMntOn, 
 				                      T2.UsrLogin, T2.UsrFName, T2.UsrMName, T2.UsrLName, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, 
@@ -6059,7 +6059,7 @@ UNION ALL
 						                            WHERE      DetailId = T1.DetailId)
 		</createView>
 	</changeSet>
-	
+
 
 	<changeSet id="145" author="satyanarayana.g">
 		<addColumn tableName="RMTBaseRateCodes">
@@ -6198,7 +6198,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-    <changeSet id="152" author="meena.a">
+	<changeSet id="152" author="meena.a">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='LIMIT_ADDTNAL_FIELDS_REQ';
@@ -6206,7 +6206,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="153" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -6230,7 +6230,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="154" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -6254,7 +6254,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="156_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6263,15 +6263,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="156" author="DurgaPrasad G">
-		<modifyDataType tableName="RMTLOVFIELDDETAIL" columnName="VALUEDESC" newDataType="varchar(200)"/>
+		<modifyDataType tableName="RMTLOVFIELDDETAIL" columnName="VALUEDESC" newDataType="varchar(200)" />
 	</changeSet>
-	
+
 	<changeSet id="157" author="DurgaPrasad G">
-		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP" columnName="VALUEDESC" newDataType="varchar(200)"/>
+		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP" columnName="VALUEDESC" newDataType="varchar(200)" />
 	</changeSet>
-	
+
 	<changeSet id="156_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6280,7 +6280,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="158" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -6299,7 +6299,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="160" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -6334,16 +6334,16 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="161" author="Durgaprasad G">
-		 <createView viewName="PaymentTransaction_View" replaceIfExists="true">
+		<createView viewName="PaymentTransaction_View" replaceIfExists="true">
 		 	select FA.FinReference, PT.TranModule, FA.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
 			from PaymentTransaction PT Inner Join FinAdvancePayments FA on PT.PAYMENTID= FA.PAYMENTID;
 		 </createView>
 	</changeSet>
-	
+
 	<changeSet id="162" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="Id" tableName="MandatesStatus" defaultValue="0"/>
+		<addDefaultValue columnName="Id" tableName="MandatesStatus" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="163" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -6351,7 +6351,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="164" author="satyanarayana.g">
 		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
 		   SELECT A.ID,
@@ -6390,5 +6390,156 @@ UNION ALL
 				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
 				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE;
 	 </createView>
+	</changeSet>
+
+	<changeSet id="139" author="Kesav">
+		<createTable tableName="CREDITREVIEWCONFIG">
+			<column name="Id" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="BUSINESSVERTICAL" type="varchar(8)" />
+			<column name="PRODUCT" type="varchar(8)" />
+			<column name="FINCATEGORY" type="varchar(8)" />
+			<column name="EMPLOYMENTTYPE" type="varchar(8)" />
+			<column name="ELIGIBILITYMETHOD" type="varchar(8)" />
+			<column name="SECTION" type="varchar(8)" />
+			<column name="TEMPLATENAME" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATEVERSION" type="bigint" />
+			<column name="FIELDS" type="varchar(2000)" />
+			<column name="CUSTID" type="bigint" defaultValue="0" />
+			<column name="PROTECTEDCELLS" type="varchar(2000)" />
+			<column name="SURROGATETYPE" type="varchar(10)" />
+			<column name="SQLQUERY" type="varchar(2000)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="140" author="Kesav">
+		<createTable tableName="CREDITREVIEWDATA">
+			<column name="FINREFERENCE" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATEDATA" type="varchar(2000)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TEMPLATENAME" type="varchar(50)" />
+			<column name="TEMPLATEVERSION" type="bigint" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="141" author="Kesav">
+		<comment>Account Opening Date Rights for Customer Banking</comment>
+		<sql>
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select
+			MAX(RightID) + 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+			SecGroupRights);
+			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+
+			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName =
+			'CustomerBankInfoDialog_AccountOpeningDate');
+			Delete from SecRights where RightName =
+			'CustomerBankInfoDialog_AccountOpeningDate';
+			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
+			'CustomerBankInfoDialog_AccountOpeningDate', 'CustomerBankInfoDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null,
+			null, null, null, null, 0 );
+			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights),
+			(Select GrpID from SecGroups where GrpCode = 'CustomerBankInfo_Maker'), (Select RightID from SecRights where
+			RightName = 'CustomerBankInfoDialog_AccountOpeningDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null,
+			null, null, 0 );
+
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID)
+			+ 1 from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+			Update
+			SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+		</sql>
+	</changeSet>
+
+	<changeSet id="142" author="Kesav">
+		<addColumn tableName="CustomerBankInfo">
+			<column name="AccountOpeningDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="143" author="Kesav">
+		<addColumn tableName="CustomerBankInfo_Temp">
+			<column name="AccountOpeningDate" type="datetime" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="144" author="Kesav">
+		<comment>Account Opening Date column added</comment>
+		<createView viewName="CustomerBankInfo_AView" replaceIfExists="true">
+			SELECT  t1.bankid, t1.custid, t1.bankname, t1.accountnumber, t1.accounttype, t1.salaryaccount, 
+					t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid, 
+					t3.bankname AS lovdescbankname, t4.valuedesc AS lovdescaccounttype, t1.credittranno, t1.credittranamt, t1.credittranavg, t1.debittranno, t1.debittranamt, 
+					t1.cashdepositno, t1.cashdepositamt, t1.cashwithdrawalno, t1.cashwithdrawalamt, t1.chqdepositno, t1.chqdepositamt, t1.chqissueno, t1.chqissueamt, t1.inwardchqbounceno, 
+					t1.outwardchqbounceno, t1.eodbalmin, t1.eodbalmax, t1.eodbalavg, t1.bankbranch, t1.fromdate, t1.todate, t1.repaymentfrom, t1.noofmonthsbanking, t1.lwowratio, t1.cclimit, 
+					t1.typeofbanks, t1.AccountOpeningDate
+			FROM customerbankinfo t1
+			JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'		
+		</createView>
+	</changeSet>
+
+	<changeSet id="145" author="Kesav">
+		<comment>Account Opening Date column added</comment>
+		<createView viewName="CustomerBankInfo_View" replaceIfExists="true">
+			SELECT  t1.bankid, t1.custid, t1.bankname, t1.accountnumber, t1.accounttype, t1.salaryaccount, 
+				    t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid, t3.bankname AS lovdescbankname, 
+					t4.valuedesc AS lovdescaccounttype, t1.credittranno, t1.credittranamt, t1.credittranavg, t1.debittranno, t1.debittranamt, t1.cashdepositno, t1.cashdepositamt, t1.cashwithdrawalno, 
+					t1.cashwithdrawalamt, t1.chqdepositno, t1.chqdepositamt, t1.chqissueno, t1.chqissueamt, t1.inwardchqbounceno, t1.outwardchqbounceno, t1.eodbalmin, t1.eodbalmax, t1.eodbalavg, 
+					t1.bankbranch, t1.fromdate, t1.todate, t1.repaymentfrom, t1.noofmonthsbanking, t1.lwowratio, t1.cclimit, t1.typeofbanks, t1.AccountOpeningDate
+			FROM customerbankinfo_temp t1
+			JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+						
+			UNION ALL
+			
+			SELECT  t1.bankid, t1.custid, t1.bankname, t1.accountnumber, t1.accounttype, t1.salaryaccount, 
+					t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid, t3.bankname AS lovdescbankname, 
+					t4.valuedesc AS lovdescaccounttype, t1.credittranno, t1.credittranamt, t1.credittranavg, t1.debittranno, t1.debittranamt, t1.cashdepositno, t1.cashdepositamt, t1.cashwithdrawalno, 
+					t1.cashwithdrawalamt, t1.chqdepositno, t1.chqdepositamt, t1.chqissueno, t1.chqissueamt, t1.inwardchqbounceno, t1.outwardchqbounceno, t1.eodbalmin, t1.eodbalmax, t1.eodbalavg,  
+					t1.bankbranch, t1.fromdate, t1.todate, t1.repaymentfrom, t1.noofmonthsbanking, t1.lwowratio, t1.cclimit, t1.typeofbanks, t1.AccountOpeningDate
+			FROM customerbankinfo t1
+			JOIN bmtbankdetail t3 ON t3.bankcode = t1.bankname
+			JOIN rmtlovfielddetail t4 ON t4.fieldcodevalue = t1.accounttype AND t4.fieldcode = 'ACC_TYPE'
+			WHERE NOT (EXISTS ( SELECT 1 FROM customerbankinfo_temp WHERE customerbankinfo_temp.bankid = t1.bankid))		
+		</createView>
+	</changeSet>
+
+	<changeSet id="146" author="Vinay">
+		<sql>
+			Delete from SMTparameters where SysParmCode = 'CUSTOM_DEVIATION_FILE_PATH';
+			INSERT INTO SMTparameters VALUES
+			('CUSTOM_DEVIATION_FILE_PATH','Custom deviation file
+			path.','String',0,'/opt/pennant/PFF/BASE/extensions',100,0,null,null,'',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0)
+			;
+		</sql>
+	</changeSet>
+
+	<changeSet id="147" author="Kesava">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOW_CIBIL_REQUEST';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_CIBIL_REQUEST', 'Allow Cibil Request.', 'String', '1', 'N', 1, 0, NULL, NULL, 'Allow Cibil Request.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>

@@ -122,53 +122,5 @@
 	<changeSet id="9" author="VaraPrasad.K">
 		<modifyDataType tableName="AdtFinTypeVASProducts" columnName="mandatory" newDataType="boolean" />
 	</changeSet>
-	<!-- 5.0.7 is Under QC please use 5.0.8 -->
-	
-	<changeSet author="Kesav" id="10">
-		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="AdtExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
-	</changeSet> 
-	
-	<changeSet author="Kesav" id="10">
-		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="AdtExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
-	</changeSet> 
-	
-	<changeSet id="11" author="Kesav">
-		<createTable tableName="ADTCREDITREVIEWDATA">
-		<column name="AuditId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditDate" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditSeq" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="AuditImage" type="varchar(20)">
-				<constraints nullable="false" />
-			</column>
-			<column name="FINREFERENCE" type="varchar(20)"/>
-			<column name="TEMPLATEDATA" type="varchar(2000)"/>
-			<column name="TEMPLATENAME" type="varchar(50)" />
-			<column name="TEMPLATEVERSION" type="bigint"/>
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" />
-		</createTable>
-	</changeSet>
-	
-	<changeSet id="12" author="Kesav">
-		<addColumn tableName="AdtCustomerBankInfo">
-			<column name="AccountOpeningDate" type="datetime"/>
-		</addColumn>
-	</changeSet>
-	
+	<!-- 5.0.7 is Under QC please use 5.0.8 -->	
 </databaseChangeLog>
