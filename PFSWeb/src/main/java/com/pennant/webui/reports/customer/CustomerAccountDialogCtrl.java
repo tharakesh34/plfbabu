@@ -35,7 +35,6 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.reports.customer.model.CustomerAccountListModelItemRender;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
@@ -285,7 +284,7 @@ public class CustomerAccountDialogCtrl extends GFCBaseCtrl<Accounts> {
 		if (custId != Long.MIN_VALUE || custId != 0) {
 			pagingEnquiryList.setDetailed(true);
 			this.searchObjAc = new JdbcSearchObject<Accounts>(Accounts.class);
-			this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
+			//this.searchObjAc.addFilter(new Filter("acCustId", custId, Filter.OP_EQUAL));
 			this.searchObjAc.addTabelName("Accounts_AView");
 			this.accounts = getPagedListService().getSRBySearchObject(this.searchObjAc).getResult();
 			getPagedListWrapper().initList(this.accounts, this.listBoxEnquiryResult, this.pagingEnquiryList);

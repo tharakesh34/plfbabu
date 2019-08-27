@@ -24,9 +24,9 @@ public class CustomerAccountListModelItemRender implements ListitemRenderer<Acco
 	public void render(Listitem item, Accounts accounts, int count) throws Exception {
 
 		Listcell lc;
-		lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accounts.getAccountId()));
+		lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accounts.getAcNumber()));
 		lc.setParent(item);
-		lc = new Listcell(accounts.getAcShortName());
+		lc = new Listcell(PennantApplicationUtil.formatAccountNumber(accounts.getAcNumber()));
 		lc.setParent(item);
 		lc = new Listcell(accounts.getAcBranch());
 		lc.setParent(item);

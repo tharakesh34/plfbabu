@@ -44,6 +44,8 @@ package com.pennant.backend.model.accounts;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -65,6 +67,8 @@ public class Accounts extends AbstractWorkflowEntity {
 	private String acPurpose;
 	private boolean internalAc;
 	private boolean custSysAc;
+	private String acNumber;
+
 	private BigDecimal shadowBal = BigDecimal.ZERO;
 	private BigDecimal acBalance = BigDecimal.ZERO;
 	private Date acOpenDate;
@@ -95,6 +99,12 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public boolean isNew() {
 		return isNewRecord();
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("acNumber");
+		return excludeFields;
 	}
 
 	public Accounts(String accountId) {
@@ -348,5 +358,13 @@ public class Accounts extends AbstractWorkflowEntity {
 
 	public void setAcBalance(BigDecimal acBalance) {
 		this.acBalance = acBalance;
+	}
+
+	public String getAcNumber() {
+		return acNumber;
+	}
+
+	public void setAcNumber(String acNumber) {
+		this.acNumber = acNumber;
 	}
 }

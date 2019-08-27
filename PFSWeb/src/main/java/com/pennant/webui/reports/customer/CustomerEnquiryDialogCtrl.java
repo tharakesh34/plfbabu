@@ -163,6 +163,7 @@ public class CustomerEnquiryDialogCtrl extends GFCBaseCtrl<FinanceEnquiry> {
 		this.custCIF.setValueColumn("CustCIF");
 		this.custCIF.setDescColumn("CustShrtName");
 		this.custCIF.setValidateColumns(new String[] { "CustCIF" });
+		this.custCIF.setMandatoryStyle(true);
 	}
 
 	/**
