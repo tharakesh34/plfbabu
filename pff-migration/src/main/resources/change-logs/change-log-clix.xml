@@ -3528,4 +3528,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="87" author="vijaya.a">
+		<sql>
+        	<![CDATA[
+           		update plf.data_engine_column set name = 'REMARKS' where tableid in (select Id from plf.data_engine_table where configId In (select Id from plf.data_engine_config where name = 'MANDATES_IMPORT')) and startindex = '24';
+				update plf.data_engine_column set name = 'REJECT_REASON' where tableid in (select Id from plf.data_engine_table where configId In (select Id from plf.data_engine_config where name = 'MANDATES_IMPORT')) and startindex = '25';
+        	]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
