@@ -30,8 +30,8 @@
 		parent="abstractInterface" />
 
 	<!-- The below bean configurations should be in implementation layer only if required. -->
-	<bean id="abstractCibilEnquiryProcess" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
-		abstract="true" parent="abstractInterface" />
+	<bean id="creditInformation" class="com.pennanttech.pff.external.creditInformation.AbstractCibilEnquiryProcess"
+		parent="abstractInterface" />
 	<bean id="abstractDMSIntegration" class="com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService"
 		abstract="true" parent="abstractInterface" />
 	<bean id="dmsIdentificationDAO" class="com.pennant.backend.dao.dms.impl.DMSIdentificationDAOImpl">

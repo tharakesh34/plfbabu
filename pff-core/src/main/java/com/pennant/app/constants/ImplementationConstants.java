@@ -113,7 +113,6 @@ public class ImplementationConstants {
 	public static final boolean ALLOW_FEES_RECALCULATE = true; // Fees Recalculate always
 	public static final boolean ALLOW_PAID_FEE_SCHEDULE_METHOD = false; // Fee Schedule Methods for Paid by customer and Waved by Bank.
 	public static final boolean ALLOW_BARCODE = false;
-	public static final boolean CIBIL_BUTTON_REQ = false;
 	public static final boolean PPPERCENT_VALIDATION_REQ = false; // validation based on partial payment percent
 
 	// Deposit Process

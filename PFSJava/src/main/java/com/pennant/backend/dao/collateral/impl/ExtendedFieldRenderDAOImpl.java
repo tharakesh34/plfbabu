@@ -424,6 +424,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public boolean isExists(String reference, int seqNo, String tableName) {
+		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder(" Select count(*) from ");
@@ -437,7 +438,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		if (count > 0) {
 			return true;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return false;
 	}
 

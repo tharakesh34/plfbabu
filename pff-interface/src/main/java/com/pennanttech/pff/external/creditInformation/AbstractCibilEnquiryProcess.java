@@ -108,6 +108,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	private final String extConfigFileName = "RetailCibilConsumer.properties";
 	private boolean cibil_Button;
 
+	public AbstractCibilEnquiryProcess() {
+		super();
+	}
+
 	/**
 	 * Method to get the CIBIL details of the Customer and set these details to ExtendedFieldDetails.
 	 * 
@@ -239,6 +243,41 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 				}
 
 				appplicationdata.put("Reference", customer.getCustCIF());
+
+				if (!appplicationdata.containsKey("SeqNo")) {
+					appplicationdata.put("SeqNo", 1);
+				}
+				if (!appplicationdata.containsKey("Version")) {
+					appplicationdata.put("Version", 0);
+				}
+				if (!appplicationdata.containsKey("LastMntOn")) {
+					appplicationdata.put("LastMntOn", new Timestamp(System.currentTimeMillis()));
+				}
+				if (!appplicationdata.containsKey("LastMntBy")) {
+					appplicationdata.put("LastMntBy", 0);
+				}
+				if (!appplicationdata.containsKey("RecordStatus")) {
+					appplicationdata.put("RecordStatus", "");
+				}
+				if (!appplicationdata.containsKey("RoleCode")) {
+					appplicationdata.put("RoleCode", "");
+				}
+				if (!appplicationdata.containsKey("NextRoleCode")) {
+					appplicationdata.put("NextRoleCode", "");
+				}
+				if (!appplicationdata.containsKey("TaskId")) {
+					appplicationdata.put("TaskId", "");
+				}
+				if (!appplicationdata.containsKey("NextTaskId")) {
+					appplicationdata.put("NextTaskId", "");
+				}
+				if (!appplicationdata.containsKey("RecordType")) {
+					appplicationdata.put("RecordType", "");
+				}
+				if (!appplicationdata.containsKey("WorkflowId")) {
+					appplicationdata.put("WorkflowId", 0);
+				}
+
 				prepareResponseObj(appplicationdata, customerDetails);
 
 				Map<String, Object> extFieldMap = creditInterfaceDao.getExtendedField(customer.getCustCIF(),
@@ -499,7 +538,11 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		search.addTabelName("cibil_member_details");
 		search.addFilter(new Filter("segment_Type", PennantConstants.PFF_CUSTCTG_INDIV));
 
-		memberDetails = (CibilMemberDetail) searchProcessor.getResults(search);
+		if (searchProcessor.getResults(search) != null && searchProcessor.getResults(search) instanceof List) {
+			memberDetails = (CibilMemberDetail) searchProcessor.getResults(search).get(0);
+		} else {
+			memberDetails = (CibilMemberDetail) searchProcessor.getResults(search);
+		}
 
 		this.CBIL_ENQUIRY_SCORE_TYPE = SysParamUtil.getValueAsString("CBIL_ENQUIRY_SCORE_TYPE");
 	}

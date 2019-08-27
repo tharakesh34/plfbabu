@@ -246,4 +246,5 @@ public class SMTParameterConstants {
 	public static final String LIMIT_ADDTNAL_FIELDS_REQ = "LIMIT_ADDTNAL_FIELDS_REQ";
 	public static final String CUST_PAN_VALIDATION = "CUST_PAN_VALIDATION"; // Profit Waiver in Fee Waivers
 	public static final String CUSTOM_DEVIATION_FILE_PATH = "CUSTOM_DEVIATION_FILE_PATH"; //Custom Deviations File Path
+	public static final String ALLOW_CIBIL_REQUEST = "ALLOW_CIBIL_REQUEST"; //Cibil Request
 }

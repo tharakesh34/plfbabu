@@ -760,17 +760,18 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		}
 
 		try {
+			//receipt upload issue fixed allow the decimal values in receipupload file receiptamount(27-12-2019)
 			BigDecimal precisionAmount = new BigDecimal(strValue);
+			precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
 			BigDecimal actualAmount = precisionAmount;
 
 			precisionAmount = precisionAmount.setScale(0, RoundingMode.HALF_DOWN);
 			if (precisionAmount.compareTo(actualAmount) != 0) {
-				actualAmount = actualAmount.multiply(BigDecimal.valueOf(100));
 				actualAmount = actualAmount.setScale(0, RoundingMode.HALF_DOWN);
 				setErrorToRUD(rud, "RU0040", "Minor Currency (Decimals) in [RECEIPTAMOUNT] ");
 				rud.setReceiptAmount(actualAmount);
 			} else {
-				precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
+				//precisionAmount = precisionAmount.multiply(BigDecimal.valueOf(100));
 				rud.setReceiptAmount(precisionAmount);
 			}
 

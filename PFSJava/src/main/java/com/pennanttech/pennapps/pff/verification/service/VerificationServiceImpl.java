@@ -490,9 +490,13 @@ public class VerificationServiceImpl extends GenericService<Verification> implem
 	private void savePD(FinanceDetail financeDetail, Verification item) {
 		List<CustomerDetails> customerDetails = new ArrayList<>();
 		customerDetails.add(financeDetail.getCustomerDetails());
-		for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
-			customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
+
+		if (CollectionUtils.isNotEmpty(financeDetail.getJountAccountDetailList())) {
+			for (JointAccountDetail jointAccountDetail : financeDetail.getJountAccountDetailList()) {
+				customerDetails.add(customerDetailsService.getApprovedCustomerById(jointAccountDetail.getCustID()));
+			}
 		}
+
 		for (CustomerDetails custDetails : customerDetails) {
 			Customer customer = custDetails.getCustomer();
 

@@ -2119,8 +2119,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	private void doCheckCibil() {
+		logger.debug(Literal.ENTERING);
 
-		if (ImplementationConstants.CIBIL_BUTTON_REQ) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_CIBIL_REQUEST)) {
 			if (getCustomerDetails().getCustomer().isNewRecord()
 					|| (getFinancedetail() != null && getFinancedetail().isNewRecord())) {
 				this.btn_GenerateCibil.setVisible(false);
@@ -2132,6 +2133,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		} else {
 			this.btn_GenerateCibil.setVisible(false);
 		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetCategoryProperties() {

@@ -133,6 +133,10 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			parameterMap.put("despositslipid", presentmentRef);
 			parameterMap.put("clientCode", "VEHCLIX162");
 			parameterMap.put("AccountNo", bankAccNo);
+			// for new Presentment only total count needs
+			if (smtPaymentModeConfig != null && smtPaymentModeConfig.equals("PRESENTMENT_REQUEST_PDC")) {
+				parameterMap.put("ChequeamountSum", getSumOfChequeAmt());
+			}
 			dataEngine.setParameterMap(parameterMap);
 
 			if (smtPaymentModeConfig != null) {
@@ -521,6 +525,23 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	// For Presentment PDC total amount
+	private String getSumOfChequeAmt() {
+		BigDecimal amount = BigDecimal.ZERO;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select coalesce(sum(Chequeamount), 0)");
+		sql.append(" from PRESENTMENT_REQ_DETAILS_VIEW");
+
+		try {
+			amount = this.jdbcTemplate.queryForObject(sql.toString(), BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return amount.toString();
+		}
+
+		return amount.toString();
 	}
 
 }

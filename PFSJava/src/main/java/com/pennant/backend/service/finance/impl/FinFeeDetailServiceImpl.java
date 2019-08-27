@@ -1368,14 +1368,27 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			FinanceDetail financeDetail, Map<String, BigDecimal> taxPercentages, boolean apiRequest) {
 		logger.debug(Literal.ENTERING);
 
+		// 27-08-19: Fee Defaults setting when comes from API
+		BigDecimal totalGST;
 		if ((!apiRequest && finFeeDetail.isFeeModified()) || (apiRequest && finFeeDetail.isAlwModifyFee())) {
+			if (apiRequest) {
+				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
+				finFeeDetail.setActualAmountOriginal(taxableAmount);
+				finFeeDetail.setActualAmountGST(totalGST);
+				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
+					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
+					finFeeDetail.setPaidAmountOriginal(taxableAmount);
+					finFeeDetail.setPaidAmountGST(totalGST);
+				}
+			}
 			return;
 		}
 
 		String taxComponent = finFeeDetail.getTaxComponent();
 		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
 
-		BigDecimal totalGST;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 			if ((!apiRequest && !finFeeDetail.isFeeModified()) || !finFeeDetail.isAlwModifyFee()) {
 				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
