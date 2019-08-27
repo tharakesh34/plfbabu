@@ -72,7 +72,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		int alertDays = finOption.getAlertDays();
 		int noticePeriodDays = finOption.getNoticePeriodDays();
-		int totalDays = noticePeriodDays + alertDays;//27
+		int totalDays = noticePeriodDays + alertDays;
 
 		currentOptionDate = DateUtil.getDatePart(currentOptionDate);
 		Date userFrequencyDate = DateUtil.addDays(currentOptionDate, -totalDays);
