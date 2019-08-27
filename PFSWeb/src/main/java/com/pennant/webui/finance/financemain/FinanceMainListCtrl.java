@@ -81,6 +81,7 @@ import com.pennant.app.util.FinanceWorkflowRoleUtil;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -109,9 +110,9 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
@@ -159,6 +160,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected Listbox sortOperator_recordType; // autoWired
 	protected Datebox initiateDate; // autoWired
 	protected Listbox sortOperator_InitiateDate; // autoWired
+	protected Textbox branchCode; // autoWired
+	protected Listbox sortOperator_Branch; // autowired
 
 	// List headers
 	protected Listheader listheader_CustomerCIF; // autoWired
@@ -195,6 +198,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private boolean fromEligibleScreen = false;
 	private FinanceEligibility finEligibility = null;
 	protected int oldVar_sortOperator_finType; // autoWired
+	protected int oldVar_sortOperator_Branch = -1; // autowired
 
 	private DedupParmService dedupParmService;
 	private FinanceMainExtService financeMainExtService;
@@ -279,6 +283,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.sortOperator_InitiateDate
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getNumericOperators()));
 		this.sortOperator_InitiateDate.setItemRenderer(new SearchOperatorListModelItemRenderer());
+
+		this.sortOperator_Branch
+				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
+		this.sortOperator_Branch.setItemRenderer(new SearchOperatorListModelItemRenderer());
 
 		this.sortOperator_finRequestStage
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getEqualOrNotOperators()));
@@ -878,6 +886,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finReference.setValue("");
 		this.sortOperator_finType.setSelectedIndex(0);
 		this.finType.setValue("");
+		this.branchCode.setValue("");
 		this.sortOperator_custName.setSelectedIndex(0);
 		this.fincustName.setValue("");
 		this.sortOperator_mobileNumber.setSelectedIndex(0);
@@ -896,6 +905,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.finRequestStage.setSelectedIndex(0);
 		this.sortOperator_finQueuePriority.setSelectedIndex(0);
 		this.finQueuePriority.setSelectedIndex(0);
+		this.sortOperator_Branch.setSelectedIndex(0);
+		this.oldVar_sortOperator_Branch = -1;
 		this.oldVar_sortOperator_finType = 0;
 		if (isWorkFlowEnabled()) {
 			this.sortOperator_recordStatus.setSelectedIndex(0);
@@ -1061,6 +1072,30 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
+
+		if (StringUtils.isNotBlank(this.branchCode.getValue())) {
+
+			// get the search operator
+			final Listitem itemCustID = this.sortOperator_Branch.getSelectedItem();
+			if (itemCustID != null) {
+				final int searchOpId = ((SearchOperators) itemCustID.getAttribute("data")).getSearchOperatorId();
+
+				if (searchOpId == -1) {
+					// do nothing
+				} else if (searchOpId == Filter.OP_LIKE) {
+					this.searchObj.addFilter(new Filter("finBranch",
+							"%" + this.branchCode.getValue().trim().toUpperCase() + "%", searchOpId));
+				} else if (searchOpId == Filter.OP_IN) {
+					this.searchObj.addFilter(
+							new Filter("FinBranch", this.branchCode.getValue().trim().split(","), Filter.OP_IN));
+				} else if (searchOpId == Filter.OP_NOT_IN) {
+					this.searchObj.addFilter(
+							new Filter("FinBranch", this.branchCode.getValue().trim().split(","), Filter.OP_NOT_IN));
+				} else {
+					this.searchObj.addFilter(new Filter("FinBranch", this.branchCode.getValue().trim(), searchOpId));
+				}
+			}
+		}
 		// finDOB
 		if (this.finDateofBirth.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, sortOperator_finDateofBirth.getSelectedItem(),
@@ -1157,6 +1192,36 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving " + event.toString());
 	}
 
+	/**
+	 * When user clicks on "btnSearchBranchCode" button This method displays ExtendedSearchListBox with branch details
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchBranch(Event event) {
+		logger.debug("Entering  " + event.toString());
+
+		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
+			//Calling MultiSelection ListBox From DB
+			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceMainList, "Branch",
+					this.branchCode.getValue(), new Filter[] {});
+			if (selectedValues != null) {
+				this.branchCode.setValue(selectedValues);
+			}
+
+		} else {
+			Object dataObject = ExtendedSearchListBox.show(this.window_FinanceMainList, "Branch");
+			if (dataObject instanceof String) {
+				this.branchCode.setValue("");
+			} else {
+				Branch details = (Branch) dataObject;
+				if (details != null) {
+					this.branchCode.setValue(details.getBranchCode());
+				}
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	// ************************************************************************
 	// //
 	// **On Change Events for Multi-Selection Listbox's for Search operators***
@@ -1167,6 +1232,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	public void onSelect$sortOperator_finType(Event event) {
 		this.oldVar_sortOperator_finType = doChangeStringOperator(sortOperator_finType, oldVar_sortOperator_finType,
 				this.finType);
+	}
+
+	public void onSelect$sortOperator_Branch(Event event) {
+		this.oldVar_sortOperator_Branch = doChangeStringOperator(sortOperator_Branch, oldVar_sortOperator_Branch,
+				this.branchCode);
 	}
 
 	/**
