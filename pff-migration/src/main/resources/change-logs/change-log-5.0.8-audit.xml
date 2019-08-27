@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -23,24 +23,33 @@
 	<property name="call.date" value="getdate()" dbms="mssql" />
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
-	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
-	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
-	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
-	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
-	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
-	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)"
+		dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')"
+		dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')"
+		dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)"
+		dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')"
+		dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')"
+		dbms="postgresql" />
 	<property name="call.replaceView" value="ALTER" dbms="mssql" />
-	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
-	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE"
+		dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE"
+		dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plfaudit,public,pg_catalog;
 		</sql>
 	</changeSet>
 
-	 <changeSet id="1" author="satyanarayana.g">
+	<changeSet id="1" author="satyanarayana.g">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="AllowRevolving" type="boolean" />
 		</addColumn>
@@ -77,7 +86,8 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="PK_IWL_Id" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="PK_IWL_Id"
+					nullable="false" />
 			</column>
 			<column name="InstrumentMode" type="varchar(8)">
 				<constraints unique="true" uniqueConstraintName="UK_IWL_InstrumentMode" />
@@ -173,7 +183,7 @@
 			<column name="WorkflowId" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="9" author="vijaya.a">
 		<createTable tableName="ADTCUSTCARDSALESDETAILS">
 			<column name="AuditId" type="bigint">
@@ -188,8 +198,8 @@
 			<column name="AuditImage" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="CardSalesId" type="bigint">
 				<constraints nullable="false" />
@@ -263,8 +273,8 @@
 	</changeSet>
 
 	<changeSet id="16" author="naga.g">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_ADTCustomerGST"
-			tableName="ADTCustomerGST" />
+		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="pk_ADTCustomerGST" tableName="ADTCustomerGST" />
 	</changeSet>
 
 	<changeSet id="17" author="naga.g">
@@ -303,8 +313,8 @@
 	</changeSet>
 
 	<changeSet id="18" author="naga.g">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_ADTCustomerGSTdetails"
-			tableName="ADTCustomerGSTdetails" />
+		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="pk_ADTCustomerGSTdetails" tableName="ADTCustomerGSTdetails" />
 	</changeSet>
 
 	<changeSet id="19" author="satyanarayana.g">
@@ -320,7 +330,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="20" author="meena.a">
 		<comment>extra fields added in AdtLimitDetails</comment>
 		<addColumn tableName="AdtLimitDetails">
@@ -330,10 +340,16 @@
 			<column name="Tenor" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="20.0" author="satyanarayana.g">
 		<addColumn tableName="ADTRMTBaseRateCodes">
-			<column name="bRRepayRvwFrq" type="VARCHAR2(5)"/>
+			<column name="bRRepayRvwFrq" type="VARCHAR2(5)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="21" author="Saikiran.V">
+		<addColumn tableName="adtcustomers">
+			<column name="dnd" type="boolean" />
 		</addColumn>
 	</changeSet>
 
