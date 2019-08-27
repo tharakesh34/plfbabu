@@ -708,7 +708,7 @@
 	</createView>
 	</changeSet>
 
-	<changeSet id="95" author="Durgaprasad.G">
+	<changeSet id="95.1" author="Durgaprasad.G">
 		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
 			  SELECT t1.finreference,
 						t1.schseq,
