@@ -68,17 +68,17 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 	}
 
 	private void sendAlert(FinOption finOption, FinanceDetail financeDetail) {
-		Date currentOptionDate = finOption.getCurrentOptionDate();//21-06-2019
+		Date currentOptionDate = finOption.getCurrentOptionDate();
 
-		int alertDays = finOption.getAlertDays();//7
-		int noticePeriodDays = finOption.getNoticePeriodDays();//20
+		int alertDays = finOption.getAlertDays();
+		int noticePeriodDays = finOption.getNoticePeriodDays();
 		int totalDays = noticePeriodDays + alertDays;//27
 
-		currentOptionDate = DateUtil.getDatePart(currentOptionDate);//21-06-2019
-		Date userFrequencyDate = DateUtil.addDays(currentOptionDate, -totalDays);//25-05-2019
+		currentOptionDate = DateUtil.getDatePart(currentOptionDate);
+		Date userFrequencyDate = DateUtil.addDays(currentOptionDate, -totalDays);
 
-		BigDecimal totalPriBal = finOption.getTotalPriBal();//10000000
-		BigDecimal penaltyPaid = finOption.getPenaltyPaid();//0
+		BigDecimal totalPriBal = finOption.getTotalPriBal();
+		BigDecimal penaltyPaid = finOption.getPenaltyPaid();
 
 		if (totalPriBal == null) {
 			totalPriBal = BigDecimal.ZERO;
@@ -90,7 +90,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		finOption.setTotalAmt(totalPriBal.add(penaltyPaid));
 
-		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);//01-06-2019
+		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);
 
 		if (appDate.compareTo(userFrequencyDate) < 0 || appDate.compareTo(custUserFrequencyDate) < 0) {
 			return;
