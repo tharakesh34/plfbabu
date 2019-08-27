@@ -3582,6 +3582,14 @@
 			<column name="AdvEMITds" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	<changeSet id="25" author="Siva">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS where sysparmcode = 'ADVINT_TDS_INCZ_UPF';
+				INSERT INTO SMTPARAMETERS VALUES('ADVINT_TDS_INCZ_UPF', 'Advance Interest TDS Incomize Upfront', 'String', 1, 'Y', 1, 0, 'NULL', 'NULL', 'Advance Interest TDS Incomize Upfront', '1', '1000', CURRENT_TIMESTAMP, 'Approved','', '', '', '', '', '0');
+			]]>
+		</sql>
+	</changeSet>
 
 
 </databaseChangeLog>
