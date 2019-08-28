@@ -8436,5 +8436,14 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="174" author="SaiKiran.V">
+		<sql>
+			<![CDATA[
+				UPDATE customers Set dnd = 0;
+				UPDATE customers_Temp Set dnd = 0;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
