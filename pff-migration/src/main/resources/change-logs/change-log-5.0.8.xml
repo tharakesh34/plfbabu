@@ -8234,7 +8234,7 @@ UNION ALL
 		 </createView>
 	</changeSet>
 	
-	<changeSet id="171" author="satyanarayana.g" dbms="postgresql, oracle">
+	<changeSet id="171" author="satyanarayana.g" >
 		<addDefaultValue columnName="Id" tableName="MandatesStatus" defaultValue="0"/>
 	</changeSet>
 	
