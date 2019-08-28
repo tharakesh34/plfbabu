@@ -13,6 +13,7 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -53,10 +54,26 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 				tranType = PennantConstants.TRAN_ADD;
 				customerExtLiability.setRecordType("");
 				externalLiabilityDAO.save(customerExtLiability, "");
+				if (customerExtLiability.getExtLiabilitiesPayments() != null
+						&& !customerExtLiability.getExtLiabilitiesPayments().isEmpty()) {
+					for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : customerExtLiability
+							.getExtLiabilitiesPayments()) {
+						extLiabilityPaymentdetails.setLiabilityId(customerExtLiability.getId());
+					}
+					customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), "");
+				}
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerExtLiability.setRecordType("");
 				externalLiabilityDAO.update(customerExtLiability, "");
+				if (customerExtLiability.getExtLiabilitiesPayments() != null
+						&& !customerExtLiability.getExtLiabilitiesPayments().isEmpty()) {
+					for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : customerExtLiability
+							.getExtLiabilitiesPayments()) {
+						customerExtLiabilityDAO.update(extLiabilityPaymentdetails, "");
+					}
+
+				}
 			}
 		}
 		if (!StringUtils.equals(customerExtLiability.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {

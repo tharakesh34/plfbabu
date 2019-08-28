@@ -36,6 +36,7 @@ import com.pennant.backend.model.customermasters.CustomerGST;
 import com.pennant.backend.model.customermasters.CustomerGSTDetails;
 import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
@@ -1776,6 +1777,7 @@ public class CustomerDetailsController {
 			curliability.setSourceId(APIConstants.FINSOURCE_ID_API);
 			curliability.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curliability.setNewRecord(false);
+			curliability.setBefImage(curliability);
 			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 			AuditHeader auditHeader = validation
 					.extLiabilityValidation(getAuditHeader(curliability, PennantConstants.TRAN_WF), "doApprove");
@@ -1817,6 +1819,15 @@ public class CustomerDetailsController {
 			CustomerExtLiability temp = new CustomerExtLiability();
 			temp.setCustId(customer.getCustID());
 			List<CustomerExtLiability> customerExtLiabilityList = customerExtLiabilityService.getLiabilities(temp);
+			if (customerExtLiabilityList != null && !customerExtLiabilityList.isEmpty()) {
+				for (CustomerExtLiability customerExtLiability : customerExtLiabilityList) {
+					List<ExtLiabilityPaymentdetails> extLiabilityPaymentdetailsList = customerExtLiabilityDAO
+							.getExtLiabilitySubDetailById(customerExtLiability.getId(), "");
+					if (extLiabilityPaymentdetailsList != null && !extLiabilityPaymentdetailsList.isEmpty())
+						customerExtLiability.setExtLiabilitiesPayments(extLiabilityPaymentdetailsList);
+				}
+			}
+
 			if (customerExtLiabilityList != null && !customerExtLiabilityList.isEmpty()) {
 				response = new CustomerDetails();
 				response.setCustCIF(cif);

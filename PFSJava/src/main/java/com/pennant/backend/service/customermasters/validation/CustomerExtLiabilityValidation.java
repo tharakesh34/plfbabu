@@ -16,6 +16,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
+import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
@@ -246,6 +247,38 @@ public class CustomerExtLiabilityValidation {
 
 		if (StringUtils.isNotBlank(liability.getRepayBank())) {
 			auditDetail.setErrorDetail(validateMasterCode("BMTBankDetail", "BankCode", liability.getRepayBank()));
+		}
+		if (liability.getTenure() <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "tenure";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+		} else {
+			if (liability.getExtLiabilitiesPayments().size() != liability.getTenure()) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "extLiabilitiesPayments";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+				auditDetail.setErrorDetail(errorDetail);
+			}else{
+				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
+					if(extLiabilityPaymentdetails.getEMIType().isEmpty()){
+						String[] valueParam = new String[2];
+						valueParam[0] = "EMIType";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}else{
+						ArrayList<ValueLabel> valueLabel= PennantStaticListUtil.getfrequency("Monthly");
+						
+					}
+					if(StringUtils.isBlank(String.valueOf(extLiabilityPaymentdetails.isInstallmentCleared()))){
+						String[] valueParam = new String[2];
+						valueParam[0] = "installmentCleared";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}
+						
+				}
+			}
 		}
 
 		auditDetail.setErrorDetail(errorDetail);

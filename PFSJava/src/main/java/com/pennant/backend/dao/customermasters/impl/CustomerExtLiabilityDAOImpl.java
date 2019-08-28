@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
+import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl;
@@ -191,7 +192,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select version from customer_ext_liabilities cel");
+		sql.append(" select version from customer_ext_liabilities_aview cel");
 		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
 		sql.append(" where custid = :custid and seqno = :seqno");
 		logger.trace(Literal.SQL + sql.toString());
@@ -417,6 +418,30 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		logger.debug("Leaving");
 		return liabilitiesPaymentdetails;
+	}
+
+	@Override
+	public void update(ExtLiabilityPaymentdetails installmentDetails, String type) {
+		logger.debug(Literal.ENTERING);
+		int recordCount = 0;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" update EXTERNAL_LIABILITIES_PD");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" set EMIType=:EMIType, installmentCleared=:installmentCleared,");
+		sql.append(" version=:version, lastmntby=:lastMntBy,lastmnton=:lastMntOn, recordstatus=:recordStatus,");
+		sql.append(" rolecode=:roleCode, nextrolecode=:nextRoleCode,");
+		sql.append(" taskid=:taskId, nexttaskid=:nextTaskId, recordtype=:recordType, workflowid=:workflowId");
+		sql.append(" where liabilityId = :liabilityId ");
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(installmentDetails);
+		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+		logger.debug(Literal.LEAVING);
+
 	}
 
 }

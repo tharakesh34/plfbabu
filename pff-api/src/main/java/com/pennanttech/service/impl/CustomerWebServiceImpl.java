@@ -2458,17 +2458,19 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-
+	
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customerExtLiability.getCustId());
 		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
+		liability.setLinkId(customerExtLiabilityDAO.getLinkId(customerExtLiability.getCustId()));
+		
+	//	liability = customerExtLiabilityService.getLiability(liability);
 
-		liability = customerExtLiabilityService.getLiability(liability);
-
-		CustomerExtLiability custExtLiability = customerExtLiabilityService.getLiability(customerExtLiability);
+		CustomerExtLiability custExtLiability = customerExtLiabilityService.getLiability(liability);
+		
 		if (custExtLiability != null) {
 			// call delete customer service
-			response = customerDetailsController.deleteCustomerExternalLiability(customerExtLiability);
+			response = customerDetailsController.deleteCustomerExternalLiability(liability);
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];

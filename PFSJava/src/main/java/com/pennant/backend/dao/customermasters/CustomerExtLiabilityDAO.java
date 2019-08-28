@@ -38,4 +38,6 @@ public interface CustomerExtLiabilityDAO {
 	void save(List<ExtLiabilityPaymentdetails> installmentDetails, String type);
 
 	List<ExtLiabilityPaymentdetails> getExtLiabilitySubDetailById(long custId, String type);
+
+	void update(ExtLiabilityPaymentdetails installmentDetails, String type);
 }
