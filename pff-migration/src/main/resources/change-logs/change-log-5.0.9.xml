@@ -1277,7 +1277,7 @@
 		   FROM financemain t1
 		     JOIN customers t2 ON t1.custid = t2.custid
 		     JOIN rmtfinancetypes t3 ON t1.fintype = t3.fintype
-		     JOIN bmtproduct t4 ON t3.fincategory = t4.productcode;
+		     JOIN bmtproduct t4 ON t3.fincategory = t4.productcode
 		</createView>
 	</changeSet>
 	
