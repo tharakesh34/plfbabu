@@ -32,25 +32,40 @@
 	<changeSet id="01" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="02" author="Durgaprasad G">
-		<addColumn tableName="FINANCEMAIN_PA">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+		<addColumn tableName="FINANCEMAIN">
 			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="03" author="Durgaprasad G">
+		<addColumn tableName="FINANCEMAIN_PA">
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="04" author="Durgaprasad G">
+		<addColumn tableName="FINANCEMAIN_PA">
+			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="05" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+		<changeSet id="06" author="Durgaprasad G">
+		<addColumn tableName="FINANCEMAIN_TEMP">
 			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="04" author="Durgaprasad G">
+	<changeSet id="07" author="Durgaprasad G">
 		<createView viewName="financemain_aview" replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.investmentref,
@@ -343,7 +358,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="05" author="Durgaprasad G">
+	<changeSet id="08" author="Durgaprasad G">
 		<createView viewName="financemain_tview" replaceIfExists="true">
 				SELECT t1.finreference,
 			    t1.investmentref,
@@ -636,7 +651,16 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="06" author="Durgaprasad G">
+
+	<changeSet id="9.0_pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'financemain_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="09" author="Durgaprasad G">
 		<createView viewName="financemain_view" replaceIfExists="true">
 				SELECT t1.finreference,
 			    t1.investmentref,
@@ -1221,7 +1245,16 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="07" author="Durgaprasad G">
+	<changeSet id="9.0_post" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'financemain_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="10" author="Durgaprasad G">
 		<createView viewName="financemaintenance_aview" replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.finbranch,
@@ -1281,7 +1314,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="08" author="Durgaprasad G">
+	<changeSet id="11" author="Durgaprasad G" dbms="postgresql,oracle">
 		<createView viewName="financemaintenance_view" replaceIfExists="true">
 					SELECT t1.finreference,
 		    t1.finbranch,
@@ -1418,11 +1451,148 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="09" author="Durgaprasad G">
+	<changeSet id="11" author="Durgaprasad G" dbms="mssql">
+		<createView viewName="financemaintenance_view" replaceIfExists="true">
+					SELECT t1.finreference,
+		    t1.finbranch,
+		    t1.fintype,
+		    t1.finccy,
+		    t1.schedulemethod,
+		    t1.profitdaysbasis,
+		    t1.finstartdate,
+		    t1.numberofterms,
+		    t1.custid,
+		    t1.finamount,
+		    t1.maturitydate,
+		    t1.finrepaymentamount,
+		    t1.finisactive,
+		    t1.blacklisted,
+		    t1.feechargeamt,
+		    t1.insuranceamt,
+		    t1.graceterms,
+		    t1.allowgrcperiod,
+		    t1.grcperiodenddate,
+		    t1.alwmultidisb,
+		    t1.defferments,
+		    t1.nextrolecode,
+		    t1.recordstatus,
+		    t1.recordtype,
+		    t1.allowgrcpftrvw,
+		    t1.allowrepayrvw,
+		    t1.lastrepaydate,
+		    t1.lastrepaypftdate,
+		    t1.alloweddefrpychange,
+		    t1.availeddefrpychange,
+		    t1.rcdmaintainsts,
+		    t1.migratedfinance,
+		    t1.closingstatus,
+		    t1.repayratebasis,
+		    t1.manualschedule,
+		    t1.fincurrassetvalue,
+		    t1.takeoverfinance,
+		    t1.nextrolloverdate,
+		    t1.availedunplanemi,
+		    t1.availedreageh,
+		    t1.maxunplannedemi,
+		    t1.maxreageholidays,
+		    t1.downpayment,
+		    t1.planemihalw,
+		    t1.calterms,
+		    t1.ratechganyday,
+		    t1.finassetvalue,
+		    t2.custcif AS lovdesccustcif,
+		    t3.finisalwdifferment AS lovdescfinalwdeferment,
+		    t3.findivision AS lovdescfindivision,
+		    t3.fincategory AS lovdescproductcodename,
+		    t4.productcategory,
+		    COALESCE(t5.roledesc, dbo.fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+		    COALESCE(t9.noinst, 0) AS noinst,
+		    t1.samplingrequired,
+		    t1.advemiterms,
+		    t1.sanbsdschdle,
+			t1.PromotionSeqID
+		   FROM financemain_temp t1
+		     JOIN customers t2 ON t1.custid = t2.custid
+		     JOIN rmtfinancetypes t3 ON t1.fintype = t3.fintype
+		     LEFT JOIN secroles t5 ON t1.nextrolecode = t5.rolecd
+		     JOIN bmtproduct t4 ON t3.fincategory = t4.productcode
+		     LEFT JOIN finpftdetails t9 ON t1.finreference = t9.finreference
+		UNION ALL
+		 SELECT t1.finreference,
+		    t1.finbranch,
+		    t1.fintype,
+		    t1.finccy,
+		    t1.schedulemethod,
+		    t1.profitdaysbasis,
+		    t1.finstartdate,
+		    t1.numberofterms,
+		    t1.custid,
+		    t1.finamount,
+		    t1.maturitydate,
+		    t1.finrepaymentamount,
+		    t1.finisactive,
+		    t1.blacklisted,
+		    t1.feechargeamt,
+		    t1.insuranceamt,
+		    t1.graceterms,
+		    t1.allowgrcperiod,
+		    t1.grcperiodenddate,
+		    t1.alwmultidisb,
+		    t1.defferments,
+		    t1.nextrolecode,
+		    t1.recordstatus,
+		    t1.recordtype,
+		    t1.allowgrcpftrvw,
+		    t1.allowrepayrvw,
+		    t1.lastrepaydate,
+		    t1.lastrepaypftdate,
+		    t1.alloweddefrpychange,
+		    t1.availeddefrpychange,
+		    t1.rcdmaintainsts,
+		    t1.migratedfinance,
+		    t1.closingstatus,
+		    t1.repayratebasis,
+		    t1.manualschedule,
+		    t1.fincurrassetvalue,
+		    t1.takeoverfinance,
+		    t1.nextrolloverdate,
+		    t1.availedunplanemi,
+		    t1.availedreageh,
+		    t1.maxunplannedemi,
+		    t1.maxreageholidays,
+		    t1.downpayment,
+		    t1.planemihalw,
+		    t1.calterms,
+		    t1.ratechganyday,
+		    t1.finassetvalue,
+		    t2.custcif AS lovdesccustcif,
+		    t3.finisalwdifferment AS lovdescfinalwdeferment,
+		    t3.findivision AS lovdescfindivision,
+		    t3.fincategory AS lovdescproductcodename,
+		    t4.productcategory,
+		    COALESCE(t5.roledesc, dbo.fn_get_roledesc(t1.nextrolecode)) AS lovdescrequeststage,
+		    COALESCE(t9.noinst, 0) AS noinst,
+		    t1.samplingrequired,
+		    t1.advemiterms,
+		    t1.sanbsdschdle,
+			t1.PromotionSeqID
+		   FROM financemain t1
+		     JOIN customers t2 ON t1.custid = t2.custid
+		     JOIN rmtfinancetypes t3 ON t1.fintype = t3.fintype
+		     LEFT JOIN secroles t5 ON t1.nextrolecode = t5.rolecd
+		     JOIN bmtproduct t4 ON t3.fincategory = t4.productcode
+		     LEFT JOIN finpftdetails t9 ON t1.finreference = t9.finreference
+		  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+		           FROM financemain_temp
+		          WHERE financemain_temp.finreference = t1.finreference))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="12" author="Durgaprasad G">
 		<sql>
 			INSERT INTO bmtintratebasiscodes(
 			intratebasiscode, intratebasisdesc, intratebasisisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-			VALUES ('P/360', 'Periodicity (30D Periods )', 1, 0, 1000, sysdate, 'Approved', null, null, null, null, null, 0);
+			VALUES ('P/360', 'Periodicity (30D Periods )', 1, 0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
 		</sql>
 	</changeSet>
 </databaseChangeLog>
