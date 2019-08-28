@@ -456,26 +456,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="38" author="srihari.m" dbms="oracle">
-		<createTable tableName="PaymentTransaction">
-			<column name="TRANSACTIONID" type="NUMBER" autoIncrement="true" />
-			<column name="PAYMENTID" type="NUMBER">
-				<constraints nullable="false" />
-			</column>
-			<column name="MessageId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="TRANMODULE" type="VARCHAR(4)" />
-			<column name="TRANREFERENCE" type="VARCHAR(20)" />
-			<column name="TRANBATCH" type="VARCHAR(20)" />
-			<column name="TRANSTATUS" type="CHAR(1)" />
-			<column name="RESPREFERENCE" type="VARCHAR(50)" />
-			<column name="STATUSCODE" type="VARCHAR(10)" />
-			<column name="STATUSDESC" type="VARCHAR(100)" />
-			<column name="TRANSCTIONINITON" type="datetime" />
-			<column name="STATUSUPDATEON" type="datetime" />
-		</createTable>
-	</changeSet>
 	
 	<changeSet id="39" author="satyanarayana.g">
 		<sql>
