@@ -10984,7 +10984,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String finRvwFrq = null;
 		if (CalculationConstants.RATE_BASIS_R.equals(financeType.getFinRateType())) {
 			BaseRateCode baseRateCode = baseRateCodeDAO.getBaseRateCodeById(financeMain.getRepayBaseRate(), "");
-			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 				finRvwFrq = baseRateCode.getbRRepayRvwFrq();
 				financeMain.setRepayRvwFrq(finRvwFrq);
 			} else {
