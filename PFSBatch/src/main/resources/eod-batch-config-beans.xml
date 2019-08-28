@@ -720,6 +720,8 @@
 		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
 		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
 		<property name="directorDetailDAO" ref="directorDetailDAO" />
+		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
+		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 	</bean>
 
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
@@ -842,5 +844,10 @@
 
 	<!-- GSTRate -->
 	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl" parent="sequenceDao" />
+	
+	<bean id="customerGstDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerGstDetailDAOImpl"
+		parent="sequenceDao" />
 
+	<bean id="customerCardSalesInfoDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerCardSalesInfoDAOImpl"
+		parent="sequenceDao" />
 </beans>

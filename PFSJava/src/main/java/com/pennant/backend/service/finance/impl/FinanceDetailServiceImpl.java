@@ -4968,11 +4968,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			//Calling External CMS API system. 
 			this.paymentsProcessService.process(financeDetail, auditHeader, DisbursementConstants.CHANNEL_DISBURSEMENT);
-			if (!auditHeader.isNextProcess()) {
-				logger.debug(Literal.LEAVING);
-				return aAuditHeader;
-			}
-
+			 
 			FinanceDetail tempfinanceDetail = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempfinanceDetail.getFinScheduleData().getFinanceMain();
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
