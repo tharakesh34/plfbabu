@@ -8230,7 +8230,7 @@ UNION ALL
 	<changeSet id="170" author="Durgaprasad G">
 		 <createView viewName="PaymentTransaction_View" replaceIfExists="true">
 		 	select FA.FinReference, PT.TranModule, FA.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
-			from PaymentTransaction PT Inner Join FinAdvancePayments FA on PT.PAYMENTID= FA.PAYMENTID;
+			from PaymentTransaction PT Inner Join FinAdvancePayments FA on PT.PAYMENTID= FA.PAYMENTID
 		 </createView>
 	</changeSet>
 	
