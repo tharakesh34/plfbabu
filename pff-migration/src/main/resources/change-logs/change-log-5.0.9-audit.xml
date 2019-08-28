@@ -52,6 +52,11 @@
 	<changeSet id="01" author="Durgaprasad G">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="02" author="Durgaprasad G">
+		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
