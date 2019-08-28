@@ -254,7 +254,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 
 		if (this.paging != null) {
 			try {
-				new PTListReportUtils(moduleCode, searchObject, this.paging.getTotalSize() + 1);
+				new PTListReportUtils(moduleCode, searchObject, this.paging.getTotalSize()-1);
 			} catch (InterruptedException e) {
 				logger.error("Exception:", e);
 			}
