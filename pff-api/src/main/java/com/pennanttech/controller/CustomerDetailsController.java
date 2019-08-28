@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
@@ -21,6 +22,8 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.BankInfoSubDetail;
+import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -36,6 +39,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
+import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
 import com.pennant.backend.service.customermasters.CustomerChequeInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -55,6 +59,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
@@ -70,11 +75,13 @@ public class CustomerDetailsController {
 	private CustomerIncomeService customerIncomeService;
 	private CustomerBankInfoDAO customerBankInfoDAO;
 	private CustomerGstDetailDAO customerGstDetailDAO;
+	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
 	private CustomerDocumentService customerDocumentService;
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerGstService customerGstService;
+	private CustomerCardSalesInfoService customerCardSalesInfoService;
 	private CustomerChequeInfoService customerChequeInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private DocumentManagerDAO documentManagerDAO;
@@ -1244,7 +1251,209 @@ public class CustomerDetailsController {
 		return response;
 
 	}
+	
+	
+	/**
+	 * Method for create Customer CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * 
+	 */
 
+	public CustomerCardSaleInfoDetails addCardSalesInformation(CustCardSales custCardSales, String cif) {
+		CustomerCardSaleInfoDetails response = null;
+		try {
+			logger.debug("Entering");
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
+			Customer customer = customerDetailsService.getCustomerByCIF(cif);
+			custCardSales.setCustID(customer.getCustID());
+			// customerGST.setLovDescCustCIF(cif);
+			custCardSales.setNewRecord(true);
+			custCardSales.setVersion(1);
+			custCardSales.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			custCardSales.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			custCardSales.setLastMntBy(userDetails.getUserId());
+			custCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
+			custCardSales.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			AuditHeader auditHeader = getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
+		
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = new CustomerCardSaleInfoDetails();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				auditHeader = customerCardSalesInfoService.doApprove(auditHeader);
+				response = new CustomerCardSaleInfoDetails();
+				CustCardSales custCardSalesinfo = (CustCardSales) auditHeader.getAuditDetail().getModelData();
+				response.setId(custCardSalesinfo.getId());
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new CustomerCardSaleInfoDetails();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+
+		logger.debug("Leaving");
+
+		return response;
+
+	}
+	
+	/**
+	 * Method for update CustomerGSTInformation in PLF system.
+	 * 
+	 * @param customerBankInfo
+	 */
+
+	public WSReturnStatus updateCardSalestInformation(CustCardSales custCardSales, String cif) {
+		 logger.debug("Entering");
+		WSReturnStatus response = null;
+		try {
+			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
+			// user language
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			custCardSales.setUserDetails(userDetails);
+			custCardSales.setCustID(prvCustomer.getCustID());
+			custCardSales.setLovDescCustCIF(cif);
+			custCardSales.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			custCardSales.setNewRecord(false);
+			custCardSales.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			custCardSales.setLastMntBy(userDetails.getUserId());
+			custCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
+			custCardSales.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			custCardSales.setVersion((customerCardSalesInfoService.getVersion(custCardSales.getId())) + 1);
+			
+			for(CustCardSalesDetails custCardSalesDetails:custCardSales.getCustCardMonthSales()){
+				custCardSalesDetails.setVersion(custCardSales.getVersion());	
+			}
+									
+			AuditHeader auditHeader=getAuditHeader(custCardSales, PennantConstants.TRAN_WF);
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				customerCardSalesInfoService.doApprove(auditHeader);
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+		logger.debug("Leaving");
+		return response;
+	}
+	
+
+	/**
+	 * get CustomerGstInformation By the Customer Id
+	 * 
+	 * @param customerId
+	 * @return
+	 */
+	public CustomerDetails getCardSalesInformation(String cif) {
+		logger.debug("Entering");
+		CustomerDetails response = null;
+		Customer customer = customerDetailsService.getCustomerByCIF(cif);
+		try {
+			List<CustCardSales> custCardSaleslist = customerCardSalesInfoService
+					.getApprovedCardSalesInfoByCustomerId(customer.getCustID());
+			for (int i = 0; i < custCardSaleslist.size(); i++) {
+				List<CustCardSalesDetails> custCardSalesDetailsList = customerCardSalesInfoService
+						.getCardSalesInfoSubDetailById(custCardSaleslist.get(i).getId(), "");
+				custCardSaleslist.get(i).setCustCardMonthSales(custCardSalesDetailsList);
+			}
+			if (custCardSaleslist != null && !custCardSaleslist.isEmpty()) {
+				response = new CustomerDetails();
+				response.setCustCIF(cif);
+				response.setCustCardSales(custCardSaleslist);
+				response.setCustomer(null);
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			} else {
+				response = new CustomerDetails();
+				response.setCustomer(null);
+				String[] valueParm = new String[1];
+				valueParm[0] = cif;
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90304", valueParm));
+			}
+		} catch (Exception e) {
+			logger.error("Exception: ", e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response = new CustomerDetails();
+			response.setCustomer(null);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+
+	/**
+	 * delete the CustomerGSTInformation.
+	 * 
+	 * @param CustomerGSTInformation
+	 * @return WSReturnStatus
+	 * 
+	 */
+	public WSReturnStatus deleteCardSaleInformation(CustCardSales custCardSales) {
+		logger.debug("Entering");
+		WSReturnStatus response = null;
+		try {
+			CustCardSales curCustCardSales = customerCardSalesInfoService.getCustomerCardSalesInfoById(custCardSales.getId());
+
+			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			curCustCardSales.setUserDetails(userDetails);
+			curCustCardSales.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			curCustCardSales.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			curCustCardSales.setSourceId(APIConstants.FINSOURCE_ID_API);
+			curCustCardSales.setNewRecord(false);
+			AuditHeader auditHeader = getAuditHeader(curCustCardSales, PennantConstants.TRAN_WF);
+			
+			response = new WSReturnStatus();
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				}
+			} else {
+				// get the header details from the request
+				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+						.get(APIHeader.API_HEADER_KEY);
+				// set the headerDetails to AuditHeader
+				auditHeader.setApiHeader(reqHeaderDetails);
+				
+				getCustomerCardSalesInfoDAO().delete(curCustCardSales.getId(),"");
+				customerCardSalesInfoService.doApprove(auditHeader);
+				response = APIErrorHandlerService.getSuccessStatus();
+			}
+		} catch (Exception e) {
+			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
+			return APIErrorHandlerService.getFailedStatus();
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	
 	/**
 	 * get CustomerAccountBehaviour By the cif
 	 * 
@@ -1874,6 +2083,19 @@ public class CustomerDetailsController {
 	 * @param tranType
 	 * @return AuditHeader
 	 */
+	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
+		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()), null,
+				null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+	
+	/**
+	 * Get Audit Header Details
+	 * 
+	 * @param aCustomerGSTInfo
+	 * @param tranType
+	 * @return AuditHeader
+	 */
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
@@ -2027,6 +2249,15 @@ public class CustomerDetailsController {
 		this.customerGstDetailDAO = customerGstDetailDAO;
 	}
 
+	
+	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
+		return customerCardSalesInfoDAO;
+	}
+
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
+	}
+
 	public CustomerGstService getCustomerGstService() {
 		return customerGstService;
 	}
@@ -2035,4 +2266,12 @@ public class CustomerDetailsController {
 		this.customerGstService = customerGstService;
 	}
 
+	public CustomerCardSalesInfoService getCustomerCardSalesInfoService() {
+		return customerCardSalesInfoService;
+	}
+
+	public void setCustomerCardSalesInfoService(CustomerCardSalesInfoService customerCardSalesInfoService) {
+		this.customerCardSalesInfoService = customerCardSalesInfoService;
+	}
+   
 }

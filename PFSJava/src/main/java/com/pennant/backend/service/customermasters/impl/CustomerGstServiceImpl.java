@@ -137,6 +137,7 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerGST.setRecordType("");
+				getCustomerGstDetailDAO().update(customerGST, "");
 				if (customerGST.getCustomerGSTDetailslist().size() > 0) {
 					for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
 						customerGSTDetails.setHeaderId(customerGST.getId());
@@ -226,9 +227,9 @@ public class CustomerGstServiceImpl extends GenericService<CustomerGST> implemen
 
 	@Override
 	public int getVersion(long id) {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCustomerGstDetailDAO().getVersion(id);
 	}
+	
 
 	@Override
 	public AuditDetail doValidations(CustomerGST customerGST, String recordType) {

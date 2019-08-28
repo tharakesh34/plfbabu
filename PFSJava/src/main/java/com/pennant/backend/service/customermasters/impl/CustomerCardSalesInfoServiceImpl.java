@@ -1,5 +1,6 @@
 package com.pennant.backend.service.customermasters.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -93,10 +94,35 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 				tranType = PennantConstants.TRAN_ADD;
 				customerCardSalesInfo.setRecordType("");
 				customerCardSalesInfo.setId(getCustomerCardSalesInfoDAO().save(customerCardSalesInfo, ""));
+				if (customerCardSalesInfo.getCustCardMonthSales() != null) {
+					for (CustCardSalesDetails custCardSalesDetails : customerCardSalesInfo.getCustCardMonthSales()) {
+						custCardSalesDetails.setNewRecord(true);
+						custCardSalesDetails.setVersion(1);
+						custCardSalesDetails.setRecordType("");
+						custCardSalesDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						custCardSalesDetails.setLastMntBy(customerCardSalesInfo.getLastMntBy());
+						custCardSalesDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						custCardSalesDetails.setCardSalesId(customerCardSalesInfo.getId());
+						getCustomerCardSalesInfoDAO().save(custCardSalesDetails, "");
+					}
+				}
+				
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customerCardSalesInfo.setRecordType("");
 				getCustomerCardSalesInfoDAO().update(customerCardSalesInfo, "");
+				if (customerCardSalesInfo.getCustCardMonthSales() != null) {
+					for (CustCardSalesDetails custCardSalesDetails : customerCardSalesInfo.getCustCardMonthSales()) {
+						custCardSalesDetails.setNewRecord(true);
+						custCardSalesDetails.setVersion(customerCardSalesInfo.getVersion());
+						custCardSalesDetails.setRecordType("");
+						custCardSalesDetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+						custCardSalesDetails.setLastMntBy(customerCardSalesInfo.getLastMntBy());
+						custCardSalesDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						custCardSalesDetails.setCardSalesId(customerCardSalesInfo.getId());
+						getCustomerCardSalesInfoDAO().update(custCardSalesDetails, "");
+					}
+				}
 			}
 		}
 		if (!StringUtils.equals(customerCardSalesInfo.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
@@ -119,7 +145,13 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-
+	
+	@Override
+	public List<CustCardSalesDetails> getCardSalesInfoSubDetailById(long CardSaleId, String type) {
+		
+		return getCustomerCardSalesInfoDAO().getCardSalesInfoSubDetailById(CardSaleId, type);
+	}
+	
 	@Override
 	public int getVersion(long id) {
 		return getCustomerCardSalesInfoDAO().getVersion(id);
@@ -140,7 +172,7 @@ public class CustomerCardSalesInfoServiceImpl implements CustomerCardSalesInfoSe
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(CustCardSales customerCardSalesInfo) {
+	public AuditDetail doValidations(CustCardSales customerCardSalesInfo,String recordType) {
 
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();

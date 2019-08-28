@@ -5,12 +5,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
+import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
-
-public class CustCardSalesDetails extends AbstractWorkflowEntity {
+@XmlType(propOrder = { "id", "cardSalesId", "month","salesAmount","noOfSettlements","totalNoOfCredits","totalNoOfDebits","totalCreditValue","totalDebitValue","inwardBounce", "outwardBounce" })
+@XmlAccessorType(XmlAccessType.NONE)
+public class CustCardSalesDetails extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
 
 	@XmlElement(name = "id")

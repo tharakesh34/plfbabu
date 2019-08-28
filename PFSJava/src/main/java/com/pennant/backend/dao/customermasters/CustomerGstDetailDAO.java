@@ -32,7 +32,7 @@ public interface CustomerGstDetailDAO {
 
 	void update(CustomerGSTDetails customerGSTDetails, String type);
 
-	int getVersion(long id, String addrType);
+	int getVersion(long id);
 
 	List<CustomerGSTDetails> getCustomerGSTDetailsById(long custId, String type);
 

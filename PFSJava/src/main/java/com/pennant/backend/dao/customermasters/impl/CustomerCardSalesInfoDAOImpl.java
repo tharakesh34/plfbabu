@@ -40,7 +40,8 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(", RecordType, WorkflowId ");
 		sql.append(" FROM  CUSTCARDSALES");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where MerchantId = :MerchantId");
+		sql.append(" Where Id = :Id");
+		//sql.append(" Where MerchantId = :MerchantId");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerCardSalesInfo);
@@ -168,7 +169,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 	public int getVersion(long id) {
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("BankId", id);
+		source.addValue("Id", id);
 
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT Version FROM CUSTCARDSALES");
@@ -280,7 +281,7 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		sql.append(" Where Id = :Id");
 		if (!type.endsWith("_Temp")) {
-			//sql.append(" AND Version= :Version-1");
+			sql.append(" AND Version= :Version-1");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -299,6 +300,20 @@ public class CustomerCardSalesInfoDAOImpl extends SequenceDao<CustCardSales> imp
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custCardSaleInfoDetail);
+
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
+	}
+	
+	@Override
+	public void delete(long cardSalesId, String type) {
+		CustCardSalesDetails custCardSalesDetails = new CustCardSalesDetails();
+		custCardSalesDetails.setCardSalesId(cardSalesId);
+		StringBuilder sql = new StringBuilder(" Delete From CUSTCARDSALESDETAILS");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CardSalesId =:CardSalesId");
+
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(custCardSalesDetails);
 
 		this.jdbcTemplate.update(sql.toString(), beanParameters);
 	}

@@ -31,5 +31,7 @@ public interface CustomerCardSalesInfoDAO {
 
 	void delete(CustCardSalesDetails cardSalesInfoSubDetails, String type);
 
+	void delete(long cardSalesId, String type);
+
 	int getCustomerCardSalesInfoByCustMerchantId(long custId, String merchantId, long Id, String type);
 }

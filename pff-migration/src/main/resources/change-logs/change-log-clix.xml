@@ -3527,6 +3527,13 @@ UNION ALL
         	]]>
 		</sql>
 	</changeSet>
+	<changeSet id="87" author="naga.g">
+		<sql>
+			 <![CDATA[
+				Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('CUST_GST_TAB_REQUIRED','Is Customer GST Tab is Required.','String',1,'Y',8,0,null,null,'Is Customer GST Tab is Required.',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			 ]]>
+		</sql>
+	</changeSet>
 	
 	<changeSet id="87" author="vijaya.a">
 		<sql>

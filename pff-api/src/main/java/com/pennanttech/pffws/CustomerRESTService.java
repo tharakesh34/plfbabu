@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
+import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
@@ -18,6 +19,7 @@ import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
@@ -179,13 +181,32 @@ public interface CustomerRESTService {
 			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
 
 	@GET
-	@Path("/customerService/getCustomerGstnformation/{cif}")
+	@Path("/customerService/getCustomerGstInformation/{cif}")
 	public CustomerDetails getCustomerGstnformation(@PathParam("cif") String custCIF) throws ServiceException;
 
 	@DELETE
 	@Path("/customerService/deleteCustomerGstInformation")
 	WSReturnStatus deleteCustomerGstInformation(
 			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
+	@POST
+	@Path("/customerService/addCardSalesInformation")
+	public CustomerCardSaleInfoDetails addCardSalesInformation(
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
+	
+	@POST
+	@Path("/customerService/updatecustCardSalesInformation")
+	public WSReturnStatus updateCardSaleInformation(
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
+	
+	@GET
+	@Path("/customerService/getCardSalesInformation/{cif}")
+	public CustomerDetails getCardSalesInformation(@PathParam("cif") String custCIF) throws ServiceException;
+	
+	@DELETE
+	@Path("/customerService/deleteCardSaleInformation")
+	public WSReturnStatus deleteCardSaleInformation(
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
 
 	@POST
 	@Path("/customerService/addCustomerAccountBehaviour")
@@ -256,4 +277,5 @@ public interface CustomerRESTService {
 	@Path("/customerService/addCreditReviewDetails")
 	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData);
 
+	
 }

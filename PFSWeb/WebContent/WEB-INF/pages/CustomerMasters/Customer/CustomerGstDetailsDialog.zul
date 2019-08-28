@@ -55,7 +55,7 @@
 							<row>
 								<label value="${c:l('label_CustomerDialog_GSTNumber.value')}" />
 								<hbox>
-									<space spacing="2px" />
+									<space id="space_GSTNumber" spacing="2px" sclass="mandatory" />
 									<uppercasebox id="gstNumber" maxlength="50" width="153px" style="overflow: hidden;" />
 								</hbox>
 							</row>
@@ -66,11 +66,7 @@
 									<combobox id="frequencyType" width="155px" />
 								</hbox>
 							</row>
-							<!-- <row> <label value="${c:l('label_CustomerDialog_Frequency.value')}" /> <hbox> <space id="space_Frequency" spacing="2px" 
-								sclass="mandatory" /> <combobox id="frequency" width="155px" /> </hbox> </row> <row> <label value="${c:l('label_CustomerDialog_Year.value')}" 
-								/> <hbox> <space id="space_Year" spacing="2px" sclass="mandatory" /> <combobox id="year" width="155px" /> </hbox> </row> 
-								<row> <label value="${c:l('label_CustomerDialog_GSTAmount.value')}" /> <hbox> <space id="space_GstAmount" spacing="2px" sclass="mandatory" 
-								/> <currencyBox id="gstAmount" /> </hbox> </row> -->
+							
 						</rows>
 
 					</grid>

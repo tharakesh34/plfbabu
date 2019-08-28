@@ -376,8 +376,28 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 	}
 
 	@Override
-	public int getVersion(long id, String addrType) {
-		return 0;
+	public int getVersion(long id) {
+		logger.debug("Entering");
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Id", id);
+
+		StringBuffer selectSql = new StringBuffer();
+		selectSql.append("SELECT Version FROM CustomerGst");
+
+		selectSql.append(" WHERE Id = :Id");
+
+		logger.debug("insertSql: " + selectSql.toString());
+
+		int recordCount = 0;
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			logger.error(dae);
+			recordCount = 0;
+		}
+		logger.debug("Leaving");
+		return recordCount;
 	}
 
 	@Override

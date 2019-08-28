@@ -22,6 +22,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.blacklist.BlackListCustomers;
+import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -41,6 +42,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
+import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerEMailService;
@@ -75,6 +77,7 @@ import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
+import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
@@ -103,6 +106,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerDocumentService customerDocumentService;
 	private CustomerBankInfoService customerBankInfoService;
 	private CustomerGstService customerGstService;
+	private CustomerCardSalesInfoService customerCardSalesInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private DedupParmDAO dedupParmDAO;
@@ -1896,6 +1900,209 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+	/**
+	 * Method for create CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * @throws ServiceException
+	 */
+	@Override
+	public CustomerCardSaleInfoDetails addCardSalesInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException {
+		logger.debug("Entering");
+		validationUtility.validate(customerCardSaleInfoDetails, SaveValidationGroup.class);
+		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "customer CardSalesInfo";
+			CustomerCardSaleInfoDetails acustCardSalesInfoDetail = new CustomerCardSaleInfoDetails();
+			acustCardSalesInfoDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return acustCardSalesInfoDetail;
+		}
+		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
+			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerCardSaleInfoDetails.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerCardSaleInfoDetails.getCif();
+				CustomerGstInfoDetail customerGstInfoDetails = new CustomerGstInfoDetail();
+				customerGstInfoDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return customerCardSaleInfoDetails;
+			}
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.TRAN_WF);
+		// validate customer details as per the API specification
+		AuditDetail auditDetail = customerCardSalesInfoService.doValidations(customerCardSaleInfoDetails.getCustCardSales(),
+				PennantConstants.RECORD_TYPE_NEW);
+		
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		
+		
+		
+		CustomerCardSaleInfoDetails response = null;
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				response = new CustomerCardSaleInfoDetails();
+				response.setReturnStatus(
+						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+				return response;
+			}
+		}
+		// call add Customer gst method in case of no errors
+		response = customerDetailsController.addCardSalesInformation(customerCardSaleInfoDetails.getCustCardSales(),
+				customerCardSaleInfoDetails.getCif());
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	
+	/**
+	 * get CustomerGstInfoDetail by the given customer cif.
+	 * 
+	 * @param custCIF
+	 */
+	@Override
+	public CustomerDetails getCardSalesInformation(String custCIF) throws ServiceException {
+		logger.debug("Entering");
+		// Mandatory validation
+		if (StringUtils.isBlank(custCIF)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(custCIF);
+		CustomerDetails response = new CustomerDetails();
+		// validation
+		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
+		if (customer == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = custCIF;
+			response.setReturnStatus(getErrorDetails("90101", valueParm));
+			response.setCustomer(null);
+		} else {
+			response = customerDetailsController.getCardSalesInformation(custCIF);
+		}
+		logger.debug("Leaving");
+
+		return response;
+	}
+	
+	/**
+	 * Method for update CustomerGstInfoDetail in PLF system.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 * @throws ServiceException
+	 */
+	@Override
+	public WSReturnStatus updateCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException {
+		logger.debug("Entering");
+		// bean validations
+		validationUtility.validate(customerCardSaleInfoDetails, UpdateValidationGroup.class);
+		if (customerCardSaleInfoDetails.getCustCardSales() == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "customerCardSalesInfo";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
+		}
+		// customer validations
+		Customer customer = null;
+		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
+			customer = customerDetailsService.getCustomerByCIF(customerCardSaleInfoDetails.getCif());
+			if (customer == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerCardSaleInfoDetails.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			}
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.TRAN_WF);
+
+		// validate customer details as per the API specification
+		AuditDetail auditDetail = customerCardSalesInfoService.doValidations(customerCardSaleInfoDetails.getCustCardSales(),
+				PennantConstants.RECORD_TYPE_UPD);
+
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		if (auditHeader.getErrorMessage() != null) {
+			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
+				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+			}
+		}
+
+		WSReturnStatus response = null;
+		// validate Customer with given CustCIF
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getCustCardSales().getId());
+				
+
+		if (custCardSalesInfo != null) {
+			// call update customer if there is no errors
+			response = customerDetailsController.updateCardSalestInformation(customerCardSaleInfoDetails.getCustCardSales(),
+					customerCardSaleInfoDetails.getCif());
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getCustCardSales().getCustID());
+			valueParm[1] = customerCardSaleInfoDetails.getCif();
+			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	
+	/**
+	 * delete CustomerGstInfoDetail.
+	 * 
+	 * @param CustomerGstInfoDetail
+	 */
+	@Override
+	public WSReturnStatus deleteCardSaleInformation(CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException {
+
+		logger.debug("Enetring");
+		// bean validations
+		validationUtility.validate(customerCardSaleInfoDetails, DeleteValidationGroup.class);
+
+		// customer validations
+		CustCardSales custCardSales = null;
+		if (StringUtils.isNotBlank(customerCardSaleInfoDetails.getCif())) {
+			Customer customerDetails = customerDetailsService.getCustomerByCIF(customerCardSaleInfoDetails.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerCardSaleInfoDetails.getCif();
+				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
+			} else {
+				custCardSales = new CustCardSales();
+				custCardSales.setCustID(customerDetails.getCustID());
+				custCardSales.setId(customerCardSaleInfoDetails.getId());
+				// for logging purpose
+				APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
+			}
+		}
+		WSReturnStatus response = null;
+		// validate Customer with given CustCIF
+		
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getId());
+		
+
+		if (custCardSalesInfo != null) {
+			// call delete customer service
+			response = customerDetailsController.deleteCardSaleInformation(custCardSalesInfo);
+		} else {
+			response = new WSReturnStatus();
+			String[] valueParm = new String[2];
+			valueParm[0] = String.valueOf(customerCardSaleInfoDetails.getId());
+			valueParm[1] = customerCardSaleInfoDetails.getCif();
+			return APIErrorHandlerService.getFailedStatus("90116", valueParm);
+		}
+		logger.debug("Leaving");
+		return response;
+	}
 
 	/**
 	 * Method for create CustomerAccountBehaviour in PLF system.
@@ -2811,12 +3018,25 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 * @param tranType
 	 * @return AuditHeader
 	 */
+	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
+		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()), null,
+				null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
+	/**
+	 * Get Audit Header Details
+	 * 
+	 * @param aCustomerBankInfo
+	 * @param tranType
+	 * @return AuditHeader
+	 */
 	private AuditHeader getAuditHeader(CustomerGST aCustomerGST, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustomerGST.getBefImage(), aCustomerGST);
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
 				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-
+	
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -3058,7 +3278,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setCustomerGstService(CustomerGstService customerGstService) {
 		this.customerGstService = customerGstService;
 	}
-
+     
+	@Autowired
+	public void setCustomerCardSalesInfoService(CustomerCardSalesInfoService customerCardSalesInfoService) {
+		this.customerCardSalesInfoService = customerCardSalesInfoService;
+	}
+	@Autowired
 	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
 		return customerCardSalesInfoDAO;
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustCardSales;
+import com.pennant.backend.model.customermasters.CustCardSalesDetails;
 
 public interface CustomerCardSalesInfoService {
 
@@ -14,9 +15,11 @@ public interface CustomerCardSalesInfoService {
 
 	public CustCardSales getCustomerCardSalesInfoById(long CardSalesId);
 
+	public List<CustCardSalesDetails> getCardSalesInfoSubDetailById(long CardSaleId, String type);
+
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	int getVersion(long id);
 
-	AuditDetail doValidations(CustCardSales customerCardSalesInfo);
+	AuditDetail doValidations(CustCardSales customerCardSalesInfo,String recordType);
 }
