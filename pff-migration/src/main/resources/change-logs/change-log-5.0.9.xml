@@ -2233,5 +2233,12 @@
 				]]>
 		</sql>
  	</changeSet>
+ 	<changeSet id="18" author="saikiran.v">
+		<sql>
+				<![CDATA[
+					INSERT INTO ErrorDetails VALUES('90498','EN','E','Early Settlement Already initiated','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
+				]]>
+		</sql>
+ 	</changeSet>
 	
 </databaseChangeLog>
