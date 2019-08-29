@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,7 +20,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -91,5 +92,34 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="5" author="VaraPrasad.K">
+		<sql>
+            <![CDATA[
+
+                Delete From plf.SecRights Where RightName = 'menu_Item_CovenantRegisterReport';
+                Delete From plf.SecRights Where RightName = 'menu_Item_CollateralRegisterReport';
+                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COVENANT_REGISTER_REPORT');
+                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COLLATERAL_REGISTER_REPORT');
+                Delete from secgroups where grpcode = 'COVENANT_REGISTER_REPORT';
+                Delete from secgroups where grpcode = 'COLLATERAL_REGISTER_REPORT';
+
+                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+                insert into secgroups values((select max(grpid)+1 from secgroups),'COVENANT_REGISTER_REPORT','Convenant Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+                insert into secgroups values((select max(grpid)+1 from secgroups),'COLLATERAL_REGISTER_REPORT','Collateral Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+
+                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+                INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 0, 'menu_Item_CovenantRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0;
+                INSERT INTO plf.SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM plf.SECRIGHTS), 0, 'menu_Item_CollateralRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM plf.SEQSECRIGHTS WHERE 0=0;
+                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+
+                INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='COVENANT_REGISTER_REPORT') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_CovenantRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                INSERT INTO plf.SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM plf.SECGROUPRIGHTS), (SELECT GRPID  FROM plf.SECGROUPS WHERE GRPCODE='COLLATERAL_REGISTER_REPORT') ,(SELECT RIGHTID FROM plf.SECRIGHTS WHERE RIGHTNAME='menu_Item_CollateralRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+            ]]>
+		</sql>
+	</changeSet>
+
+
 
 </databaseChangeLog>
