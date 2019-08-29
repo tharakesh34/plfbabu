@@ -1703,7 +1703,6 @@ public class CustomerDetailsController {
 		try {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			Customer customer = customerDetailsService.getCustomerByCIF(cif);
-
 			liability.setCustId(customer.getCustID());
 			liability.setCustCif(cif);
 			liability.setNewRecord(true);
@@ -1713,7 +1712,21 @@ public class CustomerDetailsController {
 			liability.setSourceId(APIConstants.FINSOURCE_ID_API);
 			liability.setLastMntBy(userDetails.getUserId());
 			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-
+			if (liability.getExtLiabilitiesPayments() != null && !liability.getExtLiabilitiesPayments().isEmpty()) {
+				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
+					liability.setNewRecord(true);
+					extLiabilityPaymentdetails.setVersion(1);
+					extLiabilityPaymentdetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					extLiabilityPaymentdetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					//extLiabilityPaymentdetails.setSourceId(APIConstants.FINSOURCE_ID_API);
+					extLiabilityPaymentdetails.setLastMntBy(userDetails.getUserId());
+					extLiabilityPaymentdetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				}
+			}
+			liability.setLinkId(customerExtLiabilityDAO.getLinkId(liability.getCustId()));
+			if(liability.getLinkId()==0){
+				customerExtLiabilityDAO.setLinkId(liability);
+			}
 			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 
 			AuditHeader auditHeader = validation
@@ -1760,8 +1773,24 @@ public class CustomerDetailsController {
 		WSReturnStatus response = null;
 		try {
 			Customer prvCustomer = customerDetailsService.getCustomerByCIF(cif);
+			liability.setCustId(prvCustomer.getCustID());
+			liability.setLinkId(customerExtLiabilityDAO.getLinkId(prvCustomer.getCustID()));
+			CustomerExtLiability curliability = customerExtLiabilityService.getLiability(liability);
+			List<CustomerExtLiability> customerExtLiabilityList = customerExtLiabilityService.getLiabilities(liability);
+			if (customerExtLiabilityList != null && !customerExtLiabilityList.isEmpty()) {
+				for (CustomerExtLiability customerExtLiability : customerExtLiabilityList) {
+					if (liability.getId() == customerExtLiability.getId()) {
+						for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
+							extLiabilityPaymentdetails.setLiabilityId(liability.getId());
+						}
+						liability.setExtLiabilitiesPayments(liability.getExtLiabilitiesPayments());
+					}
+				}
+
+			}
 			// user language
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			
 			liability.setUserDetails(userDetails);
 			liability.setCustId(prvCustomer.getCustID());
 			liability.setCustCif(cif);
@@ -1771,8 +1800,25 @@ public class CustomerDetailsController {
 			liability.setSourceId(APIConstants.FINSOURCE_ID_API);
 			liability.setLastMntBy(userDetails.getUserId());
 			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			liability.setBefImage(curliability);
 			liability.setVersion(
-					(customerExtLiabilityService.getVersion(liability.getCustId(), liability.getSeqNo())) + 1);
+					(customerExtLiabilityDAO.getExtLiabilityVersion(liability.getLinkId(), liability.getSeqNo())) + 1);
+			if (liability.getExtLiabilitiesPayments() != null && !liability.getExtLiabilitiesPayments().isEmpty()) {
+				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
+					extLiabilityPaymentdetails.setUserDetails(userDetails);
+					// extLiabilityPaymentdetails.setCustId(prvCustomer.getCustID());
+					// extLiabilityPaymentdetails.setCustCif(cif);
+					extLiabilityPaymentdetails.setRecordType(PennantConstants.RCD_UPD);
+					extLiabilityPaymentdetails.setNewRecord(false);
+					extLiabilityPaymentdetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					// extLiabilityPaymentdetails.setSourceId(APIConstants.FINSOURCE_ID_API);
+					extLiabilityPaymentdetails.setLastMntBy(userDetails.getUserId());
+					extLiabilityPaymentdetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					extLiabilityPaymentdetails.setVersion(liability.getVersion());
+
+				}
+			}
+			
 			CustomerExtLiabilityValidation validation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
 			AuditHeader auditHeader = validation
 					.extLiabilityValidation(getAuditHeader(liability, PennantConstants.TRAN_WF), "doApprove");

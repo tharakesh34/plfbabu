@@ -2378,10 +2378,13 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customer.getCustID());
-		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
-
+		liability.setSeqNo(customerExtLiabilityDetail.getExternalLiability().getSeqNo());
+		liability.setLinkId(customerExtLiabilityDAO.getLinkId(customer.getCustID()));
 		liability = customerExtLiabilityService.getLiability(liability);
+
 		if (liability != null) {
+			customerExtLiabilityDetail.getExternalLiability().setId(liability.getId());
+
 			// call update customer if there is no errors
 			response = customerDetailsController.updateCustomerExternalLiability(
 					customerExtLiabilityDetail.getExternalLiability(), customerExtLiabilityDetail.getCif());
@@ -2463,11 +2466,11 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		liability.setCustId(customerExtLiability.getCustId());
 		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
 		liability.setLinkId(customerExtLiabilityDAO.getLinkId(customerExtLiability.getCustId()));
-		
-	//	liability = customerExtLiabilityService.getLiability(liability);
+
+		// liability = customerExtLiabilityService.getLiability(liability);
 
 		CustomerExtLiability custExtLiability = customerExtLiabilityService.getLiability(liability);
-		
+
 		if (custExtLiability != null) {
 			// call delete customer service
 			response = customerDetailsController.deleteCustomerExternalLiability(liability);

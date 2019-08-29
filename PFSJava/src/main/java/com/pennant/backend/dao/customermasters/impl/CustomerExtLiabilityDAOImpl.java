@@ -63,7 +63,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" taskId, nextTaskId, recordType, workflowId");
 			sql.append(" from ");
 			sql.append(view);
-			sql.append(" where linkid =:linkId and custId = :custId and seqno = :seqno");
+			sql.append(" where linkid =:linkId and custId = :custId and seqNo = :seqNo");
 		} else {
 			sql.append(" select id, el.linkId, seqno, cel.custid, cu.custcif, cu.custshrtname,");
 			sql.append(" el.fintype, ft.fintypedesc, findate, loanbank, lb.bankname loanbankname,");
@@ -88,7 +88,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 			sql.append(" left join loanpurposes lp on lp.loanpurposecode = el.loanpurpose");
 			sql.append(" left join bmtbankdetail rb on rb.bankcode = el.repaybank");
 			sql.append(" left join bmtcuststatuscodes cs on cs.custstscode = el.finstatus");
-			sql.append(" where el.linkid =:linkId and cel.custId = :custId and seqno = :seqNo");
+			sql.append(" where el.linkid =:linkId and cel.custId = :custId and seqNo = :seqNo");
 		}
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -192,7 +192,7 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" select version from customer_ext_liabilities_aview cel");
+		sql.append(" select version from customer_ext_liabilities cel");
 		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
 		sql.append(" where custid = :custid and seqno = :seqno");
 		logger.trace(Literal.SQL + sql.toString());
@@ -442,6 +442,32 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 		}
 		logger.debug(Literal.LEAVING);
 
+	}
+
+	@Override
+	public int getExtLiabilityVersion(long linkId, int liabilitySeq) {
+
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select version from external_liabilities ");
+		sql.append(" where linkId = :linkId and seqNo = :seqNo");
+		logger.trace(Literal.SQL + sql.toString());
+
+		int recordCount = 0;
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("linkId", linkId);
+		mapSqlParameterSource.addValue("seqNo", liabilitySeq);
+
+		try {
+			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+		} catch (EmptyResultDataAccessException dae) {
+			recordCount = 0;
+		}
+		logger.debug(Literal.LEAVING);
+		return recordCount;
+
+	
 	}
 
 }
