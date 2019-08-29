@@ -293,29 +293,36 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-					if (bankInfoSubDetail.getMonthYear() == null) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "MonthYear";
-						// valueParm[1] = customerBankInfo.getAccountType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
+				if (bankInfoDetail.getBankInfoSubDetails().size() == 3 || bankInfoDetail.getBankInfoSubDetails().size()==0) {
+					for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+						if (bankInfoSubDetail.getMonthYear() == null) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "MonthYear";
+							// valueParm[1] = customerBankInfo.getAccountType();
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+						if (bankInfoSubDetail.getDay() <= 0) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Day";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
+						if (bankInfoSubDetail.getBalance() == null
+								|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+							String[] valueParm = new String[1];
+							valueParm[0] = "Balance";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							auditDetail.setErrorDetail(errorDetail);
+						}
 					}
-					if (bankInfoSubDetail.getDay() <= 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "Day";
-						// valueParm[1] = customerBankInfo.getAccountType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
-					}
-					if (bankInfoSubDetail.getBalance() == null
-							|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = "Balance";
-						// valueParm[1] = customerBankInfo.getAccountType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
-					}
+				}else{
+					String[] valueParm = new String[4];
+					valueParm[0] = "bankInfoSubDetails size "+bankInfoDetail.getBankInfoSubDetails().size();
+					valueParm[1] = " is Invalid. ";
+					valueParm[2] = " Size should be 0 or 3";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm), "EN");
+					auditDetail.setErrorDetail(errorDetail);
 				}
 			}
 		}

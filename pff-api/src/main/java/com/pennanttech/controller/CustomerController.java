@@ -1492,8 +1492,9 @@ public class CustomerController {
 		}
 	}
 
-	public void doAddCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
+	public WSReturnStatus doAddCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
 		logger.debug("ENTERING");
+		WSReturnStatus response=null;
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
 		Map<String, BigDecimal> prv1YearValuesMap = null;
@@ -1773,18 +1774,17 @@ public class CustomerController {
 				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				auditHeader = creditApplicationReviewService.doApprove(auditHeader);
+				response = new WSReturnStatus();
+				response= APIErrorHandlerService.getSuccessStatus();
+				return response;
 			} catch (Exception e) {
 				logger.error("Exception", e);
-				APIErrorHandlerService.logUnhandledException(e);
-				/*
-				 * response = new WSReturnStatus(); return APIErrorHandlerService.getFailedStatus();
-				 */
+				response= APIErrorHandlerService.getFailedStatus();
+				return response;
 			}
-
 		}
-
 		logger.debug("LEAVING");
-
+		return APIErrorHandlerService.getSuccessStatus();
 	}
 
 	/**

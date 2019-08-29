@@ -2909,11 +2909,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 			}
 
 		}
-		customerController.doAddCreditReviewDetails(finCreditReviewDetailsData);
-
+		response = customerController.doAddCreditReviewDetails(finCreditReviewDetailsData);
 		logger.debug(Literal.LEAVING);
-
-		return null;
+		return response;
 	}
 
 	/**

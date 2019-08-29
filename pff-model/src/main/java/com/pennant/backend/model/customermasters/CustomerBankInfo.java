@@ -123,9 +123,9 @@ public class CustomerBankInfo extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private String ccLimit;
 	private String typeOfBanks;
+	private Date accountOpeningDate;
 	@XmlElementWrapper(name = "bankInfoDetails")
 	@XmlElement(name = "bankInfoDetail")
-	private Date accountOpeningDate;
 	private List<BankInfoDetail> bankInfoDetails = new ArrayList<>();
 	private List<BankInfoSubDetail> bankInfoSubDetails = new ArrayList<>();
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
