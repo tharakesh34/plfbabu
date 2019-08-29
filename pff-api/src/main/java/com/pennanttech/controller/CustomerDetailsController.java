@@ -900,6 +900,27 @@ public class CustomerDetailsController {
 			customerBankInfo.setLastMntBy(userDetails.getUserId());
 			customerBankInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				bankInfoDetail.setUserDetails(userDetails);
+				bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				bankInfoDetail.setNewRecord(true);
+				bankInfoDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				bankInfoDetail.setLastMntBy(userDetails.getUserId());
+				// bankInfoDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+				bankInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				bankInfoDetail.setVersion(1);
+				for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+					bankInfoSubDetail.setUserDetails(userDetails);
+					bankInfoSubDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					bankInfoSubDetail.setNewRecord(false);
+					bankInfoSubDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					bankInfoSubDetail.setLastMntBy(userDetails.getUserId());
+					// bankInfoDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+					bankInfoSubDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					bankInfoSubDetail.setVersion(1);
+				}
+
+			}
 			CustomerBankInfoValidation validation = new CustomerBankInfoValidation(customerBankInfoDAO);
 			AuditHeader auditHeader = validation
 					.bankInfoValidation(getAuditHeader(customerBankInfo, PennantConstants.TRAN_WF), "doApprove");
@@ -958,6 +979,26 @@ public class CustomerDetailsController {
 			customerBankInfo.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerBankInfo.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerBankInfo.setVersion((customerBankInfoService.getVersion(customerBankInfo.getBankId())) + 1);
+			for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+				bankInfoDetail.setUserDetails(userDetails);
+				bankInfoDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				bankInfoDetail.setNewRecord(false);
+				bankInfoDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				bankInfoDetail.setLastMntBy(userDetails.getUserId());
+				// bankInfoDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+				bankInfoDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				bankInfoDetail.setVersion(customerBankInfo.getVersion());
+				for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+					bankInfoSubDetail.setUserDetails(userDetails);
+					bankInfoSubDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					bankInfoSubDetail.setNewRecord(false);
+					bankInfoSubDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					bankInfoSubDetail.setLastMntBy(userDetails.getUserId());
+					// bankInfoDetail.setSourceId(APIConstants.FINSOURCE_ID_API);
+					bankInfoSubDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					bankInfoSubDetail.setVersion(customerBankInfo.getVersion());
+				}
+			}
 			CustomerBankInfoValidation validation = new CustomerBankInfoValidation(customerBankInfoDAO);
 			AuditHeader auditHeader = validation
 					.bankInfoValidation(getAuditHeader(customerBankInfo, PennantConstants.TRAN_WF), "doApprove");
