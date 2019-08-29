@@ -2223,6 +2223,13 @@
 				select deps_restore_dependencies ('plf', 'wiffinancemain_aview');
 			]]>
 		</sql>
-	</changeSet>
+	<changeSet id="17" author="saikiran.v">
+		<sql>
+				<![CDATA[
+					 update reportfilterfields set fielddbname='FINDIVISION' where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_PutCallReport'
+					 and fieldid=1); 
+				]]>
+		</sql>
+ 	</changeSet>
 	
 </databaseChangeLog>
