@@ -2607,8 +2607,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COVENANTTYPE));
 				//remove the current role and display allowed roles.
-				map.put("allowedRoles",
-						StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));
+				map.put("allowedRoles", "");//StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), "")
 				map.put("module", "Organization");
 				covenantTypeWindow = Executions.createComponents(url,
 						getTabpanel(AssetConstants.UNIQUE_ID_COVENANTTYPE), map);

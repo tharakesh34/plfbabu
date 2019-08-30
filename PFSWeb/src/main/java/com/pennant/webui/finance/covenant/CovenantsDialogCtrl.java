@@ -107,6 +107,7 @@ import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.finance.financemain.FinCovenantMaintanceDialogCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -998,7 +999,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				covenant.setAlertType(strAlertType);
 
 			} else {
-				covenant.setFrequency(null);
+				covenant.setAlertType(null);
 			}
 
 		} catch (WrongValueException we) {
@@ -1088,8 +1089,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 
 		if (!documentRecieved.isDisabled()
 				&& (this.documentRecieved.isChecked() && PennantConstants.List_Select.equals(frequency))) {
-			this.covenantFrequency.setConstraint(
-					new PTDateValidator(Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value"), true));
+			this.covenantFrequency.setConstraint(new PTListValidator<Property>(
+					Labels.getLabel("label_CovenantsDialog_CovenantFrequency.value"), listFrequency, true));
 		}
 
 		if (this.alertType.getSelectedIndex() == 1) {
