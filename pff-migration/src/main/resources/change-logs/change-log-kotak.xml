@@ -2979,4 +2979,17 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="49" author="satyanarayana.g">
+		<comment>Schedule Details</comment>
+		<sql>
+			<![CDATA[
+				Delete from reportList where code ='SCHENQ';
+				INSERT INTO ReportList VALUES ('SCHENQ', 'FinanceMain', 'listheader_FinType.label,listheader_LovDescProductCodeName.label,listheader_LovDescCustCIF.label,listheader_FinReference.label,listheader_FinBranch.label,listheader_FinStartDate.label,listheader_NumberOfTerms.label,listheader_MaturityDate.label,listheader_FinCcy.label,listheader_FinancingAmount.label,listheader_CurFinAmount.label',
+				'finType,lovDescProductCodeName,lovDescCustCIF,finReference,finBranch,finStartDate,numberOfTerms,maturityDate,finCcy,financingAmount,curFinAmount',
+				'String,String,String,String,String,Date,Int,Date,String,BigDecimal,BigDecimal', ' ', 'ReportList11', 'Schedule Details',  'Loan Enquiry', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
