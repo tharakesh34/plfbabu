@@ -2248,4 +2248,21 @@
 				]]>
 		</sql>
  	</changeSet>
+
+	<changeSet id="20" author="Durgaprasad G">
+		<createTable tableName="IRRScheduleDetail">
+			<column name="FinReference" type="varchar(20)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="SchDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ProfitCalc" type="decimal(18,0)" />
+			<column name="PrincipalCalc" type="decimal(18,0)" />
+			<column name="RepayAmount" type="decimal(18,0)" />
+			<column name="ClosingBalance" type="decimal(18,0)" />
+			<column name="GapInterst" type="decimal(18,0)" />
+		</createTable>
+	</changeSet>
+ 	
 </databaseChangeLog>
