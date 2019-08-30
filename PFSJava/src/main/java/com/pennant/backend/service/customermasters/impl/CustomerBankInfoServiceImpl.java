@@ -1,6 +1,7 @@
 package com.pennant.backend.service.customermasters.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -21,6 +23,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
@@ -214,7 +217,12 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
-
+		if (StringUtils.isEmpty(customerBankInfo.getAccountNumber())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "accountNumber";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+			auditDetail.setErrorDetail(errorDetail);
+		}
 		LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",
 				customerBankInfo.getAccountType());
 		if (lovFieldDetail == null) {
@@ -293,20 +301,37 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 					auditDetail.setErrorDetail(errorDetail);
 				}
-				if (bankInfoDetail.getBankInfoSubDetails().size() == 3 || bankInfoDetail.getBankInfoSubDetails().size()==0) {
+				String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
+				String[] days = configDay.split(PennantConstants.DELIMITER_COMMA);
+				List<String> daysList = new ArrayList<>();
+				List<String> daysInputlis = new ArrayList<>();
+				for (String type : days) {
+					daysList.add(type);
+				}
+				if (bankInfoDetail.getBankInfoSubDetails().size() != daysList.size()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "BankInfoSubDetails";
+					valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+
+				} else {
 					for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
 						if (bankInfoSubDetail.getMonthYear() == null) {
 							String[] valueParm = new String[1];
 							valueParm[0] = "MonthYear";
-							// valueParm[1] = customerBankInfo.getAccountType();
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 							auditDetail.setErrorDetail(errorDetail);
 						}
 						if (bankInfoSubDetail.getDay() <= 0) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "Day";
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
+							String[] valueParm = new String[2];
+							valueParm[0] = "BankInfoSubDetails:Day";
+							valueParm[1] = "Zero";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
+						}else{
+							daysInputlis.add(String.valueOf(bankInfoSubDetail.getDay()));
 						}
 						if (bankInfoSubDetail.getBalance() == null
 								|| bankInfoSubDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
@@ -316,13 +341,23 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 							auditDetail.setErrorDetail(errorDetail);
 						}
 					}
-				}else{
-					String[] valueParm = new String[4];
-					valueParm[0] = "bankInfoSubDetails size "+bankInfoDetail.getBankInfoSubDetails().size();
-					valueParm[1] = " is Invalid. ";
-					valueParm[2] = " Size should be 0 or 3";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30550", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
+					for (String day : daysInputlis) {
+						boolean flag = true;
+						for (String detai : daysList) {
+							if (StringUtils.equals(day, detai)) {
+								flag = false;
+								break;
+							}
+						}
+						if (flag) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "day";
+							valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+							return auditDetail;
+						}
+					}
 				}
 			}
 		}

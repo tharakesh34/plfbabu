@@ -2829,7 +2829,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
-					if (detail.getBankInfoSubDetails().size() != SysParamUtil.getValueAsInt("BANKINFO_DAYS")) {
+					String configDay = SysParamUtil.getValueAsString(SMTParameterConstants.BANKINFO_DAYS);
+					String[] days = configDay.split(PennantConstants.DELIMITER_COMMA);
+					List<String> daysList = new ArrayList<>();
+					List<String> daysInputlis = new ArrayList<>();
+					for (String type : days) {
+						daysList.add(type);
+					}
+					if (detail.getBankInfoSubDetails().size() != daysList.size() ) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "BankInfoSubDetails";
 						valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
@@ -2846,6 +2853,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
+							}else{
+								daysInputlis.add(String.valueOf(subDetail.getDay()));
 							}
 							if (subDetail.getBalance() == null
 									|| subDetail.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
@@ -2856,7 +2865,25 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
+						}	
+						for (String day : daysInputlis) {
+							boolean flag = true;
+							for (String detai : daysList) {
+								if (StringUtils.equals(day, detai)) {
+									flag = false;
+									break;
+								}
+							}
+							if (flag) {
+								String[] valueParm = new String[2];
+								valueParm[0] = "day";
+								valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
+								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30540", "", valueParm));
+								auditDetail.setErrorDetail(errorDetail);
+								return auditDetail;
+							}
 						}
+						
 					}
 				}
 

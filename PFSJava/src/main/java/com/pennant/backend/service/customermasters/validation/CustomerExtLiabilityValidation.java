@@ -1,6 +1,7 @@
 package com.pennant.backend.service.customermasters.validation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,7 +22,9 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.pff.sampling.dao.SamplingDAO;
 
 public class CustomerExtLiabilityValidation {
@@ -255,20 +258,18 @@ public class CustomerExtLiabilityValidation {
 			auditDetail.setErrorDetail(errorDetail);
 		} else {
 			if (liability.getExtLiabilitiesPayments().size() != liability.getTenure()) {
-				String[] valueParam = new String[2];
-				valueParam[0] = "extLiabilitiesPayments";
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
+				String[] valueParm = new String[2];
+				valueParm[0] = "No of instalment Details ";
+				valueParm[1] = "Tenure";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90220", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 			}else{
 				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
-					if(extLiabilityPaymentdetails.getEMIType().isEmpty()){
+					if(StringUtils.isEmpty(extLiabilityPaymentdetails.getEMIType())){
 						String[] valueParam = new String[2];
 						valueParam[0] = "EMIType";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
-					}else{
-						ArrayList<ValueLabel> valueLabel= PennantStaticListUtil.getfrequency("Monthly");
-						
 					}
 					if(StringUtils.isBlank(String.valueOf(extLiabilityPaymentdetails.isInstallmentCleared()))){
 						String[] valueParam = new String[2];
@@ -278,6 +279,26 @@ public class CustomerExtLiabilityValidation {
 					}
 						
 				}
+				String date = DateUtility.format(liability.getFinDate(), PennantConstants.DBDateFormat);
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
+						liability.getTenure());
+				if (CollectionUtils.isNotEmpty(paymentDetails)) {
+					for (int i = 0; i < liability.getExtLiabilitiesPayments().size(); i++) {
+						int emiCount = 0;
+						for (int j = 0; j < paymentDetails.size(); j++) {
+							if (liability.getExtLiabilitiesPayments().get(i).getEMIType()
+									.equals((paymentDetails.get(j).getEMIType()))) {
+								emiCount++;
+							}
+						}
+						if (emiCount == 0) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Emi Type";
+							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91123", "", valueParm));
+							auditDetail.setErrorDetail(errorDetail);
+						}
+					}
+				}
 			}
 		}
 
@@ -285,6 +306,32 @@ public class CustomerExtLiabilityValidation {
 		return auditDetail;
 	}
 
+	public List<ExtLiabilityPaymentdetails> getPaymentDetails(Date startDate, int noOfMonths) {
+		Date dtStartDate = DateUtility.addMonths(startDate, 1);
+		Date dtEndDate = DateUtility.addMonths(dtStartDate, noOfMonths);
+		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate, noOfMonths);
+		return months;
+	}
+
+	private List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate, int noOfMonths) {
+		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
+		if (startDate == null || endDate == null) {
+			return list;
+		}
+
+		Date tempStartDate = (Date) startDate.clone();
+		Date tempEndDate = (Date) endDate.clone();
+
+		while (DateUtility.compare(tempStartDate, tempEndDate) < 0) {
+			ExtLiabilityPaymentdetails temp = new ExtLiabilityPaymentdetails();
+			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
+			temp.setEMIType(key);
+			tempStartDate = DateUtil.addMonths(tempStartDate, 1);
+			list.add(temp);
+		}
+
+		return list;
+	}
 	private ErrorDetail validateMasterCode(String tableName, String columnName, Object value) {
 
 		ErrorDetail errorDetail = new ErrorDetail();
