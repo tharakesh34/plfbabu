@@ -2264,5 +2264,754 @@
 			<column name="GapInterst" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="21" author="Siva">
+		<dropColumn tableName="BMTAEEVENTS" columnName="MANDATORY" />
+		<dropColumn tableName="BMTAEEVENTS" columnName="ODAPPLICABLE" />
+	</changeSet>
+
+	<changeSet id="22" author="Siva">
+		<createTable tableName="CategoryWiseEvents">
+			<column name="AEEventCode" type="varchar2(8)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="CategoryCode" type="char(1)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="ACTIVE" type="NUMBER(1,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MANDATORY" type="NUMBER(1,0)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SeqOrder" type="NUMBER(2,0)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="23" author="Siva">
+		<createView viewName="CategoryWiseEvents_VIEW"
+			replaceIfExists="true">
+				SELECT            T1.AEEventCode, T1.CategoryCode  , T1.Active ,T1.Mandatory, T1.SeqOrder,T2.AEEventCodeDesc
+				FROM        CategoryWiseEvents  T1 INNER JOIN 
+				BMTAEEvents T2 ON T1.AEEventCode = T2.AEEventCode
+	</createView>
+	</changeSet>
+
+	<changeSet id="24" author="Siva">
+		<sql>
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSF','F',1,0,1);
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','F',1,1,2);
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','F',1,1,3);
+			INSERT INTO CategoryWiseEvents VALUES('AMZ','F',1,1,4);
+			INSERT INTO CategoryWiseEvents VALUES('DEFRPY','F',1,1,5);
+			INSERT INTO CategoryWiseEvents VALUES('DISBINS','F',1,1,6);
+			INSERT INTO CategoryWiseEvents VALUES('EARLYPAY','F',1,1,7);
+			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','F',1,1,8);
+			INSERT INTO CategoryWiseEvents VALUES('EMIDAY','F',1,1,9);
+			INSERT INTO CategoryWiseEvents VALUES('FEEPAY','F',1,1,10);
+			INSERT INTO CategoryWiseEvents VALUES('INSTDATE','F',1,1,11);
+			INSERT INTO CategoryWiseEvents VALUES('JVPOST','F',1,0,12);
+			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','F',1,1,13);
+			INSERT INTO CategoryWiseEvents VALUES('MANFEE','F',1,1,14);
+			INSERT INTO CategoryWiseEvents VALUES('PAYMTINS','F',1,1,15);
+			INSERT INTO CategoryWiseEvents VALUES('RATCHG','F',1,1,16);
+			INSERT INTO CategoryWiseEvents VALUES('REAGING','F',1,1,17);
+			INSERT INTO CategoryWiseEvents VALUES('REPAY','F',1,1,18);
+			INSERT INTO CategoryWiseEvents VALUES('SCDCHG','F',1,1,19);
+			INSERT INTO CategoryWiseEvents VALUES('VASACRUL','F',1,1,20);
+			INSERT INTO CategoryWiseEvents VALUES('VASFEE','F',1,1,21);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','F',1,1,22);
+
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSF','O',1,0,1);
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','O',1,1,2);
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','O',1,1,3);
+			INSERT INTO CategoryWiseEvents VALUES('AMZ','O',1,1,4);
+			INSERT INTO CategoryWiseEvents VALUES('AMZPD','O',1,1,5);
+			INSERT INTO CategoryWiseEvents VALUES('AMZSUSP','O',1,1,6);
+			INSERT INTO CategoryWiseEvents VALUES('CANFIN','O',1,1,7);
+			INSERT INTO CategoryWiseEvents VALUES('CMTDISB','O',1,1,8);
+			INSERT INTO CategoryWiseEvents VALUES('JVPOST','O',1,0,9);
+			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','O',1,1,10);
+			INSERT INTO CategoryWiseEvents VALUES('MANFEE','O',1,1,11);
+			INSERT INTO CategoryWiseEvents VALUES('NORM_PD','O',1,1,12);
+			INSERT INTO CategoryWiseEvents VALUES('NORM_PIS','O',1,1,13);
+			INSERT INTO CategoryWiseEvents VALUES('PD_NORM','O',1,1,14);
+			INSERT INTO CategoryWiseEvents VALUES('PD_PIS','O',1,1,15);
+			INSERT INTO CategoryWiseEvents VALUES('PIS_NORM','O',1,1,16);
+			INSERT INTO CategoryWiseEvents VALUES('PIS_PD','O',1,1,17);
+			INSERT INTO CategoryWiseEvents VALUES('PROVSN','O',1,1,18);
+			INSERT INTO CategoryWiseEvents VALUES('REPAY','O',1,1,19);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','O',1,1,20);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','O',1,1,21);
+
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','C',1,1,2);
+			INSERT INTO CategoryWiseEvents VALUES('AMZ','C',1,1,3);
+			INSERT INTO CategoryWiseEvents VALUES('AMZ_MON','C',1,1,4);
+			INSERT INTO CategoryWiseEvents VALUES('COMPOUND','C',1,1,5);
+			INSERT INTO CategoryWiseEvents VALUES('DISBINS','C',1,1,6);
+			INSERT INTO CategoryWiseEvents VALUES('EARLYPAY','C',1,1,7);
+			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','C',1,1,8);
+			INSERT INTO CategoryWiseEvents VALUES('FEEPAY','C',1,1,9);
+			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','C',1,1,10);
+			INSERT INTO CategoryWiseEvents VALUES('REPAY','C',1,0,11);
+			INSERT INTO CategoryWiseEvents VALUES('STAGE','C',1,0,12);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','C',1,1,13);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','C',1,1,14);
+
+		</sql>
+	</changeSet>
+	
+	<changeSet id="25" author="Siva">
+		<sql>
+		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_SolutionFactory_CDFinanceType','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETYPE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+		</sql>
+	</changeSet>
+	
+	<changeSet id="26" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions">
+			<column name="ReferenceID" type="bigint" defaultValue="0" />
+			<column name="OpenBalOnPV" type="boolean" defaultValue="0" />
+			<column name="Tenor" type="int" defaultValue="0" />
+			<column name="AdvEMITerms" type="int" defaultValue="0" />
+			<column name="PftDaysBasis" type="varchar(8)" />
+			<column name="SubventionMethod" type="varchar(8)" />
+			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" defaultValue="0" />
+			<column name="CashbackMonth" type="int" defaultValue="0" />
+			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="Promotions_Temp">
+			<column name="ReferenceID" type="bigint" defaultValue="0" />
+			<column name="OpenBalOnPV" type="boolean" defaultValue="0" />
+			<column name="Tenor" type="int" defaultValue="0" />
+			<column name="AdvEMITerms" type="int" defaultValue="0" />
+			<column name="PftDaysBasis" type="varchar(8)" />
+			<column name="SubventionMethod" type="varchar(8)" />
+			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="TaxApplicable" type="boolean" defaultValue="0" />
+			<column name="CashbackMonth" type="int" defaultValue="0" />
+			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="26.1" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions">
+			<column name="ProductCategory" type="varchar(8)" />
+		</addColumn>
+		<addColumn tableName="Promotions_Temp">
+			<column name="ProductCategory" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="27.1" author="Siva">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionMethod, t1.SubventionRate,
+			    t1.TaxApplicable, t1.CashbackMonth, t1.SchemeIRR,t1.ProductCategory
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="28.1" author="Siva">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionMethod, t1.SubventionRate,
+			    t1.TaxApplicable, t1.CashbackMonth, t1.SchemeIRR,t1.ProductCategory
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="29.1" author="Siva">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionMethod, t1.SubventionRate,
+			    t1.TaxApplicable, t1.CashbackMonth, t1.SchemeIRR,t1.ProductCategory
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			UNION ALL
+			 SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionMethod, t1.SubventionRate,
+			    t1.TaxApplicable, t1.CashbackMonth, t1.SchemeIRR,t1.ProductCategory
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM promotions_temp
+			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="30" author="Siva">
+		<addColumn tableName="FinTypeFees">
+			<column name="ReferenceId" type="bigint" defaultValue="0"/>
+		</addColumn>
+		<addColumn tableName="FinTypeFees_Temp">
+			<column name="ReferenceId" type="bigint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="31" author="Siva">
+		<createView viewName="FinTypeFees_AView" replaceIfExists="true">
+			 SELECT t1.fintype,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeorder,
+			    t1.feeschedulemethod,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.amount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.moduleid,
+			    t1.alwpreincomization,
+			    t2.feetypecode,
+			    t2.feetypedesc,
+			    t2.taxapplicable,
+			    t2.taxcomponent,
+			    t3.rulecodedesc AS ruledesc,
+				t1.ReferenceId
+			   FROM fintypefees t1
+			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule= 'FEES' AND t1.finevent= t3.ruleevent
+		</createView>
+	</changeSet> 
+	<changeSet id="32" author="Siva">
+		<createView viewName="FinTypeFees_View" replaceIfExists="true">
+			SELECT t1.fintype,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeorder,
+			    t1.feeschedulemethod,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.amount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.moduleid,
+			    t1.alwpreincomization,
+			    t2.feetypecode,
+			    t2.feetypedesc,
+			    t2.taxapplicable,
+			    t2.taxcomponent,
+			    t3.rulecodedesc AS ruledesc,
+				t1.ReferenceId
+			   FROM fintypefees_temp t1
+			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN rules t3 ON t1.rulecode= t3.rulecode AND t3.rulemodule= 'FEES' AND t1.finevent= t3.ruleevent
+			UNION ALL
+			 SELECT t1.fintype,
+			    t1.originationfee,
+			    t1.finevent,
+			    t1.feetypeid,
+			    t1.feeorder,
+			    t1.feeschedulemethod,
+			    t1.calculationtype,
+			    t1.rulecode,
+			    t1.amount,
+			    t1.percentage,
+			    t1.calculateon,
+			    t1.alwdeviation,
+			    t1.maxwaiverperc,
+			    t1.alwmodifyfee,
+			    t1.alwmodifyfeeschdmthd,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t1.moduleid,
+			    t1.alwpreincomization,
+			    t2.feetypecode,
+			    t2.feetypedesc,
+			    t2.taxapplicable,
+			    t2.taxcomponent,
+			    t3.rulecodedesc AS ruledesc,
+				t1.ReferenceId
+			   FROM fintypefees t1
+			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+			     LEFT JOIN rules t3 ON t1.rulecode= t3.rulecode AND t3.rulemodule= 'FEES' AND t1.finevent= t3.ruleevent
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM fintypefees_temp F
+			          WHERE F.fintype= t1.fintype AND F.finevent= t1.finevent AND F.feetypeid = t1.feetypeid AND F.originationfee = t1.originationfee));
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="33" author="Siva">
+		<createSequence sequenceName="SeqPromotionScheme" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	
+	<changeSet id="34" author="Siva">
+		<sql>
+					
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CDSCHEME_MAKER', 'WF Maker for CD Scheme Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CDSCHEME_APPROVER', 'WF Approver for CD Scheme Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_SolutionFactory_CDScheme','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_Tenor','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_AdvEMITerms','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_CashbackMonth','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SubventionMethod','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_PftDaysBasis','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SubventionRate','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SchemeIRR','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_TaxApplicable','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PromotionCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PromotionDesc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_StartDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_EndDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_ActualInterestRate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Tenor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_AdvEMITerms'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashbackMonth'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SubventionMethod'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PftDaysBasis'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SubventionRate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SchemeIRR'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_TaxApplicable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PromotionDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PromotionDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+					
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CDSCHEME_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CDSCHEME_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
+					
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			
+		</sql>
+	</changeSet>
+	
+	<changeSet id="35" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions">
+			<column name="cashBackFromDealer" type="int" defaultValue="0" />
+			<column name="cashBackToCustomer" type="int" defaultValue="0" />
+		</addColumn>
+		<addColumn tableName="Promotions_Temp">
+			<column name="cashBackFromDealer" type="int" defaultValue="0" />
+			<column name="cashBackToCustomer" type="int" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="36" author="Siva">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="37" author="Siva">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="38" author="Siva">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			UNION ALL
+			 SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM promotions_temp
+			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="39" author="Siva">
+		<dropColumn tableName="Promotions" columnName="SubventionMethod" />
+		<dropColumn tableName="Promotions" columnName="CashbackMonth" />
+		<dropColumn tableName="Promotions" columnName="SchemeIRR" />
+		<dropColumn tableName="Promotions" columnName="ProductCategory" />
+		
+		<dropColumn tableName="Promotions_Temp" columnName="SubventionMethod" />
+		<dropColumn tableName="Promotions_Temp" columnName="CashbackMonth" />
+		<dropColumn tableName="Promotions_Temp" columnName="SchemeIRR" />
+		<dropColumn tableName="Promotions_Temp" columnName="ProductCategory" />
+	</changeSet>
+	
  	
 </databaseChangeLog>
