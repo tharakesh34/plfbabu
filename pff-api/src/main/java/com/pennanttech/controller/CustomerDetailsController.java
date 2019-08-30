@@ -1213,8 +1213,22 @@ public class CustomerDetailsController {
 			customerGST.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerGST.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerGST.setVersion((customerGstService.getVersion(customerGST.getId())) + 1);
-			for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+			/*for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
 				customerGSTDetails.setVersion(customerGST.getVersion());
+			}*/
+			
+			List<CustomerGSTDetails> cutomerGSTDetailistdb = customerGstService.getCustomerGstDeatailsByCustomerId(customerGST.getId(),"");
+    
+			for (CustomerGSTDetails customerGSTDetails : customerGST.getCustomerGSTDetailslist()) {
+		        int i=0;
+				while(!cutomerGSTDetailistdb.isEmpty()){
+				if(StringUtils.equals(customerGSTDetails.getFrequancy(), cutomerGSTDetailistdb.get(i).getFrequancy())){
+					customerGSTDetails.setVersion(cutomerGSTDetailistdb.get(i).getVersion()+1);
+					break;
+				}
+				i++;
+				}
+				
 			}
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
 			/*AuditHeader auditHeader = validation
@@ -1802,7 +1816,7 @@ public class CustomerDetailsController {
 			liability.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			liability.setBefImage(curliability);
 			liability.setVersion(
-					(customerExtLiabilityDAO.getExtLiabilityVersion(liability.getLinkId(), liability.getSeqNo())) + 1);
+					(customerExtLiabilityDAO.getVersion(liability.getLinkId(), liability.getSeqNo())) + 1);
 			if (liability.getExtLiabilitiesPayments() != null && !liability.getExtLiabilitiesPayments().isEmpty()) {
 				for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : liability.getExtLiabilitiesPayments()) {
 					extLiabilityPaymentdetails.setUserDetails(userDetails);

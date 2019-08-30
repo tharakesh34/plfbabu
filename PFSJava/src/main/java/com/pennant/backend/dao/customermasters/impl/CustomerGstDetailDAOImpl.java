@@ -402,8 +402,28 @@ public class CustomerGstDetailDAOImpl extends SequenceDao<CustomerGST> implement
 
 	@Override
 	public List<CustomerGSTDetails> getCustomerGSTDetailsById(long headerId, String type) {
-		return null;
+		logger.debug("Entering");
+		CustomerGSTDetails customerGSTDetails = new CustomerGSTDetails();
+		customerGSTDetails.setHeaderId(headerId);
 
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT Id,HeaderId, Frequancy, FinancialYear, SalAmount,");
+		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" FROM  customergstdetails");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where HeaderId= :HeaderId");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerGSTDetails);
+		RowMapper<CustomerGSTDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerGSTDetails.class);
+
+		List<CustomerGSTDetails> customerGstInfoDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+
+		logger.debug("Leaving");
+		return customerGstInfoDetails;
 	}
 
 	@Override
