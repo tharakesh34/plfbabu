@@ -2991,5 +2991,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="50" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				  UPDATE SMTPARAMETERS SET SYSPARMVALUE=',PAYTM,EXPERIA,BILLDESK,PAYU,' WHERE SYSPARMCODE='EXCLUDE_SUB_RECEIPT_MODE_VALUE';
+				
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

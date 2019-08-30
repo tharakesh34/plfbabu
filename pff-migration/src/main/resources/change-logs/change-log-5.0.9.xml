@@ -2240,5 +2240,12 @@
 				]]>
 		</sql>
  	</changeSet>
-	
+	<changeSet id="19" author="saikiran.v">
+		<sql>
+				<![CDATA[
+				  	DELETE  SMTparameters WHERE SYSPARMCODE='EXCLUDE_SUB_RECEIPT_MODE_VALUE';
+					INSERT INTO SMTparameters  VALUES ('EXCLUDE_SUB_RECEIPT_MODE_VALUE', 'To exclude Sub Receipt Mode Values', 'String', '0', '', 1, 0, NULL, NULL,'To exclude Sub Receipt Mode Values From List', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+ 	</changeSet>
 </databaseChangeLog>
