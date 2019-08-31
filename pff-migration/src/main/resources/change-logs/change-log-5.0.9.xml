@@ -3023,4 +3023,61 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="41" author="satyanarayana.g">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="42" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE REJECTFINANCEMAIN Set PromotionSeqID = 0  where PromotionSeqID is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="43_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="44" author="satyanarayana.g">
+		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+			SELECT F.FINREFERENCE,
+					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
+					F.FINTYPE,
+					F.FINBRANCH,
+					F.FINSTARTDATE,
+					F.MATURITYDATE,
+					F.NUMBEROFTERMS,
+					F.FINCCY,
+					F.FINAMOUNT,
+					F.FINAMOUNT - F.DOWNPAYMENT + F.FEECHARGEAMT + F.INSURANCEAMT  FINANCINGAMOUNT,
+					F.FEECHARGEAMT,
+					F.INSURANCEAMT,
+					F.FINAMOUNT - F.DOWNPAYMENT + F.FEECHARGEAMT + F.INSURANCEAMT - F.FINREPAYMENTAMOUNT  CURFINAMOUNT,
+					F.DOWNPAYMENT,
+					F.FINCURRASSETVALUE,
+					F.FINASSETVALUE,
+					F.ALLOWDRAWINGPOWER,
+					F.PROMOTIONSEQID,
+					C.CUSTCIF  LOVDESCCUSTCIF
+					FROM REJECTFINANCEMAIN F
+					LEFT JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+					LEFT JOIN RMTFINANCETYPES T ON F.FINTYPE = T.FINTYPE
+	</createView>
+	</changeSet>
+
+	<changeSet id="44_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
