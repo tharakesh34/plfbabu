@@ -3013,5 +3013,14 @@
 		<dropColumn tableName="Promotions_Temp" columnName="ProductCategory" />
 	</changeSet>
 	
- 	
+	<changeSet id="40" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN Set PromotionSeqID = 0  where PromotionSeqID is null;
+				UPDATE FINANCEMAIN_TEMP Set PromotionSeqID = 0 where PromotionSeqID is null;
+				UPDATE FINANCEMAIN_PA Set PromotionSeqID = 0 where PromotionSeqID is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

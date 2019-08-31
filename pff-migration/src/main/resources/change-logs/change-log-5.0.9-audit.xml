@@ -103,5 +103,13 @@
 			<column name="cashBackToCustomer" type="int" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="08" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN Set PromotionSeqID = 0  where PromotionSeqID is null;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
