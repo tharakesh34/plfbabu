@@ -2733,7 +2733,7 @@
 			     LEFT JOIN rules t3 ON t1.rulecode= t3.rulecode AND t3.rulemodule= 'FEES' AND t1.finevent= t3.ruleevent
 			  WHERE NOT (EXISTS ( SELECT 1
 			           FROM fintypefees_temp F
-			          WHERE F.fintype= t1.fintype AND F.finevent= t1.finevent AND F.feetypeid = t1.feetypeid AND F.originationfee = t1.originationfee));
+			          WHERE F.fintype= t1.fintype AND F.finevent= t1.finevent AND F.feetypeid = t1.feetypeid AND F.originationfee = t1.originationfee))
 		</createView>
 	</changeSet> 
 	
