@@ -372,7 +372,8 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
 		aeEvent.setEntityCode(details.getEntityCode());
 		aeEvent.setAccountingEvent(AccountEventConstants.ACCEVENT_INSPAY);
-		aeEvent.setFinReference(String.valueOf(details.getProviderId()));
+		// Setting FinReference instead of provider ID
+		aeEvent.setFinReference(details.getFinReference());
 		aeEvent.setValueDate(DateUtility.getAppDate());
 		aeEvent.setBranch(details.getUserDetails().getBranchCode());// FIXME
 																	// Branch

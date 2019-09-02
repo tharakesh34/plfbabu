@@ -827,7 +827,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		} catch (Exception e) {
 			setErrorToRUD(rud, "RU0040", "Value in [RECEIVEDDATE] ");
 		}
-		// Value Date and Received Date
+
+		// 30-08-19:Date comparision should be with date and not on string
 		// Value Date and Received Date
 		String strValueDate = getCellStringValue(rchRow, 8);
 		String strReceivedDate = getCellStringValue(rchRow, 9);

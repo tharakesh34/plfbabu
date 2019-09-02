@@ -209,8 +209,10 @@ public class AEAmountCodes implements Serializable {
 
 	// Advance EMI/Interest changes
 	private BigDecimal intAdjusted = BigDecimal.ZERO;
-	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
+	private BigDecimal emiAdjusted = BigDecimal.ZERO;
+	private BigDecimal emiTdsAdjusted = BigDecimal.ZERO;
+	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal priAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
 
@@ -1530,5 +1532,21 @@ public class AEAmountCodes implements Serializable {
 
 	public void setBpiToAdvInt(boolean bpiToAdvInt) {
 		this.bpiToAdvInt = bpiToAdvInt;
+	}
+
+	public BigDecimal getEmiAdjusted() {
+		return emiAdjusted;
+	}
+
+	public void setEmiAdjusted(BigDecimal emiAdjusted) {
+		this.emiAdjusted = emiAdjusted;
+	}
+
+	public BigDecimal getEmiTdsAdjusted() {
+		return emiTdsAdjusted;
+	}
+
+	public void setEmiTdsAdjusted(BigDecimal emiTdsAdjusted) {
+		this.emiTdsAdjusted = emiTdsAdjusted;
 	}
 }

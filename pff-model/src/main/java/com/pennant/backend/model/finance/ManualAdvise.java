@@ -77,7 +77,7 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private String feeTypeDesc;
 	@XmlElement
 	private String feeTypeCode;
-	private int sequence;
+	private int sequence = 0;
 	@XmlElement
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private BigDecimal paidAmount = BigDecimal.ZERO;

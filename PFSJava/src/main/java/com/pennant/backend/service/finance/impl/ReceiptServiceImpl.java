@@ -935,10 +935,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 		allocationDetailDAO.saveAllocations(receiptHeader.getAllocations(), tableType);
 
-		// Finance Schedule Details
-		listDeletion(finReference, tableType.getSuffix());
-		// listSave(scheduleData, tableType.getSuffix(), 0, false);
-
 		if (FinanceConstants.DEPOSIT_APPROVER.equals(receiptHeader.getRoleCode())
 				&& !(PennantConstants.RCD_STATUS_SAVED.equals(receiptHeader.getRecordStatus())
 						|| PennantConstants.RCD_STATUS_RESUBMITTED.equals(receiptHeader.getRecordStatus()))) {
@@ -1480,6 +1476,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String roleCode = receiptData.getReceiptHeader().getRoleCode();
 		String nextRoleCode = receiptData.getReceiptHeader().getNextRoleCode();
 		boolean isLoanActiveBef = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive();
+
+		if (financeScheduleDetailDAO.isScheduleInQueue(orgReceiptData.getFinReference())) {
+			throw new AppException("Not allowed to approve the receipt, since the loan schedule under maintenance.");
+		}
 
 		// Preparing Before Image for Audit
 		FinReceiptHeader befRctHeader = null;

@@ -180,7 +180,8 @@ public class ImplementationConstants {
 	 * created advice (Payable /Receivable) will be depended on this flag. Defaulted to true, Since it is the default
 	 * behavior
 	 */
-	public static final boolean ALW_ADV_INTEMI_ADVICE_CREATION = true;
+	public static final boolean RCVADV_CREATE_ON_INTEMI = true;
+	public static final boolean PYBADV_CREATE_ON_INTEMI = false;
 
 	//Covenant tab visible
 	public static final boolean COVENANT_REQUIRED = false;

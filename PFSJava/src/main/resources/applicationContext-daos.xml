@@ -3371,6 +3371,10 @@
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
+		<property name="advancePaymentDetailDAO" ref="advancePaymentDetailDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -3599,6 +3603,9 @@
 
 	<!-- Collateral Assignment -->
 	<bean id="finPlanEmiHolidayDAO" class="com.pennant.backend.dao.finance.impl.FinPlanEmiHolidayDAOImpl" parent="basicDao" />
+
+	<!-- Finance Main Detail -->
+	<bean id="advancePaymentDetailDAO" class="com.pennant.backend.dao.finance.impl.AdvancePaymentDetailDAOImpl" parent="basicDao" />
 
 	<!--============ Finance Writeoff Details ============== -->
 	<bean id="financeWriteoffDAO" class="com.pennant.backend.dao.finance.impl.FinanceWriteoffDAOImpl" parent="basicDao" />

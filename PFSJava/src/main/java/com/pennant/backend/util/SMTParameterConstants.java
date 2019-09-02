@@ -137,6 +137,9 @@ public class SMTParameterConstants {
 	public static final String BPI_PAID_ON_INSTDATE = "BPI_PAID_ON_INSTDATE";
 	public static final String BPI_TDS_DEDUCT_ON_ORG = "BPI_TDS_DEDUCT_ON_ORG";
 
+	// On Advance Interest TDS Incomize Required Upfront
+	public static final String ADVANCE_TDS_INCZ_UPF = "ADVINT_TDS_INCZ_UPF";
+
 	// Allow Partner Bank in Mandate based on this flag variable
 	public static final String MANDATE_ALW_PARTNER_BANK = "MANDATE_ALW_PARTNER_BANK";
 

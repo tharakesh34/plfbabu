@@ -276,9 +276,9 @@ public class FinanceDetail implements java.io.Serializable {
 	private LMSServiceLog lmsServiceLog;
 	private boolean pdApprovalTab = false;
 	private boolean pdInitTab = false;
-
-	private Date appDate = null; //For Custom Deviations	
-	private CreditReviewData creditReviewData; //For Credit Review Details
+	private Date appDate = null;
+	private CreditReviewData creditReviewData;
+	private AdvancePaymentDetail advancePaymentDetail;
 
 	public FinanceDetail() {
 		super();
@@ -1396,5 +1396,13 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setAppDate(Date appDate) {
 		this.appDate = appDate;
+	}
+
+	public AdvancePaymentDetail getAdvancePaymentDetail() {
+		return advancePaymentDetail;
+	}
+
+	public void setAdvancePaymentDetail(AdvancePaymentDetail advancePaymentDetail) {
+		this.advancePaymentDetail = advancePaymentDetail;
 	}
 }

@@ -5305,7 +5305,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 			setOverideMap(auditHeader.getOverideMap());
 
-		} catch (InterfaceException e) {
+		} catch (AppException e) {
 			MessageUtil.showError(e);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);

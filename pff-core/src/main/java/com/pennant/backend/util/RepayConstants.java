@@ -134,16 +134,10 @@ public class RepayConstants {
 	public static final String ALLOCATION_MANADV = "MANADV";
 	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 
-	// Receipt Types
-	/**
-	 * Received
-	 */
+	// Receipt process Types
 	public static final String RECEIPTTYPE_RECIPT = "R";
-
-	/**
-	 * Paid
-	 */
 	public static final String RECEIPTTYPE_PAYABLE = "P";
+	public static final String RECEIPTTYPE_ADJUST = "A";
 
 	// Receipt Types
 	public static final String RECEIPTTO_FINANCE = "F";

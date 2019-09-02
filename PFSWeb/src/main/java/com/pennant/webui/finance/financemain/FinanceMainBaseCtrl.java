@@ -222,6 +222,7 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxDetails;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -1118,15 +1119,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Schedule related buttons
 		this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnValidate"));
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()
-				&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()) {
-			btnLockRecord.setVisible(true);
+		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+			if (StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()
+					&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()) {
+				btnLockRecord.setVisible(true);
 
-			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-			if (StringUtils.isNotEmpty(financeMain.getNextUserId())) {
-				btnLockRecord.setLabel(Labels.getLabel("btnUnlockRecord"));
-				btnLockRecord.setTooltiptext(Labels.getLabel("btnUnlockRecord.tooltiptext"));
+				if (StringUtils.isNotEmpty(financeMain.getNextUserId())) {
+					btnLockRecord.setLabel(Labels.getLabel("btnUnlockRecord"));
+					btnLockRecord.setTooltiptext(Labels.getLabel("btnUnlockRecord.tooltiptext"));
+				}
+			} else {
+				btnLockRecord.setVisible(false);
 			}
 		} else {
 			btnLockRecord.setVisible(false);
@@ -13761,7 +13766,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 
-			setTDSForAdvInt(financeMain, dataMap, amountCodes);
+			// Advance payment Details Resetting
+			AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(finScheduleData, null, null);
+			if (curAdvpay != null) {
+				amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
+				amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
+				boolean advIntTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
+				if (!advIntTDSInczUpf) {
+					amountCodes.setIntTdsAdjusted(BigDecimal.ZERO);
+					amountCodes.setEmiTdsAdjusted(BigDecimal.ZERO);
+				} else {
+					amountCodes.setIntTdsAdjusted(curAdvpay.getAdvIntTds());
+					amountCodes.setEmiTdsAdjusted(curAdvpay.getAdvEMITds());
+				}
+			}
 
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
 			aeEvent.setDataMap(dataMap);
@@ -13789,7 +13807,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				tempAmountCodes.setPftChg(inst.getPftChg());
 
 				// Advance Interest
-				setTDSForAdvInt(financeMain, dataMap, tempAmountCodes);
+				AdvancePaymentUtil.setAdvancePaymentDetails(finScheduleData, amountCodes, moduleDefiner);
 
 				dataMap = tempAmountCodes.getDeclaredFieldValues(dataMap);
 				aeEvent.setAeAmountCodes(tempAmountCodes);
@@ -13839,17 +13857,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING);
-	}
-
-	private void setTDSForAdvInt(FinanceMain financeMain, Map<String, Object> dataMap, AEAmountCodes tempAmountCodes) {
-		if (financeMain.isTDSApplicable()) {
-			String grcAdvType = financeMain.getGrcAdvType();
-			String advType = financeMain.getAdvType();
-			if (AdvanceType.hasAdvInterest(grcAdvType) || AdvanceType.hasAdvInterest(advType)) {
-				tempAmountCodes.setIntTdsAdjusted(AdvancePaymentUtil.getTDSOnAdvanseInterest(dataMap));
-				financeMain.setIntTdsAdjusted(tempAmountCodes.getIntTdsAdjusted());
-			}
-		}
 	}
 
 	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)

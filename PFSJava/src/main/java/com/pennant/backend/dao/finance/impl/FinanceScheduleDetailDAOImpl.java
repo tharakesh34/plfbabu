@@ -1745,4 +1745,20 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return null;
 	}
 
+	@Override
+	public boolean isScheduleInQueue(String finReference) {
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+
+		int count = jdbcTemplate.queryForObject(
+				"select count(FinReference) from FinScheduleDetails_Temp where FinReference = :FinReference", source,
+				Integer.class);
+
+		if (count > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
 }

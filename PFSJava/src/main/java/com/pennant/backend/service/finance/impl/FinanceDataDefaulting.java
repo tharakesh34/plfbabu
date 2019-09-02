@@ -733,6 +733,12 @@ public class FinanceDataDefaulting {
 			finMain.setRepayRateBasis(financeType.getFinRateType());
 		}
 
+		// 29-08-19 : Defaulting INterst Rate from Loan Type if not Provided
+		if (StringUtils.isBlank(finMain.getRepayBaseRate())
+				&& finMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) == 0) {
+			finMain.setRepayProfitRate(financeType.getFinIntRate());
+		}
+
 		//Repay Rate
 		if (StringUtils.isBlank(finMain.getRepayBaseRate())
 				&& finMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) == 0

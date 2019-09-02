@@ -776,8 +776,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 */
 	@Override
 	public List<FinODDetails> getFinODBalByFinRef(String finReference) {
-		logger.debug("Entering");
-
 		FinODDetails finODDetails = new FinODDetails();
 		finODDetails.setFinReference(finReference);
 
@@ -787,7 +785,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		selectSql.append(" TotPenaltyAmt, TotWaived, TotPenaltyPaid, TotPenaltyBal, ");
 		selectSql.append(" LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays, ODChargeType, ");
 		selectSql.append(" ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc,  ");
-		selectSql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal ");
+		selectSql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal");
+		selectSql.append(", LockODRecalCal");
 		selectSql.append(" From FinODDetails");
 		selectSql.append(" Where FinReference =:FinReference ");
 
@@ -798,11 +797,10 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		try {
 			return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finODDetails = null;
+			logger.warn(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return null;
+
+		return new ArrayList<>();
 	}
 
 	@Override

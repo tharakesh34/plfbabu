@@ -468,8 +468,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 		paramMap.addValue("Reference", finReference);
+		// 30-08-2019:Added ValueDate
 		selectSql.append(
-				" SELECT ReceiptID,PaymentType,PaymentRef,FavourNumber,Amount,Status,ReceiptSeqID,ReceivedDate,TransactionRef  from FinReceiptDetail");
+				" SELECT ReceiptID,PaymentType,PaymentRef,FavourNumber,Amount,Status,ReceiptSeqID,ReceivedDate,ValueDate,TransactionRef  from FinReceiptDetail");
 		selectSql.append(" Where ReceiptId in (Select ReceiptId from FINRECEIPTHEADER where Reference = :Reference) ");
 
 		logger.trace(Literal.SQL + selectSql.toString());

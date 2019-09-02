@@ -271,11 +271,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		if (StringUtils.isNotEmpty(events.toString())) {
 			postingDetails = getFinanceDetailService().getPostingsByFinRefAndEvent(finReference, events.toString(),
 					this.showZeroCals.isChecked(), "", tableType);
-			if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_DISB_INST_POST)) {
-				List<ReturnDataSet> postingDetails1 = getFinanceDetailService().getInsurancePostings(finReference);
-				postingDetails.addAll(postingDetails1);
-			}
-
+			//29-08-19 Code Removed For insurance postings 
 		}
 		doGetListItemRenderer(postingDetails);
 		logger.debug("Leaving");

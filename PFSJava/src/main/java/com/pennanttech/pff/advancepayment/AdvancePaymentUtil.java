@@ -4,16 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.ImplementationConstants;
-import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 
@@ -282,7 +284,7 @@ public class AdvancePaymentUtil {
 					if (AdvanceType.AE != rpyAdvType) {
 
 						if (rpyTerm == rpyAdvTerms) {
-							continue;
+							break;
 						}
 
 						if (rpyAdvTerms > 0) {
@@ -297,36 +299,22 @@ public class AdvancePaymentUtil {
 		return amount;
 	}
 
-	public static BigDecimal getTDSOnAdvanseInterest(Map<String, Object> dataMap) {
-		BigDecimal tds = BigDecimal.ZERO;
-
-		BigDecimal net = (BigDecimal) dataMap.get("ADVINT_N");
-		BigDecimal waived = (BigDecimal) dataMap.get("ADVINT_W");
-		BigDecimal paid = (BigDecimal) dataMap.get("ADVINT_P");
-
-		if (net == null) {
-			net = BigDecimal.ZERO;
-		}
-
-		if (waived == null) {
-			waived = BigDecimal.ZERO;
-		}
-
-		if (paid == null) {
-			paid = BigDecimal.ZERO;
-		}
-
-		tds = tds.add(net).add(waived).add(paid);
-
-		return GSTCalculator.getTDS(tds);
-	}
-
-	public static BigDecimal calculateTDSOnAdvanseInterest(final FinScheduleData finScheduleData) {
+	/**
+	 * Method for creating Finance Advance Payment Object with the Totals if applicable
+	 * 
+	 * @param finScheduleData
+	 * @return
+	 */
+	public static AdvancePaymentDetail calculateAdvancePayment(final FinScheduleData finScheduleData) {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
 		Date gracePeriodEndDate = finMain.getGrcPeriodEndDate();
 
-		BigDecimal amount = BigDecimal.ZERO;
+		BigDecimal advInt = BigDecimal.ZERO;
+		BigDecimal advIntTds = BigDecimal.ZERO;
+		BigDecimal advEMI = BigDecimal.ZERO;
+		BigDecimal advEMITds = BigDecimal.ZERO;
+
 		AdvanceType grcAdvType = AdvanceType.getType(finMain.getGrcAdvType());
 		AdvanceType rpyAdvType = AdvanceType.getType(finMain.getAdvType());
 
@@ -334,6 +322,10 @@ public class AdvancePaymentUtil {
 		int rpyAdvTerms = getTerms(rpyAdvType, finMain.getAdvTerms());
 		int grcTerm = 0;
 		int rpyTerm = 0;
+
+		if (grcAdvTerms == 0 && rpyAdvTerms == 0) {
+			return null;
+		}
 
 		for (FinanceScheduleDetail sd : schedules) {
 
@@ -354,24 +346,108 @@ public class AdvancePaymentUtil {
 						grcTerm++;
 					}
 
-					amount = amount.add(sd.getTDSAmount());
+					advInt = advInt.add(sd.getProfitSchd().subtract(sd.getTDSAmount()));
+					advIntTds = advIntTds.add(sd.getTDSAmount());
 				} else {
 					if (AdvanceType.AE != rpyAdvType) {
 
 						if (rpyTerm == rpyAdvTerms) {
-							continue;
+							break;
 						}
 
 						if (rpyAdvTerms > 0) {
 							rpyTerm++;
 						}
-						amount = amount.add(sd.getTDSAmount());
+						advInt = advInt.add(sd.getProfitSchd().subtract(sd.getTDSAmount()));
+						advIntTds = advIntTds.add(sd.getTDSAmount());
+					} else {
+						if (schDate.compareTo(gracePeriodEndDate) > 0) {
+
+							if (rpyTerm == rpyAdvTerms) {
+								continue;
+							}
+							if (rpyAdvTerms > 0) {
+								rpyTerm++;
+							}
+							advEMI = advEMI.add(sd.getProfitSchd()).add(sd.getPrincipalSchd())
+									.subtract(sd.getTDSAmount());
+							advEMITds = advEMITds.add(sd.getTDSAmount());
+						}
 					}
 				}
 			}
 		}
 
-		return amount;
+		// Creating Finance Advance Payment with totals
+		AdvancePaymentDetail advPay = new AdvancePaymentDetail();
+		advPay.setFinReference(finMain.getFinReference());
+		advPay.setAdvInt(advInt);
+		advPay.setAdvIntTds(advIntTds);
+		advPay.setAdvEMI(advEMI);
+		advPay.setAdvEMITds(advEMITds);
+
+		return advPay;
+	}
+
+	/**
+	 * Method for Fetching Difference TDS Un-Incomized Amount to incomize Up-front When Interest amount Changed
+	 * 
+	 * @param finScheduleData
+	 * @return
+	 */
+	public static AdvancePaymentDetail getDiffOnAdvIntAndAdvEMI(final FinScheduleData finScheduleData,
+			AdvancePaymentDetail advPay, String moduleDefiner) {
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		String grcAdvType = financeMain.getGrcAdvType();
+		String advType = financeMain.getAdvType();
+		if (!AdvanceType.hasAdvInterest(grcAdvType) && !AdvanceType.hasAdvInterest(advType)) {
+			return null;
+		}
+
+		// Calculate Total TDS Amount based on Terms from Scheduled Installments
+		AdvancePaymentDetail curAdvPay = calculateAdvancePayment(finScheduleData);
+		if (curAdvPay == null) {
+			return curAdvPay;
+		}
+
+		if (advPay == null) {
+			return curAdvPay;
+		}
+
+		// Loan Already In servicing Process, Need to Cross Check whether Diff Incomization Required or not
+		// Find out the difference and adjust to Bean for Further Process
+		curAdvPay.setAdvInt(curAdvPay.getAdvInt().subtract(advPay.getAdvInt()));
+		curAdvPay.setAdvIntTds(curAdvPay.getAdvIntTds().subtract(advPay.getAdvIntTds()));
+		curAdvPay.setAdvEMI(curAdvPay.getAdvEMI().subtract(advPay.getAdvEMI()));
+		curAdvPay.setAdvEMITds(curAdvPay.getAdvEMITds().subtract(advPay.getAdvEMITds()));
+
+		if (!ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
+			if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
+				if (curAdvPay.getAdvInt().compareTo(BigDecimal.ZERO) > 0) {
+					curAdvPay.setAdvInt(BigDecimal.ZERO);
+					curAdvPay.setAdvIntTds(BigDecimal.ZERO);
+				}
+				if (curAdvPay.getAdvEMI().compareTo(BigDecimal.ZERO) > 0) {
+					curAdvPay.setAdvEMI(BigDecimal.ZERO);
+					curAdvPay.setAdvEMITds(BigDecimal.ZERO);
+				}
+			}
+		}
+
+		if (!ImplementationConstants.PYBADV_CREATE_ON_INTEMI) {
+			if (curAdvPay.getAdvInt().compareTo(BigDecimal.ZERO) < 0) {
+				curAdvPay.setAdvInt(BigDecimal.ZERO);
+				curAdvPay.setAdvIntTds(BigDecimal.ZERO);
+			}
+			if (curAdvPay.getAdvEMI().compareTo(BigDecimal.ZERO) < 0) {
+				curAdvPay.setAdvEMI(BigDecimal.ZERO);
+				curAdvPay.setAdvEMITds(BigDecimal.ZERO);
+			}
+		}
+
+		return curAdvPay;
+
 	}
 
 	private static BigDecimal calculateAdvanseEMI(final FinScheduleData finScheduleData) {
@@ -602,5 +678,26 @@ public class AdvancePaymentUtil {
 		}
 
 		return advanceProfit;
+	}
+
+	public static void setAdvancePaymentDetails(FinScheduleData finScheduleData, AEAmountCodes amountCodes,
+			String moduleDefiner) {// Advance payment Details Resetting
+		AdvancePaymentDetail curAdvpay = null;
+		curAdvpay = getDiffOnAdvIntAndAdvEMI(finScheduleData, null, moduleDefiner);
+
+		if (curAdvpay == null) {
+			return;
+		}
+
+		amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
+		amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
+
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF)) {
+			amountCodes.setIntTdsAdjusted(curAdvpay.getAdvIntTds());
+			amountCodes.setEmiTdsAdjusted(curAdvpay.getAdvEMITds());
+		} else {
+			amountCodes.setIntTdsAdjusted(BigDecimal.ZERO);
+			amountCodes.setEmiTdsAdjusted(BigDecimal.ZERO);
+		}
 	}
 }

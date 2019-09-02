@@ -109,12 +109,11 @@ public class FinODDetails implements java.io.Serializable {
 	private BigDecimal oDMaxWaiverPerc = BigDecimal.ZERO;
 	private BigDecimal oDMinCapAmount = BigDecimal.ZERO;
 	private BigDecimal payableAmount = BigDecimal.ZERO;
-
 	private String oDRuleCode;
-
 	private boolean lpCpz = false;
 	private BigDecimal lpCpzAmount = BigDecimal.ZERO;
 	private BigDecimal lpCurCpzBal = BigDecimal.ZERO;
+	private boolean lockODRecalCal;
 
 	//OD Penalty Capitalization
 
@@ -460,6 +459,14 @@ public class FinODDetails implements java.io.Serializable {
 
 	public void setLpCurCpzBal(BigDecimal lpCurCpzBal) {
 		this.lpCurCpzBal = lpCurCpzBal;
+	}
+
+	public boolean isLockODRecalCal() {
+		return lockODRecalCal;
+	}
+
+	public void setLockODRecalCal(boolean lockODRecalCal) {
+		this.lockODRecalCal = lockODRecalCal;
 	}
 
 }

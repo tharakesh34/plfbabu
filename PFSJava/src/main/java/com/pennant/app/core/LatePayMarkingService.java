@@ -359,6 +359,9 @@ public class LatePayMarkingService extends ServiceHelper {
 			Date valueDate, Date penaltyCalDate, boolean isEODprocess) {
 		logger.debug("Entering");
 
+		if (fod.isLockODRecalCal()) {
+			return;
+		}
 		Date maxValuDate = penaltyCalDate;
 		fod.setFinODTillDate(penaltyCalDate);
 		fod.setFinCurODPri(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));

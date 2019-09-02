@@ -153,4 +153,6 @@ public interface FinanceScheduleDetailDAO {
 
 	FinanceMain getFinanceMainForRateReport(String finReference, String type);
 
+	boolean isScheduleInQueue(String finReference);
+
 }

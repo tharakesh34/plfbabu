@@ -1025,6 +1025,10 @@
 				rightName="menu_Item_Put_CallReport" />
 			<menuItem id="menu_Item_LTVBreachReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menu_Item_LTVBreachReport" />
+			<menuItem id="menu_Item_CovenantRegisterReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CovenantRegisterReport" />
+			<menuItem id="menu_Item_CollateralRegisterReport" zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_CollateralRegisterReport" />
 		</menu>
 
 		<menu id="menu_Category_Legal">

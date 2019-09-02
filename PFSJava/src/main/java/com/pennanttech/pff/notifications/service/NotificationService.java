@@ -63,6 +63,7 @@ import com.pennant.backend.model.finance.FinanceWriteoffHeader;
 import com.pennant.backend.model.finance.InvestmentFinHeader;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.model.finance.RepayData;
+import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
@@ -88,6 +89,8 @@ import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
+import com.pennanttech.pff.core.util.DataMapUtil;
+import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -1122,6 +1125,14 @@ public class NotificationService {
 		if (lmsServiceLog != null && lmsServiceLog.getEvent() != null) {
 			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
 		}
+		//put call email template datamap added
+		FinOption finOption = aFinanceDetail.getFinOption();
+		if (finOption != null) {
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("_code"), finOption.getOptionType());
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("_description"), finOption.getOptionType());
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("_nextFrequencyDate"), "");
+		}
+		declaredFieldValues.putAll(DataMapUtil.getDataMap(aFinanceDetail));
 
 		return declaredFieldValues;
 	}

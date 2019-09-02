@@ -585,9 +585,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				} else {
 					usrAlign = "right";
 				}
-
+				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
-						+ StringEscapeUtils.unescapeHtml(note.getRemarks()) + " </font> <br>  ";
+						+ StringEscapeUtils.escapeHtml(note.getRemarks()) + " </font> <br>  ";
 				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = content + "<font style='color:#FF0000;float:" + usrAlign + ";'>"
@@ -684,7 +684,8 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				//4
 				lc = new Listcell();
 				Html html = new Html();
-				html.setContent(StringEscapeUtils.unescapeHtml(note.getRemarks()));
+				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
+				html.setContent(StringEscapeUtils.escapeHtml(note.getRemarks()));
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);

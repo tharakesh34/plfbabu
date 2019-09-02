@@ -1486,8 +1486,9 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							rHEventExcess = "Payment Received vide ";
 							String rpaymentType = StringUtils.trimToEmpty(finReceiptDetail.getPaymentType());
 							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
+							//30-08-2019:Receipt date and value date should populate in SOA
 							Date receiptDate = finReceiptHeader.getReceiptDate();
-							Date receivedDate = finReceiptDetail.getReceivedDate();
+							Date receivedDate = finReceiptDetail.getValueDate();
 
 							String favourNumber = finReceiptDetail.getFavourNumber();
 
@@ -1523,7 +1524,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 									if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)
 											&& StringUtils.equals(receiptModeStatus,
-													RepayConstants.PAYSTATUS_APPROVED)) {
+													RepayConstants.PAYSTATUS_DEPOSITED)) {
 										status = " - Subject to realization";
 									}
 
