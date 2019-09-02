@@ -3591,6 +3591,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
-
+	<changeSet id="26" author="murthy.y">
+		<renameTable newTableName="AdvancePaymentDetails" oldTableName="AdvancePaymentDetail"/>
+	</changeSet>
 </databaseChangeLog>
