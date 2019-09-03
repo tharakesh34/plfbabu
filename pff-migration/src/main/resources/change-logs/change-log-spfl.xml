@@ -89,41 +89,4 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="5" author="VaraPrasad.K">
-		<sql>
-            <![CDATA[
-                Delete From SecRights Where RightName = 'menu_Item_CovenantRegisterReport';
-                Delete From SecRights Where RightName = 'menu_Item_CollateralRegisterReport';
-                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COVENANT_REGISTER_REPORT');
-                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COLLATERAL_REGISTER_REPORT');
-                Delete from secgroups where grpcode = 'COVENANT_REGISTER_REPORT';
-                Delete from secgroups where grpcode = 'COLLATERAL_REGISTER_REPORT';
-
-                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
-                insert into secgroups values((select max(grpid)+1 from secgroups),'COVENANT_REGISTER_REPORT','Convenant Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
-                insert into secgroups values((select max(grpid)+1 from secgroups),'COLLATERAL_REGISTER_REPORT','Collateral Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
-                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
-
-                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
-                INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_CovenantRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
-                INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_CollateralRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
-                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
-
-                INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COVENANT_REGISTER_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_CovenantRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-                INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERAL_REGISTER_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_CollateralRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
-            ]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="6" author="VaraPrasad.K">
-		<sql>
-            <![CDATA[
-		 		update reportconfiguration set wherecondition=1 where menuitemcode='menu_Item_DailyPastdue';
-
-				update reportfilterfields set fielddbname='T5.FinDivision' where reportid in  (select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastdue') and fieldid=1;
-			 ]]>
-		</sql>
-	</changeSet>
-
 </databaseChangeLog>

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -1387,7 +1385,8 @@
 			insert into BMTAMOUNTCODES
 			values('REPAY',0,'bounceCharge_IGST_W','Bounce charge IGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
-			insert into BMTAMOUNTCODES
+			insert into
+			BMTAMOUNTCODES
 			values('REPAY',0,'bounceCharge_UGST_W','Bounce charge UGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 
@@ -2085,8 +2084,7 @@
 	</changeSet>
 
 	<changeSet id="74" author="meena.a">
-		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
-			constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
+		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID" constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
 	</changeSet>
 
 	<changeSet id="75" author="Manoj.p" dbms="oracle">
@@ -4112,7 +4110,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="135_pre" author="Kesav" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4121,17 +4119,17 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="Kesav" id="135">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
 		<modifyDataType tableName="ExtendedFieldHeader_Temp" columnName="ModuleName" newDataType="varchar(20)" />
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet author="Kesav" id="136">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
 		<modifyDataType tableName="ExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="135_post" author="Kesav" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4140,13 +4138,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet author="Varaprasad.K" id="137.1">
 		<sql>
-			
+
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
 			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='RECEIPTUPLOAD';
-			
+
 		</sql>
 		<insert tableName="WorkFlowDetails">
 			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
@@ -4170,8 +4168,8 @@
 			<column name="RecordType">NULL</column>
 		</insert>
 	</changeSet>
-	
-<changeSet id="138.1" author="Varaprasad.K">
+
+	<changeSet id="138.1" author="Varaprasad.K">
 		<update tableName="WORKFLOWDETAILS">
 			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":"canvas","properties":{"process_id":"RECEIPTUPLOAD","name":"Receipt Upload","documentation":"Receipt Upload","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-389A8CE0-888D-4B00-920C-69E34A7C0661"}],"bounds":{"lowerRight":{"x":120,"y":180},"upperLeft":{"x":90,"y":150}},"dockers":[]},{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38","properties":{"overrideid":"","name":"Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTUPLOAD_MAKER","firstName":"RECEIPTUPLOAD_MAKER","fullName":"RECEIPTUPLOAD_MAKER","id":"RECEIPTUPLOAD_MAKER","roledesc":"RECEIPTUPLOAD_MAKER","$$hashKey":"object:2569"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-801C6882-8F81-4ED2-93C0-7A01911559A3"}],"bounds":{"lowerRight":{"x":282.34375,"y":205},"upperLeft":{"x":182.34375,"y":125}},"dockers":[]},{"resourceId":"sid-389A8CE0-888D-4B00-920C-69E34A7C0661","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}],"bounds":{"lowerRight":{"x":181.60009765625,"y":165},"upperLeft":{"x":120.923095703125,"y":165}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}},{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277","properties":{"overrideid":"","name":"Author","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTUPLOAD_APPROVER","firstName":"RECEIPTUPLOAD_APPROVER","fullName":"RECEIPTUPLOAD_APPROVER","id":"RECEIPTUPLOAD_APPROVER","roledesc":"Receipt Upload Approver","$$hashKey":"object:5001"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640"}],"bounds":{"lowerRight":{"x":636.34375,"y":205},"upperLeft":{"x":536.34375,"y":125}},"dockers":[]},{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-AC222929-D459-4D8F-BA05-D961DA14FC32"},{"resourceId":"sid-11AE199B-F50B-493C-86CF-FB3130890950"},{"resourceId":"sid-B0C34E28-1BC6-410D-9E16-1D201079A426"}],"bounds":{"lowerRight":{"x":776.34375,"y":185},"upperLeft":{"x":736.34375,"y":145}},"dockers":[]},{"resourceId":"sid-3E9F7C6D-BABA-4547-B63B-DDFD425FB640","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211"}],"bounds":{"lowerRight":{"x":735.8632855499009,"y":165.43847371129004},"upperLeft":{"x":636.6289019500991,"y":165.14746378870996}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-D6A6605D-79A3-4AF4-87AF-7B1520094211"}},{"resourceId":"sid-801C6882-8F81-4ED2-93C0-7A01911559A3","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277"}],"bounds":{"lowerRight":{"x":535.5625,"y":165},"upperLeft":{"x":283.125,"y":165}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-21CBDDAF-AAD8-4B7D-849C-693E3538F277"}},{"resourceId":"sid-AC222929-D459-4D8F-BA05-D961DA14FC32","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}],"bounds":{"lowerRight":{"x":756.84375,"y":144.482421875},"upperLeft":{"x":232.34375,"y":27}},"dockers":[{"x":20.5,"y":20.5},{"x":756.84375,"y":27},{"x":232.34375,"y":27},{"x":50,"y":40}],"target":{"resourceId":"sid-64DF32BA-44C7-4549-BADB-E1F4DA259B38"}},{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9","properties":{"overrideid":"","name":"Approve","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1"}],"bounds":{"lowerRight":{"x":955,"y":200},"upperLeft":{"x":855,"y":120}},"dockers":[]},{"resourceId":"sid-11AE199B-F50B-493C-86CF-FB3130890950","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9"}],"bounds":{"lowerRight":{"x":854.2294481116865,"y":164.7754025836125},"upperLeft":{"x":776.3625929039385,"y":161.8847536663875}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-DDD249AA-E185-4DB7-BA7D-36BA1F8B00C9"}},{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":1058.34375,"y":174},"upperLeft":{"x":1030.34375,"y":146}},"dockers":[]},{"resourceId":"sid-9DB49125-804C-45EB-A3CD-C88FAC84A6E1","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8"}],"bounds":{"lowerRight":{"x":1030.2802734375,"y":160},"upperLeft":{"x":955.5323486328125,"y":160}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-797F644F-7D8B-42C2-833B-80827AAAC7E8"}},{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594","properties":{"overrideid":"","name":"Cancel Process","rerunnable":true,"servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D"}],"bounds":{"lowerRight":{"x":803.34375,"y":359},"upperLeft":{"x":703.34375,"y":279}},"dockers":[]},{"resourceId":"sid-B0C34E28-1BC6-410D-9E16-1D201079A426","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594"}],"bounds":{"lowerRight":{"x":756.3971264969502,"y":278.4260410983908},"upperLeft":{"x":754.2688891280498,"y":185.0876307766092}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-A841C3F5-F0CD-4D94-8670-47E344328594"}},{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":908.34375,"y":333},"upperLeft":{"x":880.34375,"y":305}},"dockers":[]},{"resourceId":"sid-F55455F9-B71E-4D16-A9DC-BFACF6DF910D","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E"}],"bounds":{"lowerRight":{"x":880.125,"y":319},"upperLeft":{"x":803.9140625,"y":319}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-88D42B2F-F2F4-4C8C-B5D9-717384758F2E"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
 			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
@@ -4268,16 +4266,58 @@
 			<where>workflowtype='RECEIPTUPLOAD' and workflowactive=1
 			</where>
 		</update>
-	</changeSet>	
-	
-	<changeSet id="139" author="SaiPriya" >
+	</changeSet>
+
+	<changeSet id="139" author="SaiPriya">
 		<sql>
 			<![CDATA[
-			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REINSTATELOAN_MAKER', 'Reinstate Maker','FINANCE', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECROLES WHERE 0=0;
-			INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REINSTATELOAN_APPROVER', 'Reinstate Approver','', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECROLES WHERE 0=0;		
+				INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REINSTATELOAN_MAKER', 'Reinstate Maker','FINANCE', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECROLES WHERE 0=0;
+				INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES),1, 'REINSTATELOAN_APPROVER', 'Reinstate Approver','', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECROLES WHERE 0=0;		
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+	<changeSet id="140" author="VaraPrasad.K">
+		<sql>
+            <![CDATA[
+            	delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_putcallreport';
+				delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CovenantRegisterReport';
+				delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CollateralRegister';
+				
+            	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Put/Call Report','Put/Call Report',1,'PutCall','dataSource',1,'menu_Item_putcallreport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport'),1,'Loan Reference','LOVSEARCH','Loan Reference','fm.FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Covenant Register Report','Covenant Register Report',1,'CovenantRegisterReportl','dataSource',1,'menu_Item_CovenantRegisterReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantRegisterReport'),1,'Loan Reference','LOVSEARCH','Loan Reference','fm.FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Collateral Register Report','Collateral Register Report',1,'CollateralRegister','dataSource',1,'menu_Item_CollateralRegister',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1);
+				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_CollateralRegister'),1,'Loan Reference','LOVSEARCH','Loan Reference','fm.FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+				
+                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COVENANT_REGISTER_REPORT');
+                Delete from secgrouprights where grpid = (select grpid from secgroups where grpcode='COLLATERAL_REGISTER_REPORT');
+                
+                Delete From SecRights Where RightName = 'menu_Item_CovenantRegisterReport';
+                Delete From SecRights Where RightName = 'menu_Item_CollateralRegisterReport';
+                
+                Delete from secgroups where grpcode = 'COVENANT_REGISTER_REPORT';
+                Delete from secgroups where grpcode = 'COLLATERAL_REGISTER_REPORT';
+
+                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+                insert into secgroups values((select max(grpid)+1 from secgroups),'COVENANT_REGISTER_REPORT','Convenant Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+                insert into secgroups values((select max(grpid)+1 from secgroups),'COLLATERAL_REGISTER_REPORT','Collateral Register Report',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+                update seqsecgroups set seqno=(select max(grpid) from secgroups_view);
+
+                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+                INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_CovenantRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+                INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_CollateralRegisterReport','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+                update seqsecrights set seqno=(select max(rightid)+1 from secrights_view);
+
+                INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COVENANT_REGISTER_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_CovenantRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='COLLATERAL_REGISTER_REPORT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_CollateralRegisterReport'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+                
+                update reportconfiguration set wherecondition=1 where menuitemcode='menu_Item_DailyPastdue';
+				update reportfilterfields set fielddbname='T5.FinDivision' where reportid in  (select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastdue') and fieldid=1;
+		 	]]>
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
