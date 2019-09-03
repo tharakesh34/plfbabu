@@ -6886,4 +6886,63 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="126" author="Bharat R">
+	<comment>This Change set already executed in all Singlosource client in 5.0.7 version</comment>
+		<addColumn tableName="FinOdDetails">
+			<column name="LockODRecalCal" type="Boolean" defaultValue="0">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="127" author="Bharat R">
+	<comment>This Change set already executed in all Singlosource client in 5.0.7 version</comment>
+		<createView viewName="finoddetails_view" replaceIfExists="true">
+	SELECT od.finreference,
+    od.finodschddate,
+    od.finodfor,
+    od.finbranch,
+    od.fintype,
+    od.custid,
+    od.finodtilldate,
+    od.fincurodamt,
+    od.fincurodpri,
+    od.fincurodpft,
+    od.finmaxodamt,
+    od.finmaxodpri,
+    od.finmaxodpft,
+    od.gracedays,
+    od.incgracedays,
+    od.fincuroddays,
+    od.totpenaltyamt,
+    od.totwaived,
+    od.totpenaltypaid,
+    od.lpiamt,
+    od.lpipaid,
+    od.lpibal,
+    od.totpenaltybal,
+    od.finlmdfdate,
+    COALESCE(pr.applyodpenalty, 0) AS applyodpenalty,
+    COALESCE(pr.odincgrcdays, 0) AS odincgrcdays,
+    COALESCE(pr.odchargetype, '') AS odchargetype,
+    COALESCE(pr.odgracedays, 0) AS odgracedays,
+    COALESCE(pr.odchargecalon, '') AS odchargecalon,
+    COALESCE(pr.odchargeamtorperc, 0) AS odchargeamtorperc,
+    COALESCE(pr.odallowwaiver, 0) AS odallowwaiver,
+    COALESCE(pr.odmaxwaiverperc, 0) AS odmaxwaiverperc,
+    COALESCE(pr.odrulecode, '') AS odrulecode,
+    od.LockODRecalCal
+   FROM finoddetails od
+     LEFT JOIN finodpenalty_latest_rates_view pr ON od.finreference = pr.finreference
+</createView>
+	</changeSet>
+	
+	<changeSet id="128" author="Bharat R">
+		<sql>
+		<![CDATA[
+             Update FinODDetails set LockODRecalCal = 0 where ODCalType = ‘F’;
+ 		]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
