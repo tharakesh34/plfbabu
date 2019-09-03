@@ -51,16 +51,16 @@
 
 	<changeSet id="01" author="Durgaprasad G">
 		<addColumn tableName="ADTFINANCEMAIN">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="02" author="Durgaprasad G">
 		<addColumn tableName="ADTFINANCEMAIN">
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+			<column name="PromotionSeqID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="03" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="AdtPromotions">
@@ -70,32 +70,33 @@
 			<column name="AdvEMITerms" type="int" defaultValue="0" />
 			<column name="PftDaysBasis" type="varchar(8)" />
 			<column name="SubventionMethod" type="varchar(8)" />
-			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="SubventionRate" type="decimal(13,9)"
+				defaultValue="0" />
 			<column name="TaxApplicable" type="boolean" defaultValue="0" />
 			<column name="CashbackMonth" type="int" defaultValue="0" />
 			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="04" author="Siva">
 		<addColumn tableName="AdtPromotions">
 			<column name="ProductCategory" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="05" author="Siva">
 		<addColumn tableName="AdtFinTypeFees">
-			<column name="ReferenceId" type="bigint" defaultValue="0"/>
+			<column name="ReferenceId" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="06" author="Siva">
 		<dropColumn tableName="AdtPromotions" columnName="SubventionMethod" />
 		<dropColumn tableName="AdtPromotions" columnName="CashbackMonth" />
 		<dropColumn tableName="AdtPromotions" columnName="SchemeIRR" />
 		<dropColumn tableName="AdtPromotions" columnName="ProductCategory" />
 	</changeSet>
-	
+
 	<changeSet id="07" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="AdtPromotions">
@@ -103,13 +104,25 @@
 			<column name="cashBackToCustomer" type="int" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="08" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE ADTFINANCEMAIN Set PromotionSeqID = 0  where PromotionSeqID is null;
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="11" author="ADARSH">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="SvAmount" type="Decimal(18,2)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="12" author="ADARSH">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="CBAmount" type="Decimal(18,2)" defaultValue="0" />
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>
