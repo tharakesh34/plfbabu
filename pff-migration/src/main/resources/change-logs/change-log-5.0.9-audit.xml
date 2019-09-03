@@ -89,6 +89,15 @@
 			<column name="ReferenceId" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="06_pre" author="Siva" dbms="mssql">
+		<sql>
+			<![CDATA[
+			alter table AdtPromotions drop constraint DF_AdtPromotions_CashbackMonth;
+			alter table AdtPromotions drop constraint DF_AdtPromotions_SchemeIRR;
+			]]>
+		</sql>
+</changeSet>
+	
 
 	<changeSet id="06" author="Siva">
 		<dropColumn tableName="AdtPromotions" columnName="SubventionMethod" />
