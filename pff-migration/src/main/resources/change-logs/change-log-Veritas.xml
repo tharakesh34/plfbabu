@@ -6939,7 +6939,7 @@ UNION ALL
 	<changeSet id="128" author="Bharat R">
 		<sql>
 		<![CDATA[
-             Update FinODDetails set LockODRecalCal = 0 where ODCalType = ‘F’;
+             Update FinODDetails set LockODRecalCal = 0 where ODCalType = 'F';
  		]]>
 		</sql>
 	</changeSet>
