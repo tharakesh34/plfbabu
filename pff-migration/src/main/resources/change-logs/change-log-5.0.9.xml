@@ -3138,4 +3138,110 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="45" author="satyanarayana.g">
+		<dropPrimaryKey tableName="fintypefees " constraintName="pk_fintypefees"/>
+		<addPrimaryKey tableName="fintypefees" columnNames="fintype, originationfee, finevent, feetypeid, moduleid, referenceid" constraintName="pk_fintypefees"/>
+	</changeSet>
+	
+	<changeSet id="46" author="satyanarayana.g">
+		<addColumn tableName="FINPFTDETAILS ">
+			<column name="GapIntAmz" type="decimal(18,0)" defaultValue="0"/>
+			<column name="GapIntAmzLbd" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PrvMthGapIntAmz" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="47" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				update FINPFTDETAILS set GAPINTAMZ=0 where GAPINTAMZ is null;
+				update FINPFTDETAILS set GAPINTAMZLBD=0 where GAPINTAMZLBD is null;
+				update FINPFTDETAILS set PRVMTHGAPINTAMZ=0 where PRVMTHGAPINTAMZ is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="48" author="satyanarayana.g">
+		<addColumn tableName="FINPFTDETAILS_SNAPSHOT ">
+			<column name="GapIntAmz" type="decimal(18,0)" defaultValue="0"/>
+			<column name="GapIntAmzLbd" type="decimal(18,0)" defaultValue="0"/>
+			<column name="PrvMthGapIntAmz" type="decimal(18,0)" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="49" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				update FINPFTDETAILS_SNAPSHOT set GAPINTAMZ=0 where GAPINTAMZ is null;
+				update FINPFTDETAILS_SNAPSHOT set GAPINTAMZLBD=0 where GAPINTAMZLBD is null;
+				update FINPFTDETAILS_SNAPSHOT set PRVMTHGAPINTAMZ=0 where PRVMTHGAPINTAMZ is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="50" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				INSERT INTO bmtamountcodes(allowedevent, allowedria, amountcode, amountcodedesc, amountcodeisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
+				VALUES ('AMZ', 0, 'ae_dGapAmz', 'Gap Interest from Last Posting to Today', 1, 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="51" author="satyanarayana.g">
+		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
+			SELECT T1.FINREFERENCE,
+				  T1.INVESTMENTREF,
+				  T1.FINTYPE,
+				  T1.FINCCY,
+				  T1.FINAMOUNT,
+				  T1.DOWNPAYMENT,
+				  T1.FEECHARGEAMT,
+				  T1.SCHEDULEMETHOD,
+				  T1.NUMBEROFTERMS,
+				  T1.RECORDSTATUS,
+				  T1.RECORDTYPE,
+				  T1.ROLECODE,
+				  T1.NEXTROLECODE,
+				  T1.FINBRANCH,
+				  T1.FINCONTRACTDATE,
+				  T1.LINKEDFINREF,
+				  T1.NEXTUSERID,
+				  T1.PRIORITY,
+				  T1.WORKFLOWID,
+				  T1.TASKID,
+				  T1.NEXTTASKID,
+				  T1.FINPREAPPROVEDREF,
+				  T1.RCDMAINTAINSTS,
+				  T1.INSURANCEAMT,
+				  T1.FINCURRASSETVALUE,
+				  T1.CALTERMS,
+				  T1.DEVIATIONAPPROVAL,
+				  T1.FINPURPOSE,
+				  T1.INITIATEDATE,
+				  T1.FINASSETVALUE,
+				  T2.CUSTCIF        LOVDESCCUSTCIF,
+				  T2.CUSTSHRTNAME   LOVDESCCUSTSHRTNAME,
+				  T2.CUSTPASSPORTNO  LOVDESCCUSTPASSPORTNO,
+				  T2.CUSTDOB         LOVDESCCUSTDOB,
+				  T2.CUSTCRCPR       LOVDESCCUSTCRCPR,
+				  T2.PHONENUMBER,
+				  T3.FINCATEGORY  LOVDESCPRODUCTCODENAME,
+				  T3.FINDIVISION  LOVDESCFINDIVISION,
+				  T3.PRODUCT      LOVDESCFINPRODUCT,
+				  T3.FINTYPEDESC  LOVDESCFINTYPENAME,
+				  T1.PRODUCTCATEGORY,
+				  COALESCE(T4.ROLEDESC, FN_GET_ROLEDESC(T1.NEXTROLECODE))  LOVDESCREQUESTSTAGE,
+				  T1.SAMPLINGREQUIRED,
+				  T1.ADVANCEEMI,
+				  T1.ADVEMITERMS,
+				  T1.BPIPFTDAYSBASIS,
+				  T1.GRACETERMS
+				FROM FINANCEMAIN_TEMP T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD
+	</createView>
+	</changeSet>
+	
 </databaseChangeLog>
