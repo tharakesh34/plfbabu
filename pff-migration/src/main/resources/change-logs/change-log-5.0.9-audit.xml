@@ -133,5 +133,12 @@
 			<column name="CBAmount" type="Decimal(18,2)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="13" author="meena.a">
+		<comment>extra fields added in Limitdetails</comment>
+		<addColumn tableName="AdtLimitdetails">
+			<column name="ExternalRef1" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
