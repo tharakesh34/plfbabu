@@ -5125,4 +5125,170 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+	<changeSet id="85" author="Siva">
+		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		
+			UPDATE SECRIGHTS SET RIGHTNAME = 'PromotionDialog_CashbackFromDealer' WHERE RIGHTNAME = 'PromotionDialog_CashbackMonth';
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_CashbackToCustomer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_OpenBalOnPV','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
+			
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashbackToCustomer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_OpenBalOnPV'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+		</sql>
+	</changeSet>
+	
+	<changeSet id="86" author="Siva">
+		<dropTable tableName="SeqPromotions"/>
+	</changeSet>
+	<changeSet id="87" author="Siva">
+		<createSequence sequenceName="SeqPromotions" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+	</changeSet>
+	
+	<changeSet id="88" author="Siva">
+		<createView viewName="lmtpromotionworkflowdef_aview" replaceIfExists="true">
+			 SELECT t1.fintype,
+			    t1.fintype AS typecode,
+			    t4.fintypedesc AS lovdescfintypename,
+			    NULL AS collateraldesc,
+			    NULL AS vasproductdesc,
+			    NULL AS commitmenttypedesc,
+			    t1.fintype AS lovdescpromotioncode,
+			    t2.promotiondesc AS lovdescpromotionname,
+			    NULL AS lovdescfacilitytypename,
+			    t1.screencode,
+			    t1.workflowtype,
+			    t3.workflowdesc AS lovdescworkflowtypename,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.workflowroles AS lovdescworkflowrolesname,
+			    t4.fincategory AS lovdescproductcodename,
+			    t4.findivision AS lovdescfindivisionname,
+			    t3.firsttaskowner AS lovdescfirsttaskowner,
+			    t1.modulename,
+			    t2.active AS finisactive,
+			    t5.productdesc AS lovdescproductname,
+			    t4.fintypedesc AS lovdescpromofintypedesc,
+			    t4.finassettype,
+			    t2.startdate,
+			    t2.enddate,
+			    t1.finevent,
+			    t5.productcategory,
+				t2.ReferenceId
+			   FROM lmtfinanceworkflowdef t1
+			     LEFT JOIN promotions t2 ON t1.fintype = t2.promotioncode
+			     JOIN workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN bmtproduct t5 ON t4.fincategory = t5.productcode
+		</createView>
+	</changeSet> 
+	<changeSet id="89" author="Siva">
+		<createView viewName="lmtpromotionworkflowdef_view" replaceIfExists="true">
+			 SELECT t1.fintype,
+			    t1.fintype AS typecode,
+			    t4.fintypedesc AS lovdescfintypename,
+			    NULL AS collateraldesc,
+			    NULL AS vasproductdesc,
+			    NULL AS commitmenttypedesc,
+			    NULL AS lovdescfacilitytypename,
+			    t1.screencode,
+			    t1.workflowtype,
+			    t3.workflowdesc AS lovdescworkflowtypename,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.workflowroles AS lovdescworkflowrolesname,
+			    t4.fincategory AS lovdescproductcodename,
+			    t3.firsttaskowner AS lovdescfirsttaskowner,
+			    t1.modulename,
+			    t2.active AS finisactive,
+			    t2.fintype AS lovdescproductname,
+			    t4.finassettype,
+			    t1.finevent,
+			    t5.productcategory,
+				t2.ReferenceId
+			   FROM lmtfinanceworkflowdef_temp t1
+			     LEFT JOIN promotions t2 ON t1.fintype = t2.promotioncode
+			     JOIN workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN bmtproduct t5 ON t4.fincategory = t5.productcode
+			UNION ALL
+			 SELECT t1.fintype,
+			    t1.fintype AS typecode,
+			    t4.fintypedesc AS lovdescfintypename,
+			    NULL AS collateraldesc,
+			    NULL AS vasproductdesc,
+			    NULL AS commitmenttypedesc,
+			    NULL AS lovdescfacilitytypename,
+			    t1.screencode,
+			    t1.workflowtype,
+			    t3.workflowdesc AS lovdescworkflowtypename,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t3.workflowroles AS lovdescworkflowrolesname,
+			    t4.fincategory AS lovdescproductcodename,
+			    t3.firsttaskowner AS lovdescfirsttaskowner,
+			    t1.modulename,
+			    t2.active AS finisactive,
+			    t2.fintype AS lovdescproductname,
+			    t4.finassettype,
+			    t1.finevent,
+			    t5.productcategory,
+				t2.ReferenceId
+			   FROM lmtfinanceworkflowdef t1
+			     LEFT JOIN promotions t2 ON t1.fintype = t2.promotioncode
+			     JOIN workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
+			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
+			     JOIN bmtproduct t5 ON t4.fincategory = t5.productcode
+			  WHERE NOT (EXISTS ( SELECT 1 AS expr1
+			           FROM lmtfinanceworkflowdef_temp W
+			          WHERE W.fintype = t1.fintype AND W.finevent = t1.finevent AND W.modulename = t1.modulename))
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="90" author="Siva">
+		<sql>
+		
+			DELETE FROM CategoryWiseEvents WHERE CategoryCode = 'C'
+
+			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
+			INSERT INTO CategoryWiseEvents VALUES('DISBINS','C',1,1,2);
+			INSERT INTO CategoryWiseEvents VALUES('AMZ','C',1,1,3);
+			INSERT INTO CategoryWiseEvents VALUES('REPAY','C',1,1,4);
+			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','C',1,1,5);
+			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','C',1,1,6);
+			INSERT INTO CategoryWiseEvents VALUES('INSTDATE','C',1,1,7);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','C',1,0,8);
+			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','C',1,0,9);
+
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
