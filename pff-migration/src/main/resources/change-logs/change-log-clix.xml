@@ -3544,7 +3544,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="dheerendra">
+	<changeSet id="88" author="dheerendra">
 		<createView viewName="ogl_view" replaceIfExists="true">
 			SELECT p.postdate AS acctdate,
 				   p.postref,
