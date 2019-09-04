@@ -5276,7 +5276,7 @@ UNION ALL
 	<changeSet id="90" author="Siva">
 		<sql>
 		
-			DELETE FROM CategoryWiseEvents WHERE CategoryCode = 'C'
+			DELETE FROM CategoryWiseEvents WHERE CategoryCode = 'C';
 
 			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
 			INSERT INTO CategoryWiseEvents VALUES('DISBINS','C',1,1,2);
