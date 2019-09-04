@@ -3135,5 +3135,39 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			</where>
 		</update>
 	</changeSet>
+	<changeSet id="52" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+			  	delete LimitFldCriterias where QBFLDTYPE ='bigint' and QBSTFLD  ='calvalue' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('bigint',	 	'calvalue',		 			'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='bigint' and QBSTFLD  ='global' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('bigint',	 	'global',	  		 		'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='bigint' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('bigint',	     	'static',		     		'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='decimal' and QBSTFLD  ='calvalue' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='=, != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('decimal',	 	'calvalue',	 			    'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '=, != , > , >= , < , <='); 
+				delete LimitFldCriterias where QBFLDTYPE ='decimal' and QBSTFLD  ='global' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('decimal',	 	'global',	 	 			'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='decimal' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('decimal',	 	'static',		 			'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='int' and QBSTFLD  ='global' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('int',	     	'global',	 		 		'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='int' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('int',	     	'static',	 		 		'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+				delete LimitFldCriterias where QBFLDTYPE ='nchar' and QBSTFLD  ='global' and QBFLDCRITERIANAMES = 'Equal,Not Equal' and QBFLDCRITERIAVALUES='= , !=';
+				INSERT  INTO LimitFldCriterias VALUES ('nchar',	 	 	'global',	  	 			'Equal,Not Equal',	 '= , !=');
+				delete LimitFldCriterias where QBFLDTYPE ='nchar' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal' and QBFLDCRITERIAVALUES='= , !=';
+				INSERT  INTO LimitFldCriterias VALUES ('nchar',	     	'static',	 		 		'Equal,Not Equal',	 '= , !=');
+				delete LimitFldCriterias where QBFLDTYPE ='nvarchar' and QBSTFLD  ='dbvalue' and QBFLDCRITERIANAMES = 'Equal,Not Equal,IN,Not IN' and QBFLDCRITERIAVALUES='= , != , IN , NOT IN';
+				INSERT  INTO LimitFldCriterias VALUES ('nvarchar',	 	'dbvalue',	 	 			'Equal,Not Equal,IN,Not IN',	 '= , != , IN , NOT IN');
+				delete LimitFldCriterias where QBFLDTYPE ='nvarchar' and QBSTFLD  ='global' and QBFLDCRITERIANAMES = 'Equal,Not Equal' and QBFLDCRITERIAVALUES='= , != ';
+				INSERT  INTO LimitFldCriterias VALUES ('nvarchar',	 	'global',	 	 			'Equal,Not Equal',	 '= , != ');
+				delete LimitFldCriterias where QBFLDTYPE ='nvarchar' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal,IN,Not IN' and QBFLDCRITERIAVALUES='= , != , IN , NOT IN';
+				INSERT  INTO LimitFldCriterias VALUES ('nvarchar',	 	'static',	     			'Equal,Not Equal,IN,Not IN',	 '= , != , IN , NOT IN');
+				delete LimitFldCriterias where QBFLDTYPE ='smalldatetime' and QBSTFLD  ='static' and QBFLDCRITERIANAMES = 'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to' and QBFLDCRITERIAVALUES='= , != , > , >= , < , <=';
+				INSERT  INTO LimitFldCriterias VALUES ('smalldatetime',	'static',	 				'Equal,Not Equal,Greater than,Greater than Or Equal to,Less than,Less than Or Equal to',	 '= , != , > , >= , < , <=');
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
