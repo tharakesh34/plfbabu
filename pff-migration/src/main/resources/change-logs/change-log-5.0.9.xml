@@ -5456,6 +5456,7 @@ UNION ALL
      LEFT JOIN secroles t4 ON t1.nextrolecode = t4.rolecd
 	</createView>
 	</changeSet>
+	
 	<changeSet id="93" author="meena.a">
 		<comment>extra fields added in Limitdetails</comment>
 		<addColumn tableName="Limitdetails">
