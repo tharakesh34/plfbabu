@@ -3000,4 +3000,140 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	
+	<changeSet id="51" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='RECEIPT_LOAN_CLOSURE';
+			]]>
+		</sql>
+		<insert tableName="WorkFlowDetails">
+			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowType">RECEIPT_LOAN_CLOSURE</column>
+			<column name="WorkFlowSubType">Receipt Closure Process</column>
+			<column name="WorkFlowDesc">Gold Loan Full Release Workflow</column>
+			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
+			<column name="WorkFlowRoles">RECEIPTCLOSURE_MAKER;RECEIPTCLOSURE_APPROVER</column>
+			<column name="FirstTaskOwner">RECEIPTCLOSURE_MAKER</column>
+			<column name="WorkFlowActive">1</column>
+			<column name="Version">5</column>
+			<column name="LastMntBy">1000</column>
+			<column name="LastMntOn" valueDate="current_timestamp" />
+			<column name="RecordStatus">Null</column>
+			<column name="RoleCode">Null</column>
+			<column name="NextRoleCode">Null</column>
+			<column name="TaskId">Null</column>
+			<column name="NextTaskId">Null</column>
+			<column name="RecordType">NULL</column>
+		</insert>
+	</changeSet>
+
+	<changeSet id="51.1" author="satyanarayana.g">
+		<update tableName="WORKFLOWDETAILS">
+			<column name="JSONDESIGN" type="NCLOB"><![CDATA[{"resourceId":1063,"properties":{"process_id":"RECEIPT_LOAN_CLOSURE","name":"Receipt Closure Process","documentation":"","category":"","listenerclass":"","listenerentitytype":""},"stencil":{"id":"BPMNDiagram"},"childShapes":[{"resourceId":"startEvent1","properties":{"overrideid":"","name":"Start"},"stencil":{"id":"StartNoneEvent"},"childShapes":[],"outgoing":[{"resourceId":"sid-C4F2FE9A-D693-4F78-BF35-59FC61E39BB3"}],"bounds":{"lowerRight":{"x":90,"y":190},"upperLeft":{"x":60,"y":160}},"dockers":[]},{"resourceId":"sid-8ED2D976-6A19-4EE3-B633-F80094375212","properties":{"overrideid":"","name":"Loan Closure Maker","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTCLOSURE_MAKER","firstName":"RECEIPTCLOSURE_MAKER","fullName":"RECEIPTCLOSURE_MAKER","id":"RECEIPTCLOSURE_MAKER","roledesc":" Receipt Closure Maker Role","$$hashKey":"object:4900"}}}},"additionalforms":"","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-69A3855B-58E0-4715-A009-4FCB1DFA63A7"},{"resourceId":"sid-7B92DDCE-32BB-452C-9692-B47DA3079347"}],"bounds":{"lowerRight":{"x":280,"y":215},"upperLeft":{"x":180,"y":135}},"dockers":[]},{"resourceId":"sid-C4F2FE9A-D693-4F78-BF35-59FC61E39BB3","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-8ED2D976-6A19-4EE3-B633-F80094375212"}],"bounds":{"lowerRight":{"x":179.3515625,"y":175},"upperLeft":{"x":90.53125,"y":175}},"dockers":[{"x":15,"y":15},{"x":50,"y":40}],"target":{"resourceId":"sid-8ED2D976-6A19-4EE3-B633-F80094375212"}},{"resourceId":"sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB","properties":{"overrideid":"","name":"Loan Closure Approver","usertaskassignment":{"assignment":{"type":"idm","idm":{"type":"user","assignee":{"email":"RECEIPTCLOSURE_APPROVER","firstName":"RECEIPTCLOSURE_APPROVER","fullName":"RECEIPTCLOSURE_APPROVER","id":"RECEIPTCLOSURE_APPROVER","roledesc":" Receipt Closure Maker Role","$$hashKey":"object:6523"}}}},"additionalforms":"Accounting","formkeydefinition":"","allowrevert":"","prioritydefinition":"Role Queue","baseactor":"","duedatedefinition":"","multiinstance_type":"None","isforcompensation":"false"},"stencil":{"id":"UserTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-8A1197AA-0D42-4D5F-8213-A38D370CD205"}],"bounds":{"lowerRight":{"x":445,"y":215},"upperLeft":{"x":345,"y":135}},"dockers":[]},{"resourceId":"sid-DBB8BA2F-D908-4529-8E55-AD2544873E25","properties":{"overrideid":"","name":"","sequencefloworder":""},"stencil":{"id":"ExclusiveGateway"},"childShapes":[],"outgoing":[{"resourceId":"sid-49608423-B2DA-48A9-A488-BC1CD36C3752"},{"resourceId":"sid-322D8464-2984-4223-A3A2-DC5415BFF15A"},{"resourceId":"sid-D70E6AE1-61AE-4732-8DE8-478CD8F2010F"}],"bounds":{"lowerRight":{"x":520,"y":195},"upperLeft":{"x":480,"y":155}},"dockers":[]},{"resourceId":"sid-25781B18-EE31-46CC-A854-60810F1085AA","properties":{"overrideid":"","name":"Complete Process","rerunnable":true,"servicetaskexpression":"doApprove","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"approveTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-4282B9CF-1902-4C3C-9026-EDF630137858"}],"bounds":{"lowerRight":{"x":700,"y":215},"upperLeft":{"x":600,"y":135}},"dockers":[]},{"resourceId":"sid-E2E517DA-F117-42DB-9518-E6810E555844","properties":{"overrideid":"","name":"Cancel Process","rerunnable":true,"servicetaskexpression":"doReject","isforcompensation":"false","multiinstance_type":"None","parameters":""},"stencil":{"id":"rejectTask"},"childShapes":[],"outgoing":[{"resourceId":"sid-ECF25D4E-4A2D-423D-BC9F-4AD94839A62F"}],"bounds":{"lowerRight":{"x":550,"y":335},"upperLeft":{"x":450,"y":255}},"dockers":[]},{"resourceId":"sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B","properties":{"overrideid":"","name":"Approved"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":763,"y":189},"upperLeft":{"x":735,"y":161}},"dockers":[]},{"resourceId":"sid-4282B9CF-1902-4C3C-9026-EDF630137858","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B"}],"bounds":{"lowerRight":{"x":734.078125,"y":175},"upperLeft":{"x":700.5,"y":175}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B"}},{"resourceId":"sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B","properties":{"overrideid":"","name":"Rejected"},"stencil":{"id":"EndNoneEvent"},"childShapes":[],"outgoing":[],"bounds":{"lowerRight":{"x":658,"y":309},"upperLeft":{"x":630,"y":281}},"dockers":[]},{"resourceId":"sid-ECF25D4E-4A2D-423D-BC9F-4AD94839A62F","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B"}],"bounds":{"lowerRight":{"x":629.5,"y":295},"upperLeft":{"x":550.5,"y":295}},"dockers":[{"x":50,"y":40},{"x":14,"y":14}],"target":{"resourceId":"sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B"}},{"resourceId":"sid-7B92DDCE-32BB-452C-9692-B47DA3079347","properties":{"overrideid":"","name":"Cancel","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Cancelled'"}},"defaultflow":"false","action":"Cancel","state":"Cancelled","mandatenotes":true,"capturereasons":"false","typeofreason":"","constraint":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-E2E517DA-F117-42DB-9518-E6810E555844"}],"bounds":{"lowerRight":{"x":449.2016833207592,"y":295},"upperLeft":{"x":230,"y":215.34375}},"dockers":[{"x":50,"y":71},{"x":230,"y":295},{"x":29.431995265992725,"y":40}],"target":{"resourceId":"sid-E2E517DA-F117-42DB-9518-E6810E555844"}},{"resourceId":"sid-8A1197AA-0D42-4D5F-8213-A38D370CD205","properties":{"overrideid":"","name":"","repruseaction":"false","conditionsequenceflow":"","defaultflow":"false","action":"","state":"","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-DBB8BA2F-D908-4529-8E55-AD2544873E25"}],"bounds":{"lowerRight":{"x":479.718761230466,"y":175.40151071673208},"upperLeft":{"x":445.453113769534,"y":175.23911428326792}},"dockers":[{"x":50,"y":40},{"x":20.5,"y":20.5}],"target":{"resourceId":"sid-DBB8BA2F-D908-4529-8E55-AD2544873E25"}},{"resourceId":"sid-49608423-B2DA-48A9-A488-BC1CD36C3752","properties":{"overrideid":"","name":"Approve","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Approved'"}},"defaultflow":"false","action":"Approve","state":"Approved","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-25781B18-EE31-46CC-A854-60810F1085AA"}],"bounds":{"lowerRight":{"x":599.9453180927317,"y":175.43415553709943},"upperLeft":{"x":520.1874944072683,"y":175.16740696290057}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-25781B18-EE31-46CC-A854-60810F1085AA"}},{"resourceId":"sid-D70E6AE1-61AE-4732-8DE8-478CD8F2010F","properties":{"overrideid":"","name":"Reject","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Rejected'"}},"defaultflow":"false","action":"Reject","state":"Rejected","mandatenotes":true,"capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-E2E517DA-F117-42DB-9518-E6810E555844"}],"bounds":{"lowerRight":{"x":500.417690936206,"y":254.78907125323323},"upperLeft":{"x":500.168246563794,"y":195.17186624676677}},"dockers":[{"x":20.5,"y":20.5},{"x":50,"y":40}],"target":{"resourceId":"sid-E2E517DA-F117-42DB-9518-E6810E555844"}},{"resourceId":"sid-69A3855B-58E0-4715-A009-4FCB1DFA63A7","properties":{"overrideid":"","name":"Submit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Submitted'"}},"defaultflow":"false","action":"Submit","state":"Submitted","mandatenotes":"false","capturereasons":"false","typeofreason":"","constraint":""},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB"}],"bounds":{"lowerRight":{"x":344.37109375,"y":175},"upperLeft":{"x":280.62890625,"y":175}},"dockers":[{"x":50,"y":40},{"x":50,"y":40}],"target":{"resourceId":"sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB"}},{"resourceId":"sid-322D8464-2984-4223-A3A2-DC5415BFF15A","properties":{"overrideid":"","name":"Resubmit","repruseaction":true,"conditionsequenceflow":{"expression":{"type":"static","staticValue":"vo.recordStatus == 'Resubmitted'"}},"defaultflow":"false","action":"Resubmit","state":"Resubmitted","mandatenotes":true,"capturereasons":"false","typeofreason":"","constraint":"","showdiamondmarker":false},"stencil":{"id":"SequenceFlow"},"childShapes":[],"outgoing":[{"resourceId":"sid-8ED2D976-6A19-4EE3-B633-F80094375212"}],"bounds":{"lowerRight":{"x":500.5,"y":154.90625},"upperLeft":{"x":230,"y":71}},"dockers":[{"x":20.5,"y":20.5},{"x":500.5,"y":71},{"x":230,"y":71},{"x":50,"y":63}],"target":{"resourceId":"sid-8ED2D976-6A19-4EE3-B633-F80094375212"}}],"bounds":{"lowerRight":{"x":1200,"y":1050},"upperLeft":{"x":0,"y":0}},"stencilset":{"url":"stencilsets/bpmn2.0/bpmn2.0.json","namespace":"http://b3mn.org/stencilset/bpmn2.0#"},"ssextensions":[]}]]></column>
+			<column name="WORKFLOWXML" type="CLOB"><![CDATA[<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://activiti.org/test">
+  <process id="RECEIPT_LOAN_CLOSURE" name="Receipt Closure Process" isExecutable="true">
+    <startEvent id="startEvent1" name="Start"/>
+    <userTask id="sid-8ED2D976-6A19-4EE3-B633-F80094375212" name="Loan Closure Maker" activiti:actor="RECEIPTCLOSURE_MAKER" activiti:assignmentLevel="Role Queue"/>
+    <sequenceFlow id="sid-C4F2FE9A-D693-4F78-BF35-59FC61E39BB3" sourceRef="startEvent1" targetRef="sid-8ED2D976-6A19-4EE3-B633-F80094375212" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <userTask id="sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB" name="Loan Closure Approver" activiti:actor="RECEIPTCLOSURE_APPROVER" activiti:additionalForms="Accounting" activiti:assignmentLevel="Role Queue"/>
+    <exclusiveGateway id="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25"/>
+    <serviceTask id="sid-25781B18-EE31-46CC-A854-60810F1085AA" name="Complete Process" activiti:operation="doApprove" activiti:rerunnable="true"/>
+    <serviceTask id="sid-E2E517DA-F117-42DB-9518-E6810E555844" name="Cancel Process" activiti:operation="doReject" activiti:rerunnable="true"/>
+    <endEvent id="sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B" name="Approved"/>
+    <sequenceFlow id="sid-4282B9CF-1902-4C3C-9026-EDF630137858" sourceRef="sid-25781B18-EE31-46CC-A854-60810F1085AA" targetRef="sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <endEvent id="sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B" name="Rejected"/>
+    <sequenceFlow id="sid-ECF25D4E-4A2D-423D-BC9F-4AD94839A62F" sourceRef="sid-E2E517DA-F117-42DB-9518-E6810E555844" targetRef="sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-7B92DDCE-32BB-452C-9692-B47DA3079347" name="Cancel" sourceRef="sid-8ED2D976-6A19-4EE3-B633-F80094375212" targetRef="sid-E2E517DA-F117-42DB-9518-E6810E555844" action="Cancel" state="Cancelled" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Cancelled'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-8A1197AA-0D42-4D5F-8213-A38D370CD205" sourceRef="sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB" targetRef="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25" representsUserAction="false" mandateNotes="false" captureReasons="false"/>
+    <sequenceFlow id="sid-49608423-B2DA-48A9-A488-BC1CD36C3752" name="Approve" sourceRef="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25" targetRef="sid-25781B18-EE31-46CC-A854-60810F1085AA" action="Approve" state="Approved" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Approved'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-D70E6AE1-61AE-4732-8DE8-478CD8F2010F" name="Reject" sourceRef="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25" targetRef="sid-E2E517DA-F117-42DB-9518-E6810E555844" action="Reject" state="Rejected" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Rejected'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-69A3855B-58E0-4715-A009-4FCB1DFA63A7" name="Submit" sourceRef="sid-8ED2D976-6A19-4EE3-B633-F80094375212" targetRef="sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB" action="Submit" state="Submitted" representsUserAction="true" mandateNotes="false" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Submitted'</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-322D8464-2984-4223-A3A2-DC5415BFF15A" name="Resubmit" sourceRef="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25" targetRef="sid-8ED2D976-6A19-4EE3-B633-F80094375212" action="Resubmit" state="Resubmitted" representsUserAction="true" mandateNotes="true" captureReasons="false">
+      <conditionExpression xsi:type="tFormalExpression">vo.recordStatus == 'Resubmitted'</conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_RECEIPT_LOAN_CLOSURE">
+    <bpmndi:BPMNPlane bpmnElement="RECEIPT_LOAN_CLOSURE" id="BPMNPlane_RECEIPT_LOAN_CLOSURE">
+      <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="60.0" y="160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-8ED2D976-6A19-4EE3-B633-F80094375212" id="BPMNShape_sid-8ED2D976-6A19-4EE3-B633-F80094375212">
+        <omgdc:Bounds height="80.0" width="100.0" x="180.0" y="135.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB" id="BPMNShape_sid-BA71D229-59DF-47FF-A7BA-EDF50A275EDB">
+        <omgdc:Bounds height="80.0" width="100.0" x="345.0" y="135.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-DBB8BA2F-D908-4529-8E55-AD2544873E25" id="BPMNShape_sid-DBB8BA2F-D908-4529-8E55-AD2544873E25">
+        <omgdc:Bounds height="40.0" width="40.0" x="480.0" y="155.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-25781B18-EE31-46CC-A854-60810F1085AA" id="BPMNShape_sid-25781B18-EE31-46CC-A854-60810F1085AA">
+        <omgdc:Bounds height="80.0" width="100.0" x="600.0" y="135.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-E2E517DA-F117-42DB-9518-E6810E555844" id="BPMNShape_sid-E2E517DA-F117-42DB-9518-E6810E555844">
+        <omgdc:Bounds height="80.0" width="100.0" x="450.0" y="255.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B" id="BPMNShape_sid-7BCCED83-99D9-4011-A1D9-0702781C3E8B">
+        <omgdc:Bounds height="28.0" width="28.0" x="735.0" y="161.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B" id="BPMNShape_sid-469B1AD4-984C-4DD4-A5CD-E7A5F9B11E5B">
+        <omgdc:Bounds height="28.0" width="28.0" x="630.0" y="281.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-49608423-B2DA-48A9-A488-BC1CD36C3752" id="BPMNEdge_sid-49608423-B2DA-48A9-A488-BC1CD36C3752">
+        <omgdi:waypoint x="519.5637583892617" y="175.43624161073825"/>
+        <omgdi:waypoint x="600.0" y="175.16722408026754"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-4282B9CF-1902-4C3C-9026-EDF630137858" id="BPMNEdge_sid-4282B9CF-1902-4C3C-9026-EDF630137858">
+        <omgdi:waypoint x="700.0" y="175.0"/>
+        <omgdi:waypoint x="735.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-7B92DDCE-32BB-452C-9692-B47DA3079347" id="BPMNEdge_sid-7B92DDCE-32BB-452C-9692-B47DA3079347">
+        <omgdi:waypoint x="230.0" y="215.0"/>
+        <omgdi:waypoint x="230.0" y="295.0"/>
+        <omgdi:waypoint x="450.0" y="295.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-8A1197AA-0D42-4D5F-8213-A38D370CD205" id="BPMNEdge_sid-8A1197AA-0D42-4D5F-8213-A38D370CD205">
+        <omgdi:waypoint x="445.0" y="175.23696682464455"/>
+        <omgdi:waypoint x="480.4047619047619" y="175.4047619047619"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-69A3855B-58E0-4715-A009-4FCB1DFA63A7" id="BPMNEdge_sid-69A3855B-58E0-4715-A009-4FCB1DFA63A7">
+        <omgdi:waypoint x="280.0" y="175.0"/>
+        <omgdi:waypoint x="345.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-C4F2FE9A-D693-4F78-BF35-59FC61E39BB3" id="BPMNEdge_sid-C4F2FE9A-D693-4F78-BF35-59FC61E39BB3">
+        <omgdi:waypoint x="90.0" y="175.0"/>
+        <omgdi:waypoint x="180.0" y="175.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-322D8464-2984-4223-A3A2-DC5415BFF15A" id="BPMNEdge_sid-322D8464-2984-4223-A3A2-DC5415BFF15A">
+        <omgdi:waypoint x="500.5" y="155.5"/>
+        <omgdi:waypoint x="500.5" y="71.0"/>
+        <omgdi:waypoint x="230.0" y="71.0"/>
+        <omgdi:waypoint x="230.0" y="135.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-D70E6AE1-61AE-4732-8DE8-478CD8F2010F" id="BPMNEdge_sid-D70E6AE1-61AE-4732-8DE8-478CD8F2010F">
+        <omgdi:waypoint x="500.4201680672269" y="194.57983193277312"/>
+        <omgdi:waypoint x="500.1673640167364" y="255.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-ECF25D4E-4A2D-423D-BC9F-4AD94839A62F" id="BPMNEdge_sid-ECF25D4E-4A2D-423D-BC9F-4AD94839A62F">
+        <omgdi:waypoint x="550.0" y="295.0"/>
+        <omgdi:waypoint x="630.0" y="295.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>]]></column>
+			<where>workflowtype='RECEIPT_LOAN_CLOSURE' and workflowactive=1
+			</where>
+		</update>
+	</changeSet>
+	
 </databaseChangeLog>
