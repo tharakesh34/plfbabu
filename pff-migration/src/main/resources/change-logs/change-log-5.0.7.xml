@@ -4277,7 +4277,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="140.2" author="VaraPrasad.K">
+	<changeSet id="140.1" author="VaraPrasad.K">
 		<sql>
             <![CDATA[
                 delete from REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_putcallreport');
