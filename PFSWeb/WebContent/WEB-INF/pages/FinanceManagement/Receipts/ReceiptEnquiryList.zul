@@ -121,7 +121,7 @@
 							<listhead sizable="true">
 								<listheader id="listheader_ReceiptReceiptId" label="${c:l('listheader_ReceiptReceiptId.label')}"
 									sort="auto" hflex="min" />
-								<listheader id="listheader_ReceiptReference" label="${c:l('listheader_ReceiptReference.label')}"
+								<listheader id="listheader_ReceiptReference" label="${c:l('listheader_FeeReceiptReference.label')}"
 									sort="auto" hflex="min" />
 								<listheader id="listheader_PromotionCode" label="${c:l('listheader_PromotionCode.label')}" sort="auto"
 									hflex="min" visible="false" />

@@ -28,6 +28,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.component.Uppercasebox;
 import com.pennant.webui.financemanagement.receipts.model.ReceiptRealizationListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
@@ -57,6 +58,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_ReceiptAllocattionType;
 	protected Listheader listheader_ReceiptFinType;
 	protected Listheader listheader_ReceiptFinBranch;
+	protected Listheader listheader_ReceiptRef;
+	protected Listheader listheader_ReceiptDate;
 	protected Listheader listheader_ReceiptCusomer;
 	protected Listheader listheader_ReceiptCustName;
 	protected Listheader listheader_ReceiptStatus;
@@ -71,6 +74,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Combobox allocationType;
 	protected Textbox finType;
 	protected Textbox finBranch;
+	protected Uppercasebox transactionRef;
 
 	protected Listbox sortOperator_ReceiptReference;
 	protected Listbox sortOperator_ReceiptCustomer;
@@ -79,6 +83,8 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listbox sortOperator_ReceiptAllocationType;
 	protected Listbox sortOperator_ReceiptFinType;
 	protected Listbox sortOperator_ReceiptFinBranch;
+	protected Listbox sortOperator_ReceiptTranRef;
+
 
 	protected int oldVar_sortOperator_custCIF;
 	protected int oldVar_sortOperator_finType;
@@ -101,9 +107,9 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.module = getArgument("module");
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			super.moduleCode = "FeeReceipt";
-			super.tableName = "FinReceiptHeader_FEView";
-			super.queueTableName = "FinReceiptHeader_FEView";
-			super.enquiryTableName = "FinReceiptHeader_FEView";
+			super.tableName = "FinReceiptHeader_FDView";
+			super.queueTableName = "FinReceiptHeader_FDView";
+			super.enquiryTableName = "FinReceiptHeader_FDView";
 		} else {
 			super.moduleCode = "FinReceiptHeader";
 			super.tableName = "FinReceiptHeader_View";
@@ -146,6 +152,10 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				Operators.STRING);
 		registerField("finBranch", listheader_ReceiptFinBranch, SortOrder.NONE, finBranch,
 				sortOperator_ReceiptFinBranch, Operators.STRING);
+		registerField("transactionRef", listheader_ReceiptRef, SortOrder.NONE, transactionRef,
+				sortOperator_ReceiptTranRef, Operators.STRING);
+		registerField("receiptDate");
+
 		registerField("ReceiptModeStatus", listheader_ReceiptStatus);
 
 		// Render the page and display the data.
@@ -165,10 +175,10 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
 			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
-					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
-			whereClause.append("AND ( ");
-			whereClause.append(getUsrFinAuthenticationQry(false));
-			whereClause.append(")");
+					+ FinanceConstants.FINSER_EVENT_FEEPAYMENT + "' AND  (RecordType IS NOT NULL)");
+			//whereClause.append("AND ( ");
+			//whereClause.append(getUsrFinAuthenticationQry(false));
+			//whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
 			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinanceConstants.FINSER_EVENT_FEEPAYMENT
