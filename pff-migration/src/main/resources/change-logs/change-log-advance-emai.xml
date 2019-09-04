@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -191,25 +189,18 @@
 	</changeSet>
 
 	<changeSet id="2.3" author="shinde.b">
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq"
-			columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms"
-			columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms"
-			columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms"
-			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvIntersetReq" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMinTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvMaxTerms" columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="GrcAdvDefaultTerms" columnDataType="int" />
 
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvIntersetReq" columnDataType="boolean" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMinTerms" columnDataType="int" />
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvMaxTerms" columnDataType="int" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms"
-			columnDataType="int" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="AdvDefaultTerms" columnDataType="int" />
 
 		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="DSFReq" columnDataType="boolean" />
-		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq"
-			columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTFINANCETYPES_TEMP" columnName="CashCollateralReq" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="3" author="shinde.b">
@@ -3554,17 +3545,11 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="24" author="murthy.y">
-		<sql>
-			<![CDATA[
-				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_INT', 'Allow Advance Interest ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance Interest ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI', 'Allow Advance EMI ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance EMI ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_FRONT_END', 'Allow Front End (POS Reduction) ?','String', 1, 'N', 1, 0, null, null, 'Allow Front End (POS Reduction) ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REARE_END', 'Rear End ?','String', 1, 'Y', 1, 0, null, null, 'Allow Rear End ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-				Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS', 'Repayment Terms ?','String', 1, 'Y', 1, 0, null, null, 'Repayment Terms ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0);
-            ]]>
-		</sql>
-	</changeSet> -->
+	<!-- <changeSet id="24" author="murthy.y"> <sql> <![CDATA[ Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_INT', 'Allow Advance Interest ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance Interest ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', 
+		null, null, null, null, null, 0); Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI', 'Allow Advance EMI ?','String', 1, 'Y', 1, 0, null, null, 'Allow Advance EMI ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); 
+		Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_FRONT_END', 'Allow Front End (POS Reduction) ?','String', 1, 'N', 1, 0, null, null, 'Allow Front End (POS Reduction) ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, 
+		null, 0); Insert into SMTPARAMETERS (sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REARE_END', 'Rear End ?','String', 1, 'Y', 1, 0, null, null, 'Allow Rear End ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); Insert into SMTPARAMETERS 
+		(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid) values ('ADVANCE_PAYMENT_EMI_STAGE_REPAY_TERMS', 'Repayment Terms ?','String', 1, 'Y', 1, 0, null, null, 'Repayment Terms ?', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0); ]]> </sql> </changeSet> -->
 	<changeSet id="24" author="Siva">
 		<createTable tableName="AdvancePaymentDetail">
 			<column name="Id" type="bigint" autoIncrement="true">
@@ -3573,7 +3558,7 @@
 			<column name="FinReference" type="varchar(20)">
 				<constraints nullable="false" unique="true" />
 			</column>
-			<column name="InstructionUID" type="bigint" >
+			<column name="InstructionUID" type="bigint">
 				<constraints nullable="false" unique="true" />
 			</column>
 			<column name="AdvInt" type="decimal(18,0)" />
@@ -3582,8 +3567,8 @@
 			<column name="AdvEMITds" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
-	
-		<changeSet id="25" author="Siva">
+
+	<changeSet id="25" author="Siva">
 		<sql>
 			<![CDATA[
 				DELETE FROM SMTPARAMETERS where sysparmcode = 'ADVINT_TDS_INCZ_UPF';
@@ -3592,6 +3577,6 @@
 		</sql>
 	</changeSet>
 	<changeSet id="26" author="murthy.y">
-		<renameTable newTableName="AdvancePaymentDetails" oldTableName="AdvancePaymentDetail"/>
+		<renameTable newTableName="AdvancePaymentDetails" oldTableName="AdvancePaymentDetail" />
 	</changeSet>
 </databaseChangeLog>
