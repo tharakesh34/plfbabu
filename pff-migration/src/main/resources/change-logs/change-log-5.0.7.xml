@@ -4277,12 +4277,17 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="140.1" author="VaraPrasad.K">
+	<changeSet id="140.2" author="VaraPrasad.K">
 		<sql>
             <![CDATA[
+                delete from REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_putcallreport');
+				delete from REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CovenantRegisterReport');
+				delete from REPORTFILTERFIELDS where reportid=(select reportid from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CollateralRegister');
+
             	delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_putcallreport';
 				delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CovenantRegisterReport';
 				delete from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CollateralRegister';
+				
 				
             	Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Put/Call Report','Put/Call Report',1,'PutCall','dataSource',1,'menu_Item_putcallreport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,1,0);
 				Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport'),1,'Loan Reference','LOVSEARCH','Loan Reference','fm.FinReference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,1,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
