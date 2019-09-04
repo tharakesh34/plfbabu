@@ -805,8 +805,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				if (grid_label.getFellowIfAny("SListId") != null) {
 					Textbox text = (Textbox) grid_label.getFellowIfAny("SListId");
 					String[] statList = text.getValue().split(",");
-
-					if (statList.length > 20) {
+					//tack default length in configuration file
+					if (statList.length > aExtendedFieldDetail.getFieldLength()) {
 						throw new WrongValueException(text, Labels.getLabel("NUMBER_MAXVALUE_EQ", new String[] {
 								Labels.getLabel("label_ExtendedFieldDetailDialog_FieldList.value"), "20 Items" }));
 					}
@@ -1235,7 +1235,8 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 					ExtendedFieldConstants.FIELDTYPE_MULTILINETEXT)) {
 				maxLength = 1000;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_STATICCOMBO)) {
-				maxLength = 100;
+				//change the length 100 to 4000
+				maxLength = 4000;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_RADIO)) {
 				maxLength = 20;
 			} else if (StringUtils.equals(getComboboxValue(fieldType), ExtendedFieldConstants.FIELDTYPE_ACTRATE)) {

@@ -169,7 +169,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	// Constants for scriptlets.
 	private static final String SCRIPTLET_DELIMITER = "^^";
 	private static final String SCRIPT_DELIMITER = ">>";
-
+	//Constant for static list 
+	private static final String DELIMITER_PIPELINE = "|";
 	// story #699 Allow Additional filters for extended combobox.
 	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
 	private ExtendedFieldHeader extendedFieldHeader;
@@ -1789,13 +1790,26 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		staticList = detail.getFieldList().split(",");
 		for (int j = 0; j < staticList.length; j++) {
 
+			// New change for static list
+			String value = null;
+			String lable = null;
+			String valueLables = staticList[j];
+			if (StringUtils.contains(valueLables, DELIMITER_PIPELINE)) {
+				String[] valueLable = StringUtils.split(valueLables, DELIMITER_PIPELINE);
+				value = valueLable[0];
+				lable = valueLable[1];
+			} else {
+				value = valueLables;
+				lable = valueLables;
+			}
+
 			comboitem = new Comboitem();
-			comboitem.setValue(staticList[j]);
-			comboitem.setLabel(staticList[j]);
+			comboitem.setValue(value);
+			comboitem.setLabel(lable);
 			combobox.appendChild(comboitem);
 
 			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-					&& StringUtils.equals(fieldValueMap.get(detail.getFieldName()).toString(), staticList[j])) {
+					&& StringUtils.equals(fieldValueMap.get(detail.getFieldName()).toString(), value)) {
 				combobox.setSelectedItem(comboitem);
 			}
 		}
