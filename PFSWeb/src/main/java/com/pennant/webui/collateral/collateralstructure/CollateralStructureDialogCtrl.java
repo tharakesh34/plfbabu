@@ -882,7 +882,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		this.collateralLocReq.setChecked(collateralStructure.isCollateralLocReq());
 		this.collateralValuatorReq.setChecked(collateralStructure.isCollateralValuatorReq());
 		if (this.collateralValuatorReq.isChecked()) {
-			this.valuationFrequency.setMandatoryStyle(true);
+			//this.valuationFrequency.setMandatoryStyle(true);
 		}
 		this.remarks.setValue(collateralStructure.getRemarks());
 		setLtvType(getComboboxValue(this.ltvType), false);
@@ -949,9 +949,9 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	private void allowValuationFrequency() {
 		if (this.collateralValuatorReq.isChecked()) {
-			this.valuationFrequency.setMandatoryStyle(true);
+			//this.valuationFrequency.setMandatoryStyle(true);
 		} else {
-			this.valuationFrequency.setMandatoryStyle(false);
+			//this.valuationFrequency.setMandatoryStyle(false);
 		}
 	}
 
@@ -1010,26 +1010,36 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 
 		// valuation Frequency && valuation Pending && valuation Frequency Date
-		if (this.collateralValuatorReq.isChecked()) {
+		/*if (this.collateralValuatorReq.isChecked()) {*/
 			try {
-				this.valuationFrequency.isValidComboValue();
-				collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
+				if(!this.valuationFrequency.getValue().equals("")) {
+					this.valuationFrequency.isValidComboValue();
+					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
+					if(this.nextValuationDate.getValue() != null && !this.nextValuationDate.getValue().equals("")) {
+						if (!FrequencyUtil.isFrqDate(this.valuationFrequency.getValue(), this.nextValuationDate.getValue())) {
+							throw new WrongValueException(this.valuationFrequency, Labels.getLabel("FRQ_DATE_MISMATCH",
+									new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
+											Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
+						}
 
-				if (!FrequencyUtil.isFrqDate(this.valuationFrequency.getValue(), this.nextValuationDate.getValue())) {
-					throw new WrongValueException(this.valuationFrequency, Labels.getLabel("FRQ_DATE_MISMATCH",
-							new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-									Labels.getLabel("label_CollateralStructureDialog_ValuationFrequency.value") }));
+						Date appDate = DateUtility.getAppDate();
+						Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
+
+						if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
+								|| this.nextValuationDate.getValue().after(appEndDate)) {
+							throw new WrongValueException(this.nextValuationDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
+									new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
+											DateUtility.formatToShortDate(appDate),
+											DateUtility.formatToShortDate(appEndDate) }));
+						}
+					}
+					else
+					{
+						collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
+					}
 				}
-
-				Date appDate = DateUtility.getAppDate();
-				Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-
-				if (this.nextValuationDate.getValue() == null || this.nextValuationDate.getValue().before(appDate)
-						|| this.nextValuationDate.getValue().after(appEndDate)) {
-					throw new WrongValueException(this.nextValuationDate, Labels.getLabel("DATE_ALLOWED_RANGE_EQUAL",
-							new String[] { Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"),
-									DateUtility.formatToShortDate(appDate),
-									DateUtility.formatToShortDate(appEndDate) }));
+				else {
+					collateralStructure.setValuationFrequency(this.valuationFrequency.getValue());
 				}
 
 				collateralStructure.setNextValuationDate(this.nextValuationDate.getValue());
@@ -1037,7 +1047,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-		}
+		/*}*/
 
 		try {
 			String query = this.queryId.getValue();
@@ -1259,7 +1269,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 			this.maxLtvWaiver.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_CollateralStructureDialog_MaxLtvWaiver.value"), 2, true, false, 100));
 		}
-		if (!this.nextValuationDate.isReadonly()) {
+		if (!this.nextValuationDate.isReadonly() && this.nextValuationDate.getValue() != null &&!this.nextValuationDate.getValue().equals("")) {
 			this.nextValuationDate.setConstraint(new PTDateValidator(
 					Labels.getLabel("label_CollateralStructureDialog_NextValuationDate.value"), true));
 		}

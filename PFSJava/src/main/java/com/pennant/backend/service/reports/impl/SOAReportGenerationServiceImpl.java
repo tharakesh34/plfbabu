@@ -1360,7 +1360,15 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 					soaTranReport.setEvent(manualAdvise.getFeeTypeDesc() + manualAdvFeeType + finRef);
 					soaTranReport.setTransactionDate(manualAdvise.getPostDate());
 					soaTranReport.setValueDate(manualAdvise.getValueDate());
-					soaTranReport.setCreditAmount(manualAdvise.getAdviseAmount());
+					
+					//03-09-18:GST Amount For Payable advices is not reflecting in SOA
+					BigDecimal gstAmount = BigDecimal.ZERO;
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) {
+						gstAmount = GSTCalculator.getTotalGST(finReference, manualAdvise.getAdviseAmount(),
+								manualAdvise.getTaxComponent());
+					}
+					
+					soaTranReport.setCreditAmount(manualAdvise.getAdviseAmount().add(gstAmount));
 					soaTranReport.setDebitAmount(BigDecimal.ZERO);
 					soaTranReport.setPriority(14);
 
