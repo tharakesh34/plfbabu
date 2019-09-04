@@ -5573,6 +5573,14 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
+		<changeSet id="96_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'limitdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="96" author="meena.a">
 		<createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
 			SELECT T1.DETAILID,
@@ -5623,6 +5631,15 @@ UNION ALL
 					LEFT OUTER JOIN LIMITGROUP T3 ON T5.GROUPCODE = T3.GROUPCODE
 					LEFT OUTER JOIN RULES T4 ON T5.LIMITLINE = T4.RULECODE AND RULEMODULE  ='LMTLINE'
 		</createView>
+	</changeSet>
+	
+	<changeSet id="96_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'limitdetails_aview');
+				
+			]]>
+		</sql>
 	</changeSet>
 	
 	<changeSet id="97" author="meena.a">
