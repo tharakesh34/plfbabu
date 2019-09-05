@@ -91,6 +91,9 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 						amedia = new AMedia(docDetail.getDocName(), "msg", "application/octet-stream", data);
 					} else if (PennantConstants.DOC_TYPE_IMAGE.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "jpeg", "image/jpeg", data);
+					} else if (PennantConstants.DOC_TYPE_ZIP.equals(docDetail.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "x-zip-compressed", "application/x-zip-compressed",
+								data);
 					}
 					document.setContent(amedia);
 				}

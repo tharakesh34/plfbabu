@@ -394,6 +394,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
 						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
+			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia("document.x-zip-compressed", "x-zip-compressed", "application/x-zip-compressed",
+						data);
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
@@ -1027,7 +1030,8 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_IMAGE;
 			} else if (media.getName().endsWith(".doc") || media.getName().endsWith(".docx")) {
 				docType = PennantConstants.DOC_TYPE_WORD;
-
+			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_ZIP;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
@@ -1048,6 +1052,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+					this.finDocumentPdfView
+							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {

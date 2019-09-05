@@ -2329,7 +2329,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					if (!(StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_PDF)
 							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
 							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
-							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE))) {
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_ZIP))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDoctype();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm));

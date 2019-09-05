@@ -448,6 +448,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)) {
 				amedia = new AMedia(docName, "xlsx",
 						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
 			}
 			Filedownload.save(amedia);
 		}
@@ -1325,6 +1327,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
+			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_ZIP;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
@@ -1345,6 +1349,9 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
+				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+					this.finDocumentPdfView
+							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)

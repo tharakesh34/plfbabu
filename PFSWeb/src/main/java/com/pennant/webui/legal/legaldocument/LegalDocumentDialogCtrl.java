@@ -536,6 +536,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
 			} else if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_EXCEL)) {
 				amedia = new AMedia(docName, "xlsx", "application/pdf", data);
+			} else if (StringUtils.equals(docType, PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
 			}
 			if (amedia != null) {
 				Filedownload.save(amedia);
@@ -946,6 +948,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				docType = PennantConstants.DOC_TYPE_WORD;
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
+			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_ZIP;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
@@ -965,6 +969,9 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+				this.documentPdfView
+						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 			}
 
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {

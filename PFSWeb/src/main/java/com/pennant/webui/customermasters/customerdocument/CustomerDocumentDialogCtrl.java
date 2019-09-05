@@ -2099,6 +2099,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				docType = PennantConstants.DOC_TYPE_WORD;
 			} else if (media.getName().endsWith(".msg")) {
 				docType = PennantConstants.DOC_TYPE_MSG;
+			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_ZIP;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
@@ -2118,8 +2120,11 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
-			}
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+				this.finDocumentPdfView
+						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
 
+			}
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.setVisible(true);
 				this.finDocumentPdfView.setVisible(false);
