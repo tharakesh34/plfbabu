@@ -3169,5 +3169,12 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="53" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_BACK_DATED_ADD_RATE_CHANGE';
+			 ]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
