@@ -4337,6 +4337,81 @@
             ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="143" author="vijaya.a">
+		<sql>
+            <![CDATA[
+            	delete from data_engine_column where TableId in (select id from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY')));
+				delete from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY'));
+				delete from data_engine_config  where name in ('GL_VOCHER_DOWNLOAD_TALLY');
+				
+				INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) 
+				VALUES ((select max(id) + 1 from data_engine_config), 'GL_VOCHER_DOWNLOAD_TALLY', 'VOUCHER_UPLOAD', 3 , 'VOUCHER_UPLOAD', NULL, NULL, NULL, 0, 0, NULL , 'Voucher Number, Voucher Date,  Voucher Value Date, Voucher Type, GL Code, GL Description, DrCr Flag, Amount, Narration', NULL, 'A', 'C:/Pennant/PFF/DailyDownload/GLVochers' , 'GL_VOUCHERS_', '.xlsx', 1, NULL, '${ddMMYYYY}', NULL, '0', NULL, 1, 1);
+				
+				INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) 
+				VALUES ((select max(id) + 1 from data_engine_table), (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY'), 'GL_VOCHERS_VIEW', 0, 'ID', 'POSTDATE = :POSTDATE', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'LINKEDTRANID', 	 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'POSTDATE', 		 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd.MM.yyyy', 		'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'VALUEDATE', 		 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, 'DATE:dd.MM.yyyy', 		'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'GROUPDESCRIPTION', 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'HOSTACCOUNT', 	 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'TRANDESC', 		 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'DRORCR', 	 		 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'POSTAMOUNT', 	 	 0, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'NARRATION', 	 	 1, 'N', NULL, NULL, NULL, NULL, '0', NULL, NULL, NULL, NULL, 					'O');
+				
+				update seq_data_engine_config set SeqNo = (select max(id) from data_engine_config);
+				update seq_data_engine_table set SeqNo = (select max(id) from data_engine_table);
+            ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="144" author="vijaya.a">
+		<sql>
+            <![CDATA[
+            	UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS_VIEW);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS_VIEW);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS_VIEW);
+				
+				INSERT INTO SECROLES SELECT (SELECT MAX(ROLEID)+1 FROM SECROLES), 1, 'GL_VOCHER_DOWNLOAD', 'General Ledger Daily Download Role', '', 0, 1000, CURRENT_TIMESTAMP,'', '', '', '', '', '', 0 FROM SEQSECROLES WHERE 0=0;
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GL_VOCHER_DOWNLOAD','General Ledger Daily Download Group', 0, 1000, CURRENT_TIMESTAMP, 'APPROVED', '', '', '', '', '', 0 FROM SEQSECGROUPS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menu_Item_GL_Dowload','MENU',0, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='GL_VOCER_DOWNLOADH') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menu_Item_GL_Dowload'), 1, 0, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+				INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GL_VOCHER_DOWNLOAD'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='GL_VOCHER_DOWNLOAD'), 0, 1000, CURRENT_TIMESTAMP, 'APPROVED', '', '', '', '', '', 0);
+				
+				UPDATE SEQSECRIGHTS SET SEQNO = (SELECT MAX(RIGHTID) FROM SECRIGHTS_VIEW);
+				UPDATE SEQSECGROUPS SET SEQNO = (SELECT MAX(GRPID)  FROM SECGROUPS_VIEW);
+				UPDATE SEQSECROLES SET SEQNO = (SELECT MAX(ROLEID)  FROM SECROLES);
+				UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS_VIEW);
+				UPDATE SEQSECROLEGROUPS SET SEQNO = (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS_VIEW);
+            ]]>
+		</sql>
+	</changeSet>
 
+	<changeSet id="145" author="vijaya.a">
+		<createView viewName="GL_VOCHERS_VIEW" replaceIfExists="true">
+			select 
+			LinkedTranId, 
+			PostDate, 
+			ValueDate, 
+			DRORCR, 
+			PostAmount/100 PostAmount, 
+			am.Account, 
+			HostAccount, 
+			GroupCode, 
+			GroupDescription, 
+			TransOrder, 
+			TranCode, 
+			TranDesc
+			from Postings p
+			inner join AccountMapping am on am.account = p.account
+			inner join RMTAccountTypes at on at.acType = am.accountType
+			inner join AccountTypeGroup atg on atg.GroupId = at.acTypeGrpId
+			where PostAmount <> 0 
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>
