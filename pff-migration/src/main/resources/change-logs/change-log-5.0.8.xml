@@ -8535,5 +8535,27 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="178" author="Kesav">
+		<comment>button_JountAccountDetailDialog_btnEditCustomer right created</comment>
+		<sql>
+			<![CDATA[
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+				
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JountAccountDetailDialog_btnEditCustomer');
+				Delete from SecRights where RightName = 'button_JountAccountDetailDialog_btnEditCustomer';
+				INSERT INTO SecRights  VALUES ((Select MAX(RightID)+1 From SecRights),2,'button_JountAccountDetailDialog_btnEditCustomer','JountAccountDetailDialog',1,1000,CURRENT_TIMESTAMP,'Approved','',' ','','','',0);
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_JountAccountDetailDialog_btnEditCustomer'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
+				
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);			
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
