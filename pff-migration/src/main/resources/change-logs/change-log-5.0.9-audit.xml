@@ -140,12 +140,18 @@
 			<column name="ExternalRef1" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="14" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="AdtPromotions">
-			<column name="specialScheme" type="boolean" defaultValue="0"/>
+			<column name="specialScheme" type="smallint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="15" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="AdtPromotions">
 			<column name="remarks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-
 </databaseChangeLog>

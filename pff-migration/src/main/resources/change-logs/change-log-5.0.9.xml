@@ -5694,19 +5694,36 @@ UNION ALL
 					AND RULEMODULE  ='LMTLINE'
 		</createView>
 	</changeSet>
+	
 	<changeSet id="98" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions">
-			<column name="specialScheme" type="boolean" defaultValue="0"/>
-			<column name="remarks" type="varchar(50)" />
-		</addColumn>
-		<addColumn tableName="Promotions_Temp">
-			<column name="specialScheme" type="boolean" defaultValue="0"/>
-			<column name="remarks" type="varchar(50)" />
+			<column name="specialScheme" type="smallint" defaultValue="0"/>
 		</addColumn>
 	</changeSet>
 	
 	<changeSet id="99" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions">
+			<column name="remarks" type="varchar(50)" />
+			</addColumn>
+	</changeSet>
+	
+	<changeSet id="100" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions_Temp">
+			<column name="specialScheme" type="smallint" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="101" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions_Temp">
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="102" author="Siva">
 		<createView viewName="Promotions_AView" replaceIfExists="true">
 			SELECT t1.promotionid,
 			    t1.promotioncode,
@@ -5755,7 +5772,7 @@ UNION ALL
 		</createView>
 	</changeSet> 
 	
-	<changeSet id="100" author="Siva">
+	<changeSet id="103" author="Siva">
 		<createView viewName="Promotions_TView" replaceIfExists="true">
 			SELECT t1.promotionid,
 			    t1.promotioncode,
@@ -5804,7 +5821,7 @@ UNION ALL
 		</createView>
 	</changeSet> 
 	
-	<changeSet id="101" author="Siva">
+	<changeSet id="104" author="Siva">
 		<createView viewName="Promotions_View" replaceIfExists="true">
 			SELECT t1.promotionid,
 			    t1.promotioncode,
@@ -5900,5 +5917,4 @@ UNION ALL
 			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 		</createView>
 	</changeSet> 
-	
 </databaseChangeLog>
