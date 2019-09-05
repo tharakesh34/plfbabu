@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
 	<property name="add.schema" value=" " dbms="oracle" />
@@ -2084,7 +2086,8 @@
 	</changeSet>
 
 	<changeSet id="74" author="meena.a">
-		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID" constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
+		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
+			constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
 	</changeSet>
 
 	<changeSet id="75" author="Manoj.p" dbms="oracle">
@@ -4023,9 +4026,7 @@
 </createView>
 	</changeSet>
 
-	<!-- <changeSet id="128_pre" author="murthy" dbms="postgresql">
-		<dropView viewName="accounts_view" />
-	</changeSet> -->
+	<!-- <changeSet id="128_pre" author="murthy" dbms="postgresql"> <dropView viewName="accounts_view" /> </changeSet> -->
 
 	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
@@ -4143,7 +4144,8 @@
 		<sql>
 
 			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
-			UPDATE WorkFlowDetails SET WorkFlowActive= 0 where WorkFlowType='RECEIPTUPLOAD';
+			UPDATE WorkFlowDetails SET
+			WorkFlowActive= 0 where WorkFlowType='RECEIPTUPLOAD';
 
 		</sql>
 		<insert tableName="WorkFlowDetails">
@@ -4322,6 +4324,17 @@
                 update reportconfiguration set wherecondition=1 where menuitemcode='menu_Item_DailyPastdue';
 				update reportfilterfields set fielddbname='T5.FinDivision' where reportid in  (select reportid from reportconfiguration where menuitemcode='menu_Item_DailyPastdue') and fieldid=1;
 		 	]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="142" author="VaraPrasad.K">
+		<sql>
+            <![CDATA[
+            	update REPORTCONFIGURATION set REPORTJASPERNAME = 'CovenantRegisterReport' where REPORTJASPERNAME = 'CovenantRegisterReportl';
+            	update REPORTCONFIGURATION set MENUITEMCODE = 'menu_Item_CollateralRegisterReport' where MENUITEMCODE = 'menu_Item_CollateralRegister';
+				update REPORTFILTERFIELDS set fieldDBName = 'c.CustCIF' where reportId = (select ReportId from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CollateralRegisterReport');
+				update REPORTCONFIGURATION set ReportHeading = 'Put Call Report', REPORTNAME = 'Excel:Put Call Report' where MENUITEMCODE = 'menu_Item_putcallreport'
+            ]]>
 		</sql>
 	</changeSet>
 
