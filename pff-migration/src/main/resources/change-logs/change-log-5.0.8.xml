@@ -8459,7 +8459,7 @@ UNION ALL
 		<comment>Customer Province added in fee rules</comment>
 		<sql>
 			<![CDATA[
-				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBS' and rbfldname='customerProvince'
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBS' and rbfldname='customerProvince';
 				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSF' and rbfldname='customerProvince';
 				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSN' and rbfldname='customerProvince';
 				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSP' and rbfldname='customerProvince';
