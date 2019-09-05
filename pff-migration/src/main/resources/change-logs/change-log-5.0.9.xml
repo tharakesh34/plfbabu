@@ -5917,4 +5917,13 @@ UNION ALL
 			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 		</createView>
 	</changeSet> 
+	
+	<changeSet id="105" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOW_BACK_DATED_ADD_RATE_CHANGE';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_BACK_DATED_ADD_RATE_CHANGE', 'Allow back dated add rate chnage.', 'String', '1', 'N', 1, 0, NULL, NULL, 'Allow back dated add rate chnage.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
