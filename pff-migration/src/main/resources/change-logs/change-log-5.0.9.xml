@@ -5932,8 +5932,7 @@ UNION ALL
 			<![CDATA[
 				Delete from SMTParameters where SysParmCode = 'DISB_PARTNERBANK';
 				INSERT INTO smtparameters(sysparmcode, sysparmdesc, sysparmtype, sysparmmaint, sysparmvalue, sysparmlength, sysparmdec, sysparmlist, sysparmvaldmod, sysparmdescription, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-	                 VALUES ('DISB_PARTNERBANK', 'Disb PartnerBank Id', 'long', 1, '68', 30, 0,NULL,NULL, 'Disb PartnerBank Id', '1', '1000', sysDate, 'Approved',NULL,NULL,NULL,NULL,NULL,'0');
-
+	            VALUES ('DISB_PARTNERBANK', 'Disb PartnerBank Id', 'long', 1, '68', 30, 0,NULL,NULL, 'Disb PartnerBank Id', '1', '1000', sysDate, 'Approved',NULL,NULL,NULL,NULL,NULL,'0');
 			]]>
 		</sql>
 	</changeSet>
