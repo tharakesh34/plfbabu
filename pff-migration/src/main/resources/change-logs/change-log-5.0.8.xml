@@ -8454,5 +8454,86 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="175" author="SaiKumar">
+		<comment>Customer Province added in fee rules</comment>
+		<sql>
+			<![CDATA[
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBS' and rbfldname='customerProvince'
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSF' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSN' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'ADDDBSP' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'AMENDMNT' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'CANFIN' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'DEFFRQ' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'DEFRPY' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'DPRCIATE' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'EARLYPAY' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'EARLYSTL' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'LIBILITY' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'MNTCMT' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'NEWCMT' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'NOCISU' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'REPAY' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'SEGCHG' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'TFCLAIM' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'TIMECLS' and rbfldname='customerProvince';
+				Delete from RBFieldDetails where RBModule = 'FEES' and RBEvent = 'WRITEOFF' and rbfldname='customerProvince';
+				
+				Insert Into rbfielddetails values ('FEES', 'ADDDBS', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'ADDDBSF', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'ADDDBSN', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'ADDDBSP', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'AMENDMNT', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'CANFIN', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'DEFFRQ', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'DEFRPY', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'DPRCIATE', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'EARLYPAY', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'EARLYSTL', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'LIBILITY', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'MNTCMT', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'NEWCMT', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'NOCISU', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'REPAY', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'SEGCHG', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'TFCLAIM', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'TIMECLS', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');
+				Insert Into rbfielddetails values ('FEES', 'WRITEOFF', 'customerProvince', 'Customer Province', 'nvarchar', 8, 0, 1, 'Province', 'static,global,dbvalue', 'Province');			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="176" author="SaiKumar">
+		<comment>CO-APP Customer Create in SMT Parameters</comment>
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'COAPP_CUST_CREATE';
+				insert into SMTParameters values('COAPP_CUST_CREATE','CO-APP Customer Create','String','1','Y','1','0','','','CO-APP Customer Create','1','1000',CURRENT_TIMESTAMP, 'Approved','','','','','','0');			
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="177" author="SaiKumar">
+		<comment>button_JountAccountDetailDialog_btnCreateCustomer right created</comment>
+		<sql>
+			<![CDATA[
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+				
+				Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName = 'button_JountAccountDetailDialog_btnCreateCustomer');
+				Delete from SecRights where RightName = 'button_JountAccountDetailDialog_btnCreateCustomer';
+				INSERT INTO SecRights  VALUES ((Select MAX(RightID)+1 From SecRights),2,'button_JountAccountDetailDialog_btnCreateCustomer','JountAccountDetailDialog',1,1000,CURRENT_TIMESTAMP,'Approved','',' ','','','',0);
+				Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BFSD_ORIGINATION_MAKER'), (Select RightID from SecRights where RightName = 'button_JountAccountDetailDialog_btnCreateCustomer'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0 );
+				
+				Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+				Update SeqSecRights Set SeqNo = (Select MAX(RightID) + 1 from SecRights);
+				Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
+				Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);			
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
