@@ -5694,5 +5694,211 @@ UNION ALL
 					AND RULEMODULE  ='LMTLINE'
 		</createView>
 	</changeSet>
+	<changeSet id="98" author="Siva">
+		<comment>New columns added for CD Schemes in Promotion</comment>
+		<addColumn tableName="Promotions">
+			<column name="specialScheme" type="boolean" defaultValue="0"/>
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+		<addColumn tableName="Promotions_Temp">
+			<column name="specialScheme" type="boolean" defaultValue="0"/>
+			<column name="remarks" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="99" author="Siva">
+		<createView viewName="Promotions_AView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory, t1.specialScheme,t1.remarks
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="100" author="Siva">
+		<createView viewName="Promotions_TView" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory,t1.specialScheme,t1.remarks
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+		</createView>
+	</changeSet> 
+	
+	<changeSet id="101" author="Siva">
+		<createView viewName="Promotions_View" replaceIfExists="true">
+			SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory,t1.specialScheme,t1.remarks
+			   FROM promotions_temp t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			UNION ALL
+			 SELECT t1.promotionid,
+			    t1.promotioncode,
+			    t1.promotiondesc,
+			    t1.fintype,
+			    t1.startdate,
+			    t1.enddate,
+			    t1.finisdwpayrequired,
+			    t1.downpayrule,
+			    t1.actualinterestrate,
+			    t1.finbaserate,
+			    t1.finsplrate,
+			    t1.finmargin,
+			    t1.applyrpypricing,
+			    t1.rpypricingmethod,
+			    t1.finminterm,
+			    t1.finmaxterm,
+			    t1.finminamount,
+			    t1.finmaxamount,
+			    t1.finminrate,
+			    t1.finmaxrate,
+			    t1.active,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+			    t2.finccy,
+			    t2.fincategory,
+			    t2.fintypedesc,
+			    t3.rulecode AS downpayrulecode,
+			    t3.rulecodedesc AS downpayruledesc,
+			    t4.rulecode AS rpypricingcode,
+			    t4.rulecodedesc AS rpypricingdesc,
+			    t1.ReferenceID, t1.OpenBalOnPV, t1.Tenor, t1.AdvEMITerms, t1.PftDaysBasis, t1.SubventionRate,
+			    t1.TaxApplicable, t1.cashBackFromDealer, t1.cashBackToCustomer, t2.ProductCategory,t1.specialScheme,t1.remarks
+			   FROM promotions t1
+			     JOIN rmtfinancetypes t2 ON t1.fintype = t2.fintype
+			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
+			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM promotions_temp
+			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
+		</createView>
+	</changeSet> 
 	
 </databaseChangeLog>
