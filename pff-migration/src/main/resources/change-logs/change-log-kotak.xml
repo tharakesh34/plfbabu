@@ -3176,5 +3176,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="54" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				update secrights set rightname='menuItem_SolutionFactory_CDFinanceType_Kotak' where rightname='menuItem_SolutionFactory_CDFinanceType';
+				update secrights set rightname='menuItem_SolutionFactory_CDScheme_Kotak' where rightname='menuItem_SolutionFactory_CDScheme';
+				update secrights set rightname='menuItem_Finance_FinanceMain_Kotak' where rightname='menuItem_Finance_FinanceMain';
+			 ]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
