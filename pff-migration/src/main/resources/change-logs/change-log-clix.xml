@@ -3614,6 +3614,31 @@ UNION ALL
 	</sql>
 </changeSet>
 
+	<changeSet id="90" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	delete from plf.secGroupRights Where rightid In (select RightId from plf.SecRights where rightname = 'CustomerDialog_custIndustry');
+				delete from plf.secGroupRights Where rightid In (select RightId from plf.SecRights where rightname = 'CustomerDialog_custSector');
+
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="91" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	INSERT INTO ErrorDetails VALUES('91140','EN','E','Eligibility Method is mandatory','','Approved','','','','','',0,current_timestamp,1000,0);
+				INSERT INTO ErrorDetails VALUES('91141','EN','E','Form No is mandatory','','Approved','','','','','',0,current_timestamp,1000,0);
+			]]>
+		</sql>
+	</changeSet>
 	
-	
+	<changeSet id="92" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('CLIX_VERIFICATIONS_CUSTOMERVIEW','Clix not required fields', 'String', '1', 'Y', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
