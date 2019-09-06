@@ -826,7 +826,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		this.custSector.setMaxlength(8);
 		this.custSector.setTextBoxWidth(121);
-		this.custSector.setMandatoryStyle(true);
+		if (!isReadOnly("CustomerDialog_custSector")) {
+			this.custSector.setMandatoryStyle(true);
+		}
 		this.custSector.setModuleName("Sector");
 		this.custSector.setValueColumn("SectorCode");
 		this.custSector.setDescColumn("SectorDesc");
@@ -834,7 +836,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		this.custIndustry.setMaxlength(8);
 		this.custIndustry.setTextBoxWidth(121);
-		this.custIndustry.setMandatoryStyle(true);
+		if (!isReadOnly("CustomerDialog_custSector")) {
+			this.custIndustry.setMandatoryStyle(true);
+		}
 		this.custIndustry.setModuleName("Industry");
 		this.custIndustry.setValueColumn("IndustryCode");
 		this.custIndustry.setDescColumn("IndustryDesc");

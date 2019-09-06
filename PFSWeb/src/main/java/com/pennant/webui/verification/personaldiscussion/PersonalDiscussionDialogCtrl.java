@@ -35,6 +35,7 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
@@ -156,6 +157,8 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 
 	@Autowired
 	private transient PersonalDiscussionService personalDiscussionService;
+	
+	protected Button btnSearchCustomerDetails;
 
 	/**
 	 * default constructor.<br>
@@ -252,6 +255,14 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		this.agentName.setMaxlength(50);
 		this.verificationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.summaryRemarks.setMaxlength(500);
+		
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
+				PennantConstants.YES)) {
+			this.btnSearchCustomerDetails.setVisible(false);
+		} else {
+			this.btnSearchCustomerDetails.setVisible(true);
+		}
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);

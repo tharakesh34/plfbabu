@@ -7188,6 +7188,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
+		// Eligibility Method validations
+		// =======================================
+		if (StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+				|| StringUtils.equals(financeMain.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
+			doPostHookValidation(auditHeader);
+		}
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}

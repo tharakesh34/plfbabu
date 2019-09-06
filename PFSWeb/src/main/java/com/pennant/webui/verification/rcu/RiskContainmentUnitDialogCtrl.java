@@ -28,6 +28,7 @@ import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.A;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
@@ -135,6 +136,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private transient CustomerDetailsService customerDetailsService;
 
 	private boolean fromLoanOrg;
+	
+	protected Button btnSearchCustomerDetails;
 
 	/**
 	 * default constructor.<br>
@@ -232,6 +235,13 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		this.agentName.setMaxlength(20);
 		this.remarks.setMaxlength(500);
 
+		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
+				PennantConstants.YES)) {
+			this.btnSearchCustomerDetails.setVisible(false);
+		} else {
+			this.btnSearchCustomerDetails.setVisible(true);
+		}
+		
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -531,6 +541,8 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_WORD)
 					|| details.getDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
 			}
 			Filedownload.save(amedia);
 

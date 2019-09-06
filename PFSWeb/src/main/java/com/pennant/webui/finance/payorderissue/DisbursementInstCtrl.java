@@ -99,7 +99,7 @@ public class DisbursementInstCtrl {
 	private String role;
 
 	List<ValueLabel> paymentDetailList = PennantStaticListUtil.getPaymentDetails();
-	List<ValueLabel> paymentTypeList = PennantStaticListUtil.getAllPaymentTypes();
+	List<ValueLabel> paymentTypeList = PennantStaticListUtil.getPaymentTypesWithIST();
 	private FinanceMain financeMain;
 	private List<FinanceDisbursement> financeDisbursements;
 	private List<FinanceDisbursement> approvedDisbursments;
