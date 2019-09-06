@@ -328,11 +328,11 @@
 			<column name="LinkedTranId" />
 		</createIndex>
 	</changeSet>
+	
 	<changeSet id="10" author="murthy.y">
 		<addColumn tableName="Postings_Stage">
 			<column name="PostDate" />
 		</addColumn>
-		<
 	</changeSet>
 </databaseChangeLog>
 
