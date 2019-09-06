@@ -4416,7 +4416,7 @@
 			inner join AccountMapping am on am.account = p.account
 			inner join RMTAccountTypes at on at.acType = am.accountType
 			inner join AccountTypeGroup atg on atg.GroupId = at.acTypeGrpId
-			where PostAmount <> 0 
+			where PostAmount != 0 
 		</createView>
 	</changeSet>
 
