@@ -1050,6 +1050,7 @@
 		<property name="directorDetailService" ref="directorDetailService" />
 		<property name="externalDocumentManager" ref="externalDocumentManager" />
 		<property name="dedupParmService" ref="dedupParmService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl" class="com.pennant.webui.customermasters.customer.ProspectCustomerDialogCtrl"
@@ -3582,6 +3583,11 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="limitStructureService" ref="limitStructureService" />
 	</bean>
+	<!-- Limit Rebuild Process -->
+	<bean id="limitRebuildProcessListCtrl" class="com.pennant.webui.limit.limitdetails.LimitRebuildProcessListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="institutionLimitRebuild" ref="institutionLimitRebuild" />
+	</bean>
 
 	<!-- Error Detail -->
 	<bean id="errorDetailListCtrl" class="com.pennant.webui.errordetail.errordetail.ErrorDetailListCtrl" parent="basisListCtrl"
@@ -4423,6 +4429,7 @@
 		<property name="scriptValidationService" ref="scriptValidationService" />
 		<property name="extFieldConfigService" ref="extFieldConfigService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!--============ Customer Enquiry Details ============== -->
@@ -5411,4 +5418,7 @@
 	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype">
 		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
 	</bean>
+
+	<bean id="vocherDownloadListCtrl" class="com.pennanttech.webui.downloads.VocherDownloadListctrl" parent="basisListCtrl"
+		scope="prototype" />
 </beans>

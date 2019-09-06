@@ -113,6 +113,7 @@ import com.pennant.UserWorkspace;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -176,6 +177,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private ExtendedFieldHeader extendedFieldHeader;
 	private boolean isCommodity = false;
 	private List<String> hsnCodes = new ArrayList<>();
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -385,6 +387,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						if (Events.ON_CHANGE.equals(eventName)
 								&& ExtendedFieldConstants.FIELDTYPE_AMOUNT.equals(detail.getFieldType())) {
 							component.addEventListener(eventName, new EventListener<Event>() {
+								@Override
 								public void onEvent(Event e) throws Exception {
 									String data = "0";
 
@@ -957,7 +960,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 					}
 				} else if (component instanceof Checkbox) {
 					Checkbox checkbox = (Checkbox) component;
-					values.put(detail.getFieldName(), checkbox.isChecked() ? true : false);
+					if (App.DATABASE == Database.POSTGRES) {
+						values.put(detail.getFieldName(), checkbox.isChecked() ? true : false);
+					} else {
+						values.put(detail.getFieldName(), checkbox.isChecked() ? 1 : 0);
+					}
 				} else if (component instanceof Textbox) {
 
 					if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_PHONE, detail.getFieldType())) {
@@ -1208,6 +1215,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		public onMultiSelectionItemSelected() {
 		}
 
+		@Override
 		public void onEvent(Event event) throws Exception {
 			Checkbox checkbox = (Checkbox) event.getTarget();
 			Listitem listItem = (Listitem) checkbox.getParent().getParent();
@@ -1249,6 +1257,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		public onMultiSelButtonClick() {
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public void onEvent(Event event) throws Exception {
 			Button button = (Button) event.getTarget();
@@ -1893,6 +1902,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		extendedCombobox.setId(getComponentId(detail.getFieldName()));
 		extendedCombobox.setReadonly(isReadOnly);
 
+		//Setting the id's to  ExtendedCombobox inner components like Textbox and button for Scriptlet using
+		extendedCombobox.getChildren().get(1).getChildren().get(0).setId(extendedCombobox.getId().concat("_ctb"));
+		extendedCombobox.getChildren().get(1).getChildren().get(1).setId(extendedCombobox.getId().concat("_ctb_but"));
+
 		// Adding the event listener
 		// story #699 Allow Additional filters for extended combobox.
 		extendedCombobox.addEventListener(Events.ON_FULFILL, new MyExtendedComboListener());
@@ -1907,17 +1920,56 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (lovefields.length >= 2) {
 			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[1],
 					detail.isFieldMandatory(), detail.getFieldLength(), 150);
+		} else if (lovefields.length == 1) {
+			extendedCombobox.setProperties(detail.getFieldList(), lovefields[0], lovefields[0],
+					detail.isFieldMandatory(), detail.getFieldLength(), 150);
 		}
 
 		// Data Setting
 		if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
 				&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())) {
 			extendedCombobox.setValue(fieldValueMap.get(detail.getFieldName()).toString());
+
+			// Fetching the Description column
+			String descValue = getExtFieldDesc(moduleMapping, fieldValueMap.get(detail.getFieldName()).toString());
+			if (StringUtils.isNotBlank(descValue)) {
+				extendedCombobox.setDescription(descValue);
+			}
 		}
 
 		setHSNCodeFilters(extendedCombobox);
 
 		return extendedCombobox;
+	}
+
+	// Getting the extended field description column.
+	private String getExtFieldDesc(ModuleMapping moduleMapping, String value) {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			StringBuilder sql = new StringBuilder();
+
+			String[] loveFields = moduleMapping.getLovFields();
+
+			if (loveFields.length <= 1) {
+				return null;
+			}
+
+			String tableName = moduleMapping.getTableName();
+			if (StringUtils.trimToNull(tableName) == null) {
+				return null;
+			}
+
+			sql.append(" Select ").append(loveFields[1]).append(" From ").append(tableName);
+			sql.append(" Where ").append(loveFields[0]).append(" = '").append(value).append("'");
+
+			return getExtendedFieldDetailsService().getExtFieldDesc(sql.toString());
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 	private void setHSNCodeFilters(ExtendedCombobox extendedCombobox) {
@@ -1958,31 +2010,30 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			ExtendedFieldDetail detail = getFieldDetail(fieldName);
 			addFilters(detail);
-
 			setUnitPrice(extendedCombobox);
 		}
+	}
 
-		private void setUnitPrice(ExtendedCombobox extendedCombobox) {
-			if (!"HSNCodeData".equals(extendedCombobox.getModuleName())) {
-				return;
+	private void setUnitPrice(ExtendedCombobox extendedCombobox) {
+		if (!"HSNCodeData".equals(extendedCombobox.getModuleName())) {
+			return;
+		}
+
+		Commodity commodity = (Commodity) extendedCombobox.getObject();
+		if (commodity == null) {
+			return;
+		}
+
+		for (ExtendedFieldDetail details : getExtendedFieldDetails()) {
+			if (!details.getFieldName().equals("UNITPRICE")) {
+				continue;
 			}
 
-			Commodity commodity = (Commodity) extendedCombobox.getObject();
-			if (commodity == null) {
-				return;
-			}
-
-			for (ExtendedFieldDetail details : getExtendedFieldDetails()) {
-				if (!details.getFieldName().equals("UNITPRICE")) {
-					continue;
-				}
-
-				String id = getComponentId(details.getFieldName());
-				Component componentCurrencyBox = tabpanel.getFellowIfAny(id);
-				if (componentCurrencyBox instanceof CurrencyBox) {
-					CurrencyBox currencyBox = (CurrencyBox) componentCurrencyBox;
-					currencyBox.setValue(PennantApplicationUtil.formateAmount(commodity.getCurrentValue(), ccyFormat));
-				}
+			String id = getComponentId(details.getFieldName());
+			Component componentCurrencyBox = tabpanel.getFellowIfAny(id);
+			if (componentCurrencyBox instanceof CurrencyBox) {
+				CurrencyBox currencyBox = (CurrencyBox) componentCurrencyBox;
+				currencyBox.setValue(PennantApplicationUtil.formateAmount(commodity.getCurrentValue(), ccyFormat));
 			}
 		}
 	}
@@ -2095,11 +2146,23 @@ public class ExtendedFieldsGenerator extends AbstractController {
 				extendedCombobox.setConstraint("");
 				extendedCombobox.setErrorMessage("");
 
-				StringBuilder sb = new StringBuilder();
-				sb.append(childArray[0]).append(delimiter)
-						.append(StringUtils.isEmpty(combobox.getValue()) ? " " : combobox.getValue()).append(delimiter)
-						.append(childArray[2]);
-				filters.add(sb.toString());
+				if (StringUtils.trimToNull(combobox.getValue()) != null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(childArray[0]).append(delimiter).append(combobox.getValue()).append(delimiter)
+							.append(childArray[2]);
+					filters.add(sb.toString());
+				}
+			} else if (component instanceof Textbox) {
+				Textbox textbox = (Textbox) component;
+				textbox.setConstraint("");
+				textbox.setErrorMessage("");
+
+				if (StringUtils.trimToNull(textbox.getValue()) != null) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(childArray[0]).append(delimiter).append(textbox.getValue()).append(delimiter)
+							.append(childArray[2]);
+					filters.add(sb.toString());
+				}
 			}
 		}
 		appendFilters(extendedCombobox, filters);
@@ -2888,6 +2951,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			target.addEventListener(Events.ON_CHANGE, new CalcAgeListener());
 		} else {
 			target.addEventListener(eventName, new EventListener<Event>() {
+				@Override
 				public void onEvent(Event e) throws Exception {
 					if (e.getData() != null) {
 						Thread.sleep(2000);
@@ -2947,6 +3011,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		return window;
 	}
 
+	@Override
 	public void setWindow(Window window) {
 		this.window = window;
 	}
@@ -3019,6 +3084,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		this.topLevelTab = topLevelTab;
 	}
 
+	@Override
 	public void setUserWorkspace(UserWorkspace userWorkspace) {
 		super.setUserWorkspace(userWorkspace);
 	}
@@ -3085,6 +3151,14 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 	public void setHsnCodes(List<String> hsnCodes) {
 		this.hsnCodes = hsnCodes;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

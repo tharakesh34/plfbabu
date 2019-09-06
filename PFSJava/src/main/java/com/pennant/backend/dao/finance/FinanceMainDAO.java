@@ -401,4 +401,5 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFinanceDetailsForInsurance(String finReference, String type);
 
+	List<FinanceMain> getFinMainListBySQLQueryRule(String whereClause, String type);
 }

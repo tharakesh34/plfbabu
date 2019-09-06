@@ -104,4 +104,7 @@ public interface ExtendedFieldDetailDAO {
 	List<ExtendedFieldDetail> getExtendedFieldDetailForRule();
 
 	ExtendedFieldDetail getExtendedFieldDetailById(long id, String fieldName, String type);
+
+	// for extended combobox description -- 04-09-2019
+	String getExtFldDesc(String sql);
 }

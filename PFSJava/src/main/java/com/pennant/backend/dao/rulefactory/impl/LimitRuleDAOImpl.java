@@ -64,6 +64,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>Rule model</b> class.<br>
@@ -385,6 +386,31 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 		}
 		logger.debug("Leaving");
 		return fieldList;
+	}
+
+	@Override
+	public LimitFilterQuery getLimitRuleByQueryCode(String queryCode, String queryModule, String type) {
+
+		LimitFilterQuery dedupParm = new LimitFilterQuery();
+		dedupParm.setQueryCode(queryCode);
+		dedupParm.setQueryModule(queryModule);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select QueryId, QueryCode, QueryModule, QuerySubCode,QueryDesc, SQLQuery, ActualBlock, Active");
+		sql.append(" From LimitParams");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where QueryCode = :QueryCode AND QueryModule = :QueryModule");
+
+		logger.debug(Literal.SQL + sql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dedupParm);
+		RowMapper<LimitFilterQuery> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(LimitFilterQuery.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return null;
 	}
 
 }

@@ -155,6 +155,7 @@ import com.pennant.backend.model.systemmasters.SubSegment;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -506,6 +507,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean isNewCustCret = false;
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * default constructor.<br>
@@ -988,7 +990,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
 
 		this.custRO1.setTextBoxWidth(121);
-		if(!isReadOnly("CustomerDialog_custRO1")){
+		if (!isReadOnly("CustomerDialog_custRO1")) {
 			this.custRO1.setMandatoryStyle(true);
 		}
 		this.custRO1.setModuleName("SourceOfficer");
@@ -1415,6 +1417,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				// required.
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
 			extendedFieldCtrl.setUserRole(getRole());
+
+			extendedFieldCtrl.setExtendedFieldDetailsService(getExtendedFieldDetailsService());
 
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
@@ -7002,4 +7006,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.customerGstList = customerGstList;
 	}
 
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
 }

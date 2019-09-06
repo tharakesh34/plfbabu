@@ -1006,12 +1006,6 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			wve.add(we);
 		}
 
-		saveDocumentDetails(getCovenantDocuments());
-
-		covenant.setDocumentDetails(this.covenant.getDocumentDetails());
-
-		covenant.setCovenantDocuments(getCovenantDocuments());
-
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -1022,6 +1016,13 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			}
 			throw new WrongValuesException(wvea);
 		}
+
+		saveDocumentDetails(getCovenantDocuments());
+
+		covenant.setDocumentDetails(this.covenant.getDocumentDetails());
+
+		covenant.setCovenantDocuments(getCovenantDocuments());
+
 		covenant.setRecordStatus(this.recordStatus.getValue());
 		setCovenant(covenant);
 

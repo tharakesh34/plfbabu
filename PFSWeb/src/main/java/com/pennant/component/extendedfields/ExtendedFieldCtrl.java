@@ -44,6 +44,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.staticparms.ExtFieldConfigService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -73,6 +74,7 @@ public class ExtendedFieldCtrl {
 	private UserWorkspace userWorkspace;
 	private String userRole;
 	private boolean overflow;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * Method for Rendering the Extended field details
@@ -113,6 +115,7 @@ public class ExtendedFieldCtrl {
 		this.generator.setOverflow(overflow);
 		this.generator.setUserWorkspace(userWorkspace);
 		this.generator.setUserRole(userRole);
+		this.generator.setExtendedFieldDetailsService(getExtendedFieldDetailsService());
 		if (tab != null) {
 			this.generator.setTopLevelTab(tab);
 			this.tab.setLabel(extendedFieldHeader.getTabHeading());
@@ -988,6 +991,14 @@ public class ExtendedFieldCtrl {
 
 	public void setValues(Map<String, Object> fieldValueMap) {
 		this.generator.setValues(extendedFieldHeader.getExtendedFieldDetails(), fieldValueMap);
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

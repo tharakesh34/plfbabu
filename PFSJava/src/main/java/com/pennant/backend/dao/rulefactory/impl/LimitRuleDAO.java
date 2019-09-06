@@ -26,4 +26,6 @@ public interface LimitRuleDAO {
 
 	List<LimitFldCriterias> getOperatorsList();
 
+	LimitFilterQuery getLimitRuleByQueryCode(String queryCode, String queryModule, String type); // BFLW2
+
 }

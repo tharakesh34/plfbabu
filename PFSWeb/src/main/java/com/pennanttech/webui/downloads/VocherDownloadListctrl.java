@@ -1,0 +1,332 @@
+package com.pennanttech.webui.downloads;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zul.Borderlayout;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Paging;
+import org.zkoss.zul.Window;
+
+import com.pennant.backend.service.administration.SecurityUserService;
+import com.pennant.util.Constraint.PTDateValidator;
+import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennanttech.dataengine.config.DataEngineConfig;
+import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.EventProperties;
+import com.pennanttech.dataengine.util.DateUtil;
+import com.pennanttech.dataengine.util.DateUtil.DateFormat;
+import com.pennanttech.dataengine.util.EncryptionUtil;
+import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.gl.VocherDownloadService;
+import com.pennanttech.service.AmazonS3Bucket;
+
+public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = Logger.getLogger(VocherDownloadListctrl.class);
+
+	protected Window window_VocherDownloadList;
+	protected Borderlayout borderLayout_VocherDownloadList;
+	protected Paging pagingVocherDownloadList;
+	protected Listbox listBoxVocherDownload;
+	protected Button btnRefresh;
+	protected Button btnexecute;
+	protected Datebox vocherDate;
+	private Button downlaod;
+
+	protected DataEngineConfig dataEngineConfig;
+	protected SecurityUserService securityUserService;
+	private VocherDownloadService vocherDownloadService;
+
+	protected AmazonS3Bucket bucket;
+	private Map<Long, String> userMap = new HashMap<>();
+
+	/**
+	 * default constructor.<br>
+	 */
+	public VocherDownloadListctrl() {
+		super();
+	}
+
+	@Override
+	protected void doSetProperties() {
+		super.moduleCode = "FileDownload";
+		super.pageRightName = "FileDownload";
+		super.tableName = "DE_FILE_CONTROL_VIEW";
+		super.queueTableName = "DE_FILE_CONTROL_VIEW";
+	}
+
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+	// +++++++++++++++ Component Events ++++++++++++++++ //
+	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
+
+	public void onCreate$window_VocherDownloadList(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		// Set the page level components.
+		setPageComponents(window_VocherDownloadList, borderLayout_VocherDownloadList, listBoxVocherDownload,
+				pagingVocherDownloadList);
+		setItemRender(new VocherDownloadListModelItemRenderer());
+
+		// Application Deployment Date
+		registerField("Id", SortOrder.DESC);
+		registerField("Name");
+		registerField("Status");
+		registerField("CONFIGID");
+		registerField("POSTEVENT");
+		registerField("FileName");
+		registerField("FileLocation");
+		registerField("UserId");
+		registerField("endTime");
+		registerField("ValueDate", SortOrder.DESC);
+		registerField("startDate");
+		
+		vocherDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		doRenderPage();
+		search();
+		doSetFieldProperties();
+		this.listBoxVocherDownload.setHeight(this.borderLayoutHeight - 100 + "px");
+		logger.debug(Literal.LEAVING);
+	}
+
+	protected void doAddFilters() {
+		super.doAddFilters();
+		this.searchObject.addFilterEqual("NAME", "GL_VOCHER_DOWNLOAD_TALLY");
+	}
+
+	private void doSetFieldProperties() {
+
+	}
+
+	/**
+	 * Call the FileDownload dialog with a new empty entry. <br>
+	 */
+	public void onClick$btnRefresh(Event event) throws Exception {
+		refresh();
+	}
+
+	/**
+	 * Call the FileDownload dialog with a new empty entry. <br>
+	 */
+	public void onClick$btnexecute(Event event) throws Exception {
+		doSetValidations();
+		ArrayList<WrongValueException> wve = new ArrayList<>();
+		try {
+			this.vocherDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		try {
+			vocherDownloadService.downloadVocher(getUserWorkspace().getLoggedInUser().getUserId(),
+					getUserWorkspace().getLoggedInUser().getUserName(), this.vocherDate.getValue());
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+
+		refresh();
+
+	}
+
+	/**
+	 * Sets the Validation by setting the accordingly constraints to the fields.
+	 */
+	private void doSetValidations() throws Exception {
+		if (!this.vocherDate.isReadonly()) {
+			this.vocherDate
+					.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_VocherDate.value"), true));
+		}
+	}
+
+	/**
+	 * Disables the Validation by setting empty constraints.
+	 */
+	private void doRemoveValidation() {
+		logger.debug(Literal.ENTERING);
+		this.vocherDate.setConstraint("");
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+		logger.debug(Literal.ENTERING);
+		try {
+
+			Button downloadButt = (Button) event.getOrigin().getTarget();
+			FileDownlaod fileDownlaod = (FileDownlaod) downloadButt.getAttribute("object");
+
+			if (com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
+				String prefix = loadS3Bucket(fileDownlaod.getConfigId());
+				downloadFromS3Bucket(prefix, fileDownlaod.getFileName());
+			} else {
+				downloadFromServer(fileDownlaod);
+			}
+			dataEngineConfig.saveDowloadHistory(fileDownlaod.getId(), getUserWorkspace().getUserDetails().getUserId());
+			refresh();
+		} catch (Exception e) {
+			MessageUtil.showError(e.getMessage());
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String loadS3Bucket(long configId) {
+
+		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
+
+		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
+				EncryptionUtil.decrypt(eventproperties.getAccessKey()),
+				EncryptionUtil.decrypt(eventproperties.getSecretKey()));
+
+		return eventproperties.getPrefix();
+	}
+
+	private void downloadFromServer(FileDownlaod fileDownlaod) throws FileNotFoundException, IOException {
+		String filePath = fileDownlaod.getFileLocation();
+		String fileName = fileDownlaod.getFileName();
+
+		if (filePath != null && fileName != null) {
+			filePath = filePath.concat("/").concat(fileName);
+		}
+
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+		InputStream inputStream = new FileInputStream(filePath);
+		int data;
+		while ((data = inputStream.read()) >= 0) {
+			stream.write(data);
+		}
+
+		inputStream.close();
+		inputStream = null;
+		Filedownload.save(stream.toByteArray(), "text/plain", fileName);
+		stream.close();
+	}
+
+	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+		String key = prefix.concat("/").concat(fileName);
+
+		byte[] fileData = bucket.getObject(key);
+		Filedownload.save(fileData, "text/plain", fileName);
+	}
+
+	private void refresh() {
+		doRemoveValidation();
+		doClearData();
+		doReset();
+		search();
+	}
+
+	private void doClearData() {
+		this.vocherDate.setText("");
+	}
+
+	private class VocherDownloadListModelItemRenderer implements ListitemRenderer<FileDownlaod>, Serializable {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+			Listcell lc;
+
+			lc = new Listcell(fileDownlaod.getFileName());
+			lc.setParent(item);
+
+			lc = new Listcell(getSecurityUser(fileDownlaod.getUserId()));
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), DateFormat.LONG_DATE));
+			lc.setParent(item);
+
+			lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), DateFormat.LONG_DATE));
+			lc.setParent(item);
+
+			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
+			lc.setParent(item);
+
+			lc = new Listcell();
+			downlaod = new Button();
+			downlaod.addForward("onClick", self, "onClick_Downlaod");
+			lc.appendChild(downlaod);
+			downlaod.setLabel("Download");
+			downlaod.setTooltiptext("Download");
+
+			downlaod.setAttribute("object", fileDownlaod);
+			StringBuilder builder = new StringBuilder();
+			builder.append(fileDownlaod.getFileLocation());
+			builder.append(File.separator);
+			builder.append(fileDownlaod.getFileName());
+
+			if (!ExecutionStatus.S.name().equals(fileDownlaod.getStatus())) {
+				downlaod.setDisabled(true);
+				downlaod.setTooltiptext("File generation failed.");
+			}
+
+			if (!com.pennanttech.dataengine.Event.MOVE_TO_S3_BUCKET.name().equals(fileDownlaod.getPostEvent())) {
+				File file = new File(builder.toString());
+				if (!file.exists()) {
+					downlaod.setDisabled(true);
+					downlaod.setTooltiptext("File not available.");
+				}
+			}
+
+			lc.setParent(item);
+		}
+
+	}
+
+	private String getSecurityUser(long usrId) {
+		return userMap.computeIfAbsent(usrId, userLogin -> getUserLogin(usrId));
+	}
+
+	private String getUserLogin(long usrId) {
+		return securityUserService.getSecurityUserById(usrId).getUsrLogin();
+	}
+
+	@Autowired
+	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {
+		this.dataEngineConfig = dataEngineConfig;
+	}
+
+	@Autowired
+	public void setSecurityUserService(SecurityUserService securityUserService) {
+		this.securityUserService = securityUserService;
+	}
+
+	@Autowired
+	public void setVocherDownloadService(VocherDownloadService vocherDownloadService) {
+		this.vocherDownloadService = vocherDownloadService;
+	}
+
+}

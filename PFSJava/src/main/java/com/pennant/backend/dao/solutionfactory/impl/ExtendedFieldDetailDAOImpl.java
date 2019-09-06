@@ -1070,4 +1070,16 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	public void setAuditDataSource(DataSource dataSource) {
 		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+
+	// Extended fields Extended combobox description--04-09-2019
+	@Override
+	public String getExtFldDesc(String sql) {
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(String.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql, beanParameters, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return null;
+	}
 }

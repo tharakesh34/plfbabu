@@ -700,4 +700,29 @@ public class AdvancePaymentUtil {
 			amountCodes.setEmiTdsAdjusted(BigDecimal.ZERO);
 		}
 	}
+
+	public static boolean advPayUpdateReq(String moduleDefiner) {
+		boolean advPayUpdReq = false;
+		switch (moduleDefiner) {
+		case FinanceConstants.FINSER_EVENT_ORG:
+		case FinanceConstants.FINSER_EVENT_ADDDISB:
+		case FinanceConstants.FINSER_EVENT_RATECHG:
+		case FinanceConstants.BULK_RATE_CHG:
+		case FinanceConstants.FINSER_EVENT_ADDTERM:
+		case FinanceConstants.FINSER_EVENT_RMVTERM:
+		case FinanceConstants.FINSER_EVENT_CANCELDISB:
+		case FinanceConstants.FINSER_EVENT_CHGPFT:
+		case FinanceConstants.FINSER_EVENT_CHGFRQ:
+		case FinanceConstants.FINSER_EVENT_PLANNEDEMI:
+		case FinanceConstants.FINSER_EVENT_UNPLANEMIH:
+		case FinanceConstants.FINSER_EVENT_RESCHD:
+		case FinanceConstants.FINSER_EVENT_RECALCULATE:
+		case FinanceConstants.FINSER_EVENT_CHGRPY:
+			advPayUpdReq = true;
+			break;
+		default:
+			break;
+		}
+		return advPayUpdReq;
+	}
 }

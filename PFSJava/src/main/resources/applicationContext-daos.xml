@@ -3374,7 +3374,7 @@
 		<property name="advancePaymentDetailDAO" ref="advancePaymentDetailDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		
+
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
 		<property name="jointAccountDetailService" ref="finJointAccountDetailService" />
@@ -3605,7 +3605,8 @@
 	<bean id="finPlanEmiHolidayDAO" class="com.pennant.backend.dao.finance.impl.FinPlanEmiHolidayDAOImpl" parent="basicDao" />
 
 	<!-- Finance Main Detail -->
-	<bean id="advancePaymentDetailDAO" class="com.pennant.backend.dao.finance.impl.AdvancePaymentDetailDAOImpl" parent="basicDao" />
+	<bean id="advancePaymentDetailDAO" class="com.pennant.backend.dao.finance.impl.AdvancePaymentDetailDAOImpl"
+		parent="basicDao" />
 
 	<!--============ Finance Writeoff Details ============== -->
 	<bean id="financeWriteoffDAO" class="com.pennant.backend.dao.finance.impl.FinanceWriteoffDAOImpl" parent="basicDao" />
@@ -6613,6 +6614,25 @@
 
 	<bean id="limitReferenceMappingDAO" class="com.pennant.backend.dao.limit.impl.LimitReferenceMappingDAOImpl"
 		parent="sequenceDao" />
+		
+	<bean id="institutionLimitRebuild" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="institutionLimitRebuildTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="institutionLimitRebuildTarget" class="com.pennant.backend.service.limitservice.impl.InstitutionLimitRebuild" />
 
 	<!-- Error Detail -->
 	<bean id="errorDetailDAO" class="com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl" parent="basicDao" />

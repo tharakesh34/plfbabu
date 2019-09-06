@@ -2000,6 +2000,11 @@ public class ExtendedFieldDetailsService {
 				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
+	// Extended field Extended combobox Description--04-09-2019
+	public String getExtFieldDesc(String sql) {
+		return this.extendedFieldDetailDAO.getExtFldDesc(sql);
+	}
+
 	public List<ExtendedField> getExtndedFieldDetails(String moduleName, String subModuleName, String event,
 			String reference) {
 

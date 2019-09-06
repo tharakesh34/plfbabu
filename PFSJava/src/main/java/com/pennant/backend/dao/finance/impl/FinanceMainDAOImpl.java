@@ -4984,4 +4984,80 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug("Leaving");
 		return financeMain;
 	}
+
+	@Override
+	public List<FinanceMain> getFinMainListBySQLQueryRule(String whereClause, String type) {
+		StringBuilder sql = new StringBuilder("SELECT FinReference,GraceTerms, NumberOfTerms,");
+		sql.append(" GrcPeriodEndDate, GraceBaseRate, GraceSpecialRate, GrcPftRate, GrcPftFrq,NextGrcPftDate,");
+		sql.append(" AllowGrcPftRvw,GrcPftRvwFrq, NextGrcPftRvwDate, AllowGrcCpz, GrcCpzFrq, NextGrcCpzDate,");
+		sql.append(" RepayBaseRate,RepaySpecialRate, RepayProfitRate, RepayFrq, NextRepayDate, RepayPftFrq, ");
+		sql.append(" AllowRepayRvw,RepayRvwFrq,NextRepayRvwDate,AllowRepayCpz, RepayCpzFrq, NextRepayCpzDate,");
+		sql.append(" MaturityDate, CpzAtGraceEnd,DownPayment, ReqRepayAmount, TotalProfit, DownPayBank,");
+		sql.append(" TotalCpz,TotalGrossPft,TotalGracePft,TotalGraceCpz,TotalGrossGrcPft, TotalRepayAmt,");
+		sql.append(" NextRepayPftDate,GrcRateBasis,RepayRateBasis, FinType,FinRemarks, FinCcy, ScheduleMethod,");
+		sql.append(" ProfitDaysBasis, ReqMaturity, CalTerms, CalMaturity, FirstRepay, LastRepay,DownPaySupl,");
+		sql.append(" FinStartDate, FinAmount, FinRepaymentAmount, CustID, Defferments, PlanDeferCount, ");
+		sql.append(" FinBranch, FinSourceID, AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
+		sql.append(" AvailedDefFrqChange, RecalType, FinAssetValue, DisbAccountId, RepayAccountId,FinIsActive,");
+		sql.append(" LastRepayDate, LastRepayPftDate,LastRepayRvwDate, LastRepayCpzDate, AllowGrcRepay, ");
+		sql.append(" GrcMargin, RepayMargin, FinCommitmentRef, DepreciationFrq, FinCurrAssetValue,");
+		sql.append(" NextDepDate, LastDepDate, FinAccount, FinCustPftAccount, ClosingStatus, FinApprovedDate,");
+		sql.append(" AnualizedPercRate , EffectiveRateOfReturn , FinRepayPftOnFrq , GrcProfitDaysBasis, ");
+		sql.append(" LinkedFinRef, GrcMinRate, GrcMaxRate , RpyMinRate, RpyMaxRate,GrcSchdMthd, StepPolicy,");
+		sql.append(" ManualSchedule, TakeOverFinance , GrcAdvBaseRate ,GrcAdvMargin ,GrcAdvPftRate,");
+		sql.append(" SupplementRent, IncreasedCost, feeAccountId, MinDownPayPerc,TDSApplicable, FeeChargeAmt,");
+		sql.append(" PlanEMIHMethod, PlanEMIHMaxPerYear, PlanEMIHMax, PlanEMIHLockPeriod , PlanEMICpz, ");
+		sql.append(" DeductFeeDisb,RvwRateApplFor, SchCalOnRvw,PastduePftCalMthd,DroppingMethod,RateChgAnyDay,");
+		sql.append(" InvestmentRef,DownPayAccount,SecurityDeposit, RcdMaintainSts,FinRepayMethod, FinCancelAc,");
+		sql.append(" MigratedFinance,ScheduleMaintained,ScheduleRegenerated,CustDSR,JointAccount,JointCustId,");
+		sql.append(" Blacklisted,OverrideLimit,FinPurpose,FinStatus,FinStsReason,InitiateUser,RpyAdvMargin,");
+		sql.append(" BankName, Iban, AccountType, DdaReferenceNo, NextUserId, Priority, AlwManualSteps,");
+		sql.append(" RolloverFrq, NextRolloverDate,ShariaStatus,InitiateDate,MMAId,AccountsOfficer,DsaCode, ");
+		sql.append(" ReferralId, DmaCode, SalesDepartment, QuickDisb, WifReference, UnPlanEMIHLockPeriod, ");
+		sql.append(" MaxReAgeHolidays, AvailedUnPlanEmi, AvailedReAgeH, PromotionCode, ApplicationNo, AlwBPI,");
+		sql.append(" CalRoundingMode , AlwMultiDisb, BpiAmount, PastduePftMargin,FinCategory,ProductCategory,");
+		sql.append(" DeviationApproval,FinPreApprovedRef,MandateID,FirstDroplineDate,PftServicingODLimit,");
+		sql.append(" UnPlanEMICpz, ReAgeCpz, MaxUnplannedEmi,BpiTreatment, PlanEMIHAlw,InsuranceAmt,");
+		sql.append(" RpyAdvPftRate, StepType, DroplineFrq,RpyAdvBaseRate,NoOfSteps,StepFinance,FinContractDate");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(" , lovDescFinTypeName, lovDescFinBranchName, ");
+			sql.append(" lovDescAccruedTillLBD, lovDescFinScheduleOn, CostOfFunds, ARFSuspendSubvention,");
+			sql.append(" SubventionTillMonths, AllowSuspendSubvention, SuspendBucket,SubventionApplicable,");
+			sql.append(" LovDescStepPolicyName,CustStsDescription, lovDescAccountsOfficer,DsaCodeDesc, ");
+			sql.append(" ReAgeBucket, FinLimitRef, ReferralIdDesc, DmaCodeDesc, SalesDepartmentDesc,");
+			sql.append(" CustNationality, CustParentCountry, CustGenderCode, CustIsStaff, CustAddrProvince");
+			sql.append(" FinDivision, CustIndustry, CustCtgCode, CustDftBranch, CustEmpSts, CustMaritalSts, ");
+			sql.append(" CustRiskCountry, CustSector,CustSegment, CustSubSector, CustSubSegment, CustTypeCode");
+		}
+
+		if (type.equals("_LCFTView")) {
+			sql.append(" , 1 LimitValid");
+		}
+
+		sql.append(" From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" " + whereClause);
+		sql.append(" AND FinIsActive = 1");
+
+		if (type.equals("_LCFTView")) {
+
+			if (App.DATABASE == Database.ORACLE) {
+				sql.append(" AND RcdMaintainSts IS NULL ");
+			} else {
+				sql.append(" AND RcdMaintainSts = '' ");
+			}
+		}
+
+		logger.debug("selectSql: " + sql.toString());
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), typeRowMapper);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ArrayList<>();
+
+	}
 }

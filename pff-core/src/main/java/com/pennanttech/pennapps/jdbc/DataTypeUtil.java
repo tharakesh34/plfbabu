@@ -80,6 +80,8 @@ public final class DataTypeUtil {
 					return Integer.parseInt(value);
 				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.STRING) {
 					return value;
+				} else if (DataType.valueOf(fieldType.toUpperCase()) == DataType.OBJECT) {
+					return value;
 				}
 				break;
 			}
