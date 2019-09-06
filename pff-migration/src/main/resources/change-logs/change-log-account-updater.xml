@@ -329,9 +329,9 @@
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="10" author="murthy.y">
+	 <changeSet id="10" author="murthy.y">
 		<addColumn tableName="Postings_Stage">
-			<column name="PostDate" />
+			<column name="PostDate" type="datetime" />
 		</addColumn>
 	</changeSet>
 </databaseChangeLog>
