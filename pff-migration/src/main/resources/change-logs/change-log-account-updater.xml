@@ -95,7 +95,6 @@
 	<changeSet id="3" author="naga.g">
 		<createTable tableName="Accounts_History">
 			<column name="Id" type="bigint">
-				>
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_history_id" />
 			</column>
 			<column name="AccountId" type="bigint">
