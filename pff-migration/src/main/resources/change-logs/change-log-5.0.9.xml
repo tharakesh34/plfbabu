@@ -5937,4 +5937,12 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="107" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='BR_INRST_RVW_FRQ_FRQDAYVAL_REQ';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
