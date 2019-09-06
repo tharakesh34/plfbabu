@@ -35,7 +35,7 @@
 		<createSequence sequenceName="SeqAccounts_By_FinReferences" startValue="1" incrementBy="1" />
 	</changeSet>
 
-	<changeSet id="1.1" author="naga.g">
+	<changeSet id="1" author="naga.g">
 		<dropView viewName="Accounts_view" />
 		<dropView viewName="Accounts_aview" />
 
@@ -92,7 +92,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="3.1" author="naga.g">
+	<changeSet id="3" author="naga.g">
 		<createTable tableName="Accounts_History">
 			<column name="Id" type="bigint">
 				<constraints nullable="false" primaryKey="true" primaryKeyName="pk_accounts_history_id" />
