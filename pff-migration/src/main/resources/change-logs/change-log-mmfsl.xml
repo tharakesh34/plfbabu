@@ -2908,16 +2908,20 @@
 	]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="37" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-			create table offlineusrmessagesbackup_1 as select * from offlineusrmessagesbackup;
+				create table offlineusrmessagesbackup_1 as 
+				select * from offlineusrmessagesbackup;
 			]]>
 		</sql>
 	</changeSet>
+
 	<changeSet id="38" author="naga.g" dbms="oracle">
 		<dropTable tableName="offlineusrmessagesbackup" />
 	</changeSet>
+
 	<changeSet id="39" author="naga.g" dbms="oracle">
 		<createTable tableName="offlineusrmessagesbackup">
 			<column name="id" type="NUMBER(10,0)" autoIncrement="true">
@@ -2936,6 +2940,7 @@
 			</column>
 		</createTable>
 	</changeSet>
+
 	<changeSet id="40" author="naga.g" dbms="oracle">
 		<createIndex tableName="OFFLINEUSRMESSAGESBACKUP"
 			indexName="IX_OLUMB_TOUSRID">
