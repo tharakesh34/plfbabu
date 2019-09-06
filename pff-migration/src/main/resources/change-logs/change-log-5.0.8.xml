@@ -8557,5 +8557,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="179" author="Varaprasad.K">
+	<sql>
+	    <![CDATA[
+			Delete from SMTparameters where SysParmCode = 'ALLOW_LOAN_APP_LOCK';
+			INSERT INTO SMTparameters  VALUES ('ALLOW_LOAN_APP_LOCK', 'Loan lock related flag if it is Y then lock button visible at a loan level.', 'String', '1', 'N', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		]]>
+	</sql>
+</changeSet>
 
 </databaseChangeLog>

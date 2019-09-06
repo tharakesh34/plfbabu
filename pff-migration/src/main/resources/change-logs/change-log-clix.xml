@@ -3604,6 +3604,16 @@ UNION ALL
   ORDER BY p.linkedtranid
 		</createView>
 	</changeSet >
+	<changeSet id="89" author="Varaprasad.K">
+	<sql>
+	    <![CDATA[
+	        delete from secgrouprights where rightid  in (select rightid from secrights where rightname='CustomerDialog_custRO1');
+			Delete from SMTparameters where SysParmCode = 'ALLOW_LOAN_APP_LOCK';
+			INSERT INTO SMTparameters  VALUES ('ALLOW_LOAN_APP_LOCK', 'Presentment download related flag if it is Y then initiates dowmload.', 'String', '1', 'Y', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		]]>
+	</sql>
+</changeSet>
+
 	
 	
 </databaseChangeLog>

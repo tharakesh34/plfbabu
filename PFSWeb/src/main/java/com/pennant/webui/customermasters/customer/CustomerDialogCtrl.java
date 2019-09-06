@@ -984,7 +984,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		this.custSubSegment.setValidateColumns(new String[] { "SubSegmentCode" });
 
 		this.custRO1.setTextBoxWidth(121);
-		this.custRO1.setMandatoryStyle(true);
+		if(!isReadOnly("CustomerDialog_custRO1")){
+			this.custRO1.setMandatoryStyle(true);
+		}
 		this.custRO1.setModuleName("SourceOfficer");
 		this.custRO1.setValueColumn("DealerName");
 		this.custRO1.setDescColumn("DealerCity");

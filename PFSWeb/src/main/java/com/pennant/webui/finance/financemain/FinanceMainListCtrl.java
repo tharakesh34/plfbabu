@@ -78,6 +78,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FinanceWorkflowRoleUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.QueueAssignment;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.administration.SecurityUser;
@@ -498,7 +499,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check whether the record was locked by any other user.
 		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
 
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK && StringUtils.isNotEmpty(userId)
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK")) && StringUtils.isNotEmpty(userId)
 				&& !StringUtils.equals(userId, Long.toString(getUserWorkspace().getUserId()))) {
 			SecurityUser user = PennantAppUtil.getUser(Long.valueOf(userId));
 			String userName = "";

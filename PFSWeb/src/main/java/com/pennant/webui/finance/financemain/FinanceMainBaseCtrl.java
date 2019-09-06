@@ -1119,7 +1119,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Schedule related buttons
 		this.btnValidate.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnValidate"));
 		this.btnBuildSchedule.setVisible(getUserWorkspace().isAllowed("button_FinanceMainDialog_btnBuildSchd"));
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 			if (StringUtils.isEmpty(moduleDefiner) && btnLockRecord.isVisible()
 					&& !getFinanceDetail().getFinScheduleData().getFinanceMain().isNew()) {
 				btnLockRecord.setVisible(true);
@@ -6674,7 +6674,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 			String currUserId = getFinanceDetailService()
 					.getNextUserId(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
 

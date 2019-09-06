@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinanceDeviationsDAO;
@@ -395,7 +396,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 						 * owner and Update the update the record process flag to zero. 3. delete the record which
 						 * assigned for next role Code.
 						 */
-						if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+						if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 							finmain.setNextUserId(null);
 						} else {
 							TaskOwners taskowner = taskOwnersDAO.getTaskOwner(finref, roleCode);

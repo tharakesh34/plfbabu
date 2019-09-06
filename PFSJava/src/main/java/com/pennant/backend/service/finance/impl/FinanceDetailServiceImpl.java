@@ -9308,7 +9308,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private void updateTaskLog(FinanceMain financeMain, boolean isSaveorUpdate) {
 		logger.debug(Literal.ENTERING);
 
-		if (PennantConstants.ALLOW_LOAN_APP_LOCK) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 			if (!PennantConstants.RCD_STATUS_SAVED.equals(financeMain.getRecordStatus())) {
 				Map<String, String> roleUsers = new HashMap<>();
 				roleUsers.put(financeMain.getRoleCode(), String.valueOf(financeMain.getLastMntBy()));

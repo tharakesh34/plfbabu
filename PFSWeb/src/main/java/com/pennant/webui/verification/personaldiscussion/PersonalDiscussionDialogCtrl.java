@@ -84,6 +84,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.fi.PDStatus;
 import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.service.PersonalDiscussionService;
@@ -673,7 +674,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == PDStatus.NEGATIVE.getKey()) {
+		if (type == PDStatus.NEGATIVE.getKey() || type == PDStatus.REFERTOCREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
 		} else {
 			this.reason.setMandatoryStyle(false);

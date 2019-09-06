@@ -576,7 +576,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				vrf.setDecision(Decision.APPROVE.getKey());
 			}
 			fillComboBox(decision, vrf.getDecision(), filterDecisions(decisionList));
-		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey()) {
+		} else if (vrf.getStatus() == FIStatus.NEGATIVE.getKey() || vrf.getStatus() == FIStatus.REFERTOCREDIT.getKey() ) {
 			decisionList.add(new ValueLabel(String.valueOf(Decision.APPROVE.getKey()), Decision.APPROVE.getValue()));
 			if (vrf.getDecision() == Decision.APPROVE.getKey()) {
 				vrf.setDecision(Decision.SELECT.getKey());

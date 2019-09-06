@@ -744,7 +744,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == RCUStatus.NEGATIVE.getKey()) {
+		if (type == RCUStatus.NEGATIVE.getKey() || type == RCUStatus.REFERTOCREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
 		} else {
 			this.reason.setMandatoryStyle(false);

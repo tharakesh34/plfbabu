@@ -672,7 +672,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 	}
 
 	private void visibleComponent(Integer type) {
-		if (type == FIStatus.NEGATIVE.getKey()) {
+		if (type == FIStatus.NEGATIVE.getKey() || type == FIStatus.REFERTOCREDIT.getKey()) {
 			this.reason.setMandatoryStyle(true);
 		} else {
 			this.reason.setMandatoryStyle(false);
