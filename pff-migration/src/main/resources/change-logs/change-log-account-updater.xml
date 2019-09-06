@@ -323,5 +323,17 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="9" author="murthy.y">
+		<createIndex tableName="Postings" indexName="IDX_POSTINGS_LINKEDTRANID">
+			<column name="LinkedTranId" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="10" author="murthy.y">
+		<addColumn tableName="Postings_Stage">
+			<column name="PostDate" />
+		</addColumn>
+		<
+	</changeSet>
 </databaseChangeLog>
 
