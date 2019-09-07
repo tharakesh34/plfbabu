@@ -384,6 +384,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label windowTitle;
 
 	protected Datebox finStartDate;
+	
 	protected Textbox promotionProduct;
 	protected Textbox finDivisionName;
 	protected Textbox businessVertical;
