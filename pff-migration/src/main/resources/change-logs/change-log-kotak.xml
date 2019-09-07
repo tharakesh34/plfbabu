@@ -3184,5 +3184,36 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="55" author="dheerendra">
+		<sql>
+			<![CDATA[
+				INSERT INTO SMTPARAMETERS(
+				sysparmcode, sysparmdesc, sysparmtype, sysparmmaint,  sysparmlength, sysparmdec,   
+				sysparmdescription, version, lastmntby, lastmnton, recordstatus,  workflowid)
+				VALUES ('GST_Suntech_Interface', 'GST_EXECUTION', 'String', '1',  '30', '0', 'check lastmnt date ', 1, 1000,CURRENT_TIMESTAMP, 'Approved', 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="56" author="dheerendra.d">
+		<createTable tableName="GSTSUNTECHLOG">
+			<column name="CUSTID" type="bigint" />
+			<column name="FINREFERNECE" type="varchar(20)" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="57" author="dheerendra.d">
+		<createTable tableName="GstErrorDetails">
+			<column name="code" type="varchar(20)" />
+			<column name="CUSTID" type="bigint" />
+			<column name="gstnNo" type="varchar(20)" />
+			<column name="finReference" type="varchar(20)" />
+			<column name="invoiceId" type="bigint" />
+			<column name="insertDate" type="datetime" />
+			<column name="status" type="varchar(10)" />
+			<column name="errorsDesc" type="varchar(300)" />
+		</createTable>
+	</changeSet>
 	
 </databaseChangeLog>
