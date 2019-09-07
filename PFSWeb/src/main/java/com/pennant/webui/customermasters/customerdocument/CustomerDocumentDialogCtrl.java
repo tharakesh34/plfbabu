@@ -668,7 +668,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 
 		if (aCustomerDocument.getCustDocImage() != null) {
 			if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_WORD)
-					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)) {
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(
 						getDocumentLink(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(),
@@ -2121,11 +2122,12 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-				this.finDocumentPdfView
-						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 
 			}
-			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
 				this.docDiv.setVisible(true);
 				this.finDocumentPdfView.setVisible(false);
 			} else {

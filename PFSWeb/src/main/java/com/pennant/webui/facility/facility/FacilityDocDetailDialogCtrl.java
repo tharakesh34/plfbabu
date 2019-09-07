@@ -395,8 +395,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
 						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
 			} else if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
-				amedia = new AMedia("document.x-zip-compressed", "x-zip-compressed", "application/x-zip-compressed",
-						data);
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
+						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
 			}
 			finDocumentPdfView.setContent(amedia);
 		}
@@ -1053,8 +1054,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-					this.finDocumentPdfView
-							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+					this.docDiv.getChildren().clear();
+					this.docDiv.appendChild(
+							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {

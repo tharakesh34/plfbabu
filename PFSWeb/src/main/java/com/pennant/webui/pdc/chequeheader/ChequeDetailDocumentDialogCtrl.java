@@ -272,11 +272,11 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				// this.docDiv.getChildren().clear();
 				getDocumentLink(fileName, docType, fileName, ddaImageData);
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-				this.chequeDocumentDivPdfView
-						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+				getDocumentLink(fileName, docType, fileName, ddaImageData);
 			}
 
-			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
 				this.chequeDocumentDivPdfView.setVisible(false);
 			} else {
 				this.chequeDocumentDivPdfView.setVisible(true);

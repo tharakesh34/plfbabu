@@ -1045,8 +1045,9 @@ public class DocumentDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-					this.finDocumentPdfView
-							.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+					this.docDiv.getChildren().clear();
+					this.docDiv.appendChild(
+							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD)) {

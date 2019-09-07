@@ -431,7 +431,8 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 		AMedia amedia = null;
 		if (aLegalDocument.getDocImage() != null) {
 			if (aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_WORD)
-					|| aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_MSG)) {
+					|| aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_MSG)
+					|| aLegalDocument.getUploadDocumentType().equals(PennantConstants.DOC_TYPE_ZIP)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(
 						getDocumentLink(aLegalDocument.getDocumentName(), aLegalDocument.getUploadDocumentType(),
@@ -970,11 +971,12 @@ public class LegalDocumentDialogCtrl extends GFCBaseCtrl<LegalDocument> {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
-				this.documentPdfView
-						.setContent(new AMedia(fileName, null, null, new ByteArrayInputStream(ddaImageData)));
+				this.docDiv.getChildren().clear();
+				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
 			}
 
-			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
+					|| docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
 				this.docDiv.setVisible(true);
 				this.documentPdfView.setVisible(false);
 			} else {
