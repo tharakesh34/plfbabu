@@ -3641,4 +3641,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="93" author="Varaprasad.K">
+		<sql>
+	    	<![CDATA[
+	    	    UPDATE ErrorDetails SET MESSAGE='Application Form No Is mandatory'  WHERE CODE='91141'
+	        	
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
