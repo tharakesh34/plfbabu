@@ -26,7 +26,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="1" author="Saikiran.v">
+ 	<changeSet id="1" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AllowDrawingPower" type="boolean" />
 		</addColumn>
@@ -4026,7 +4026,7 @@
 </createView>
 	</changeSet>
 
-	<!-- <changeSet id="128_pre" author="murthy" dbms="postgresql"> <dropView viewName="accounts_view" /> </changeSet> -->
+	<changeSet id="128_pre" author="murthy" dbms="postgresql"> <dropView viewName="accounts_view" /> </changeSet> 
 
 	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
@@ -4426,6 +4426,587 @@
             	update REPORTFILTERFIELDS set MULTISELECTSEARCH=0 where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_LoanwiseVoucherDetail') and fieldid=2;
 				Insert into REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Loan Wise Voucher Report','Excel:Loan Wise Voucher Report',1,'LoanwiseVoucherReportForAll','dataSource',1,'menu_Item_LoanwiseVoucherReport',2,1000, null, null, null, null, null, null, 0, current_timestamp, 0, 0, 0);
              ]]>
+		</sql>
+	</changeSet> 
+	
+	<changeSet id="147" author="vijaya.a">
+		<createTable tableName="MiscPostingUploads">
+			<column name="UPLOADID" type="bigint" >
+				<constraints nullable="false" />
+			</column>
+			<column name="MISCPOSTINGID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="BATCH" type="varchar(20)"/>
+			<column name="BRANCH" type="varchar(12)" />
+			<column name="BATCHPURPOSE" type="varchar(20)" />
+			<column name="POSTAGAINST" type="varchar(5)" />
+			<column name="REFERENCE" type="varchar(20)" />
+			<column name="POSTINGDIVISION" type="varchar(8)" />
+			<column name="ACCOUNT" type="varchar(50)" />
+			<column name="TXNENTRY" type="varchar(1)" />
+			<column name="VALUEDATE" type="datetime" />
+			<column name="TXNAMOUNT" type="decimal(18,2)" />
+			<column name="NARRLINE1" type="varchar(100)" />
+			<column name="NARRLINE2" type="varchar(100)" />
+			<column name="NARRLINE3" type="varchar(100)" />
+			<column name="NARRLINE4" type="varchar(100)" />
+			<column name="UPLOADSTATUS" type="varchar(10)" />
+			<column name="REASON" type="varchar(200)" />
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(50)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="148" author="vijaya.a">
+		<addPrimaryKey tableName="MiscPostingUploads"
+			columnNames="MISCPOSTINGID" constraintName="PK_MISCPOSTINGUPLOADS" />
+	</changeSet>
+
+	<changeSet id="149" author="Rahul">
+		<createView viewName="MISCPOSTINGUPLOADS_AVIEW">
+    			SELECT 		
+    				T1.UploadId, 
+    				T1.MISCPOSTINGID, 
+    				T2.FILENAME, 
+    				T1.BATCH, 
+    				T1.BRANCH, 
+    				T1.BATCHPURPOSE, 
+    				T1.POSTAGAINST, 
+    				T1.REFERENCE, 
+    				T1.POSTINGDIVISION, 
+    				T1.ACCOUNT,
+					T1.Version, 
+					T1.LastMntBy, 
+					T1.LastMntOn, 
+					T1.RecordStatus, 
+					T1.RoleCode, 
+					T1.NextRoleCode, 
+					T1.TaskId, 
+					T1.NextTaskId, 
+					T1.RecordType, 
+					T1.WorkflowId,
+					T1.TXNENTRY,
+					T1.VALUEDATE,
+					T1.TXNAMOUNT,
+					T1.NARRLINE1,
+					T1.NARRLINE2,
+					T1.NARRLINE3,
+					T1.NARRLINE4, 
+					T1.UPLOADSTATUS, 
+					T1.REASON
+				FROM MISCPOSTINGUPLOADS T1 INNER JOIN 
+			    UPLOADHEADER T2 ON T1.UploadId = T2.UploadId
+    	</createView>
+	</changeSet>
+
+	<changeSet id="150" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	 INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'menuItem_MiscPostingUpload', 'MENU', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'menuCat_BulkUploads', 'MENU', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_UploadList_NewMiscPostingUpload', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_MiscPostingUploadDialog_btnBrowse', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_MiscPostingUploadDialog_btnNew', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_MiscPostingUploadDialog_btnEdit', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_MiscPostingUploadDialog_btnDelete', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+			     INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '2', 'button_MiscPostingUploadDialog_btnSave', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+					
+				 INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'menuItem_MiscPostingUploadApproval', 'MENU', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+				
+				 INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'MISCPOSTINGUPLOAD_MAKER', 'WF Maker Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			     INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'MISCPOSTINGUPLOAD_APPROVER', 'WF Maker Group',  1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_MiscPostingUpload'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_BulkUploads'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_UploadList_NewMiscPostingUpload'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnBrowse'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnNew'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnEdit'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnDelete'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'button_MiscPostingUploadDialog_btnSave'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_BulkUploads'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);	 
+			     INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuItem_MiscPostingUploadApproval'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="151" author="vijaya.a">
+	 	<addColumn tableName="MiscPostingUploads">
+	 		<column name="TransactionId" type="bigint"/>
+	 	</addColumn>
+	</changeSet>
+	
+	<changeSet id="152" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+			 	delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt');
+       			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt';
+       			Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Miscellaneous posting Upload Status report','Miscellaneous posting Upload Status report',1,'MiscellaneouspostUploadStsrpt','datasource',1,'menu_Item_MiscellaneouspostUploadStsrpt',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+       			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),1,'Entity','LOVSEARCH','Entity','t1.entity',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+       			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),2,'File Name','LOVSEARCH','File Name','t1.filename',null,'MiscUploadPostings','getFileName','getFileName',0,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+       			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),3,'Date','DATE','Date','t1.transactiondate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="153" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+				delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt');
+			    delete from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt';
+			    Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Miscellaneous posting Upload Status report','Miscellaneous posting Upload Status report',1,'MiscellaneouspostUploadStsrpt','datasource',1,'menu_Item_MiscellaneouspostUploadStsrpt',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,0);
+			    Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),1,'Entity','LOVSEARCH','Entity','t1.entity',null,'Entity','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			    Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),2,'File Name','LOVSEARCH','File Name','t1.filename',null,'MiscUploadPostings','getFileName','getFileName',0,0,0,0,2,1,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			    Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_MiscellaneouspostUploadStsrpt'),3,'Date','DATE','Date','t1.transactiondate',null,'---Select----',null,null,0,0,0,0,3,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="154" author="vijaya.a">
+		<createView viewName="MISCPOSTINGUPLOADS_AVIEW" replaceIfExists="true">
+    		SELECT 		
+    			T1.UploadId, 
+    			T1.MISCPOSTINGID, 
+    			T2.FILENAME, 
+    			T1.BATCH, 
+    			T1.BRANCH, 
+    			T1.BATCHPURPOSE, 
+    			T1.POSTAGAINST, 
+    			T1.REFERENCE, 
+    			T1.POSTINGDIVISION, 
+    			T1.ACCOUNT,
+				T1.Version, 
+				T1.LastMntBy, 
+				T1.LastMntOn, 
+				T1.RecordStatus, 
+				T1.RoleCode, 
+				T1.NextRoleCode, 
+				T1.TaskId, 
+				T1.NextTaskId, 
+				T1.RecordType, 
+				T1.WorkflowId,
+				T1.TXNENTRY,
+				T1.VALUEDATE,
+				T1.TXNAMOUNT,
+				T1.NARRLINE1,
+				T1.NARRLINE2,
+				T1.NARRLINE3,
+				T1.NARRLINE4, 
+				T1.UPLOADSTATUS, 
+				T1.REASON,
+				t1.transactionid
+			FROM MISCPOSTINGUPLOADS T1 INNER JOIN 
+			UPLOADHEADER T2 ON T1.UploadId = T2.UploadId
+    </createView>
+	</changeSet>
+	
+	<changeSet id="156" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('JVPosting','JVPosting','listheader_BatchReference.label,listheader_Batch.label,listheader_DebitCount.label,listheader_CreditsCount.label,listheader_TotDebitsByBatchCcy.label,listheader_TotCreditsByBatchCcy.label,listheader_RecordStatus.label','reference,batch,debitCount,creditsCount,totDebitsByBatchCcy,totCreditsByBatchCcy,recordStatus','String,String,int,int,int,int,String',' ','ReportList07','Miscellaneous Posting Upload Details','Upload Masters',2,1001,Convert(Datetime,'12-FEB-19'),'Approved',' ',' ',' ',' ',' ',0,0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="157" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'menu_Item_MiscellaneouspostUploadStsrpt', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+	        	INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'menuCat_Reports', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+	 			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_Reports'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);	 
+     			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_MiscellaneouspostUploadStsrpt'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+     			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_Reports'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+     			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_MiscellaneouspostUploadStsrpt'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="158" author="vijaya.a">
+	 	<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="00000001"/>
+	</changeSet>
+
+	<changeSet id="159" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingDivision');
+	 			INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'JVPostingDialog_PostingDivision', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+	 			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingDivision'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	 
+	 <changeSet id="160" author="vijaya.a">
+	  	<dropNotNullConstraint tableName="MiscPostingUploads" columnName="BATCH" columnDataType = "varchar(20)"/>
+	 </changeSet>
+	 
+	 <changeSet id="161" author="vijaya.a">
+	  	<modifyDataType tableName="MiscPostingUploads" columnName="BATCHPURPOSE" newDataType="varchar(200)"/>
+	 </changeSet>
+	 
+	 <changeSet id="162" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch');
+			  	delete from SECRIGHTS where  rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch');
+	  			INSERT INTO SECRIGHTS (RIGHTID, RIGHTTYPE, RIGHTNAME, PAGE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTTASKID, WORKFLOWID) VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), '0', 'JVPostingDialog_PostingBranch', 'MiscPostingUploadDialog', '0', '1000', CURRENT_TIMESTAMP, 'Approved', ' ', '0');
+	 			INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch'), 1, 1, 1000, CURRENT_TIMESTAMP, '', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
+	 
+	<changeSet id="163" author="vijaya.a">
+	 	<dropSequence sequenceName="SeqMscPostRef"/>
+	</changeSet>
+	 
+	<changeSet id="164" author="vijaya.a">
+	 	<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="10000000"/>
+	</changeSet>
+	
+	
+	<changeSet id="165" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JVPOSTINGS_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingDivision');
+	 			delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JVPOSTINGS_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch');
+	 			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='JVPOSTINGS_MAKER'),(select rightid from secrights where rightname='JVPostingDialog_PostingDivision'),1,0,10000,Convert(Datetime,'18-MAY-17'),'Approved',' ',' ',' ',' ',' ',0);
+     			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='JVPOSTINGS_MAKER'),(select rightid from secrights where rightname='JVPostingDialog_PostingBranch'),1,0,10000,Convert(Datetime,'18-MAY-17'),'Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="166" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	update secrights set righttype=3 where rightname in ('JVPostingDialog_PostingBranch','JVPostingDialog_PostingDivision');
+			]]>
+		</sql>
+	</changeSet> 
+
+	<changeSet id="167" author="vijaya.a">
+		<createView replaceIfExists="true" viewName="MISCUPLOADPOSTINGS_RVIEW">
+			select UPLOADID,FILENAME from UploadHeader where module = 'MiscPostingUpload'
+		</createView>
+	</changeSet>
+
+	 <changeSet id="168" author="vijaya.a">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN Financemain T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Reference Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on T3.Batchreference = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'
+	 	</createView>
+	</changeSet> 
+	
+	<changeSet id="175" author="vijaya.a">
+		<createTable tableName="UPLOADHEADER_Temp">
+			<column name="UPLOADID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILELOCATION" type="varchar(250)" />
+			<column name="FILENAME" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANSACTIONDATE" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TOTALRECORDS" type="int" />
+			<column name="SUCCESSCOUNT" type="int" />
+			<column name="FAILEDCOUNT" type="int" />
+			<column name="MODULE" type="varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="bigint" />
+			<column name="LASTMNTON" type="datetime" />
+			<column name="RECORDSTATUS" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(50)" />
+			<column name="NEXTROLECODE" type="varchar(200)" />
+			<column name="TASKID" type="varchar(50)" />
+			<column name="NEXTTASKID" type="varchar(200)" />
+			<column name="RECORDTYPE" type="varchar(50)" />
+			<column name="WORKFLOWID" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="177" author="vijaya.a">
+	 <addColumn tableName="UPLOADHEADER">
+	  <column name="Entity" type="varchar(8)"/>
+	 </addColumn>
+	 <addColumn tableName="UPLOADHEADER_TEMP">
+	  <column name="Entity" type="varchar(8)"/>
+	 </addColumn>
+	</changeSet>
+	
+	<changeSet id="178" author="vijaya.a">
+	<dropColumn tableName="UPLOADHEADER" columnName="Entity"/>
+	<dropColumn tableName="UPLOADHEADER_temp" columnName="Entity"/>
+	</changeSet>
+	
+	<changeSet id="179" author="vijaya.a">
+	 <addColumn tableName="UPLOADHEADER">
+	  <column name="EntityCode" type="varchar(8)"/>
+	 </addColumn>
+	 <addColumn tableName="UPLOADHEADER_TEMP">
+	  <column name="EntityCode" type="varchar(8)"/>
+	 </addColumn>
+	</changeSet>
+	
+	<changeSet id="180" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SeqJVpostings">
+			<column name="SeqNo" type="bigint" autoIncrement="true"/>
+			<column name="Value" type="int"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="181" author="vijaya.a">
+	<createView replaceIfExists="true" viewName="UploadHeader_View">
+	 
+	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module,
+				T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T1.Entitycode, T2.EntityDesc, T3.UsrLogIn USERNAME
+	FROM 		UploadHeader_Temp T1 LEFT JOIN	
+			    Entity T2 ON T1.Entitycode = T2.EntityCode LEFT JOIN 
+				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+			
+	Union All
+
+	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module,
+				T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+				T1.Entitycode, T2.EntityDesc, T3.UsrLogIn USERNAME
+	FROM 		UploadHeader T1 LEFT JOIN	
+			    Entity T2 ON T1.Entitycode = T2.EntityCode LEFT JOIN 
+				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+	WHERE 		NOT EXISTS ( SELECT 1 FROM UploadHeader_Temp WHERE UploadId = T1.UploadId);
+
+
+	</createView>
+	</changeSet>
+	
+	<changeSet id="182" author="vijaya.a">
+		<dropSequence sequenceName="SeqMscPostRef"/>
+	</changeSet>
+	
+	<changeSet id="183" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SeqMscPostRef">
+			<column name="SeqNo" type="bigint" autoIncrement="true"/>
+			<column name="Value" type="int"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="184" author="vijaya.a">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN (Select FinReference from FinanceMain UNION 
+		           SELECT FinReference from FinanceMain_Temp) T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Reference Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on cast(T3.batchreference as varchar(20)) = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'
+	 	</createView>
+	</changeSet> 
+	
+	<changeset>
+		
+	</changeset>
+
+	<changeSet id="185" author="vijaya.a">
+		<sql>
+	    	<![CDATA[
+	        	INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MISCPOSTINGUPLOAD_MAKER'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='MISC_POST_MAKER'), 0, 1000, CURRENT_TIMESTAMP, 'APPROVED', '', '', '', '', '', 0);
+				INSERT INTO SECROLEGROUPS VALUES ((SELECT MAX(ROLEGRPID)+1 FROM SECROLEGROUPS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='MISCPOSTINGUPLOAD_APPROVER'),(SELECT ROLEID FROM SECROLES WHERE ROLECD='MISC_POST_APPROVER'), 0, 1000, CURRENT_TIMESTAMP, 'APPROVED', '', '', '', '', '', 0);
+			]]>
 		</sql>
 	</changeSet>
 
