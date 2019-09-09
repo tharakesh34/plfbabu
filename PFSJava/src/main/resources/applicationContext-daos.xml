@@ -3423,11 +3423,6 @@
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 		<property name="insuranceDetailService" ref="insuranceDetailService" />
-		<!-- Payments process service -->
-		<property name="paymentsProcessService" ref="paymentsProcessService" />
-		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
-
-		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
 
 	</bean>
 
