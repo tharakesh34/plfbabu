@@ -5009,5 +5009,13 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="186" author="murthy.y">
+		<sql>
+	    	<![CDATA[
+	        	update FinODDetails set LockODRecalCal = 0 where LockODRecalCal is null;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
