@@ -4996,10 +4996,6 @@
 				WHERE T1.FinEvent ='JVPOST'
 	 	</createView>
 	</changeSet> 
-	
-	<changeset>
-		
-	</changeset>
 
 	<changeSet id="185" author="vijaya.a">
 		<sql>
