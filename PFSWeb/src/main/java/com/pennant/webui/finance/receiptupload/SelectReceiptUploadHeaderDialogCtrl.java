@@ -651,10 +651,10 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		// Validate Receipt Header Vs Allocations
 		validateRUDvsRAD();
 
-		if (uadList != null && !uadList.isEmpty()) {
+		/*if (uadList != null && !uadList.isEmpty()) {
 			MessageUtil.showError("Allocations not related to Receipts found in allocation sheet");
 			return true;
-		}
+		}*/
 
 		logger.debug(Literal.LEAVING);
 		return false;
