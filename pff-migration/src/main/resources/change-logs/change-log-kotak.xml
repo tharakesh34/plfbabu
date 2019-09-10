@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -23,7 +23,8 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -31,7 +32,8 @@
 
 	<changeSet id="1" author="Durgaprasad.g">
 		<sql>
-			Insert into RMTLOVFIELDDETAIL values ((select max(fieldcodeid)+1 from
+			Insert into RMTLOVFIELDDETAIL values ((select max(fieldcodeid)+1
+			from
 			RMTLOVFIELDDETAIL),'CAT_COAPP','Corporate','Corporate','1',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0,'0');
 		</sql>
 	</changeSet>
@@ -56,10 +58,13 @@
 			Insert into TEMPLATES
 			(TEMPLATEID,TEMPLATEFOR,MODULE,TEMPLATECODE,TEMPLATEDESC,SMSTEMPLATE,SMSCONTENT,EMAILTEMPLATE,EMAILCONTENT,EMAILFORMAT,EMAILSUBJECT,EMAILSENDTO,TURNAROUNDTIME,REPEAT,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,EVENT)
 			values
-			((Select MAX(Seqno)+1 from SeqMailTemplate),'CN','FIN','ADD_RATE_CHANGE_NOTIFICATION','Add rate change
+			((Select MAX(Seqno)+1 from
+			SeqMailTemplate),'CN','FIN','ADD_RATE_CHANGE_NOTIFICATION','Add rate
+			change
 			notification.',0,null,1,null,'H','${vo.LAN}',null,0,0,1,1,1000,sysdate,'Approved',null,null,null,null,null,0,'AddRateChange');
 
-			Update SeqMailTemplate set seqno = (Select max(TEMPLATEID) from TEMPLATES_VIEW);
+			Update SeqMailTemplate set seqno = (Select max(TEMPLATEID) from
+			TEMPLATES_VIEW);
 		</sql>
 	</changeSet>
 	<changeSet id="3" author="saikiran.v">
@@ -275,20 +280,26 @@
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERNECE" type="varchar(16)" />
 			<column name="BALANCE" type="bigint" />
-			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="LAST_PROCESSED_DATE" type="datetime"
+				defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
 
 	<changeSet id="18" author="Durgaprasad.g" dbms="oracle">
 		<sql>
-			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'Grace', 'Moratorium');
+			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'Grace',
+			'Moratorium');
 			UPDATE ERRORDETAILS_TEMP E SET
-			Message = REPLACE(E.Message, 'Grace', 'Moratorium');
+			Message =
+			REPLACE(E.Message, 'Grace', 'Moratorium');
 
-			UPDATE ERRORDETAILS E SET Message = REPLACE(E.Message, 'grace',
+			UPDATE ERRORDETAILS E SET
+			Message = REPLACE(E.Message, 'grace',
 			'moratorium');
-			UPDATE ERRORDETAILS_TEMP E SET Message =
-			REPLACE(E.Message, 'grace', 'moratorium');
+			UPDATE
+			ERRORDETAILS_TEMP E SET Message =
+			REPLACE(E.Message, 'grace',
+			'moratorium');
 		</sql>
 	</changeSet>
 
@@ -314,7 +325,8 @@
 		<createTable tableName="NLADS_BALANCE">
 			<column name="FINREFERENCE" type="varchar(16)" />
 			<column name="BALANCE" type="bigint" />
-			<column name="LAST_PROCESSED_DATE" type="datetime" defaultValueDate="CURRENT_TIMESTAMP" />
+			<column name="LAST_PROCESSED_DATE" type="datetime"
+				defaultValueDate="CURRENT_TIMESTAMP" />
 		</createTable>
 	</changeSet>
 	<changeSet id="22" author="Saikiran.V">
@@ -369,15 +381,18 @@
 	</changeSet>
 
 	<changeSet id="26" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranModule" constraintName="UK_TranModule" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranModule"
+			constraintName="UK_TranModule" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="27" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranReference" constraintName="UK_TranReference" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranReference"
+			constraintName="UK_TranReference" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="28" author="santhoshi.k">
-		<addUniqueConstraint columnNames="TranBatch" constraintName="UK_TranBatch" tableName="PaymentTransaction" />
+		<addUniqueConstraint columnNames="TranBatch"
+			constraintName="UK_TranBatch" tableName="PaymentTransaction" />
 	</changeSet>
 
 	<changeSet id="29" author="santhoshi.k">
@@ -388,7 +403,8 @@
 	</changeSet>
 
 	<changeSet id="30" author="santhoshi.k">
-		<addUniqueConstraint columnNames="BORROWERCIF" constraintName="UK_BorrowerDetails" tableName="BorrowerDetails" />
+		<addUniqueConstraint columnNames="BORROWERCIF"
+			constraintName="UK_BorrowerDetails" tableName="BorrowerDetails" />
 	</changeSet>
 
 	<changeSet id="31" author="santhoshi.k">
@@ -404,7 +420,8 @@
 	</changeSet>
 
 	<changeSet id="32" author="satyanarayana.g">
-		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL" oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
+		<renameColumn tableName="AP_GL_TO_ORACLE_GL_TRANS_DTL"
+			oldColumnName="CREATED_DATETIME" newColumnName="CREATED_DATE" />
 	</changeSet>
 
 	<changeSet id="33" author="Durgaprasads G">
@@ -455,8 +472,8 @@
 			   ]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="39" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -464,7 +481,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="40" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -475,7 +492,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="41" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -489,7 +506,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="42" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -500,7 +517,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="43" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -508,7 +525,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="44" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -520,7 +537,7 @@
 		</sql>
 	</changeSet>
 
-<changeSet id="45" author="Durgaprasad G">
+	<changeSet id="45" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
 							
@@ -2928,7 +2945,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="45" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -2936,22 +2953,22 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="46" author="satyanarayana.g">
-	<sql>
+		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_BR_INRST_RVW_FRQ_FRQCODEVAL_REQ';
 			 ]]>
-	</sql>
-	
-</changeSet>
+		</sql>
+
+	</changeSet>
 	<changeSet id="47" author="meena.a">
-	<sql>
+		<sql>
 			<![CDATA[
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='LIMIT_ADDTNAL_FIELDS_REQ';
 			 ]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
 	<changeSet id="48" author="satyanarayana.g">
 		<sql>
@@ -2979,7 +2996,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="49" author="satyanarayana.g">
 		<comment>Schedule Details</comment>
 		<sql>
@@ -2999,7 +3016,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="51" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -3008,14 +3025,16 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			]]>
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">RECEIPT_LOAN_CLOSURE</column>
 			<column name="WorkFlowSubType">Receipt Closure Process</column>
 			<column name="WorkFlowDesc">Gold Loan Full Release Workflow</column>
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowRoles">RECEIPTCLOSURE_MAKER;RECEIPTCLOSURE_APPROVER</column>
+			<column name="WorkFlowRoles">RECEIPTCLOSURE_MAKER;RECEIPTCLOSURE_APPROVER
+			</column>
 			<column name="FirstTaskOwner">RECEIPTCLOSURE_MAKER</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">5</column>
@@ -3215,14 +3234,46 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="errorsDesc" type="varchar(300)" />
 		</createTable>
 	</changeSet>
-	
-	
-<changeSet id="58" author="srihari.m" dbms="oracle">
-<sql>
-  <![CDATA[
-       ALTER TABLE PaymentTransaction ADD SEQNO Number(2);
-   ]]>
-</sql>
-</changeSet>
-	
+
+
+	<changeSet id="58" author="srihari.m" dbms="oracle">
+		<sql>
+  			<![CDATA[
+       			ALTER TABLE PaymentTransaction ADD SEQNO Number(2);
+  			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="59" author="srihari.m" dbms="oracle">
+		<sql>
+  			<![CDATA[
+       			drop table PAYMENTTRANSACTION;
+  			 ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="60" author="srihari.m" dbms="oracle">
+		<createTable tableName="PaymentTransaction">
+			<column name="TRANSACTIONID" type="NUMBER" autoIncrement="true" >
+				<constraints primaryKey="true" />
+			</column>
+			<column name="MESSAGEID" type="VARCHAR(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="PAYMENTID" type="NUMBER">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANMODULE" type="VARCHAR(4)" />
+			<column name="SEQNO" type="NUMBER (2,0)" defaultValue="0" />
+			<column name="TRANREFERENCE" type="VARCHAR(20)" />
+			<column name="TRANBATCH" type="VARCHAR(20)" />
+			<column name="TRANSTATUS" type="CHAR(1)" />
+			<column name="RESPREFERENCE" type="VARCHAR(50)" />
+			<column name="STATUSCODE" type="VARCHAR(10)" />
+			<column name="STATUSDESC" type="VARCHAR(500)" />
+			<column name="TRANSCTIONINITON" type="TIMESTAMP" />
+			<column name="STATUSUPDATEON" type="TIMESTAMP" />
+
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
