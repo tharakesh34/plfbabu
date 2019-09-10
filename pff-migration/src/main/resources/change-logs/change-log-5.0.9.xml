@@ -28,40 +28,40 @@
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="01" author="Durgaprasad G">
+
+	<changeSet id="01" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="02" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN">
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+			<column name="PromotionSeqID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="03" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN_PA">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="04" author="Durgaprasad G">
+
+	<changeSet id="04" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN_PA">
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+			<column name="PromotionSeqID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="05" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="06" author="Durgaprasad G">
+
+	<changeSet id="06" author="Durgaprasad G">
 		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+			<column name="PromotionSeqID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -650,7 +650,7 @@
 			     LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
 		</createView>
 	</changeSet>
-	
+
 
 	<changeSet id="9.0_pre" author="Durgaprasad G" dbms="postgresql">
 		<sql>
@@ -659,7 +659,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="09" author="Durgaprasad G">
 		<createView viewName="financemain_view" replaceIfExists="true">
 				SELECT t1.finreference,
@@ -1244,7 +1244,7 @@
 			          WHERE financemain_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="9.0_post" author="Durgaprasad G" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1252,10 +1252,11 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="10" author="Durgaprasad G">
-		<createView viewName="financemaintenance_aview" replaceIfExists="true">
+		<createView viewName="financemaintenance_aview"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1313,9 +1314,10 @@
 		     JOIN bmtproduct t4 ON t3.fincategory = t4.productcode
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11" author="Durgaprasad G" dbms="postgresql,oracle">
-		<createView viewName="financemaintenance_view" replaceIfExists="true">
+		<createView viewName="financemaintenance_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1450,9 +1452,10 @@
 		          WHERE financemain_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="11" author="Durgaprasad G" dbms="mssql">
-		<createView viewName="financemaintenance_view" replaceIfExists="true">
+		<createView viewName="financemaintenance_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 		    t1.finbranch,
 		    t1.fintype,
@@ -1587,15 +1590,20 @@
 		          WHERE financemain_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="12" author="Durgaprasad G">
 		<sql>
 			INSERT INTO bmtintratebasiscodes(
-			intratebasiscode, intratebasisdesc, intratebasisisactive, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-			VALUES ('P/360', 'Periodicity (30D Periods )', 1, 0, 1000, Current_TimeStamp, 'Approved', null, null, null, null, null, 0);
+			intratebasiscode,
+			intratebasisdesc, intratebasisisactive, version, lastmntby,
+			lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid,
+			recordtype, workflowid)
+			VALUES ('P/360', 'Periodicity (30D Periods )',
+			1, 0, 1000, Current_TimeStamp, 'Approved', null, null, null, null,
+			null, 0);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="10" author="satyanarayana.g">
 		<addColumn tableName="WIFFINANCEMAIN">
 			<column name="AllowDrawingPower" type="boolean" />
@@ -1633,12 +1641,16 @@
 	</changeSet>
 
 	<changeSet id="14" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="15_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -1646,7 +1658,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="satyanarayana.g">
 		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -2025,7 +2037,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -2033,9 +2045,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="16" author="satyanarayana.g">
-		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+		<createView viewName="WIFFINANCEMAIN_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
 					T1.GRCPERIODENDDATE,
@@ -2224,7 +2237,7 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="17" author="saikiran.v">
 		<sql>
 				<![CDATA[
@@ -2232,14 +2245,14 @@
 					 and fieldid=1); 
 				]]>
 		</sql>
- 	</changeSet>
- 	<changeSet id="18" author="saikiran.v">
+	</changeSet>
+	<changeSet id="18" author="saikiran.v">
 		<sql>
 				<![CDATA[
 					INSERT INTO ErrorDetails VALUES('90498','EN','E','Early Settlement Already initiated','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 				]]>
 		</sql>
- 	</changeSet>
+	</changeSet>
 	<changeSet id="19" author="saikiran.v">
 		<sql>
 				<![CDATA[
@@ -2247,7 +2260,7 @@
 					INSERT INTO SMTparameters  VALUES ('EXCLUDE_SUB_RECEIPT_MODE_VALUE', 'To exclude Sub Receipt Mode Values', 'String', '0', '', 1, 0, NULL, NULL,'To exclude Sub Receipt Mode Values From List', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 				]]>
 		</sql>
- 	</changeSet>
+	</changeSet>
 
 	<changeSet id="20" author="Durgaprasad G">
 		<createTable tableName="IRRScheduleDetail">
@@ -2264,7 +2277,7 @@
 			<column name="GapInterst" type="decimal(18,0)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="21" author="Siva">
 		<dropColumn tableName="BMTAEEVENTS" columnName="MANDATORY" />
 		<dropColumn tableName="BMTAEEVENTS" columnName="ODAPPLICABLE" />
@@ -2303,75 +2316,147 @@
 		<sql>
 			INSERT INTO CategoryWiseEvents VALUES('ADDDBSF','F',1,0,1);
 			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','F',1,1,2);
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','F',1,1,3);
-			INSERT INTO CategoryWiseEvents VALUES('AMZ','F',1,1,4);
-			INSERT INTO CategoryWiseEvents VALUES('DEFRPY','F',1,1,5);
-			INSERT INTO CategoryWiseEvents VALUES('DISBINS','F',1,1,6);
-			INSERT INTO CategoryWiseEvents VALUES('EARLYPAY','F',1,1,7);
-			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','F',1,1,8);
-			INSERT INTO CategoryWiseEvents VALUES('EMIDAY','F',1,1,9);
-			INSERT INTO CategoryWiseEvents VALUES('FEEPAY','F',1,1,10);
-			INSERT INTO CategoryWiseEvents VALUES('INSTDATE','F',1,1,11);
-			INSERT INTO CategoryWiseEvents VALUES('JVPOST','F',1,0,12);
-			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','F',1,1,13);
-			INSERT INTO CategoryWiseEvents VALUES('MANFEE','F',1,1,14);
-			INSERT INTO CategoryWiseEvents VALUES('PAYMTINS','F',1,1,15);
-			INSERT INTO CategoryWiseEvents VALUES('RATCHG','F',1,1,16);
-			INSERT INTO CategoryWiseEvents VALUES('REAGING','F',1,1,17);
-			INSERT INTO CategoryWiseEvents VALUES('REPAY','F',1,1,18);
-			INSERT INTO CategoryWiseEvents VALUES('SCDCHG','F',1,1,19);
-			INSERT INTO CategoryWiseEvents VALUES('VASACRUL','F',1,1,20);
-			INSERT INTO CategoryWiseEvents VALUES('VASFEE','F',1,1,21);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','F',1,1,22);
+			INSERT
+			INTO CategoryWiseEvents VALUES('ADDDBSP','F',1,1,3);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZ','F',1,1,4);
+			INSERT INTO
+			CategoryWiseEvents VALUES('DEFRPY','F',1,1,5);
+			INSERT INTO
+			CategoryWiseEvents VALUES('DISBINS','F',1,1,6);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EARLYPAY','F',1,1,7);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EARLYSTL','F',1,1,8);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EMIDAY','F',1,1,9);
+			INSERT INTO
+			CategoryWiseEvents VALUES('FEEPAY','F',1,1,10);
+			INSERT INTO
+			CategoryWiseEvents VALUES('INSTDATE','F',1,1,11);
+			INSERT INTO
+			CategoryWiseEvents VALUES('JVPOST','F',1,0,12);
+			INSERT INTO
+			CategoryWiseEvents VALUES('LATEPAY','F',1,1,13);
+			INSERT INTO
+			CategoryWiseEvents VALUES('MANFEE','F',1,1,14);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PAYMTINS','F',1,1,15);
+			INSERT INTO
+			CategoryWiseEvents VALUES('RATCHG','F',1,1,16);
+			INSERT INTO
+			CategoryWiseEvents VALUES('REAGING','F',1,1,17);
+			INSERT INTO
+			CategoryWiseEvents VALUES('REPAY','F',1,1,18);
+			INSERT INTO
+			CategoryWiseEvents VALUES('SCDCHG','F',1,1,19);
+			INSERT INTO
+			CategoryWiseEvents VALUES('VASACRUL','F',1,1,20);
+			INSERT INTO
+			CategoryWiseEvents VALUES('VASFEE','F',1,1,21);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEOFF','F',1,1,22);
 
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSF','O',1,0,1);
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','O',1,1,2);
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','O',1,1,3);
-			INSERT INTO CategoryWiseEvents VALUES('AMZ','O',1,1,4);
-			INSERT INTO CategoryWiseEvents VALUES('AMZPD','O',1,1,5);
-			INSERT INTO CategoryWiseEvents VALUES('AMZSUSP','O',1,1,6);
-			INSERT INTO CategoryWiseEvents VALUES('CANFIN','O',1,1,7);
-			INSERT INTO CategoryWiseEvents VALUES('CMTDISB','O',1,1,8);
-			INSERT INTO CategoryWiseEvents VALUES('JVPOST','O',1,0,9);
-			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','O',1,1,10);
-			INSERT INTO CategoryWiseEvents VALUES('MANFEE','O',1,1,11);
-			INSERT INTO CategoryWiseEvents VALUES('NORM_PD','O',1,1,12);
-			INSERT INTO CategoryWiseEvents VALUES('NORM_PIS','O',1,1,13);
-			INSERT INTO CategoryWiseEvents VALUES('PD_NORM','O',1,1,14);
-			INSERT INTO CategoryWiseEvents VALUES('PD_PIS','O',1,1,15);
-			INSERT INTO CategoryWiseEvents VALUES('PIS_NORM','O',1,1,16);
-			INSERT INTO CategoryWiseEvents VALUES('PIS_PD','O',1,1,17);
-			INSERT INTO CategoryWiseEvents VALUES('PROVSN','O',1,1,18);
-			INSERT INTO CategoryWiseEvents VALUES('REPAY','O',1,1,19);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','O',1,1,20);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','O',1,1,21);
+			INSERT INTO
+			CategoryWiseEvents VALUES('ADDDBSF','O',1,0,1);
+			INSERT INTO
+			CategoryWiseEvents VALUES('ADDDBSN','O',1,1,2);
+			INSERT INTO
+			CategoryWiseEvents VALUES('ADDDBSP','O',1,1,3);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZ','O',1,1,4);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZPD','O',1,1,5);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZSUSP','O',1,1,6);
+			INSERT INTO
+			CategoryWiseEvents VALUES('CANFIN','O',1,1,7);
+			INSERT INTO
+			CategoryWiseEvents VALUES('CMTDISB','O',1,1,8);
+			INSERT INTO
+			CategoryWiseEvents VALUES('JVPOST','O',1,0,9);
+			INSERT INTO
+			CategoryWiseEvents VALUES('LATEPAY','O',1,1,10);
+			INSERT INTO
+			CategoryWiseEvents VALUES('MANFEE','O',1,1,11);
+			INSERT INTO
+			CategoryWiseEvents VALUES('NORM_PD','O',1,1,12);
+			INSERT INTO
+			CategoryWiseEvents VALUES('NORM_PIS','O',1,1,13);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PD_NORM','O',1,1,14);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PD_PIS','O',1,1,15);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PIS_NORM','O',1,1,16);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PIS_PD','O',1,1,17);
+			INSERT INTO
+			CategoryWiseEvents VALUES('PROVSN','O',1,1,18);
+			INSERT INTO
+			CategoryWiseEvents VALUES('REPAY','O',1,1,19);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEBK','O',1,1,20);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEOFF','O',1,1,21);
 
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSN','C',1,1,2);
-			INSERT INTO CategoryWiseEvents VALUES('AMZ','C',1,1,3);
-			INSERT INTO CategoryWiseEvents VALUES('AMZ_MON','C',1,1,4);
-			INSERT INTO CategoryWiseEvents VALUES('COMPOUND','C',1,1,5);
-			INSERT INTO CategoryWiseEvents VALUES('DISBINS','C',1,1,6);
-			INSERT INTO CategoryWiseEvents VALUES('EARLYPAY','C',1,1,7);
-			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','C',1,1,8);
-			INSERT INTO CategoryWiseEvents VALUES('FEEPAY','C',1,1,9);
-			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','C',1,1,10);
-			INSERT INTO CategoryWiseEvents VALUES('REPAY','C',1,0,11);
-			INSERT INTO CategoryWiseEvents VALUES('STAGE','C',1,0,12);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','C',1,1,13);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','C',1,1,14);
+			INSERT INTO
+			CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
+			INSERT INTO
+			CategoryWiseEvents VALUES('ADDDBSN','C',1,1,2);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZ','C',1,1,3);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZ_MON','C',1,1,4);
+			INSERT INTO
+			CategoryWiseEvents VALUES('COMPOUND','C',1,1,5);
+			INSERT INTO
+			CategoryWiseEvents VALUES('DISBINS','C',1,1,6);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EARLYPAY','C',1,1,7);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EARLYSTL','C',1,1,8);
+			INSERT INTO
+			CategoryWiseEvents VALUES('FEEPAY','C',1,1,9);
+			INSERT INTO
+			CategoryWiseEvents VALUES('LATEPAY','C',1,1,10);
+			INSERT INTO
+			CategoryWiseEvents VALUES('REPAY','C',1,0,11);
+			INSERT INTO
+			CategoryWiseEvents VALUES('STAGE','C',1,0,12);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEBK','C',1,1,13);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEOFF','C',1,1,14);
 
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="25" author="Siva">
 		<sql>
-		INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_SolutionFactory_CDFinanceType','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETYPE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-		INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='FINANCETYPE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM
+			SECRIGHTS), 0,
+			'menuItem_SolutionFactory_CDFinanceType','MENU',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FINANCETYPE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='FINANCETYPE_APPROVER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_SolutionFactory_CDFinanceType'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="26" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions">
@@ -2381,7 +2466,8 @@
 			<column name="AdvEMITerms" type="int" defaultValue="0" />
 			<column name="PftDaysBasis" type="varchar(8)" />
 			<column name="SubventionMethod" type="varchar(8)" />
-			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="SubventionRate" type="decimal(13,9)"
+				defaultValue="0" />
 			<column name="TaxApplicable" type="boolean" defaultValue="0" />
 			<column name="CashbackMonth" type="int" defaultValue="0" />
 			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
@@ -2393,7 +2479,8 @@
 			<column name="AdvEMITerms" type="int" defaultValue="0" />
 			<column name="PftDaysBasis" type="varchar(8)" />
 			<column name="SubventionMethod" type="varchar(8)" />
-			<column name="SubventionRate" type="decimal(13,9)" defaultValue="0" />
+			<column name="SubventionRate" type="decimal(13,9)"
+				defaultValue="0" />
 			<column name="TaxApplicable" type="boolean" defaultValue="0" />
 			<column name="CashbackMonth" type="int" defaultValue="0" />
 			<column name="SchemeIRR" type="decimal(13,9)" defaultValue="0" />
@@ -2408,7 +2495,7 @@
 			<column name="ProductCategory" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="27.1" author="Siva">
 		<createView viewName="Promotions_AView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2456,8 +2543,8 @@
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="28.1" author="Siva">
 		<createView viewName="Promotions_TView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2505,8 +2592,8 @@
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="29.1" author="Siva">
 		<createView viewName="Promotions_View" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2602,17 +2689,17 @@
 			           FROM promotions_temp
 			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="30" author="Siva">
 		<addColumn tableName="FinTypeFees">
-			<column name="ReferenceId" type="bigint" defaultValue="0"/>
+			<column name="ReferenceId" type="bigint" defaultValue="0" />
 		</addColumn>
 		<addColumn tableName="FinTypeFees_Temp">
-			<column name="ReferenceId" type="bigint" defaultValue="0"/>
+			<column name="ReferenceId" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="31" author="Siva">
 		<createView viewName="FinTypeFees_AView" replaceIfExists="true">
 			 SELECT t1.fintype,
@@ -2653,7 +2740,7 @@
 			     JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
 			     LEFT JOIN rules t3 ON t1.rulecode = t3.rulecode AND t3.rulemodule= 'FEES' AND t1.finevent= t3.ruleevent
 		</createView>
-	</changeSet> 
+	</changeSet>
 	<changeSet id="32" author="Siva">
 		<createView viewName="FinTypeFees_View" replaceIfExists="true">
 			SELECT t1.fintype,
@@ -2735,65 +2822,216 @@
 			           FROM fintypefees_temp F
 			          WHERE F.fintype= t1.fintype AND F.finevent= t1.finevent AND F.feetypeid = t1.feetypeid AND F.originationfee = t1.originationfee))
 		</createView>
-	</changeSet> 
-	
-	<changeSet id="33" author="Siva">
-		<createSequence sequenceName="SeqPromotionScheme" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
 	</changeSet>
-	
+
+	<changeSet id="33" author="Siva">
+		<createSequence sequenceName="SeqPromotionScheme"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
+
 	<changeSet id="34" author="Siva">
 		<sql>
-					
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
 
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CDSCHEME_MAKER', 'WF Maker for CD Scheme Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'CDSCHEME_APPROVER', 'WF Approver for CD Scheme Maker', 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
-			
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_SolutionFactory_CDScheme','MENU',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_Tenor','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_AdvEMITerms','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_CashbackMonth','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SubventionMethod','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_PftDaysBasis','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SubventionRate','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_SchemeIRR','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_TaxApplicable','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PromotionCode'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PromotionDesc'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_StartDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_EndDate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_ActualInterestRate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Tenor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_AdvEMITerms'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashbackMonth'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SubventionMethod'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_PftDaysBasis'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SubventionRate'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SchemeIRR'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_TaxApplicable'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Active'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PromotionDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_PromotionDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-					
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CDSCHEME_MAKER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId  From SecGroups Where GrpCode='CDSCHEME_APPROVER'), (Select  RoleID  From SecRoles Where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
-					
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE
+			SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO= (SELECT MAX(ROLEGRPID) FROM
+			SECROLEGROUPS);
+
+			INSERT INTO
+			SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM
+			SECGROUPS),
+			'CDSCHEME_MAKER', 'WF Maker for CD Scheme Maker',
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS
+			WHERE 0=0;
+			INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM
+			SECGROUPS), 'CDSCHEME_APPROVER', 'WF Approver for CD Scheme Maker',
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECGROUPS
+			WHERE 0=0;
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM
+			SECRIGHTS), 0,
+			'menuItem_SolutionFactory_CDScheme','MENU',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_Tenor','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_AdvEMITerms','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_CashbackMonth','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_SubventionMethod','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_PftDaysBasis','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_SubventionRate','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_SchemeIRR','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_TaxApplicable','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_PromotionCode'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_PromotionDesc'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_StartDate'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_EndDate'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_ActualInterestRate'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Tenor'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_AdvEMITerms'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_CashbackMonth'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_SubventionMethod'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_PftDaysBasis'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_SubventionRate'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_SchemeIRR'),
+			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_TaxApplicable'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_Active'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_PromotionDialog_btnSave'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='CDSCHEME_APPROVER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_SolutionFactory_CDScheme'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_APPROVER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_PromotionDialog_btnSave'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO
+			SecRoleGroups values((Select MAX(RoleGrpID)+1 From
+			SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='CDSCHEME_MAKER'), (Select RoleID From SecRoles Where
+			RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ','
+			',' ',0);
+			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1
+			From
+			SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='CDSCHEME_APPROVER'), (Select RoleID From SecRoles Where
+			RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ','
+			',' ',0);
+
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE
+			SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM
+			SECGROUPS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO= (SELECT MAX(ROLEGRPID) FROM
+			SECROLEGROUPS);
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="35" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions">
@@ -2805,7 +3043,7 @@
 			<column name="cashBackToCustomer" type="int" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="36" author="Siva">
 		<createView viewName="Promotions_AView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2853,8 +3091,8 @@
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="37" author="Siva">
 		<createView viewName="Promotions_TView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2902,8 +3140,8 @@
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="38" author="Siva">
 		<createView viewName="Promotions_View" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -2999,20 +3237,20 @@
 			           FROM promotions_temp
 			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="39" author="Siva">
 		<dropColumn tableName="Promotions" columnName="SubventionMethod" />
 		<dropColumn tableName="Promotions" columnName="CashbackMonth" />
 		<dropColumn tableName="Promotions" columnName="SchemeIRR" />
 		<dropColumn tableName="Promotions" columnName="ProductCategory" />
-		
+
 		<dropColumn tableName="Promotions_Temp" columnName="SubventionMethod" />
 		<dropColumn tableName="Promotions_Temp" columnName="CashbackMonth" />
 		<dropColumn tableName="Promotions_Temp" columnName="SchemeIRR" />
 		<dropColumn tableName="Promotions_Temp" columnName="ProductCategory" />
 	</changeSet>
-	
+
 	<changeSet id="40" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -3022,10 +3260,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="41" author="satyanarayana.g">
 		<addColumn tableName="REJECTFINANCEMAIN">
-			<column name="PromotionSeqID" type="bigint" defaultValue="0"/>
+			<column name="PromotionSeqID" type="bigint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -3036,7 +3274,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="43_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3046,7 +3284,8 @@
 	</changeSet>
 
 	<changeSet id="44" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -3079,13 +3318,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="45" author="satyanarayana.g">
+
+	<changeSet id="45" author="satyanarayana.g">
 		<addColumn tableName="REJECTFINANCEMAIN">
-			<column name="SanBsdSchdle" type="boolean" defaultValue="0"/>
+			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="46" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -3093,7 +3332,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="47_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3101,9 +3340,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="47" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -3129,7 +3369,7 @@
 					LEFT JOIN RMTFINANCETYPES T ON F.FINTYPE = T.FINTYPE
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="47_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3137,8 +3377,8 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="48" author="Pruthvi">
 		<sql>
 		<![CDATA[
@@ -3149,7 +3389,7 @@
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="49" author="Pruthvi" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3821,7 +4061,7 @@
      LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
      LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical</createView>
 	</changeSet>
-	
+
 	<changeSet id="64_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4416,7 +4656,7 @@ UNION ALL
            FROM financemain_temp
           WHERE financemain_temp.finreference = t1.finreference))</createView>
 	</changeSet>
-	
+
 	<changeSet id="64_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -4698,7 +4938,7 @@ UNION ALL
           WHERE financemain_temp.finreference = t1.finreference))
          </createView>
 	</changeSet>
-	
+
 	<changeSet id="67" author="ADARSH" dbms="mssql">
 		<createView replaceIfExists="true" viewName="financemaintenance_view">
     	SELECT t1.finreference,
@@ -4861,14 +5101,20 @@ UNION ALL
 		<dropPrimaryKey constraintName="pk_fintypefees"
 			tableName="fintypefees" />
 	</changeSet>
-	
+
 	<changeSet id="70_pre" author="ADARSH" dbms="mssql">
-		<addNotNullConstraint tableName="fintypefees" columnName="fintype" columnDataType="varchar(8)" />
-		<addNotNullConstraint tableName="fintypefees" columnName="originationfee" columnDataType="boolean" />
-		<addNotNullConstraint tableName="fintypefees" columnName="finevent" columnDataType="varchar(8)" />
-		<addNotNullConstraint tableName="fintypefees" columnName="feetypeid" columnDataType="bigint" />
-		<addNotNullConstraint tableName="fintypefees" columnName="moduleid" columnDataType="int" />
-		<addNotNullConstraint tableName="fintypefees" columnName="referenceid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="fintype" columnDataType="varchar(8)" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="originationfee" columnDataType="boolean" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="finevent" columnDataType="varchar(8)" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="feetypeid" columnDataType="bigint" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="moduleid" columnDataType="int" />
+		<addNotNullConstraint tableName="fintypefees"
+			columnName="referenceid" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="70" author="ADARSH">
@@ -4891,7 +5137,8 @@ UNION ALL
 
 	<changeSet id="73" author="ADARSH">
 		<addColumn tableName="FINPFTDETAILS">
-			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)" defaultValue="0" />
+			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -4921,7 +5168,8 @@ UNION ALL
 
 	<changeSet id="78" author="ADARSH">
 		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
-			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)" defaultValue="0" />
+			<column name="PRVMTHGAPINTAMZ" type="decimal(18,0)"
+				defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
@@ -4945,7 +5193,7 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="82" author="ADARSH">
 		<sql>
 		<![CDATA[
@@ -4955,7 +5203,7 @@ UNION ALL
  		]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="83" author="satyanarayana.g" dbms="postgresql,oracle">
 		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -5067,7 +5315,7 @@ UNION ALL
 				LEFT JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="84" author="satyanarayana.g">
 		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -5124,33 +5372,62 @@ UNION ALL
 				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="85" author="Siva">
 		<sql>
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-		
-			UPDATE SECRIGHTS SET RIGHTNAME = 'PromotionDialog_CashbackFromDealer' WHERE RIGHTNAME = 'PromotionDialog_CashbackMonth';
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_CashbackToCustomer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'PromotionDialog_OpenBalOnPV','PromotionDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_CashbackToCustomer'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='PromotionDialog_OpenBalOnPV'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+			UPDATE SECRIGHTS SET RIGHTNAME =
+			'PromotionDialog_CashbackFromDealer' WHERE
+			RIGHTNAME =
+			'PromotionDialog_CashbackMonth';
+			INSERT INTO SECRIGHTS
+			SELECT (SELECT
+			MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_CashbackToCustomer','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+			INSERT INTO
+			SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'PromotionDialog_OpenBalOnPV','PromotionDialog',0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_CashbackToCustomer'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CDSCHEME_MAKER') ,(SELECT
+			RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='PromotionDialog_OpenBalOnPV'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			UPDATE
+			SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="86" author="Siva">
-		<dropTable tableName="SeqPromotions"/>
+		<dropTable tableName="SeqPromotions" />
 	</changeSet>
 	<changeSet id="87" author="Siva">
-		<createSequence sequenceName="SeqPromotions" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999"/>
+		<createSequence sequenceName="SeqPromotions"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="88" author="Siva">
-		<createView viewName="lmtpromotionworkflowdef_aview" replaceIfExists="true">
+		<createView viewName="lmtpromotionworkflowdef_aview"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fintype AS typecode,
 			    t4.fintypedesc AS lovdescfintypename,
@@ -5193,9 +5470,10 @@ UNION ALL
 			     JOIN rmtfinancetypes t4 ON t2.fintype = t4.fintype
 			     JOIN bmtproduct t5 ON t4.fincategory = t5.productcode
 		</createView>
-	</changeSet> 
+	</changeSet>
 	<changeSet id="89" author="Siva">
-		<createView viewName="lmtpromotionworkflowdef_view" replaceIfExists="true">
+		<createView viewName="lmtpromotionworkflowdef_view"
+			replaceIfExists="true">
 			 SELECT t1.fintype,
 			    t1.fintype AS typecode,
 			    t4.fintypedesc AS lovdescfintypename,
@@ -5271,26 +5549,36 @@ UNION ALL
 			           FROM lmtfinanceworkflowdef_temp W
 			          WHERE W.fintype = t1.fintype AND W.finevent = t1.finevent AND W.modulename = t1.modulename))
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="90" author="Siva">
 		<sql>
-		
+
 			DELETE FROM CategoryWiseEvents WHERE CategoryCode = 'C';
 
-			INSERT INTO CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
-			INSERT INTO CategoryWiseEvents VALUES('DISBINS','C',1,1,2);
-			INSERT INTO CategoryWiseEvents VALUES('AMZ','C',1,1,3);
-			INSERT INTO CategoryWiseEvents VALUES('REPAY','C',1,1,4);
-			INSERT INTO CategoryWiseEvents VALUES('LATEPAY','C',1,1,5);
-			INSERT INTO CategoryWiseEvents VALUES('EARLYSTL','C',1,1,6);
-			INSERT INTO CategoryWiseEvents VALUES('INSTDATE','C',1,1,7);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEOFF','C',1,0,8);
-			INSERT INTO CategoryWiseEvents VALUES('WRITEBK','C',1,0,9);
+			INSERT
+			INTO
+			CategoryWiseEvents VALUES('ADDDBSP','C',1,1,1);
+			INSERT INTO
+			CategoryWiseEvents VALUES('DISBINS','C',1,1,2);
+			INSERT INTO
+			CategoryWiseEvents VALUES('AMZ','C',1,1,3);
+			INSERT INTO
+			CategoryWiseEvents VALUES('REPAY','C',1,1,4);
+			INSERT INTO
+			CategoryWiseEvents VALUES('LATEPAY','C',1,1,5);
+			INSERT INTO
+			CategoryWiseEvents VALUES('EARLYSTL','C',1,1,6);
+			INSERT INTO
+			CategoryWiseEvents VALUES('INSTDATE','C',1,1,7);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEOFF','C',1,0,8);
+			INSERT INTO
+			CategoryWiseEvents VALUES('WRITEBK','C',1,0,9);
 
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="91" author="shahbaj.b">
 		<createView viewName="financeenquiry_view" replaceIfExists="true">
 		
@@ -5400,7 +5688,7 @@ UNION ALL
      LEFT JOIN secroles t4 ON t1.nextrolecode = t4.rolecd
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="92" author="shahbaj.b" dbms="mssql">
 		<createView viewName="financemain_lview" replaceIfExists="true">
 	SELECT t1.finreference,
@@ -5456,21 +5744,21 @@ UNION ALL
      LEFT JOIN secroles t4 ON t1.nextrolecode = t4.rolecd
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="93" author="meena.a">
 		<comment>extra fields added in Limitdetails</comment>
 		<addColumn tableName="Limitdetails">
 			<column name="ExternalRef1" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="94" author="meena.a">
 		<comment>extra fields added in Limitdetails</comment>
 		<addColumn tableName="Limitdetails_temp">
 			<column name="ExternalRef1" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="95" author="meena.a">
 		<createView viewName="LIMITDETAILS_VIEW" replaceIfExists="true">
 			SELECT T1.DETAILID,
@@ -5572,15 +5860,15 @@ UNION ALL
 					WHERE NOT EXISTS (SELECT 1 FROM LIMITDETAILS_TEMP WHERE DETAILID = T1.DETAILID)
 		</createView>
 	</changeSet>
-	
-		<changeSet id="96_pre" author="murthy.y" dbms="postgresql">
+
+	<changeSet id="96_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'limitdetails_aview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="96" author="meena.a">
 		<createView viewName="LIMITDETAILS_AVIEW" replaceIfExists="true">
 			SELECT T1.DETAILID,
@@ -5632,7 +5920,7 @@ UNION ALL
 					LEFT OUTER JOIN RULES T4 ON T5.LIMITLINE = T4.RULECODE AND RULEMODULE  ='LMTLINE'
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="96_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5641,7 +5929,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="97" author="meena.a">
 		<createView viewName="LIMITDETAILS_TVIEW" replaceIfExists="true">
 			SELECT T1.DETAILID,
@@ -5694,35 +5982,35 @@ UNION ALL
 					AND RULEMODULE  ='LMTLINE'
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="98" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions">
-			<column name="specialScheme" type="smallint" defaultValue="0"/>
+			<column name="specialScheme" type="smallint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="99" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions">
 			<column name="remarks" type="varchar(50)" />
-			</addColumn>
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="100" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions_Temp">
-			<column name="specialScheme" type="smallint" defaultValue="0"/>
+			<column name="specialScheme" type="smallint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="101" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="Promotions_Temp">
 			<column name="remarks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="102" author="Siva">
 		<createView viewName="Promotions_AView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -5770,8 +6058,8 @@ UNION ALL
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="103" author="Siva">
 		<createView viewName="Promotions_TView" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -5819,8 +6107,8 @@ UNION ALL
 			     LEFT JOIN rules t3 ON t1.downpayrule = t3.ruleid
 			     LEFT JOIN rules t4 ON t1.rpypricingmethod = t4.ruleid
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="104" author="Siva">
 		<createView viewName="Promotions_View" replaceIfExists="true">
 			SELECT t1.promotionid,
@@ -5916,8 +6204,8 @@ UNION ALL
 			           FROM promotions_temp
 			          WHERE promotions_temp.promotioncode = t1.promotioncode AND promotions_temp.promotionid = t1.promotionid))
 		</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="105" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -5926,7 +6214,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="106" author="Srikanth">
 		<sql>
 			<![CDATA[
@@ -5936,7 +6224,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="107" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -5944,10 +6232,61 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="108" author="Srikanth">
-		<createView viewName="LMTFinanceWorkFlowDef_View" replaceIfExists="true">
+
+	<changeSet id="108" author="Srikanth" dbms="postgresql">
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">
+		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
+				T4.FacilityDesc lovDescFacilityTypeName ,
+						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName, 
+                 COALESCE(CAST(T2.FinIsActive as smallint), T6.Active,CAST(T7.Active as smallint),CAST(T8.Active as smallint) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef_Temp T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType 
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						 LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				UNION ALL
+				SELECT   T1.FinType, T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName, T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc, T4.FacilityDesc lovDescFacilityTypeName,
+						 T1.ScreenCode, T1.WorkFlowType,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName,
+                COALESCE(CAST(T2.FinIsActive as smallint), T6.Active,CAST(T7.Active as smallint),CAST(T8.Active as smallint) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef  T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType 
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						  LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				WHERE    (NOT EXISTS
+				                          (SELECT     1 Expr1
+				                            FROM          LMTFinanceWorkFlowDef_Temp
+				                            WHERE      (FinType = T1.FinType AND FinEvent = T1.FinEvent AND ModuleName = T1.ModuleName)))
 		
+		</createView>
+	</changeSet>
+
+	<changeSet id="108" author="Srikanth" dbms="oracle">
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">		
 		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
 				T4.FacilityDesc lovDescFacilityTypeName ,
 						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
@@ -5995,9 +6334,61 @@ UNION ALL
 		
 	</createView>
 	</changeSet>
-	
+
+	<changeSet id="108" author="Srikanth" dbms="mssql">
+		<createView viewName="LMTFinanceWorkFlowDef_View"
+			replaceIfExists="true">
+		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
+				T4.FacilityDesc lovDescFacilityTypeName ,
+						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName, 
+                 COALESCE(CAST(T2.FinIsActive as bit), T6.Active,CAST(T7.Active as bit),CAST(T8.Active as bit) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef_Temp T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType 
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						 LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				UNION ALL
+				SELECT   T1.FinType, T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName, T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc, T4.FacilityDesc lovDescFacilityTypeName,
+						 T1.ScreenCode, T1.WorkFlowType,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName,
+                COALESCE(CAST(T2.FinIsActive as bit), T6.Active,CAST(T7.Active as bit),CAST(T8.Active as bit) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef  T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType 
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						  LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				WHERE    (NOT EXISTS
+				                          (SELECT     1 Expr1
+				                            FROM          LMTFinanceWorkFlowDef_Temp
+				                            WHERE      (FinType = T1.FinType AND FinEvent = T1.FinEvent AND ModuleName = T1.ModuleName)))
+											
+			</createView>
+		</changeSet>
+
 	<changeSet id="109" author="Srikanth">
-		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW" replaceIfExists="true">
+		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW"
+			replaceIfExists="true">
 		SELECT t1.fintype,
 				t1.fintype AS typecode,
 				t2.fintypedesc AS lovdescfintypename,
@@ -6041,13 +6432,13 @@ UNION ALL
 			 LEFT JOIN collateralstructure t6 ON t1.fintype = t6.collateraltype
 			 LEFT JOIN vasstructure t7 ON t1.fintype = t7.productcode
 			 LEFT JOIN commitmenttype t8 ON t1.fintype = t8.typecode
-      		 LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
-		
+      		 LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype	
 	</createView>
-	</changeSet>	
+	</changeSet>
+
 	<changeSet id="110" author="Srikanth">
-		<createView viewName="LMTFINANCEWORKFLOWDEF_FTVIEW" replaceIfExists="true">
-		
+		<createView viewName="LMTFINANCEWORKFLOWDEF_FTVIEW"
+			replaceIfExists="true">	
 		 SELECT T1.FinType, T2.FinTypeDesc lovDescFinTypeName, T1.ScreenCode,
             T1.WorkFlowType, T5.ProductCategory, T2.FinIsActive, T1.FinEvent,
             T3.FirstTaskOwner LovDescFirstTaskOwner, T2.FinCategory LovdescProductCodeName,
@@ -6058,8 +6449,6 @@ UNION ALL
             INNER JOin BMTProduct T5 ON T2.FinCategory = T5.ProductCode
             LEFT JOIN Promotions T6 ON T6.PromotionCode= T1.Fintype
 		</createView>
-	</changeSet>	
-	
-		
-	
+	</changeSet>
+
 </databaseChangeLog>
