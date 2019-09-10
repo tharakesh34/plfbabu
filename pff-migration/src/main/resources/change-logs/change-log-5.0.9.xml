@@ -5945,4 +5945,121 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="108" author="Srikanth">
+		<createView viewName="LMTFinanceWorkFlowDef_View" replaceIfExists="true">
+		
+		SELECT   T1.FinType,T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName , T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc,
+				T4.FacilityDesc lovDescFacilityTypeName ,
+						 T1.ScreenCode, T1.WorkFlowType ,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName, 
+                 COALESCE(CAST(T2.FinIsActive as number(1)), T6.Active,CAST(T7.Active as number(1)),CAST(T8.Active as number(1)) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef_Temp T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType 
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						 LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				UNION ALL
+				SELECT   T1.FinType, T1.FinType TypeCode, T2.FinTypeDesc lovDescFinTypeName, T6.CollateralDesc,T7.ProductDesc VasProductDesc,T8.Description CommitmentTypeDesc, T4.FacilityDesc lovDescFacilityTypeName,
+						 T1.ScreenCode, T1.WorkFlowType,T3.WorkFlowDesc lovDescWorkFlowTypeName, T1.Version,
+						 T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, 
+				         T1.NextTaskId, T1.RecordType, T1.WorkflowId, T3.WorkFlowRoles LovDescWorkFlowRolesName,
+				         T2.FinCategory lovDescProductCodeName,T3.FirstTaskOwner LovDescFirstTaskOwner,
+				         T1.ModuleName,
+                COALESCE(CAST(T2.FinIsActive as number(1)), T6.Active,CAST(T7.Active as number(1)),CAST(T8.Active as number(1)) ) FinIsActive,
+                 COALESCE(T2.Product,'') LovDescProductName,T2.FinAssetType,
+				         T1.FinEvent, T5.ProductCategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+				FROM     LMTFinanceWorkFlowDef  T1 
+						 LEFT JOIN RMTFinanceTypes T2 ON T1.FinType = T2.FinType 
+						 INNER JOIN WorkFlowDetails T3 ON T1.WorkFlowType = T3.WorkFlowType 
+						 AND T3.WorkFlowActive = 1 
+						 LEFT JOIN CAFFacilityTypes T4 ON T1.FinType = T4.FacilityType
+						 LEFT JOIN BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+						  LEFT JOIN CollateralStructure T6 ON T1.FinType = T6.CollateralType 
+						 LEFT JOIN VasStructure T7 ON T1.FinType = T7.ProductCode 
+						  LEFT JOIN CommitmentType T8 ON T1.FinType = T8.TypeCode
+              LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+				WHERE    (NOT EXISTS
+				                          (SELECT     1 Expr1
+				                            FROM          LMTFinanceWorkFlowDef_Temp
+				                            WHERE      (FinType = T1.FinType AND FinEvent = T1.FinEvent AND ModuleName = T1.ModuleName)))
+		
+	</createView>
+	</changeSet>
+	
+	<changeSet id="109" author="Srikanth">
+		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW" replaceIfExists="true">
+		SELECT t1.fintype,
+				t1.fintype AS typecode,
+				t2.fintypedesc AS lovdescfintypename,
+				t6.collateraldesc,
+				t7.productdesc AS vasproductdesc,
+				t8.description AS commitmenttypedesc,
+				t1.fintype AS lovdescpromotioncode,
+				t2.fintypedesc AS lovdescpromotionname,
+				t4.facilitydesc AS lovdescfacilitytypename,
+				t1.screencode,
+				t1.workflowtype,
+				t3.workflowdesc AS lovdescworkflowtypename,
+				t1.version,
+				t1.lastmntby,
+				t1.lastmnton,
+				t1.recordstatus,
+				t1.rolecode,
+				t1.nextrolecode,
+				t1.taskid,
+				t1.nexttaskid,
+				t1.recordtype,
+				t1.workflowid,
+				t3.workflowroles AS lovdescworkflowrolesname,
+				t2.fincategory AS lovdescproductcodename,
+				t2.findivision AS lovdescfindivisionname,
+				t3.firsttaskowner AS lovdescfirsttaskowner,
+				t1.modulename,
+				COALESCE(t2.finisactive, t6.active, t7.active, t8.active) AS finisactive,
+				COALESCE(t2.product, '') AS lovdescproductname,
+				t2.lovdescpromofintypedesc,
+				t2.finassettype,
+				t2.startdate,
+				t2.enddate,
+				t1.finevent,
+				t5.productcategory,COALESCE(T9.REFERENCEID,0) REFERENCEID
+		   FROM lmtfinanceworkflowdef t1
+			 LEFT JOIN rmtfinancetypes_aview t2 ON t1.fintype = t2.fintype
+			 JOIN workflowdetails t3 ON t1.workflowtype = t3.workflowtype AND t3.workflowactive = 1
+			 LEFT JOIN caffacilitytypes t4 ON t1.fintype = t4.facilitytype
+			 LEFT JOIN bmtproduct t5 ON t2.fincategory = t5.productcode
+			 LEFT JOIN collateralstructure t6 ON t1.fintype = t6.collateraltype
+			 LEFT JOIN vasstructure t7 ON t1.fintype = t7.productcode
+			 LEFT JOIN commitmenttype t8 ON t1.fintype = t8.typecode
+      		 LEFT JOIN Promotions T9 ON T9.PromotionCode= T1.Fintype
+		
+	</createView>
+	</changeSet>	
+	<changeSet id="110" author="Srikanth">
+		<createView viewName="LMTFINANCEWORKFLOWDEF_FTVIEW" replaceIfExists="true">
+		
+		 SELECT T1.FinType, T2.FinTypeDesc lovDescFinTypeName, T1.ScreenCode,
+            T1.WorkFlowType, T5.ProductCategory, T2.FinIsActive, T1.FinEvent,
+            T3.FirstTaskOwner LovDescFirstTaskOwner, T2.FinCategory LovdescProductCodeName,
+            T1.ModuleName,COALESCE(T6.REFERENCEID,0) REFERENCEID
+		    FROM LMTFinanceWorkFlowDef T1
+            INNER JOIN RMTFinanceTypes T2   ON T1.FinType = T2.FinType 
+            INNER JOIN WorkFlowDetails T3   ON T1.WorkFlowType = T3.WorkFlowType AND T3.WorkFlowActive = 1
+            INNER JOin BMTProduct T5 ON T2.FinCategory = T5.ProductCode
+            LEFT JOIN Promotions T6 ON T6.PromotionCode= T1.Fintype
+		</createView>
+	</changeSet>	
+	
+		
+	
 </databaseChangeLog>
