@@ -3216,4 +3216,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</createTable>
 	</changeSet>
 	
+	
+<changeSet id="58" author="srihari.m" dbms="oracle">
+<sql>
+  <![CDATA[
+       ALTER TABLE PaymentTransaction ADD SEQNO Number(2);
+   ]]>
+</sql>
+</changeSet>
+	
 </databaseChangeLog>
