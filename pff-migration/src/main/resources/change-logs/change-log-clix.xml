@@ -3848,4 +3848,67 @@ UNION ALL
 		</createView>
 	</changeSet >
 	
+	<changeSet id="97" author="dheerendra">
+		<createView viewName="ogl_view" replaceIfExists="true">
+	SELECT p.postdate AS acctdate,
+    p.postref,
+    p.finevent,
+    p.acccy AS ccycode,
+    m.key_code AS jecode,
+    'PENNANT' AS jesrcname,
+    mad.key_code AS sgmt1ble,
+    ma.key_code AS prodcatcode,
+    COALESCE(rlfd.fieldcodevalue, '0000')    AS programcode,
+    rb.branchswiftbrncde AS branchcode,
+    am.hostaccount,
+    p.account AS accttype,
+    COALESCE(pb.hostglcode, '') AS hostglcode,
+    '000000' AS sgmt5,
+    m.key_code AS event,
+    p.finreference AS lan,
+        CASE
+            WHEN p.drorcr = 'D' THEN p.postamount
+            WHEN p.drorcr = 'C' THEN 0
+            ELSE 0
+        END AS debit,
+        CASE
+            WHEN p.drorcr = 'D' THEN 0
+            WHEN p.drorcr = 'C' THEN p.postamount
+            ELSE 0
+        END AS credit,
+    p.valuedate AS transactiondate,
+    f.fintype AS loantype,
+    c.custshrtname AS customername,
+    c.CUSTCIF AS customerid,
+    ft.findivision AS divisioncode,
+    p.linkedtranid AS transactionid,
+    p.entitycode,
+    p.poststatus,
+    p.oldlinkedtranid AS oldid,
+    fap.paymenttype,
+    fap.transactionref,
+    COALESCE(fap.beneficiaryname, '') AS beneficiaryname,
+    COALESCE(fap.beneficiaryaccno, '') AS beneaccno,
+    rmt.actypegrpid AS bank,
+    COALESCE(fap.liabilityholdname, '') AS liabilityholdname,
+    COALESCE(fap.llreferenceno, '') AS llreferenceno
+   FROM plf.postings p
+     LEFT JOIN plf.financemain f ON p.finreference = f.finreference
+       left join plf.rmtlovfielddetail rlfd on f.eligibilitymethod = rlfd.fieldcodeid and fieldcode = 'ELGMETHOD'
+     LEFT JOIN plf.rmtfinancetypes ft ON f.fintype = ft.fintype
+     LEFT JOIN plf.smtdivisiondetail sd ON sd.divisioncode = ft.findivision
+     LEFT JOIN plf.master_def mad ON mad.key_type = sd.entitycode
+     JOIN plf.rmtbranches rb ON rb.branchcode = p.postbranch
+     LEFT JOIN plf.finadvancepayments fap ON fap.finreference = p.finreference AND p.linkedtranid = fap.linkedtranid
+     LEFT JOIN plf.partnerbanks pb ON pb.partnerbankid = fap.partnerbankid
+     LEFT JOIN plf.customers c ON c.custid = f.custid
+     LEFT JOIN plf.master_def m ON m.key_type = p.finevent
+     LEFT JOIN plf.master_def ma ON ma.key_type = ft.fincategory
+     LEFT JOIN plf.accountmapping am ON am.account = p.account
+     LEFT JOIN plf.rmtaccounttypes rmt ON rmt.actype = am.account
+  WHERE p.postamount > 0
+  ORDER BY p.linkedtranid;
+		</createView>
+	</changeSet >
+	
 </databaseChangeLog>
