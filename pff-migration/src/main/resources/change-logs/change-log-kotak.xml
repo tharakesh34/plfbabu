@@ -3271,9 +3271,8 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="RESPREFERENCE" type="VARCHAR(50)" />
 			<column name="STATUSCODE" type="VARCHAR(10)" />
 			<column name="STATUSDESC" type="VARCHAR(500)" />
-			<column name="TRANSCTIONINITON" type="TIMESTAMP" />
-			<column name="STATUSUPDATEON" type="TIMESTAMP" />
-
+			<column name="TRANSCTIONINITON" type="DATETIME" />
+			<column name="STATUSUPDATEON" type="DATETIME" />
 		</createTable>
 	</changeSet>
 </databaseChangeLog>
