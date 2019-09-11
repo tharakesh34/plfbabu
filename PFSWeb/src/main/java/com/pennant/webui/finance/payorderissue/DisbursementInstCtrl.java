@@ -306,7 +306,11 @@ public class DisbursementInstCtrl {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
 					lc.setParent(item);
 
-					lc = new Listcell(detail.getStatus());
+					if (detail.getStatus().equals("REJECTED")) {
+						lc = new Listcell(detail.getStatus() + "-" + detail.getRejectReason());
+					} else {
+						lc = new Listcell(detail.getStatus());
+					}
 					lc.setParent(item);
 
 					lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordStatus()));

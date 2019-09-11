@@ -117,6 +117,7 @@ public final class ExtFieldStaticList {
 		list.add("IndustryCode");
 		list.add("OtherBank");
 		list.add("RelationShipArea");
+		list.add("SecurityUser");
 
 		return list;
 	}

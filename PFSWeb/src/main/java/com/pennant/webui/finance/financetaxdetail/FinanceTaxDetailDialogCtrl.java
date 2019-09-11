@@ -1038,6 +1038,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			setCustCIFFilter(false);
 		}
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
+		if(this.applicableFor.getSelectedIndex() == 0) {
+			this.applicableFor.setSelectedIndex(1);
+			setCustCIFFilter(true);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
