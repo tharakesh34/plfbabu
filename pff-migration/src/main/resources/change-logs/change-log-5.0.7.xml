@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,13 +20,15 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
 
- 	<changeSet id="1" author="Saikiran.v">
+
+	<changeSet id="1" author="Saikiran.v">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="AllowDrawingPower" type="boolean" />
 		</addColumn>
@@ -56,8 +58,10 @@
 	</changeSet>
 
 	<changeSet id="4" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="5_pre" author="Saikiran.v" dbms="postgresql">
@@ -70,7 +74,8 @@
 	</changeSet>
 
 	<changeSet id="5" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview"
+			replaceIfExists="true">
 		SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -330,7 +335,8 @@
 	</changeSet>
 
 	<changeSet id="6" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_orgview " replaceIfExists="true">	 
+		<createView viewName="rmtfinancetypes_orgview "
+			replaceIfExists="true">	 
 		SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -547,7 +553,8 @@
 		</sql>
 	</changeSet>
 	<changeSet id="7" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_view " replaceIfExists="true">	 	 
+		<createView viewName="rmtfinancetypes_view "
+			replaceIfExists="true">	 	 
 	
 			 SELECT t1.fintype,
 				t1.fincategory,
@@ -1086,16 +1093,20 @@
 	<changeSet author="Kesav" id="11">
 		<comment>New columns added for GST Waivers</comment>
 		<addColumn tableName="FinRepayScheduleDetail_Temp">
-			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -1104,16 +1115,20 @@
 	<changeSet author="Kesav" id="12">
 		<comment>New columns added for GST Waivers</comment>
 		<addColumn tableName="FinRepayScheduleDetail">
-			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -1139,7 +1154,8 @@
 
 	<changeSet id="15" author="Kesav">
 		<comment> WaivedGST column added for GST Waivers</comment>
-		<createView viewName="ReceiptAllocationDetail_Aview" replaceIfExists="true">
+		<createView viewName="ReceiptAllocationDetail_Aview"
+			replaceIfExists="true">
 			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
 						T1.paidgst, T1.WaivedGST
 			FROM 		ReceiptAllocationDetail T1
@@ -1152,7 +1168,8 @@
 
 	<changeSet id="16" author="Kesav">
 		<comment> WaivedGST column added for GST Waivers</comment>
-		<createView viewName="ReceiptAllocationDetail_View" replaceIfExists="true">
+		<createView viewName="ReceiptAllocationDetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
 						T1.paidgst, T1.waivedreqamount, T1.waiveraccepted, T1.totaldue, T1.WaivedGST
 			FROM 		ReceiptAllocationDetail_Temp T1
@@ -1324,7 +1341,8 @@
 
 	<changeSet id="25" author="Kesav">
 		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
-		<createView viewName="ManualAdvisemovements_AView" replaceIfExists="true">
+		<createView viewName="ManualAdvisemovements_AView"
+			replaceIfExists="true">
 			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
 						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
 						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
@@ -1336,7 +1354,8 @@
 
 	<changeSet id="26" author="Kesav">
 		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
-		<createView viewName="ManualAdvisemovements_TView" replaceIfExists="true">
+		<createView viewName="ManualAdvisemovements_TView"
+			replaceIfExists="true">
 			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
 						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
 						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
@@ -1362,16 +1381,20 @@
 	<changeSet id="27" author="Kesav">
 		<comment>LPP Waiver GST accounting Configuration parameters</comment>
 		<sql>
-			insert into BMTAMOUNTCODES values('LATEPAY',0,'LPP_CGST_W','Penalty charge CGST
+			insert into BMTAMOUNTCODES
+			values('LATEPAY',0,'LPP_CGST_W','Penalty charge CGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES
-			values('LATEPAY',0,'LPP_SGST_W','Penalty charge SGST
+			values('LATEPAY',0,'LPP_SGST_W','Penalty
+			charge SGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES
-			values('LATEPAY',0,'LPP_IGST_W','Penalty charge IGST
+			values('LATEPAY',0,'LPP_IGST_W','Penalty
+			charge IGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES
-			values('LATEPAY',0,'LPP_UGST_W','Penalty charge UGST
+			values('LATEPAY',0,'LPP_UGST_W','Penalty
+			charge UGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 		</sql>
 	</changeSet>
@@ -1379,7 +1402,8 @@
 	<changeSet id="28" author="Kesav">
 		<comment>Bounce Waiver GST accounting Configuration parameters</comment>
 		<sql>
-			insert into BMTAMOUNTCODES values('REPAY',0,'bounceCharge_CGST_W','Bounce charge CGST
+			insert into BMTAMOUNTCODES
+			values('REPAY',0,'bounceCharge_CGST_W','Bounce charge CGST
 			Waived',1,1,1000,Current_TimeStamp,'Approved',null,null,null,null,null,0);
 			insert into BMTAMOUNTCODES
 			values('REPAY',0,'bounceCharge_SGST_W','Bounce charge SGST
@@ -1598,7 +1622,8 @@
 
 	<changeSet id="41" author="Kesav">
 		<comment>WaivedGST column added for GST Waivers</comment>
-		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+		<createView viewName="Wiffinfeedetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
 						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
 						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
@@ -1741,7 +1766,8 @@
 
 	<changeSet id="49" author="Kesav">
 		<comment>ReferenceId column added for Receipt Fees</comment>
-		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+		<createView viewName="Wiffinfeedetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
 						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
 						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
@@ -1811,35 +1837,43 @@
 	</changeSet>
 
 	<changeSet id="54" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="NoticePeriodDays" newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="55" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="AlertDays" newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="56" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="57" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="54" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="NoticePeriodDays" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="55" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="AlertDays" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="56" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="57" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="smallint" />
 	</changeSet>
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 
@@ -1861,20 +1895,15 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="60" author="vijaya.a">
-		<addColumn tableName="vasprovideraccdetail">
-			<column name="PartnerBankId" type="bigint" />
-		</addColumn>
-	</changeSet>
+	<!-- <changeSet id="60" author="vijaya.a"> <addColumn tableName="vasprovideraccdetail"> 
+		<column name="PartnerBankId" type="bigint" /> </addColumn> </changeSet> -->
 
-	<changeSet id="61" author="vijaya.a">
-		<addColumn tableName="vasprovideraccdetail_temp">
-			<column name="PartnerBankId" type="bigint" />
-		</addColumn>
-	</changeSet>
+	<!-- <changeSet id="61" author="vijaya.a"> <addColumn tableName="vasprovideraccdetail_temp"> 
+		<column name="PartnerBankId" type="bigint" /> </addColumn> </changeSet> -->
 
 	<changeSet id="62" author="vijaya.a">
-		<createView viewName="Vasprovideraccdetail_view" replaceIfExists="true">
+		<createView viewName="Vasprovideraccdetail_view"
+			replaceIfExists="true">
 			SELECT t1.id,
     			t1.providerid,
     			t5.dealername AS providerdesc,
@@ -1953,7 +1982,8 @@
 	</changeSet>
 
 	<changeSet id="63" author="vijaya.a">
-		<createView viewName="Vasprovideraccdetail_aview" replaceIfExists="true">
+		<createView viewName="Vasprovideraccdetail_aview"
+			replaceIfExists="true">
 			SELECT t1.id,
 			    t1.providerid,
 			    t5.dealername AS providerdesc,
@@ -2045,7 +2075,8 @@
 	</changeSet>
 
 	<changeSet id="68" author="Varaprasad.k">
-		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="reasoncode" newDataType="varchar(8)" />
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT"
+			columnName="reasoncode" newDataType="varchar(8)" />
 	</changeSet>
 
 	<changeSet id="69" author="meena.a">
@@ -2063,7 +2094,8 @@
 	</changeSet>
 
 	<changeSet id="71" author="meena.a">
-		<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="PROCESS_ID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="MANDATE_REQUESTS"
+			columnName="PROCESS_ID" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="72" author="meena.a">
@@ -2086,16 +2118,18 @@
 	</changeSet>
 
 	<changeSet id="74" author="meena.a">
-		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
-			constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
+		<addUniqueConstraint tableName="MANDATE_REQUESTS"
+			columnNames="MANDATEID, STATUS, PROCESS_ID" constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
 	</changeSet>
 
 	<changeSet id="75" author="Manoj.p" dbms="oracle">
 		<sql splitStatements="false">
 			begin
-			execute immediate 'CREATE SEQUENCE SEQ_MANDATES_REQUEST_PROCESS START WITH 1
+			execute immediate 'CREATE SEQUENCE
+			SEQ_MANDATES_REQUEST_PROCESS START WITH 1
 			INCREMENT BY
-			1 MAXVALUE 9223372036854775807 NOCYCLE';
+			1 MAXVALUE
+			9223372036854775807 NOCYCLE';
 			end;
 		</sql>
 	</changeSet>
@@ -2104,7 +2138,8 @@
 		<sql splitStatements="false">
 			do $$
 			begin
-			execute 'CREATE SEQUENCE SEQ_MANDATES_REQUEST_PROCESS START 1 INCREMENT BY 1';
+			execute 'CREATE SEQUENCE
+			SEQ_MANDATES_REQUEST_PROCESS START 1 INCREMENT BY 1';
 			end;
 			$$;
 		</sql>
@@ -2112,7 +2147,9 @@
 
 	<changeSet id="75" author="Manoj.p" dbms="mssql">
 		<sql splitStatements="false">
-			CREATE TABLE SEQ_MANDATES_REQUEST_PROCESS(SeqNo bigint IDENTITY(1,1) NOT NULL, Value int NOT
+			CREATE TABLE
+			SEQ_MANDATES_REQUEST_PROCESS(SeqNo bigint IDENTITY(1,1) NOT NULL,
+			Value int NOT
 			NULL);
 		</sql>
 	</changeSet>
@@ -2182,8 +2219,10 @@
 	</changeSet>
 
 	<changeSet id="77" author="satyanarayana.g">
-		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
-		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="FINREFERENCE" newDataType="varchar(20)" />
+		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE"
+			newDataType="varchar(20)" />
+		<modifyDataType tableName="QUERYDETAIL_TEMP"
+			columnName="FINREFERENCE" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet id="77_post" author="satyanarayana.g" dbms="postgresql">
@@ -2218,8 +2257,10 @@
 	</changeSet>
 
 	<changeSet id="80" author="Durgaprasad.G">
-		<modifyDataType tableName="ERRORDETAILS" columnName="Message" newDataType="Varchar(200)" />
-		<modifyDataType tableName="ERRORDETAILS_TEMP" columnName="Message" newDataType="Varchar(200)" />
+		<modifyDataType tableName="ERRORDETAILS" columnName="Message"
+			newDataType="Varchar(200)" />
+		<modifyDataType tableName="ERRORDETAILS_TEMP"
+			columnName="Message" newDataType="Varchar(200)" />
 	</changeSet>
 
 	<changeSet id="80_post" author="Durgaprasad.G" dbms="postgresql">
@@ -2231,17 +2272,10 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="81" author="satyanarayana.g">
-		<addColumn tableName="FINANCEMAIN">
-			<column name="AllowDrawingPower" type="boolean" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="82" author="satyanarayana.g">
-		<addColumn tableName="FINANCEMAIN_TEMP">
-			<column name="AllowDrawingPower" type="boolean" />
-		</addColumn>
-	</changeSet>
+	<!-- <changeSet id="81" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN"> 
+		<column name="AllowDrawingPower" type="boolean" /> </addColumn> </changeSet> 
+		<changeSet id="82" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN_TEMP"> 
+		<column name="AllowDrawingPower" type="boolean" /> </addColumn> </changeSet> -->
 
 	<changeSet id="83" author="satyanarayana.g">
 		<sql>
@@ -2262,15 +2296,14 @@
 	</changeSet>
 
 	<changeSet id="85" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="86" author="satyanarayana.g">
-		<addColumn tableName="FINANCEMAIN_PA">
-			<column name="AllowDrawingPower" type="boolean" />
-		</addColumn>
-	</changeSet>
+	<!-- <changeSet id="86" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN_PA"> 
+		<column name="AllowDrawingPower" type="boolean" /> </addColumn> </changeSet> -->
 
 	<changeSet id="87" author="satyanarayana.g">
 		<sql>
@@ -2289,14 +2322,12 @@
 	</changeSet>
 
 	<changeSet id="89" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
-	<changeSet id="90" author="satyanarayana.g">
-		<addColumn tableName="REJECTFINANCEMAIN">
-			<column name="AllowDrawingPower" type="boolean" />
-		</addColumn>
-	</changeSet>
+	<!-- <changeSet id="90" author="satyanarayana.g"> <addColumn tableName="REJECTFINANCEMAIN"> 
+		<column name="AllowDrawingPower" type="boolean" /> </addColumn> </changeSet> -->
 
 	<changeSet id="92" author="satyanarayana.g">
 		<sql>
@@ -2315,7 +2346,8 @@
 	</changeSet>
 
 	<changeSet id="94" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="REJECTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="95_pre" author="satyanarayana.g" dbms="postgresql">
@@ -3532,7 +3564,8 @@
 	</changeSet>
 
 	<changeSet id="99" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -3656,7 +3689,8 @@
 	</changeSet>
 
 	<changeSet id="108" author="Varaprasad.k">
-		<modifyDataType tableName="SecUsers_Rtemp" columnName="USERSTAFFID" newDataType="varchar(10)" />
+		<modifyDataType tableName="SecUsers_Rtemp" columnName="USERSTAFFID"
+			newDataType="varchar(10)" />
 	</changeSet>
 
 	<changeSet id="108_post" author="murthy.y" dbms="postgresql">
@@ -3695,10 +3729,14 @@
 	</changeSet>
 
 	<changeSet id="110" author="Varaprasad.k">
-		<modifyDataType tableName="finprovisions" columnName="USENFPROV" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions_temp" columnName="USENFPROV" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions_temp" columnName="AUTORELEASENFP" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions" columnName="USENFPROV"
+			newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp"
+			columnName="USENFPROV" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP"
+			newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp"
+			columnName="AUTORELEASENFP" newDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="110_post" author="murthy.y" dbms="postgresql">
@@ -3734,14 +3772,19 @@
 	</changeSet>
 
 	<changeSet id="113" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="USENFPROV" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="USENFPROV" tableName="finprovisions_temp" defaultValue="0" />
-		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions_temp" defaultValue="0" />
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions"
+			defaultValue="0" />
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions_temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP"
+			tableName="finprovisions" defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP"
+			tableName="finprovisions_temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="114" author="Saikiran.V">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 					SELECT t1.receiptallocationid,
 				    t1.receiptid,
 				    t1.allocationid,
@@ -3785,7 +3828,8 @@
 		</createView>
 	</changeSet>
 	<changeSet id="115" author="Saikiran.V">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 					SELECT t1.receiptallocationid,
 				    t1.receiptid,
 				    t1.allocationid,
@@ -4026,7 +4070,9 @@
 </createView>
 	</changeSet>
 
-	<changeSet id="128_pre" author="murthy" dbms="postgresql"> <dropView viewName="accounts_view" /> </changeSet> 
+	<changeSet id="128_pre" author="murthy" dbms="postgresql">
+		<dropView viewName="accounts_view" />
+	</changeSet>
 
 	<changeSet id="128" author="murthy">
 		<dropTable tableName="ACCOUNTS_TEMP" />
@@ -4054,8 +4100,10 @@
 	</changeSet>
 
 	<changeSet id="130" author="Manoj.P">
-		<modifyDataType tableName="fintypevasproducts" columnName="mandatory" newDataType="smallint" />
-		<modifyDataType tableName="fintypevasproducts_temp" columnName="mandatory" newDataType="smallint" />
+		<modifyDataType tableName="fintypevasproducts"
+			columnName="mandatory" newDataType="smallint" />
+		<modifyDataType tableName="fintypevasproducts_temp"
+			columnName="mandatory" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="130_post" author="Manoj.P" dbms="postgresql">
@@ -4093,7 +4141,8 @@
 	</changeSet>
 
 	<changeSet id="133" author="murthy">
-		<modifyDataType tableName="BMTSUBSECTORS" columnName="SubSectorDesc" newDataType="varchar(100)" />
+		<modifyDataType tableName="BMTSUBSECTORS" columnName="SubSectorDesc"
+			newDataType="varchar(100)" />
 	</changeSet>
 
 	<changeSet id="133_post" author="Manoj.P" dbms="postgresql">
@@ -4123,12 +4172,14 @@
 
 	<changeSet author="Kesav" id="135">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="ExtendedFieldHeader_Temp" columnName="ModuleName" newDataType="varchar(20)" />
+		<modifyDataType tableName="ExtendedFieldHeader_Temp"
+			columnName="ModuleName" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet author="Kesav" id="136">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="ExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
+		<modifyDataType tableName="ExtendedFieldHeader"
+			columnName="ModuleName" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet id="135_post" author="Kesav" dbms="postgresql">
@@ -4143,20 +4194,24 @@
 	<changeSet author="Varaprasad.K" id="137.1">
 		<sql>
 
-			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1 FROM workflowdetails);
+			UPDATE SeqWorkFlowDetails SET SEQNO= (SELECT MAX(WorkflowId)+1
+			FROM workflowdetails);
 			UPDATE WorkFlowDetails SET
-			WorkFlowActive= 0 where WorkFlowType='RECEIPTUPLOAD';
+			WorkFlowActive= 0
+			where WorkFlowType='RECEIPTUPLOAD';
 
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">RECEIPTUPLOAD</column>
 			<column name="WorkFlowSubType">Receipt Upload</column>
 			<column name="WorkFlowDesc">Receipt Upload</column>
 			<column name="JsonDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="SvgDesign" type="nclob"><![CDATA[NULL]]></column>
 			<column name="WorkFlowXml" type="clob"><![CDATA[NULL]]></column>
-			<column name="WorkFlowRoles">RECEIPTUPLOAD_MAKER;RECEIPTUPLOAD_APPROVER</column>
+			<column name="WorkFlowRoles">RECEIPTUPLOAD_MAKER;RECEIPTUPLOAD_APPROVER
+			</column>
 			<column name="FirstTaskOwner">RECEIPTUPLOAD_MAKER</column>
 			<column name="WorkFlowActive">1</column>
 			<column name="Version">0</column>
@@ -4427,17 +4482,17 @@
 				Insert into REPORTCONFIGURATION  values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Loan Wise Voucher Report','Excel:Loan Wise Voucher Report',1,'LoanwiseVoucherReportForAll','dataSource',1,'menu_Item_LoanwiseVoucherReport',2,1000, null, null, null, null, null, null, 0, current_timestamp, 0, 0, 0);
              ]]>
 		</sql>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="147" author="vijaya.a">
 		<createTable tableName="MiscPostingUploads">
-			<column name="UPLOADID" type="bigint" >
+			<column name="UPLOADID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="MISCPOSTINGID" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="BATCH" type="varchar(20)"/>
+			<column name="BATCH" type="varchar(20)" />
 			<column name="BRANCH" type="varchar(12)" />
 			<column name="BATCHPURPOSE" type="varchar(20)" />
 			<column name="POSTAGAINST" type="varchar(5)" />
@@ -4539,13 +4594,13 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="151" author="vijaya.a">
-	 	<addColumn tableName="MiscPostingUploads">
-	 		<column name="TransactionId" type="bigint"/>
-	 	</addColumn>
+		<addColumn tableName="MiscPostingUploads">
+			<column name="TransactionId" type="bigint" />
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="152" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
@@ -4558,7 +4613,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="153" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
@@ -4571,9 +4626,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="154" author="vijaya.a">
-		<createView viewName="MISCPOSTINGUPLOADS_AVIEW" replaceIfExists="true">
+		<createView viewName="MISCPOSTINGUPLOADS_AVIEW"
+			replaceIfExists="true">
     		SELECT 		
     			T1.UploadId, 
     			T1.MISCPOSTINGID, 
@@ -4609,15 +4665,23 @@
 			UPLOADHEADER T2 ON T1.UploadId = T2.UploadId
     </createView>
 	</changeSet>
-	
-	<changeSet id="156" author="vijaya.a">
+
+	<changeSet id="156" author="vijaya.a" dbms="postgresql,oracle">
 		<sql>
 	    	<![CDATA[
-	        	Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('JVPosting','JVPosting','listheader_BatchReference.label,listheader_Batch.label,listheader_DebitCount.label,listheader_CreditsCount.label,listheader_TotDebitsByBatchCcy.label,listheader_TotCreditsByBatchCcy.label,listheader_RecordStatus.label','reference,batch,debitCount,creditsCount,totDebitsByBatchCcy,totCreditsByBatchCcy,recordStatus','String,String,int,int,int,int,String',' ','ReportList07','Miscellaneous Posting Upload Details','Upload Masters',2,1001,Convert(Datetime,'12-FEB-19'),'Approved',' ',' ',' ',' ',' ',0,0);
+	        	Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('JVPosting','JVPosting','listheader_BatchReference.label,listheader_Batch.label,listheader_DebitCount.label,listheader_CreditsCount.label,listheader_TotDebitsByBatchCcy.label,listheader_TotCreditsByBatchCcy.label,listheader_RecordStatus.label','reference,batch,debitCount,creditsCount,totDebitsByBatchCcy,totCreditsByBatchCcy,recordStatus','String,String,int,int,int,int,String',' ','ReportList07','Miscellaneous Posting Upload Details','Upload Masters',2,1001,to_date('12-02-19','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0,0);
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="156" author="vijaya.a" dbms="mssql">
+		<sql>
+	    	<![CDATA[
+	        	Insert into REPORTLIST (CODE,MODULE,FIELDLABELS,FIELDVALUES,FIELDTYPE,ADDFIELDS,REPORTFILENAME,REPORTHEADING,MODULETYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID,FORMATREQ) values ('JVPosting','JVPosting','listheader_BatchReference.label,listheader_Batch.label,listheader_DebitCount.label,listheader_CreditsCount.label,listheader_TotDebitsByBatchCcy.label,listheader_TotCreditsByBatchCcy.label,listheader_RecordStatus.label','reference,batch,debitCount,creditsCount,totDebitsByBatchCcy,totCreditsByBatchCcy,recordStatus','String,String,int,int,int,int,String',' ','ReportList07','Miscellaneous Posting Upload Details','Upload Masters',2,1001,convert(varchar,'2019-02-12',23),'Approved',' ',' ',' ',' ',' ',0,0);
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="157" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
@@ -4630,9 +4694,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="158" author="vijaya.a">
-	 	<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="00000001"/>
+		<createSequence sequenceName="SeqMscPostRef"
+			incrementBy="1" startValue="00000001" />
 	</changeSet>
 
 	<changeSet id="159" author="vijaya.a">
@@ -4644,16 +4709,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	 
-	 <changeSet id="160" author="vijaya.a">
-	  	<dropNotNullConstraint tableName="MiscPostingUploads" columnName="BATCH" columnDataType = "varchar(20)"/>
-	 </changeSet>
-	 
-	 <changeSet id="161" author="vijaya.a">
-	  	<modifyDataType tableName="MiscPostingUploads" columnName="BATCHPURPOSE" newDataType="varchar(200)"/>
-	 </changeSet>
-	 
-	 <changeSet id="162" author="vijaya.a">
+
+
+	<changeSet id="161" author="vijaya.a">
+		<modifyDataType tableName="MiscPostingUploads"
+			columnName="BATCHPURPOSE" newDataType="varchar(200)" />
+	</changeSet>
+
+	<changeSet id="162" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
 	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'MISCPOSTINGUPLOAD_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch');
@@ -4663,17 +4726,29 @@
 			]]>
 		</sql>
 	</changeSet>
-	 
+
 	<changeSet id="163" author="vijaya.a">
-	 	<dropSequence sequenceName="SeqMscPostRef"/>
+		<dropSequence sequenceName="SeqMscPostRef" />
 	</changeSet>
-	 
+
 	<changeSet id="164" author="vijaya.a">
-	 	<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="10000000"/>
+		<createSequence sequenceName="SeqMscPostRef"
+			incrementBy="1" startValue="10000000" />
 	</changeSet>
-	
-	
-	<changeSet id="165" author="vijaya.a">
+
+
+	<changeSet id="165" author="vijaya.a" dbms="postgresql,oracle">
+		<sql>
+	    	<![CDATA[
+	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JVPOSTINGS_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingDivision');
+	 			delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JVPOSTINGS_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingBranch');
+	 			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='JVPOSTINGS_MAKER'),(select rightid from secrights where rightname='JVPostingDialog_PostingDivision'),1,0,10000,to_date('18-05-17','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0);
+     			Insert into SECGROUPRIGHTS (GRPRIGHTID,GRPID,RIGHTID,ACCESSTYPE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select max(grprightid) from secgrouprights)+1,(select grpid from secgroups where grpcode='JVPOSTINGS_MAKER'),(select rightid from secrights where rightname='JVPostingDialog_PostingBranch'),1,0,10000,to_date('18-05-17','DD-MM-RR'),'Approved',' ',' ',' ',' ',' ',0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="165" author="vijaya.a" dbms="mssql">
 		<sql>
 	    	<![CDATA[
 	        	delete from SECGROUPRIGHTS where grpid =(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'JVPOSTINGS_MAKER') and rightid =(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'JVPostingDialog_PostingDivision');
@@ -4683,14 +4758,14 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="166" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
 	        	update secrights set righttype=3 where rightname in ('JVPostingDialog_PostingBranch','JVPostingDialog_PostingDivision');
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="167" author="vijaya.a">
 		<createView replaceIfExists="true" viewName="MISCUPLOADPOSTINGS_RVIEW">
@@ -4698,7 +4773,209 @@
 		</createView>
 	</changeSet>
 
-	 <changeSet id="168" author="vijaya.a">
+	<changeSet id="168" author="vijaya.a" dbms="oracle">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">	
+	SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN Financemain T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				cast(T3.Reference as varchar(20)) Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on cast(T3.Batchreference as varchar(20)) = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'				
+		</createView>
+	</changeSet>
+
+	<changeSet id="168" author="vijaya.a" dbms="postgresql">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN Financemain T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Reference Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on cast(T3.Batchreference as varchar(20)) = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'
+	 	</createView>
+	</changeSet>
+
+	<changeSet id="168" author="vijaya.a" dbms="mssql">
 		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
 			SELECT	
 				T1.LinkedTranId, 
@@ -4797,8 +5074,8 @@
 				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
 				WHERE T1.FinEvent ='JVPOST'
 	 	</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="175" author="vijaya.a">
 		<createTable tableName="UPLOADHEADER_Temp">
 			<column name="UPLOADID" type="bigint">
@@ -4831,37 +5108,62 @@
 	</changeSet>
 
 	<changeSet id="177" author="vijaya.a">
-	 <addColumn tableName="UPLOADHEADER">
-	  <column name="Entity" type="varchar(8)"/>
-	 </addColumn>
-	 <addColumn tableName="UPLOADHEADER_TEMP">
-	  <column name="Entity" type="varchar(8)"/>
-	 </addColumn>
+		<addColumn tableName="UPLOADHEADER">
+			<column name="Entity" type="varchar(8)" />
+		</addColumn>
+		<addColumn tableName="UPLOADHEADER_TEMP">
+			<column name="Entity" type="varchar(8)" />
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="178" author="vijaya.a">
-	<dropColumn tableName="UPLOADHEADER" columnName="Entity"/>
-	<dropColumn tableName="UPLOADHEADER_temp" columnName="Entity"/>
+		<dropColumn tableName="UPLOADHEADER" columnName="Entity" />
+		<dropColumn tableName="UPLOADHEADER_temp" columnName="Entity" />
 	</changeSet>
-	
+
 	<changeSet id="179" author="vijaya.a">
-	 <addColumn tableName="UPLOADHEADER">
-	  <column name="EntityCode" type="varchar(8)"/>
-	 </addColumn>
-	 <addColumn tableName="UPLOADHEADER_TEMP">
-	  <column name="EntityCode" type="varchar(8)"/>
-	 </addColumn>
+		<addColumn tableName="UPLOADHEADER">
+			<column name="EntityCode" type="varchar(8)" />
+		</addColumn>
+		<addColumn tableName="UPLOADHEADER_TEMP">
+			<column name="EntityCode" type="varchar(8)" />
+		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="180" author="vijaya.a" dbms="mssql">
 		<createTable tableName="SeqJVpostings">
-			<column name="SeqNo" type="bigint" autoIncrement="true"/>
-			<column name="Value" type="int"/>
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int" />
 		</createTable>
 	</changeSet>
+
+	<changeSet id="181" author="vijaya.a" dbms="oracle">
+		<createView replaceIfExists="true" viewName="UploadHeader_View">
+	 	 
+	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module
+				,T1.Version, T1.LastMntBy, T1.LastMntOn, cast( T1.RecordStatus as NVARCHAR2(50)) RecordStatus,cast( T1.RoleCode as NVARCHAR2(50)) RoleCode
+        , cast( T1.NextRoleCode as NVARCHAR2(50)) NextRoleCode,cast( T1.TaskId as NVARCHAR2(50)) TaskId,cast( T1.NextTaskId as NVARCHAR2(50)) NextTaskId,cast( T1.RecordType as NVARCHAR2(50)) RecordType, T1.WorkflowId
+				,T1.Entitycode, T2.EntityDesc, T3.UsrLogIn USERNAME
+	FROM 		UploadHeader_Temp T1 LEFT JOIN	
+			    Entity T2 ON T1.Entitycode = T2.EntityCode LEFT JOIN 
+				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+
+	Union All
+
+	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module
+				,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus RecordStatus , T1.RoleCode
+        , T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId
+				,T1.Entitycode, T2.EntityDesc, T3.UsrLogIn USERNAME
+	FROM 		UploadHeader T1 LEFT JOIN	
+			    Entity T2 ON T1.Entitycode = T2.EntityCode LEFT JOIN 
+				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+	WHERE 		NOT EXISTS ( SELECT 1 FROM UploadHeader_Temp WHERE UploadId = T1.UploadId)
 	
-	<changeSet id="181" author="vijaya.a">
-	<createView replaceIfExists="true" viewName="UploadHeader_View">
+	</createView>
+	</changeSet>
+
+	<changeSet id="181" author="vijaya.a" dbms="postgresql,mssql">
+		<createView replaceIfExists="true" viewName="UploadHeader_View">
 	 
 	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module,
 				T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
@@ -4878,24 +5180,126 @@
 	FROM 		UploadHeader T1 LEFT JOIN	
 			    Entity T2 ON T1.Entitycode = T2.EntityCode LEFT JOIN 
 				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
-	WHERE 		NOT EXISTS ( SELECT 1 FROM UploadHeader_Temp WHERE UploadId = T1.UploadId);
+	WHERE 		NOT EXISTS ( SELECT 1 FROM UploadHeader_Temp WHERE UploadId = T1.UploadId)
 
 
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="182" author="vijaya.a">
-		<dropSequence sequenceName="SeqMscPostRef"/>
+		<dropSequence sequenceName="SeqMscPostRef" />
 	</changeSet>
-	
+
 	<changeSet id="183" author="vijaya.a" dbms="mssql">
 		<createTable tableName="SeqMscPostRef">
-			<column name="SeqNo" type="bigint" autoIncrement="true"/>
-			<column name="Value" type="int"/>
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int" />
 		</createTable>
 	</changeSet>
-	
-	<changeSet id="184" author="vijaya.a">
+
+	<changeSet id="184" author="vijaya.a" dbms="oracle">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
+		SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN (Select FinReference from FinanceMain UNION 
+		           SELECT FinReference from FinanceMain_Temp) T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId,
+        cast(T3.Reference as varchar(20)) Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on cast(T3.batchreference as varchar(20)) = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'
+	</createView>
+	</changeSet>
+
+	<changeSet id="184" author="vijaya.a" dbms="postgresql">
 		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
 			SELECT	
 				T1.LinkedTranId, 
@@ -4995,7 +5399,109 @@
 				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
 				WHERE T1.FinEvent ='JVPOST'
 	 	</createView>
-	</changeSet> 
+	</changeSet>
+
+	<changeSet id="184" author="vijaya.a" dbms="mssql">
+		<createView replaceIfExists="true" viewName="POSTINGS_VIEW">
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T1.Finreference,
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN (Select FinReference from FinanceMain UNION 
+		           SELECT FinReference from FinanceMain_Temp) T3 on T3.Finreference = T1.Finreference
+				WHERE T1.FinEvent NOT IN ('VASFEE', 'JVPOST')
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Primarylinkref, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate,
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode
+				INNER JOIN vasrecording T3 ON T3.vasreference = T1.Finreference
+				WHERE T1.FinEvent='VASFEE'
+			UNION ALL
+			SELECT	
+				T1.LinkedTranId, 
+				T1.Postref, 
+				T1.PostingId, 
+				T3.Reference Finreference, 
+				T1.FinEvent, 
+				T1.PostDate, 
+				T1.ValueDate,
+				T1.AppValueDate,
+				T1.AppDate, 
+				T1.TranCode, 
+				T1.RevTranCode, 
+				T1.DrOrCr, 
+				T1.Account, 
+				T1.PostAmount, 
+				T1.PostStatus, 
+				T1.ErrorId, 
+				T1.ErrorMsg, 
+				T2.AEEventCodeDesc LovDescEventCodeName, 
+				T1.ShadowPosting, 
+				T1.TranDesc, 
+				T1.AmountType, 
+				T1.AcCcy, 
+				T1.PostBranch, 
+				T1.Userbranch, 
+				T1.TranOrderID, 
+				T1.TransOrder
+			FROM  Postings T1
+				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
+				INNER JOIN jvpostings T3 on cast(T3.batchreference as varchar2(20)) = T1.Finreference
+				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
+				WHERE T1.FinEvent ='JVPOST'
+	 	</createView>
+	</changeSet>
 
 	<changeSet id="185" author="vijaya.a">
 		<sql>
@@ -5005,7 +5511,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="186" author="murthy.y">
 		<sql>
 	    	<![CDATA[
@@ -5013,19 +5519,20 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="187" author="vijaya.a">
-	 	<createSequence sequenceName="SeqJVpostings" incrementBy="1" startValue="1"/>
+		<createSequence sequenceName="SeqJVpostings"
+			incrementBy="1" startValue="1" />
 	</changeSet>
-	
+
 	<changeSet id="188" author="vijaya.a">
-	 	<dropSequence sequenceName="SeqJVpostings"/>
+		<dropSequence sequenceName="SeqJVpostings" />
 	</changeSet>
-	
+
 	<changeSet id="189" author="vijaya.a" dbms="mssql">
 		<createTable tableName="SeqJVpostings">
-			<column name="SeqNo" type="bigint" autoIncrement="true"/>
-			<column name="Value" type="int"/>
+			<column name="SeqNo" type="bigint" autoIncrement="true" />
+			<column name="Value" type="int" />
 		</createTable>
 	</changeSet>
 
