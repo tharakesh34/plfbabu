@@ -3784,7 +3784,7 @@ UNION ALL
 
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="96" author="dheerendra">
 		<createView viewName="ogl_view" replaceIfExists="true">
 	SELECT p.postdate AS acctdate,
@@ -3846,8 +3846,8 @@ UNION ALL
   WHERE p.postamount > 0 and p.finevent ='INSPAY'
   ORDER BY p.linkedtranid ;
 		</createView>
-	</changeSet >
-	
+	</changeSet>
+
 	<changeSet id="97" author="dheerendra">
 		<createView viewName="ogl_view" replaceIfExists="true">
 	SELECT p.postdate AS acctdate,
@@ -3909,6 +3909,13 @@ UNION ALL
   WHERE p.postamount > 0
   ORDER BY p.linkedtranid;
 		</createView>
-	</changeSet >
-	
+	</changeSet>
+
+	<changeSet id="111" author="dheerendra">
+		<sql>
+			<![CDATA[
+				update plf.master_def set key_code='C-PAJRL/Disbursement/Additional Disbursements' where key_type='ADDDBSN';
+				update plf.master_def set key_code='C-PAJRL/Disbursement/Loan Booking' where key_type='ADDDBSP';
+			]]>
+		</sql>
 </databaseChangeLog>
