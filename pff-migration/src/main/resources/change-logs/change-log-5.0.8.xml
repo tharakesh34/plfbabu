@@ -8566,5 +8566,13 @@ UNION ALL
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="180" author="naga.g">
+		<sql>
+			 <![CDATA[
+			    delete from SMTPARAMETERS where sysparmcode='DISB_IFSCCODE';
+				Insert into SMTPARAMETERS (sysparmcode,sysparmdesc,sysparmtype,sysparmmaint,sysparmvalue,sysparmlength,sysparmdec,sysparmlist,sysparmvaldmod,sysparmdescription,version,lastmntby,lastmnton,recordstatus,rolecode,nextrolecode,taskid,nexttaskid,recordtype,workflowid ) values ('DISB_IFSCCODE','DISB_IFSCCODE ','String',1,'SBIN0000008',11,0,null,null,'IFSC CODE',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			 ]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
