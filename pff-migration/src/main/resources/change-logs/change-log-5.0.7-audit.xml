@@ -122,5 +122,49 @@
 	<changeSet id="9" author="VaraPrasad.K">
 		<modifyDataType tableName="AdtFinTypeVASProducts" columnName="mandatory" newDataType="boolean" />
 	</changeSet>
-	<!-- 5.0.7 is Under QC please use 5.0.8 -->	
+	<!-- 5.0.7 is Under QC please use 5.0.8 -->
+	
+	<changeSet id="10" author="vijaya.a">
+		<createTable tableName="ADTUPLOADHEADER">
+			<column name="AUDITID" type="Bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITDATE" type="Datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITSEQ" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AUDITIMAGE" type="Varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="UPLOADID" type="Bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FILELOCATION" type="Varchar(250)" />
+			<column name="FILENAME" type="Varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TRANSACTIONDATE" type="Datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="TOTALRECORDS" type="int" />
+			<column name="SUCCESSCOUNT" type="int" />
+			<column name="FAILEDCOUNT" type="int" />
+			<column name="MODULE" type="Varchar(250)">
+				<constraints nullable="false" />
+			</column>
+			<column name="VERSION" type="int" />
+			<column name="LASTMNTBY" type="Bigint" />
+			<column name="LASTMNTON" type="Datetime" />
+			<column name="RECORDSTATUS" type="Varchar(50)" />
+			<column name="ROLECODE" type="Varchar(50)" />
+			<column name="NEXTROLECODE" type="Varchar(200)" />
+			<column name="TASKID" type="Varchar(50)" />
+			<column name="NEXTTASKID" type="Varchar(200)" />
+			<column name="RECORDTYPE" type="Varchar(50)" />
+			<column name="WORKFLOWID" type="Bigint" />
+			<column name="ENTITYCODE" type="Varchar(8)" />
+		</createTable>
+	</changeSet>	
 </databaseChangeLog>

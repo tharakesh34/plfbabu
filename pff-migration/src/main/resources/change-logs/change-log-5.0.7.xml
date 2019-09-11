@@ -5013,5 +5013,9 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="187" author="vijaya.a">
+	 	<createSequence sequenceName="SeqJVpostings" incrementBy="1" startValue="1"/>
+	</changeSet>
 
 </databaseChangeLog>
