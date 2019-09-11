@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,7 +22,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -58,8 +59,10 @@
 	</changeSet>
 
 	<changeSet id="05" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="06_pre" author="satyanarayana.g" dbms="postgresql">
@@ -71,7 +74,8 @@
 	</changeSet>
 
 	<changeSet id="06" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
 					T1.FINTYPEDESC,
@@ -328,7 +332,8 @@
 	</changeSet>
 
 	<changeSet id="7" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW " replaceIfExists="true">	 
+		<createView viewName="RMTFINANCETYPES_ORGVIEW "
+			replaceIfExists="true">	 
 			SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
 					T1.FINTYPEDESC,
@@ -545,7 +550,8 @@
 	</changeSet>
 
 	<changeSet id="8" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_VIEW " replaceIfExists="true">	 	 
+		<createView viewName="RMTFINANCETYPES_VIEW "
+			replaceIfExists="true">	 	 
 	
 			SELECT T1.FINTYPE,
 				  T1.FINCATEGORY,
@@ -1065,8 +1071,10 @@
 	</changeSet>
 
 	<changeSet id="15" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="17" author="satyanarayana.g">
@@ -1092,7 +1100,8 @@
 	</changeSet>
 
 	<changeSet id="20" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="22" author="satyanarayana.g">
@@ -1118,7 +1127,8 @@
 	</changeSet>
 
 	<changeSet id="25" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="REJECTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="26_pre" author="satyanarayana.g" dbms="postgresql">
@@ -2339,7 +2349,8 @@
 	</changeSet>
 
 	<changeSet id="29" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -2401,11 +2412,13 @@
 	</changeSet>
 
 	<changeSet id="33" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="active" tableName="TaxType" defaultValue="0" />
+		<addDefaultValue columnName="active" tableName="TaxType"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="34" author="Saikiran.v">
-		<createIndex tableName="TaxType" indexName="IX_TaxType_Name" unique="true">
+		<createIndex tableName="TaxType" indexName="IX_TaxType_Name"
+			unique="true">
 			<column name="Name" />
 		</createIndex>
 	</changeSet>
@@ -2468,7 +2481,8 @@
 
 	<changeSet id="40" author="Prasadraju.B" dbms="postgresql, oracle">
 		<comment> Adding default constraint for serviceble column to 1 "Prasadraju.B" </comment>
-		<addDefaultValue columnName="serviceable" tableName="pincodes" defaultValue="1" />
+		<addDefaultValue columnName="serviceable" tableName="pincodes"
+			defaultValue="1" />
 	</changeSet>
 
 	<changeSet id="41" author="vijaya.a">
@@ -2483,7 +2497,8 @@
 
 	<changeSet author="Kesav" id="42">
 		<comment>data type modified from varchar(150) to varchar(200)</comment>
-		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName" newDataType="varchar(200)" />
+		<modifyDataType tableName="GST_Invoice_Txn" columnName="CustomerName"
+			newDataType="varchar(200)" />
 	</changeSet>
 
 
@@ -2570,7 +2585,8 @@
 	</changeSet>
 
 	<changeSet id="58" author="saikiran.v">
-		<createView viewName="wiffinfeedetail_view" replaceIfExists="true">
+		<createView viewName="wiffinfeedetail_view"
+			replaceIfExists="true">
 			SELECT t1.feeid,t1.finreference,t1.feeseq,t1.originationfee,t1.finevent,t1.feetypeid,t1.feeorder,t1.calculatedamount,t1.actualamount,t1.waivedamount,
 			t1.paidamount,t1.feeschedulemethod,t1.terms,t1.remainingfee,t1.paymentref,t1.calculationtype,t1.rulecode,t1.fixedamount,t1.percentage,t1.calculateon,
 			t1.alwdeviation,t1.maxwaiverperc,t1.alwmodifyfee,t1.alwmodifyfeeschdmthd,t1.vasreference,t1.status,t1.taxapplicable,t1.taxcomponent,t1.paidamountoriginal,
@@ -2609,7 +2625,8 @@
 	</changeSet>
 
 	<changeSet id="61" author="saikiran.v">
-		<createView viewName="receiptallocationdetail_aview" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_aview"
+			replaceIfExists="true">
 			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
 			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedgst,t1.taxheaderid
    			FROM receiptallocationdetail t1
@@ -2621,7 +2638,8 @@
 	</changeSet>
 
 	<changeSet id="62" author="saikiran.v">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 			SELECT t1.receiptallocationid,t1.receiptid,t1.allocationid,t1.allocationtype,t1.allocationto,t1.paidamount,t1.waivedamount,
 			COALESCE(t3.feetypedesc, t5.feetypedesc) AS typedesc,t1.paidgst,t1.waivedreqamount,t1.waiveraccepted,t1.totaldue,t1.waivedgst,t1.taxheaderid
    			FROM receiptallocationdetail_temp t1 
@@ -2825,7 +2843,8 @@
 
 	<changeSet id="47" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
-		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW" replaceIfExists="true">
+		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW"
+			replaceIfExists="true">
 			SELECT t1.id,
     			t1.LiabilityId,
     			t1.EmiType,
@@ -2884,8 +2903,10 @@
 	</changeSet>
 
 	<changeSet id="50" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="MAXAMTPERINSTRUCTION" tableName="INSTRUMENTWISELIMIT" defaultValue="0" />
-		<addDefaultValue columnName="MAXAMTPERINSTRUCTION" tableName="INSTRUMENTWISELIMIT_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="MAXAMTPERINSTRUCTION"
+			tableName="INSTRUMENTWISELIMIT" defaultValue="0" />
+		<addDefaultValue columnName="MAXAMTPERINSTRUCTION"
+			tableName="INSTRUMENTWISELIMIT_TEMP" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="51" author="satyanarayana.g">
@@ -2898,15 +2919,16 @@
 	</changeSet>
 
 	<changeSet id="52" author="satyanarayana.g">
-		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT" columnName="MAXAMTPERINSTRUCTION"
-			columnDataType="decimal(18,0)" />
-		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT_TEMP" columnName="MAXAMTPERINSTRUCTION"
-			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT"
+			columnName="MAXAMTPERINSTRUCTION" columnDataType="decimal(18,0)" />
+		<addNotNullConstraint tableName="INSTRUMENTWISELIMIT_TEMP"
+			columnName="MAXAMTPERINSTRUCTION" columnDataType="decimal(18,0)" />
 	</changeSet>
 
 	<changeSet id="53" author="satyanarayana.g">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
-		<createView viewName="INSTRUMENTWISELIMIT_VIEW" replaceIfExists="true">
+		<createView viewName="INSTRUMENTWISELIMIT_VIEW"
+			replaceIfExists="true">
 			SELECT T1.ID,
 					T1.INSTRUMENTMODE,
 					T1.PAYMENTMINAMTPERTRANS,
@@ -2956,7 +2978,8 @@
 
 	<changeSet id="54" author="satyanarayana.g">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
-		<createView viewName="INSTRUMENTWISELIMIT_AVIEW" replaceIfExists="true">
+		<createView viewName="INSTRUMENTWISELIMIT_AVIEW"
+			replaceIfExists="true">
 			   SELECT T1.ID,
 					  T1.INSTRUMENTMODE,
 					  T1.PAYMENTMINAMTPERTRANS,
@@ -2982,7 +3005,8 @@
 
 	<changeSet id="55" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
-		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW" replaceIfExists="true">
+		<createView viewName="EXTERNAL_LIABILITIES_PD_VIEW"
+			replaceIfExists="true">
 			SELECT t1.id,
     			t1.LiabilityId,
     			t1.EmiType,
@@ -3089,8 +3113,10 @@
 	</changeSet>
 
 	<changeSet id="106" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="alwSanctionAmt" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="alwSanctionAmt"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="alwSanctionAmt"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="107" author="Saikiran.v">
@@ -3113,8 +3139,10 @@
 	</changeSet>
 
 	<changeSet id="109" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="alwSanctionAmtOverride" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="alwSanctionAmtOverride"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="alwSanctionAmtOverride"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="110_pre" author="Saikiran.v" dbms="postgresql">
@@ -3128,7 +3156,8 @@
 	</changeSet>
 
 	<changeSet id="110" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview"
+			replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
     t1.fintypedesc,
@@ -3374,7 +3403,8 @@
 
 
 	<changeSet id="111" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_orgview"
+			replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
     t1.fintypedesc,
@@ -3576,7 +3606,8 @@
 	</changeSet>
 
 	<changeSet id="112" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_view"
+			replaceIfExists="true">
 			SELECT t1.fintype,
     t1.fincategory,
     t1.fintypedesc,
@@ -4079,7 +4110,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="113" author="Saikiran.V" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -4091,131 +4122,237 @@ UNION ALL
 
 	<changeSet id="114" author="Durgaprasad G">
 		<sql>
-			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM SECGROUPS);
+			UPDATE SEQSECGROUPS SET SEQNO= (SELECT MAX(GRPID) FROM
+			SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
 			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			UPDATE SEQSECOPERATIONROLES SET SEQNO=
-			(SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE
+			SEQSECOPERATIONROLES SET SEQNO=
+			(SELECT MAX(OPRROLEID) FROM
+			SECOPERATIONROLES);
 			UPDATE SEQSECROLES SET SEQNO=
-			(SELECT MAX(ROLEID) FROM SecRoles);
+			(SELECT MAX(ROLEID)
+			FROM SecRoles);
 
-			INSERT INTO SecRoles VALUES ((select max(roleid)+1 from
+			INSERT INTO SecRoles VALUES ((select max(roleid)+1
+			from
 			secroles),1,'GSTDETAILS_MAKER','GST details maintaince maker
 			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ','
 			',' ',' ',0) ;
 			INSERT INTO SecRoles VALUES ((select
-			max(roleid)+1 from secroles),1,'GSTDETAILS_APPROVER','GST details
+			max(roleid)+1 from
+			secroles),1,'GSTDETAILS_APPROVER','GST details
 			maintaince approver
-			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0) ;
+			role.','',1,1000,CURRENT_TIMESTAMP,'Approved',' ',' ',' ',' ',' ',0)
+			;
 
 			INSERT INTO SECGROUPS SELECT
-			(SELECT MAX(GRPID)+1 FROM SECGROUPS), 'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER',
+			(SELECT MAX(GRPID)+1 FROM SECGROUPS),
+			'GSTMAINTENANCE_MAKER', 'GSTMAINTENANCE_MAKER',
 			0,1000,CURRENT_TIMESTAMP,' ','
-			',' ',' ',' ',' ',0 FROM SEQSECGROUPS WHERE 0=0;
+			',' ',' ',' ',' ',0 FROM SEQSECGROUPS
+			WHERE 0=0;
 			INSERT INTO SECGROUPS SELECT (SELECT
-			MAX(GRPID)+1 FROM SECGROUPS),
-			'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER', 0,1000,CURRENT_TIMESTAMP,' ','
+			MAX(GRPID)+1 FROM
+			SECGROUPS),
+			'GSTMAINTENANCE_APPROVER', 'GSTMAINTENANCE_APPROVER',
+			0,1000,CURRENT_TIMESTAMP,' ','
 			',' ',' ',' ',' ',0 FROM
-			SEQSECGROUPS WHERE 0=0;
+			SEQSECGROUPS
+			WHERE 0=0;
 
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS), (SELECT
 			GRPID FROM SECGROUPS WHERE
 			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT
-			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailList_NewFinanceTaxDetail'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailDialog_btnEdit'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT
-			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailDialog_btnNew'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailDialog_btnDelete'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT
-			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT
-			INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='FinanceTaxDetailDialog_FinReference'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'),
-			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
-			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
-			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
-			',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
-			WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'),
-			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
-			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
-			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
-			',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
-			WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
-			RIGHTNAME='FinanceTaxDetailDialog_Country'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO
-			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_Province'),
-			1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
-			FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM
-			SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_City'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1,
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_APPROVER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='menuItem_FinanceManagement_FinanceTaxDetail'), 1,
 			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
-			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
-			GRPCODE='GSTMAINTENANCE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS
-			WHERE
-			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailList_PrintList'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailList_NewFinanceTaxDetail'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnEdit'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnNew'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnDelete'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT
+			INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_FinReference'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_ApplicableFor'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_TaxExempted'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_TaxNumber'),
+			1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_AddrLine1'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
+			',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_AddrLine2'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_AddrLine3'),
+			1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_AddrLine4'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ','
+			',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_Country'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_Province'),
+			1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1
+			FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_City'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_MAKER')
+			,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='FinanceTaxDetailDialog_PinCode'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 
-			INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
+			INSERT INTO
+			SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS),
+			(SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='GSTMAINTENANCE_APPROVER')
+			,(SELECT RIGHTID FROM SECRIGHTS
+			WHERE
+			RIGHTNAME='button_FinanceTaxDetailDialog_btnSave'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
+			INSERT INTO
+			SecRoleGroups values((Select MAX(RoleGrpID)+1 From
+			SecRoleGroups),(Select GrpId From SecGroups Where
 			GrpCode='GSTMAINTENANCE_MAKER'), (Select RoleID From SecRoles Where
-			RoleCd='GSTDETAILS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			RoleCd='GSTDETAILS_MAKER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ','
+			',' ',0);
 			INSERT INTO SecRoleGroups
-			values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where
-			GrpCode='GSTMAINTENANCE_APPROVER'), (Select RoleID From SecRoles Where
-			RoleCd='GSTDETAILS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+			values((Select MAX(RoleGrpID)+1
+			From SecRoleGroups),(Select GrpId From SecGroups Where
+			GrpCode='GSTMAINTENANCE_APPROVER'), (Select RoleID From SecRoles
+			Where
+			RoleCd='GSTDETAILS_APPROVER'),0,1000,CURRENT_TIMESTAMP,' ',' ','
+			',' ',' ',' ',0);
 
 			UPDATE SEQSECGROUPS SET SEQNO=
-			(SELECT MAX(GRPID) FROM SECGROUPS);
+			(SELECT MAX(GRPID)
+			FROM SECGROUPS);
 			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
 			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
-			UPDATE SEQSECROLEGROUPS SET SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
-			UPDATE SEQSECOPERATIONROLES SET SEQNO=
-			(SELECT MAX(OPRROLEID) FROM SECOPERATIONROLES);
-			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID) FROM SecRoles);
+			UPDATE SEQSECROLEGROUPS SET
+			SEQNO= (SELECT MAX(ROLEGRPID) FROM SECROLEGROUPS);
+			UPDATE
+			SEQSECOPERATIONROLES SET SEQNO=
+			(SELECT MAX(OPRROLEID) FROM
+			SECOPERATIONROLES);
+			UPDATE SEQSECROLES SET SEQNO= (SELECT MAX(ROLEID)
+			FROM SecRoles);
 
 		</sql>
 	</changeSet>
@@ -4223,7 +4360,8 @@ UNION ALL
 	<changeSet id="124" author="naga.g">
 		<createTable tableName="CustomerGST">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="CustomerGST_pk" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="CustomerGST_pk"
+					nullable="false" />
 			</column>
 			<column name="CustId" type="bigint"></column>
 			<column name="GstNumber" type="varchar(15)" />
@@ -4246,7 +4384,8 @@ UNION ALL
 	<changeSet id="125" author="naga.g">
 		<createTable tableName="CustomerGST_Temp">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="CustomerGST_Temp_pk" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="CustomerGST_Temp_pk"
+					nullable="false" />
 			</column>
 			<column name="CustId" type="bigint"></column>
 			<column name="GstNumber" type="varchar(15)" />
@@ -4328,7 +4467,8 @@ UNION ALL
 	<changeSet id="128" author="naga.g">
 		<createTable tableName="CustomerGSTdetails">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="customergstdetails_id_pk" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="customergstdetails_id_pk"
+					nullable="false" />
 			</column>
 			<column name="headerId" type="bigint" />
 			<column name="Frequancy" type="varchar(15)"></column>
@@ -4353,7 +4493,8 @@ UNION ALL
 	<changeSet id="129" author="naga.g">
 		<createTable tableName="CustomerGSTdetails_temp">
 			<column name="Id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="custmergstdetails_temp_id_pkey" nullable="false" />
+				<constraints primaryKey="true" primaryKeyName="custmergstdetails_temp_id_pkey"
+					nullable="false" />
 			</column>
 			<column name="headerId" type="bigint" />
 			<column name="Frequancy" type="varchar(15)"></column>
@@ -4384,8 +4525,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="131" author="naga.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails" defaultValue="0" />
-		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails_Temp" defaultValue="0" />
+		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails"
+			defaultValue="0" />
+		<addDefaultValue columnName="SalAmount" tableName="CustomerGSTdetails_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="132" author="naga.g">
@@ -4397,7 +4540,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="134" author="naga.g">
-		<createView viewName="CustomerGSTdetails_view" replaceIfExists="true">
+		<createView viewName="CustomerGSTdetails_view"
+			replaceIfExists="true">
 				SELECT t1.id,
 			    t1.headerid,
 			    t1.frequancy,
@@ -4438,7 +4582,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="135" author="naga.g">
-		<createView viewName="CustomerGSTdetails_aview" replaceIfExists="true">
+		<createView viewName="CustomerGSTdetails_aview"
+			replaceIfExists="true">
 				 SELECT t1.id,
 			    t1.headerid,
 			    t1.frequancy,
@@ -4556,8 +4701,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="141" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes"
+			defaultValue="0" />
+		<addDefaultValue columnName="SanBsdSchdle" tableName="RMTFinanceTypes_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="142_pre" author="satyanarayana.g" dbms="postgresql">
@@ -4569,7 +4716,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="142" author="satyanarayana.g">
-		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview"
+			replaceIfExists="true">
 		    SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
 					T1.FINTYPEDESC,
@@ -4830,7 +4978,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="143" author="satyanarayana.g">
-		<createView viewName="rmtfinancetypes_orgview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_orgview"
+			replaceIfExists="true">
 		    SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
 					T1.FINTYPEDESC,
@@ -5049,7 +5198,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="144" author="satyanarayana.g">
-		<createView viewName="rmtfinancetypes_view" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_view"
+			replaceIfExists="true">
 		    SELECT T1.FINTYPE,
 					T1.FINCATEGORY,
 					T1.FINTYPEDESC,
@@ -5551,17 +5701,18 @@ UNION ALL
 
 	<changeSet id="141" author="Durgaprasad G">
 		<comment> startValue is result of above query.</comment>
-		<createSequence sequenceName="Seq_Gst_Invoice_Txn" startValue="1000" incrementBy="1" />
+		<createSequence sequenceName="Seq_Gst_Invoice_Txn"
+			startValue="1000" incrementBy="1" />
 	</changeSet>
 
-	<!-- <changeSet id="142" author="Durgaprasad G">
-		<comment>Select SeqNo from Seq_Gst_Invoice_Txn_Details,result of query should be start value of below sequnc.</comment>
-		<dropTable tableName="Seq_Gst_Invoice_Txn_Details" />
-	</changeSet> -->
+	<!-- <changeSet id="142" author="Durgaprasad G"> <comment>Select SeqNo from 
+		Seq_Gst_Invoice_Txn_Details,result of query should be start value of below 
+		sequnc.</comment> <dropTable tableName="Seq_Gst_Invoice_Txn_Details" /> </changeSet> -->
 
 	<changeSet id="143" author="Durgaprasad G">
 		<comment> startValue is result of above query.</comment>
-		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details" startValue="1000" incrementBy="1" />
+		<createSequence sequenceName="Seq_Gst_Invoice_Txn_Details"
+			startValue="1000" incrementBy="1" />
 	</changeSet>
 
 	<changeSet id="56" author="vijaya.a" dbms="postgresql, oracle">
@@ -5581,7 +5732,8 @@ UNION ALL
 		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALES">
 			<column name="Id" type="bigInt">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CUSTCARDSALES_ID" />
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_CUSTCARDSALES_ID" />
 			</column>
 			<column name="MerchantId" type="varchar(20)">
 				<constraints nullable="false" />
@@ -5608,7 +5760,8 @@ UNION ALL
 		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALES_Temp">
 			<column name="Id" type="bigInt">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALES_TEMP_ID" />
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_CARDSALES_TEMP_ID" />
 			</column>
 			<column name="MerchantId" type="varchar(20)">
 				<constraints nullable="false" />
@@ -5635,7 +5788,8 @@ UNION ALL
 		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALESDETAILS">
 			<column name="Id" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_ID" />
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_CARDSALESDET_ID" />
 			</column>
 			<column name="CardSalesId" type="bigInt">
 				<constraints nullable="false" />
@@ -5678,7 +5832,8 @@ UNION ALL
 		<comment>Clix Card Sales changes</comment>
 		<createTable tableName="CUSTCARDSALESDETAILS_TEMP">
 			<column name="Id" type="bigint">
-				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_CARDSALESDET_TEMP_ID" />
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="PK_CARDSALESDET_TEMP_ID" />
 			</column>
 			<column name="CardSalesId" type="bigInt">
 				<constraints nullable="false" />
@@ -5776,7 +5931,8 @@ UNION ALL
 
 	<changeSet id="64" author="vijaya.a">
 		<comment>Clix Installment clearence changes</comment>
-		<createView viewName="CUSTCARDSALESDETAILS_View" replaceIfExists="true">
+		<createView viewName="CUSTCARDSALESDETAILS_View"
+			replaceIfExists="true">
 			SELECT t1.Id,
     			t1.CardSalesId,
     			t1.Month,
@@ -5828,7 +5984,8 @@ UNION ALL
 
 	<changeSet id="65" author="vijaya.a">
 		<comment>MaxAmtPerInstruction column added in InstrumentwiseLimit for IMPS Splitting</comment>
-		<createView viewName="CUSTCARDSALESDETAILS_AView" replaceIfExists="true">
+		<createView viewName="CUSTCARDSALESDETAILS_AView"
+			replaceIfExists="true">
 			  SELECT t1.Id,
     			t1.CardSalesId,
     			t1.Month,
@@ -6092,7 +6249,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="147" author="satyanarayana.g">
-		<createView viewName="RMTBASERATECODES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTBASERATECODES_AVIEW"
+			replaceIfExists="true">
 		   SELECT T1.BRTYPE,
 				  T1.BRTYPEDESC,
 				  T1.BRTYPEISACTIVE,
@@ -6128,7 +6286,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="148" author="satyanarayana.g">
-		<createView viewName="RMTBASERATECODES_VIEW" replaceIfExists="true">
+		<createView viewName="RMTBASERATECODES_VIEW"
+			replaceIfExists="true">
 		   SELECT   T1.BRTYPE,
 					T1.BRTYPEDESC,
 					T1.BRTYPEISACTIVE,
@@ -6275,11 +6434,13 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="156" author="DurgaPrasad G">
-		<modifyDataType tableName="RMTLOVFIELDDETAIL" columnName="VALUEDESC" newDataType="varchar(200)" />
+		<modifyDataType tableName="RMTLOVFIELDDETAIL"
+			columnName="VALUEDESC" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="157" author="DurgaPrasad G">
-		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP" columnName="VALUEDESC" newDataType="varchar(200)" />
+		<modifyDataType tableName="RMTLOVFIELDDETAIL_TEMP"
+			columnName="VALUEDESC" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="156_post" author="satyanarayana.g" dbms="postgresql">
@@ -6290,9 +6451,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	 <changeSet id="158" author="SaiKiran.V">
+
+
+	<changeSet id="158" author="SaiKiran.V">
 		<addColumn tableName="customers">
 			<column name="dnd" type="boolean" />
 		</addColumn>
@@ -6323,10 +6484,12 @@ UNION ALL
 
 
 	<changeSet id="162" author="SaiKiran.V" dbms="postgresql, oracle">
-		<addDefaultValue columnName="dnd" tableName="customers" defaultValue="0" />
-		<addDefaultValue columnName="dnd" tableName="customers_Temp" defaultValue="0" />
+		<addDefaultValue columnName="dnd" tableName="customers"
+			defaultValue="0" />
+		<addDefaultValue columnName="dnd" tableName="customers_Temp"
+			defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="163_deps" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6334,9 +6497,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	
+
+
+
 	<changeSet id="163_pre" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6345,7 +6508,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="163" author="SaiKiran.V" dbms="postgresql,oracle">
 		<createView viewName="customers_view" replaceIfExists="true">
 						 SELECT t1.custid,
@@ -6783,8 +6946,8 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="163_post" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -6793,7 +6956,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="163" author="SaiKiran.V" dbms="mssql">
 		<createView viewName="customers_view" replaceIfExists="true">
 						 SELECT t1.custid,
@@ -7231,7 +7394,7 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="164_pre" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7240,7 +7403,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="164" author="SaiKiran.V" dbms="postgresql,oracle">
 		<createView viewName="customers_aview" replaceIfExists="true">
 	SELECT t1.custid,
@@ -7459,8 +7622,8 @@ UNION ALL
      LEFT JOIN secroles t34 ON t1.nextrolecode = t34.rolecd				
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="164_post" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7469,7 +7632,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="164" author="SaiKiran.V" dbms="mssql">
 		<createView viewName="customers_aview" replaceIfExists="true">
 	SELECT t1.custid,
@@ -7689,8 +7852,8 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
-	
+
+
 	<changeSet id="165_pre" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7699,7 +7862,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="165" author="SaiKiran.V" dbms="postgresql,oracle">
 		<createView viewName="customers_tview" replaceIfExists="true">
 		 SELECT t1.custid,
@@ -7919,7 +8082,7 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="165_post" author="SaiKiran.V" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7928,7 +8091,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="165" author="SaiKiran.V" dbms="mssql">
 		<createView viewName="customers_tview" replaceIfExists="true">
 		 SELECT t1.custid,
@@ -8148,24 +8311,42 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="166" author="Vinay">
 		<sql>
+			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM
+			SECRIGHTS);
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT
+			MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+
+			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
+			'CustomerDialog_dnd','CustomerDialog',0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
+
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM
+			SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE
+			GRPCODE='CUSTOMER_DDE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE
+			RIGHTNAME='CustomerDialog_dnd'), 1, 0,1000,CURRENT_TIMESTAMP,' ','
+			',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT
+			MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS
+			WHERE RIGHTNAME='CustomerDialog_dnd'), 1, 0,1000,CURRENT_TIMESTAMP,'
+			',' ',' ',' ',' ',' ',0);
+			INSERT INTO SECGROUPRIGHTS VALUES((SELECT
+			MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS
+			WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM
+			SECRIGHTS WHERE RIGHTNAME='CustomerDialog_dnd'), 1,
+			0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
+
 			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			
-			INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'CustomerDialog_dnd','CustomerDialog',0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0;
-			
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_dnd'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_dnd'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID  FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='CustomerDialog_dnd'), 1, 0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
-			
-			UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
-			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
-			
+			UPDATE
+			SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM
+			SECGROUPRIGHTS);
+
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="167" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -8175,13 +8356,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="168" author="meena.a">
-    <addDefaultValue columnDataType="int" columnName="TENOR" defaultValueNumeric="0" tableName="LIMITDETAILS"/>
-	<addDefaultValue columnDataType="int" columnName="TENOR" defaultValueNumeric="0" tableName="LIMITDETAILS_TEMP"/>
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="LIMITDETAILS" />
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="LIMITDETAILS_TEMP" />
 	</changeSet>
 
-	
+
 	<changeSet id="169" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -8214,9 +8397,9 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	
-	<changeSet id="170.0" author="srihari.m" >
+
+
+	<changeSet id="170.0" author="srihari.m">
 		<createTable tableName="PaymentTransaction">
 			<column name="TRANSACTIONID" type="NUMBER" autoIncrement="true" />
 			<column name="PAYMENTID" type="NUMBER">
@@ -8238,16 +8421,18 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="170" author="Durgaprasad G">
-		 <createView viewName="PaymentTransaction_View" replaceIfExists="true">
+		<createView viewName="PaymentTransaction_View"
+			replaceIfExists="true">
 		 	select FA.FinReference, PT.TranModule, FA.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
 			from PaymentTransaction PT Inner Join FinAdvancePayments FA on PT.PAYMENTID= FA.PAYMENTID
 		 </createView>
 	</changeSet>
-	
-	<changeSet id="171" author="satyanarayana.g" >
-		<addDefaultValue columnName="Id" tableName="MandatesStatus" defaultValue="0"/>
+
+	<changeSet id="171" author="satyanarayana.g">
+		<addDefaultValue columnName="Id" tableName="MandatesStatus"
+			defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="172" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -8255,7 +8440,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="173" author="satyanarayana.g">
 		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
 		   SELECT A.ID,
@@ -8295,7 +8480,7 @@ UNION ALL
 				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
 	 </createView>
 	</changeSet>
-	
+
 	<changeSet id="139" author="Kesav">
 		<createTable tableName="CREDITREVIEWCONFIG">
 			<column name="Id" type="bigint" defaultValue="0">
@@ -8347,31 +8532,50 @@ UNION ALL
 	<changeSet id="141" author="Kesav">
 		<comment>Account Opening Date Rights for Customer Banking</comment>
 		<sql>
-			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from
+			SecGroups);
 			Update SeqSecRights Set SeqNo = (Select
-			MAX(RightID) + 1 from SecRights);
-			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from
+			MAX(RightID) + 1
+			from SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select
+			MAX(GrpRightID) + 1 from
 			SecGroupRights);
-			Update SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			Update SeqSecRoleGroups Set
+			SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 
-			Delete from SecGroupRights where RightID In (Select RightID from SecRights where RightName =
+			Delete from
+			SecGroupRights where RightID In (Select RightID from SecRights where
+			RightName =
 			'CustomerBankInfoDialog_AccountOpeningDate');
-			Delete from SecRights where RightName =
+			Delete from
+			SecRights where RightName =
 			'CustomerBankInfoDialog_AccountOpeningDate';
-			Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 3,
-			'CustomerBankInfoDialog_AccountOpeningDate', 'CustomerBankInfoDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null,
+			Insert into SecRights
+			Values((Select max(RightID) + 1 from SecRights), 3,
+			'CustomerBankInfoDialog_AccountOpeningDate',
+			'CustomerBankInfoDialog', 1, 1000, CURRENT_TIMESTAMP, 'Approved',
+			null,
 			null, null, null, null, 0 );
-			Insert into secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights),
-			(Select GrpID from SecGroups where GrpCode = 'CustomerBankInfo_Maker'), (Select RightID from SecRights where
-			RightName = 'CustomerBankInfoDialog_AccountOpeningDate'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null,
+			Insert into secGroupRights
+			Values((Select max(GrpRightID) + 1 from SecGroupRights),
+			(Select GrpID
+			from SecGroups where GrpCode = 'CustomerBankInfo_Maker'), (Select
+			RightID from SecRights where
+			RightName =
+			'CustomerBankInfoDialog_AccountOpeningDate'), 1, 1, 1000,
+			CURRENT_TIMESTAMP, null, null, null, null,
 			null, null, 0 );
 
-			Update SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
-			Update SeqSecRights Set SeqNo = (Select MAX(RightID)
-			+ 1 from SecRights);
-			Update SeqSecGroupRights Set SeqNo = (Select MAX(GrpRightID) + 1 from SecGroupRights);
 			Update
-			SeqSecRoleGroups Set SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
+			SeqSecGroups Set SeqNo = (Select MAX(GrpID) + 1 from SecGroups);
+			Update SeqSecRights Set SeqNo = (Select MAX(RightID)
+			+ 1 from
+			SecRights);
+			Update SeqSecGroupRights Set SeqNo = (Select
+			MAX(GrpRightID) + 1 from SecGroupRights);
+			Update
+			SeqSecRoleGroups Set
+			SeqNo = (Select MAX(RoleGrpID) + 1 from SecRoleGroups);
 		</sql>
 	</changeSet>
 
@@ -8389,7 +8593,8 @@ UNION ALL
 
 	<changeSet id="144" author="Kesav">
 		<comment>Account Opening Date column added</comment>
-		<createView viewName="CustomerBankInfo_AView" replaceIfExists="true">
+		<createView viewName="CustomerBankInfo_AView"
+			replaceIfExists="true">
 			SELECT  t1.bankid, t1.custid, t1.bankname, t1.accountnumber, t1.accounttype, t1.salaryaccount, 
 					t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid, 
 					t3.bankname AS lovdescbankname, t4.valuedesc AS lovdescaccounttype, t1.credittranno, t1.credittranamt, t1.credittranavg, t1.debittranno, t1.debittranamt, 
@@ -8404,7 +8609,8 @@ UNION ALL
 
 	<changeSet id="145" author="Kesav">
 		<comment>Account Opening Date column added</comment>
-		<createView viewName="CustomerBankInfo_View" replaceIfExists="true">
+		<createView viewName="CustomerBankInfo_View"
+			replaceIfExists="true">
 			SELECT  t1.bankid, t1.custid, t1.bankname, t1.accountnumber, t1.accounttype, t1.salaryaccount, 
 				    t1.version, t1.lastmntby, t1.lastmnton, t1.recordstatus, t1.rolecode, t1.nextrolecode, t1.taskid, t1.nexttaskid, t1.recordtype, t1.workflowid, t3.bankname AS lovdescbankname, 
 					t4.valuedesc AS lovdescaccounttype, t1.credittranno, t1.credittranamt, t1.credittranavg, t1.debittranno, t1.debittranamt, t1.cashdepositno, t1.cashdepositamt, t1.cashwithdrawalno, 
@@ -8430,7 +8636,8 @@ UNION ALL
 
 	<changeSet id="146" author="Vinay">
 		<sql>
-			Delete from SMTparameters where SysParmCode = 'CUSTOM_DEVIATION_FILE_PATH';
+			Delete from SMTparameters where SysParmCode =
+			'CUSTOM_DEVIATION_FILE_PATH';
 			INSERT INTO SMTparameters VALUES
 			('CUSTOM_DEVIATION_FILE_PATH','Custom deviation file
 			path.','String',0,'/opt/pennant/PFF/BASE/extensions',100,0,null,null,'',1,1000,CURRENT_TIMESTAMP,'Approved','','','','','',0)
@@ -8446,7 +8653,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="174" author="SaiKiran.V">
 		<sql>
 			<![CDATA[
@@ -8455,7 +8662,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="175" author="SaiKumar">
 		<comment>Customer Province added in fee rules</comment>
 		<sql>
@@ -8504,7 +8711,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="176" author="SaiKumar">
 		<comment>CO-APP Customer Create in SMT Parameters</comment>
 		<sql>
@@ -8514,7 +8721,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="177" author="SaiKumar">
 		<comment>button_JountAccountDetailDialog_btnCreateCustomer right created</comment>
 		<sql>
@@ -8536,7 +8743,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="178" author="Kesav">
 		<comment>button_JountAccountDetailDialog_btnEditCustomer right created</comment>
 		<sql>
@@ -8559,14 +8766,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 	<changeSet id="179" author="Varaprasad.K">
-	<sql>
+		<sql>
 	    <![CDATA[
 			Delete from SMTparameters where SysParmCode = 'ALLOW_LOAN_APP_LOCK';
 			INSERT INTO SMTparameters  VALUES ('ALLOW_LOAN_APP_LOCK', 'Loan lock related flag if it is Y then lock button visible at a loan level.', 'String', '1', 'N', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
 		]]>
-	</sql>
-</changeSet>
-<changeSet id="180" author="naga.g">
+		</sql>
+	</changeSet>
+	<changeSet id="180" author="naga.g">
 		<sql>
 			 <![CDATA[
 			    delete from SMTPARAMETERS where sysparmcode='DISB_IFSCCODE';
@@ -8576,7 +8783,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="181" author="vijaya.a">
-		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW"
+			replaceIfExists="true">
 			 SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -8635,12 +8843,12 @@ UNION ALL
 			    t5.accountno AS partnerbankac,
 			    t6.branchdesc AS printinglocdesc,
 			    t1.rejectreason
-			   FROM plf.finadvancepayments_temp t1
-			     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-			     LEFT JOIN plf.bmtbankdetail t31 ON t31.bankcode::text = t3.bankcode::text
-			     LEFT JOIN plf.bmtbankdetail t4 ON t1.bankcode::text = t4.bankcode::text
-			     LEFT JOIN plf.partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
-			     LEFT JOIN plf.bankbranches t6 ON t6.branchcode::text = t1.printingloc::text
+			   FROM finadvancepayments_temp t1
+			     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+			     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+			     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+			     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+			     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc
 			UNION ALL
 			 SELECT t1.finreference,
 			    t1.paymentid,
@@ -8700,20 +8908,21 @@ UNION ALL
 			    t5.accountno AS partnerbankac,
 			    t6.branchdesc AS printinglocdesc,
 			    t1.rejectreason
-			   FROM plf.finadvancepayments t1
-			     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-			     LEFT JOIN plf.bmtbankdetail t31 ON t31.bankcode::text = t3.bankcode::text
-			     LEFT JOIN plf.bmtbankdetail t4 ON t1.bankcode::text = t4.bankcode::text
-			     LEFT JOIN plf.partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
-			     LEFT JOIN plf.bankbranches t6 ON t6.branchcode::text = t1.printingloc::text
+			   FROM finadvancepayments t1
+			     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+			     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+			     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+			     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+			     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc
 			  WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.finadvancepayments_temp
-          WHERE finadvancepayments_temp.finreference::text = t1.finreference::text AND finadvancepayments_temp.paymentseq = t1.paymentseq));
+           FROM finadvancepayments_temp
+          WHERE finadvancepayments_temp.finreference = t1.finreference AND finadvancepayments_temp.paymentseq = t1.paymentseq))
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="182" author="vijaya.a">
-		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_TVIEW"
+			replaceIfExists="true">
 				 SELECT t1.finreference,
 				    t1.paymentid,
 				    t1.paymentseq,
@@ -8772,17 +8981,18 @@ UNION ALL
 				    t5.accountno AS partnerbankac,
 				    t6.branchdesc AS printinglocdesc,
 				    t1.rejectreason
-				   FROM plf.finadvancepayments_temp t1
-				     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-				     LEFT JOIN plf.bmtbankdetail t31 ON t31.bankcode::text = t3.bankcode::text
-				     LEFT JOIN plf.bmtbankdetail t4 ON t1.bankcode::text = t4.bankcode::text
-				     LEFT JOIN plf.partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
-				     LEFT JOIN plf.bankbranches t6 ON t6.branchcode::text = t1.printingloc::text;
+				   FROM finadvancepayments_temp t1
+				     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+				     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+				     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+				     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+				     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="183" author="vijaya.a">
-		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW"
+			replaceIfExists="true">
 			SELECT t1.finreference,
 			    t1.paymentid,
 			    t1.paymentseq,
@@ -8841,13 +9051,12 @@ UNION ALL
 			    t5.accountno AS partnerbankac,
 			    t6.branchdesc AS printinglocdesc,
 			    t1.rejectreason
-			   FROM plf.finadvancepayments t1
-			     LEFT JOIN plf.bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
-			     LEFT JOIN plf.bmtbankdetail t31 ON t31.bankcode::text = t3.bankcode::text
-			     LEFT JOIN plf.bmtbankdetail t4 ON t1.bankcode::text = t4.bankcode::text
-			     LEFT JOIN plf.partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
-			     LEFT JOIN plf.bankbranches t6 ON t6.branchcode::text = t1.printingloc::text;	
+			   FROM finadvancepayments t1
+			     LEFT JOIN bankbranches t3 ON t1.bankbranchid = t3.bankbranchid
+			     LEFT JOIN bmtbankdetail t31 ON t31.bankcode = t3.bankcode
+			     LEFT JOIN bmtbankdetail t4 ON t1.bankcode = t4.bankcode
+			     LEFT JOIN partnerbanks t5 ON t5.partnerbankid = t1.partnerbankid
+			     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc	
 	</createView>
 	</changeSet>
-
 </databaseChangeLog>
