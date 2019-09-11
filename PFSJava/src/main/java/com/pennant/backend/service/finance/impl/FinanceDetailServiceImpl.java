@@ -7124,7 +7124,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 		// validate QueryModule
-		if (!ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 			if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
 				String finReference = financeMain.getFinReference();
 				String currentRole = financeMain.getRoleCode();

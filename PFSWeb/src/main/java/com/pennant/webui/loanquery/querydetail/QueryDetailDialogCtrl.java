@@ -86,6 +86,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -778,7 +779,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			}
 		}
 		// Get the QueryloanORLegalWorkflow details.
-		if (ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 			String loanORLegalWorkflowType = null;
 			if (financeMain == null && legalDetail != null) {
 				long loanWorkFLowID = getFinanceMainService().getLoanWorkFlowIdByFinRef(legalDetail.getLoanReference(),

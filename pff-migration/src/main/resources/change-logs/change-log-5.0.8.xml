@@ -9059,4 +9059,12 @@ UNION ALL
 			     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc	
 	</createView>
 	</changeSet>
+	<changeSet id="184" author="Varaprasad.K">
+		<sql>
+	    <![CDATA[
+	        Delete from SMTparameters where SysParmCode = 'QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES';
+			INSERT INTO SMTparameters  VALUES ('QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES', 'Query assign to loan and legal loans', 'String', '1', 'N', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		]]>
+		</sql>
+    </changeSet>
 </databaseChangeLog>

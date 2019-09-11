@@ -935,7 +935,7 @@ public class LegalDetailServiceImpl extends GenericService<LegalDetail> implemen
 		// Query module, Validating the all quarry's raised by users resolved or not.
 		if ("doApprove".equals(method)) {
 			// Queries that were assigned to Legal Roles to be closed 
-			if (ImplementationConstants.QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES) {
+			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
 				WorkFlowDetails legalWorkflow = WorkFlowUtil.getDetailsByType("LEGAL_DETAILS");
 				List<QueryDetail> queryList = getQueryDetailService()
 						.getQueryListByReference(legalDetail.getLegalReference());

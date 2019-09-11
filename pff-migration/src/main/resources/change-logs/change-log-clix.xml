@@ -3919,4 +3919,34 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="99" author="Varaprasad.K">
+		<sql>
+	    <![CDATA[
+	        Delete from SMTparameters where SysParmCode = 'QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES';
+			INSERT INTO SMTparameters  VALUES ('QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES', 'Query assign to loan and legal loans', 'String', '1', 'Y', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
+		]]>
+		</sql>
+    </changeSet>
+    <changeSet id="100" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+			 Delete from ErrorDetails where code='Q001';
+			 Delete from ErrorDetails where code='Q002';
+			 Delete from ErrorDetails where code='Q003';
+			 INSERT INTO ErrorDetails VALUES('Q001','EN','E','Please close the queries to proceed further','','Approved','','','','','',0,current_timestamp,1000,0);
+             INSERT INTO ErrorDetails VALUES('Q002','EN','E','Please close the queries that were assigned to Legal Roles to proceed further','','Approved','','','','','',0,current_timestamp,1000,0);
+			 INSERT INTO ErrorDetails VALUES('Q003','EN','E','Please close the queries that were assigned at this stage to proceed further','','Approved','','','','','',0,current_timestamp,1000,0);
+			]]>
+		</sql>
+      </changeSet>
+      <changeSet id="101" author="Varaprasad.K">
+		<sql>
+	    	<![CDATA[
+	    	    update plf.errordetails set severity = 'W' where code = '65032'
+			]]>
+		</sql>
+	</changeSet>
+    
+	
+	
 </databaseChangeLog>
