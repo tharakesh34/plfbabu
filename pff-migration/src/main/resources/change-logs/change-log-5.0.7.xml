@@ -5017,5 +5017,16 @@
 	<changeSet id="187" author="vijaya.a">
 	 	<createSequence sequenceName="SeqJVpostings" incrementBy="1" startValue="1"/>
 	</changeSet>
+	
+	<changeSet id="188" author="vijaya.a">
+	 	<dropSequence sequenceName="SeqJVpostings"/>
+	</changeSet>
+	
+	<changeSet id="189" author="vijaya.a" dbms="mssql">
+		<createTable tableName="SeqJVpostings">
+			<column name="SeqNo" type="bigint" autoIncrement="true"/>
+			<column name="Value" type="int"/>
+		</createTable>
+	</changeSet>
 
 </databaseChangeLog>
