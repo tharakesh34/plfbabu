@@ -3918,4 +3918,5 @@ UNION ALL
 				update plf.master_def set key_code='C-PAJRL/Disbursement/Loan Booking' where key_type='ADDDBSP';
 			]]>
 		</sql>
+	</changeSet>
 </databaseChangeLog>
