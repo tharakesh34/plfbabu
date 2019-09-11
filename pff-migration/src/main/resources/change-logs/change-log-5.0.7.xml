@@ -5497,7 +5497,7 @@
 				T1.TransOrder
 			FROM  Postings T1
 				INNER JOIN BMTAEEvents T2 ON T1.FinEvent = T2.AEEventCode 
-				INNER JOIN jvpostings T3 on cast(T3.batchreference as varchar2(20)) = T1.Finreference
+				INNER JOIN jvpostings T3 on cast(T3.batchreference as varchar(20)) = T1.Finreference
 				INNER JOIN Financemain T4 on T3.Reference = T4.Finreference
 				WHERE T1.FinEvent ='JVPOST'
 	 	</createView>
