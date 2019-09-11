@@ -2947,14 +2947,25 @@
 			<column name="TOUSRID" type="varchar(50)" />
 		</createIndex>
 	</changeSet>
-	
-	<changeSet id="41" author="naga.g" dbms="oracle">
-		<sql>
-		<![CDATA[
-		  Delete from reportList where code ='VASProviderAccDetail';
-          INSERT INTO ReportList VALUES ('VASProviderAccDetail','VASProviderAccDetail', 'listheader_ProviderId.label,listheader_PaymentMode.label,listheader_EntityCode.label,listheader_BankBranchID.label,listheader_AccountNumber.label,listheader_ReceivableAdjustment.label,listheader_ReconciliationAmount.label','ProviderId,PaymentMode,EntityCode,BankBranchID,AccountNumber,ReceivableAdjustment,ReconciliationAmount','Long,String,String,Long,String,boolean,BigDecimal',' ', 'ReportList07', 'VASProviderAccDetail',  'Administration', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
-		]]>
-		</sql>
+	<changeSet id="41" author="naga.g">
+		<createTable tableName="BatchFileDetails">
+			<column name="id" type="NUMBER(10,0)" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="batchFileDetails_pkey" />
+			</column>
+			<column name="FileId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Reference" type="varchar(30)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ErrorDesc" type="varchar(1000)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
-	
+
 </databaseChangeLog>	
