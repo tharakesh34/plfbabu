@@ -100,6 +100,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -133,6 +134,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	protected Longbox custID;
 	protected Button viewCustInfo;
 	protected Button btn_NewCust;
+	protected Button btn_EditCust;
 	protected Label label_CustCIFName;
 	protected Hbox hbox_CustCIFName;
 	protected Space space_CustCIFName;
@@ -679,6 +681,20 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onClick$btn_EditCust(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		if (this.custID.longValue() <= 0) {
+			MessageUtil.showError("Please select any customer.");
+			return;
+		}
+		final CustomerDetails customerDetails = customerDetailsService.getCustById(this.custID.longValue());
+
+		doShowDialogPage(customerDetails);
+
+		logger.debug("Leaving" + event.toString());
+	}
+
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
 	 * 
@@ -904,6 +920,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnCancel.setVisible(true);
 		}
 		readOnlyComponent(isReadOnly("JountAccountDetailDialog_catOfCoApplicant"), this.catOfCoApplicant);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.COAPP_CUST_CREATE)) {
+			readOnlyComponent(isReadOnly("button_JountAccountDetailDialog_btnCreateCustomer"), this.btn_NewCust);
+			readOnlyComponent(isReadOnly("button_JountAccountDetailDialog_btnEditCustomer"), this.btn_EditCust);
+		} else {
+			this.btn_NewCust.setVisible(false);
+			this.btn_EditCust.setVisible(false);
+		}
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -921,6 +944,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					this.btnSave.setVisible(false);
 					btnCancel.setVisible(false);
 					this.viewCustInfo.setVisible(false);
+					this.btn_NewCust.setVisible(false);
+					this.btn_EditCust.setVisible(false);
 					authoritySignatory.setDisabled(true);
 					includeIncome.setDisabled(true);
 				} else if (isNewRecord()) {
@@ -976,7 +1001,6 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSave"));
 			this.btnSearchCustCIF
 					.setVisible(getUserWorkspace().isAllowed("button_JountAccountDetailDialog_btnSearchCustCIF"));
-			this.btn_NewCust.setVisible(ImplementationConstants.COAPP_CUST_CRET);
 		}
 		logger.debug("Leaving");
 	}

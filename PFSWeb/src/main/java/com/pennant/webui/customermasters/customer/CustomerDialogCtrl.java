@@ -2052,7 +2052,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				this.btnNotes.setVisible(true);
 			} else {
 				this.btnCtrl.setInitNew();
-				this.btnDelete.setVisible(true);
+				if (!isNewCustCret) {
+					this.btnDelete.setVisible(true);
+				}
 			}
 			doEdit();
 		}

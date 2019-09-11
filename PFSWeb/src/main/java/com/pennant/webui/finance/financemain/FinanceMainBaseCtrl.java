@@ -208,6 +208,7 @@ import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.AgreementDetail;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
@@ -223,7 +224,6 @@ import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxDetails;
-import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -385,7 +385,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label windowTitle;
 
 	protected Datebox finStartDate;
-	
+
 	protected Textbox promotionProduct;
 	protected Textbox finDivisionName;
 	protected Textbox businessVertical;
@@ -1063,7 +1063,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private transient SpreadsheetCtrl spreadSheetCtrl;
 
 	private String elgMethodVisible = SysParamUtil.getValueAsString(SMTParameterConstants.ELGMETHOD);
-	private String isCreditRevTabReq = SysParamUtil.getValueAsString(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ);
 	private List<String> assignCollateralRef = new ArrayList<>();
 	private Map<String, Object> collateralRuleMap = new HashMap<>();
 	//adding new document fields
@@ -2024,7 +2023,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(onLoad);
 
 		//Credit Review Tab
-		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(false);
 		}
 
@@ -8663,13 +8663,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.finStartDate.setValue(appDate);
 		}
-		
+
 		if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_MONTHWISE_REQ)) {
-			if(!this.alwBpiTreatment.isChecked()) {
+			if (!this.alwBpiTreatment.isChecked()) {
 				this.alwBpiTreatment.setChecked(true);
 				oncheckalwBpiTreatment(true);
-				fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_DISBURSMENT, PennantStaticListUtil.getDftBpiTreatment(),
-						"");
+				fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_DISBURSMENT,
+						PennantStaticListUtil.getDftBpiTreatment(), "");
 			}
 		}
 
@@ -9711,6 +9711,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$eligibilityMethod(Event event) {
 		logger.debug(Literal.ENTERING);
 		Object dataObject = eligibilityMethod.getObject();
+		String fieldCode = "";
 		if (dataObject instanceof String) {
 			this.eligibilityMethod.setValue(dataObject.toString());
 			this.eligibilityMethod.setDescription("");
@@ -9718,9 +9719,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			LovFieldDetail details = (LovFieldDetail) dataObject;
 			if (details != null) {
 				this.eligibilityMethod.setAttribute("FieldCodeId", details.getFieldCodeId());
+				fieldCode = details.getFieldCodeValue();
 			}
 		}
-		appendCreditReviewDetailTab(true);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
+			appendCreditReviewDetailTab(true);
+		}
+		setEligibilityMethod(fieldCode);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setEligibilityMethod(String value) {
+		logger.debug(Literal.ENTERING);
+
+		Window window = extendedFieldCtrl.getWindow();
+		Textbox eligmethod;
+		if (window != null) {
+			try {
+				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
+
+					eligmethod = (Textbox) window.getFellow("ad_ELGMETHOD");
+					eligmethod.setValue(value);
+				}
+			} catch (Exception e) {
+				logger.error(Literal.LEAVING);
+			}
+
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -14729,8 +14755,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//}
 			}
 		}
-		
-		int fddLockPeriod = financeType.getFddLockPeriod(); 
+
+		int fddLockPeriod = financeType.getFddLockPeriod();
 		fddLockPeriod = fddLogic(getFinanceDetail().getFinScheduleData().getFinanceMain(), financeType, fddLockPeriod);
 
 		if (StringUtils.isNotEmpty(this.repayFrq.getValue())
@@ -14880,12 +14906,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.rpyPftFrqRow.isVisible() && this.nextRepayPftDate.getValue() == null
 				&& StringUtils.isNotEmpty(this.repayPftFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayPftFrq.getValue()) == null) {
-			this.nextRepayPftDate_two.setValue(
-					FrequencyUtil
-							.getNextDate(this.repayPftFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-									HolidayHandlerTypes.MOVE_NONE, false,
-									this.allowGrace.isChecked() ? 0 : fddLockPeriod)
-							.getNextFrequencyDate());
+			this.nextRepayPftDate_two.setValue(FrequencyUtil
+					.getNextDate(this.repayPftFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
+							HolidayHandlerTypes.MOVE_NONE, false, this.allowGrace.isChecked() ? 0 : fddLockPeriod)
+					.getNextFrequencyDate());
 		} else if (!this.rpyPftFrqRow.isVisible()) {
 			this.nextRepayPftDate_two.setValue(this.nextRepayDate_two.getValue());
 		}
@@ -14973,7 +14997,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private int fddLogic(FinanceMain financeMain, FinanceType financeType, int fddLockPeriod) {
 		logger.debug(Literal.ENTERING);
 		if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_MONTHWISE_REQ)) {
@@ -17879,7 +17903,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		appendStageAccountingDetailsTab(false);
 
 		//Credit Review Details
-		if (StringUtils.equals(isCreditRevTabReq, PennantConstants.YES)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.IS_CREDITREVIEW_TAB_REQ)
+				&& isTabVisible(StageTabConstants.CreditReviewDetails)) {
 			appendCreditReviewDetailTab(false);
 		}
 

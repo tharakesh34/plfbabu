@@ -173,9 +173,9 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		selectSql.append(" BMTRejectCodes T6 ON T1.RejectStatus = T6.RejectCode LEFT OUTER JOIN  ");
 		selectSql.append(" SecUsers T7 ON T1.LastMntBy = T7.UsrID LEFT OUTER JOIN");
 		selectSql.append(
-				" (SELECT REFERENCE,MAX(ID) AS ID FROM PLF.REASONHEADER GROUP BY REFERENCE)  T8 ON T8.REFERENCE = T1.FINREFERENCE");
+				" (SELECT REFERENCE,MAX(ID) AS ID FROM REASONHEADER GROUP BY REFERENCE)  T8 ON T8.REFERENCE = T1.FINREFERENCE");
 		selectSql.append(
-				" LEFT JOIN PLF.REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
+				" LEFT JOIN REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
 
 		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);
 		RowMapper<ReinstateFinance> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReinstateFinance.class);

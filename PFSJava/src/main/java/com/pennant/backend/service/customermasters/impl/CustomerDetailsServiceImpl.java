@@ -2836,7 +2836,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					for (String type : days) {
 						daysList.add(type);
 					}
-					if (detail.getBankInfoSubDetails().size() != daysList.size() ) {
+					if (detail.getBankInfoSubDetails().size() != daysList.size()) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "BankInfoSubDetails";
 						valueParm[1] = SysParamUtil.getValueAsString("BANKINFO_DAYS");
@@ -2853,7 +2853,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
-							}else{
+							} else {
 								daysInputlis.add(String.valueOf(subDetail.getDay()));
 							}
 							if (subDetail.getBalance() == null
@@ -2865,7 +2865,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								auditDetail.setErrorDetail(errorDetail);
 								return auditDetail;
 							}
-						}	
+						}
 						for (String day : daysInputlis) {
 							boolean flag = true;
 							for (String detai : daysList) {
@@ -2883,7 +2883,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 								return auditDetail;
 							}
 						}
-						
+
 					}
 				}
 
@@ -7486,6 +7486,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public boolean getCustomerByCoreBankId(String custCoreBank) {
 		return getCustomerDAO().getCustomerByCoreBankId(custCoreBank);
+	}
+
+	@Override
+	public CustomerDetails getCustById(long id) {
+		return getCustomerById(id, "_AView");
 	}
 
 	public LovFieldDetailService getLovFieldDetailService() {

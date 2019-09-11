@@ -362,8 +362,15 @@ public class ManualDeviationDialogCtrl extends GFCBaseCtrl<ManualDeviation> {
 			this.categorization.setValue(aManualDeviation.getCategorizationCode(),
 					aManualDeviation.getCategorizationName());
 		}
-		this.active.setChecked(aManualDeviation.isActive());
 		this.recordStatus.setValue(aManualDeviation.getRecordStatus());
+		if (aManualDeviation.isNew()
+				|| (aManualDeviation.getRecordType() != null ? aManualDeviation.getRecordType() : "")
+						.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			this.active.setChecked(true);
+			this.active.setDisabled(true);
+		} else {
+			this.active.setChecked(aManualDeviation.isActive());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

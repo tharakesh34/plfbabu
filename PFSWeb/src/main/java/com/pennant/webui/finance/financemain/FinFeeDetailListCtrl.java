@@ -96,6 +96,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FeePaymentDetail;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -2865,6 +2866,17 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				if (getFinanceDetail().getCustomerDetails().getCustEmployeeDetail() != null) {
 					objectList.add(getFinanceDetail().getCustomerDetails().getCustEmployeeDetail());
 				}
+				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
+							break;
+						}
+					}
+				} else {
+					executionMap.put("customerProvince", "");
+				}	
 			}
 
 			if (getFinanceDetail().getFinScheduleData() != null) {

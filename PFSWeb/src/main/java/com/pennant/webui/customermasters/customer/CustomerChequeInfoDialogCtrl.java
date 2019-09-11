@@ -878,6 +878,7 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 				if (StringUtils.isBlank(aCustomerChequeInfo.getRecordType())) {
 					aCustomerChequeInfo.setVersion(aCustomerChequeInfo.getVersion() + 1);
 					aCustomerChequeInfo.setRecordType(PennantConstants.RCD_UPD);
+					aCustomerChequeInfo.setNewRecord(true);
 				}
 
 				if (aCustomerChequeInfo.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {

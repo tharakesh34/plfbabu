@@ -254,4 +254,5 @@ public class SMTParameterConstants {
 
 	public static final String BPI_MONTHWISE_REQ = "BPI_MONTHWISE_REQ";
 
+	public static final String COAPP_CUST_CREATE = "COAPP_CUST_CREATE";//Create Customer in CO-Applicant
 }

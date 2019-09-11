@@ -71,6 +71,7 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -626,6 +627,18 @@ public class FeeDetailService {
 			objectList.add(financeDetail.getCustomerDetails().getCustomer());
 			if (financeDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
 				objectList.add(financeDetail.getCustomerDetails().getCustEmployeeDetail());
+			}
+			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+			if (CollectionUtils.isNotEmpty(addressList)) {
+				for (CustomerAddres customerAddres : addressList) {
+					if (customerAddres.getCustAddrPriority() == Integer
+							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
+						break;
+					}
+				}
+			} else {
+				executionMap.put("customerProvince", "");
 			}
 		}
 		if (financeDetail.getFinScheduleData() != null) {

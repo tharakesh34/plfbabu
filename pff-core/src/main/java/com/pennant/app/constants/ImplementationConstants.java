@@ -157,9 +157,6 @@ public class ImplementationConstants {
 	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
 	public static final boolean NEGATE_SIGN_TB = false;
 
-	// If True, credit amounts will be shown with "-" sign in Trial balance. Bajaj it is True
-	public static final boolean COAPP_CUST_CRET = false;
-
 	//The below variable is set to show the Reporting manager list,Branch Details tab if set false 
 	//else User Hierarchy tab if set true.
 	public static final boolean ALLOW_ACCESS_CONTROL_TYPE = true;

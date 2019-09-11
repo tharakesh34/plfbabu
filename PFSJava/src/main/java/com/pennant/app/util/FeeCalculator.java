@@ -238,6 +238,18 @@ public class FeeCalculator implements Serializable {
 					if (financeDetail.getCustomerDetails().getCustEmployeeDetail() != null) {
 						objectList.add(financeDetail.getCustomerDetails().getCustEmployeeDetail());
 					}
+					List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+					if (CollectionUtils.isNotEmpty(addressList)) {
+						for (CustomerAddres customerAddres : addressList) {
+							if (customerAddres.getCustAddrPriority() == Integer
+									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+								executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
+								break;
+							}
+						}
+					} else {
+						executionMap.put("customerProvince", "");
+					}
 				}
 
 				if (financeDetail.getFinScheduleData() != null) {

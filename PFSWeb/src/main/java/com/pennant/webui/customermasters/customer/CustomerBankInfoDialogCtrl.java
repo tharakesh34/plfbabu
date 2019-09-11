@@ -1415,7 +1415,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (bounceIn.getValidateValue() != null) {
 				bounceInWard = bounceIn.getValidateValue();
 			}
-			if (!(bounceIn.isReadonly()) && (bounceInWard.intValue() <= 0)) {
+			if (!(bounceIn.isReadonly()) && (bounceInWard.intValue() < 0)) {
 				throw new WrongValueException(bounceIn,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce In Ward" }));
 			}
@@ -1429,7 +1429,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			if (bounceOut.getValidateValue() != null) {
 				bounceInOut = bounceOut.getValidateValue();
 			}
-			if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() <= 0)) {
+			if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() < 0)) {
 				throw new WrongValueException(bounceOut,
 						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce Out Ward" }));
 			}

@@ -42,24 +42,30 @@
 					<groupbox id="gb_basicDetails" mold="3d">
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
 							</columns>
 							<rows>
 								<row id="row0">
 									<label id="label_CustCIF" value="${c:l('label_JountAccountDetailDialog_CustCIF.value')}" />
-									<hbox id="hbox_CustCIF">
-										<space id="space_CustCIF" spacing="2px" sclass="mandatory" />
-										<textbox id="custCIF" width="180px" />
-										<longbox id="custID" width="150px" maxlength="26" visible="false" />
-										<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" />
-										<space spacing="2px" />
-										<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
-										<space spacing="2px" />
-										<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}" tooltiptext="${c:l('tooltip_NewCust')}" />
-									</hbox>
+									<cell colspan="3">
+										<hbox id="hbox_CustCIF">
+											<space id="space_CustCIF" spacing="2px" sclass="mandatory" />
+											<textbox id="custCIF" width="180px" />
+											<longbox id="custID" width="150px" maxlength="26" visible="false" />
+											<button id="btnSearchCustCIF" visible="false" image="/images/icons/LOVSearch.png" />
+											<space spacing="2px" />
+											<button id="viewCustInfo" image="/images/icons/more.png" tooltiptext="${c:l('tooltip_Custinfo')}" />
+											<space spacing="2px" />
+											<button id="btn_NewCust" label="${c:l('label_JountAccountDetailDialog_BtnNewCust.value')}" tooltiptext="${c:l('tooltip_NewCust')}" />
+											<space spacing="2px" />
+											<button id="btn_EditCust" label="${c:l('label_JountAccountDetailDialog_BtnEditCust.value')}" tooltiptext="${c:l('tooltip_EditCust')}" />
+										</hbox>
+									</cell>
+								</row>
+								<row>
 									<label id="label_CustCIFName" value="${c:l('label_JountAccountDetailDialog_CustCIFName.value')}" />
 									<hbox id="hbox_CustCIFName">
 										<space id="space_CustCIFName" spacing="2px" sclass="mandatory" />
