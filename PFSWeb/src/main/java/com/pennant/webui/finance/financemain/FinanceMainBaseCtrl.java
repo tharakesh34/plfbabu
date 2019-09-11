@@ -69,6 +69,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -7324,7 +7325,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// PDC
 		Tab pdcTab = getTab(AssetConstants.UNIQUE_ID_CHEQUE);
-		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()) {
+		if (chequeDetailDialogCtrl != null && pdcTab.isVisible()
+				&& (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						&& !this.userAction.getSelectedItem().getLabel().contains("Reject")
+						&& !this.userAction.getSelectedItem().getLabel().contains("Resubmit"))) {
 			chequeDetailDialogCtrl.doSave_PDC(aFinanceDetail, getFinanceMain().getFinReference());
 		}
 
@@ -8658,6 +8662,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			getFinanceDetail().getFinScheduleData().getFinanceMain().setFinStartDate(this.finStartDate.getValue());
 		} else {
 			this.finStartDate.setValue(appDate);
+		}
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_MONTHWISE_REQ)) {
+			if(!this.alwBpiTreatment.isChecked()) {
+				this.alwBpiTreatment.setChecked(true);
+				oncheckalwBpiTreatment(true);
+				fillComboBox(this.dftBpiTreatment, FinanceConstants.BPI_DISBURSMENT, PennantStaticListUtil.getDftBpiTreatment(),
+						"");
+			}
 		}
 
 		autoBuildSchedule();
@@ -11027,7 +11040,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.oldVar_dftBpiTreatment = this.dftBpiTreatment.getSelectedIndex();
 					getFinanceDetail().getFinScheduleData().getFinanceMain().setAlwBPI(false);
 					//errorList.add(new ErrorDetail("30571", null));
-
 				}
 			}
 
@@ -14717,23 +14729,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				//}
 			}
 		}
+		
+		int fddLockPeriod = financeType.getFddLockPeriod(); 
+		fddLockPeriod = fddLogic(getFinanceDetail().getFinScheduleData().getFinanceMain(), financeType, fddLockPeriod);
 
 		if (StringUtils.isNotEmpty(this.repayFrq.getValue())
 				&& FrequencyUtil.validateFrequency(this.repayFrq.getValue()) == null && !singleTermFinance) {
-
 			if (this.nextRepayPftDate.getValue() != null) {
-
 				int frqDay = Integer.parseInt(this.repayFrq.getValue().substring(3));
 				int day = DateUtility.getDay(this.nextRepayPftDate.getValue());
 				this.nextRepayDate_two.setValue(
 						FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1, this.nextRepayPftDate.getValue(),
 								HolidayHandlerTypes.MOVE_NONE, day == frqDay).getNextFrequencyDate());
-
+				if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_MONTHWISE_REQ)) {
+					this.nextRepayDate_two.setValue(FrequencyUtil.getNextDate(this.repayFrq.getValue(), 1,
+							this.gracePeriodEndDate_two.getValue(), HolidayHandlerTypes.MOVE_NONE, false,
+							this.allowGrace.isChecked() ? 0 : fddLockPeriod).getNextFrequencyDate());
+				}
 			} else {
 				this.nextRepayDate_two.setValue(FrequencyUtil
 						.getNextDate(this.repayFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
-								HolidayHandlerTypes.MOVE_NONE, false,
-								this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
+								HolidayHandlerTypes.MOVE_NONE, false, this.allowGrace.isChecked() ? 0 : fddLockPeriod)
 						.getNextFrequencyDate());
 
 			}
@@ -14868,7 +14884,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					FrequencyUtil
 							.getNextDate(this.repayPftFrq.getValue(), 1, this.gracePeriodEndDate_two.getValue(),
 									HolidayHandlerTypes.MOVE_NONE, false,
-									this.allowGrace.isChecked() ? 0 : financeType.getFddLockPeriod())
+									this.allowGrace.isChecked() ? 0 : fddLockPeriod)
 							.getNextFrequencyDate());
 		} else if (!this.rpyPftFrqRow.isVisible()) {
 			this.nextRepayPftDate_two.setValue(this.nextRepayDate_two.getValue());
@@ -14956,6 +14972,51 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+	
+	private int fddLogic(FinanceMain financeMain, FinanceType financeType, int fddLockPeriod) {
+		logger.debug(Literal.ENTERING);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.BPI_MONTHWISE_REQ)) {
+			if (StringUtils.equals("BL", financeMain.getFinType())) {
+				String dueDate = this.repayPftFrq.getValue().length() > 2
+						? this.repayPftFrq.getValue().substring(this.repayPftFrq.getValue().length() - 2)
+						: this.repayPftFrq.getValue();
+
+				int month = DateUtility.getMonth(financeMain.getFinStartDate());
+				int year = DateUtility.getYear(financeMain.getFinStartDate());
+
+				YearMonth yearMonthObject = YearMonth.of(year, month);
+				int daysInMonth = yearMonthObject.lengthOfMonth();
+
+				if (dueDate.equals("07") && daysInMonth == 31) {
+					fddLockPeriod = 17;
+				}
+				if (dueDate.equals("07") && daysInMonth == 30) {
+					fddLockPeriod = 16;
+				}
+				if (dueDate.equals("07") && daysInMonth == 29) {
+					fddLockPeriod = 15;
+				}
+				if (dueDate.equals("07") && daysInMonth == 28) {
+					fddLockPeriod = 14;
+				}
+
+				if (dueDate.equals("02") && daysInMonth == 31) {
+					fddLockPeriod = 12;
+				}
+				if (dueDate.equals("02") && daysInMonth == 30) {
+					fddLockPeriod = 11;
+				}
+				if (dueDate.equals("02") && daysInMonth == 29) {
+					fddLockPeriod = 10;
+				}
+				if (dueDate.equals("02") && daysInMonth == 28) {
+					fddLockPeriod = 9;
+				}
+			}
+		}
+		logger.debug(Literal.ENTERING);
+		return fddLockPeriod;
 	}
 
 	/**

@@ -84,7 +84,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
@@ -388,6 +387,10 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if ("application/octet-stream".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_7Z;
+			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_RAR;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 				return;

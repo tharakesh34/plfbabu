@@ -114,4 +114,6 @@ public interface JVPostingService {
 
 	List<ErrorDetail> doMiscellaneousValidations(JVPosting posting);
 
+	public AuditHeader processData(AuditHeader auditHeader, boolean postingSuccess);
+
 }

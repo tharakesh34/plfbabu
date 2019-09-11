@@ -43,10 +43,13 @@
 package com.pennant.backend.dao.finance;
 
 import com.pennant.backend.model.expenses.UploadHeader;
+import com.pennanttech.pff.core.TableType;
 
 public interface UploadHeaderDAO {
 
 	UploadHeader getUploadHeader(long uploadId);
+
+	UploadHeader getUploadHeaderById(long uploadId, String type);
 
 	boolean isFileNameExist(String fileName);
 
@@ -55,4 +58,18 @@ public interface UploadHeaderDAO {
 	void updateRecordCounts(UploadHeader uploadHeader);
 
 	void updateRecord(UploadHeader uploadHeader);
+
+	// ManualJVPosting CR
+	void updateFileDownload(long uploadId, boolean fileDownload, String type);
+
+	public long save(UploadHeader uploadHeader, TableType tableType);
+
+	void update(UploadHeader uploadHeader, TableType tableType);
+
+	void updateRecordCounts(UploadHeader uploadHeader, TableType tableType);
+
+	void delete(UploadHeader uploadHeader, TableType tableType);
+
+	boolean isDuplicateKey(long uploadId, String fileName, TableType tableType);
+
 }

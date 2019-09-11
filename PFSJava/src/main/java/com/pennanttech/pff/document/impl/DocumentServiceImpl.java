@@ -247,7 +247,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOC)
 							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
 							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)
-							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_ZIP))) {
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_ZIP)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_7Z)
+							|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_RAR))) {
 						String[] valueParm = new String[1];
 						valueParm[0] = detail.getDoctype();
 						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));
@@ -366,7 +368,9 @@ public class DocumentServiceImpl extends GenericService<DocumentDetails> impleme
 					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)
 					|| StringUtils.equals(detail.getDoctype(), "JPG") || StringUtils.equals(detail.getDoctype(), "JPEG")
 					|| StringUtils.equals(detail.getDoctype(), "PNG")
-					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_ZIP))) {
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_ZIP)
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_7Z)
+					|| StringUtils.equals(detail.getDoctype(), PennantConstants.DOC_TYPE_RAR))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = detail.getDoctype();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));

@@ -44,6 +44,7 @@ package com.pennant.backend.dao.others.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -55,6 +56,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.others.JVPostingDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.others.JVPosting;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -73,7 +75,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the new JVPosting
+	 * This method set the Work Flow id based on the module name and return the
+	 * new JVPosting
 	 * 
 	 * @return JVPosting
 	 */
@@ -91,7 +94,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method get the module from method getJVPosting() and set the new record flag as true and return JVPosting()
+	 * This method get the module from method getJVPosting() and set the new
+	 * record flag as true and return JVPosting()
 	 * 
 	 * @return JVPosting
 	 */
@@ -171,8 +175,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete JV Posting Details by key BatchReference
+	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if
+	 * Record not deleted then throws DataAccessException with error 41003.
+	 * delete JV Posting Details by key BatchReference
 	 * 
 	 * @param JV
 	 *            Posting Details (jVPosting)
@@ -217,12 +222,21 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	 * @throws DataAccessException
 	 * 
 	 */
+	public long getReferenceSequence() {
+		// Fetching the sequence number for reference.
+		return getNextValue("SeqMscPostRef");
+	}
 
 	@Override
 	public long save(JVPosting jVPosting, String type) {
 		logger.debug("Entering");
 		if (jVPosting.isNewRecord() && jVPosting.getBatchReference() == 0) {
 			jVPosting.setBatchReference(createBatchReference());
+		}
+		if (StringUtils.equals(jVPosting.getPostAgainst(), FinanceConstants.POSTING_AGAINST_NONLOAN)) {
+			final JVPosting aJVPosting = new JVPosting();
+			BeanUtils.copyProperties(getJVPosting(), aJVPosting);
+			jVPosting.setReference(Long.toString(getReferenceSequence()));
 		}
 		logger.debug("get NextID:" + jVPosting.getId());
 
@@ -251,8 +265,9 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method updates the Record JVPostings or JVPostings_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update JV Posting Details by key BatchReference and Version
+	 * This method updates the Record JVPostings or JVPostings_Temp. if Record
+	 * not updated then throws DataAccessException with error 41004. update JV
+	 * Posting Details by key BatchReference and Version
 	 * 
 	 * @param JV
 	 *            Posting Details (jVPosting)

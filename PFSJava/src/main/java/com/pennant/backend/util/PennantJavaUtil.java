@@ -336,6 +336,7 @@ import com.pennant.backend.model.mail.TemplateFields;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.masters.Locality;
+import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.others.JVPosting;
 import com.pennant.backend.model.others.JVPostingEntry;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -3390,13 +3391,22 @@ public class PennantJavaUtil {
 				new ModuleMapping("CreditReviewData", CreditReviewData.class,
 						new String[] { "CreditReviewData", "CreditReviewData" }, null, new String[] { "FinReference" },
 						null, 600));
-		
+
 		ModuleUtil.register("PaymentTransaction",
 				new ModuleMapping("PaymentTransaction", PaymentTransaction.class,
-						new String[] { "PaymentTransaction_View", " PaymentTransaction_View" },null,
+						new String[] { "PaymentTransaction_View", " PaymentTransaction_View" }, null,
 						new String[] { "FinReference", "TranReference" }, null, 300));
-		
-	
+
+		// MiscPosting Upload
+		ModuleUtil.register("MiscPostingUpload",
+				new ModuleMapping("MiscPostingUpload", MiscPostingUpload.class,
+						new String[] { "MiscPostingUploads", "MiscPostingUploads_AView" }, null,
+						new String[] { "UploadId", "FileName" }, null, 600));
+
+		ModuleUtil.register("MiscUploadPostings",
+				new ModuleMapping("UploadHeader", UploadHeader.class,
+						new String[] { "UploadHeader", "MiscUploadPostings_Rview" }, null,
+						new String[] { "UploadId", "FileName" }, null, 600));
 
 		registerCustomModules();
 	}

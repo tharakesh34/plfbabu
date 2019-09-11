@@ -720,6 +720,11 @@
 				rightname="menuItem_Settlement_Process_Download" />
 			<menuItem id="menu_Item_Vocher_Dowload" zulNavigation="/WEB-INF/pages/DataEngine/VocherDownloadList.zul"
 				rightname="menu_Item_Vocher_Dowload" />
+			<menuItem id="menu_Item_MiscPostingUpload" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MM"
+				rightName="menuItem_MiscPostingUpload" />
+			<menuItem id="menu_Item_MiscPostingUploadApproval" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=MA"
+				rightName="menuItem_MiscPostingUploadApproval" />
+         	
 		</menu>
 		<menuItem id="menu_Item_LenderUpload" zulNavigation="/WEB-INF/pages/LenderUpload/LenderDataUpload.zul"
 			rightName="menuItem_LenderUpload" />

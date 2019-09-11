@@ -73,4 +73,5 @@ public interface JVPostingDAO {
 
 	long createBatchReference();
 
+	long getReferenceSequence();
 }

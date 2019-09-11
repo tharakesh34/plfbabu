@@ -136,7 +136,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 	private transient CustomerDetailsService customerDetailsService;
 
 	private boolean fromLoanOrg;
-	
+
 	protected Button btnSearchCustomerDetails;
 
 	/**
@@ -241,7 +241,7 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -543,6 +543,10 @@ public class RiskContainmentUnitDialogCtrl extends GFCBaseCtrl<RiskContainmentUn
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
 			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
 				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
+				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
 			}
 			Filedownload.save(amedia);
 

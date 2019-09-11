@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -88,6 +89,8 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 
 	private List<RefundUpload> refundUploads = new ArrayList<RefundUpload>();
 	private List<AssignmentUpload> assignmentUploads = new ArrayList<AssignmentUpload>();
+	private List<MiscPostingUpload> miscPostingUploads = new ArrayList<MiscPostingUpload>();
+
 	@XmlTransient
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
@@ -105,6 +108,14 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("assignmentPartnerCode");
 		excludeFields.add("assignmentPartnerDesc");
 		excludeFields.add("assignmentUploads");
+		excludeFields.add("entityDesc");
+		excludeFields.add("miscPostingUploads");
+		excludeFields.add("auditDetailMap");
+		excludeFields.add("userName");
+		excludeFields.add("fileDownload");
+		excludeFields.add("assignmentPartnerId");
+		excludeFields.add("assignmentUploads");
+		excludeFields.add("auditDetailMap");
 		return excludeFields;
 	}
 
@@ -293,6 +304,14 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setAssignmentUploads(List<AssignmentUpload> assignmentUploads) {
 		this.assignmentUploads = assignmentUploads;
+	}
+
+	public List<MiscPostingUpload> getMiscPostingUploads() {
+		return miscPostingUploads;
+	}
+
+	public void setMiscPostingUploads(List<MiscPostingUpload> miscPostingUpload) {
+		this.miscPostingUploads = miscPostingUpload;
 	}
 
 }

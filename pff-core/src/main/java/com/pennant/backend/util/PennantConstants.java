@@ -261,6 +261,8 @@ public class PennantConstants {
 	public static final String DOC_TYPE_DOCX = "DOCX";
 	public static final String DOC_TYPE_EXCEL = "EXCEL";
 	public static final String DOC_TYPE_ZIP = "ZIP";
+	public static final String DOC_TYPE_7Z = "7Z";
+	public static final String DOC_TYPE_RAR = "RAR";
 
 	public static final String DOC_TYPE_CODE_PHOTO = "CUSTPHOTO";
 
@@ -759,6 +761,7 @@ public class PennantConstants {
 	public static final String UPLOAD_INCOMETYPE_EXPENSE = "E";
 	public static final String UPLOAD_STATUS_SUCCESS = "SUCCESS";
 	public static final String UPLOAD_STATUS_FAIL = "FAILED";
+	public static final String UPLOAD_STATUS_REJECT = "REJECT";
 	public static final String EXPENSE_UPLOAD_ADD = "A";
 	public static final String EXPENSE_UPLOAD_OVERRIDE = "O";
 	public static final String EXPENSE_MODE_SCREEN = "Screen";

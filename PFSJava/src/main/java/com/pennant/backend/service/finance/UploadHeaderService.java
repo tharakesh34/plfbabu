@@ -55,11 +55,14 @@ import com.pennant.backend.model.expenses.UploadFinTypeExpense;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 
 public interface UploadHeaderService {
 
 	UploadHeader getUploadHeader(long uploadId);
+
+	UploadHeader getUploadHeaderById(long uploadId, String type);
 
 	boolean isFileNameExist(String fileName);
 
@@ -119,10 +122,9 @@ public interface UploadHeaderService {
 
 	AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader);
 
-	UploadHeader getUploadHeaderById(long uploadId);
-
 	void validateAssignmentScreenLevel(AssignmentUpload assignmentUpload, String entityCode);
 
 	void updateFileDownload(long uploadId, boolean fileDownload, String type);
 
+	List<MiscPostingUpload> getMiscPostingUploadListByUploadId(long uploadId);
 }

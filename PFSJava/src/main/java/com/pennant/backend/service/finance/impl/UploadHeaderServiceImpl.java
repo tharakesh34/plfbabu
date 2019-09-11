@@ -44,11 +44,16 @@
 
 package com.pennant.backend.service.finance.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.ErrorUtil;
+import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.dao.finance.FinExpenseMovementsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -58,6 +63,7 @@ import com.pennant.backend.dao.finance.UploadHeaderDAO;
 import com.pennant.backend.dao.finance.UploadTaxPercentDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.expenses.FinExpenseMovements;
@@ -66,18 +72,26 @@ import com.pennant.backend.model.expenses.UploadFinTypeExpense;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
+import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.ExpenseTypeService;
 import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
+import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>FinancePurposeDetail</b>.<br>
  * 
  */
-public class UploadHeaderServiceImpl implements UploadHeaderService {
+public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implements UploadHeaderService {
 	private static final Logger logger = Logger.getLogger(UploadHeaderServiceImpl.class);
 
 	private UploadHeaderDAO uploadHeaderDAO;
@@ -92,6 +106,8 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	private UploadTaxPercentDAO uploadTaxPercentDAO;
 	private FinFeeDetailService finFeeDetailService;
 	private UploadFinTypeExpenseDAO uploadFinTypeExpenseDAO;
+	private MiscPostingUploadService miscPostingUploadService;
+	private AuditHeaderDAO auditHeaderDAO;
 
 	public UploadHeaderServiceImpl() {
 		super();
@@ -100,6 +116,11 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	@Override
 	public UploadHeader getUploadHeader(long uploadId) {
 		return this.uploadHeaderDAO.getUploadHeader(uploadId);
+	}
+
+	@Override
+	public UploadHeader getUploadHeaderById(long uploadId, String type) {
+		return this.uploadHeaderDAO.getUploadHeaderById(uploadId, type);
 	}
 
 	@Override
@@ -164,20 +185,16 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 
 	@Override
 	public void update(FinExpenseDetails finExpenseDetails) {
-		logger.debug("Entering");
-
+		logger.debug(Literal.ENTERING);
 		this.finExpenseDetailsDAO.update(finExpenseDetails);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void updateRecordCounts(UploadHeader uploadHeader) {
-		logger.debug("Entering");
-
+		logger.debug(Literal.ENTERING);
 		this.uploadHeaderDAO.updateRecordCounts(uploadHeader);
-
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -196,7 +213,7 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) {
+	public AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader) {
 
 		return finTypeExpenseService.doApprove(auditHeader);
 	}
@@ -311,39 +328,103 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 	}
 
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UploadHeader getApprovedUploadHeaderById(long academicID) {
-		// TODO Auto-generated method stub
-		return null;
+	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
+		this.uploadHeaderDAO.updateFileDownload(uploadId, fileDownload, type);
 	}
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "delete");
+
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+		this.uploadHeaderDAO.delete(uploadHeader, TableType.MAIN_TAB);
+
+		// Child
+		this.miscPostingUploadService.deleteByUploadId(uploadHeader.getUploadId());
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
 	}
 
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public AuditHeader doApprove(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
 
-	@Override
-	public AuditHeader doApproveFinTypeExpense(AuditHeader auditHeader) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		String tranType = "";
+		auditHeader = businessValidation(auditHeader, "doApprove");
 
-	@Override
-	public UploadHeader getUploadHeaderById(long uploadId) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		UploadHeader uploadHeader = new UploadHeader();
+		BeanUtils.copyProperties((UploadHeader) auditHeader.getAuditDetail().getModelData(), uploadHeader);
+
+		this.uploadHeaderDAO.delete(uploadHeader, TableType.TEMP_TAB);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
+			auditHeader.getAuditDetail()
+					.setBefImage(this.uploadHeaderDAO.getUploadHeaderById(uploadHeader.getUploadId(), ""));
+		}
+
+		if (uploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			tranType = PennantConstants.TRAN_DEL;
+			// List
+			@SuppressWarnings("unused")
+			List<AuditDetail> deleteAudit = deleteChilds(uploadHeader, "", tranType);
+			// auditDetails.addAll(deleteAudit);//Skipping audit
+			this.uploadHeaderDAO.delete(uploadHeader, TableType.MAIN_TAB);
+		} else {
+			uploadHeader.setRoleCode("");
+			uploadHeader.setNextRoleCode("");
+			uploadHeader.setTaskId("");
+			uploadHeader.setNextTaskId("");
+			uploadHeader.setWorkflowId(0);
+
+			if (PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
+				tranType = PennantConstants.TRAN_ADD;
+				uploadHeader.setRecordType("");
+				this.uploadHeaderDAO.save(uploadHeader, TableType.MAIN_TAB);
+			} else {
+				tranType = PennantConstants.TRAN_UPD;
+				uploadHeader.setRecordType("");
+				this.uploadHeaderDAO.update(uploadHeader, TableType.MAIN_TAB);
+			}
+
+			// updating
+			if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
+				miscPostingUploadService.updateList(uploadHeader.getMiscPostingUploads());
+
+				// adding posting detail in JVPostings table
+				miscPostingUploadService.insertInJVPosting(uploadHeader);
+			}
+
+		}
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		String[] fields = PennantJavaUtil.getFieldDetails(new UploadHeader(), uploadHeader.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
+				uploadHeader.getBefImage(), uploadHeader));
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		auditHeader.setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setAuditTranType(tranType);
+		auditHeader.getAuditDetail().setModelData(uploadHeader);
+
+		// List
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
 	}
 
 	@Override
@@ -352,9 +433,199 @@ public class UploadHeaderServiceImpl implements UploadHeaderService {
 
 	}
 
-	@Override
-	public void updateFileDownload(long uploadId, boolean fileDownload, String type) {
-		// TODO Auto-generated method stub
 
+	@Override
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "doReject");
+
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		this.uploadHeaderDAO.delete(uploadHeader, TableType.TEMP_TAB);
+		this.miscPostingUploadService.deleteByUploadId(uploadHeader.getUploadId());
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	@Override
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
+
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+
+		TableType tableType1 = TableType.MAIN_TAB;
+		if (uploadHeader.isWorkflow()) {
+			tableType1 = TableType.TEMP_TAB;
+		}
+
+		if (uploadHeader.isNew()) {
+			uploadHeader.setUploadId(this.uploadHeaderDAO.save(uploadHeader, tableType1));
+			// MiscPostingUploads
+			if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
+				this.miscPostingUploadService.save(uploadHeader.getMiscPostingUploads(), uploadHeader.getUploadId());
+			}
+			auditHeader.getAuditDetail().setModelData(uploadHeader);
+			auditHeader.setAuditReference(String.valueOf(uploadHeader.getUploadId()));
+		} else {
+			this.uploadHeaderDAO.update(uploadHeader, tableType1);
+			if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
+			this.miscPostingUploadService.updateList(uploadHeader.getMiscPostingUploads());
+			}
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
+		getAuditHeaderDAO().addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+
+		return auditHeader;
+	}
+
+	/**
+	 * businessValidation method do the following steps. 1) get the details from
+	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
+	 * Record based on the record details. 4) Validate for any business
+	 * validation.
+	 * 
+	 * @param AuditHeader
+	 *            (auditHeader)
+	 * @return auditHeader
+	 */
+	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		auditHeader.setAuditDetail(auditDetail);
+		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
+		auditHeader = nextProcess(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+
+		return auditHeader;
+	}
+
+	/**
+	 * For Validating AuditDetals object getting from Audit Header, if any
+	 * mismatch conditions Fetch the error details from
+	 * getUploadHeaderDAO().getErrorDetail with Error ID and language as
+	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * 
+	 * @param auditDetail
+	 * @param usrLanguage
+	 * @return
+	 */
+	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
+		UploadHeader uploadHeader = (UploadHeader) auditDetail.getModelData();
+
+		// Check the unique keys.
+		if (uploadHeader.isNew() && this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(),
+				uploadHeader.getFileName(), uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_MiscPostingUploadDialog_Filename.value") + ": "
+					+ uploadHeader.getFileName();
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", parameters)));
+		}
+
+		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
+
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
+	}
+
+	/**
+	 * Common Method for Retrieving AuditDetails List
+	 * 
+	 * @param auditHeader
+	 * @param method
+	 * @return
+	 */
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		// HashMap<String, List<AuditDetail>> auditDetailMap = new
+		// HashMap<String, List<AuditDetail>>();
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+		// String auditTranType = "";
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (uploadHeader.isWorkflow()) {
+				// auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		auditHeader.getAuditDetail().setModelData(uploadHeader);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug(Literal.LEAVING);
+
+		return auditHeader;
+	}
+
+	public List<AuditDetail> deleteChilds(UploadHeader uploadHeader, String tableType, String auditTranType) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
+			// this.miscPostingUploadService.deleteByUploadId(uploadHeader.getUploadId());
+		}
+
+		logger.debug(Literal.LEAVING);
+
+		return auditDetails;
+	}
+
+	public AuditHeaderDAO getAuditHeaderDAO() {
+		return auditHeaderDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public MiscPostingUploadService getMiscPostingUploadService() {
+		return miscPostingUploadService;
+	}
+
+	public void setMiscPostingUploadService(MiscPostingUploadService miscPostingUploadService) {
+		this.miscPostingUploadService = miscPostingUploadService;
+	}
+
+	@Override
+	public List<MiscPostingUpload> getMiscPostingUploadListByUploadId(long uploadId) {
+		return miscPostingUploadService.getMiscPostingUploadsByUploadId(uploadId);
+	}
+
+	@Override
+	public UploadHeader getApprovedUploadHeaderById(long academicID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

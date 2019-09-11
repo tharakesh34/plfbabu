@@ -3423,7 +3423,6 @@
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 		<property name="insuranceDetailService" ref="insuranceDetailService" />
-
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -9116,6 +9115,8 @@
 		<property name="uploadTaxPercentDAO" ref="uploadTaxPercentDAO" />
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="uploadFinTypeExpenseDAO" ref="uploadFinTypeExpenseDAO" />
+		<property name="miscPostingUploadService" ref="miscPostingUploadService"/>
+		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
 	</bean>
 
 	<bean id="uploadHeaderDAO" class="com.pennant.backend.dao.finance.impl.UploadHeaderDAOImpl" parent="sequenceDao" />
@@ -11220,5 +11221,39 @@
 	<bean name="creditFinancialServiceTarget" class="com.pennant.backend.service.financemanagement.bankorcorpcreditreview.impl.CreditFinancialServiceImpl" />
 
 	<bean id="creditReviewDetailDAO" class="com.pennant.backend.dao.finance.impl.CreditReviewDetailDAOImpl" parent="sequenceDao" />
+	
+	
+	<!--============ MiscPosting Upload Details ============== -->
+	<bean id="miscPostingUploadDAO" class="com.pennant.backend.dao.finance.impl.MiscPostingUploadDAOImpl" parent="sequenceDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="miscPostingUploadService"	class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="miscPostingUploadTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean> 
 
+	<bean name="miscPostingUploadTarget" class="com.pennant.backend.service.finance.impl.MiscPostingUploadServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="miscPostingUploadDAO" ref="miscPostingUploadDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="branchDAO" ref="branchDAO" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="accountMappingDAO" ref="accountMappingDAO" />
+		<property name="jVPostingDAO" ref="jVPostingDAO"/>
+		<property name="jVPostingService" ref="jVPostingService"/>
+		<property name="divisionDetailDAO" ref="divisionDetailDAO"/>
+	</bean> 
 </beans>

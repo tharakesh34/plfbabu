@@ -5421,4 +5421,19 @@
 
 	<bean id="vocherDownloadListCtrl" class="com.pennanttech.webui.downloads.VocherDownloadListctrl" parent="basisListCtrl"
 		scope="prototype" />
+	
+	<!-- Upload List -->
+	<bean id="uploadListCtrl" class="com.pennant.webui.finance.upload.UploadListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+	</bean>
+	
+	<!-- MiscPosting Upload -->
+	<bean id="selectMiscPostingUploadDialogCtrl" class="com.pennant.webui.finance.upload.SelectMiscPostingUploadDialogCtrl"	parent="basisCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+   	</bean>
+	<bean id="miscPostingUploadDialogCtrl" class="com.pennant.webui.finance.upload.MiscPostingUploadDialogCtrl"	parent="basisCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+		<property name="miscPostingUploadService" ref="miscPostingUploadService"/>
+	</bean>
+	
 </beans>

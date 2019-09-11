@@ -5060,4 +5060,46 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return new ArrayList<>();
 
 	}
+
+	@Override
+	public FinanceMain getFinanceMainDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select T1.FinIsActive, T1.FinStartDate, T1.FinBranch,T36.ENTITYCODE As LovDescEntityCode");
+		sql.append(", T7.FINDIVISION As LovDescFinDivision FROM FINANCEMAIN T1 ");
+		sql.append(" JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE");
+		sql.append(" LEFT JOIN RMTBRANCHES T12 ON T1.FINBRANCH = T12.BRANCHCODE");
+		sql.append(" LEFT JOIN FINPFTDETAILS T17 ON T17.FINREFERENCE = T1.FINREFERENCE");
+		sql.append(" LEFT JOIN STEPPOLICYHEADER T24 ON T1.STEPPOLICY = T24.POLICYCODE");
+		sql.append(" LEFT JOIN BMTCUSTSTATUSCODES T27 ON T1.FINSTATUS = T27.CUSTSTSCODE");
+		sql.append(" LEFT JOIN AMTVEHICLEDEALER T28 ON T1.ACCOUNTSOFFICER = T28.DEALERID");
+		sql.append(" LEFT JOIN RELATIONSHIPOFFICERS T30 ON T1.DSACODE = T30.ROFFICERCODE");
+		sql.append(" LEFT JOIN RELATIONSHIPOFFICERS T33 ON T1.REFERRALID = T33.ROFFICERCODE");
+		sql.append(" LEFT JOIN RELATIONSHIPOFFICERS T34 ON T1.DMACODE = T34.ROFFICERCODE");
+		sql.append(" LEFT JOIN RMTGENDEPARTMENTS T35 ON T1.SALESDEPARTMENT = T35.GENDEPARTMENT");
+		sql.append(" LEFT JOIN SMTDIVISIONDETAIL T36 ON T7.FINDIVISION = T36.DIVISIONCODE");
+		sql.append(" LEFT JOIN RELATIONSHIPOFFICERS T37 ON T1.EMPLOYEENAME = T37.ROFFICERCODE");
+		sql.append(" LEFT JOIN RMTLOVFIELDDETAIL T38 ON T1.ELIGIBILITYMETHOD = T38.FIELDCODEID");
+		sql.append(" LEFT JOIN LOANPURPOSES T39 ON T1.FINPURPOSE = T39.LOANPURPOSECODE");
+		sql.append(" LEFT JOIN AMTVEHICLEDEALER T40 ON T1.CONNECTOR = T40.DEALERID");
+		sql.append(" LEFT JOIN BUSINESS_VERTICAL BV ON BV.ID = T1.BUSINESSVERTICAL");
+		sql.append(" Where T1.FinReference =:FinReference and T38.FIELDCODE = :ELGMETHOD");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("ELGMETHOD", "ELGMETHOD");
+		source.addValue("FinReference", finReference);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

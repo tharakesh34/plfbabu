@@ -252,6 +252,10 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if ("application/octet-stream".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_7Z;
+			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_RAR;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
 				return;
@@ -273,10 +277,13 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 				getDocumentLink(fileName, docType, fileName, ddaImageData);
 			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
 				getDocumentLink(fileName, docType, fileName, ddaImageData);
+			} else if (docType.equals(PennantConstants.DOC_TYPE_7Z)) {
+				getDocumentLink(fileName, docType, fileName, ddaImageData);
+			} else if (docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+				getDocumentLink(fileName, docType, fileName, ddaImageData);
 			}
 
-			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-					|| docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.chequeDocumentDivPdfView.setVisible(false);
 			} else {
 				this.chequeDocumentDivPdfView.setVisible(true);

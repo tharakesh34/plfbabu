@@ -75,7 +75,8 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceMainById(String id, String type, boolean isWIF);
 
 	/**
-	 * Saves the record. If required, this will generate the identity sequence number for the record before saving.
+	 * Saves the record. If required, this will generate the identity sequence
+	 * number for the record before saving.
 	 * 
 	 * @param financeMain
 	 *            The model object that contains the parameters.
@@ -83,7 +84,8 @@ public interface FinanceMainDAO {
 	 *            The type of the table.
 	 * @param wif
 	 *            Whether the record is for what-if or the loan.
-	 * @return Identity sequence number as string or primary key code of the saved record.
+	 * @return Identity sequence number as string or primary key code of the
+	 *         saved record.
 	 * @throws DataAccessException
 	 *             If there is any problem issuing the save.
 	 */
@@ -247,13 +249,16 @@ public interface FinanceMainDAO {
 	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
 
 	/**
-	 * Get the total maximum re-payment amount against the specified mandate excluding the finance.
+	 * Get the total maximum re-payment amount against the specified mandate
+	 * excluding the finance.
 	 * 
 	 * @param mandateId
-	 *            Mandate id for which the total maximum re-payment amount to be fetched.
+	 *            Mandate id for which the total maximum re-payment amount to be
+	 *            fetched.
 	 * @param finReference
 	 *            Finance reference that need to be excluded.
-	 * @return The total maximum re-payment amount against the specified mandate excluding the finance.
+	 * @return The total maximum re-payment amount against the specified mandate
+	 *         excluding the finance.
 	 */
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
 
@@ -312,16 +317,22 @@ public interface FinanceMainDAO {
 	Map<String, Date> getUnApprovedFinanceList(String fintype);
 
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
-			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
+			String purpose, boolean wif);// ### 18-07-2018 Ticket ID :
+											// 124998,receipt upload
 
-	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);//### 12-07-2018 Ticket ID : 12499
+	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ###
+																							// 12-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 12499
 
-	//### 10-09-2018,Ticket id:124998
+	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
 
 	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
 
-	//### 10-10-2018,Ticket id:124998
+	// ### 10-10-2018,Ticket id:124998
 	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
@@ -348,7 +359,12 @@ public interface FinanceMainDAO {
 
 	FinanceMain isFlexiLoan(String finReference);
 
-	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);//### 17-07-2018 Ticket ID : 127950
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ###
+																							// 17-07-2018
+																							// Ticket
+																							// ID
+																							// :
+																							// 127950
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
@@ -402,4 +418,6 @@ public interface FinanceMainDAO {
 	FinanceMain getFinanceDetailsForInsurance(String finReference, String type);
 
 	List<FinanceMain> getFinMainListBySQLQueryRule(String whereClause, String type);
+
+	FinanceMain getFinanceMainDetails(String reference);
 }

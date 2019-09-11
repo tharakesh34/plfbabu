@@ -450,6 +450,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
 				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_7Z)) {
+				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
+			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
+				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
 			}
 			Filedownload.save(amedia);
 		}
@@ -514,7 +518,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			if (aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)
-					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL) || aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_7Z)
+					|| aDocumentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(aDocumentDetails.getDocName(), aDocumentDetails.getDoctype(),
 						this.documnetName.getValue(), aDocumentDetails.getDocImage()));
@@ -1329,6 +1336,10 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if ("application/octet-stream".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_7Z;
+			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_RAR;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
@@ -1349,14 +1360,17 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL) || docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+						|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.setVisible(true);
 					this.finDocumentPdfView.setVisible(false);
 				} else {

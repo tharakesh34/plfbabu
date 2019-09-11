@@ -94,6 +94,11 @@ public class ImageViewCtrl extends GFCBaseCtrl<Object> {
 					} else if (PennantConstants.DOC_TYPE_ZIP.equals(docDetail.getDoctype())) {
 						amedia = new AMedia(docDetail.getDocName(), "x-zip-compressed", "application/x-zip-compressed",
 								data);
+					} else if (PennantConstants.DOC_TYPE_7Z.equals(docDetail.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "octet-stream", "application/octet-stream", data);
+					} else if (PennantConstants.DOC_TYPE_RAR.equals(docDetail.getDoctype())) {
+						amedia = new AMedia(docDetail.getDocName(), "x-rar-compressed", "application/x-rar-compressed",
+								data);
 					}
 					document.setContent(amedia);
 				}

@@ -6049,7 +6049,9 @@ public class FinanceDataValidation {
 					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_DOC)
 					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_DOCX)
 					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_IMAGE)
-					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_ZIP))) {
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_ZIP)
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_7Z)
+					|| StringUtils.equals(documents.getDoctype(), PennantConstants.DOC_TYPE_RAR))) {
 				String[] valueParm = new String[1];
 				valueParm[0] = documents.getDoctype();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN"));

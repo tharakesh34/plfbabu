@@ -61,6 +61,7 @@ import org.zkoss.zul.Window;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.service.finance.UploadHeaderService;
+import com.pennant.backend.util.JvPostingConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.webui.finance.upload.model.UploadListModelItemRenderer;
@@ -111,7 +112,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		super.moduleCode = "UploadHeader";
 		super.pageRightName = "UploadHeaderList";
 		super.tableName = "UploadHeader_AView";
-		super.queueTableName = "UploadHeader_TView";
+		super.queueTableName = "UploadHeader_Temp";
 		super.enquiryTableName = "UploadHeader_View";
 
 		this.module = getArgument("module");
@@ -121,9 +122,22 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		Filter[] filters = new Filter[1];
-		filters[0] = new Filter("Module", this.module, Filter.OP_EQUAL);
-		this.searchObject.addFilters(filters);
+		if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
+			this.searchObject.addFilters(filters);
+			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL),
+					new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE));
+		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			Filter[] filters = new Filter[2];
+			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
+			filters[1] = new Filter("NextRoleCode", "%APPROVER%", Filter.OP_LIKE);
+			this.searchObject.addFilters(filters);
+		} else {
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("Module", this.module, Filter.OP_EQUAL);
+			this.searchObject.addFilters(filters);
+		}
 	}
 
 	/**
@@ -142,6 +156,9 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			newButtonRight = "button_UploadList_NewRefundUpload";
 		} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
 			newButtonRight = "button_UploadList_NewAssignmentUpload";
+		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+			// Register buttons and fields.
+			newButtonRight = "button_UploadList_NewMiscPostingUpload";
 		}
 
 		// Register buttons and fields.
@@ -158,6 +175,11 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		// Render the page and display the data.
 		doRenderPage();
+		
+		if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			button_UploadList_New.setVisible(false);
+		}
+		
 		search();
 	}
 
@@ -219,13 +241,18 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		// Get the selected entity.
 		long id = (long) selectedItem.getAttribute("id");
-		UploadHeader uploadHeader = uploadHeaderService.getUploadHeaderById(id);
+		UploadHeader uploadHeader = uploadHeaderService.getUploadHeaderById(id, "_View");
 
 		if (uploadHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
 
+		if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)
+				|| JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			uploadHeader.setMiscPostingUploads(
+					uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
+		}
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " UploadId = '" + uploadHeader.getUploadId() + "' AND version=" + uploadHeader.getVersion()
 				+ " ";
@@ -235,7 +262,31 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			if (isWorkFlowEnabled() && uploadHeader.getWorkflowId() == 0) {
 				uploadHeader.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(uploadHeader);
+
+			Map<String, Object> arg = getDefaultArguments();
+			arg.put("uploadHeader", uploadHeader);
+			arg.put("uploadListCtrl", this);
+			arg.put("module", this.module);
+
+			String zulPath = "";
+
+			if (UploadConstants.UPLOAD_MODULE_REFUND.equals(this.module)) {
+				zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
+			} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
+				zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
+			} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+				uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+				zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+			} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+				uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+				zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
+			}
+
+			try {
+				Executions.createComponents(zulPath, null, arg);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -255,6 +306,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("uploadHeader", uploadHeader);
 		arg.put("uploadListCtrl", this);
+		arg.put("module", this.module);
 
 		String zulPath = "";
 
@@ -262,6 +314,12 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			zulPath = "/WEB-INF/pages/Finance/Uploads/RefundUploadDialog.zul";
 		} else if (UploadConstants.UPLOAD_MODULE_ASSIGNMENT.equals(this.module)) {
 			zulPath = "/WEB-INF/pages/Finance/Uploads/AssignmentUploadDialog.zul";
+		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)) {
+			uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+			zulPath = "/WEB-INF/pages/Finance/Uploads/SelectMiscPostingUploadDialog.zul";
+		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
+			uploadHeader.setModule(JvPostingConstants.MISCELLANEOUSPOSTING_MODULE);
+			zulPath = "/WEB-INF/pages/Finance/Uploads/MiscPostingUploadDialog.zul";
 		}
 
 		try {

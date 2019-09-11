@@ -669,7 +669,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		if (aCustomerDocument.getCustDocImage() != null) {
 			if (aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_WORD)
 					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_MSG)
-					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_ZIP)
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_7Z)
+					|| aCustomerDocument.getCustDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(
 						getDocumentLink(aCustomerDocument.getCustDocName(), aCustomerDocument.getCustDocType(),
@@ -2102,6 +2104,10 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if ("application/octet-stream".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_7Z;
+			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_RAR;
 			} else {
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 				return;
@@ -2121,13 +2127,16 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 					|| docType.equals(PennantConstants.DOC_TYPE_MSG)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
-			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+			} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(fileName, docType, this.documnetName.getValue(), ddaImageData));
 
 			}
+
 			if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-					|| docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+					|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+					|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 				this.docDiv.setVisible(true);
 				this.finDocumentPdfView.setVisible(false);
 			} else {

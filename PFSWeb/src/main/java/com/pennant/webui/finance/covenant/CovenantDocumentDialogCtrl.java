@@ -436,7 +436,9 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 			if (documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_WORD)
 					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_MSG)
 					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_EXCEL)
-					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)) {
+					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_ZIP)
+					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_7Z)
+					|| documentDetails.getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
 				this.docDiv.getChildren().clear();
 				this.docDiv.appendChild(getDocumentLink(documentDetails.getDocName(), documentDetails.getDoctype(),
 						this.documentName.getValue(), documentDetails.getDocImage()));
@@ -619,6 +621,10 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if ("application/octet-stream".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_7Z;
+			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
+				docType = PennantConstants.DOC_TYPE_RAR;
 			} else {
 				isSupported = false;
 				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
@@ -639,14 +645,17 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
-				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+				} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.getChildren().clear();
 					this.docDiv.appendChild(
 							getDocumentLink(fileName, docType, this.documentName.getValue(), ddaImageData));
 				}
 
 				if (docType.equals(PennantConstants.DOC_TYPE_WORD) || docType.equals(PennantConstants.DOC_TYPE_MSG)
-						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL) || docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+						|| docType.equals(PennantConstants.DOC_TYPE_EXCEL)
+						|| docType.equals(PennantConstants.DOC_TYPE_ZIP) || docType.equals(PennantConstants.DOC_TYPE_7Z)
+						|| docType.equals(PennantConstants.DOC_TYPE_RAR)) {
 					this.docDiv.setVisible(true);
 					this.finDocumentPdfView.setVisible(false);
 				} else {

@@ -338,6 +338,12 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 			Filedownload.save(content, "application/octet-stream", fileName);
 		} else if (docType.equals(PennantConstants.DOC_TYPE_EXCEL)) {
 			Filedownload.save(content, "application/octet-stream", fileName);
+		} else if (docType.equals(PennantConstants.DOC_TYPE_ZIP)) {
+			Filedownload.save(content, "application/x-zip-compressed", fileName);
+		} else if (docType.equals(PennantConstants.DOC_TYPE_7Z)) {
+			Filedownload.save(content, "application/octet-stream", fileName);
+		} else if (docType.equals(PennantConstants.DOC_TYPE_RAR)) {
+			Filedownload.save(content, "application/x-rar-compressed", fileName);
 		}
 	}
 }

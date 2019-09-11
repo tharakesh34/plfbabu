@@ -15,13 +15,13 @@
  * FILE HEADER *
  ******************************************************************************************** 
  * 
- * FileName : PennantConstants.java *
+ * FileName : ReceiptUploadConstants.java *
  * 
  * Author : PENNANT TECHONOLOGIES *
  * 
- * Creation Date : 26-04-2011 *
+ * Creation Date : 01-03-2019 *
  * 
- * Modified Date : 26-04-2011 *
+ * Modified Date : 01-03-2019 *
  * 
  * Description : *
  * 
@@ -31,41 +31,20 @@
  * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ******************************************************************************************** 
  */
+
 package com.pennant.backend.util;
 
 /**
  * This stores all constants required for running the application
  */
-public class UploadConstants {
-	private UploadConstants() {
+public class JvPostingConstants {
+	private JvPostingConstants() {
 		super();
 	}
 
-	// Module Name
-	public static final String UPLOAD_MODULE_REFUND = "Refund";
-	public static final String UPLOAD_MODULE_ASSIGNMENT = "Assignment";
+	public static final String MISCELLANEOUSPOSTING_MAKER = "MM";
+	public static final String MISCELLANEOUSPOSTING_APPROVER = "MA";
 
-	// Satus
-	public static final String REFUND_UPLOAD_STATUS_SUCCESS = "S";
-	public static final String REFUND_UPLOAD_STATUS_FAIL = "F";
-	public static final String UPLOAD_STATUS_SUCCESS = "S";
-	public static final String UPLOAD_STATUS_FAIL = "F";
-
-	public static final String REFUNDUPLOAD_EXCESS_AMOUNT = "E";
-	public static final String REFUNDUPLOAD_ADVANCE_AMOUNT = "A";
-	public static final String REFUNDUPLOAD_MANUAL_ADVISE_PAYABLE = "M";
-
-	public static final String FRR = "FRR"; // FRR Upload Constant
-
-	// FinSource Id
-	public static final String FINSOURCE_ID_API = "API";
-	public static final String FINSOURCE_ID_PFF = "PFF";
-	public static final String FINSOURCE_ID_UPLOAD = "UPL";
-
-	// Voucher Details Upload Type
-	public static final String UPLOAD_TYPE_NEW = "NEW";
-	public static final String UPLOAD_TYPE_UPDATE = "UPDATE";
-
-	public static final String MISC_POSTING_UPLOAD = "MiscPostingUpload";
+	public static final String MISCELLANEOUSPOSTING_MODULE = "MiscPostingUpload";
 
 }

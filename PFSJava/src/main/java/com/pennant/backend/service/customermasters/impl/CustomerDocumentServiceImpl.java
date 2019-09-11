@@ -539,7 +539,9 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOC)
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_DOCX)
 						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_IMAGE)
-						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_ZIP))) {
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_ZIP)
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_7Z)
+						|| StringUtils.equals(customerDocument.getCustDocType(), PennantConstants.DOC_TYPE_RAR))) {
 					String[] valueParm = new String[1];
 					valueParm[0] = customerDocument.getCustDocType();
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90122", "", valueParm), "EN");

@@ -297,7 +297,8 @@ public class FinanceConstants {
 	// FIXME: PV: 31MAY17 Duplicate and different version present in calculation
 	// constants
 	/*
-	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static final String RVW_ALL = "RVWALL";
+	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static
+	 * final String RVW_ALL = "RVWALL";
 	 */
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String method_scheduleChange = "scheduleChange";
@@ -486,4 +487,6 @@ public class FinanceConstants {
 
 	public static final String EARLYSETTLEMENT = "ES";
 	public static final String PARTIALSETTLEMENT = "EP";
+
+	public static final String POSTING_AGAINST_NONLOAN = "NONLAN";
 }

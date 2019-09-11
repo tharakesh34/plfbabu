@@ -144,7 +144,7 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 	private transient CustomerDetailsService customerDetailsService;
 	@Autowired
 	private transient CollateralSetupService collateralSetupService;
-	
+
 	protected Button btnSearchCustomerDetails;
 
 	/**
@@ -245,14 +245,14 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		this.agentCode.setMaxlength(8);
 		this.agentName.setMaxlength(20);
 		this.remarks.setMaxlength(500);
-		
+
 		if (StringUtils.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CLIX_VERIFICATIONS_CUSTOMERVIEW),
 				PennantConstants.YES)) {
 			this.btnSearchCustomerDetails.setVisible(false);
 		} else {
 			this.btnSearchCustomerDetails.setVisible(true);
 		}
-		
+
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -574,6 +574,10 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 				amedia = new AMedia(docName, "docx", "application/pdf", data);
 			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_ZIP)) {
 				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_7Z)) {
+				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
+			} else if (details.getDocType().equals(PennantConstants.DOC_TYPE_RAR)) {
+				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
 			}
 			Filedownload.save(amedia);
 
