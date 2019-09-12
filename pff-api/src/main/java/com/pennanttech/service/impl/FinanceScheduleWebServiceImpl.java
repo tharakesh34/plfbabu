@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.service.finance.impl.FinanceDataDefaulting;
@@ -43,10 +42,14 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 	public FinScheduleData createFinanceSchedule(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceDetail finDetail = new FinanceDetail();
+		finDetail.setFinScheduleData(finScheduleData);
+
+		FinScheduleData finScheduleDataNew = null;
+
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(finScheduleData, SaveValidationGroup.class);
 
-		FinScheduleData financeSchdData = null;
 		try {
 			if (finScheduleData.getFinanceMain() == null) {
 				FinScheduleData response = new FinScheduleData();
@@ -64,34 +67,36 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			logFields[2] = String.valueOf(finScheduleData.getFinanceMain().getFinAmount());
 			APIErrorHandlerService.logKeyFields(logFields);
 
-			// validate and Data defaulting
-			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finScheduleData);
+			// validate and Data defaulting and resetting again becuase of some new() was used in called class
+			finDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finDetail);
+			finScheduleData = finDetail.getFinScheduleData();
 
 			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
 
+			//FIXME: PV 28AUG19 to be removed as already handled in financedatadefaulting.defaultFinance()
 			// validate finance data
-			FinanceDetail financeDetail = null;
-			if (!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) {
-				financeDetail = new FinanceDetail();
-				financeDetail.setFinScheduleData(finScheduleData);
-				CustomerDetails customerDetails = new CustomerDetails();
-				customerDetails.setCustomer(null);
-				financeDetail.setCustomerDetails(customerDetails);
-			}
+			/*
+			 * FinanceDetail financeDetail = null; if
+			 * (!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) { financeDetail = new
+			 * FinanceDetail(); financeDetail.setFinScheduleData(finScheduleData); CustomerDetails customerDetails = new
+			 * CustomerDetails(); customerDetails.setCustomer(null); financeDetail.setCustomerDetails(customerDetails);
+			 * }
+			 */
+
 			// validate schedule details
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true,
-					financeDetail);
+					finDetail);
 			if (!finScheduleData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(finScheduleData);
 			}
 
 			// call doCreateFinanceSchedule method after successful validations
-			financeSchdData = financeDetailController.doCreateFinanceSchedule(finScheduleData);
+			finScheduleDataNew = financeDetailController.doCreateFinanceSchedule(finScheduleData);
 
-			if (financeSchdData != null && financeSchdData.getErrorDetails() != null) {
-				return getErrorMessage(financeSchdData);
+			if (finScheduleDataNew != null && finScheduleDataNew.getErrorDetails() != null) {
+				return getErrorMessage(finScheduleDataNew);
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -101,11 +106,11 @@ public class FinanceScheduleWebServiceImpl implements FinanceScheduleRestService
 			return response;
 		}
 		// for  logging purpose
-		if (financeSchdData != null) {
-			APIErrorHandlerService.logReference(financeSchdData.getFinReference());
+		if (finScheduleDataNew != null) {
+			APIErrorHandlerService.logReference(finScheduleDataNew.getFinReference());
 		}
 		logger.debug(Literal.LEAVING);
-		return financeSchdData;
+		return finScheduleDataNew;
 	}
 
 	private FinScheduleData getErrorMessage(FinScheduleData financeSchdData) {

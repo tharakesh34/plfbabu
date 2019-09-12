@@ -69,6 +69,7 @@ import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -166,6 +167,9 @@ public class FinScheduleData implements Serializable {
 	@XmlElement
 	private SubventionDetail subventionDetail;
 
+	// Promotion / Scheme
+	private Promotion promotion;
+
 	private boolean quickDisb;
 
 	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<>();
@@ -193,6 +197,7 @@ public class FinScheduleData implements Serializable {
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
 	private List<LowerTaxDeduction> lowerTaxDeductionDetails = new ArrayList<>();
+	private List<IRRScheduleDetail> irrSDList = new ArrayList<>(1);
 
 	@XmlElement(name = "hostReference")
 	private String oldFinReference;
@@ -711,5 +716,21 @@ public class FinScheduleData implements Serializable {
 
 	public void setLowerTaxDeductionDetails(List<LowerTaxDeduction> lowerTaxDeductionDetails) {
 		this.lowerTaxDeductionDetails = lowerTaxDeductionDetails;
+	}
+
+	public Promotion getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
+	}
+
+	public List<IRRScheduleDetail> getIrrSDList() {
+		return irrSDList;
+	}
+
+	public void setIrrSDList(List<IRRScheduleDetail> irrSDList) {
+		this.irrSDList = irrSDList;
 	}
 }

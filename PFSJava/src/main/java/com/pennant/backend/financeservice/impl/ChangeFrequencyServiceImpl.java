@@ -14,7 +14,9 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
@@ -48,6 +50,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 	public FinScheduleData doChangeFrequency(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst) {
 		logger.debug("Entering");
 
+		boolean isApplySanctionBasedSchedule = SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData);
 		FinScheduleData scheduleData = null;
 		Cloner cloner = new Cloner();
 		scheduleData = cloner.deepClone(finScheduleData);
@@ -63,9 +66,8 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		// Dates Modifications as per New Frequency Date Selection
 		Date prvSchdate = financeMain.getFinStartDate();
 		FinanceScheduleDetail prvSchd = null;
-		;
 		Date eventFromdate = null;
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		int day = Integer.parseInt(frequency.substring(3));
 		for (int i = 1; i < scheduleList.size(); i++) {
 
@@ -95,7 +97,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 			}
 
 			// Only allowed if payment amount is greater than Zero
-			if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0
+			if (!isApplySanctionBasedSchedule && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) <= 0
 					&& StringUtils.isEmpty(curSchd.getBpiOrHoliday())) {
 				if (curSchd.isDisbOnSchDate()) {
 					curSchd.setDisbOnSchDate(false);

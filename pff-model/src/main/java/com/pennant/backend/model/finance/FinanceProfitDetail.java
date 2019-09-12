@@ -115,8 +115,8 @@ public class FinanceProfitDetail implements Serializable {
 	private BigDecimal accumulatedDepPri = BigDecimal.ZERO;
 	private BigDecimal depreciatePri = BigDecimal.ZERO;
 	//others
-	private BigDecimal disburse = BigDecimal.ZERO;
-	private BigDecimal downpay = BigDecimal.ZERO;
+	//private BigDecimal disburse = BigDecimal.ZERO;
+	//private BigDecimal downpay = BigDecimal.ZERO;
 
 	private BigDecimal acrTillLBD = BigDecimal.ZERO;
 	private BigDecimal EarnedPft = BigDecimal.ZERO;
@@ -207,6 +207,12 @@ public class FinanceProfitDetail implements Serializable {
 
 	private BigDecimal totalSvnAmount = BigDecimal.ZERO;
 	private int noInstEarlyStl;
+
+	private BigDecimal gapIntAmz = BigDecimal.ZERO;
+	private BigDecimal gapIntAmzLbd = BigDecimal.ZERO;
+	private BigDecimal prvMthGapIntAmz = BigDecimal.ZERO;
+	private BigDecimal svAmount = BigDecimal.ZERO;
+	private BigDecimal cbAmount = BigDecimal.ZERO;
 
 	// IND AS Amortization
 	private String aMZMethod;
@@ -955,21 +961,17 @@ public class FinanceProfitDetail implements Serializable {
 		this.pftAmzPD = pftAmzPD;
 	}
 
-	public BigDecimal getDisburse() {
-		return disburse;
-	}
+	/*
+	 * public BigDecimal getDisburse() { return disburse; }
+	 * 
+	 * public void setDisburse(BigDecimal disburse) { this.disburse = disburse; }
+	 */
 
-	public void setDisburse(BigDecimal disburse) {
-		this.disburse = disburse;
-	}
-
-	public BigDecimal getDownpay() {
-		return downpay;
-	}
-
-	public void setDownpay(BigDecimal downpay) {
-		this.downpay = downpay;
-	}
+	/*
+	 * public BigDecimal getDownpay() { return downpay; }
+	 * 
+	 * public void setDownpay(BigDecimal downpay) { this.downpay = downpay; }
+	 */
 
 	public BigDecimal getAmzTillLBDNormal() {
 		return amzTillLBDNormal;
@@ -1618,4 +1620,45 @@ public class FinanceProfitDetail implements Serializable {
 	public void setAMZMethod(String aMZMethod) {
 		this.aMZMethod = aMZMethod;
 	}
+
+	public BigDecimal getGapIntAmz() {
+		return gapIntAmz;
+	}
+
+	public void setGapIntAmz(BigDecimal gapIntAmz) {
+		this.gapIntAmz = gapIntAmz;
+	}
+
+	public BigDecimal getGapIntAmzLbd() {
+		return gapIntAmzLbd;
+	}
+
+	public void setGapIntAmzLbd(BigDecimal gapIntAmzLbd) {
+		this.gapIntAmzLbd = gapIntAmzLbd;
+	}
+
+	public BigDecimal getPrvMthGapIntAmz() {
+		return prvMthGapIntAmz;
+	}
+
+	public void setPrvMthGapIntAmz(BigDecimal prvMthGapIntAmz) {
+		this.prvMthGapIntAmz = prvMthGapIntAmz;
+	}
+
+	public BigDecimal getSvAmount() {
+		return svAmount;
+	}
+
+	public void setSvAmount(BigDecimal svAmount) {
+		this.svAmount = svAmount;
+	}
+
+	public BigDecimal getCbAmount() {
+		return cbAmount;
+	}
+
+	public void setCbAmount(BigDecimal cbAmount) {
+		this.cbAmount = cbAmount;
+	}
+
 }

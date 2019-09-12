@@ -15,6 +15,8 @@
 							tooltiptext="${c:l('button_Search.tooltiptext')}" />
 						<button id="btnDownload" label="${c:l('label_btndownload.value')}" autodisable="button_Search,btnDownload,print,btnRefresh,help" />
 					</toolbar>
+					
+					
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" height="24px" label="${c:l('label_Refresh')}" autodisable="button_Search,btnDownload,print,btnRefresh,help"
@@ -26,7 +28,7 @@
 				<north border="none" />
 				<center border="none">
 					<div>
-						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
+						 <grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
 								<column width="15%" />
 								<column width="5%" />
@@ -37,6 +39,15 @@
 							</columns>
 							<rows>
 								<row>
+									<label id="label_CustomerDownload_FromDate" value="${c:l('label_CustomerDownload_FromDate.value')}" />
+									<label />
+									<datebox id="fromDate" width="108px"/>
+
+									<label id="label_CustomerDownload_ToDate" value="${c:l('label_CustomerDownload_ToDate.value')}" />
+									<label />
+									<datebox id="toDate" width="171px"  />
+								</row>
+								<!--<row>
 									<label id="label_CustomerSearch_CustCIF" value="${c:l('label_CustomerSearch_CustCIF.value')}" />
 									<listbox id="sortOperator_custCIF" width="43px" mold="select" rows="1" />
 									<textbox id="custCIF" width="108px" maxlength="19" />
@@ -82,9 +93,9 @@
 											</radio>
 										</radiogroup>
 									</cell>
-								</row>
+								</row>-->
 							</rows>
-						</grid>
+						</grid> 
 						<listbox id="listBoxCustomerDownload" fixedLayout="true" span="true" width="100%" height="100%" multiple="false"
 							sizedByContent="true">
 							<listhead sizable="true">
@@ -104,7 +115,7 @@
 									hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+								<listheader id="listheader_RecordType" label="${c:l('listheader_LastMntOn.label')}" sort="auto"
 									hflex="min" />
 							</listhead>
 						</listbox>

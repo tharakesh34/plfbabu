@@ -138,4 +138,30 @@ public class PaymentProcessImpl implements PaymentProcess {
 		}
 	}
 
+	@Override
+	public void updateStatus(Object... params) {
+		logger.debug(Literal.ENTERING);
+
+		long paymentId = (Long) params[0];
+		String status = (String) params[1];
+		String rejectReason = (String) params[2];
+		String tranReference = (String) params[3];
+
+		PaymentInstruction instruction = new PaymentInstruction();
+		instruction.setPaymentInstructionId(paymentId);
+
+		instruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
+
+		if (DisbursementConstants.STATUS_PAID.equals(status)) {
+			instruction.setStatus("E");
+		} else {
+			instruction.setStatus("R");
+		}
+		instruction.setRejectReason(rejectReason);
+		instruction.setTransactionRef(tranReference);
+
+		process(instruction);
+
+		logger.debug(Literal.LEAVING);
+	}
 }

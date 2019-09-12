@@ -80,4 +80,6 @@ public interface PaymentDetailService {
 	void paymentReversal(PaymentInstruction paymentInstruction);
 
 	void updatePaymentStatus(PaymentInstruction paymentInstruction);
+
+	PaymentInstruction getPaymentInstruction(long paymentId, String type);
 }

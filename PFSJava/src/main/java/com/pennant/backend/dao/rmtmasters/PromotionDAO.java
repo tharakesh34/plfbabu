@@ -43,6 +43,7 @@
 
 package com.pennant.backend.dao.rmtmasters;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -65,4 +66,12 @@ public interface PromotionDAO {
 	int getPromotionByRuleCode(long ruleId, String type);
 
 	Promotion getPromotionByCode(String promotionCode, String type);
+
+	Promotion getActiveSchemeForTxn(String promotionCode, Date valueDate);
+
+	long getPromotionalReferenceId();
+
+	Promotion getPromotionById(long promotionId, String string);
+
+	Promotion getPromotionByReferenceId(long referenceId, String type);
 }

@@ -26,6 +26,7 @@ import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
+import com.pennant.app.util.CDScheduleCalculator;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -92,11 +93,13 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -118,6 +121,7 @@ import com.pennant.backend.service.finance.JointAccountDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.mandate.FinMandateService;
 import com.pennant.backend.service.notifications.NotificationsService;
+import com.pennant.backend.service.partnerbank.PartnerBankService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
 import com.pennant.backend.util.CollateralConstants;
@@ -138,7 +142,6 @@ import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -192,6 +195,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private ChequeHeaderService chequeHeaderService;
 	private RemarksWebServiceImpl remarksWebServiceImpl;
 	private RemarksController remarksController;
+	private PartnerBankService partnerBankService;
 
 	/**
 	 * Method for process create finance request
@@ -211,10 +215,13 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
 			FinanceType financeType = finScheduleData.getFinanceType();
-			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
+			financeMain.setFinType(financeType.getFinType());
+
+			//FIXME: PV 28AUG19. Seems FinReference already generated in previous methods
 			if (financeType.isFinIsGenRef()) {
 				financeMain.setFinReference(null);
 			}
+
 			if (StringUtils.isBlank(financeMain.getFinReference())) {
 				finReference = String.valueOf(String
 						.valueOf(ReferenceGenerator.generateFinRef(financeMain, finScheduleData.getFinanceType())));
@@ -222,9 +229,12 @@ public class CreateFinanceController extends SummaryDetailService {
 				finReference = financeMain.getFinReference();
 
 			}
+
 			// user language
-			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			financeMain.setUserDetails(userDetails);
+			if (financeMain.getUserDetails() == null) {
+				LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+				financeMain.setUserDetails(userDetails);
+			}
 
 			financeMain.setFinReference(finReference);
 			finScheduleData.setFinReference(financeMain.getFinReference());
@@ -284,19 +294,22 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setNextTaskId(getNextTaskId(taskid, financeMain.isQuickDisb(), stp));
 			financeMain.setNewRecord(true);
 			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(), userDetails));
+			financeMain.setLastMntBy(getLastMntBy(financeMain.isQuickDisb(), financeMain.getUserDetails()));
 			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 
-			finScheduleData.setFinanceMain(financeMain);
+			//finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
 
-			doSetRequiredDetails(financeDetail, loanWithWIF, userDetails, stp, false, false);
+			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
+			setDisbursements(financeDetail, loanWithWIF, false, false);
 
-			if (financeDetail.getFinScheduleData().getExternalReference() != null
-					&& !financeDetail.getFinScheduleData().getExternalReference().isEmpty()) {
-				if (financeDetail.getFinScheduleData().isUpfrontAuto()) {
+			finScheduleData = financeDetail.getFinScheduleData();
+			financeMain = finScheduleData.getFinanceMain();
+
+			if (finScheduleData.getExternalReference() != null && !finScheduleData.getExternalReference().isEmpty()) {
+				if (finScheduleData.isUpfrontAuto()) {
 					adjustFeesAuto(finScheduleData);
 				} else {
 
@@ -304,8 +317,8 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 			}
 
-			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
-				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+			if (finScheduleData.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
 					response.setReturnStatus(
@@ -316,19 +329,24 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			if (!loanWithWIF) {
 				// call schedule calculator
-				finScheduleData.getFinanceMain().setCalculateRepay(true);
-				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
-					if (financeDetail.getFinScheduleData().getOverdraftScheduleDetails() != null) {
-						financeDetail.getFinScheduleData().getOverdraftScheduleDetails().clear();
+				financeMain.setCalculateRepay(true);
+				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+					if (finScheduleData.getOverdraftScheduleDetails() != null) {
+						finScheduleData.getOverdraftScheduleDetails().clear();
 					}
 					// To Rebuild the overdraft if any fields are changed
-					financeDetail.getFinScheduleData().getFinanceMain()
-							.setEventFromDate(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate());
-					finScheduleData = ScheduleCalculator.buildODSchedule(financeDetail.getFinScheduleData());
+					financeMain.setEventFromDate(financeMain.getFinStartDate());
+					finScheduleData = ScheduleCalculator.buildODSchedule(finScheduleData);
 					financeDetail.setFinScheduleData(finScheduleData);
-					financeDetail.getFinScheduleData().getFinanceMain().setLovDescIsSchdGenerated(true);
+					financeMain.setLovDescIsSchdGenerated(true);
 
+				} else if (StringUtils.equals(FinanceConstants.PRODUCT_CD, financeMain.getProductCategory())) {
+					finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
+					if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
+						finScheduleData = CDScheduleCalculator.getCalSchd(finScheduleData);
+						finScheduleData.setSchduleGenerated(true);
+						adjustCDDownpay(financeDetail);
+					}
 				} else {
 					finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
 					if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
@@ -338,6 +356,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						doProcessPlanEMIHDays(finScheduleData);
 					}
 				}
+
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
 						FinanceDetail response = new FinanceDetail();
@@ -354,7 +373,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 
 			} else {
-				finScheduleData.getFinanceMain().setCalculateRepay(true);
+				financeMain.setCalculateRepay(true);
 				finScheduleData.setSchduleGenerated(true);
 			}
 
@@ -363,13 +382,15 @@ public class CreateFinanceController extends SummaryDetailService {
 				return financeDetail;
 			}
 
-			// Reset Data
-			finScheduleData.getFinanceMain().setEqualRepay(financeMain.isEqualRepay());
-			finScheduleData.getFinanceMain().setRecalType(financeMain.getRecalType());
-			finScheduleData.getFinanceMain().setLastRepayDate(financeMain.getFinStartDate());
-			finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain.getFinStartDate());
-			finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain.getFinStartDate());
-			finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain.getFinStartDate());
+			//FIXME: PV 28AUG19. Why setting is required like set a = a?
+			/*
+			 * // Reset Data finScheduleData.getFinanceMain().setEqualRepay(financeMain.isEqualRepay());
+			 * finScheduleData.getFinanceMain().setRecalType(financeMain.getRecalType());
+			 * finScheduleData.getFinanceMain().setLastRepayDate(financeMain.getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain.getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain.getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain.getFinStartDate());
+			 */
 
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
 
@@ -681,11 +702,11 @@ public class CreateFinanceController extends SummaryDetailService {
 				}
 				details.setDoctype(agreementDefinition.getAggtype());
 				details.setDocName(reportName.substring(15));
-				details.setDocReceivedDate(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setDocReceivedDate(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
 				details.setVersion(1);
 				details.setFinEvent(frefdata.getFinEvent());
 				// details.setCategoryCode(agreementDefinition.getModuleName());
-				details.setLastMntOn(DateUtility.getTimestamp(DateUtility.getAppDate()));
+				details.setLastMntOn(DateUtility.getTimestamp(SysParamUtil.getAppDate()));
 				details.setFinEvent(FinanceConstants.FINSER_EVENT_ORG);
 				details.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				details.setNewRecord(true);
@@ -973,16 +994,25 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		CustomerDetails customerDetails = null;
 		// setting required values which are not received from API
+		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
+		// line around 1204 with different methods. Only difference found is order and
+		// later method even fetching VAS details.. SO tried to make as one query.
+		//REF: CUST28AUG19
+
 		if (financeMain.getCustID() > 0) {
-			customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
+			//customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
+			customerDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
 			if (customerDetails != null) {
 				customerDetails.setUserDetails(userDetails);
 				financeDetail.setCustomerDetails(customerDetails);
 			}
 		}
 
-		// process disbursement details
-		doProcessDisbInstructions(financeDetail, moveLoanStage);
+		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
+		// Durables where default down payment calculated. METHOD. setDisbursements
+		/*
+		 * // process disbursement details doProcessDisbInstructions(financeDetail, moveLoanStage);
+		 */
 
 		// set finAssetValue = FinCurrAssetValue when there is no maxDisbCheck
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
@@ -990,11 +1020,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (!financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
 				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 			if (!finType.isAlwMaxDisbCheckReq()) {
-				financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());// FIXME:
-																					// override
-																					// actual
-																					// finAsset
-																					// value
+				financeMain.setFinAssetValue(financeMain.getFinCurrAssetValue());
 			}
 		}
 
@@ -1180,11 +1206,17 @@ public class CreateFinanceController extends SummaryDetailService {
 			detail.setTaskId(financeMain.getTaskId());
 			detail.setNextTaskId(financeMain.getNextTaskId());
 		}
-		financeDetail.setFinScheduleData(finScheduleData);
-		if (financeMain.getCustID() > 0) {
-			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
-			financeDetail.setCustomerDetails(custDetails);
-		}
+
+		// setting required values which are not received from API
+		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
+		// line 1204 with different methods. Only difference found is order and
+		// later method even fetching VAS details.. SO tried to make as one query.
+		//REF: CUST28AUG19
+		/*
+		 * financeDetail.setFinScheduleData(finScheduleData); if (financeMain.getCustID() > 0) { CustomerDetails
+		 * custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
+		 * financeDetail.setCustomerDetails(custDetails); }
+		 */
 
 		// CollateralAssignment details
 		for (CollateralAssignment detail : financeDetail.getCollateralAssignmentList()) {
@@ -1331,28 +1363,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		// validate disbursement instructions
-		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (!approve && !moveLoanStage) {
-				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-				disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-				disbursementDetails.setDisbAmount(financeMain.getFinAmount());
-				disbursementDetails.setVersion(1);
-				disbursementDetails.setDisbSeq(1);
-				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
-				finScheduleData.getDisbursementDetails().add(disbursementDetails);
-			}
-		}
-
-		// validate Disbursement instruction total amount
-		if (financeDetail.getAdvancePaymentsList() != null && financeDetail.getAdvancePaymentsList().size() > 0) {
-			validateDisbInstAmount(financeDetail);
-		}
+		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
+		// Durables where default down payment calculated. METHOD. setDisbursements
 
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
@@ -1741,7 +1753,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeDetail.getMandate().setIFSC(bankBranch.getIFSC());
 			financeDetail.getMandate().setBankBranchID(bankBranch.getBankBranchID());
 			financeDetail.getMandate().setActive(true);
-			financeDetail.getMandate().setInputDate(DateUtility.getAppDate());
+			financeDetail.getMandate().setInputDate(SysParamUtil.getAppDate());
 		}
 	}
 
@@ -1763,6 +1775,77 @@ public class CreateFinanceController extends SummaryDetailService {
 						ErrorUtil.getErrorDetail(new ErrorDetail(erroDetails.getCode(), erroDetails.getParameters())));
 			}
 		}
+	}
+
+	/**
+	 * Method for Creating New Disbursement Instruction for the Transaction
+	 * 
+	 * Default Payment Type : IFT
+	 * 
+	 * @param financeDetail
+	 * @param moveLoanStage
+	 * @return
+	 */
+	private FinAdvancePayments createNewDisbInst(FinanceDetail financeDetail, boolean moveLoanStage) {
+
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		LoggedInUser userDetails = financeDetail.getUserDetails();
+
+		FinAdvancePayments advPayment = new FinAdvancePayments();
+		advPayment.setFinReference(financeMain.getFinReference());
+		advPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		advPayment.setPaymentDetail(DisbursementConstants.PAYMENT_DETAIL_CUSTOMER);
+		advPayment.setNewRecord(true);
+		advPayment.setVersion(1);
+		advPayment.setLastMntBy(userDetails.getUserId());
+		advPayment.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		if (financeDetail.isStp()) {
+			advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		}
+		if (moveLoanStage) {
+			advPayment.setRecordStatus(financeMain.getRecordStatus());
+		} else if (financeDetail.isStp()) {
+			advPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		}
+
+		advPayment.setUserDetails(financeMain.getUserDetails());
+		advPayment.setPaymentSeq(1);
+		advPayment.setDisbSeq(1);
+		advPayment.setActive(true);
+		advPayment.setDisbCCy(financeMain.getFinCcy());
+		advPayment.setAmtToBeReleased(financeMain.getFinAmount().subtract(financeMain.getDeductFeeDisb())
+				.subtract(financeMain.getDownPayment()));
+		advPayment.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IST);
+		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));//FIXME SIVA 28AUG19 : PartnerBank ID To be decide for IFT Transaction
+		advPayment.setLLDate(financeMain.getFinStartDate());
+		// fetch partner bank details
+		PartnerBank partnerBank = partnerBankService.getApprovedPartnerBankById(advPayment.getPartnerBankID());
+		if (partnerBank != null) {
+			advPayment.setPartnerBankAc(partnerBank.getAccountNo());
+			advPayment.setPartnerBankAcType(partnerBank.getAcType());
+		}
+
+		// workflow related
+		advPayment.setWorkflowId(financeMain.getWorkflowId());
+		advPayment.setRoleCode(financeMain.getRoleCode());
+		advPayment.setNextRoleCode(financeMain.getNextRoleCode());
+		advPayment.setTaskId(financeMain.getTaskId());
+		advPayment.setNextTaskId(financeMain.getNextTaskId());
+
+		BankBranch bankBranch = new BankBranch();
+		/*
+		 * if (true) { //if (StringUtils.isNotBlank(advPayment.getiFSC())) { //FIXME SIVA 28AUG19 : IFSC Code To be
+		 * decide for IFT Transaction bankBranch = bankBranchService.getBankBrachByIFSC("SBIN0000003"); } else if
+		 * (StringUtils.isNotBlank(advPayment.getBranchBankCode()) &&
+		 * StringUtils.isNotBlank(advPayment.getBranchCode())) { bankBranch =
+		 * bankBranchService.getBankBrachByCode(advPayment.getBranchBankCode(), advPayment.getBranchCode()); }
+		 * 
+		 * if (bankBranch != null) { advPayment.setiFSC(bankBranch.getIFSC());
+		 * advPayment.setBranchBankCode(bankBranch.getBankCode()); advPayment.setBranchCode(bankBranch.getBranchCode());
+		 * advPayment.setBankBranchID(bankBranch.getBankBranchID()); }
+		 */
+		return advPayment;
 	}
 
 	/**
@@ -2072,7 +2155,7 @@ public class CreateFinanceController extends SummaryDetailService {
 								.getFinScheduleDetails(detail, "", false);
 						if (finSchduleList != null) {
 							for (FinanceScheduleDetail financeScheduleDetail : finSchduleList) {
-								if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
+								if (SysParamUtil.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
 									if (!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
 										totEMIAmount = totEMIAmount.add(financeScheduleDetail.getRepayAmount());
 										break;
@@ -2211,7 +2294,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						schdPriPaid = schdPriPaid.add(financeScheduleDetail.getSchdPriPaid());
 						principalSchd = principalSchd.add(financeScheduleDetail.getPrincipalSchd());
 						profitSchd = profitSchd.add(financeScheduleDetail.getProfitSchd());
-						if (DateUtility.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
+						if (SysParamUtil.getAppDate().compareTo(financeScheduleDetail.getSchDate()) == -1) {
 							if (!(financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)
 									&& isnextRepayAmount) {
 								finInquiryDetail.setNextRepayAmount(financeScheduleDetail.getRepayAmount());
@@ -3066,7 +3149,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				continue;
 			}
 
-			if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+			if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
 
 				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "60407", null, null), userDetails.getLanguage());
@@ -3209,6 +3292,18 @@ public class CreateFinanceController extends SummaryDetailService {
 			for (FinanceScheduleDetail schdDetail : finDetail.getFinScheduleData().getFinanceScheduleDetails()) {
 				schdDetail.setFinReference(finReference);
 			}
+			for (FinFeeDetail feeDetail : finDetail.getFinScheduleData().getFinFeeDetailList()) {
+				feeDetail.setFinReference(finReference);
+				feeDetail.setFeeID(Long.MIN_VALUE);
+				feeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				feeDetail.setNewRecord(true);
+				feeDetail.getTaxHeader().setHeaderId(Long.MIN_VALUE);
+				for (Taxes tax : feeDetail.getTaxHeader().getTaxDetails()) {
+					tax.setId(Long.MIN_VALUE);
+				}
+				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
+			}
+
 			//process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
@@ -3401,6 +3496,64 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		return APIErrorHandlerService.getSuccessStatus();
 
+	}
+
+	public void setDisbursements(FinanceDetail finDetail, boolean loanWithWIF, boolean approve, boolean moveLoanStage) {
+		FinScheduleData finScheduleData = finDetail.getFinScheduleData();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		doProcessDisbInstructions(finDetail, moveLoanStage);
+
+		// validate disbursement instructions
+		if (!loanWithWIF && !finDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (!approve && !moveLoanStage) {
+				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+				disbursementDetails.setDisbDate(finMain.getFinStartDate());
+				disbursementDetails.setDisbAmount(finMain.getFinAmount());
+				disbursementDetails.setVersion(1);
+				disbursementDetails.setDisbSeq(1);
+				disbursementDetails.setDisbReqDate(SysParamUtil.getAppDate());
+				disbursementDetails.setFeeChargeAmt(finMain.getFeeChargeAmt());
+				disbursementDetails.setInsuranceAmt(finMain.getInsuranceAmt());
+				disbursementDetails
+						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(finMain.getDisbAccountId()));
+				finScheduleData.getDisbursementDetails().add(disbursementDetails);
+			}
+		}
+
+		// validate Disbursement instruction total amount
+		if (finDetail.getAdvancePaymentsList() != null && finDetail.getAdvancePaymentsList().size() > 0) {
+			validateDisbInstAmount(finDetail);
+		} else if (finDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+				.equals(FinanceConstants.PRODUCT_CD) && finDetail.getAdvancePaymentsList() == null
+				|| finDetail.getAdvancePaymentsList().isEmpty()) {
+
+			List<FinAdvancePayments> advPayList = finDetail.getAdvancePaymentsList();
+			if (advPayList == null) {
+				advPayList = new ArrayList<>();
+			}
+
+			advPayList.add(createNewDisbInst(finDetail, moveLoanStage));
+			finDetail.setAdvancePaymentsList(advPayList);
+		}
+
+	}
+
+	public void adjustCDDownpay(FinanceDetail finDetail) {
+		FinScheduleData finScheduleData = finDetail.getFinScheduleData();
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		if (!StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_CD)) {
+			return;
+		}
+
+		if (finMain.getDownPayment().compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
+
+		FinAdvancePayments fap = finDetail.getAdvancePaymentsList().get(0);
+		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()));
 	}
 
 	protected String getTaskAssignmentMethod(String taskId) {
@@ -3615,4 +3768,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setRemarksController(RemarksController remarksController) {
 		this.remarksController = remarksController;
 	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
+	}
+
 }

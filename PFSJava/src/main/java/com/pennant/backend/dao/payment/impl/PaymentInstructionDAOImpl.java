@@ -337,4 +337,22 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		logger.debug("Leaving");
 		return assignedCount;
 	}
+
+	@Override
+	public void updateStatus(PaymentInstruction instruction, String tableType) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update PAYMENTINSTRUCTIONS");
+		updateSql.append(StringUtils.trimToEmpty(tableType));
+		updateSql.append("  Set Status = :Status");
+		updateSql.append("  Where PaymentInstructionId = :PaymentInstructionId");
+
+		logger.debug("updateSql: " + updateSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(instruction);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+
 }

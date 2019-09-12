@@ -55,14 +55,17 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
+import com.pennant.backend.dao.finance.IRRScheduleDetailDAO;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.IRRScheduleDetail;
 import com.pennant.backend.model.finance.ProjectedAccrual;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
@@ -73,7 +76,8 @@ public class AccrualService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = Logger.getLogger(AccrualService.class);
 
-	private FinanceSuspHeadDAO suspHeadDAO;
+	private FinanceSuspHeadDAO financeSuspHeadDAO;
+	private IRRScheduleDetailDAO irrScheduleDetailDAO;
 
 	public BigDecimal big100 = new BigDecimal(100);
 	public String tdsRoundMode = null;
@@ -146,7 +150,7 @@ public class AccrualService extends ServiceHelper {
 
 		if (suspReq == 1) {
 			if (!StringUtils.equals(finMain.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-				dateSusp = suspHeadDAO.getFinSuspDate(finRef);
+				dateSusp = financeSuspHeadDAO.getFinSuspDate(finRef);
 			}
 		}
 
@@ -162,6 +166,12 @@ public class AccrualService extends ServiceHelper {
 		if (schdDetails == null || schdDetails.isEmpty()) {
 		} else {
 			calAccruals(finMain, schdDetails, pftDetail, valueDate, dateSusp);
+
+			if (ImplementationConstants.GAP_INTEREST_REQUIRED
+					&& StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_CD)) {
+				calGapInterest(finMain, pftDetail, valueDate);
+			}
+
 		}
 
 		//Gross Totals
@@ -193,11 +203,12 @@ public class AccrualService extends ServiceHelper {
 			pftDetail.setFirstODDate(pftDetail.getFinStartDate());
 			pftDetail.setPrvODDate(pftDetail.getFinStartDate());
 			pftDetail.setAdvanceEMI(finMain.getAdvanceEMI());
-
+			pftDetail.setSvAmount(finMain.getSvAmount());
+			pftDetail.setCbAmount(finMain.getCbAmount());
 		}
 
 		//Miscellaneous Fields
-		pftDetail.setLastMdfDate(DateUtility.getAppDate());
+		pftDetail.setLastMdfDate(SysParamUtil.getAppDate());
 		pftDetail.setMaturityDate(finMain.getMaturityDate());
 		pftDetail.setFinIsActive(finMain.isFinIsActive());
 		pftDetail.setClosingStatus(finMain.getClosingStatus());
@@ -716,6 +727,8 @@ public class AccrualService extends ServiceHelper {
 		finPftDetail.setAcrSuspTillLBD(finPftDetail.getPftAccrueSusp());
 		finPftDetail.setSvnAcrTillLBD(finPftDetail.getSvnPftAmount());
 
+		finPftDetail.setGapIntAmzLbd(finPftDetail.getGapIntAmz());
+
 		//Month End move all the balances to previous month also
 		if (DateUtility.getDay(custEODEvent.getEodValueDate()) == 1) {
 			finPftDetail.setPrvMthAcr(finPftDetail.getPftAccrued());
@@ -724,6 +737,7 @@ public class AccrualService extends ServiceHelper {
 			finPftDetail.setPrvMthAmzNrm(finPftDetail.getPftAmzNormal());
 			finPftDetail.setPrvMthAmzPD(finPftDetail.getPftAmzPD());
 			finPftDetail.setPrvMthAmzSusp(finPftDetail.getPftAmzSusp());
+			finPftDetail.setPrvMthGapIntAmz(finPftDetail.getGapIntAmz());
 			finEODEvent.setUpdMonthEndPostings(true);
 		}
 		// these fields should be update after the accrual posting only so these will not be considered in normal update.
@@ -982,8 +996,72 @@ public class AccrualService extends ServiceHelper {
 		tdsSchdIdx = -2;
 	}
 
-	public void setSuspHeadDAO(FinanceSuspHeadDAO suspHeadDAO) {
-		this.suspHeadDAO = suspHeadDAO;
+	private void calGapInterest(FinanceMain fm, FinanceProfitDetail fpd, Date valueDate) {
+		List<IRRScheduleDetail> irrSDList = irrScheduleDetailDAO.getIRRScheduleDetailList(fm.getFinReference());
+
+		IRRScheduleDetail prvSchd = null;
+		IRRScheduleDetail curSchd = null;
+		IRRScheduleDetail nextSchd = null;
+
+		Date prvSchdDate = null;
+		Date curSchdDate = null;
+		Date nextSchdDate = null;
+		int valueToadd = SysParamUtil.getValueAsInt(SMTParameterConstants.ACCRUAL_CAL_ON);
+		Date accrualDate = DateUtility.addDays(valueDate, valueToadd);
+		BigDecimal totIrrAmz = BigDecimal.ZERO;
+
+		for (int i = 0; i < irrSDList.size(); i++) {
+			curSchd = irrSDList.get(i);
+			curSchdDate = curSchd.getSchDate();
+
+			if (i == 0) {
+				prvSchd = curSchd;
+			} else {
+				prvSchd = irrSDList.get(i - 1);
+			}
+
+			prvSchdDate = prvSchd.getSchDate();
+
+			// Next details: in few cases  there might be schedules present even after the maturity date. ex: when calculating the fees
+			if (curSchdDate.compareTo(fm.getMaturityDate()) == 0 || i == (irrSDList.size() - 1)) {
+				nextSchd = curSchd;
+			} else {
+				nextSchd = irrSDList.get(i + 1);
+			}
+
+			nextSchdDate = nextSchd.getSchDate();
+
+			//-------------------------------------------------------------------------------------
+			//IRR ACCRUAL CALCULATION
+			//-------------------------------------------------------------------------------------
+			BigDecimal irrAmz = BigDecimal.ZERO;
+
+			// Amortization
+			if (curSchdDate.compareTo(accrualDate) < 0) {
+				irrAmz = curSchd.getProfitCalc();
+			} else if (accrualDate.compareTo(prvSchdDate) > 0 && accrualDate.compareTo(nextSchdDate) <= 0) {
+				int days = getNoDays(prvSchdDate, accrualDate);
+				int daysInCurPeriod = getNoDays(prvSchdDate, curSchdDate);
+
+				irrAmz = curSchd.getProfitCalc().multiply(new BigDecimal(days)).divide(new BigDecimal(daysInCurPeriod),
+						9, RoundingMode.HALF_DOWN);
+				irrAmz = CalculationUtil.roundAmount(irrAmz, fm.getCalRoundingMode(), fm.getRoundingTarget());
+			} else {
+				break;
+			}
+
+			totIrrAmz = totIrrAmz.add(irrAmz);
+		}
+
+		fpd.setGapIntAmz(totIrrAmz.subtract(fpd.getPftAmz()));
+	}
+
+	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
+		this.financeSuspHeadDAO = financeSuspHeadDAO;
+	}
+
+	public void setIrrScheduleDetailDAO(IRRScheduleDetailDAO irrScheduleDetailDAO) {
+		this.irrScheduleDetailDAO = irrScheduleDetailDAO;
 	}
 
 }

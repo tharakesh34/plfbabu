@@ -2795,7 +2795,10 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ProfitDaysBasis_A_A_ISDA")));
 			PftDaysBasisList.add(new ValueLabel(CalculationConstants.IDB_ACT_365LEAPS,
 					Labels.getLabel("label_ProfitDaysBasis_A_A365LS")));
+			PftDaysBasisList.add(
+					new ValueLabel(CalculationConstants.IDB_BY_PERIOD, Labels.getLabel("label_ProfitDaysBasis_P_360")));
 		}
+
 		return PftDaysBasisList;
 	}
 
@@ -2927,6 +2930,8 @@ public class PennantStaticListUtil {
 						Labels.getLabel("label_ProductCategory_Conventional.value")));
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_ODFACILITY,
 						Labels.getLabel("label_ProductCategory_Overdraft.value")));
+				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_CD,
+						Labels.getLabel("label_ProductCategory_ConsumerDurable.value")));
 			} else if (ImplementationConstants.IMPLEMENTATION_ISLAMIC) {
 				productCategories.add(new ValueLabel(FinanceConstants.PRODUCT_FWIJARAH,
 						Labels.getLabel("label_ProductCategory_ForwardIjarah.value")));
@@ -5131,7 +5136,7 @@ public class PennantStaticListUtil {
 		}
 		return frequency;
 	}
-	
+
 	public static ArrayList<ValueLabel> getDisbursementStatus() {
 		if (disbursementStatus == null) {
 			disbursementStatus = new ArrayList<ValueLabel>(2);

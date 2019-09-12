@@ -90,6 +90,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 	private boolean active;
 
 	private int moduleId;
+	private long referenceId;
 
 	private boolean newRecord = false;
 	private String lovValue;
@@ -359,5 +360,13 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setAlwPreIncomization(boolean alwPreIncomization) {
 		this.alwPreIncomization = alwPreIncomization;
+	}
+
+	public long getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(long referenceId) {
+		this.referenceId = referenceId;
 	}
 }

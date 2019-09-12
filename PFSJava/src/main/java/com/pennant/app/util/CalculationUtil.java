@@ -101,6 +101,8 @@ public class CalculationUtil implements Serializable {
 			return getIDB_ACT_365LEAP(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
 			return getIDB_ACT_365LEAPStart(startCalendar, endCalendar);
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
+			return getIDB_BY_PERIOD(startCalendar, endCalendar);
 		}
 
 		return BigDecimal.ONE;
@@ -302,6 +304,14 @@ public class CalculationUtil implements Serializable {
 		return BigDecimal.valueOf(DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInYear);
 	}
 
+	private static BigDecimal getIDB_BY_PERIOD(Calendar startCalendar, Calendar endCalendar) {
+		int numberOfDays = calNoOfDays(startCalendar.getTime(), endCalendar.getTime(),
+				CalculationConstants.IDB_BY_PERIOD);
+		double daysInYear = 360d;
+		BigDecimal dayFactor = BigDecimal.valueOf(numberOfDays / daysInYear);
+		return dayFactor;
+	}
+
 	public static BigDecimal calInterest(Date dtStart, Date dtEnd, BigDecimal principalAmount, String strDaysBasis,
 			BigDecimal rate) {
 		/*
@@ -454,6 +464,19 @@ public class CalculationUtil implements Serializable {
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAP)
 				|| strDaysBasis.equals(CalculationConstants.IDB_ACT_365LEAPS)) {
 			return (int) DateUtility.getDaysBetween(startCalendar, endCalendar);
+		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
+			double daysInMonth = 30d;
+			double noOfmonths = DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInMonth;
+			noOfmonths = Math.round(noOfmonths);
+
+			if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)
+					&& startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
+				noOfmonths = noOfmonths + 1;
+			}
+
+			int numberOfDays = (int) (noOfmonths * 30);
+
+			return numberOfDays;
 		}
 
 		return 0;
@@ -793,15 +816,16 @@ public class CalculationUtil implements Serializable {
 
 	public static BigDecimal roundAmount(BigDecimal amount, String roundingMode, int roundingTarget) {
 
+		if (StringUtils.isBlank(roundingMode)) {
+			roundingMode = RoundingMode.HALF_DOWN.name();
+		}
+
 		if (roundingTarget == 0) {
 			amount = amount.setScale(0, RoundingMode.HALF_DOWN);
 			return amount;
 		}
 
 		BigDecimal bdRoundTarget = BigDecimal.valueOf(roundingTarget);
-		//BigDecimal number2 = BigDecimal.valueOf(2);
-		//amount = amount.add(bdRoundTarget.divide(number2)).divide(bdRoundTarget);
-		//amount = amount.add(BigDecimal.valueOf(roundingTarget / 2)).divide(BigDecimal.valueOf(roundingTarget));
 
 		amount = amount.divide(bdRoundTarget);
 		roundingMode = StringUtils.trimToEmpty(roundingMode);
@@ -827,4 +851,89 @@ public class CalculationUtil implements Serializable {
 		return amount;
 	}
 
+	//This formula applicable only for 30/360 with Fixed periods only
+	public static BigDecimal calDepositPV(BigDecimal fv, BigDecimal intRate, int terms, String frq, String roundingMode,
+			int roundingTarget) {
+		BigDecimal pv = BigDecimal.ZERO;
+
+		//Future Value is ZERO
+		if (fv.compareTo(BigDecimal.ZERO) == 0) {
+			return pv;
+		}
+
+		//Interest Rate = 0
+		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
+			pv = roundAmount(fv, roundingMode, roundingTarget);
+			return pv;
+		}
+
+		BigDecimal termsPerYear = BigDecimal.valueOf(getTermsPerYear(frq));
+		intRate = intRate.divide(BigDecimal.valueOf(100));
+		intRate = intRate.divide(termsPerYear, 13, RoundingMode.HALF_DOWN);
+
+		double dIntRate = intRate.doubleValue();
+		double dFV = fv.doubleValue();
+		double dPV = dFV / (Math.pow((1 + dIntRate), terms));
+		pv = BigDecimal.valueOf(dPV);
+		pv = roundAmount(pv, roundingMode, roundingTarget);
+		return pv;
+	}
+
+	//This formula applicable only for 30/360 with Fixed periods only
+	public static BigDecimal calLoanPVAdvance(BigDecimal intRate, int terms, BigDecimal pmt, BigDecimal fv, int type,
+			String frq, String roundingMode, int roundingTarget) {
+		BigDecimal pv = BigDecimal.ZERO;
+
+		// Type 0: Arrears and 1: Advance
+		if (type != 0) {
+			type = 1;
+		}
+
+		// Interest Rate = 0
+		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
+			pv = pmt.multiply(BigDecimal.valueOf(terms));
+			pv = pv.subtract(fv);
+			pv = roundAmount(pv, roundingMode, roundingTarget);
+			return pv;
+		}
+
+		BigDecimal termsPerYear = BigDecimal.valueOf(getTermsPerYear(frq));
+		intRate = intRate.divide(BigDecimal.valueOf(100));
+		intRate = intRate.divide(termsPerYear, 13, RoundingMode.HALF_DOWN);
+
+		double dIntRate = intRate.doubleValue();
+		double dFV = fv.doubleValue();
+		double dPmt = pmt.doubleValue();
+		double dPV = (((1 - Math.pow(1 + dIntRate, terms)) / dIntRate) * dPmt * (1 + dIntRate * type) - dFV)
+				/ Math.pow(1 + dIntRate, terms);
+
+		dPV = dPV * (-1);
+		pv = BigDecimal.valueOf(dPV);
+		pv = roundAmount(pv, roundingMode, roundingTarget);
+		return pv;
+	}
+
+	public static BigDecimal calLoanPV(BigDecimal intRate, int terms, BigDecimal pmt, String frq, String roundingMode,
+			int roundingTarget) {
+		BigDecimal pv = BigDecimal.ZERO;
+
+		// Interest Rate = 0
+		if (intRate.compareTo(BigDecimal.ZERO) == 0) {
+			pv = pmt.multiply(BigDecimal.valueOf(terms));
+			pv = roundAmount(pv, roundingMode, roundingTarget);
+			return pv;
+		}
+
+		BigDecimal termsPerYear = BigDecimal.valueOf(getTermsPerYear(frq));
+		intRate = intRate.divide(BigDecimal.valueOf(100));
+		intRate = intRate.divide(termsPerYear, 13, RoundingMode.HALF_DOWN);
+
+		double dIntRate = intRate.doubleValue();
+		double dPmt = pmt.doubleValue();
+		double dPV = dPmt / dIntRate * (1 - Math.pow(1 + dIntRate, -terms));
+
+		pv = BigDecimal.valueOf(dPV);
+		pv = roundAmount(pv, roundingMode, roundingTarget);
+		return pv;
+	}
 }

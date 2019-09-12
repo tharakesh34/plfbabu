@@ -50,8 +50,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 
 /**
@@ -129,6 +127,7 @@ public class FinanceEnquiry implements java.io.Serializable {
 	private List<CollateralSetup> collateralSetupDetails;
 	private List<ChequeDetail> chequeDetail;
 	private List<CustomerDetails> finGuarenters;
+	private BigDecimal svAmount = BigDecimal.ZERO;
 
 	public FinanceEnquiry() {
 
@@ -717,6 +716,14 @@ public class FinanceEnquiry implements java.io.Serializable {
 
 	public void setFinGuarenters(List<CustomerDetails> finGuarenters) {
 		this.finGuarenters = finGuarenters;
+	}
+
+	public BigDecimal getSvAmount() {
+		return svAmount;
+	}
+
+	public void setSvAmount(BigDecimal svAmount) {
+		this.svAmount = svAmount;
 	}
 
 }

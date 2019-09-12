@@ -572,17 +572,7 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		Customer customer = new Customer();
 		customer.setCustCIF(cifId);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
-		selectSql.append(
-				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
-		selectSql.append(" , CasteId, ReligionId, SubCategory, Dnd");
-		if (type.contains("View")) {
-			selectSql.append(" ,LovDescCustStsName");
-			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
-		}
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
+		StringBuilder selectSql = selectCustomerBasicInfo(type);
 		selectSql.append(" Where CustCIF = :CustCIF");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -597,6 +587,21 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		}
 		logger.debug("Leaving");
 		return customer;
+	}
+
+	private StringBuilder selectCustomerBasicInfo(String type) {
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
+		selectSql.append(
+				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
+		selectSql.append(" , CasteId, ReligionId, SubCategory");
+		if (type.contains("View")) {
+			selectSql.append(" ,LovDescCustStsName");
+			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
+		}
+		selectSql.append(" FROM  Customers");
+		selectSql.append(StringUtils.trimToEmpty(type));
+		return selectSql;
 	}
 
 	public Customer checkCustomerByCIF(String cif, String type) {
@@ -2300,21 +2305,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug("Entering");
 		Customer customer = new Customer();
 		customer.setCustCoreBank(externalCif);
-		;
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT CustID, CustCIF, CustFName, CustMName, CustLName,CustDOB, CustShrtName, CustCRCPR, ");
-		selectSql.append(
-				" CustPassportNo, CustCtgCode, CustNationality, CustDftBranch, Version, CustBaseCcy, PhoneNumber, EmailId, CustRO1");
-		selectSql.append(" , CasteId, ReligionId, SubCategory");
-		if (type.contains("View")) {
-			selectSql.append(" ,LovDescCustStsName");
-			selectSql.append(" , CasteCode, CasteDesc, ReligionCode, ReligionDesc");
-		}
-		selectSql.append(" FROM  Customers");
-		selectSql.append(StringUtils.trimToEmpty(type));
+		StringBuilder selectSql = selectCustomerBasicInfo(type);
 		selectSql.append(" Where CustCoreBank = :CustCoreBank");
-
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
 		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);

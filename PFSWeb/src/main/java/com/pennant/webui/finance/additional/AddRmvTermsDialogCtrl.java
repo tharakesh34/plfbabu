@@ -64,6 +64,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -171,6 +172,9 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				this.setAddTerms((Boolean) arguments.get("addTerms"));
 			}
 
+			boolean applySanctionCheck = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
+			getFinScheduleData().getFinanceMain().setApplySanctionCheck(applySanctionCheck);
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
@@ -246,9 +250,21 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.btnAddRmvTerms.setTooltiptext(Labels.getLabel("btnRmvTerms.tooltiptext"));
 			this.recalTypeRow.setVisible(true);
 
-			String excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
-			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-					PennantStaticListUtil.getSchCalCodes(), excldValues);
+			String excldValues = "";
+			String recalType = "";
+
+			if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+				excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
+				recalType = CalculationConstants.RPYCHG_ADJMDT;
+			} else if (aFinSchData.getFinanceMain().isSanBsdSchdle()) {
+				excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
+				recalType = aFinSchData.getFinanceMain().getRecalType();
+			} else {
+				excldValues = ",CURPRD,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,ADJTERMS,";
+				recalType = aFinSchData.getFinanceMain().getRecalType();
+			}
+
+			fillComboBox(this.cbReCalType, recalType, PennantStaticListUtil.getSchCalCodes(), excldValues);
 
 			changeRecalType();
 			fillSchRecalFromDates(cbRecalFromDate, aFinSchData.getFinanceScheduleDetails(), null);

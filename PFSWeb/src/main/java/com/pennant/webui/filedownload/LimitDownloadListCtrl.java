@@ -43,6 +43,12 @@
 
 package com.pennant.webui.filedownload;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,17 +58,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -75,15 +85,15 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.limit.LimitHeader;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.filedownload.LimitDownloadService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -126,8 +136,10 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 	protected Datebox reviewDate;
 	protected Checkbox active;
 	protected Textbox recordStatus;
-	protected Listbox recordType;
+	protected Datebox toDate;
+	protected Datebox fromDate;
 
+	protected Listbox recordType;
 	protected Listbox sortOperator_Name;
 	protected Listbox sortOperator_Id;
 	protected Listbox sortOperator_ResponsibleBranch;
@@ -152,6 +164,7 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 
 	private Map<Long, LimitHeader> limitDownloadMap = new HashMap<Long, LimitHeader>();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	@Autowired
 	private LimitDownloadService limitDownloadService;
@@ -189,23 +202,22 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 
 		registerButton(button_Search);
 
-		//id.setType(DataType.LONG.name());
-		registerField("customerId");
-		registerField("CustCIF", listheader_Id, SortOrder.ASC, id, sortOperator_Id, Operators.STRING);
-		registerField("CustShrtName", listheader_Name, SortOrder.NONE, name, sortOperator_Name, Operators.STRING);
-		registerField("responsibleBranchName", listheader_ResponsibleBranch, SortOrder.ASC, responsibleBranch,
-				sortOperator_ResponsibleBranch, Operators.STRING);
-		registerField("limitCcy", listheader_Currency, SortOrder.NONE, currency, sortOperator_Currency,
-				Operators.STRING);
-		registerField("limitStructureCode", listheader_LimitStructureCode, SortOrder.NONE, limitStructureCode,
-				sortOperator_LimitStructureCode, Operators.STRING);
-		registerField("limitExpiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate, sortOperator_ExpiryDate,
-				Operators.DATE);
-		registerField("LimitRvwDate", listheader_ReviewDate, SortOrder.NONE, reviewDate, sortOperator_ReviewDate,
-				Operators.DATE);
-		registerField("active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
-		registerField("RecordStatus");
-		registerField("RecordType");
+		// id.setType(DataType.LONG.name());
+		/*
+		 * registerField("customerId");
+		 * 
+		 * registerField("CustCIF", listheader_Id, SortOrder.ASC, id, sortOperator_Id, Operators.STRING);
+		 * registerField("CustShrtName", listheader_Name, SortOrder.NONE, name, sortOperator_Name, Operators.STRING);
+		 * registerField("responsibleBranchName", listheader_ResponsibleBranch, SortOrder.ASC, responsibleBranch,
+		 * sortOperator_ResponsibleBranch, Operators.STRING); registerField("limitCcy", listheader_Currency,
+		 * SortOrder.NONE, currency, sortOperator_Currency, Operators.STRING); registerField("limitStructureCode",
+		 * listheader_LimitStructureCode, SortOrder.NONE, limitStructureCode, sortOperator_LimitStructureCode,
+		 * Operators.STRING); registerField("limitExpiryDate", listheader_ExpiryDate, SortOrder.NONE, expiryDate,
+		 * sortOperator_ExpiryDate, Operators.DATE); registerField("LimitRvwDate", listheader_ReviewDate,
+		 * SortOrder.NONE, reviewDate, sortOperator_ReviewDate, Operators.DATE); registerField("active",
+		 * listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
+		 * registerField("RecordStatus"); registerField("RecordType");
+		 */
 
 		// Render the page and display no data when the page loaded for the
 		// first time.
@@ -218,8 +230,12 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
 
-		this.reviewDate.setFormat(DateFormat.SHORT_DATE.getPattern());
-		this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		/*
+		 * this.reviewDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		 * this.expiryDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		 */
+		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
@@ -272,10 +288,12 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 		}
 
 		if (CollectionUtils.isNotEmpty(limitList)) {
-			//Iterating and collection list of custCif to limitRef 
+			// Iterating and collection list of custCif to limitRef
 			limitList.stream().forEach(s -> limitRef.add(s.getHeaderId()));
 			try {
 				limitDownloadService.processDownload(limitRef);
+				String filePath = limitDownloadService.getFileName();
+				downloadFromServer(filePath);
 				MessageUtil.showMessage("file downloaded successfully");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -291,8 +309,32 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
+	private String downloadFromServer(String filePath) throws FileNotFoundException {
+		String Path = App.getProperty("external.interface.glems.customer.path");
+		String CustomerPath = Path.concat(File.separator);
+		String fileName = StringUtils.substringAfter(filePath, CustomerPath);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		InputStream inputStream = new FileInputStream(filePath);
+		int data;
+		try {
+			while ((data = inputStream.read()) >= 0) {
+				stream.write(data);
+			}
+			inputStream.close();
+			inputStream = null;
+			Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
+			stream.close();
+		} catch (IOException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return filePath;
+	}
+
 	public void onClick$btnRefresh(Event event) {
 		doReset();
+		doRemoveValidation();
+		this.toDate.setValue(null);
+		this.fromDate.setValue(null);
 		renderLimits();
 	}
 
@@ -358,6 +400,8 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 
 	private List<LimitHeader> renderLimits() {
 		logger.debug(Literal.ENTERING);
+
+		doSetValidations();
 		JdbcSearchObject<LimitHeader> searchObject = new JdbcSearchObject<LimitHeader>(LimitHeader.class);
 		searchObject.addField("custShrtName");
 		searchObject.addField("customerId");
@@ -369,7 +413,19 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 		searchObject.addField("limitExpiryDate");
 		searchObject.addField("limitRvwDate");
 		searchObject.addField("active");
+		searchObject.addField("lastMntOn");
+		searchObject.addField("recordStatus");
 		searchObject.addTabelName(this.tableName);
+
+		if (fromDate.getValue() != null && toDate.getValue() != null) {
+			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+
+			StringBuilder whereClause = new StringBuilder();
+			whereClause.append("(LASTMNTON >= ").append("'").append(fromDate).append("'").append(" AND LASTMNTON <= ")
+					.append("'").append(toDate).append("'").append(")");
+			searchObject.addWhereClause(whereClause.toString());
+		}
 
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filters = searchControl.getFilter();
@@ -377,14 +433,87 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 				searchObject.addFilter(filters);
 			}
 		}
-
 		List<LimitHeader> searchList = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
+
+		Map<String, String> retailMap = null;
+		Map<String, String> corpMap = null;
+		Map<String, String> smeMap = null;
+		retailMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_INDIV, "", "", false);
+		corpMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_CORP, "", "", false);
+		smeMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
+				PennantConstants.PFF_CUSTCTG_SME, "", "", false);
+		List<LimitHeader> renderList = new ArrayList<LimitHeader>();
+		if (CollectionUtils.isNotEmpty(searchList)) {
+			for (LimitHeader limitHeader : searchList) {
+				if (retailMap != null && retailMap.containsKey(limitHeader.getCustCIF())) {
+					renderList.add(limitHeader);
+					continue;
+				}
+				if (corpMap != null && corpMap.containsKey(limitHeader.getCustCIF())) {
+					renderList.add(limitHeader);
+					continue;
+				}
+				if (smeMap != null && smeMap.containsKey(limitHeader.getCustCIF())) {
+					renderList.add(limitHeader);
+					continue;
+				}
+			}
+		}
 
 		this.listbox.setItemRenderer(new LimitDownloadListModelItemRenderer());
 		getPagedListWrapper().setPagedListService(pagedListService);
-		getPagedListWrapper().initList(searchList, this.listBoxLimitDownload, this.paging);
+		getPagedListWrapper().initList(renderList, this.listBoxLimitDownload, this.paging);
 		logger.debug(Literal.LEAVING);
-		return searchList;
+		return renderList;
+	}
+
+	private void doSetValidations() {
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		if (toDate.getValue() != null || fromDate.getValue() != null) {
+			try {
+				if (!this.fromDate.isDisabled())
+					this.fromDate.setConstraint(new PTDateValidator("From Date", true));
+				this.fromDate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.toDate.isDisabled())
+					this.toDate.setConstraint(new PTDateValidator("To Date", true));
+				this.toDate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
+				throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
+			}
+		} else {
+			this.toDate.setConstraint("");
+			this.fromDate.setConstraint("");
+		}
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	}
+
+	private void doRemoveValidation() {
+		logger.debug("Entering ");
+		this.fromDate.setConstraint("");
+		this.toDate.setConstraint("");
+		logger.debug("Leaving ");
+
 	}
 
 	public LimitDownloadService getLimitDownloadService() {
@@ -445,7 +574,8 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 
 			lc = new Listcell(limitHeader.getRecordStatus());
 			lc.setParent(item);
-			lc = new Listcell(PennantJavaUtil.getLabel(limitHeader.getRecordType()));
+			lc = new Listcell(
+					PennantAppUtil.formateDate(limitHeader.getLastMntOn(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 			item.setAttribute("limitHeader", limitHeader);
 		}
@@ -480,6 +610,14 @@ public class LimitDownloadListCtrl extends GFCBaseListCtrl<LimitHeader> implemen
 			this.id.setValue("");
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
 }

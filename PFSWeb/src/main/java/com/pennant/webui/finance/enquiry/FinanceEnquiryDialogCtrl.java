@@ -217,7 +217,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox allowRevolving;
 	protected Label label_FinanceTypeDialog_AllowRevolving;
 	protected Hbox hbox_AlwRevolving;
-	
+
 	protected Label label_profitSuspense;
 	protected Checkbox profitSuspense;
 	protected Datebox finSuspDate;
@@ -863,20 +863,16 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
-			this.finAmount.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
-			this.curFinAmountValue
-					.setValue(PennantAppUtil
-							.formateAmount(
-									aFinanceMain.getFinCurrAssetValue()
-											.add(aFinanceMain.getFeeChargeAmt() == null ? BigDecimal.ZERO
-													: aFinanceMain.getFeeChargeAmt())
-											.add(aFinanceMain.getInsuranceAmt() == null ? BigDecimal.ZERO
-													: aFinanceMain.getInsuranceAmt())
-											.subtract(aFinanceMain.getDownPayment() == null ? BigDecimal.ZERO
-													: aFinanceMain.getDownPayment())
-											.subtract(aFinanceMain.getFinRepaymentAmount() != null
-													? aFinanceMain.getFinRepaymentAmount() : BigDecimal.ZERO),
-									formatter));
+			this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
+
+			//FXIME: PV. 28AUG19. SOme confusion over deducting DISBDEDUCT amounts from current asset value.
+			BigDecimal curFinAmountValue = BigDecimal.ZERO;
+
+			curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
+					.add(aFinanceMain.getInsuranceAmt()).subtract(aFinanceMain.getDownPayment())
+					.subtract(aFinanceMain.getFinRepaymentAmount()).subtract(aFinanceMain.getSvAmount());
+			this.curFinAmountValue.setValue(PennantApplicationUtil.formateAmount(curFinAmountValue, formatter));
+
 			this.finType.setValue(aFinanceMain.getFinType() + "-" + aFinanceMain.getLovDescFinTypeName());
 			this.finCcy.setValue(aFinanceMain.getFinCcy());
 			this.profitDaysBasis.setValue(aFinanceMain.getProfitDaysBasis());
@@ -936,7 +932,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.hbox_AlwRevolving.setVisible(true);
 				this.allowRevolving.setChecked(aFinanceMain.isAllowRevolving());
 			}
-			
+
 			// Step Finance Details
 			if (aFinanceMain.isStepFinance()) {
 				this.row_stepFinance.setVisible(true);

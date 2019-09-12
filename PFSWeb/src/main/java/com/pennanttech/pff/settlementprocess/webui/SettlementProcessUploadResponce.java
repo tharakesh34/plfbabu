@@ -204,7 +204,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			throw new AppException("HostReference is mandatory");
 		} else {
 			finMain = financeMainDAO
-					.getFinanceMainByOldFinReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
+					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
 				int count = financeMainDAO
 						.getCountByOldHostReference(String.valueOf(settlementMapdata.getValue("HostReference")));

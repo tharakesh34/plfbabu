@@ -460,7 +460,9 @@ public class ReceiptCalculator implements Serializable {
 		FinanceProfitDetail finPftDeatils = finScheduleData.getFinPftDeatil();
 
 		repayMain.setEarlyPayOnSchDate(valueDate);
-		repayMain.setDownpayment(finPftDeatils.getDownpay());
+		//repayMain.setDownpayment(finPftDeatils.getDownpay());
+		repayMain.setDownpayment(finPftDeatils.getDownPayment());
+
 		repayMain.setTotalCapitalize(finPftDeatils.getTotalPftCpz());
 		repayMain.setFinAmount(finPftDeatils.getTotalpriSchd().subtract(repayMain.getTotalCapitalize()));
 		repayMain.setCurFinAmount(finPftDeatils.getTotalPriBal().subtract(repayMain.getTotalCapitalize())
@@ -529,7 +531,7 @@ public class ReceiptCalculator implements Serializable {
 
 		for (int i = 0; i < finFeedetails.size(); i++) {
 			FinFeeDetail finFeeDetail = finFeedetails.get(i);
-			
+
 			//27-08-19 PSD:140172  Issue in GST calculation for Fore closure
 			BigDecimal feeAmount = finFeeDetail.getActualAmount();
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
@@ -1908,14 +1910,14 @@ public class ReceiptCalculator implements Serializable {
 				FinanceScheduleDetail lastSchd = schdDtls.get(schdDtls.size() - 1);
 				BigDecimal npftPaid = allocate.getTotalPaid();
 				BigDecimal pftPaid = allocate.getTotalPaid();
-				
+
 				// 27-08-19 Rounding Off issue
 				if (lastSchd.isTDSApplicable()) {
 					pftPaid = npftPaid.add(getTDS(npftPaid));
 				} else {
 					npftPaid = pftPaid;
 				}
-				
+
 				for (ReceiptAllocationDetail allocteDtl : rch.getAllocations()) {
 					if (allocteDtl.getAllocationType().equals(RepayConstants.ALLOCATION_FUT_PFT)) {
 						allocteDtl.setTotalPaid(pftPaid);

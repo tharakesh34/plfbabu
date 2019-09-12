@@ -60,7 +60,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.FrequencyBox;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -68,7 +67,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -313,19 +311,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			this.bRTypeIsActive.setDisabled(true);
 
 		}
-		//Interest Review Frequency
-		String rpyRvwFrq = aBaseRateCode.getbRRepayRvwFrq();
-		String brInrtRvwFrqDayValReq = SysParamUtil
-				.getValueAsString(SMTParameterConstants.BR_INRST_RVW_FRQ_FRQDAYVAL_REQ);
-		if (StringUtils.equals(brInrtRvwFrqDayValReq, PennantConstants.YES)) {
-			this.bRRepayRvwFrq.setAlwFrqDays("01");
-		}
-		if (aBaseRateCode.isNew()) {
-			this.bRRepayRvwFrq.setValue("Y0101");
-			processRvwFrq(this.bRRepayRvwFrq);
-		} else {
-			this.bRRepayRvwFrq.setValue(rpyRvwFrq);
-		}
+		this.bRRepayRvwFrq.setValue(aBaseRateCode.getbRRepayRvwFrq());
 		logger.debug("Leaving");
 	}
 
@@ -561,7 +547,9 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		}
 		this.bRTypeDesc.setReadonly(isReadOnly("BaseRateCodeDialog_bRTypeDesc"));
 		this.bRTypeIsActive.setDisabled(isReadOnly("BaseRateCodeDialog_BRTypeIsActive"));
-		this.bRRepayRvwFrq.setDisabled(isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq"));
+
+		setRepayRvwFrqVisibility(getBaseRateCode());
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -578,6 +566,21 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 			// btnCancel.setVisible(true);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void setRepayRvwFrqVisibility(BaseRateCode baseRateCode) {
+
+		if (isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq")) {
+			this.bRRepayRvwFrq.setDisabled(true);
+		} else {
+			boolean exists = this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType());
+			if (exists) {
+				this.bRRepayRvwFrq.setDisabled(true);
+			} else {
+				this.bRRepayRvwFrq.setDisabled(this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType()));
+			}
+		}
+
 	}
 
 	/**
@@ -911,34 +914,6 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		notes.setVersion(getBaseRateCode().getVersion());
 		logger.debug("Leaving");
 		return notes;
-	}
-
-	public void onSelectCode$bRRepayRvwFrq(Event event) {
-		logger.debug("Entering" + event.toString());
-		processRvwFrq(this.bRRepayRvwFrq);
-		logger.debug("Leaving" + event.toString());
-	}
-
-	// Interest Review Frequency Box Data Setting Based on Client Requirement
-	private void processRvwFrq(FrequencyBox frequencyBox) {
-		String mnth = "";
-		String day = "";
-		String frqCode = frequencyBox.getFrqCodeValue();
-		if ("Y".contains(frqCode) || "2".contains(frqCode) || "3".contains(frqCode) || "H".contains(frqCode)
-				|| "Q".contains(frqCode) || "B".contains(frqCode)) {
-			mnth = "01";
-			day = "01";
-			mnth = frqCode.concat("01").concat("01");
-			this.bRRepayRvwFrq.setDisableFrqDay(true);
-		} else if ("M0000".contains(frqCode) || "F0000".contains(frqCode) || "X0000".contains(frqCode)
-				|| "W0000".contains(frqCode)) {
-			mnth = frqCode.concat("00").concat("01");
-			day = "01";
-		} else if ("D0000".contains(frqCode)) {
-			mnth = frqCode.concat("00").concat("01");
-			day = "00";
-		}
-		frequencyBox.updateFrequency(mnth, day);
 	}
 
 	// ******************************************************//

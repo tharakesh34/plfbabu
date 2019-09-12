@@ -1325,6 +1325,7 @@
 	<bean name="baseRateCodeServiceTarget" class="com.pennant.backend.service.applicationmaster.impl.BaseRateCodeServiceImpl">
 		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!--============ Branch Details ============== -->
@@ -3374,6 +3375,7 @@
 		<property name="advancePaymentDetailDAO" ref="advancePaymentDetailDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -3423,6 +3425,12 @@
 		<property name="holdDisbursementDAO" ref="holdDisbursementDAO" />
 		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 		<property name="insuranceDetailService" ref="insuranceDetailService" />
+		<!-- Payments process service -->
+		<property name="paymentsProcessService" ref="paymentsProcessService" />
+		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
+
+		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
+
 	</bean>
 
 	<!-- Finance Data Validation Service -->
@@ -3662,6 +3670,10 @@
 
 	<!--============ Finance Schedule Details ============== -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
+		parent="basicDao" />
+		
+	<!--============ IRR Schedule Details ============== -->
+	<bean id="irrScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.IRRScheduleDetailDAOImpl"
 		parent="basicDao" />
 
 	<!--============ Finance Disbursement Details ============== -->
@@ -4486,6 +4498,7 @@
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="partnerBankService" ref="partnerBankService" />
+		<property name="paymentsProcessService" ref="paymentsProcessService" />
 	</bean>
 
 
@@ -6553,6 +6566,9 @@
 	<bean id="scheduleCalculator" class="com.pennant.app.util.ScheduleCalculator">
 		<property name="splRateDAO" ref="splRateDAO" />
 		<property name="baseRateDAO" ref="baseRateDAO" />
+	</bean>
+	
+	<bean id="iRRCalculator" class="com.pennant.app.util.IRRCalculator">
 		<property name="iRRFeeTypeDAO" ref="iRRFeeTypeDAO" />
 		<property name="irrFinanceTypeDAO" ref="irrFinanceTypeDAO" />
 	</bean>
@@ -7843,6 +7859,7 @@
 	<bean name="promotionServiceTarget" class="com.pennant.backend.service.rmtmasters.impl.PromotionServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="promotionDAO" ref="promotionDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finTypeFeesService" ref="finTypeFeesService" />
 		<property name="finTypeInsurancesService" ref="finTypeInsurancesService" />
 		<property name="finTypeAccountingService" ref="finTypeAccountingService" />
@@ -7910,7 +7927,11 @@
 		<property name="ruleDAO" ref="ruleDAO" />
 	</bean>
 	<!-- Accrual -->
-	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper" />
+	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper" >
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
+	</bean>
+
 
 	<!-- LPP/LPI Accrual -->
 	<bean id="latePaydueCreationService" class="com.pennant.app.core.LatePayDueCreationService" parent="serviceHelper">
@@ -8514,6 +8535,7 @@
 	<bean name="paymentInstructionService" class="com.pennant.backend.service.payment.impl.PaymentInstructionServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="paymentInstructionDAO" ref="paymentInstructionDAO" />
+		<property name="paymentsProcessService" ref="paymentsProcessService" />
 	</bean>
 
 	<!-- EODConfig -->

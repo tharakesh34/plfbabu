@@ -68,6 +68,7 @@ import org.zkoss.zul.Listgroup;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -106,6 +107,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	private String finType = "";
 	protected int moduleId = 0;
 	protected boolean isOverdraft = false;
+	protected boolean consumerDurable = false;
 	private boolean isCompReadonly = false;
 
 	/**
@@ -166,6 +168,9 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 			}
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
+			}
+			if (arguments.containsKey("consumerDurable")) {
+				this.consumerDurable = (Boolean) arguments.get("consumerDurable");
 			}
 
 			doEdit();
@@ -228,11 +233,14 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	private List<AccountEngineEvent> getAccountingEvents() {
+		String categoryCode = AccountEventConstants.EVENTCTG_FINANCE;
 		if (this.isOverdraft) {
-			return PennantAppUtil.getOverdraftAccountingEvents();
-		} else {
-			return PennantAppUtil.getAccountingEvents();
+			categoryCode = AccountEventConstants.EVENTCTG_OVERDRAFT;
+		} else if (this.consumerDurable) {
+			categoryCode = AccountEventConstants.EVENTCTG_GOLD;
 		}
+
+		return PennantAppUtil.getCategoryWiseEvents(categoryCode);
 	}
 
 	private List<FinTypeFees> getFinTypeFeesByModule(List<FinTypeFees> finTypeFeesList, boolean isOriginationFees) {

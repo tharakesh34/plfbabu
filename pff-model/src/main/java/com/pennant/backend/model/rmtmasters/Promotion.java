@@ -72,7 +72,7 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private Date endDate;
 	private boolean finIsDwPayRequired;
 	private long downPayRule;
-	private BigDecimal actualInterestRate;
+	private BigDecimal actualInterestRate = BigDecimal.ZERO;
 	private String finBaseRate;
 	private String finBaseRateName;
 	private String finSplRate;
@@ -82,14 +82,15 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private long rpyPricingMethod;
 	private int finMinTerm;
 	private int finMaxTerm;
-	private BigDecimal finMinAmount;
-	private BigDecimal finMaxAmount;
-	private BigDecimal finMinRate;
-	private BigDecimal finMaxRate;
+	private BigDecimal finMinAmount = BigDecimal.ZERO;
+	private BigDecimal finMaxAmount = BigDecimal.ZERO;
+	private BigDecimal finMinRate = BigDecimal.ZERO;
+	private BigDecimal finMaxRate = BigDecimal.ZERO;
 	private boolean active = true;
 	private boolean newRecord = false;
 	private Promotion befImage;
 	private LoggedInUser userDetails;
+	private String productCategory;
 
 	private String finTypeDesc;
 	private String finCcy;
@@ -97,6 +98,19 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 	private String downPayRuleDesc;
 	private String rpyPricingCode;
 	private String rpyPricingDesc;
+
+	//Consumer Durables
+	private long referenceID = Long.MIN_VALUE;
+	private boolean openBalOnPV = false;
+	private int tenor = 0;
+	private int advEMITerms = 0;
+	private String pftDaysBasis = "";
+	private BigDecimal subventionRate = BigDecimal.ZERO;
+	private boolean taxApplicable = false;
+	private int cashBackFromDealer = 0;
+	private int cashBackToCustomer = 0;
+	private boolean specialScheme;
+	private String remarks;
 
 	private String lovValue;
 
@@ -130,6 +144,7 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("rpyPricingDesc");
 		excludeFields.add("finBaseRateName");
 		excludeFields.add("finSplRateName");
+		excludeFields.add("productCategory");
 
 		return excludeFields;
 	}
@@ -440,6 +455,102 @@ public class Promotion extends AbstractWorkflowEntity implements Entity {
 
 	public void setPromotionId(long promotionId) {
 		this.promotionId = promotionId;
+	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
+	}
+
+	public long getReferenceID() {
+		return referenceID;
+	}
+
+	public void setReferenceID(long referenceID) {
+		this.referenceID = referenceID;
+	}
+
+	public boolean isOpenBalOnPV() {
+		return openBalOnPV;
+	}
+
+	public void setOpenBalOnPV(boolean openBalOnPV) {
+		this.openBalOnPV = openBalOnPV;
+	}
+
+	public int getTenor() {
+		return tenor;
+	}
+
+	public void setTenor(int tenor) {
+		this.tenor = tenor;
+	}
+
+	public int getAdvEMITerms() {
+		return advEMITerms;
+	}
+
+	public void setAdvEMITerms(int advEMITerms) {
+		this.advEMITerms = advEMITerms;
+	}
+
+	public String getPftDaysBasis() {
+		return pftDaysBasis;
+	}
+
+	public void setPftDaysBasis(String pftDaysBasis) {
+		this.pftDaysBasis = pftDaysBasis;
+	}
+
+	public BigDecimal getSubventionRate() {
+		return subventionRate;
+	}
+
+	public void setSubventionRate(BigDecimal subventionRate) {
+		this.subventionRate = subventionRate;
+	}
+
+	public boolean isTaxApplicable() {
+		return taxApplicable;
+	}
+
+	public void setTaxApplicable(boolean taxApplicable) {
+		this.taxApplicable = taxApplicable;
+	}
+
+	public int getCashBackFromDealer() {
+		return cashBackFromDealer;
+	}
+
+	public void setCashBackFromDealer(int cashBackFromDealer) {
+		this.cashBackFromDealer = cashBackFromDealer;
+	}
+
+	public int getCashBackToCustomer() {
+		return cashBackToCustomer;
+	}
+
+	public void setCashBackToCustomer(int cashBackToCustomer) {
+		this.cashBackToCustomer = cashBackToCustomer;
+	}
+
+	public boolean isSpecialScheme() {
+		return specialScheme;
+	}
+
+	public void setSpecialScheme(boolean specialScheme) {
+		this.specialScheme = specialScheme;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

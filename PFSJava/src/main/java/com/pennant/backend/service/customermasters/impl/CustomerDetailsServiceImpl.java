@@ -3224,7 +3224,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		if (customer.getCustGroupID() > 0) {
-			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", customer.getCustGroupID()));
+			auditDetail.setErrorDetail(validateMasterCode("CustomerGroup", String.valueOf(customer.getCustGroupID())));
 		}
 		if (StringUtils.isNotBlank(customer.getCustStaffID())) {
 			Pattern pattern = Pattern

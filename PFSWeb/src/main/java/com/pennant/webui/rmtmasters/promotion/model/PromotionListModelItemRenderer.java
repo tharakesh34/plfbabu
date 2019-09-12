@@ -46,6 +46,7 @@ package com.pennant.webui.rmtmasters.promotion.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
@@ -82,12 +83,19 @@ public class PromotionListModelItemRenderer implements ListitemRenderer<Promotio
 		lc = new Listcell(PennantAppUtil.formateDate(promotion.getEndDate(), PennantConstants.dateFormat));
 		lc.setParent(item);
 
+		lc = new Listcell();
+		final Checkbox active = new Checkbox();
+		active.setDisabled(true);
+		active.setChecked(promotion.isActive());
+		lc.appendChild(active);
+		lc.setParent(item);
+
 		lc = new Listcell(promotion.getRecordStatus());
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(promotion.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("promotionCode", promotion.getPromotionCode());
+		item.setAttribute("promotion", promotion);
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPromotionItemDoubleClicked");
 	}

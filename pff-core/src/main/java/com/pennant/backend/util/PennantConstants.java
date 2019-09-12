@@ -361,6 +361,7 @@ public class PennantConstants {
 	public static final String WORFLOW_MODULE_PROMOTION = "PROMOTION";
 	public static final String WORFLOW_MODULE_FACILITY = "FACILITY";
 	public static final String WORFLOW_MODULE_OVERDRAFT = "OVERDRAFT";
+	public static final String WORFLOW_MODULE_CD = "CD";
 	public static final String WORFLOW_MODULE_COLLATERAL = "COLLATERAL";
 	public static final String WORFLOW_MODULE_VAS = "VAS";
 	public static final String WORFLOW_MODULE_COMMITMENT = "COMMITMENT";

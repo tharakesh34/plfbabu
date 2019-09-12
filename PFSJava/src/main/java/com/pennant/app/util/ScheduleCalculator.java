@@ -72,15 +72,9 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.applicationmaster.IRRFeeTypeDAO;
-import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
 import com.pennant.backend.dao.applicationmaster.SplRateDAO;
 import com.pennant.backend.model.applicationmaster.BaseRate;
-import com.pennant.backend.model.applicationmaster.IRRFeeType;
-import com.pennant.backend.model.applicationmaster.IRRFinanceType;
 import com.pennant.backend.model.applicationmaster.SplRate;
-import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
 import com.pennant.backend.model.finance.FinSchFrqInsurance;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -109,9 +103,6 @@ public class ScheduleCalculator {
 	private FinScheduleData finScheduleData;
 	private static BaseRateDAO baseRateDAO;
 	private static SplRateDAO splRateDAO;
-	// ####_ 0.2
-	private static IRRFeeTypeDAO iRRFeeTypeDAO;
-	private static IRRFinanceTypeDAO irrFinanceTypeDAO;
 
 	// PROCESS METHODS IN SCHEDULE CALCULATOR
 	public static final String PROC_GETCALSCHD = "procGetCalSchd";
@@ -270,6 +261,7 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		// re generate original schedule from Flexi Schedule
@@ -297,6 +289,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setRecalIdx(-1);
 
 		// re generate original schedule from Flexi Schedule
 		if (finMain.isAlwFlexi() && finMain.isChgDropLineSchd()) {
@@ -360,6 +353,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		finScheduleData.getFinanceMain().setCpzAtGraceEnd(false);
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (finScheduleData.getFinanceMain().getGrcProfitDaysBasis() == null) {
 			finScheduleData.getFinanceMain()
 					.setGrcProfitDaysBasis(finScheduleData.getFinanceMain().getProfitDaysBasis());
@@ -384,6 +378,7 @@ public class ScheduleCalculator {
 		Cloner cloner = new Cloner();
 		FinScheduleData dpScheduleData = cloner.deepClone(finScheduleData);
 		FinanceMain finMain = dpScheduleData.getFinanceMain();
+		finMain.setRecalIdx(-1);
 
 		finMain.setFinReference(finMain.getFinReference() + "_DP");
 		dpScheduleData.setFinReference(finMain.getFinReference());
@@ -447,6 +442,7 @@ public class ScheduleCalculator {
 			BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
 		logger.debug("Entering");
 
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (StringUtils.equals(method, PROC_CHANGERATE)) {
 
 			FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -479,6 +475,7 @@ public class ScheduleCalculator {
 		logger.debug("Entering");
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+		finMain.setRecalIdx(-1);
 
 		// re generate original schedule from Flexi Schedule
 		if (finMain.isAlwFlexi() && finMain.isChgDropLineSchd()) {
@@ -508,6 +505,7 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal amount,
 			BigDecimal feeChargeAmt, boolean utilizeGrcEndDisb) {
 		logger.debug("Entering");
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 
 		if (StringUtils.equals(method, PROC_ADDDISBURSEMENT)) {
 			setFinScheduleData(procAddDisbursement(finScheduleData, amount, feeChargeAmt, utilizeGrcEndDisb));
@@ -517,7 +515,7 @@ public class ScheduleCalculator {
 
 	private ScheduleCalculator(FinScheduleData finScheduleData, String method) {
 		logger.debug("Entering");
-
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (StringUtils.equals(method, PROC_CALEFFECTIVERATE)) {
 			setFinScheduleData(calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					finScheduleData.getFinanceMain().getTotalGrossPft(),
@@ -551,6 +549,7 @@ public class ScheduleCalculator {
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, int noOfTerms) {
 		logger.debug("Entering");
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (StringUtils.equals(method, PROC_ADDTERM)) {
 			setFinScheduleData(procAddTerm(finScheduleData, noOfTerms, false));
 		}
@@ -560,12 +559,22 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(FinScheduleData finScheduleData, Date earlyPayOnSchdl, Date earlyPayOnNextSchdl,
 			BigDecimal earlyPayAmt, String method) {
 		logger.debug("Entering");
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 
 		String receivedRecalMethod = method;
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		finMain.setProcMethod(FinanceConstants.FINSER_EVENT_RECEIPT);
 		finScheduleData.getFinanceMain().setResetOrgBal(false);
+
+		if (!finMain.isApplySanctionCheck()) {
+			finMain.setApplySanctionCheck(SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData));
+		}
+
+		if (finMain.isSanBsdSchdle() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+			finScheduleData = resetOrgClosingBalances(finScheduleData);
+		}
+
 		// BPI change
 		//finScheduleData.getFinanceMain().setBpiResetReq(true);   
 
@@ -596,7 +605,9 @@ public class ScheduleCalculator {
 
 		}
 
-		if (StringUtils.equals(CalculationConstants.RPYCHG_ADJMDT, method)
+		if (finMain.isSanBsdSchdle() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+			setRepayForSanctionBasedPriHld(finScheduleData, earlyPayAmt);
+		} else if (StringUtils.equals(CalculationConstants.RPYCHG_ADJMDT, method)
 				|| StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
 
 			finMain.setRecalToDate(finMain.getMaturityDate());
@@ -608,17 +619,20 @@ public class ScheduleCalculator {
 			List<FinanceScheduleDetail> finSchdlDetailList = finScheduleData.getFinanceScheduleDetails();
 			int size = finScheduleData.getFinanceScheduleDetails().size();
 			Date eventToDate = finMain.getMaturityDate();
-			for (int i = size - 1; i >= 0; i--) {
-				FinanceScheduleDetail schDetail = finSchdlDetailList.get(i);
-				if ((schDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
-					finSchdlDetailList.remove(i);
-				} else {
-					eventToDate = schDetail.getSchDate();
-					break;
-				}
-			}
 
-			finMain.setMaturityDate(eventToDate);
+			if (!finMain.isApplySanctionCheck()) {
+				for (int i = size - 1; i >= 0; i--) {
+					FinanceScheduleDetail schDetail = finSchdlDetailList.get(i);
+					if ((schDetail.getRepayAmount().compareTo(BigDecimal.ZERO) == 0)) {
+						finSchdlDetailList.remove(i);
+					} else {
+						eventToDate = schDetail.getSchDate();
+						break;
+					}
+				}
+
+				finMain.setMaturityDate(eventToDate);
+			}
 
 			if (StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
 
@@ -699,6 +713,7 @@ public class ScheduleCalculator {
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, int noOfTerms, Date subSchStartDate,
 			String frqNewSchd) {
 		logger.debug("Entering");
+		finScheduleData.getFinanceMain().setRecalIdx(-1);
 		if (StringUtils.equals(method, PROC_SUBSCHEDULE)) {
 			setFinScheduleData(procSubSchedule(finScheduleData, noOfTerms, subSchStartDate, frqNewSchd));
 		}
@@ -1189,6 +1204,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
+		finMain.setApplySanctionCheck(SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData));
 
 		int risize = repayInstructions.size();
 
@@ -1219,7 +1235,17 @@ public class ScheduleCalculator {
 
 		finMain.setRecalSchdMethod(schdMethod);
 
-		finScheduleData = setRecalAttributes(finScheduleData, PROC_RECALSCHD, BigDecimal.ZERO, BigDecimal.ZERO);
+		
+		if (finMain.isApplySanctionCheck()) {
+			boolean isResetRecalDate = false;
+			if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+				isResetRecalDate = true;
+			}
+
+			finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, isResetRecalDate);
+		} else {
+			finScheduleData = setRecalAttributes(finScheduleData, PROC_RECALSCHD, BigDecimal.ZERO, BigDecimal.ZERO);
+		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
@@ -1266,7 +1292,7 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		Date evtFromDate = finMain.getEventFromDate();
-		Date curBussniessDate = DateUtility.getAppDate();
+		Date curBussniessDate = SysParamUtil.getAppDate();
 
 		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
 
@@ -1382,6 +1408,16 @@ public class ScheduleCalculator {
 
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
+		boolean isApplySanctionBasedSchedule = SanctionBasedSchedule.isApplySanctionBasedSchedule(finScheduleData);
+
+		if (isApplySanctionBasedSchedule) {
+			if (!StringUtils.equals(recalType, CalculationConstants.RPYCHG_ADJMDT)) {
+				finScheduleData.setErrorDetail(new ErrorDetail("SCH31",
+						"Schedules Build on SANCTION AMOUNT does not allow any RECAL TYPE other than ADJMDT Till full disbursement",
+						new String[] { " " }));
+				return finScheduleData;
+			}
+		}
 
 		// To allow recaclulation happens as per Adjust to maturity. Once
 		// calculation completes
@@ -1491,6 +1527,10 @@ public class ScheduleCalculator {
 			sdSize = finSchdDetails.size();
 		}
 
+		String frqCode = FrequencyUtil.getFrequencyCode(finMain.getbRRpyRvwFrq());
+		//Parameter for counting the number of schedules in between evtFromDate and evtToDate
+		int schdCount = 0;
+
 		for (int i = 0; i < sdSize; i++) {
 			FinanceScheduleDetail curSchd = finSchdDetails.get(i);
 			Date schdDate = curSchd.getSchDate();
@@ -1500,8 +1540,11 @@ public class ScheduleCalculator {
 					|| (i == (sdSize - 1))) {
 				recalculateRate = calculatedRate;
 
+				//Resetting the Schedule review on dates based on the base rate code frequency.
+				setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
+
 				if (curSchd.isRvwOnSchDate()) {
-					if (StringUtils.isNotBlank(baseRate)) {
+					if (StringUtils.isNotBlank(baseRate) && !finMain.isBaseRateReq()) {
 						if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
 							recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
 									finMain.getGrcMinRate(), finMain.getGrcMaxRate()).getNetRefRateLoan();
@@ -1517,10 +1560,10 @@ public class ScheduleCalculator {
 				curSchd.setMrgRate(mrgRate);
 				curSchd.setCalculatedRate(recalculateRate);
 
-				if (StringUtils.isBlank(baseRate)) {
+				if (StringUtils.isBlank(baseRate) || finMain.isBaseRateReq()) {
 					curSchd.setActRate(recalculateRate);
 				}
-
+				schdCount++;
 			}
 
 			if (DateUtility.compare(schdDate, evtToDate) >= 0) {
@@ -1574,6 +1617,65 @@ public class ScheduleCalculator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+
+	/**
+	 * Resetting the Schedule review on dates based on the base rate code frequency.
+	 * 
+	 * @param curSchd
+	 * @param frqCode
+	 * @param schdCount
+	 */
+	private void setRvwOnSchDate(FinanceMain finMain, FinanceScheduleDetail curSchd, String frqCode, int schdCount) {
+
+		//If frequency code is blank then return.
+		if (StringUtils.isBlank(frqCode)) {
+			return;
+		}
+
+		//Resetting the Schedule review on dates based on the base rate code frequency.
+		switch (frqCode) {
+		case FrequencyCodeTypes.FRQ_MONTHLY:
+			curSchd.setRvwOnSchDate(true);
+			break;
+		case FrequencyCodeTypes.FRQ_QUARTERLY:
+			if (schdCount == 0 || schdCount % 3 == 0) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setRvwOnSchDate(false);
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
+			if (schdCount == 0 || schdCount % 6 == 0) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setRvwOnSchDate(false);
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_YEARLY:
+			if (schdCount == 0 || schdCount % 12 == 0) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setRvwOnSchDate(false);
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_2YEARLY:
+			if (schdCount == 0 || schdCount % 24 == 0) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setRvwOnSchDate(false);
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_3YEARLY:
+			if (schdCount == 0 || schdCount % 36 == 0) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setRvwOnSchDate(false);
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex,
@@ -1729,7 +1831,10 @@ public class ScheduleCalculator {
 
 		finScheduleData = setRpyInstructDetails(finScheduleData, evtFromDate, evtToDate, repayAmount, reqSchdMethod);
 		finMain.setRecalSchdMethod(finMain.getScheduleMethod());
-		finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGEREPAY, BigDecimal.ZERO, repayAmount);
+
+		if (!finMain.isSanBsdSchdle()) {
+			finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGEREPAY, BigDecimal.ZERO, repayAmount);
+		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 
@@ -2023,11 +2128,6 @@ public class ScheduleCalculator {
 		dd.setDisbSeq(disbSeq + 1);
 		finScheduleData.getDisbursementDetails().add(dd);
 
-		// Applicable for For few products (Ijarah) only.
-		if (utilizeGrcEndDisb && !StringUtils.equals(finMain.getProductCategory(), FinanceConstants.PRODUCT_IJARAH)) {
-			utilizeGrcEndDisb = false;
-		}
-
 		// If No Grace no adjustment is applicable
 		if (DateUtility.compare(finMain.getFinStartDate(), graceEndDate) == 0) {
 			utilizeGrcEndDisb = false;
@@ -2170,7 +2270,13 @@ public class ScheduleCalculator {
 				}
 			}
 
-			finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount, BigDecimal.ZERO);
+			if (finMain.isSanBsdSchdle()
+					&& !StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+				finScheduleData = setRepayForSanctionBasedDisb(finScheduleData);
+			} else {
+				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
+						BigDecimal.ZERO);
+			}
 		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
@@ -2508,6 +2614,10 @@ public class ScheduleCalculator {
 			}
 		}
 
+		if (finMain.getLastRepayDate() == null) {
+			finMain.setLastRepayDate(finMain.getFinStartDate());
+		}
+
 		if (finMain.getLastDepDate() == null) {
 			finMain.setLastDepDate(finMain.getFinStartDate());
 		}
@@ -2741,8 +2851,17 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 
-		int lastIndex = finScheduleData.getFinanceScheduleDetails().size() - 1;
-		FinanceScheduleDetail lastSchd = finScheduleData.getFinanceScheduleDetails().get(lastIndex);
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+		int lastIndex = fsdList.size() - 1;
+		FinanceScheduleDetail lastSchd = fsdList.get(lastIndex);
+
+		int lastInstNumber = lastSchd.getInstNumber();
+		for (int i = lastIndex; i > 0; i--) {
+			if (fsdList.get(i).getInstNumber() > 0) {
+				lastInstNumber = fsdList.get(i).getInstNumber();
+				break;
+			}
+		}
 
 		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
 		sd.setSchDate(nextSchdDate);
@@ -2843,6 +2962,10 @@ public class ScheduleCalculator {
 		sd.setAdvMargin(lastSchd.getAdvMargin());
 		sd.setAdvPftRate(lastSchd.getAdvPftRate());
 		sd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+
+		if (sd.isRepayOnSchDate()) {
+			sd.setInstNumber(lastInstNumber + 1);
+		}
 
 		finScheduleData.getFinanceScheduleDetails().add(sd);
 		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
@@ -3056,6 +3179,10 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
+		if (finMain.getRecalIdx() < 0) {
+			setRecalIndex(finScheduleData);
+		}
+
 		Date fromDate = finMain.getFinStartDate();
 		Date toDate = finMain.getMaturityDate();
 		String fromSchdMethod = null;
@@ -3169,6 +3296,10 @@ public class ScheduleCalculator {
 		for (int i = indexStart; i < sdSize; i++) {
 			curSchd = finSchdDetails.get(i);
 			Date curSchdDate = curSchd.getSchDate();
+
+			if (i < finMain.getRecalIdx()) {
+				continue;
+			}
 
 			// Added for setting Schedule method in case of Different
 			// frequencies for PFT,CPZ & RVW
@@ -3388,17 +3519,8 @@ public class ScheduleCalculator {
 		finMain.setTotalGrossGrcPft(finMain.getTotalGraceCpz().add(finMain.getTotalGracePft()));
 		finMain.setTotalGrossPft(finMain.getTotalProfit().add(finMain.getTotalCpz()));
 
-		// Effective Rate Of Return Calculations / XIRR && IRR
-		// ####_ 0.2
-		List<IRRFinanceType> irrFinanceTypes = getIrrFinanceTypeDAO().getIRRFinanceTypeByFinType(finMain.getFinType(),
-				"_AView");
-		finScheduleData.setiRRDetails(new ArrayList<FinIRRDetails>()); // reseting list object.
+		IRRCalculator.calculateXIRRAndIRR(finScheduleData, true);
 
-		if (!irrFinanceTypes.isEmpty()) {
-			for (int j = 0; j < irrFinanceTypes.size(); j++) {
-				calculateXIRRAndIRR(finScheduleData, finMain, irrFinanceTypes.get(j));
-			}
-		}
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
@@ -3508,113 +3630,6 @@ public class ScheduleCalculator {
 			}
 		}
 		return tdsAmount;
-	}
-
-	/**
-	 * 
-	 * @param finSchdData
-	 * @param finMain
-	 * @return
-	 */
-	// ####_ 0.2
-	public static void calculateXIRRAndIRR(FinScheduleData finSchdData, FinanceMain finMain,
-			IRRFinanceType irrFinType) {
-		logger.debug("Entering");
-
-		// BigDecimal cal_IRR = BigDecimal.ZERO;
-		BigDecimal cal_XIRR = BigDecimal.ZERO;
-		BigDecimal cal_XIRR_WithFee = BigDecimal.ZERO;
-		BigDecimal calcAmount = BigDecimal.ZERO;
-
-		List<BigDecimal> schAmountList = new ArrayList<BigDecimal>(1);
-		List<Date> repayDateList = new ArrayList<Date>(1);
-		List<BigDecimal> schAmountListWithFee = new ArrayList<BigDecimal>(1);
-		List<FinFeeDetail> finFeeDList = finSchdData.getFinFeeDetailList();
-
-		BigDecimal feeAmount = BigDecimal.ZERO;
-		List<IRRFeeType> irrFeeList = null;
-		if (irrFinType != null) {
-			irrFeeList = getiRRFeeTypeDAO().getIRRFeeTypeList(irrFinType.getIRRID(), "");
-		}
-
-		for (FinFeeDetail fee : finFeeDList) {
-			if (!StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, fee.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, fee.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
-							fee.getFeeScheduleMethod())
-					&& !StringUtils.equals(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
-							fee.getFeeScheduleMethod())) {
-
-				BigDecimal feePerc = BigDecimal.ZERO;
-				boolean isRcdFound = false;
-				if (irrFeeList != null) {
-					for (IRRFeeType irrFeeType : irrFeeList) {
-						if (irrFeeType.getFeeTypeID() == fee.getFeeTypeID()) {
-							feePerc = irrFeeType.getFeePercentage();
-							isRcdFound = true;
-						}
-					}
-				}
-				BigDecimal calFeeAmount = BigDecimal.ZERO;
-				if (isRcdFound) {
-					calFeeAmount = fee.getActualAmount().subtract(fee.getWaivedAmount());
-					calFeeAmount = (calFeeAmount.multiply(feePerc)).divide(new BigDecimal(100), 0,
-							RoundingMode.HALF_DOWN);
-					feeAmount = feeAmount.add(calFeeAmount);
-				} else {
-					//FIXME: PV 16JUL18 commented to avoid fee inclusion excluded fees for XIRR
-					//feeAmount = feeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
-				}
-			}
-		}
-
-		// FIXME CH Servicing Fees should be handled
-		for (FinanceScheduleDetail finScheduleDetail : finSchdData.getFinanceScheduleDetails()) {
-
-			if (finScheduleDetail.isDisbOnSchDate()) {
-				repayDateList.add(finScheduleDetail.getSchDate());
-
-				calcAmount = finScheduleDetail.getDisbAmount().subtract(finScheduleDetail.getDownPaymentAmount());
-				calcAmount = calcAmount.multiply(new BigDecimal(-1));
-				schAmountList.add(calcAmount);
-
-				if (DateUtility.compare(finScheduleDetail.getSchDate(), finMain.getFinStartDate()) == 0) {
-					calcAmount = calcAmount.add(feeAmount);
-				}
-
-				schAmountListWithFee.add(calcAmount);
-			}
-
-			if (finScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-				schAmountList.add(finScheduleDetail.getRepayAmount());
-				schAmountListWithFee.add(finScheduleDetail.getRepayAmount().add(finScheduleDetail.getFeeSchd()));
-				repayDateList.add(finScheduleDetail.getSchDate());
-			}
-		}
-		/*
-		 * cal_IRR = RateCalculation.calculateIRR(schAmountList); int termsPerYear =
-		 * CalculationUtil.getTermsPerYear(finMain.getRepayPftFrq()); calculated_IRR = calculated_IRR.multiply(new
-		 * BigDecimal(termsPerYear));
-		 */
-
-		// In OD Facility cases, schedule may not exists before disbursements
-		if (!repayDateList.isEmpty()) {
-			cal_XIRR = RateCalculation.calculateXIRR(schAmountList, repayDateList);
-			cal_XIRR_WithFee = RateCalculation.calculateXIRR(schAmountListWithFee, repayDateList);
-		}
-
-		finMain.setAnualizedPercRate(cal_XIRR.setScale(9));
-		finMain.setEffectiveRateOfReturn(cal_XIRR_WithFee.setScale(9));
-
-		if (irrFinType != null) {
-			FinIRRDetails irr = new FinIRRDetails();
-			irr.setiRRID(irrFinType.getIRRID());
-			irr.setiRRCode(irrFinType.getIrrCode());
-			irr.setIrrCodeDesc(irrFinType.getIrrCodeDesc());
-			irr.setIRR(cal_XIRR_WithFee.setScale(9));
-			finSchdData.getiRRDetails().add(irr);
-		}
-		logger.debug("Leaving");
 	}
 
 	/*
@@ -3863,12 +3878,18 @@ public class ScheduleCalculator {
 							|| (StringUtils.trimToEmpty(finMain.getRvwRateApplFor())
 									.equals(CalculationConstants.RATEREVIEW_RVWUPR)
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
-						curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+						if (!finMain.isBaseRateReq()) {
+							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+						}
 					} else {
 						if (fixedRateTenor == 0) {
-							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+							if (!finMain.isBaseRateReq()) {
+								curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
+							}
 						} else {
-							curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
+							if (!finMain.isBaseRateReq()) {
+								curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
+							}
 						}
 					}
 					curSchd.setCalOnIndRate(false);
@@ -4225,6 +4246,7 @@ public class ScheduleCalculator {
 		finMain.setPftCpzFromReset(BigDecimal.ZERO);
 
 		boolean isRepayComplete = false;
+		boolean isSanctionBasedSchd = finScheduleData.getFinanceMain().isSanBsdSchdle();
 
 		finMain.setCalTerms(0);
 
@@ -4432,9 +4454,15 @@ public class ScheduleCalculator {
 								if (curSchd.getProfitSchd().compareTo(BigDecimal.ZERO) < 0) {
 									curSchd.setProfitSchd(BigDecimal.ZERO);
 								}
+
+								curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance())
+										.add(prvSchd.getCpzAmount()));
 							}
 
-							isRepayComplete = true;
+							if (!isSanctionBasedSchd) {
+								isRepayComplete = true;
+							}
+
 						}
 					}
 
@@ -4591,6 +4619,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(iCur);
 		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(iPrv);
 		BigDecimal schdInterest = BigDecimal.ZERO;
+		Date appDate = SysParamUtil.getAppDate();
 
 		// FIX: PV: To address Postponements, Reage, Unplanned Holidays,
 		// Holidays without additional instructions
@@ -4828,7 +4857,7 @@ public class ScheduleCalculator {
 								|| StringUtils.equals(finMain.getReceiptPurpose(),
 										FinanceConstants.FINSER_EVENT_EARLYSETTLE))) {
 
-					if (curSchd.getSchDate().compareTo(DateUtility.getAppDate()) <= 0) {
+					if (curSchd.getSchDate().compareTo(appDate) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 					} else {
 						curSchd.setPrincipalSchd(curSchd.getRepayAmount().subtract(curSchd.getProfitSchd()));
@@ -5814,7 +5843,7 @@ public class ScheduleCalculator {
 		}
 
 		curSchd.setSchdMethod(prvSchd.getSchdMethod());
-		if (!isRepayComplete) {
+		if (!isRepayComplete || finScheduleData.getFinanceMain().isSanBsdSchdle()) {
 			finScheduleData.getFinanceMain().setCalTerms(finScheduleData.getFinanceMain().getCalTerms() + 1);
 			finScheduleData.getFinanceMain().setCalMaturity(curSchd.getSchDate());
 		}
@@ -5844,6 +5873,7 @@ public class ScheduleCalculator {
 		int indexRepay = finScheduleData.getFinanceMain().getSchdIndex();
 		FinanceScheduleDetail grcEndSchd = finScheduleData.getFinanceScheduleDetails().get(indexRepay);
 		FinanceScheduleDetail rpySchd = finScheduleData.getFinanceScheduleDetails().get(indexRepay);
+		FinanceType ft = finScheduleData.getFinanceType();
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		BigDecimal instAmt = new BigDecimal(0);
@@ -5871,12 +5901,15 @@ public class ScheduleCalculator {
 			} else if (schdMethod.equals(CalculationConstants.SCHMTHD_PRI)
 					|| schdMethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
 
-				if (finMain.getReqRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+				if (finMain.isSanBsdSchdle()) {
+					instAmt = finMain.getFinAssetValue().divide(BigDecimal.valueOf(terms), 0, RoundingMode.HALF_DOWN);
+					finMain.setEqualRepay(false);
+					finMain.setCalculateRepay(false);
+				} else if (finMain.getReqRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 					instAmt = finMain.getReqRepayAmount();
 				} else {
 					instAmt = presentValue.divide(BigDecimal.valueOf(terms), 0, RoundingMode.HALF_DOWN);
 				}
-
 			}
 
 			finScheduleData = setRpyInstructDetails(finScheduleData, finMain.getNextRepayPftDate(),
@@ -7181,6 +7214,221 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
+	private FinScheduleData setRepayForSanctionBasedDisb(FinScheduleData finScheduleData) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			//setRepayForSanctionBasedDisbADJMDT(finScheduleData);
+			return finScheduleData;
+		}
+
+		finScheduleData = setRepayForSanctionBasedAddRecal(finScheduleData, false);
+		return finScheduleData;
+	}
+
+	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+
+		finMain.setRecalFromDate(finMain.getMaturityDate());
+		int idx = finScheduleData.getRepayInstructions().size() - 1;
+		finMain.setIndexMisc(idx);
+		finMain.setMiscAmount(finScheduleData.getRepayInstructions().get(idx).getRepayAmount());
+		int sdSize = fsdList.size();
+
+		Date evtFromDate = finMain.getEventFromDate();
+		BigDecimal curInstAmount = BigDecimal.ZERO;
+		Date curSchDate = finMain.getMaturityDate();
+		Date nextInstDate = finMain.getMaturityDate();
+
+		for (int iFsd = (sdSize - 1); iFsd >= 0; iFsd--) {
+			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
+			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
+				break;
+			}
+
+			if (curSchd.getPrincipalSchd().compareTo(BigDecimal.ZERO) > 0) {
+				curSchDate = curSchd.getSchDate();
+				curInstAmount = curSchd.getPrincipalSchd();
+				break;
+			}
+
+			if (curSchd.isRepayOnSchDate()) {
+				nextInstDate = curSchd.getSchDate();
+			}
+
+		}
+
+		finMain.setEqualRepay(false);
+		finMain.setCalculateRepay(false);
+
+		if (curInstAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			finMain.setRecalFromDate(finMain.getNextRepayDate());
+			finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
+			finMain.setMiscAmount(BigDecimal.ZERO);
+			return finScheduleData;
+		}
+
+		finScheduleData = setRpyInstructDetails(finScheduleData, curSchDate, curSchDate, curInstAmount,
+				CalculationConstants.SCHMTHD_PRI_PFT);
+
+		finScheduleData = setRpyInstructDetails(finScheduleData, nextInstDate, finMain.getMaturityDate(),
+				BigDecimal.ZERO, CalculationConstants.SCHMTHD_PRI_PFT);
+
+		finMain.setRecalFromDate(finMain.getMaturityDate());
+		finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
+		finMain.setMiscAmount(BigDecimal.ZERO);
+		return finScheduleData;
+	}
+
+	private FinScheduleData resetOrgClosingBalances(FinScheduleData finScheduleData) {
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+		for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+			fsd.setOrgEndBal(fsd.getClosingBalance());
+			fsd.setOrgPft(fsd.getProfitSchd());
+			fsd.setOrgPri(fsd.getPrincipalSchd());
+		}
+
+		return finScheduleData;
+	}
+
+	private FinScheduleData setRepayForSanctionBasedPriHld(FinScheduleData finScheduleData, BigDecimal earlyPayAmt) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+
+		Date maturityDate = fsdList.get(fsdList.size() - 1).getSchDate();
+		Date evtFromDate = finMain.getEventFromDate();
+		finMain.setEqualRepay(false);
+		finMain.setCalculateRepay(false);
+
+		finMain.setEventToDate(evtFromDate);
+		finMain.setRecalFromDate(maturityDate);
+		finMain.setRecalToDate(maturityDate);
+
+		String recalType = finMain.getRecalType();
+		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		finScheduleData = changeRepay(finScheduleData, earlyPayAmt, CalculationConstants.SCHMTHD_PRI_PFT);
+
+		finMain.setRecalType(recalType);
+		BigDecimal prvRepayAmount = BigDecimal.valueOf(-1);
+
+		boolean isRecalFromSet = false;
+		finMain.setRecalFromDate(evtFromDate);
+		finMain.setEventFromDate(maturityDate);
+		finMain.setRecalToDate(maturityDate);
+
+		//Set Original Balances to Closing Balances
+		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
+			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
+			FinanceScheduleDetail prvSchd = fsdList.get(iFsd - 1);
+
+			if (curSchd.getSchDate().compareTo(evtFromDate) <= 0) {
+				continue;
+			}
+
+			if (!isRecalFromSet) {
+				if (curSchd.isRepayOnSchDate() || iFsd == (fsdList.size())) {
+					finMain.setRecalFromDate(curSchd.getSchDate());
+				}
+			}
+
+			if (curSchd.getOrgEndBal().compareTo(prvSchd.getClosingBalance()) <= 0) {
+				curSchd.setClosingBalance(curSchd.getOrgEndBal());
+			} else {
+				curSchd.setClosingBalance(prvSchd.getClosingBalance());
+			}
+
+			curSchd.setPrincipalSchd(prvSchd.getClosingBalance().subtract(curSchd.getClosingBalance()));
+
+			if (curSchd.getPrincipalSchd().compareTo(prvRepayAmount) == 0) {
+				continue;
+			}
+
+			finScheduleData = setRpyInstructDetails(finScheduleData, curSchd.getSchDate(), maturityDate,
+					curSchd.getPrincipalSchd(), CalculationConstants.SCHMTHD_PRI_PFT);
+			prvRepayAmount = curSchd.getPrincipalSchd();
+		}
+
+		calSchdProcess(finScheduleData, false, false);
+		return finScheduleData;
+	}
+
+	private FinScheduleData setRepayForSanctionBasedAddRecal(FinScheduleData finScheduleData,
+			boolean isResetRecalFRomDate) {
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+		int sdSize = fsdList.size();
+		int adjTerms = finMain.getAdjTerms();
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+			finScheduleData = procAddTerm(finScheduleData, adjTerms, false);
+
+			if (finScheduleData.getErrorDetails().size() > 0) {
+				return finScheduleData;
+			}
+
+			finMain = finScheduleData.getFinanceMain();
+			fsdList = finScheduleData.getFinanceScheduleDetails();
+			sdSize = fsdList.size();
+			finMain.setRecalToDate(fsdList.get(sdSize - 1).getSchDate());
+		}
+
+		Date recalFromDate = finMain.getRecalFromDate();
+		BigDecimal disbursedAmount = BigDecimal.ZERO;
+		BigDecimal recalPosBalance = BigDecimal.ZERO;
+
+		if (isResetRecalFRomDate) {
+			recalFromDate = finMain.getFinStartDate();
+			for (int iFsd = 0; iFsd < sdSize; iFsd++) {
+				FinanceScheduleDetail curSchd = fsdList.get(iFsd);
+				if (curSchd.getSchDate().compareTo(appDate) > 0) {
+					break;
+				}
+
+				if (!curSchd.isRepayOnSchDate()) {
+					continue;
+				}
+
+				recalFromDate = curSchd.getSchDate();
+			}
+
+			finMain.setEventFromDate(recalFromDate);
+			finMain.setRecalFromDate(recalFromDate);
+			finMain.setEventToDate(finMain.getRecalToDate());
+		}
+
+		adjTerms = 0;
+
+		for (int iFsd = 0; iFsd < sdSize; iFsd++) {
+			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
+
+			if (curSchd.getSchDate().compareTo(recalFromDate) < 0) {
+				recalPosBalance = curSchd.getClosingBalance();
+				disbursedAmount = disbursedAmount.add(curSchd.getDisbAmount());
+				continue;
+			}
+
+			if (curSchd.isRepayOnSchDate()) {
+				adjTerms = adjTerms + 1;
+			}
+		}
+
+		//THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE TRUE FOR LOAN TYPE
+		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
+		recalPosBalance = unDisbursedAmount.add(recalPosBalance);
+
+		BigDecimal instAmt = recalPosBalance.divide(BigDecimal.valueOf(adjTerms), 0, RoundingMode.HALF_DOWN);
+		finMain.setEqualRepay(false);
+		finMain.setCalculateRepay(false);
+		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, finMain.getMaturityDate(), instAmt,
+				CalculationConstants.SCHMTHD_PRI_PFT);
+		finMain.setIndexMisc(finScheduleData.getRepayInstructions().size() - 1);
+		finMain.setMiscAmount(instAmt);
+		return finScheduleData;
+	}
+
 	private FinScheduleData getSchdMethod(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
@@ -8334,21 +8582,5 @@ public class ScheduleCalculator {
 
 	public void setSplRateDAO(SplRateDAO splRateDAO) {
 		ScheduleCalculator.splRateDAO = splRateDAO;
-	}
-
-	public static IRRFeeTypeDAO getiRRFeeTypeDAO() {
-		return iRRFeeTypeDAO;
-	}
-
-	public static void setiRRFeeTypeDAO(IRRFeeTypeDAO iRRFeeTypeDAO) {
-		ScheduleCalculator.iRRFeeTypeDAO = iRRFeeTypeDAO;
-	}
-
-	public static IRRFinanceTypeDAO getIrrFinanceTypeDAO() {
-		return irrFinanceTypeDAO;
-	}
-
-	public static void setIrrFinanceTypeDAO(IRRFinanceTypeDAO irrFinanceTypeDAO) {
-		ScheduleCalculator.irrFinanceTypeDAO = irrFinanceTypeDAO;
 	}
 }

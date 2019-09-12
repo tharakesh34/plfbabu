@@ -186,6 +186,7 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	private String bankingArrangement;
 	private String limitCondition;
 	private String externalRef;
+	private String externalRef1;
 	private int tenor;
 
 	public boolean isNew() {
@@ -807,4 +808,13 @@ public class LimitDetails implements java.io.Serializable, Entity {
 	public void setTenor(int tenor) {
 		this.tenor = tenor;
 	}
+
+	public String getExternalRef1() {
+		return externalRef1;
+	}
+
+	public void setExternalRef1(String externalRef1) {
+		this.externalRef1 = externalRef1;
+	}
+
 }

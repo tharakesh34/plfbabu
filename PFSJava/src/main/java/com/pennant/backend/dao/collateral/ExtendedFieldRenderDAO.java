@@ -40,4 +40,6 @@ public interface ExtendedFieldRenderDAO {
 	Map<String, Object> getCollateralMap(String reference, int seq, String tableName, String type);
 
 	Map<String, String> getAllExtendedFieldMap(String tableName, String type);
+
+	Map<String, String> getAllExtendedFieldMapForUpdateCpid(String tableName, String type);
 }

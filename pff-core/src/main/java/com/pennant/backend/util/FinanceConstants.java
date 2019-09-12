@@ -64,6 +64,7 @@ public class FinanceConstants {
 	public static final String PRODUCT_ODFACILITY = "ODFCLITY";
 	public static final String PRODUCT_DISCOUNT = "DISCOUNT";
 	public static final String PRODUCT_GOLD = "GOLD";
+	public static final String PRODUCT_CD = "CD";
 	public static final String PRODUCT_HYBRID_FLEXI = "HFLEXI";
 
 	// Finance Division Details
@@ -297,8 +298,7 @@ public class FinanceConstants {
 	// FIXME: PV: 31MAY17 Duplicate and different version present in calculation
 	// constants
 	/*
-	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static
-	 * final String RVW_ALL = "RVWALL";
+	 * public static final String RVW_UNPAID_INST = "RVWUPI"; public static final String RVW_ALL = "RVWALL";
 	 */
 	// Method code for Schedule Change exists or not on Maintenance
 	public static final String method_scheduleChange = "scheduleChange";

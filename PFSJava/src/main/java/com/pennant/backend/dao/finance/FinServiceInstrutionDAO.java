@@ -36,4 +36,6 @@ public interface FinServiceInstrutionDAO {
 
 	List<FinServiceInstruction> getDMFinServiceInstructions(String finReference, String type);
 
+	BigDecimal getNewRate(String finReference, Date schdate);
+
 }

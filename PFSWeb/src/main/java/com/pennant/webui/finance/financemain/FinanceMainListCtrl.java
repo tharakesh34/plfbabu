@@ -194,6 +194,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinanceDetailService financeDetailService;
 
 	private String requestSource;
+	private String productCode;
 	private String menuItemRightName = null;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private boolean fromEligibleScreen = false;
@@ -235,6 +236,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		if (arguments.containsKey("requestSource")) {
 			requestSource = (String) arguments.get("requestSource");
+		}
+
+		if (arguments.containsKey("product")) {
+			productCode = (String) arguments.get("product");
 		}
 
 		usrfinRolesList = getUserFinanceRoles(new String[] { "FINANCE", "PROMOTION" }, requestSource);
@@ -499,7 +504,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check whether the record was locked by any other user.
 		String userId = financeDetail.getFinScheduleData().getFinanceMain().getNextUserId();
 
-		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK")) && StringUtils.isNotEmpty(userId)
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))
+				&& StringUtils.isNotEmpty(userId)
 				&& !StringUtils.equals(userId, Long.toString(getUserWorkspace().getUserId()))) {
 			SecurityUser user = PennantAppUtil.getUser(Long.valueOf(userId));
 			String userName = "";
@@ -738,7 +744,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul", null, map);
+			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectCDFinanceSchemeDialog.zul", null,
+						map);
+			} else {
+				Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul", null,
+						map);
+			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -831,6 +843,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				break;
 			case FinanceConstants.PRODUCT_CONVENTIONAL:
 				zulPath.append("ConvFinanceMainDialog.zul");
+				break;
+			case FinanceConstants.PRODUCT_CD:
+				zulPath.append("CDFinanceMainDialog.zul");
 				break;
 			case FinanceConstants.PRODUCT_QARDHASSAN:
 				zulPath.append("QardHassanFinanceMainDialog.zul");
@@ -969,11 +984,23 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			this.searchObj.addFilter(
 					new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_EQUAL));
 		} else {
-			Filter[] filters = new Filter[2];
-			filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
-					Filter.OP_NOT_EQUAL);
-			filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
-			this.searchObj.addFilterOr(filters);
+
+			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
+				Filter[] filters = new Filter[2];
+				filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+						Filter.OP_NOT_EQUAL);
+				filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
+				this.searchObj.addFilterOr(filters);
+				this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL));
+			} else {
+				Filter[] filters = new Filter[2];
+				filters[0] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL,
+						Filter.OP_NOT_EQUAL);
+				filters[1] = new Filter("FinPreApprovedRef", FinanceConstants.FINSER_EVENT_PREAPPROVAL, Filter.OP_NULL);
+				this.searchObj.addFilterOr(filters);
+				this.searchObj
+						.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL));
+			}
 		}
 
 		this.searchObj.addFilter(new Filter("RcdMaintainSts", "", Filter.OP_EQUAL));

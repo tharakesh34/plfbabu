@@ -138,23 +138,14 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	public void updateStatus(Object... params) {
 		logger.debug(Literal.ENTERING);
 
-		String channel = (String) params[0];
-		long paymentId = (Long) params[1];
-		String status = (String) params[2];
-		String rejectReason = (String) params[3];
-		String tranReference = (String) params[4];
+		long paymentId = (Long) params[0];
+		String status = (String) params[1];
+		String rejectReason = (String) params[2];
+		String tranReference = (String) params[3];
 
 		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
 		finAdvancePayments.setPaymentId(paymentId);
 		finAdvancePayments = this.finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
-
-		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
-			channel = DisbursementConstants.CHANNEL_DISBURSEMENT;
-		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
-			channel = DisbursementConstants.CHANNEL_PAYMENT;
-		} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
-			channel = DisbursementConstants.CHANNEL_INSURANCE;
-		}
 
 		if (DisbursementConstants.STATUS_PAID.equals(status)) {
 			finAdvancePayments.setStatus("E");

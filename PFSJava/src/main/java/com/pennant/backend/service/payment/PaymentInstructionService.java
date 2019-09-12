@@ -51,17 +51,9 @@ import com.pennanttech.pff.core.TableType;
 
 public interface PaymentInstructionService {
 
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
 	PaymentInstruction getPaymentInstruction(long paymentInstructionId);
 
 	PaymentInstruction getApprovedPaymentInstruction(long paymentInstructionId);
-
-	AuditHeader delete(AuditHeader auditHeader);
-
-	AuditHeader doApprove(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
 
 	List<AuditDetail> setPaymentInstructionDetailsAuditData(PaymentInstruction paymentInstruction, String auditTranType,
 			String method);
@@ -74,4 +66,6 @@ public interface PaymentInstructionService {
 	PaymentInstruction getPaymentInstructionDetails(long paymentId, String type);
 
 	List<AuditDetail> processPaymentInstrDetails(List<AuditDetail> auditDetails, TableType type, String methodName);
+
+	void updateStatus(PaymentInstruction instruction, String tableType);
 }

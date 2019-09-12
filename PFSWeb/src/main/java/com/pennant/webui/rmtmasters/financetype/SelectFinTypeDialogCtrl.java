@@ -93,6 +93,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	private boolean isPromotion;
 	private boolean alwCopyOption;
 	private boolean isOverdraft;
+	private boolean consumerDurable;
 	protected ExtendedCombobox finDivision;
 
 	/**
@@ -143,6 +144,9 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (arguments.containsKey("isOverdraft")) {
 			this.isOverdraft = (boolean) arguments.get("isOverdraft");
+		}
+		if (arguments.containsKey("consumerDurable")) {
+			this.consumerDurable = (boolean) arguments.get("consumerDurable");
 		}
 
 		doLoadWorkFlow(this.financeType.isWorkflow(), this.financeType.getWorkflowId(),
@@ -246,6 +250,7 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		aruments.put("alwCopyOption", alwCopyOption);
 		aruments.put("financeTypeListCtrl", this.financeTypeListCtrl);
 		aruments.put("isOverdraft", isOverdraft);
+		aruments.put("consumerDurable", consumerDurable);
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
 
@@ -254,6 +259,9 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			if (isOverdraft) {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul",
 						null, aruments);
+			} else if (consumerDurable) {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/CDFinanceTypeDialog.zul", null,
+						aruments);
 			} else {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null,
 						aruments);
@@ -340,6 +348,10 @@ public class SelectFinTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			aFinanceType.setFinDivision(this.finDivision.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
+		}
+
+		if (consumerDurable) {
+			aFinanceType.setFinIsGenRef(true);
 		}
 
 		doRemoveValidation();

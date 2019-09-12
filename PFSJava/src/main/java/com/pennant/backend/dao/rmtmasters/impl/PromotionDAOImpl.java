@@ -45,6 +45,7 @@ package com.pennant.backend.dao.rmtmasters.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -96,10 +97,12 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
 		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
 		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
-		sql.append(" finMaxRate,active,");
+		sql.append(" finMaxRate,active, referenceID , openBalOnPV , tenor , advEMITerms , pftDaysBasis , ");
+		sql.append(" subventionRate , taxApplicable , cashBackFromDealer ,cashBackToCustomer,specialScheme,remarks,");
 
 		if (type.contains("View")) {
-			sql.append(" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
+			sql.append(
+					" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc,productCategory, ");
 		}
 
 		sql.append(
@@ -183,7 +186,7 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		StringBuilder sql = new StringBuilder();
 
 		if (promotion.getPromotionId() == Long.MIN_VALUE) {
-			promotion.setPromotionId(getNextId("SeqPromotions"));
+			promotion.setPromotionId(getNextValue("SeqPromotions"));
 			logger.debug("get NextID:" + promotion.getPromotionId());
 		}
 
@@ -192,7 +195,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append("(PromotionId, promotionCode, promotionDesc, finType, startDate, endDate, finIsDwPayRequired,");
 		sql.append(" downPayRule, actualInterestRate, finBaseRate, finSplRate, finMargin, applyRpyPricing,");
 		sql.append(" rpyPricingMethod, finMinTerm, finMaxTerm, finMinAmount, finMaxAmount, finMinRate,");
-		sql.append(" finMaxRate, active,");
+		sql.append(" finMaxRate, active, referenceID , openBalOnPV , tenor , advEMITerms , pftDaysBasis , ");
+		sql.append(" subventionRate , taxApplicable , cashBackFromDealer ,cashBackToCustomer,specialScheme,remarks,");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
@@ -200,7 +204,9 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 				" :PromotionId, :promotionCode, :promotionDesc, :finType, :startDate, :endDate, :finIsDwPayRequired,");
 		sql.append(" :downPayRule, :actualInterestRate, :finBaseRate, :finSplRate, :finMargin, :applyRpyPricing,");
 		sql.append(" :rpyPricingMethod, :finMinTerm, :finMaxTerm, :finMinAmount, :finMaxAmount, :finMinRate,");
-		sql.append(" :finMaxRate, :active,");
+		sql.append(" :finMaxRate, :active, :referenceID , :openBalOnPV , :tenor , :advEMITerms , :pftDaysBasis , ");
+		sql.append(
+				" :subventionRate , :taxApplicable , :cashBackFromDealer , :cashBackToCustomer, :specialScheme, :remarks ,");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -236,14 +242,19 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		updateSql.append("Update Promotions");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append(
-				"  Set PromotionId = :PromotionId, promotionCode=:promotionCode, promotionDesc=:promotionDesc, finType=:finType,");
+				" Set PromotionId = :PromotionId, promotionCode=:promotionCode, promotionDesc=:promotionDesc, finType=:finType,");
 		updateSql.append(" startDate=:startDate, endDate=:endDate, finIsDwPayRequired=:finIsDwPayRequired,");
 		updateSql
 				.append(" downPayRule=:downPayRule, actualInterestRate=:actualInterestRate, finBaseRate=:finBaseRate,");
 		updateSql.append(" finSplRate=:finSplRate, finMargin=:finMargin, applyRpyPricing=:applyRpyPricing,");
 		updateSql.append(" rpyPricingMethod=:rpyPricingMethod, finMinTerm=:finMinTerm, finMaxTerm=:finMaxTerm,");
 		updateSql.append(" finMinAmount=:finMinAmount, finMaxAmount=:finMaxAmount, finMinRate=:finMinRate,");
-		updateSql.append(" finMaxRate=:finMaxRate, active=:active,");
+		updateSql.append(
+				" finMaxRate=:finMaxRate, active=:active, referenceID=:referenceID , openBalOnPV=:openBalOnPV , tenor=:tenor , ");
+		updateSql.append(
+				" advEMITerms=:advEMITerms , pftDaysBasis=:pftDaysBasis , subventionRate=:subventionRate , taxApplicable=:taxApplicable , ");
+		updateSql.append(
+				" cashBackFromDealer=:cashBackFromDealer ,cashBackToCustomer=:cashBackToCustomer,specialScheme =:specialScheme,remarks =:remarks,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -383,14 +394,12 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
 		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
 		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
-		sql.append(" finMaxRate,active, SchemeScope, RePledge, Ltv, SchemeWiseLimit, Tenor, InterestType,");
-		sql.append(
-				" MinInterestPeriod, MonthlyCompounding, PenalInterestType, PenalRate, Module, ReferenceId, Remarks, ");
-		sql.append(
-				" ApplyODPenalty, ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ");
+		sql.append(" finMaxRate,active, referenceID , openBalOnPV , tenor , advEMITerms , pftDaysBasis , ");
+		sql.append(" subventionRate , taxApplicable , cashBackFromDealer ,cashBackToCustomer,specialScheme,remarks,");
 
 		if (type.contains("View")) {
-			sql.append(" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc, ");
+			sql.append(
+					" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc,productCategory, ");
 		}
 
 		sql.append(
@@ -414,4 +423,138 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 
 		return promotion;
 	}
+
+	@Override
+	public Promotion getActiveSchemeForTxn(final String promotionCode, Date valueDate) {
+		Promotion promotion = new Promotion();
+		promotion.setPromotionCode(promotionCode);
+		promotion.setStartDate(valueDate);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PromotionId, promotionCode,promotionDesc, finType, startDate,endDate,finIsDwPayRequired,");
+		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
+		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
+		sql.append(" finMaxRate,active, referenceID, openBalOnPV, tenor, advEmiTerms, pftDaysBasis, ");
+		sql.append(" subventionRate, taxApplicable, cashBackFromDealer, cashBackToCustomer,specialScheme,remarks ");
+		sql.append(" From Promotions Where PromotionCode =:PromotionCode");
+		sql.append(" AND StartDate <= :StartDate AND EndDate >= :StartDate AND Active = 1");
+
+		logger.debug("sql: " + sql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(promotion);
+		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+
+		try {
+			promotion = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.debug("Promotion Code: " + promotionCode + " NOT FOUND");
+			promotion = null;
+		}
+
+		return promotion;
+	}
+
+	@Override
+	public long getPromotionalReferenceId() {
+		return getNextValue("SeqPromotionScheme");
+	}
+
+	/**
+	 * Fetch the Record Promotion details by key field
+	 * 
+	 * @param promotionId
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotion
+	 */
+	@Override
+	public Promotion getPromotionById(long promotionId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
+		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
+		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
+		sql.append(" finMaxRate,active, referenceID , openBalOnPV , tenor , advEMITerms , pftDaysBasis , ");
+		sql.append(" subventionRate , taxApplicable , cashBackFromDealer ,cashBackToCustomer,specialScheme,remarks,");
+
+		if (type.contains("View")) {
+			sql.append(
+					" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc,productCategory, ");
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Promotions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PromotionId = :PromotionId");
+		logger.debug(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("PromotionId", promotionId);
+		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	/**
+	 * Fetch the Record Promotion details by key field
+	 * 
+	 * @param referenceId
+	 *            (long)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotion
+	 */
+	@Override
+	public Promotion getPromotionByReferenceId(long referenceId, String type) {
+		logger.debug(Literal.ENTERING);
+
+		MapSqlParameterSource source = null;
+
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT PromotionId, promotionCode,promotionDesc,finType,startDate,endDate,finIsDwPayRequired,");
+		sql.append(" downPayRule,actualInterestRate,finBaseRate,finSplRate,finMargin,applyRpyPricing,");
+		sql.append(" rpyPricingMethod,finMinTerm,finMaxTerm,finMinAmount,finMaxAmount,finMinRate,");
+		sql.append(" finMaxRate,active, referenceID , openBalOnPV , tenor , advEMITerms , pftDaysBasis , ");
+		sql.append(" subventionRate , taxApplicable , cashBackFromDealer ,cashBackToCustomer,specialScheme,remarks,");
+
+		if (type.contains("View")) {
+			sql.append(
+					" finCcy, FinTypeDesc, DownPayRuleCode, DownPayRuleDesc, RpyPricingCode, RpyPricingDesc,productCategory, ");
+		}
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Promotions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where ReferenceID = :ReferenceID");
+		logger.debug(Literal.SQL + sql.toString());
+
+		source = new MapSqlParameterSource();
+		source.addValue("ReferenceID", referenceId);
+		RowMapper<Promotion> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Promotion.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
 }

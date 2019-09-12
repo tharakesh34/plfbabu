@@ -44,28 +44,46 @@
 package com.pennant.webui.rmtmasters.promotion;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.DateConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.service.rmtmasters.PromotionService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.webui.rmtmasters.promotion.model.CDSchemeListModelItemRenderer;
 import com.pennant.webui.rmtmasters.promotion.model.PromotionListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
+import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -92,6 +110,9 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	protected Listheader listheader_FinType;
 	protected Listheader listheader_PromotionStartDate;
 	protected Listheader listheader_PromotionEndDate;
+	protected Listheader listheader_SchemeID;
+	protected Listheader listheader_Tenor;
+	protected Listheader listheader_PromotionActive;
 
 	// checkRights
 	protected Button button_PromotionList_NewPromotion;
@@ -99,11 +120,17 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 
 	protected Textbox promotionCode;
 	protected Textbox promotionDesc;
+	protected Textbox finCategory;
+	protected Longbox schemeID;
+	protected Checkbox active;
 
 	protected Listbox sortOperator_PromotionCode;
 	protected Listbox sortOperator_PromotionDesc;
+	protected Listbox sortOperator_SchemeID;
+	protected Listbox sortOperator_active;
 
 	private transient PromotionService promotionService;
+	private transient boolean consumerDurable = false;
 
 	/**
 	 * default constructor.<br>
@@ -114,7 +141,12 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 
 	@Override
 	protected void doSetProperties() {
-		super.moduleCode = "Promotion";
+		if (PennantConstants.WORFLOW_MODULE_CD.equals(StringUtils.trimToEmpty(finCategory.getValue()))) {
+			super.moduleCode = "CDScheme";
+		} else {
+			super.moduleCode = "Promotion";
+		}
+
 		super.pageRightName = "PromotionList";
 		super.tableName = "Promotions_AView";
 		super.queueTableName = "Promotions_View";
@@ -128,10 +160,19 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 	 *            An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PromotionList(Event event) throws Exception {
+		logger.debug("Entering");
+
+		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_CD)) {
+			consumerDurable = true;
+		}
 
 		// Set the page level components.
 		setPageComponents(window_PromotionList, borderLayout_PromotionList, listBoxPromotion, pagingPromotionList);
-		setItemRender(new PromotionListModelItemRenderer());
+		if (consumerDurable) {
+			setItemRender(new CDSchemeListModelItemRenderer());
+		} else {
+			setItemRender(new PromotionListModelItemRenderer());
+		}
 
 		// Register buttons and fields.
 		registerButton(button_PromotionList_NewPromotion, "button_PromotionList_NewPromotion", true);
@@ -145,9 +186,32 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		registerField("StartDate", listheader_PromotionStartDate, SortOrder.NONE);
 		registerField("EndDate", listheader_PromotionEndDate, SortOrder.NONE);
 
+		if (consumerDurable) {
+			registerField("ReferenceId", listheader_SchemeID, SortOrder.ASC, schemeID, sortOperator_SchemeID,
+					Operators.NUMERIC);
+			registerField("Active", listheader_PromotionActive, SortOrder.NONE, active, sortOperator_active,
+					Operators.BOOLEAN);
+			registerField("Tenor", listheader_Tenor, SortOrder.NONE);
+		} else {
+			registerField("Active", listheader_PromotionActive, SortOrder.NONE);
+		}
+
+		registerField("PromotionId");
+
 		// Render the page and display the data.
 		doRenderPage();
 		search();
+
+		logger.debug("Leaving");
+	}
+
+	protected void doAddFilters() {
+		super.doAddFilters();
+		if (consumerDurable) {
+			this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
+		} else {
+			this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
+		}
 	}
 
 	/**
@@ -189,6 +253,7 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		arg.put("promotion", promotion);
 		arg.put("promotionListCtrl", this);
 		arg.put("role", getRole());
+		arg.put("consumerDurable", consumerDurable);
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/SelectPromotionDialog.zul", null,
@@ -198,6 +263,100 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		}
 
 		logger.debug("Leaving");
+	}
+
+	/**
+	 * When user clicks on button "btnSearchScheme" button o
+	 * 
+	 * @param event
+	 */
+	public void onClick$btnSearchSchemeCode(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Filter[] filters = new Filter[1];
+		filters[0] = new Filter("ReferenceId", 0, Filter.OP_GREATER_THAN);
+
+		Object dataObject = ExtendedSearchListBox.show(this.window_PromotionList, "Promotion",
+				this.promotionCode.getValue(), filters, StringUtils.trimToNull(this.searchObject.getWhereClause()));
+		if (dataObject instanceof String) {
+			this.promotionCode.setValue("");
+		} else {
+			Promotion details = (Promotion) dataObject;
+			if (details != null) {
+				this.promotionCode.setValue(details.getPromotionCode());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$NewSchemeIdCreation(Event event) throws Exception {
+		logger.debug("Entering");
+		createSchemeDialog(event, true);
+		logger.debug("Leaving");
+	}
+
+	public void onClick$CopychemeIdCreation(Event event) throws Exception {
+		logger.debug("Entering");
+		createSchemeDialog(event, false);
+		logger.debug("Leaving");
+	}
+
+	private void createSchemeDialog(Event event, boolean processType)
+			throws IllegalAccessException, InvocationTargetException {
+		// Create a new entity.
+		Promotion promotion = new Promotion();
+		promotion.setNewRecord(true);
+		promotion.setWorkflowId(getWorkFlowId());
+
+		// aFinanceType.setFinScheduleOn("");
+		boolean isCopyProcess = false;
+		if (event.getData() != null) {
+			BigDecimalConverter bigDecimalConverter = new BigDecimalConverter(null);
+			ConvertUtils.register(bigDecimalConverter, BigDecimal.class);
+			DateConverter dateConverter = new DateConverter(null);
+			ConvertUtils.register(dateConverter, Date.class);
+			Promotion sourcePromotion = (Promotion) event.getData();
+			BeanUtils.copyProperties(promotion, sourcePromotion);
+			promotion.setNewRecord(true);
+			promotion.setRecordType("");
+			promotion.setRecordStatus("");
+			promotion.setPromotionId(Long.MIN_VALUE);
+			long schemeId = promotionService.getPromotionalReferenceId();
+			promotion.setReferenceID(schemeId);
+			promotion.setActive(true);
+
+			if (!processType) {
+				promotion.setPromotionCode(null);
+				promotion.setPromotionDesc(null);
+			}
+			isCopyProcess = true;
+
+			List<FinTypeFees> finTypeFeesList = sourcePromotion.getFinTypeFeesList();
+			if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+				promotion.setFinTypeFeesList(new ArrayList<FinTypeFees>());
+				for (FinTypeFees finTypeFees : finTypeFeesList) {
+					finTypeFees.setVersion(1);
+					finTypeFees.setRecordStatus("");
+					finTypeFees.setRecordType(PennantConstants.RCD_ADD);
+					promotion.getFinTypeFeesList().add(finTypeFees);
+				}
+			}
+		}
+
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("promotion", promotion);
+		arg.put("isCopyProcess", isCopyProcess);
+		arg.put("isNewScheme", processType);
+		arg.put("isCopy", !processType);
+		arg.put("alwCopyOption", this.button_PromotionList_NewPromotion.isVisible());
+		arg.put("promotionListCtrl", this);
+		arg.put("role", getRole());
+		arg.put("consumerDurable", consumerDurable);
+		try {
+			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Scheme/SchemeDialog.zul", null, arg);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -214,8 +373,15 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		Listitem selectedItem = this.listBoxPromotion.getSelectedItem();
 
 		// Get the selected entity.
-		String promotionCode = (String) selectedItem.getAttribute("promotionCode");
-		Promotion promotion = promotionService.getPromotionById(promotionCode, FinanceConstants.MODULEID_PROMOTION);
+		Promotion promotionObj = (Promotion) selectedItem.getAttribute("promotion");
+		Promotion promotion = null;
+		if (consumerDurable) {
+			promotion = promotionService.getPromotionByPromotionId(promotionObj.getPromotionId(),
+					FinanceConstants.MODULEID_PROMOTION);
+		} else {
+			promotion = promotionService.getPromotionById(promotionObj.getPromotionCode(),
+					FinanceConstants.MODULEID_PROMOTION);
+		}
 
 		if (promotion == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -251,11 +417,21 @@ public class PromotionListCtrl extends GFCBaseListCtrl<Promotion> implements Ser
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("promotion", promotion);
 		arg.put("promotionListCtrl", this);
+		arg.put("consumerDurable", consumerDurable);
+		arg.put("alwCopyOption", this.button_PromotionList_NewPromotion.isVisible());
 
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, arg);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
+		if (consumerDurable) {
+			try {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/CDScheme/CDSchemeDialog.zul", null, arg);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			try {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, arg);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
 		}
 
 		logger.debug("Leaving");

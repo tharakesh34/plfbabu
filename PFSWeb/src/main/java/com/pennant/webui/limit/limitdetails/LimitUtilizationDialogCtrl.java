@@ -241,6 +241,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 				map.put("limitReference", limitReferences);
 				Executions.createComponents("/WEB-INF/pages/Limit/LimitDetails/LimitCustomerReferencesDialog.zul", null,
 						map);
+			} else {
+				MessageUtil.showMessage("Limit reference details is not available");
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);

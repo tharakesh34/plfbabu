@@ -181,6 +181,18 @@ public class FinTypeFeesServiceImpl extends GenericService<FinTypeFees> implemen
 	}
 
 	/**
+	 * getFinTypeFeessById fetch the details by using FinTypeFeessDAO's getFinTypeFeesByRef method.
+	 * 
+	 * @param reference
+	 *            (long)
+	 * @return FinTypeFeess
+	 */
+	@Override
+	public List<FinTypeFees> getFinTypeFeesByRef(long reference, int moduleId) {
+		return getFinTypeFeesDAO().getFinTypeFeesByRef(reference, moduleId, "_View");
+	}
+
+	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
 	 * following actions a) DELETE Delete the record from the main table by using getFinTypeFeesDAO().delete with

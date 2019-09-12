@@ -133,6 +133,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 	private transient boolean isPromotion = false;
 	private transient boolean isOverdraft = false;
+	private transient boolean consumerDurables = false;
 	private transient FinanceTypeService financeTypeService;
 
 	/**
@@ -160,6 +161,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.searchObject.addFilterEqual("Product", "");
 			if (isOverdraft) {
 				this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
+			} else if (consumerDurables) {
+				this.searchObject.addFilterEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
 			} else {
 				//FIXME: Changed by Pradeep. Not sure about the previous condition correctness. Remove the comment after testing.
 				if (ImplementationConstants.IMPLEMENTATION_CONVENTIONAL) {
@@ -170,6 +173,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 				} else {
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_ODFACILITY);
 					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CONVENTIONAL);
+					this.searchObject.addFilterNotEqual("ProductCategory", FinanceConstants.PRODUCT_CD);
 				}
 			}
 		}
@@ -177,8 +181,13 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 	@Override
 	protected void doPrintResults() {
-		String code = this.finCategory.getValue().charAt(0) + this.finCategory.getValue().substring(1).toLowerCase()
-				+ "Type";
+		String code = null;
+		if (consumerDurables) {
+			code = "CDType";
+		} else {
+			code = this.finCategory.getValue().charAt(0) + this.finCategory.getValue().substring(1).toLowerCase()
+					+ "Type";
+		}
 		try {
 			new PTListReportUtils(code, searchObject, -1);
 		} catch (InterruptedException e) {
@@ -204,8 +213,11 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_OVERDRAFT)) {
 			isOverdraft = true;
 		}
+		if (StringUtils.trimToEmpty(finCategory.getValue()).equals(PennantConstants.WORFLOW_MODULE_CD)) {
+			consumerDurables = true;
+		}
 
-		setItemRender(new FinanceTypeListModelItemRenderer(isOverdraft));
+		setItemRender(new FinanceTypeListModelItemRenderer(isOverdraft || consumerDurables));
 		setComparator(new FinanceTypeComparator());
 
 		// Register buttons and fields.
@@ -217,6 +229,8 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		String ecldSchdmethods = ",NO_PAY,GRCNDPAY,PFTCAP,";
 		if (isOverdraft) {
 			ecldSchdmethods = ",EQUAL,GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,";
+		} else if (consumerDurables) {
+			ecldSchdmethods = ",GRCNDPAY,MAN_PRI,MANUAL,PRI,PRI_PFT,NO_PAY,PFTCAP,";
 		}
 
 		fillComboBox(this.finSchdMthd, "", PennantStaticListUtil.getScheduleMethods(), ecldSchdmethods);
@@ -231,7 +245,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		/* registerField("finAcType", listheader_FinAcType, SortOrder.NONE); */
 		registerField("finSchdMthd", listheader_SchdMthd, SortOrder.NONE, finSchdMthd, sortOperator_finSchdMthd,
 				Operators.STRING);
-		if (!isOverdraft) {
+		if (!isOverdraft && !consumerDurables) {
 			registerField("fInIsAlwGrace", listheader_AlwGrace, SortOrder.NONE, finIsAlwGrace,
 					sortOperator_finIsAlwGrace, Operators.BOOLEAN);
 		}
@@ -379,6 +393,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		map.put("alwCopyOption", this.button_FinanceTypeList_NewFinanceType.isVisible());
 		map.put("financeTypeListCtrl", this);
 		map.put("isOverdraft", isOverdraft);
+		map.put("consumerDurable", consumerDurables);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -451,12 +466,16 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 		map.put("alwCopyOption", this.button_FinanceTypeList_NewFinanceType.isVisible());
 		map.put("financeTypeListCtrl", this);
 		map.put("isOverdraft", isOverdraft);
+		map.put("consumerDurable", consumerDurables);
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
 			if (isOverdraft) {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeDialog.zul",
 						null, map);
+			} else if (consumerDurables) {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/CDFinanceTypeDialog.zul", null,
+						map);
 			} else {
 				Executions.createComponents("/WEB-INF/pages/SolutionFactory/FinanceType/FinanceTypeDialog.zul", null,
 						map);

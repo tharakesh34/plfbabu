@@ -329,6 +329,10 @@
 				rightName="menuItem_SolutionFactory_FinanceType" />
 			<menuItem id="menu_Item_OverDraftFinanceType" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/OverdraftFinanceTypeList.zul"
 				rightName="menuItem_SolutionFactory_OverdraftFinanceType" />
+			<menuItem id="menu_Item_CDFinanceType" zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/CDFinanceTypeList.zul"
+				rightName="menuItem_SolutionFactory_CDFinanceType" />
+			<menuItem id="menu_Item_CDSchemes" zulNavigation="/WEB-INF/pages/SolutionFactory/CDScheme/CDSchemeList.zul" 
+				rightName="menuItem_SolutionFactory_CDScheme"/>
 			<menuItem id="menu_Item_FinanceWorkFlow"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=FINANCE&amp;eventAction=Origination"
 				rightName="menuItem_SolutionFactory_FinanceWorkFlow" />
@@ -472,6 +476,8 @@
 	<!-- Loan Origination -->
 	<menu id="menu_Category_Finance">
 		<menuItem id="menu_Item_NewFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination"
+			rightName="menuItem_Finance_FinanceMain" />
+		<menuItem id="menu_Item_NewCDFinanceMain" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination&amp;product=CD"
 			rightName="menuItem_Finance_FinanceMain" />
 		<menuItem id="menu_Item_FinanceDeviations" zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul"
 			rightName="menuItem_Finance_FinanceDeviations" />

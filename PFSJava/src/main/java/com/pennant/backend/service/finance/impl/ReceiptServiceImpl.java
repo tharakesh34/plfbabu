@@ -1609,17 +1609,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			scheduleData.setFinanceScheduleDetails(
 					financeScheduleDetailDAO.getFinScheduleDetails(rch.getReference(), "", false));
 		}
+
 		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 			int size = scheduleData.getFinanceScheduleDetails().size();
 			for (int i = size - 1; i >= 0; i--) {
 				FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
-				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
-						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-					financeMain.setMaturityDate(curSchd.getSchDate());
-					break;
-				} else if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
-						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
-					scheduleData.getFinanceScheduleDetails().remove(i);
+				if (!financeMain.isSanBsdSchdle()) {
+					if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+							&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+						financeMain.setMaturityDate(curSchd.getSchDate());
+						break;
+					} else if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+							&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+						scheduleData.getFinanceScheduleDetails().remove(i);
+					}
 				}
 			}
 		}
@@ -3910,7 +3913,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
 					parm1 = DateUtility.formatToLongDate(appDate);
 					parm2 = String.valueOf(paramDays);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0009", parm0, parm1, parm2);
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1, parm2);
 					return receiptData;
 				}
 			}

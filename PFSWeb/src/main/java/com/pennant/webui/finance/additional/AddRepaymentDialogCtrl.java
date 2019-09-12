@@ -68,6 +68,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -182,6 +183,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			} else {
 				setFinanceMainDialogCtrl(null);
 			}
+
+			boolean applySanctionCheck = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
+			getFinScheduleData().getFinanceMain().setApplySanctionCheck(applySanctionCheck);
 
 			// set Field Properties
 			doSetFieldProperties();
@@ -360,12 +364,15 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getRepayAmount(), format));
 			}
 		}
+
 		String excludeFields = ",EQUAL,PRI_PFT,PRI,POSINT,";
 		String nonGrcExclFields = ",GRCNDPAY,PFTCAP,";
+
 		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				aFinSchData.getFinanceMain().getProductCategory())) {
 			nonGrcExclFields = ",GRCNDPAY,PFTCAP,POSINT,";
 		}
+
 		if (getFinanceScheduleDetail() != null) {
 			if (getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE)
 					|| getFinanceScheduleDetail().getSpecifier().equals(CalculationConstants.SCH_SPECIFIER_GRACE_END)) {
@@ -390,8 +397,14 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		//Check if schedule header is null or not and set the recal type fields.
-		fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-				PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+		if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+					PennantStaticListUtil.getSchCalCodes(),
+					",TILLMDT,TILLDATE,ADDRECAL,ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+		} else {
+			fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+					PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+		}
 
 		logger.debug("Leaving");
 	}
@@ -476,6 +489,9 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void fillSchToDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
 			Date fillAfter, boolean includeFromDate) {
 		logger.debug("Entering");
+
+		boolean isSnctBsdSchd = getFinScheduleData().getFinanceMain().isSanBsdSchdle();
+
 		if ("cbRepayToDate".equals(dateCombobox.getId())) {
 			this.cbRepayToDate.getItems().clear();
 		} else if ("cbTillDate".equals(dateCombobox.getId())) {
@@ -510,7 +526,7 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				// If maturity Terms, not include in list
-				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+				if (!isSnctBsdSchd && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 
@@ -964,7 +980,11 @@ public class AddRepaymentDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		if (this.cbRepayToDate.getSelectedIndex() > 0) {
 
-			if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
+			if (getFinScheduleData().getFinanceMain().isApplySanctionCheck()) {
+				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
+						PennantStaticListUtil.getSchCalCodes(),
+						",TILLMDT,TILLDATE,ADDRECAL,ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");
+			} else if (repayToDate.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0
 					|| this.cbRepayToDate.getSelectedIndex() != (totalCount - 1)) {
 				fillComboBox(this.cbReCalType, getFinScheduleData().getFinanceMain().getRecalType(),
 						PennantStaticListUtil.getSchCalCodes(), ",ADDLAST,ADJTERMS,CURPRD,ADDTERM,STEPPOS,");

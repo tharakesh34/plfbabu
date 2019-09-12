@@ -73,4 +73,6 @@ public interface FinTypeFeesService {
 
 	List<AuditDetail> delete(List<FinTypeFees> finTypeFeesList, String tableType, String auditTranType, String finType,
 			int moduleId);
+
+	List<FinTypeFees> getFinTypeFeesByRef(long referenceId, int moduleId);
 }

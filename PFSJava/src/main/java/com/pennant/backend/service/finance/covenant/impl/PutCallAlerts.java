@@ -45,7 +45,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 	public void sendAlerts() {
 		logger.debug(Literal.ENTERING);
-		
+
 		loadAppDate();
 
 		List<FinOption> finOptions = finOptionDAO.getPutCallAlertList();
@@ -66,13 +66,13 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 				sendAlert(finOption, financeDetail);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void sendAlert(FinOption finOption, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Date currentOptionDate = finOption.getCurrentOptionDate();
 
 		int alertDays = finOption.getAlertDays();
@@ -97,7 +97,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);
 
-		if (appDate.compareTo(userFrequencyDate) < 0 || appDate.compareTo(custUserFrequencyDate) < 0) {
+		if (appDate.compareTo(userFrequencyDate) < 0) {
 			logger.debug("App Date" + appDate);
 			logger.debug("UserFrequency Date" + userFrequencyDate);
 			logger.debug("custUserFrequency Date" + custUserFrequencyDate);
@@ -110,7 +110,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			logger.debug("lastAlertSentOn" + lastAlertSentOn);
 			logger.debug("App Date" + appDate);
 			logger.debug("alertDays" + alertDays);
-		
+
 			return;
 		}
 
@@ -221,7 +221,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			}
 			// Notification for Asset Review to User - End
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

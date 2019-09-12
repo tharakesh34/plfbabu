@@ -177,6 +177,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 	private String channel;
 	private String entityCode;
 	private long providerId;
+	private boolean paymentProcReq;
+	private int tempSeq = 0;
+	private String tempReference = null;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -218,6 +221,9 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("providerId");
 		excludeFields.add("printingLocDesc");
 		excludeFields.add("financeDisbursements");
+		excludeFields.add("paymentProcReq");
+		excludeFields.add("tempSeq");
+		excludeFields.add("tempReference");
 		return excludeFields;
 	}
 
@@ -715,6 +721,30 @@ public class FinAdvancePayments extends AbstractWorkflowEntity implements Entity
 
 	public void setFinanceDisbursements(List<FinanceDisbursement> financeDisbursements) {
 		this.financeDisbursements = financeDisbursements;
+	}
+
+	public boolean isPaymentProcReq() {
+		return paymentProcReq;
+	}
+
+	public void setPaymentProcReq(boolean paymentProcReq) {
+		this.paymentProcReq = paymentProcReq;
+	}
+
+	public int getTempSeq() {
+		return tempSeq;
+	}
+
+	public void setTempSeq(int tempSeq) {
+		this.tempSeq = tempSeq;
+	}
+
+	public String getTempReference() {
+		return tempReference;
+	}
+
+	public void setTempReference(String tempReference) {
+		this.tempReference = tempReference;
 	}
 
 }

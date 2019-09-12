@@ -1374,7 +1374,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	private AEEvent prepareAccountingData(FinanceDetail financeDetail, AEEvent aeEvent,
 			FinanceProfitDetail profitDetail, Date valueDate) {
 
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 		if (valueDate == null) {
 			valueDate = curBDay;
 		}
@@ -1400,13 +1400,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		aeEvent = AEAmounts.procAEAmounts(finMain, finSchdDetails, profitDetail, eventCode, valueDate, curBDay);
-		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
-					FinanceConstants.MODULEID_PROMOTION));
-		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
-					FinanceConstants.MODULEID_FINTYPE));
-		}
+
+		//TODO: PV: 28AUG19. No Separate Accounting COnfiuration Required for Promotions
+		/*
+		 * if (StringUtils.isBlank(finMain.getPromotionCode()) || finMain.getPromotionSeqId() == 0) {
+		 * aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+		 * FinanceConstants.MODULEID_FINTYPE)); } else {
+		 * aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(), eventCode,
+		 * FinanceConstants.MODULEID_PROMOTION)); }
+		 */
+
+		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getFinType(), eventCode,
+				FinanceConstants.MODULEID_FINTYPE));
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		accrualService.calProfitDetails(finMain, finSchdDetails, newProfitDetail, curBDay);
@@ -1437,7 +1442,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setModuleDefiner(StringUtils.isEmpty(financeDetail.getModuleDefiner())
 				? FinanceConstants.FINSER_EVENT_ORG : financeDetail.getModuleDefiner());
 		if (financeDetail.getModuleDefiner().equals(FinanceConstants.FINSER_EVENT_ORG)) {
-			amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+			//FIXME: PV. 18AUG19. Some confusion. As downpayment was not deducted from current asset value earlier addiing now gives double impact. 
+			//amountCodes.setDisburse(finMain.getFinCurrAssetValue().add(finMain.getDownPayment()));
+			amountCodes.setDisburse(finMain.getFinCurrAssetValue());
 		} else {
 			amountCodes.setDisburse(newProfitDetail.getTotalpriSchd().subtract(totalPriSchdOld));
 		}
@@ -1701,7 +1708,34 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		 * financeMain.getFinBranch());
 		 */
 
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+		Map<String, Object> gstExecutionMap = null;
+
+		if (PennantConstants.FINSOURCE_ID_API.equals(financeMain.getFinSourceID()) && auditHeader.getApiHeader() != null
+				&& FinanceConstants.FINSER_EVENT_ORG.equals(financeDetail.getModuleDefiner())) {
+			String custDftBranch = null;
+			String highPriorityState = null;
+			String highPriorityCountry = null;
+			if (financeDetail.getCustomerDetails() != null) {
+				custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
+
+				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
+				if (CollectionUtils.isNotEmpty(addressList)) {
+					for (CustomerAddres customerAddres : addressList) {
+						if (customerAddres.getCustAddrPriority() == Integer
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+							highPriorityState = customerAddres.getCustAddrProvince();
+							highPriorityCountry = customerAddres.getCustAddrCountry();
+							break;
+						}
+					}
+				}
+			}
+
+			gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinBranch(), custDftBranch, highPriorityState,
+					highPriorityCountry, financeDetail.getFinanceTaxDetail());
+		} else {
+			gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+		}
 
 		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
 		// On Origination processing based on Service instructions is not required

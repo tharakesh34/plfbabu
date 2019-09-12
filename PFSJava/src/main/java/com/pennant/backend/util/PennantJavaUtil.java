@@ -1500,6 +1500,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("Promotions", Promotion.class, new String[] { "Promotions", "Promotions_AView" },
 						masterWF, new String[] { "PromotionCode", "PromotionDesc" }, null, 300));
 
+		ModuleUtil.register("CDScheme",
+				new ModuleMapping("Promotions", Promotion.class, new String[] { "Promotions", "Promotions_AView" },
+						masterWF, new String[] { "PromotionCode", "PromotionDesc", "ReferenceID" }, null, 300));
+
 		ModuleUtil.register("ProductDeviation",
 				new ModuleMapping("ProductDeviation", ProductDeviation.class,
 						new String[] { "ProductDeviations", "ProductDeviations_AView" }, null,

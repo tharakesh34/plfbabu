@@ -3,7 +3,8 @@ package com.pennanttech.external.services;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.sql.Timestamp;
@@ -128,26 +129,26 @@ public abstract class JsonService<T> {
 
 			logDetail.setReference(serviceDetail.getReference());
 			logDetail.setServiceName(serviceDetail.getServiceName());
-			logDetail.setEndPoint(serviceDetail.getServiceUrl());
+			logDetail.setEndPoint(url);
 			logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
-			response = getTemplate().exchange(url, method, httpEntity, String.class);
-
+			response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
 			serviceDetail.setResponseString(response.getBody());
 		} catch (ResourceAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-			if (e.getCause() != null && e.getCause() instanceof ConnectException) {
-				errorCode = "8900";
-				errorDesc = e.getMessage();
-				status = InterfaceConstants.STATUS_FAILED;
-				throw new InterfaceException(errorCode, "Connection Expection", e);
-			} else {
-				errorCode = "8901";
-				errorDesc = e.getMessage();
-				status = InterfaceConstants.STATUS_FAILED;
-				throw new InterfaceException(errorCode, "Timeout Expection", e);
-			}
+
+			errorCode = "8900";
+			errorDesc = e.getMessage();
+			status = InterfaceConstants.STATUS_FAILED;
+			throw new InterfaceException(errorCode, "Connection Expection", e);
+
+			/*
+			 * if (e.getCause() != null && e.getCause() instanceof ConnectException) { errorCode = "8900"; errorDesc =
+			 * e.getMessage(); status = InterfaceConstants.STATUS_FAILED; throw new InterfaceException(errorCode,
+			 * "Connection Expection", e); } else { errorCode = "8901"; errorDesc = e.getMessage(); status =
+			 * InterfaceConstants.STATUS_FAILED; throw new InterfaceException(errorCode, "Timeout Expection", e); }
+			 */
 		} catch (Exception e) {
 			errorCode = "8904";
 			errorDesc = e.getMessage();
@@ -215,12 +216,20 @@ public abstract class JsonService<T> {
 		return sw.toString();
 	}
 
-	private RestTemplate getTemplate() {
+	private RestTemplate getTemplate(JsonServiceDetail jsonServiceDetail) {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
 		SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) restTemplate.getRequestFactory();
 		rf.setReadTimeout(readTimeout);
 		rf.setConnectTimeout(connTimeout);
+
+		if (jsonServiceDetail.isProxyRequired() && StringUtils.isNotEmpty(jsonServiceDetail.getProxyUrl())
+				&& jsonServiceDetail.getProxyPort() != 0) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP,
+					new InetSocketAddress(jsonServiceDetail.getProxyUrl(), jsonServiceDetail.getProxyPort()));
+			rf.setProxy(proxy);
+		}
+
 		return restTemplate;
 	}
 

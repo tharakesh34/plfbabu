@@ -82,6 +82,7 @@ import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -286,7 +287,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering");
 
 		if (getFinanceScheduleDetail() != null) {
-			this.disbAmount.setValue(PennantAppUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(),
+			this.disbAmount.setValue(PennantApplicationUtil.formateAmount(getFinanceScheduleDetail().getDisbAmount(),
 					CurrencyUtil.getFormat(aFinSchData.getFinanceMain().getFinCcy())));
 			this.fromDate.setValue(getFinanceScheduleDetail().getSchDate());
 		}
@@ -298,7 +299,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Future Disbursements not allowed at any case, because with Future Disbursements 
 		// there is an issue with SOA, Disbursement Uploads, Fore Closure Report..etc
 		if (!isWIF) {
-			this.fromDate.setValue(DateUtility.getAppDate());
+			this.fromDate.setValue(SysParamUtil.getAppDate());
 			this.fromDate.setDisabled(true);
 		}
 
@@ -335,6 +336,12 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} else {
 
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+			boolean isApplySanctionBasedSchd = SanctionBasedSchedule.isApplySanctionBasedSchedule(aFinSchData);
+
+			if (isApplySanctionBasedSchd) {
+				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,TILLDATE,";
+			}
+
 			boolean isStepPOS = false;
 			if (aFinSchData.getFinanceMain().isStepFinance() && aFinSchData.getFinanceMain().isAllowGrcPeriod()
 					&& StringUtils.equals(aFinSchData.getFinanceMain().getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
@@ -344,6 +351,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									CalculationConstants.SCHMTHD_PRI_PFT))) {
 				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,";
 				isStepPOS = true;
+			}
+
+			if (aFinSchData.getFinanceMain().isSanBsdSchdle()) {
+				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
 			}
 
 			if (isStepPOS) {
@@ -426,7 +437,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			// Closing Balance Maturity Date
 			int sdSize = aFinScheduleData.getFinanceScheduleDetails().size();
-			if (!isOverdraft && !isDevFinance) {
+			if (!isOverdraft && !isDevFinance && !finMain.isSanBsdSchdle()) {
 				for (int i = sdSize - 1; i > 0; i--) {
 					FinanceScheduleDetail curSchd = aFinScheduleData.getFinanceScheduleDetails().get(i);
 					if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) != 0) {
@@ -1192,11 +1203,18 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.cbSchdMthd.setDisabled(true);
 		}
 
+		boolean isApplySanctionBasedSchd = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
+
 		// STEP POS Recalculation Type Addition Check
 		if (this.fromDate.getValue() != null && DateUtility.compare(this.fromDate.getValue(),
 				getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) <= 0) {
 
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+
+			if (isApplySanctionBasedSchd) {
+				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,TILLDATE,";
+			}
+
 			boolean isStepPOS = false;
 			if (getFinScheduleData().getFinanceMain().isStepFinance()
 					&& getFinScheduleData().getFinanceMain().isAllowGrcPeriod()
@@ -1210,6 +1228,10 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				isStepPOS = true;
 			}
 
+			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
+				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
+			}
+
 			if (isStepPOS) {
 				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_STEPPOS,
 						PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
@@ -1220,11 +1242,22 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		} else {
 			String exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,";
+
+			if (isApplySanctionBasedSchd) {
+				exclRecalTypes = ",CURPRD,ADJTERMS,ADDLAST,STEPPOS,TILLDATE,";
+			}
+
+			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
+				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
+			}
 			String value = getFinScheduleData().getFinanceMain().getRecalType();
 			if (StringUtils.trimToNull(value) == null && PennantStaticListUtil.getDisbCalCodes().size() == 1) {
 				value = PennantStaticListUtil.getDisbCalCodes().get(0).getValue();
 			}
 
+			if (getFinScheduleData().getFinanceMain().isSanBsdSchdle()) {
+				exclRecalTypes = exclRecalTypes.concat("ADDRECAL,");
+			}
 			fillComboBox(this.cbReCalType, value, PennantStaticListUtil.getDisbCalCodes(), exclRecalTypes);
 		}
 
@@ -1304,8 +1337,11 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if (DateUtility.compare(curSchd.getSchDate(), minValidDate) < 0) {
 						continue;
 					}
-				} // If maturity Terms, not include in list
-				if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+				}
+
+				FinanceMain financeMain = scheduleData.getFinanceMain();
+				// If maturity Terms, not include in list
+				if (!financeMain.isSanBsdSchdle() && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) <= 0) {
 					continue;
 				}
 

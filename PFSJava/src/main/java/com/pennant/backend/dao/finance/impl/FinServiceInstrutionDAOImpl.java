@@ -379,6 +379,30 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
+	public BigDecimal getNewRate(String finReference, Date schdate) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("select calculatedrate from finscheduledetails_Temp where Finreference = :FinReference ");
+		sql.append("and Schdate = (select max(schdate) from finscheduledetails_Temp ");
+		sql.append("where Finreference = :FinReference and Schdate <= :Schdate) ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("FinReference", finReference);
+		paramSource.addValue("Schdate", schdate);
+
+		BigDecimal result = BigDecimal.ZERO;
+		try {
+			result = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, BigDecimal.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		logger.debug(Literal.LEAVING);
+		return result;
+	}
+
+	@Override
 	public void saveLMSServiceLOGList(List<LMSServiceLog> lmsServiceLog) {
 		logger.debug(Literal.ENTERING);
 

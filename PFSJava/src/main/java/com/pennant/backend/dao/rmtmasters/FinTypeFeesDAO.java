@@ -82,4 +82,9 @@ public interface FinTypeFeesDAO {
 
 	int getFinTypeFeesByRuleCode(String ruleCode, String type);
 
+	List<FinTypeFees> getFinTypeFeesByRef(long reference, int moduleId, String type);
+
+	List<FinTypeFees> getSchemeFeesList(long referenceId, String finEvent, String type, boolean origination,
+			int moduleId);
+
 }

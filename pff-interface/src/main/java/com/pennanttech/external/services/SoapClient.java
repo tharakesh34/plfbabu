@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
@@ -62,9 +63,6 @@ public abstract class SoapClient<T> {
 	protected SoapServiceDetail processMessage(SoapServiceDetail serviceDetail) {
 		InterfaceLogDetail logDetail = null;
 		String url = App.getProperty(serviceDetail.getServiceUrl());
-		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
-			url = StringUtils.trimToEmpty(url) + serviceDetail.getServiceEndPoint();
-		}
 
 		if (StringUtils.isEmpty(url)) {
 			throw new InterfaceException("8905", "Invalid URL Configuration");
@@ -117,7 +115,7 @@ public abstract class SoapClient<T> {
 		InterfaceLogDetail logDetail = new InterfaceLogDetail();
 		logDetail.setReference(serviceDetail.getReference());
 		logDetail.setServiceName(serviceDetail.getServiceName());
-		logDetail.setEndPoint(url);
+		logDetail.setEndPoint(url + ";" + serviceDetail.getServiceEndPoint());
 		logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
 		logDetail.setReqSentOn(new Timestamp(System.currentTimeMillis()));
 
@@ -139,6 +137,10 @@ public abstract class SoapClient<T> {
 			Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
 			marshaller.marshal(serviceDetail.getRequestData(), body);
+
+			MimeHeaders headers = message.getMimeHeaders();
+			headers.addHeader("SOAPAction", serviceDetail.getServiceEndPoint());
+
 			return message;
 		} catch (Exception e) {
 			logger.error("Error", e);

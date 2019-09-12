@@ -47,15 +47,19 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.payment.PaymentInstructionService;
+import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -71,6 +75,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentInstructionDAO paymentInstructionDAO;
+	private PaymentsProcessService paymentsProcessService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -147,35 +152,6 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * PaymentInstructions by using PaymentInstructionsDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtPaymentInstructions by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-	@Override
-	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
-
-		auditHeader = businessValidation(auditHeader, "delete");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
-
-		PaymentInstruction paymentInstruction = (PaymentInstruction) auditHeader.getAuditDetail().getModelData();
-		getPaymentInstructionDAO().delete(paymentInstruction, TableType.MAIN_TAB);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		logger.info(Literal.LEAVING);
-		return auditHeader;
-	}
-
-	/**
 	 * getPaymentInstructions fetch the details by using PaymentInstructionsDAO's getPaymentInstructionsById method.
 	 * 
 	 * @param paymentInstructionId
@@ -199,105 +175,39 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		return getPaymentInstructionDAO().getPaymentInstruction(paymentInstructionId, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getPaymentInstructionDAO().delete with
-	 * parameters paymentInstruction,"" b) NEW Add new record in to main table by using getPaymentInstructionDAO().save
-	 * with parameters paymentInstruction,"" c) EDIT Update record in the main table by using
-	 * getPaymentInstructionDAO().update with parameters paymentInstruction,"" 3) Delete the record from the workFlow
-	 * table by using getPaymentInstructionDAO().delete with parameters paymentInstruction,"_Temp" 4) Audit the record
-	 * in to AuditHeader and AdtPaymentInstructions by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
-	 * the record in to AuditHeader and AdtPaymentInstructions by using auditHeaderDAO.addAudit(auditHeader) based on
-	 * the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
+	/*
+	 * Processing the CMS payments
 	 */
-	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
+	private void processPayments(PaymentInstruction paymentInstruction) {
 
-		String tranType = "";
-		auditHeader = businessValidation(auditHeader, "doApprove");
+		List<FinAdvancePayments> advancePaymentList = new ArrayList<>();
 
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
-		PaymentInstruction paymentInstruction = new PaymentInstruction();
-		BeanUtils.copyProperties((PaymentInstruction) auditHeader.getAuditDetail().getModelData(), paymentInstruction);
+		FinanceDetail financeDetail = new FinanceDetail();
+		financeDetail.setFinScheduleData(new FinScheduleData());
+		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain());
+		financeDetail.getFinScheduleData().getFinanceMain().setFinReference(paymentInstruction.getFinReference());
 
-		getPaymentInstructionDAO().delete(paymentInstruction, TableType.TEMP_TAB);
+		FinAdvancePayments advancePayments = new FinAdvancePayments();
+		advancePayments.setPaymentId(paymentInstruction.getPaymentInstructionId());
+		advancePayments.setFinReference(paymentInstruction.getFinReference());
+		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
+		advancePayments.setAmtToBeReleased(paymentInstruction.getPaymentAmount());
+		advancePayments.setLLDate(paymentInstruction.getPostDate());
+		advancePayments.setPayableLoc(paymentInstruction.getPayableLoc());
+		advancePayments.setPrintingLoc(paymentInstruction.getPrintingLoc());
+		advancePayments.setBankName(paymentInstruction.getBankName());
+		advancePayments.setBranchDesc(paymentInstruction.getBranchDesc());
+		advancePayments.setBeneficiaryAccNo(paymentInstruction.getAccountNo());
+		advancePayments.setPhoneCountryCode(paymentInstruction.getPhoneCountryCode());
+		advancePayments.setPhoneNumber(paymentInstruction.getPhoneNumber());
+		advancePayments.setStatus(paymentInstruction.getStatus());
+		advancePayments.setRemarks(paymentInstruction.getRemarks());
+		advancePayments.setPaymentType(paymentInstruction.getPaymentType());
+		advancePayments.setInputDate(paymentInstruction.getPostDate());
+		advancePaymentList.add(advancePayments);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentInstruction.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					paymentInstructionDAO.getPaymentInstruction(paymentInstruction.getPaymentInstructionId(), ""));
-		}
-
-		if (paymentInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-			tranType = PennantConstants.TRAN_DEL;
-			getPaymentInstructionDAO().delete(paymentInstruction, TableType.MAIN_TAB);
-		} else {
-			paymentInstruction.setRoleCode("");
-			paymentInstruction.setNextRoleCode("");
-			paymentInstruction.setTaskId("");
-			paymentInstruction.setNextTaskId("");
-			paymentInstruction.setWorkflowId(0);
-
-			if (paymentInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_ADD;
-				paymentInstruction.setRecordType("");
-				getPaymentInstructionDAO().save(paymentInstruction, TableType.MAIN_TAB);
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-				paymentInstruction.setRecordType("");
-				getPaymentInstructionDAO().update(paymentInstruction, TableType.MAIN_TAB);
-			}
-		}
-
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		auditHeader.setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(paymentInstruction);
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		logger.info(Literal.LEAVING);
-		return auditHeader;
-
-	}
-
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPaymentInstructionDAO().delete with parameters paymentInstruction,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtPaymentInstructions by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.info(Literal.ENTERING);
-
-		auditHeader = businessValidation(auditHeader, "doApprove");
-		if (!auditHeader.isNextProcess()) {
-			logger.info(Literal.LEAVING);
-			return auditHeader;
-		}
-		PaymentInstruction paymentInstruction = (PaymentInstruction) auditHeader.getAuditDetail().getModelData();
-
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPaymentInstructionDAO().delete(paymentInstruction, TableType.TEMP_TAB);
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		logger.info(Literal.LEAVING);
-		return auditHeader;
+		financeDetail.setAdvancePaymentsList(advancePaymentList);
+		this.paymentsProcessService.process(financeDetail, DisbursementConstants.CHANNEL_PAYMENT);
 	}
 
 	/**
@@ -445,6 +355,9 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 				paymentInstruction.setStatus(DisbursementConstants.STATUS_APPROVED);
 			}
 			if (saveRecord) {
+				if (tableType.equals(TableType.MAIN_TAB)) {
+					paymentInstruction.setPaymentProcReq(true);
+				}
 				getPaymentInstructionDAO().save(paymentInstruction, tableType);
 			}
 			if (updateRecord) {
@@ -465,6 +378,10 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 				}
 			}
 			auditDetails.get(i).setModelData(paymentInstruction);
+
+			if (paymentInstruction.isPaymentProcReq()) {
+				processPayments(paymentInstruction);
+			}
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -488,7 +405,17 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	@Override
+	public void updateStatus(PaymentInstruction instruction, String tableType) {
+		getPaymentInstructionDAO().updateStatus(instruction, tableType);
+	}
+
+	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
 	}
+
+	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
+		this.paymentsProcessService = paymentsProcessService;
+	}
+
 }

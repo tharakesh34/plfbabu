@@ -74,6 +74,8 @@ import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
@@ -81,6 +83,7 @@ import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
+import com.pennant.backend.service.payment.PaymentsProcessService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -114,6 +117,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private PartnerBankService partnerBankService;
 	@Autowired
 	private PostingsDAO postingsDAO;
+	private PaymentsProcessService paymentsProcessService;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -413,10 +417,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		}
 
-		//Splitting IMPS Requests
-		payOrderIssueHeader.setFinAdvancePaymentsList(
-				finAdvancePaymentsService.splitRequest(payOrderIssueHeader.getFinAdvancePaymentsList()));
-
 		//Retrieving List of Audit Details For PayOrderIssueHeader Asset related modules
 		List<AuditDetail> details = processFinAdvancepayments(payOrderIssueHeader, "", data);
 		auditDetails.addAll(details);
@@ -424,6 +424,8 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
 
 		getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "_Temp");
+
+		processPayment(payOrderIssueHeader);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
@@ -436,6 +438,29 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		logger.debug("Leaving");
 
 		return auditHeader;
+	}
+
+	private void processPayment(PayOrderIssueHeader payOrderIssueHeader) {
+
+		List<FinAdvancePayments> advancePayments = payOrderIssueHeader.getFinAdvancePaymentsList();
+		List<FinAdvancePayments> resultPayments = new ArrayList<>();
+		FinanceDetail financeDetail = new FinanceDetail();
+		financeDetail.setFinScheduleData(new FinScheduleData());
+		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain());
+		if (CollectionUtils.isNotEmpty(advancePayments)) {
+			for (FinAdvancePayments finAdvancePayments : advancePayments) {
+				if (finAdvancePayments.isPaymentProcReq()) {
+					resultPayments.add(finAdvancePayments);
+					financeDetail.setFinReference(finAdvancePayments.getFinReference());
+					financeDetail.getFinScheduleData().getFinanceMain()
+							.setFinReference(finAdvancePayments.getFinReference());
+				}
+			}
+		}
+		if (CollectionUtils.isNotEmpty(resultPayments)) {
+			financeDetail.setAdvancePaymentsList(resultPayments);
+			this.paymentsProcessService.process(financeDetail, DisbursementConstants.CHANNEL_DISBURSEMENT);
+		}
 	}
 
 	private void calcluatePOHeaderDetails(PayOrderIssueHeader payOrderIssueHeader) {
@@ -795,7 +820,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 					}
 				}
 				finAdvancePaymentsDAO.save(finAdvpay, type);
-
+				if (StringUtils.isEmpty(type)) {
+					finAdvpay.setPaymentProcReq(true);
+				}
 			} else {
 				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					finAdvancePaymentsDAO.delete(finAdvpay, type);
@@ -924,6 +951,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
+	}
+
+	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
+		this.paymentsProcessService = paymentsProcessService;
 	}
 
 }

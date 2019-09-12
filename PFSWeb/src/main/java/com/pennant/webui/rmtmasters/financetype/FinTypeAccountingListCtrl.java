@@ -96,6 +96,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 	private String roleCode = "";
 	private String finType = "";
 	protected boolean isOverdraft = false;
+	protected boolean consumerDurable = false;
 	private boolean isCompReadonly = false;
 	private boolean allowRIAInvestment = false;
 	private boolean validate = false;
@@ -165,6 +166,9 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			if (arguments.containsKey("isOverdraft")) {
 				this.isOverdraft = (Boolean) arguments.get("isOverdraft");
 			}
+			if (arguments.containsKey("consumerDurable")) {
+				this.consumerDurable = (Boolean) arguments.get("consumerDurable");
+			}
 
 			this.listBoxAccountingDetails.setHeight(this.borderLayoutHeight - 120 + "px");
 
@@ -200,12 +204,14 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 			throws IllegalAccessException, IllegalArgumentException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 
+		String categoryCode = AccountEventConstants.EVENTCTG_FINANCE;
 		if (this.isOverdraft) {
-			accEventStaticList = PennantAppUtil.getOverdraftAccountingEvents();
-		} else {
-			accEventStaticList = PennantAppUtil.getAccountingEvents();
+			categoryCode = AccountEventConstants.EVENTCTG_OVERDRAFT;
+		} else if (consumerDurable) {
+			categoryCode = AccountEventConstants.EVENTCTG_CD;
 		}
 
+		accEventStaticList = PennantAppUtil.getCategoryWiseEvents(categoryCode);
 		doFillFinTypeAccountingList(this.finTypeAccountingList);
 
 		if (parent != null) {

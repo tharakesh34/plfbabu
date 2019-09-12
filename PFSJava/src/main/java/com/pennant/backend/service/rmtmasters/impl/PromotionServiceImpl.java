@@ -44,6 +44,7 @@
 package com.pennant.backend.service.rmtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,6 +54,7 @@ import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.PromotionDAO;
 import com.pennant.backend.model.applicationmaster.FinTypeInsurances;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -69,6 +71,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>Promotion</b>.<br>
@@ -79,6 +82,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PromotionDAO promotionDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	//Child Services
 	private FinTypeFeesService finTypeFeesService;
@@ -281,6 +285,75 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	}
 
 	/**
+	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
+	 * 
+	 * @param promotionCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotions
+	 */
+	@Override
+	public Promotion getPromotionByRef(Promotion promotionObj, int moduleId) {
+		logger.debug(Literal.ENTERING);
+
+		Promotion promotion = getPromotionDAO().getPromotionById(promotionObj.getPromotionId(), "_View");
+		if (promotion != null) {
+			promotion.setFinTypeFeesList(
+					getFinTypeFeesService().getFinTypeFeesByRef(promotionObj.getReferenceID(), moduleId));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return promotion;
+	}
+
+	/**
+	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
+	 * 
+	 * @param promotionCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotions
+	 */
+	@Override
+	public Promotion getPromotionByPromotionId(long promotionId, int moduleId) {
+		logger.debug(Literal.ENTERING);
+
+		Promotion promotion = getPromotionDAO().getPromotionById(promotionId, "_View");
+		if (promotion != null) {
+			promotion.setFinTypeFeesList(
+					getFinTypeFeesService().getFinTypeFeesByRef(promotion.getReferenceID(), moduleId));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return promotion;
+	}
+
+	/**
+	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionByReferenceId method.
+	 * 
+	 * @param promotionCode
+	 *            (String)
+	 * @param type
+	 *            (String) ""/_Temp/_View
+	 * @return Promotions
+	 */
+	@Override
+	public Promotion getPromotionByReferenceId(long referenceId, int moduleId) {
+		logger.debug(Literal.ENTERING);
+
+		Promotion promotion = getPromotionDAO().getPromotionById(referenceId, "_View");
+		if (promotion != null) {
+			promotion.setFinTypeFeesList(
+					getFinTypeFeesService().getFinTypeFeesByRef(promotion.getReferenceID(), moduleId));
+		}
+
+		logger.debug(Literal.LEAVING);
+		return promotion;
+	}
+
+	/**
 	 * getApprovedPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method . with parameter id
 	 * and type as blank. it fetches the approved records from the Promotions.
 	 * 
@@ -293,6 +366,25 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		logger.debug("Entering");
 
 		Promotion promotion = getPromotionDAO().getPromotionById(promotionCode, "_AView");
+
+		if (childExist && promotion != null) {
+			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
+			promotion.setFinTypeInsurancesList(
+					getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(promotionCode, moduleId));
+			promotion.setFinTypeAccountingList(
+					getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(promotionCode, moduleId));
+		}
+
+		logger.debug("Leaving");
+
+		return promotion;
+	}
+
+	@Override
+	public Promotion getActiveSchemeForTxn(String promotionCode, int moduleId, Date valueDate, boolean childExist) {
+		logger.debug("Entering");
+
+		Promotion promotion = getPromotionDAO().getActiveSchemeForTxn(promotionCode, valueDate);
 
 		if (childExist && promotion != null) {
 			promotion.setFinTypeFeesList(getFinTypeFeesService().getApprovedFinTypeFeesById(promotionCode, moduleId));
@@ -807,6 +899,14 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		this.finTypeAccountingService = finTypeAccountingService;
 	}
 
+	public FinanceMainDAO getFinanceMainDAO() {
+		return financeMainDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 	/**
 	 * Fetch record count of Promotions by using financeType
 	 * 
@@ -833,4 +933,15 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 		logger.debug("Leaving");
 		return getPromotionDAO().getPromotionsByFinType(finType, type);
 	}
+
+	@Override
+	public long getPromotionalReferenceId() {
+		return getPromotionDAO().getPromotionalReferenceId();
+	}
+
+	@Override
+	public boolean isFinExistsByPromotionSeqID(long referenceId) {
+		return getFinanceMainDAO().isFinExistsByPromotionSeqID(referenceId);
+	}
+
 }

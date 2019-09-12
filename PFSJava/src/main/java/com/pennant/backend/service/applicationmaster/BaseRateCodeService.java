@@ -66,4 +66,8 @@ public interface BaseRateCodeService {
 
 	BaseRateCode getBaseRateCodeById(String id, String type);
 
+	boolean isRepayFrqExists(String brType);
+
+	boolean isGrcRepayFrqExists(String brType);
+
 }

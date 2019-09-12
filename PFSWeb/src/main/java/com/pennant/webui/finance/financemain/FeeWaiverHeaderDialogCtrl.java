@@ -89,7 +89,6 @@ import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
@@ -234,7 +233,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			ccyFormatter = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
 
 			if (isEnquiry) {
-				this.listFeeWaiverEnqDetails.setHeight(borderLayoutHeight - 210 + "px");
+				this.listFeeWaiverDetails.setHeight(borderLayoutHeight - 210 + "px");
+				ccyFormatter = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
 			}
 
 			doSetFieldProperties();
@@ -363,12 +363,13 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		this.remarks.setValue(aFeeWaiverHeader.getRemarks());
 
-		if (isEnquiry) {
-			setFeeWaiverDetails(aFeeWaiverHeader.getFeeWaiverDetails());
-			doFillFeeWaiverEnqDetails(aFeeWaiverHeader.getFeeWaiverDetails());
-		} else {
-			doFillFeeWaiverDetails(aFeeWaiverHeader);
-		}
+		/*
+		 * if (isEnquiry) { //setFeeWaiverDetails(aFeeWaiverHeader.getFeeWaiverDetails());
+		 * //doFillFeeWaiverEnqDetails(aFeeWaiverHeader.getFeeWaiverDetails());
+		 * doFillFeeWaiverDetails(aFeeWaiverHeader); } else {
+		 */
+		doFillFeeWaiverDetails(aFeeWaiverHeader);
+		/* } */
 		this.recordStatus.setValue(aFeeWaiverHeader.getRecordStatus());
 
 		logger.debug("Leaving");
@@ -1047,95 +1048,149 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @param feeWaiverDetails
 	 */
 	public void doFillFeeWaiverEnqDetails(List<FeeWaiverDetail> feeWaiverDetails) {
-		logger.debug("Entering");
+		this.listFeeWaiverDetails.getItems().clear();
+		boolean isReadOnly = true;
 
+		if (!isEnquiry && getWorkFlow().firstTaskOwner().equals(getRole())) {
+			isReadOnly = false;
+		}
 		BigDecimal totReceivableAmt = BigDecimal.ZERO;
+		BigDecimal totGSTAmt = BigDecimal.ZERO;
+		BigDecimal totTotalAmt = BigDecimal.ZERO;
+
+		BigDecimal totReceivedAmt = BigDecimal.ZERO;
 		BigDecimal totWaivedAmt = BigDecimal.ZERO;
 		BigDecimal totBalanceAmt = BigDecimal.ZERO;
-		BigDecimal netBalanceAmt = BigDecimal.ZERO;
-		setFeeWaiverDetails(feeWaiverDetails);
-		this.listFeeWaiverDetails.setVisible(false);
-		this.listFeeWaiverEnqDetails.setVisible(true);
-		if (feeWaiverDetails != null && !feeWaiverDetails.isEmpty()) {
 
-			BigDecimal totCurrWaivedAmt = BigDecimal.ZERO;
+		BigDecimal totCurrWaivedAmt = BigDecimal.ZERO;
+		BigDecimal totDueWaiver = BigDecimal.ZERO;
+		BigDecimal totGSTWaiver = BigDecimal.ZERO;
+
+		BigDecimal totNetBal = BigDecimal.ZERO;
+
+		setFeeWaiverDetails(feeWaiverDetails);
+
+		if (CollectionUtils.isNotEmpty(feeWaiverDetails)) {
 			Decimalbox crrWaivedAmt = null;
 
 			for (FeeWaiverDetail detail : feeWaiverDetails) {
-
-				if (detail.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) == 0) {
-					continue;
-				}
 				Listitem item = null;
-				Listcell lc;
+				Listcell lc;// 1
 				item = new Listitem();
+				lc = new Listcell();
+				Checkbox selected = new Checkbox();
+				selected.setTabindex(-1);
+				selected.setChecked(false);
+				ComponentsCtrl.applyForward(selected, "onCheck=onChecklistItemSelect");
+				selected.setParent(lc);
+				lc.setParent(item);
 
-				lc = new Listcell(detail.getFeeTypeDesc());
+				// Fee TypeDesc
+				lc = new Listcell(detail.getFeeTypeDesc());// 2
 				lc.setParent(item);
 				lc.setStyle("font-weight:bold;color:##FF4500;");
 
-				lc = new Listcell(DateUtility.format(detail.getValueDate(), DateFormat.LONG_DATE.getPattern()));
+				// Due amount//receivable amount//3
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getActualReceivable(), ccyFormatter));
+				totReceivableAmt = totReceivableAmt.add(detail.getActualReceivable());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivableAmount(), ccyFormatter));
-				totReceivableAmt = detail.getReceivableAmount().add(totReceivableAmt);
+				// GST amount n//4
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivableGST(), ccyFormatter));
+				totGSTAmt = totGSTAmt.add(detail.getReceivableGST());
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getCurrWaiverAmount(), ccyFormatter));
-				totWaivedAmt = detail.getWaivedAmount().add(totWaivedAmt);
+				// Total Amount(Receivable + GST) n//5
+				BigDecimal totAmt = detail.getReceivableAmount();
+				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, ccyFormatter));
+				totTotalAmt = totAmt.add(totTotalAmt);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
+				// Received amount//6
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getReceivedAmount(), ccyFormatter));
+				totReceivedAmt = totReceivedAmt.add(detail.getReceivedAmount());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// Waived amount//7
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getWaivedAmount(), ccyFormatter));
+				totWaivedAmt = totWaivedAmt.add(detail.getWaivedAmount());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// Receivable amount//8
 				lc = new Listcell();
 				Label balance = new Label();
 				balance.setValue(PennantApplicationUtil.amountFormate(detail.getBalanceAmount(), ccyFormatter));
-				totBalanceAmt = detail.getBalanceAmount().add(totBalanceAmt);
+				totBalanceAmt = totBalanceAmt.add(detail.getBalanceAmount());
 				lc.appendChild(balance);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
+				// Waived amount//9
 				lc = new Listcell();
 				crrWaivedAmt = new Decimalbox();
-				crrWaivedAmt.setReadonly(true);
+				crrWaivedAmt.setReadonly(isReadOnly);
 				crrWaivedAmt.setFormat(PennantApplicationUtil.getAmountFormate(ccyFormatter));
 				crrWaivedAmt.setStyle("text-align:right; ");
 				crrWaivedAmt.setValue(PennantApplicationUtil.formateAmount(detail.getCurrWaiverAmount(), ccyFormatter));
 				crrWaivedAmt.addForward("onChange", self, "onChangeCurrWaivedAmount");
 				crrWaivedAmt.setAttribute("object", detail);
-				totCurrWaivedAmt = detail.getCurrWaiverAmount().add(totCurrWaivedAmt);
+				totCurrWaivedAmt = totCurrWaivedAmt.add(detail.getCurrWaiverAmount());
 				lc.appendChild(crrWaivedAmt);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				lc = new Listcell();
+				// Due Waiver n//10
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getCurrActualWaiver(), ccyFormatter));
+				totDueWaiver = totDueWaiver.add(detail.getCurrActualWaiver());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// GST Waiver n//11
+				lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getCurrWaiverGST(), ccyFormatter));
+				totGSTWaiver = totGSTWaiver.add(detail.getCurrWaiverGST());
+				lc.setStyle("text-align:right;");
+				lc.setParent(item);
+
+				// Net balance
+				lc = new Listcell();// 12
 				Label netBal = new Label();
-				netBal.setValue(PennantApplicationUtil
-						.amountFormate(detail.getBalanceAmount().subtract(detail.getCurrWaiverAmount()), ccyFormatter));
+				netBal.setValue(PennantApplicationUtil.amountFormate(detail.getBalanceAmount(), ccyFormatter));
+				totNetBal = totNetBal.add(detail.getBalanceAmount());
 				lc.appendChild(netBal);
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				netBalanceAmt = detail.getBalanceAmount().subtract(detail.getCurrWaiverAmount()).add(netBalanceAmt);
-				lc = new Listcell(detail.getWaivedBy());
-				lc.setParent(item);
-				lc.setStyle("text-align:right;");
+				crrWaivedAmt.setAttribute("NetBal", lc);
 
-				this.listFeeWaiverEnqDetails.appendChild(item);
+				this.listFeeWaiverDetails.appendChild(item);
 			}
 
 			Listitem item = new Listitem();
 			Listcell lc;
+			lc = new Listcell();
+			lc.setParent(item);
 			lc = new Listcell(" Total ");
 			lc.setStyle("font-weight:bold;");
 			item.appendChild(lc);
 
-			lc = new Listcell("--");
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivableAmt, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivableAmt, ccyFormatter));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totGSTAmt, ccyFormatter));
+			lc.setStyle("text-align:right;font-weight:bold;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totTotalAmt, ccyFormatter));
+			lc.setStyle("text-align:right;font-weight:bold;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totReceivedAmt, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
@@ -1153,13 +1208,22 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
-			lc = new Listcell(PennantApplicationUtil.amountFormate(netBalanceAmt, ccyFormatter));
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totDueWaiver, ccyFormatter));
 			lc.setStyle("text-align:right;font-weight:bold;");
 			lc.setParent(item);
 
-			this.listFeeWaiverEnqDetails.appendChild(item);
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totGSTWaiver, ccyFormatter));
+			lc.setStyle("text-align:right;font-weight:bold;");
+			lc.setParent(item);
+
+			lc = new Listcell(PennantApplicationUtil.amountFormate(totNetBal, ccyFormatter));
+			lc.setStyle("text-align:right;font-weight:bold;");
+			lc.setParent(item);
+
+			this.listFeeWaiverDetails.appendChild(item);
 		}
 		logger.debug("Leaving");
+
 	}
 
 	public void onChangeCurrWaivedAmount(ForwardEvent event) throws Exception {

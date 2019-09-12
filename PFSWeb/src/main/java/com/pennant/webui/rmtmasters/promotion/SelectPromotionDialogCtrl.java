@@ -73,6 +73,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -101,6 +102,9 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private FinTypeAccountingService finTypeAccountingService;
 
 	private String finCcy = "";
+	private boolean consumerDurable = false;
+	private boolean isCopyProcess;
+	private boolean alwCopyOption;
 
 	/**
 	 * default constructor.<br>
@@ -137,6 +141,16 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		if (arguments.containsKey("promotion")) {
 			this.promotion = (Promotion) arguments.get("promotion");
+		}
+		if (arguments.containsKey("consumerDurable")) {
+			this.consumerDurable = (boolean) arguments.get("consumerDurable");
+		}
+		if (arguments.containsKey("isCopyProcess")) {
+			this.isCopyProcess = (boolean) arguments.get("isCopyProcess");
+		}
+
+		if (arguments.containsKey("alwCopyOption")) {
+			this.alwCopyOption = (boolean) arguments.get("alwCopyOption");
 		}
 
 		doLoadWorkFlow(this.promotion.isWorkflow(), this.promotion.getWorkflowId(), this.promotion.getNextTaskId());
@@ -182,6 +196,14 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finType.setValidateColumns(new String[] { "FinType", "FinCategory", "FinTypeDesc" });
 		this.finType.setMandatoryStyle(true);
 
+		Filter[] filters = new Filter[1];
+		if (consumerDurable) {
+			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL);
+		} else {
+			filters[0] = new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL);
+		}
+		this.finType.setFilters(filters);
+
 		logger.debug("Leaving");
 	}
 
@@ -197,6 +219,13 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		doSetValidation();
 
 		doWriteComponentsToBean(this.promotion);
+
+		if (!isCopyProcess) {
+			setFeesAndAccounting(this.promotion);
+		}
+
+		long schemeId = promotionService.getPromotionalReferenceId();
+		this.promotion.setReferenceID(schemeId);
 
 		doShowDialogPage(this.promotion);
 
@@ -218,13 +247,26 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		aruments.put("promotionListCtrl", this.promotionListCtrl);
 		aruments.put("moduleCode", moduleCode);
 		aruments.put("enqiryModule", enqiryModule);
+		aruments.put("consumerDurable", consumerDurable);
+		aruments.put("isCopyProcess", isCopyProcess);
+		aruments.put("alwCopyOption", alwCopyOption);
 
-		try {
-			Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null, aruments);
-			this.window_SelectPromotionDialog.onClose();
-		} catch (Exception e) {
-			MessageUtil.showError(e);
+		if (consumerDurable) {
+			try {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/CDScheme/CDSchemeDialog.zul", null,
+						aruments);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			try {
+				Executions.createComponents("/WEB-INF/pages/SolutionFactory/Promotion/PromotionDialog.zul", null,
+						aruments);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
 		}
+		this.window_SelectPromotionDialog.onClose();
 
 		logger.debug("Leaving");
 	}
@@ -322,12 +364,17 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		doRemoveValidation();
 
 		if (wve.isEmpty()) {
+
+			List<FinTypeInsurances> finTypeInsurancesList = new ArrayList<>();
+			List<FinTypeAccounting> finTypeAccountingList = new ArrayList<>();
 			List<FinTypeFees> finTypeFeesList = getFinTypeFeesService()
 					.getApprovedFinTypeFeesById(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
-			List<FinTypeInsurances> finTypeInsurancesList = getFinTypeInsurancesService()
-					.getApprovedFinTypeInsuranceListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
-			List<FinTypeAccounting> finTypeAccountingList = getFinTypeAccountingService()
-					.getApprovedFinTypeAccountingListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+			if (!consumerDurable) {
+				finTypeInsurancesList = getFinTypeInsurancesService().getApprovedFinTypeInsuranceListByID(
+						aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+				finTypeAccountingList = getFinTypeAccountingService().getApprovedFinTypeAccountingListByID(
+						aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+			}
 
 			//Fees
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
@@ -383,6 +430,37 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private void setFeesAndAccounting(Promotion aPromotion) {
+		List<FinTypeFees> finTypeFeesList = null;
+		List<FinTypeAccounting> finTypeAccountingList = null;
+		finTypeFeesList = getFinTypeFeesService().getApprovedFinTypeFeesById(aPromotion.getFinType(),
+				FinanceConstants.MODULEID_FINTYPE);
+		if (!consumerDurable) {
+			finTypeAccountingList = getFinTypeAccountingService()
+					.getApprovedFinTypeAccountingListByID(aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
+		}
+
+		// Fees
+		if (finTypeFeesList != null && !finTypeFeesList.isEmpty()) {
+			for (FinTypeFees finTypeFee : finTypeFeesList) {
+				finTypeFee.setVersion(1);
+				finTypeFee.setRecordType(PennantConstants.RCD_ADD);
+				finTypeFee.setRecordStatus("");
+				finTypeFee.setTaskId("");
+				finTypeFee.setNextTaskId("");
+				finTypeFee.setRoleCode("");
+				finTypeFee.setNextRoleCode("");
+				finTypeFee.setModuleId(FinanceConstants.MODULEID_PROMOTION);
+				finTypeFee.setFinType(aPromotion.getPromotionCode());
+				finTypeFee.setNewRecord(true);
+			}
+		}
+
+		aPromotion.setFinTypeFeesList(finTypeFeesList);
+		aPromotion.setFinTypeAccountingList(finTypeAccountingList);
+
 	}
 
 	// ******************************************************//

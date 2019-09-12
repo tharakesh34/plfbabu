@@ -130,5 +130,6 @@ public class AccountEventConstants {
 	public static final String EVENTCTG_FINANCE = "F";
 	public static final String EVENTCTG_OVERDRAFT = "O";
 	public static final String EVENTCTG_GOLD = "G";
+	public static final String EVENTCTG_CD = "C";
 
 }

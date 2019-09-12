@@ -1495,9 +1495,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 						detail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 						detail.setNewRecord(false);
 					} else {
-						detail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-						detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						detail.setNewRecord(false);
+						if (!enqiryModule) {
+							detail.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+							detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+							detail.setNewRecord(false);
+						}
 					}
 				}
 				detail = calTaxDetail(detail);

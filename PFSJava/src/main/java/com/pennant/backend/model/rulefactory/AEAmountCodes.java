@@ -215,6 +215,9 @@ public class AEAmountCodes implements Serializable {
 	private BigDecimal intDue = BigDecimal.ZERO;
 	private BigDecimal priAdjusted = BigDecimal.ZERO;
 	private BigDecimal emiDue = BigDecimal.ZERO;
+	private BigDecimal dGapAmz = BigDecimal.ZERO;
+	private BigDecimal svAmount = BigDecimal.ZERO;
+	private BigDecimal cbAmount = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -1548,5 +1551,29 @@ public class AEAmountCodes implements Serializable {
 
 	public void setEmiTdsAdjusted(BigDecimal emiTdsAdjusted) {
 		this.emiTdsAdjusted = emiTdsAdjusted;
+	}
+
+	public BigDecimal getdGapAmz() {
+		return dGapAmz;
+	}
+
+	public void setdGapAmz(BigDecimal dGapAmz) {
+		this.dGapAmz = dGapAmz;
+	}
+
+	public BigDecimal getSvAmount() {
+		return svAmount;
+	}
+
+	public void setSvAmount(BigDecimal svAmount) {
+		this.svAmount = svAmount;
+	}
+
+	public BigDecimal getCbAmount() {
+		return cbAmount;
+	}
+
+	public void setCbAmount(BigDecimal cbAmount) {
+		this.cbAmount = cbAmount;
 	}
 }

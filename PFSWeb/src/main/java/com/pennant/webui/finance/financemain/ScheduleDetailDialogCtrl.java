@@ -745,6 +745,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		FinanceType financeType = aFinSchData.getFinanceType();
 		FinanceMain financeMain = aFinSchData.getFinanceMain();
 		String product = financeType.getFinCategory();
+		boolean isSanBsdSchdle = financeMain.isSanBsdSchdle();
 		BigDecimal finAmount = financeMain.getFinAmount();
 		int ccyFormatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		boolean isOverdraft = false;
@@ -979,7 +980,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					}
 
 					if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
-							&& !StringUtils.equals(product, FinanceConstants.PRODUCT_ODFACILITY)) {
+							&& !StringUtils.equals(product, FinanceConstants.PRODUCT_ODFACILITY) && !isSanBsdSchdle) {
 						termsCountCompleted = true;
 					}
 				}
@@ -1075,7 +1076,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 				// Resetting Maturity Terms & Summary details rendering incase
 				// of Reduce maturity cases
-				if (!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0) {
+				if (!isOverdraft && curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
+						&& !financeMain.isSanBsdSchdle()) {
 					lastRecord = true;
 				}
 

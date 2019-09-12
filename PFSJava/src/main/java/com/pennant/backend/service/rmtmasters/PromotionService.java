@@ -43,6 +43,7 @@
 
 package com.pennant.backend.service.rmtmasters;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
@@ -56,6 +57,8 @@ public interface PromotionService {
 
 	Promotion getApprovedPromotionById(String promotionCode, int moduleId, boolean childExist);
 
+	Promotion getActiveSchemeForTxn(final String promotionCode, int moduleId, Date valueDate, boolean childExist);
+
 	AuditHeader delete(AuditHeader auditHeader);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
@@ -67,4 +70,14 @@ public interface PromotionService {
 	int getFinanceTypeCountById(String finType);
 
 	List<Promotion> getPromotionsByFinType(String finType, String type);
+
+	long getPromotionalReferenceId();
+
+	Promotion getPromotionByRef(Promotion promotionObj, int moduleidPromotion);
+
+	boolean isFinExistsByPromotionSeqID(long referenceId);
+
+	Promotion getPromotionByPromotionId(long promotionId, int moduleId);
+
+	Promotion getPromotionByReferenceId(long referenceId, int moduleId);
 }

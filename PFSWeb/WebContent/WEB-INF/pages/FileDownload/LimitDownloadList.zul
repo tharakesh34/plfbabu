@@ -26,7 +26,7 @@
 				<north border="none" />
 				<center border="none">
 					<div>
-						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
+						 <grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
 							<columns>
 								<column width="15%" />
 								<column width="5%" />
@@ -37,6 +37,15 @@
 							</columns>
 							<rows>
 								<row>
+									<label id="label_CustomerDownload_FromDate" value="${c:l('label_CustomerDownload_FromDate.value')}" />
+									<label />
+									<datebox id="fromDate" width="108px"/>
+
+									<label id="label_CustomerDownload_ToDate" value="${c:l('label_CustomerDownload_ToDate.value')}" />
+									<label />
+									<datebox id="toDate" width="171px"  />
+								</row>
+								<!--<row>
 									<label id="label_LimitDetailsList_Id" value="${c:l('label_LimitDetailsList_Id.value')}" />
 									<listbox id="sortOperator_Id" width="43px" mold="select" rows="1" />
 									<hbox>
@@ -80,9 +89,9 @@
 									<label id="label_LimitDetailsList_RecordType" value="${c:l('label_LimitDetailsList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
 									<listbox id="recordType" width="100px" mold="select" />
-								</row>
+								</row>-->
 							</rows>
-						</grid>
+						</grid> 
 						<listbox id="listBoxLimitDownload" fixedLayout="true" span="true" width="100%" height="100%" multiple="false"
 							sizedByContent="true">
 							<listhead sizable="true">
@@ -101,7 +110,7 @@
 								<listheader id="listheader_Active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('listheader_RecordStatus.label')}" sort="auto"
 									hflex="min" />
-								<listheader id="listheader_RecordType" label="${c:l('listheader_RecordType.label')}" sort="auto"
+								<listheader id="listheader_RecordType" label="${c:l('listheader_LastMntOn.label')}" sort="auto"
 									hflex="min" />
 							</listhead>
 						</listbox>

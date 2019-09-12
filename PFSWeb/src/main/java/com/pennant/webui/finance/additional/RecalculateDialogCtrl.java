@@ -65,6 +65,8 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SanctionBasedSchedule;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -170,6 +172,9 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				moduleDefiner = (String) arguments.get("moduleDefiner");
 			}
 
+			boolean applySanctionCheck = SanctionBasedSchedule.isApplySanctionBasedSchedule(getFinScheduleData());
+			getFinScheduleData().getFinanceMain().setApplySanctionCheck(applySanctionCheck);
+
 			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog(getFinScheduleData());
@@ -225,25 +230,50 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
+
 		if (aFinSchData.getFinanceMain() != null) {
 
 			String excldValues = ",CURPRD,ADJMDT,ADDTERM,STEPPOS,";
 			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_RMVTERM)) {
-				excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
-			}
 
-			if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
-				fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
-						PennantStaticListUtil.getSchCalCodes(), excldValues);
+				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+					excldValues = ",CURPRD,TILLDATE,TILLMDT,ADDTERM,ADDRECAL,STEPPOS,";
+				} else {
+					excldValues = ",CURPRD,ADJMDT,TILLDATE,ADDTERM,ADDRECAL,STEPPOS,";
+				}
+			} else if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+
+				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+					excldValues = ",CURPRD,ADDTERM,STEPPOS,";
+					fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADJMDT,
+							PennantStaticListUtil.getSchCalCodes(), excldValues);
+				} else {
+					fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
+							PennantStaticListUtil.getSchCalCodes(), excldValues);
+				}
+
 				this.row_recalType.setVisible(false);
 				this.cbReCalType.setDisabled(true);
 				this.window_RecalculateDialog.setTitle(Labels.getLabel("window_AddTermRecalculateDialog.title"));
 			} else {
-				fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
-						PennantStaticListUtil.getSchCalCodes(), excldValues);
+
+				if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+					excldValues = ",CURPRD,ADJMDT,TILLDATE,TILLMDT,ADDTERM,ADJTERMS,STEPPOS,";
+					fillComboBox(this.cbReCalType, CalculationConstants.RPYCHG_ADDRECAL,
+							PennantStaticListUtil.getSchCalCodes(), excldValues);
+				} else {
+					fillComboBox(this.cbReCalType, aFinSchData.getFinanceMain().getRecalType(),
+							PennantStaticListUtil.getSchCalCodes(), excldValues);
+				}
 			}
 
-			fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails());
+			if (aFinSchData.getFinanceMain().isApplySanctionCheck()) {
+				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), true);
+				this.cbEventFromDate.setDisabled(true);
+			} else {
+				fillSchFromDates(this.cbEventFromDate, aFinSchData.getFinanceScheduleDetails(), false);
+			}
+
 			fillSchDates(this.cbTillDate, aFinSchData, aFinSchData.getFinanceMain().getFinStartDate());
 		}
 		if (aFinSchData.getFinanceType().isFinPftUnChanged()) {
@@ -258,7 +288,8 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	/** To fill schedule dates */
-	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails) {
+	public void fillSchFromDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
+			boolean isDefaultToMDT) {
 		logger.debug("Entering");
 
 		dateCombobox.getItems().clear();
@@ -268,10 +299,20 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
 
+		if (isDefaultToMDT) {
+			FinanceScheduleDetail curSchd = financeScheduleDetails.get(financeScheduleDetails.size() - 1);
+			comboitem = new Comboitem();
+			comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
+			comboitem.setValue(curSchd.getSchDate());
+			dateCombobox.appendChild(comboitem);
+			dateCombobox.setSelectedItem(comboitem);
+			return;
+		}
+
 		boolean isMaturityDone = false;
 
 		if (financeScheduleDetails != null) {
-			Date curBussDate = DateUtility.getAppDate();
+			Date curBussDate = SysParamUtil.getAppDate();
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
@@ -339,6 +380,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
+		String module = "";
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
@@ -474,13 +516,19 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				finMain.setRecalToDate(finMain.getMaturityDate());
 				finServiceInstruction.setRecalFromDate(finMain.getMaturityDate());
 				finServiceInstruction.setRecalToDate(finMain.getMaturityDate());
+
+				if (finMain.isApplySanctionCheck()
+						&& StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+					module = moduleDefiner;
+				}
+
 			}
 			finMain.setEventToDate(finMain.getMaturityDate());
 			finServiceInstruction.setToDate(finMain.getMaturityDate());
 		}
 		// Service details calling for Schedule calculation
 		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
-		setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
+		setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData(), module));
 
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 
@@ -496,7 +544,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			finMain.setEventFromDate(finMain.getFinStartDate());
 			finMain.setEventToDate(finMain.getMaturityDate());
 			setFinScheduleData(recalService.getRecalChangeProfit(getFinScheduleData(), adjustedPft));
-			setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData()));
+			setFinScheduleData(recalService.getRecalculateSchdDetails(getFinScheduleData(), ""));
 		}
 
 		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
@@ -617,7 +665,11 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			this.tillDateRow.setVisible(false);
 		}
 
-		if (this.cbReCalType.getSelectedItem().getValue().toString().equals(CalculationConstants.RPYCHG_ADDRECAL)) {
+		if (getFinScheduleData().getFinanceMain().isApplySanctionCheck()) {
+			this.tillDateRow.setVisible(false);
+			this.numOfTermsRow.setVisible(true);
+		} else if (this.cbReCalType.getSelectedItem().getValue().toString()
+				.equals(CalculationConstants.RPYCHG_ADDRECAL)) {
 			this.tillDateRow.setVisible(false);
 			this.numOfTermsRow.setVisible(true);
 		} else {

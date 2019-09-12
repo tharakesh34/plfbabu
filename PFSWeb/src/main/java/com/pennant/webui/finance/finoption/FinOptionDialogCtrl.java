@@ -198,7 +198,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	public void onClick$btnNotes(Event event) {
-		doShowNotes(this.finOption);
+		doShowNotes(this.finMaintainInstruction);
 	}
 
 	private void doShowDialog() {

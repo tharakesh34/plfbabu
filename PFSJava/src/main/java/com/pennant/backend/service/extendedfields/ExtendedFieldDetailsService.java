@@ -2060,8 +2060,12 @@ public class ExtendedFieldDetailsService {
 		return extendedDetails;
 	}
 
+	/*
+	 * flag= true get all extended details where UpdateCpID ==null; flag= false :get all extended details where
+	 * UpdateCpID !=null
+	 */
 	public Map<String, String> getAllExtndedFieldDetails(String moduleName, String subModuleName, String event,
-			String type) {
+			String type, boolean flag) {
 
 		Map<String, String> orgMap = new HashMap<>();
 		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(moduleName,
@@ -2076,7 +2080,12 @@ public class ExtendedFieldDetailsService {
 				tableName.append(StringUtils.trimToEmpty(PennantStaticListUtil.getFinEventCode(event)));
 			}
 			tableName.append("_ED");
-			orgMap = extendedFieldRenderDAO.getAllExtendedFieldMap(tableName.toString(), type);
+			if (flag) {
+				orgMap = extendedFieldRenderDAO.getAllExtendedFieldMap(tableName.toString(), type);
+			} else {
+				orgMap = extendedFieldRenderDAO.getAllExtendedFieldMapForUpdateCpid(tableName.toString(), type);
+			}
+
 		}
 		return orgMap;
 	}

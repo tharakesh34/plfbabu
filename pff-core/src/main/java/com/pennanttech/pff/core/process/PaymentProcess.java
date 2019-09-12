@@ -7,4 +7,6 @@ public interface PaymentProcess {
 	void process(PaymentInstruction paymentInstruction);
 
 	void processInsPayments(InsurancePaymentInstructions instruction);
+
+	void updateStatus(Object... params);
 }

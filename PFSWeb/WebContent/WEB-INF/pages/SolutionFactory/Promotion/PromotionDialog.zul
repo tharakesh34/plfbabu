@@ -162,6 +162,19 @@
 													<checkbox id="active" checked="false" />
 												</hlayout>
 											</row>
+											<row visible="false">
+												<label id="label_SpecialScheme" value="${c:l('label_PromotionDialog_SpecialScheme.value')}" />
+												<hlayout id="hlayout_SpecialScheme">
+													<space id="space_SpecialScheme" spacing="2px" />
+													<checkbox id="specialScheme" checked="false" />
+												</hlayout>
+												<label id="label_Remarks" value="${c:l('label_PromotionDialog_Remarks.value')}" />
+												<hlayout id="hlayout_Remarks">
+													<space id="space_Remarks" spacing="2px" />
+													<textbox id="remarks" maxlength="50" width="350px" />
+												</hlayout>
+											</row>
+											
 										</rows>
 									</grid>
 								</groupbox>

@@ -21,6 +21,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class RecalculateServiceImpl extends GenericService<FinServiceInstruction> implements RecalculateService {
@@ -33,7 +34,7 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 	 * 
 	 * @param finScheduleData
 	 */
-	public FinScheduleData getRecalculateSchdDetails(FinScheduleData finScheduleData) {
+	public FinScheduleData getRecalculateSchdDetails(FinScheduleData finScheduleData, String module) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchdData = null;
@@ -61,7 +62,11 @@ public class RecalculateServiceImpl extends GenericService<FinServiceInstruction
 		}
 
 		//TODO: PV 19JAN17 schdMethod to be added
-		finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");
+		if (StringUtils.isNotBlank(module) && StringUtils.equals(module, FinanceConstants.FINSER_EVENT_ADDTERM)) {
+			finSchdData = ScheduleCalculator.addTerm(finScheduleData, finScheduleData.getFinanceMain().getAdjTerms());
+		} else {
+			finSchdData = ScheduleCalculator.reCalSchd(finScheduleData, "");
+		}
 
 		BigDecimal newTotalPft = finSchdData.getFinanceMain().getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);

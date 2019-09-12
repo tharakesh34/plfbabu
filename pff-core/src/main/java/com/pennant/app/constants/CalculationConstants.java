@@ -57,6 +57,7 @@ public class CalculationConstants {
 	public static final String IDB_ACT_360 = "A/A_360";
 	public static final String IDB_ACT_365LEAP = "A/A_365L";
 	public static final String IDB_ACT_365LEAPS = "A/A365LS";
+	public static final String IDB_BY_PERIOD = "P/360";
 
 	// Schedule Calculations constants
 	public static final String SCHMTHD_EQUAL = "EQUAL";

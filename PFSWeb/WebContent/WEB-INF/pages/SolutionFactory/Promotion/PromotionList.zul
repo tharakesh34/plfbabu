@@ -36,7 +36,9 @@
 				</hbox>
 			</div>
 			<borderlayout id="borderLayout_PromotionList">
-				<north border="none" />
+				<north border="none">
+					<textbox id="finCategory" maxlength="50" width="450px" visible="false" />
+				</north>
 				<center border="none">
 					<div>
 						<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true">
@@ -91,6 +93,10 @@
 									sort="auto" hflex="min" />
 								<listheader id="listheader_PromotionEndDate" label="${c:l('listheader_PromotionEndDate.label')}"
 									sort="auto" hflex="min" />
+								<listheader
+									id="listheader_PromotionActive"
+									label="${c:l('listheader_PromotionActive.label')}" sort="auto"
+									hflex="min" />	
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>

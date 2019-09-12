@@ -1415,6 +1415,19 @@
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="promotionService" ref="promotionService" />
 	</bean>
+	
+	<bean id="selectCDFinanceSchemeDialogCtrl" class="com.pennant.webui.finance.financemain.SelectCDFinanceSchemeDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
+		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="customerInterfaceService" ref="customerInterfaceService" />
+		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
+		<property name="branchService" ref="branchService" />
+		<property name="customerTypeService" ref="customerTypeService" />
+		<property name="promotionService" ref="promotionService" />
+	</bean>
 
 	<bean id="selectRolloverFinanceDialogCtrl" class="com.pennant.webui.financemanagement.rollover.SelectRolloverFinanceDialogCtrl"
 		parent="basisCtrl" scope="prototype">
@@ -1672,6 +1685,9 @@
 		scope="prototype" />
 
 	<bean id="ODFacilityFinanceMainDialogCtrl" class="com.pennant.webui.finance.financemain.ODFacilityFinanceMainDialogCtrl"
+		parent="financeMainBaseCtrl" scope="prototype" />
+		
+	<bean id="cdFinanceMainDialogCtrl" class="com.pennant.webui.finance.financemain.CDFinanceMainDialogCtrl"
 		parent="financeMainBaseCtrl" scope="prototype" />
 
 	<!--============ Disbursement Detail ============== -->
@@ -2381,6 +2397,7 @@
 	<bean id="rateChangeDialogCtrl" class="com.pennant.webui.finance.additional.RateChangeDialogCtrl" parent="basisCtrl"
 		scope="prototype">
 		<property name="rateChangeService" ref="rateChangeService" />
+		<property name="baseRateCodeService" ref="baseRateCodeService" />
 	</bean>
 
 	<!--============ Advised Profit Rate Change Finance Maintainance Details ============== -->
@@ -5378,9 +5395,11 @@
 
 	<bean id="collateralDownloadListCtrl" class="com.pennant.webui.filedownload.CollateralDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 	<bean id="limitDownloadListCtrl" class="com.pennant.webui.filedownload.LimitDownloadListCtrl" parent="basisListCtrl"
 		scope="prototype">
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!-- InstrumentwiseLimit -->

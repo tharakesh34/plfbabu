@@ -84,6 +84,7 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 	private String FinAssetType;
 
 	private String productCategory;
+	private long referenceId;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -93,6 +94,7 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 		excludeFields.add("vasProductDesc");
 		excludeFields.add("commitmentTypeDesc");
 		excludeFields.add("typeCode");
+		excludeFields.add("referenceId");
 		return excludeFields;
 	}
 
@@ -327,6 +329,14 @@ public class FinanceWorkFlow extends AbstractWorkflowEntity {
 
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
+	}
+
+	public long getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(long referenceId) {
+		this.referenceId = referenceId;
 	}
 
 }

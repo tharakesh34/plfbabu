@@ -72,6 +72,9 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	public FinanceDetail createFinance(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
+		FinScheduleData fsData = financeDetail.getFinScheduleData();
+		FinanceMain finMain = fsData.getFinanceMain();
+
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
 
@@ -80,8 +83,17 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				validationUtility.validate(setup, CreateFinanceWithCollateral.class);
 			}
 		}
-		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCustCIF())
-				&& StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getCoreBankId())) {
+
+		if (finMain == null) {
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			String[] valueParm = new String[1];
+			valueParm[0] = "financeDetail";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
+		if (StringUtils.isBlank(finMain.getCustCIF()) && StringUtils.isBlank(finMain.getCoreBankId())) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			String[] valueParm = new String[1];
@@ -89,44 +101,30 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		}
+
 		//for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
+
 		// logging customer CIF as reference for create loan failure cases
 		String custCif = logFields[0];
 		APIErrorHandlerService.logReference(custCif);
+
 		try {
-			if (financeDetail.getFinScheduleData().getFinanceMain() == null) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				String[] valueParm = new String[1];
-				valueParm[0] = "financeDetail";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-				return response;
-			}
-
 			// validate and Data defaulting
-			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
 
-			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-				return getErrorMessage(financeDetail.getFinScheduleData());
+			if (!fsData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(fsData);
 			}
 
-			if (financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-					.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (finMain.getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
 				FinanceDetail finResponse = createOverDraftLoanValidation(financeDetail);
 				WSReturnStatus status = finResponse.getReturnStatus();
 				if (status != null) {
 					doEmptyResponseObject(finResponse);
 					return finResponse;
 				}
-			}
-
-			// validate finance data
-			if (!StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
-				CustomerDetails customerDetails = new CustomerDetails();
-				customerDetails.setCustomer(null);
-				financeDetail.setCustomerDetails(customerDetails);
 			}
 
 			// validate Finance schedule details Validations
@@ -423,7 +421,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 				return response;
 			}
 			// validate and Data defaulting
-			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail.getFinScheduleData());
+			financeDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
 
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
@@ -763,8 +761,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			if (StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinReference())) {
 				List<ErrorDetail> validationErrors = createFinanceController.rejectFinanceValidations(financeDetail);
 				if (CollectionUtils.isEmpty(validationErrors)) {
-					financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN,
-							financeDetail.getFinScheduleData());
+					financeDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
 					List<ErrorDetail> financeDetailErrors = null;
 					if (!CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getErrorDetails())) {
 						financeDetailErrors = financeDetail.getFinScheduleData().getErrorDetails();

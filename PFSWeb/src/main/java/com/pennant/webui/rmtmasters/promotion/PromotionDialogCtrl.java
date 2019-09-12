@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -58,14 +59,18 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
@@ -88,6 +93,7 @@ import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -97,6 +103,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -104,11 +111,13 @@ import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeInsuranceListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -144,9 +153,35 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected Decimalbox finMinRate;
 	protected Decimalbox finMaxRate;
 	protected Checkbox active;
+	protected Checkbox specialScheme;
+	protected Textbox remarks;
+
+	protected Label label_StartDate;
+	protected Label label_EndDate;
+
+	protected Textbox finTypeName;
+	protected Label schemeId;
+	protected Intbox tenor;
+	protected Intbox advEMITerms;
+	protected Combobox pftDaysBasis;
+	protected Decimalbox subventionRate;
+	protected Checkbox taxApplicable;
+	protected Checkbox openBalOnPV;
+	protected Intbox cashBackFromDealer;
+	protected Intbox cashBackToCustomer;
+
+	protected Button btnCopy;
+	protected Button btnNewSchemeId;
+
+	protected boolean alwCopyOption = false;
+	protected boolean isCopyProcess = false;
+	protected boolean isNewScheme = false;
+	protected boolean isCopy = false;
+
+	protected Tab tab_fees;
+	protected Tabpanel tabpanel_Fees;
 
 	protected Div basicDetailDiv;
-
 	protected Row row_ApplyRpyPricing;
 
 	private Promotion promotion;
@@ -171,6 +206,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	protected FinTypeAccountingListCtrl finTypeAccountingListCtrl;
 
 	private boolean isCompReadonly = false;
+	private boolean consumerDurable = false;
 
 	/**
 	 * default constructor.<br>
@@ -206,6 +242,10 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
 
+			if (arguments.containsKey("consumerDurable")) {
+				this.consumerDurable = (boolean) arguments.get("consumerDurable");
+			}
+
 			Promotion befImage = new Promotion();
 			BeanUtils.copyProperties(this.promotion, befImage);
 			this.promotion.setBefImage(befImage);
@@ -231,25 +271,21 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private boolean isMaintainable() {
-		// If workflow enabled and not first task owner then cannot maintain. Else can maintain
-		if (isWorkFlowEnabled()) {
-			if (!StringUtils.equals(getRole(), getWorkFlow().firstTaskOwner())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/**
 	 * Set the properties of the fields, like maxLength.<br>
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 
+		this.finCcy = this.promotion.getFinCcy();
+		this.format = CurrencyUtil.getFormat(this.finCcy);
+
 		this.promotionCode.setMaxlength(8);
 		this.promotionDesc.setMaxlength(50);
 		this.actualInterestRate.setMaxlength(13);
+		this.actualInterestRate.setFormat(PennantConstants.rateFormate9);
+		this.actualInterestRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.actualInterestRate.setScale(9);
 		this.finMinTerm.setMaxlength(3);
 		this.finMaxTerm.setMaxlength(3);
 
@@ -273,12 +309,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.endDate.setFormat(PennantConstants.dateFormat);
 
 		this.downPayRule.setInputAllowed(false);
-		//this.downPayRule.setDisplayStyle(3);
-		//this.downPayRule.setMaxlength(8);
 		this.downPayRule.setModuleName("Rule");
 		this.downPayRule.setValueColumn("RuleCode");
 		this.downPayRule.setDescColumn("RuleCodeDesc");
-		//this.downPayRule.setValidateColumns(new String[] { "RuleCode", "RuleCodeDesc" });
 		this.downPayRule.setFilters(
 				new Filter[] { new Filter("RuleModule", RuleConstants.MODULE_DOWNPAYRULE, Filter.OP_EQUAL) });
 		this.downPayRule.setMandatoryStyle(this.promotion.isFinIsDwPayRequired());
@@ -300,6 +333,30 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		this.row_ApplyRpyPricing.setVisible(ImplementationConstants.ALLOW_PRICINGPOLICY);
 
+		this.finMinAmount.setMandatory(false);
+		this.finMinAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.finMinAmount.setScale(format);
+
+		this.finMaxAmount.setMandatory(false);
+		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(format));
+		this.finMaxAmount.setScale(format);
+
+		if (consumerDurable) {
+
+			this.tenor.setMaxlength(2);
+			this.advEMITerms.setMaxlength(2);
+			this.cashBackFromDealer.setMaxlength(1);
+			this.cashBackToCustomer.setMaxlength(1);
+
+			this.pftDaysBasis.setReadonly(true);
+
+			this.subventionRate.setMaxlength(13);
+			this.subventionRate.setFormat(PennantConstants.rateFormate9);
+			this.subventionRate.setRoundingMode(BigDecimal.ROUND_DOWN);
+			this.subventionRate.setScale(9);
+
+		}
+
 		setStatusDetails();
 
 		logger.debug("Leaving");
@@ -318,6 +375,47 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PromotionDialog_btnSave"));
 
 		logger.debug("Leaving");
+	}
+
+	private boolean isMaintainable() {
+		// If workflow enabled and not first task owner then cannot maintain
+		// Else can maintain
+		if (enqiryModule) {
+			return false;
+		}
+
+		if (isWorkFlowEnabled()) {
+			if (!StringUtils.equals(getRole(), getWorkFlow().firstTaskOwner())) {
+				return false;
+			}
+		}
+
+		boolean isMaintenance = true;
+		if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+			isMaintenance = false;
+		}
+
+		if (isMaintenance) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean allowChildMaintenance() {
+		// If workflow enabled and not first task owner then cannot maintain
+		// Else can maintain
+		if (enqiryModule) {
+			return false;
+		}
+
+		if (isWorkFlowEnabled()) {
+			if (!StringUtils.equals(getRole(), getWorkFlow().firstTaskOwner())) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -560,11 +658,25 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.active.setChecked(aPromotion.isActive());
 
 		this.finType.setValue(aPromotion.getFinType());
-		this.finType.setDescription(aPromotion.getFinTypeDesc());
 		this.finType.setObject(new FinanceType(aPromotion.getFinType()));
 
-		this.finCcy = aPromotion.getFinCcy();
-		this.format = CurrencyUtil.getFormat(this.finCcy);
+		if (consumerDurable) {
+			this.finTypeName.setValue(aPromotion.getFinTypeDesc());
+			this.schemeId.setValue(String.valueOf(aPromotion.getReferenceID()));
+			this.tenor.setValue(aPromotion.getTenor());
+			this.advEMITerms.setValue(aPromotion.getAdvEMITerms());
+			this.cashBackFromDealer.setValue(aPromotion.getCashBackFromDealer());
+			this.cashBackToCustomer.setValue(aPromotion.getCashBackToCustomer());
+
+			fillComboBox(this.pftDaysBasis, aPromotion.getPftDaysBasis(), PennantStaticListUtil.getProfitDaysBasis(),
+					"");
+
+			this.subventionRate.setValue(aPromotion.getSubventionRate());
+			this.taxApplicable.setChecked(aPromotion.isTaxApplicable());
+			this.openBalOnPV.setChecked(aPromotion.isOpenBalOnPV());
+			this.specialScheme.setChecked(aPromotion.isSpecialScheme());
+			this.remarks.setValue(aPromotion.getRemarks());
+		}
 
 		this.finMaxAmount.setMandatory(false);
 		this.finMaxAmount.setFormat(PennantApplicationUtil.getAmountFormate(this.format));
@@ -604,9 +716,13 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.recordStatus.setValue(aPromotion.getRecordStatus());
 
 		if (StringUtils.isNotBlank(aPromotion.getFinType())) {
+
 			appendFeeDetailTab();
-			appendAccountingDetailsTab();
-			//appendInsuranceDetailsTab();	//commented as per Bajaj requirement
+
+			if (!consumerDurable) {
+				appendAccountingDetailsTab();
+				//appendInsuranceDetailsTab();	//commented as per Bajaj requirement
+			}
 		}
 
 		logger.debug("Leaving");
@@ -621,15 +737,22 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		try {
 			createTab(AssetConstants.UNIQUE_ID_FEES, true);
-
+			boolean isMaintenance = true;
 			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_FEES));
+			map.put("parentTab", consumerDurable ? tab_fees : getTab(AssetConstants.UNIQUE_ID_FEES));
 			map.put("roleCode", getRole());
 			map.put("finType", this.promotionCode.getValue());
 			map.put("finCcy", this.finCcy);
 			map.put("moduleId", FinanceConstants.MODULEID_PROMOTION);
 			map.put("mainController", this);
-			map.put("isCompReadonly", this.isCompReadonly);
+			map.put("isCompReadonly", !allowChildMaintenance());
+
+			if (promotion.isNew() || StringUtils.equals(promotion.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
+				isMaintenance = false;
+			}
+
+			map.put("enqiryModule", this.enqiryModule || isMaintenance);
+			map.put("consumerDurable", consumerDurable);
 			map.put("finTypeFeesList", this.promotion.getFinTypeFeesList());
 
 			feeDetailWindow = Executions.createComponents(
@@ -751,8 +874,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	 */
 	public void doWriteComponentsToBean(Promotion aPromotion) {
 		logger.debug("Entering");
-
-		doSetLOVValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -940,6 +1061,65 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			wve.add(we);
 		}
 
+		if (consumerDurable) {
+			try {
+				aPromotion.setTenor(this.tenor.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setAdvEMITerms(this.advEMITerms.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setCashBackFromDealer(this.cashBackFromDealer.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setPftDaysBasis(getComboboxValue(this.pftDaysBasis));
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setSubventionRate(this.subventionRate.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				/*
+				 * if (this.cashBackFromDealer.intValue() == 0 && this.cashBackToCustomer.intValue() > 0) { throw new
+				 * WrongValueException(cashBackToCustomer, Labels.getLabel("NUMBER_EQ", new String[] {
+				 * Labels.getLabel("label_CDSchemeDialog_CashbackToCustomer.value"), "0" })); }
+				 */
+				aPromotion.setCashBackToCustomer(this.cashBackToCustomer.intValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setTaxApplicable(this.taxApplicable.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setOpenBalOnPV(this.openBalOnPV.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			// Description
+			try {
+				aPromotion.setRemarks(this.remarks.getValue());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			try {
+				aPromotion.setSpecialScheme(this.specialScheme.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		if (this.finTypeFeesListCtrl != null) {
 			aPromotion.setFinTypeFeesList(this.finTypeFeesListCtrl.doSave());
 		}
@@ -957,7 +1137,6 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		doRemoveValidation();
-		doRemoveLOVValidation();
 		doClearMessage();
 
 		if (!wve.isEmpty()) {
@@ -1008,8 +1187,12 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		// fill the components with the data
 		doWriteBeanToComponents(promotion);
-
-		this.btnDelete.setVisible(false);
+		if (!promotion.isNew()) {
+			boolean isFinExists = promotionService.isFinExistsByPromotionSeqID(promotion.getReferenceID());
+			if (isFinExists) {
+				this.btnDelete.setVisible(false);
+			}
+		}
 
 		setDialog(DialogType.EMBEDDED);
 
@@ -1066,9 +1249,9 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		// Actual Interest Rate
-		if (!this.actualInterestRate.isDisabled()) {
+		if (!this.actualInterestRate.isDisabled() && !consumerDurable) {
 			this.actualInterestRate.setConstraint(new PTDecimalValidator(
-					Labels.getLabel("label_PromotionDialog_ActualInterestRate.value"), 9, false, false, 9999));
+					Labels.getLabel("label_PromotionDialog_ActualInterestRate.value"), 9, true, false, 9999));
 		}
 		// Base Rate
 		if (!this.finBaseRate.getMarginComp().isDisabled()) {
@@ -1114,6 +1297,39 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 					Labels.getLabel("label_PromotionDialog_FinMaxRate.value"), 9, false, false, 9999));
 		}
 
+		if (consumerDurable) {
+
+			// tenor
+			if (!this.tenor.isReadonly()) {
+				this.tenor.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_CDSchemeDialog_Tenor.value"), true));
+			}
+			// Advance EMI Terms
+			if (!this.advEMITerms.isReadonly()) {
+				this.advEMITerms.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_CDSchemeDialog_AdvEMITerms.value"), false));
+			}
+			// Cash Back From Dealer
+			if (!this.cashBackFromDealer.isReadonly()) {
+				this.cashBackFromDealer.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_CDSchemeDialog_CashbackFromDealer.value"), false));
+			}
+			// Cash Back To Customer
+			if (!this.cashBackToCustomer.isReadonly()) {
+				this.cashBackToCustomer.setConstraint(
+						new PTNumberValidator(Labels.getLabel("label_CDSchemeDialog_CashbackToCustomer.value"), false));
+			}
+			// Subvention Rate
+			if (!this.subventionRate.isDisabled()) {
+				this.subventionRate.setConstraint(new PTDecimalValidator(
+						Labels.getLabel("label_CDSchemeDialog_SubventionRate.value"), 9, false, false, 9999));
+			}
+			// Interest Days Basis
+			if (!this.pftDaysBasis.isDisabled()) {
+				this.pftDaysBasis.setConstraint(new StaticListValidator(PennantStaticListUtil.getProfitDaysBasis(),
+						Labels.getLabel("label_CDSchemeDialog_ProfitDaysBasis.value")));
+			}
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1135,24 +1351,21 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setConstraint("");
 		this.finMinTerm.setConstraint("");
 		this.finMaxTerm.setConstraint("");
-		this.finMinAmount.setConstraint("");
-		this.finMaxAmount.setConstraint("");
 		this.finMinRate.setConstraint("");
 		this.finMaxRate.setConstraint("");
+		this.finMinAmount.setConstraint("");
+		this.finMaxAmount.setConstraint("");
+
+		if (consumerDurable) {
+			this.tenor.setConstraint("");
+			this.advEMITerms.setConstraint("");
+			this.cashBackFromDealer.setConstraint("");
+			this.cashBackToCustomer.setConstraint("");
+			this.pftDaysBasis.setConstraint("");
+			this.subventionRate.setConstraint("");
+		}
 
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Set Validations for LOV Fields
-	 */
-	private void doSetLOVValidation() {
-	}
-
-	/**
-	 * Remove Validations for LOV Fields
-	 */
-	private void doRemoveLOVValidation() {
 	}
 
 	/**
@@ -1175,10 +1388,19 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.rpyPricingMethod.setErrorMessage("");
 		this.finMinTerm.setErrorMessage("");
 		this.finMaxTerm.setErrorMessage("");
-		this.finMinAmount.setErrorMessage("");
-		this.finMaxAmount.setErrorMessage("");
 		this.finMinRate.setErrorMessage("");
 		this.finMaxRate.setErrorMessage("");
+		this.finMinAmount.setErrorMessage("");
+		this.finMaxAmount.setErrorMessage("");
+
+		if (consumerDurable) {
+			this.tenor.setErrorMessage("");
+			this.advEMITerms.setErrorMessage("");
+			this.cashBackFromDealer.setErrorMessage("");
+			this.cashBackToCustomer.setErrorMessage("");
+			this.pftDaysBasis.setErrorMessage("");
+			this.subventionRate.setErrorMessage("");
+		}
 
 		logger.debug("Leaving");
 	}
@@ -1232,15 +1454,28 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private void doEdit() {
 		logger.debug("Entering");
 
-		this.promotionCode.setReadonly(true);
 		readOnlyComponent(true, this.finType);
 
 		if (this.promotion.isNewRecord()) {
 			this.btnCancel.setVisible(false);
+			if (consumerDurable) {
+				this.btnCopy.setVisible(false);
+				this.btnNewSchemeId.setVisible(false);
+			}
 			this.active.setDisabled(true);
 		} else {
-			this.btnCancel.setVisible(true);
+			if (consumerDurable) {
+				this.btnCopy.setVisible((allowChildMaintenance() || enqiryModule) && alwCopyOption);
+				this.btnNewSchemeId.setVisible((allowChildMaintenance() || enqiryModule) && alwCopyOption
+						&& PennantConstants.RCD_STATUS_APPROVED.equals(this.promotion.getRecordStatus()));
+			}
 			readOnlyComponent(isReadOnly("PromotionDialog_Active"), this.active);
+		}
+
+		if (isCopy) {
+			readOnlyComponent(isReadOnly("PromotionDialog_PromotionCode"), this.promotionCode);
+		} else {
+			readOnlyComponent(true, this.promotionCode);
 		}
 
 		readOnlyComponent(isReadOnly("PromotionDialog_DownPayRule"), this.downPayRule);
@@ -1250,17 +1485,32 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		readOnlyComponent(isReadOnly("PromotionDialog_EndDate"), this.endDate);
 		readOnlyComponent(isReadOnly("PromotionDialog_FinIsDwPayRequired"), this.finIsDwPayRequired);
 		readOnlyComponent(isReadOnly("PromotionDialog_ActualInterestRate"), this.actualInterestRate);
-		readOnlyComponent(isReadOnly("PromotionDialog_ApplyRpyPricing"), this.applyRpyPricing);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMinTerm"), this.finMinTerm);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMaxTerm"), this.finMaxTerm);
 		readOnlyComponent(isReadOnly("PromotionDialog_FinMinAmount"), this.finMinAmount);
 		readOnlyComponent(isReadOnly("PromotionDialog_FinMaxAmount"), this.finMaxAmount);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMinRate"), this.finMinRate);
-		readOnlyComponent(isReadOnly("PromotionDialog_FinMaxRate"), this.finMaxRate);
 
-		this.finBaseRate.getBaseComp().setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
-		this.finBaseRate.getSpecialComp().setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
-		this.finBaseRate.setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
+		if (consumerDurable) {
+			readOnlyComponent(isReadOnly("PromotionDialog_Tenor"), this.tenor);
+			readOnlyComponent(isReadOnly("PromotionDialog_AdvEMITerms"), this.advEMITerms);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashbackFromDealer"), this.cashBackFromDealer);
+			readOnlyComponent(isReadOnly("PromotionDialog_CashbackToCustomer"), this.cashBackToCustomer);
+			readOnlyComponent(isReadOnly("PromotionDialog_PftDaysBasis"), this.pftDaysBasis);
+			readOnlyComponent(isReadOnly("PromotionDialog_SubventionRate"), this.subventionRate);
+			readOnlyComponent(isReadOnly("PromotionDialog_TaxApplicable"), this.taxApplicable);
+			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.openBalOnPV);
+			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.remarks);
+			readOnlyComponent(isReadOnly("PromotionDialog_OpenBalOnPV"), this.specialScheme);
+
+		} else {
+			readOnlyComponent(isReadOnly("PromotionDialog_ApplyRpyPricing"), this.applyRpyPricing);
+			readOnlyComponent(isReadOnly("PromotionDialog_FinMinTerm"), this.finMinTerm);
+			readOnlyComponent(isReadOnly("PromotionDialog_FinMaxTerm"), this.finMaxTerm);
+			readOnlyComponent(isReadOnly("PromotionDialog_FinMinRate"), this.finMinRate);
+			readOnlyComponent(isReadOnly("PromotionDialog_FinMaxRate"), this.finMaxRate);
+
+			this.finBaseRate.getBaseComp().setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
+			this.finBaseRate.getSpecialComp().setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
+			this.finBaseRate.setReadonly(isReadOnly("PromotionDialog_FinBaseRate"));
+		}
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -1302,6 +1552,18 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		readOnlyComponent(true, this.finMinRate);
 		readOnlyComponent(true, this.finMaxRate);
 		readOnlyComponent(true, this.active);
+
+		if (consumerDurable) {
+			readOnlyComponent(true, this.tenor);
+			readOnlyComponent(true, this.advEMITerms);
+			readOnlyComponent(true, this.cashBackFromDealer);
+			readOnlyComponent(true, this.cashBackToCustomer);
+			readOnlyComponent(true, this.pftDaysBasis);
+			readOnlyComponent(true, this.subventionRate);
+			readOnlyComponent(true, this.taxApplicable);
+			readOnlyComponent(true, this.specialScheme);
+			readOnlyComponent(true, this.remarks);
+		}
 
 		this.finBaseRate.getBaseComp().setReadonly(true);
 		this.finBaseRate.getSpecialComp().setReadonly(true);
@@ -1351,7 +1613,33 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		this.finMaxRate.setValue("");
 		this.active.setChecked(false);
 
+		if (consumerDurable) {
+			this.tenor.setValue(0);
+			this.advEMITerms.setValue(0);
+			this.cashBackFromDealer.setValue(0);
+			this.cashBackToCustomer.setValue(0);
+			this.pftDaysBasis.setSelectedIndex(0);
+			this.subventionRate.setValue(BigDecimal.ZERO);
+			this.taxApplicable.setChecked(false);
+		}
+
 		logger.debug("Leaving");
+	}
+
+	public void onClick$btnCopy(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		if (doClose(this.btnSave.isVisible())) {
+			Events.postEvent("onClick$CopychemeIdCreation", promotionListCtrl.window_PromotionList, promotion);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnNewSchemeId(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		if (doClose(this.btnSave.isVisible())) {
+			Events.postEvent("onClick$NewSchemeIdCreation", promotionListCtrl.window_PromotionList, promotion);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1491,6 +1779,15 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			aPromotion.setNextTaskId(nextTaskId);
 			aPromotion.setRoleCode(getRole());
 			aPromotion.setNextRoleCode(nextRoleCode);
+
+			// FinTypeFees
+			List<FinTypeFees> finTypeFees = aPromotion.getFinTypeFeesList();
+			if (finTypeFees != null && !finTypeFees.isEmpty()) {
+				for (FinTypeFees item : finTypeFees) {
+					item.setReferenceId(aPromotion.getReferenceID());
+					item.setFinType(aPromotion.getPromotionCode());
+				}
+			}
 
 			if (StringUtils.trimToEmpty(getOperationRefs()).equals("")) {
 				processCompleted = doSaveProcess(getAuditHeader(aPromotion, tranType), null);

@@ -523,7 +523,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 
 				// Call Schedule calculator for Rate change
-				finScheduleData = recalService.getRecalculateSchdDetails(finScheduleData);
+				finScheduleData = recalService.getRecalculateSchdDetails(finScheduleData, "");
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
@@ -619,7 +619,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 				// Call Schedule calculator for Rate change
-				finScheduleData = recalService.getRecalculateSchdDetails(finScheduleData);
+				finScheduleData = recalService.getRecalculateSchdDetails(finScheduleData, "");
 
 				if (finScheduleData.getErrorDetails() != null) {
 					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {

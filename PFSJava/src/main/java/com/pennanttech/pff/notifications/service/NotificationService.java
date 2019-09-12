@@ -1124,6 +1124,8 @@ public class NotificationService {
 		LMSServiceLog lmsServiceLog = aFinanceDetail.getLmsServiceLog();
 		if (lmsServiceLog != null && lmsServiceLog.getEvent() != null) {
 			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
+			declaredFieldValues.put("rc_" + "effectiveDate",
+					DateUtility.formatToLongDate(lmsServiceLog.getEffectiveDate()));
 		}
 		//put call email template datamap added
 		FinOption finOption = aFinanceDetail.getFinOption();

@@ -360,7 +360,6 @@ public class InstrumentwiseLimitServiceImpl extends GenericService<Instrumentwis
 
 	@Override
 	public InstrumentwiseLimit getInstrumentWiseModeLimit(String paymentMode) {
-		// TODO Auto-generated method stub
 		return getInstrumentwiseLimitDAO().getInstrumentWiseModeLimit(paymentMode, "_AView");
 	}
 

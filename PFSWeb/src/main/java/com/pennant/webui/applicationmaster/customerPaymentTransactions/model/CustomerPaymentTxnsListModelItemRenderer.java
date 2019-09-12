@@ -74,17 +74,19 @@ public class CustomerPaymentTxnsListModelItemRenderer implements ListitemRendere
 		String tranModule = "";
 		if ("DISB".equals(transaction.getTranModule())) {
 			tranModule = "Disbursement";
+		} else if ("PYMT".equals(transaction.getTranModule())) {
+			tranModule = "Payments";
 		}
-		
+
 		lc = new Listcell(tranModule);
 		lc.setParent(item);
 
 		lc = new Listcell(String.valueOf(transaction.getPaymentId()));
 		lc.setParent(item);
 
-		/*lc = new Listcell(transaction.getTranStatus());
-		lc.setParent(item);
-*/
+		/*
+		 * lc = new Listcell(transaction.getTranStatus()); lc.setParent(item);
+		 */
 		item.setAttribute("paymentTransaction", transaction);
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerPaymentTxnsItemDoubleClicked");

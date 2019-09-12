@@ -421,7 +421,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (StringUtils.equals(receiptMode, DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
 			this.row_subReceiptMode.setVisible(true);
-			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), "");
+			String exlcudeValues = SysParamUtil.getValueAsString("EXCLUDE_SUB_RECEIPT_MODE_VALUE");
+			if (exlcudeValues == null) {
+				exlcudeValues = "";
+			}
+			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), exlcudeValues);
 		} else {
 			fillComboBox(subReceiptMode, "", PennantStaticListUtil.getSubReceiptPaymentModes(), ",ESCROW,");
 		}
@@ -1068,10 +1072,17 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					PennantStaticListUtil.getReceiptPurpose(), ",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
-			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(),
-					",FeePayment,EarlySettlement,");
+			String excludeFields = ",FeePayment,EarlySettlement,";
+			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
+				excludeFields = ",FeePayment,EarlySettlement,EarlyPayment,";
+			}
+			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), excludeFields);
 		} else {
-			fillComboBox(receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
+			String excludeFields = ",FeePayment,";
+			if (FinanceConstants.PRODUCT_CD.equals(financeMain.getProductCategory())) {
+				excludeFields = ",FeePayment,EarlyPayment,";
+			}
+			fillComboBox(receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), excludeFields);
 		}
 
 		FinanceType financeType = receiptService.getFinanceType(financeMain.getFinType());

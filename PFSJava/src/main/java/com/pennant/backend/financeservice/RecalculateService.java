@@ -8,7 +8,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 
 public interface RecalculateService {
 
-	FinScheduleData getRecalculateSchdDetails(FinScheduleData finScheduleData);
+	FinScheduleData getRecalculateSchdDetails(FinScheduleData finScheduleData, String module);
 
 	FinScheduleData getRecalChangeProfit(FinScheduleData finScheduleData, BigDecimal adjustedPft);
 

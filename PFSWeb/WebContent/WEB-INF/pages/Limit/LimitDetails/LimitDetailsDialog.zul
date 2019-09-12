@@ -205,6 +205,8 @@
 									visible="false" />
 								<listheader id="listheader_ExternalReference" align="right" label="${c:l('listheader_ExternalReference.label')}"
 									hflex="min" visible="false" />
+								<listheader id="listheader_ExternalReference1" align="right" label="${c:l('listheader_ExternalReference1.label')}"
+									hflex="min" visible="false" />
 								<listheader id="listheader_Tenor" align="right" label="${c:l('listheader_Tenor.label')}" hflex="min"
 									visible="false" />
 							</listhead>

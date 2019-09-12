@@ -49,6 +49,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateCodeDAO;
 import com.pennant.backend.dao.applicationmaster.impl.BaseRateCodeDAOImpl;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -69,6 +70,7 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BaseRateCodeDAO baseRateCodeDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	public BaseRateCodeServiceImpl() {
 		super();
@@ -339,4 +341,19 @@ public class BaseRateCodeServiceImpl extends GenericService<BaseRateCode> implem
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
+
+	@Override
+	public boolean isRepayFrqExists(String brType) {
+		return this.financeMainDAO.isRepayFrqExists(brType);
+	}
+
+	@Override
+	public boolean isGrcRepayFrqExists(String brType) {
+		return this.financeMainDAO.isGrcRepayFrqExists(brType);
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

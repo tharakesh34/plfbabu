@@ -92,8 +92,9 @@
 
 	<!-- Accrual -->
 	<bean id="accrualService" class="com.pennant.app.core.AccrualService" parent="serviceHelper">
-		<property name="suspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
+		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 	</bean>
 
 	<!-- LPP/LPI Accrual -->

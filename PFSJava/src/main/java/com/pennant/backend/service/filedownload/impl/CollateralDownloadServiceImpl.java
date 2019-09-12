@@ -11,6 +11,7 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.filedownload.CollateralDownloadService;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.external.GlemCollateralProcess;
 
 public class CollateralDownloadServiceImpl implements CollateralDownloadService {
 
@@ -18,9 +19,11 @@ public class CollateralDownloadServiceImpl implements CollateralDownloadService 
 
 	@Autowired
 	private CollateralSetupService collateralSetupService;
+	@Autowired(required = false)
+	private GlemCollateralProcess glemsCollateralProcess;
 
 	@Override
-	public boolean processDownload(List<String> collateralRef) throws Exception {
+	public String processDownload(List<String> collateralRef) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		List<CollateralSetup> collateralSetups = new ArrayList<>();
@@ -30,8 +33,11 @@ public class CollateralDownloadServiceImpl implements CollateralDownloadService 
 				collateralSetups.add(collateralSetupService.getCollateralSetupByRef(reference, "", false));
 			}
 		}
+		if (CollectionUtils.isNotEmpty(collateralSetups)) {
+			return glemsCollateralProcess.processDownload(collateralSetups);
+		}
 		logger.debug(Literal.LEAVING);
-		return false;
+		return "";
 	}
 
 }

@@ -108,7 +108,7 @@
 									hflex="min" style="text-align:right;" />
 							</listhead>
 						</listbox>
-						<listbox id="listFeeWaiverEnqDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
+						<!-- <listbox id="listFeeWaiverEnqDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 							width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="false">
 							<listhead sizable="true">
 								<listheader id="listheader_enq_FeeType" label="${c:l('listheader_Type.label')}" sort="none" hflex="min" />
@@ -127,7 +127,7 @@
 								<listheader id="listheader_enq_WaivedBy" label="${c:l('listheader_WaivedBy.label')}" sort="none"
 									hflex="min" style="text-align:right;" />
 							</listhead>
-						</listbox>
+						</listbox> -->
 					</groupbox>
 				</div>
 			</center>

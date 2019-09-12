@@ -6,9 +6,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -23,12 +23,14 @@ public class PaymentsProcessService {
 	private CustomerPaymentService customerPaymentService;
 	@Autowired
 	private FinAdvancePaymentsService finAdvancePaymentsService;
+	@Autowired
+	private PaymentInstructionService paymentInstructionService;
 
 	public static final String DISB_STATUS = "DISB";
 	public static final String DISB_PYMT = "PYMT";
 	public static final String DISB_INSR = "INSR";
 
-	public void process(FinanceDetail financeDetail, AuditHeader auditHeader, String channel) {
+	public void process(FinanceDetail financeDetail, String channel) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
@@ -55,20 +57,36 @@ public class PaymentsProcessService {
 			} else if (DisbursementConstants.CHANNEL_INSURANCE.equals(channel)) {
 				paymentType = DISB_INSR;
 			}
+
 			finAdvancePayments = this.customerPaymentService.processOnlinePayment(advancePayments, paymentType);
 			if (CollectionUtils.isNotEmpty(finAdvancePayments)) {
 				for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
-					this.finAdvancePaymentsService.updateStatus(finAdvancePayment, "");
+					updateStatus(finAdvancePayment, channel);
 				}
 			}
+
 		} catch (InterfaceException e) {
 			logger.debug(Literal.EXCEPTION, e);
 			if (CollectionUtils.isNotEmpty(finAdvancePayments)) {
 				for (FinAdvancePayments finAdvancePayment : finAdvancePayments) {
 					finAdvancePayment.setStatus(DisbursementConstants.STATUS_REJECTED);
-					this.finAdvancePaymentsService.updateStatus(finAdvancePayment, "");
+					updateStatus(finAdvancePayment, channel);
 				}
 			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateStatus(FinAdvancePayments finAdvancePayment, String channel) {
+		logger.debug(Literal.ENTERING);
+
+		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
+			this.finAdvancePaymentsService.updateStatus(finAdvancePayment, "");
+		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
+			PaymentInstruction instruction = new PaymentInstruction();
+			instruction.setPaymentInstructionId(finAdvancePayment.getPaymentId());
+			instruction.setStatus(finAdvancePayment.getStatus());
+			this.paymentInstructionService.updateStatus(instruction, "");
 		}
 		logger.debug(Literal.LEAVING);
 	}

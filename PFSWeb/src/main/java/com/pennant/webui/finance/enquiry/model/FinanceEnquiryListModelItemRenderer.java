@@ -59,8 +59,11 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setStyle("text-align:right");
 		lc.setParent(item);
 		if (enquiry.getFinRepaymentAmount() != null) {
-			lc = new Listcell(PennantAppUtil.amountFormate(finAmount.subtract(enquiry.getFinRepaymentAmount()),
-					CurrencyUtil.getFormat(enquiry.getFinCcy())));
+			BigDecimal curFinAmountValue = enquiry.getFinCurrAssetValue().add(enquiry.getFeeChargeAmt())
+					.add(enquiry.getInsuranceAmt()).subtract(enquiry.getDownPayment())
+					.subtract(enquiry.getFinRepaymentAmount()).subtract(enquiry.getSvAmount());
+			lc = new Listcell(
+					PennantAppUtil.amountFormate(curFinAmountValue, CurrencyUtil.getFormat(enquiry.getFinCcy())));
 			lc.setStyle("text-align:right");
 		} else {
 			lc = new Listcell("");

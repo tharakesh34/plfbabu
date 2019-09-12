@@ -217,7 +217,7 @@ public class FeeWaiverDetailDAOImpl extends SequenceDao<FeeWaiverDetail> impleme
 		sql.append(" From  FeeWaiverDetails FD inner join FeeWaiverHeader FH  on FH.waiverId=FD.waiverId ");
 		sql.append(" left join SecUsers SU on FH.lastMntBy=SU.usrid where FH.waiverId in ");
 		sql.append(" (select waiverId from FeeWaiverHeader where FinReference = :FinReference) ");
-		sql.append(" order by FeeTypeCode ");
+		sql.append(" order by WaiverId ");
 
 		logger.trace(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeWaiverHeader);

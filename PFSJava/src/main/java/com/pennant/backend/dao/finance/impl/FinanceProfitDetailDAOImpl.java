@@ -101,7 +101,9 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" LatestRpyDate, LatestRpyPri, LatestRpyPft, TotalWriteoff, FirstODDate, PrvODDate, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,MaturityDate, ");
 		selectSql.append(" ProductCategory,ExcessAmt, EmiInAdvance, PrvMthAmz, ");
-		selectSql.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid, PenaltyDue");
+		selectSql
+				.append(" PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, PenaltyPaid, PenaltyDue,");
+		selectSql.append(" GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, PrvMthGapIntAmz, SvAmount, CbAmount ");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -159,7 +161,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(", ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate,FullPaidDate");
 		sql.append(", ExcessAmt, EmiInAdvance");
 		sql.append(", PayableAdvise, ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv");
-		sql.append(", AMZMethod");
+		sql.append(", AMZMethod, GapIntAmz, GapIntAmzLbd, SvAmount, CbAmount");
 
 		sql.append(" From FinPftDetails");
 		return sql;
@@ -234,6 +236,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select AcrTillLBD, PftAmzSusp,  AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD ");
+		selectSql.append(" , GapIntAmzLbd");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -303,7 +306,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" NSchdDate, PrvRpySchDate, ODPrincipal, ODProfit, NOODInst, NOPaidInst, ClosingStatus, ");
 		selectSql.append(
 				" TotalPftPaidInAdv, TotalPriPaidInAdv, AmzTillLBD,LpiTillLBD, LppTillLBD,GstLpiTillLBD, GstLppTillLBD, TdSchdPftPaid,");
-		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise");
+		selectSql.append(" ExcessAmt, EmiInAdvance, PayableAdvise, GapIntAmzLbd, SvAmount, CbAmount");
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference =:FinReference");
 
@@ -359,6 +362,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 				" FinIsActive = :FinIsActive, ClosingStatus = :ClosingStatus,FinStatus=:FinStatus, ActualODDays = :ActualODDays,");
 		updateSql.append(
 				" AmzTillLBD=:AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD ");
+		updateSql.append(",GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd");
 		/*
 		 * updateSql.append(" ExcessAmt = :ExcessAmt, ");
 		 * updateSql.append(" EmiInAdvance = :EmiInAdvance, PayableAdvise = :PayableAdvise, ");
@@ -413,6 +417,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(
 				" TotalAdvPftSchd = :TotalAdvPftSchd, TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv=:TotalPriPaidInAdv, TdSchdAdvPft=:TdSchdAdvPft, ");
 		updateSql.append(" TdSchdRbt = :TdSchdRbt, PftAmzNormal = :PftAmzNormal, PftAmzPD=:PftAmzPD ");
+		updateSql.append(" ,GapIntAmz = :GapIntAmz, GapIntAmzLbd = :GapIntAmzLbd ");
 		updateSql.append(" Where FinReference =:FinReference");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -433,6 +438,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		updateSql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD, PrvMthAmz = :PrvMthAmz,");
 		updateSql.append(" PrvMthAmzNrm = :PrvMthAmzNrm, PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
 		updateSql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp");
+		updateSql.append(" ,GapIntAmzLbd = :GapIntAmzLbd, PrvMthGapIntAmz = :PrvMthGapIntAmz ");
 		updateSql.append(" Where FinReference =:FinReference");
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finProfitDetail);
@@ -484,7 +490,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" PrvMthAcrSusp, FirstDisbDate, LatestDisbDate, FutureInst, RemainingTenor,");
 		insertSql.append(" TotalTenor,ProductCategory");
 		insertSql.append(" ,ExcessAmt, EmiInAdvance, PayableAdvise, ");
-		insertSql.append(" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv ");
+		insertSql.append(
+				" ExcessAmtResv, EmiInAdvanceResv, PayableAdviseResv, GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz, SvAmount, CbAmount ");
 		insertSql.append(" ) Values");
 		insertSql.append(" (:FinReference, :CustId, :FinBranch, :FinType, :LastMdfDate, :TotalPftSchd, ");
 		insertSql.append(" :TotalPftCpz, :TotalPftPaid, :TotalPftBal, :TotalPftPaidInAdv, :TotalPriPaid, ");
@@ -510,7 +517,8 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		insertSql.append(" :PrvMthAcrSusp, :FirstDisbDate, :LatestDisbDate, :FutureInst, :RemainingTenor,");
 		insertSql.append(" :TotalTenor,:ProductCategory ");
 		insertSql.append(" , :ExcessAmt, :EmiInAdvance, :PayableAdvise, ");
-		insertSql.append(" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv ");
+		insertSql.append(
+				" :ExcessAmtResv, :EmiInAdvanceResv, :PayableAdviseResv, :GapIntAmz, :GapIntAmzLbd, :PrvMthGapIntAmz, :SvAmount, :CbAmount ");
 		insertSql.append(" ) ");
 
 		logger.debug("insertSql: " + insertSql.toString());
@@ -695,19 +703,19 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		sql.append(" TotalRbtSchd = :TotalRbtSchd, TotalPriPaidInAdv = :TotalPriPaidInAdv,");
 		sql.append(" FinStatus = :FinStatus, FinStsReason = :FinStsReason, FinWorstStatus = :FinWorstStatus, ");
 		sql.append(" TotalPftPaidInAdv = :TotalPftPaidInAdv, LastMdfDate = :LastMdfDate, ");
-		sql.append(" AMZMethod = :AMZMethod ");
+		sql.append(" AMZMethod = :AMZMethod, GapIntAmz = :GapIntAmz ");
 
 		if (posted) {
 			sql.append(
 					" ,AmzTillLBD = :AmzTillLBD, LpiTillLBD=:LpiTillLBD, LppTillLBD=:LppTillLBD,GstLpiTillLBD=:GstLpiTillLBD, GstLppTillLBD=:GstLppTillLBD, AmzTillLBDNormal= :AmzTillLBDNormal, ");
 			sql.append(" AmzTillLBDPD = :AmzTillLBDPD, AmzTillLBDPIS = :AmzTillLBDPIS,");
-			sql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD ");
+			sql.append(" AcrTillLBD = :AcrTillLBD, AcrSuspTillLBD = :AcrSuspTillLBD, GapIntAmzLbd = :GapIntAmzLbd ");
 		}
 
 		if (monthend) {
 			sql.append(" ,PrvMthAmz = :PrvMthAmz, PrvMthAmzNrm = :PrvMthAmzNrm, ");
 			sql.append(" PrvMthAmzPD = :PrvMthAmzPD, PrvMthAmzSusp = :PrvMthAmzSusp,");
-			sql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp");
+			sql.append(" PrvMthAcr = :PrvMthAcr, PrvMthAcrSusp = :PrvMthAcrSusp, PrvMthGapIntAmz = :PrvMthGapIntAmz");
 		}
 
 		sql.append(" Where FinReference =:FinReference");
@@ -1082,6 +1090,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ");
 		selectSql.append(" ClosingStatus, FinCategory, TotalWriteoff, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, MaturityDate, LatestRpyDate ");
+		selectSql.append(" ,GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz ");
 
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where MaturityDate >= :MaturityDate ");
@@ -1113,6 +1122,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		selectSql.append(" TdSchdPri, TdSchdPriPaid, TdSchdPriBal, PrvMthAmz, ");
 		selectSql.append(" ClosingStatus, FinCategory, TotalWriteoff, ");
 		selectSql.append(" ODPrincipal, ODProfit, CurODDays, ActualODDays, FinStartDate, MaturityDate, LatestRpyDate ");
+		selectSql.append(" ,GapIntAmz, GapIntAmzLbd, PrvMthGapIntAmz ");
 
 		selectSql.append(" From FinPftDetails");
 		selectSql.append(" Where FinReference = :FinReference");

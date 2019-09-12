@@ -279,6 +279,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal grcMaxRate = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal grcMaxAmount = BigDecimal.ZERO;
+	private boolean grcFrqEditable;
 
 	// Advised profit Rates
 	@XmlElement
@@ -349,6 +350,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal increasedCost = BigDecimal.ZERO;
 	private BigDecimal curSuplRent = BigDecimal.ZERO;
 	private BigDecimal curIncrCost = BigDecimal.ZERO;
+	private boolean frqEditable = false;
 
 	@XmlElement
 	private String rolloverFrq;
@@ -731,7 +733,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal flexiAmount = BigDecimal.ZERO;
 	private boolean chgDropLineSchd = false;
 	private Long assignmentId;
-	private Long promotionSeqId;
+	private long promotionSeqId = 0;
 	private String loanCategory;
 	private boolean allowSubvention;
 	private Map<String, Object> glSubHeadCodes = new HashMap<>();
@@ -752,6 +754,12 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal intTdsAdjusted = BigDecimal.ZERO;
 	private String extReference;
 	private String serviceName;
+	private boolean sanBsdSchdle;
+	private boolean applySanctionCheck;
+	private BigDecimal svAmount = BigDecimal.ZERO;
+	private BigDecimal cbAmount = BigDecimal.ZERO;
+	private String bRRpyRvwFrq;
+	private boolean baseRateReq;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -932,7 +940,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("flexiAmount");
 		excludeFields.add("chgDropLineSchd");
 		excludeFields.add("assignmentId");
-		excludeFields.add("promotionSeqId");
 		excludeFields.add("loanCategory");
 		excludeFields.add("allowSubvention");
 		excludeFields.add("glSubHeadCodes");
@@ -947,6 +954,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("serviceName");
 
 		excludeFields.add("pftCpzFromReset");
+		excludeFields.add("applySanctionCheck");
+		excludeFields.add("grcFrqEditable");
+		excludeFields.add("frqEditable");
+		excludeFields.add("bRRpyRvwFrq");
+		excludeFields.add("baseRateReq");
 
 		return excludeFields;
 	}
@@ -4429,4 +4441,69 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setPftCpzFromReset(BigDecimal pftCpzFromReset) {
 		this.pftCpzFromReset = pftCpzFromReset;
 	}
+
+	public boolean isSanBsdSchdle() {
+		return sanBsdSchdle;
+	}
+
+	public void setSanBsdSchdle(boolean sanBsdSchdle) {
+		this.sanBsdSchdle = sanBsdSchdle;
+	}
+
+	public boolean isApplySanctionCheck() {
+		return applySanctionCheck;
+	}
+
+	public void setApplySanctionCheck(boolean applySanctionCheck) {
+		this.applySanctionCheck = applySanctionCheck;
+	}
+
+	public BigDecimal getSvAmount() {
+		return svAmount;
+	}
+
+	public void setSvAmount(BigDecimal svAmount) {
+		this.svAmount = svAmount;
+	}
+
+	public BigDecimal getCbAmount() {
+		return cbAmount;
+	}
+
+	public void setCbAmount(BigDecimal cbAmount) {
+		this.cbAmount = cbAmount;
+	}
+
+	public boolean isGrcFrqEditable() {
+		return grcFrqEditable;
+	}
+
+	public void setGrcFrqEditable(boolean grcFrqEditable) {
+		this.grcFrqEditable = grcFrqEditable;
+	}
+
+	public boolean isFrqEditable() {
+		return frqEditable;
+	}
+
+	public void setFrqEditable(boolean frqEditable) {
+		this.frqEditable = frqEditable;
+	}
+
+	public String getbRRpyRvwFrq() {
+		return bRRpyRvwFrq;
+	}
+
+	public void setbRRpyRvwFrq(String bRRpyRvwFrq) {
+		this.bRRpyRvwFrq = bRRpyRvwFrq;
+	}
+
+	public boolean isBaseRateReq() {
+		return baseRateReq;
+	}
+
+	public void setBaseRateReq(boolean baseRateReq) {
+		this.baseRateReq = baseRateReq;
+	}
+
 }

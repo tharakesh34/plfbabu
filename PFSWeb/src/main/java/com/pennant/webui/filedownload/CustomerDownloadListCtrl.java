@@ -43,6 +43,12 @@
 
 package com.pennant.webui.filedownload;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,18 +60,29 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Path;
+import org.zkoss.zk.ui.WrongValueException;
+import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Center;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanel;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -75,15 +92,16 @@ import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.filedownload.CustomerDownloadService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
-import com.pennanttech.framework.core.SearchOperator.Operators;
-import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.GLEMSCustomerProcess;
 
 /**
  * ************************************************************<br>
@@ -101,6 +119,9 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	protected Listbox listBoxCustomerDownload;
 	protected Paging pagingCustomerDownloadList;
 
+	@Autowired
+	private GLEMSCustomerProcess glemsCustomerProcess;
+
 	protected Listheader listheader_CustCIF;
 	protected Listheader listheader_CustCoreBank;
 	protected Listheader listheader_CustShrtName;
@@ -115,6 +136,8 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	protected Textbox custTypeCode;
 	protected Textbox custShrtName;
 	protected Textbox custDftBranch;
+	protected Datebox toDate;
+	protected Datebox fromDate;
 
 	protected Listbox sortOperator_custDftBranch;
 	protected Listbox sortOperator_custCIF;
@@ -175,24 +198,21 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 
 		registerButton(button_Search);
 
-		registerField("custId");
-		registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF, sortOperator_custCIF,
-				Operators.SIMPLESTRING);
-		registerField("custCoreBank", listheader_CustCoreBank, SortOrder.NONE, custCoreBank, sortOperator_custCoreBank,
-				Operators.STRING);
-		registerField("custShrtName", listheader_CustShrtName, SortOrder.NONE, custShrtName, sortOperator_custShrtName,
-				Operators.SIMPLESTRING);
-		registerField("custDftBranch", listheader_CustDftBranch, SortOrder.NONE, custDftBranch,
-				sortOperator_custDftBranch, Operators.STRING);
-
-		fillComboBox(this.custCtgCode, "", custCtgCodeList, "");
-		registerField("custCtgCode", listheader_CustCtgCode, SortOrder.NONE, custCtgCode, sortOperator_custCtgCode,
-				Operators.STRING);
-
-		registerField("lovDescCustCtgCodeName");
-		registerField("lovDescCustTypeCodeName", listheader_CustTypeCode, SortOrder.NONE, custTypeCode,
-				sortOperator_custTypeCode, Operators.STRING);
-		registerField("LovDescRequestStage", listheader_RequestStage);
+		/*
+		 * registerField("custId"); registerField("custCIF", listheader_CustCIF, SortOrder.ASC, custCIF,
+		 * sortOperator_custCIF, Operators.SIMPLESTRING); registerField("custCoreBank", listheader_CustCoreBank,
+		 * SortOrder.NONE, custCoreBank, sortOperator_custCoreBank, Operators.STRING); registerField("custShrtName",
+		 * listheader_CustShrtName, SortOrder.NONE, custShrtName, sortOperator_custShrtName, Operators.SIMPLESTRING);
+		 * registerField("custDftBranch", listheader_CustDftBranch, SortOrder.NONE, custDftBranch,
+		 * sortOperator_custDftBranch, Operators.STRING);
+		 * 
+		 * fillComboBox(this.custCtgCode, "", custCtgCodeList, ""); registerField("custCtgCode", listheader_CustCtgCode,
+		 * SortOrder.NONE, custCtgCode, sortOperator_custCtgCode, Operators.STRING);
+		 * 
+		 * registerField("lovDescCustCtgCodeName"); registerField("lovDescCustTypeCodeName", listheader_CustTypeCode,
+		 * SortOrder.NONE, custTypeCode, sortOperator_custTypeCode, Operators.STRING);
+		 * registerField("LovDescRequestStage", listheader_RequestStage);
+		 */
 
 		// Render the page and display no data when the page loaded for the
 		// first time.
@@ -204,6 +224,9 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
+		this.toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		this.fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
 		listItem_Checkbox = new Listitem();
 		listCell_Checkbox = new Listcell();
 		listHeader_CheckBox_Comp = new Checkbox();
@@ -235,9 +258,8 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnDownload(Event event) throws Exception {
+	public void onClick$btnDownload(ForwardEvent event) throws Exception {
 		logger.debug(Literal.ENTERING);
-
 		List<Customer> customerList;
 		List<Long> custId = new ArrayList<>();
 
@@ -259,7 +281,11 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 				custId.add(customer.getCustID());
 			}
 			try {
+
 				this.customerDownloadService.processDownload(custId);
+				String filePath = glemsCustomerProcess.getFilePath();
+				downloadFromServer(filePath);
+
 				MessageUtil.showMessage("file downloaded successfully");
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
@@ -275,8 +301,61 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
+	public String downloadFromServer(String filePath) throws FileNotFoundException, IOException {
+		String Path = App.getProperty("external.interface.glems.customer.path");
+		String CustomerPath = Path.concat(File.separator);
+		String fileName = StringUtils.substringAfter(filePath, CustomerPath);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		InputStream inputStream = new FileInputStream(filePath);
+		int data;
+		while ((data = inputStream.read()) >= 0) {
+			stream.write(data);
+		}
+		inputStream.close();
+		inputStream = null;
+		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
+		stream.close();
+		/*
+		 * FileDelete delete = new FileDelete(); delete.delete(Path);
+		 */
+		return filePath;
+	}
+
+	protected void createNewPage(String uri, String tabName, Map<String, Object> args) {
+		final Borderlayout bl = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+		final Center center = bl.getCenter();
+		final Tabs tabs = (Tabs) center.getFellow("divCenter").getFellow("tabBoxIndexCenter")
+				.getFellow("tabsIndexCenter");
+
+		Tab tab = null;
+		if (tabs.getFellowIfAny(tabName.trim().replace("menu_Item_", "tab_")) != null) {
+			tab = (Tab) tabs.getFellow(tabName.trim().replace("menu_Item_", "tab_"));
+			if (tab != null) {
+				tab.close();
+			}
+		}
+		tab = new Tab();
+		tab.setId(tabName.trim().replace("menu_Item_", "tab_"));
+		tab.setLabel(Labels.getLabel(tabName));
+		tab.setClosable(true);
+		tab.setParent(tabs);
+		tab.setLabel("Disbursement File Control");
+
+		final Tabpanels tabpanels = (Tabpanels) tabs.getFellow("tabpanelsBoxIndexCenter");
+		final Tabpanel tabpanel = new Tabpanel();
+		tabpanel.setHeight("100%");
+		tabpanel.setStyle("padding: 0px;");
+		tabpanel.setParent(tabpanels);
+
+		Executions.createComponents(uri, tabpanel, args);
+		tab.setSelected(true);
+	}
+
 	public void onClick$btnRefresh(Event event) {
 		doReset();
+		doRemoveValidation();
+		this.toDate.setValue(null);
+		this.fromDate.setValue(null);
 		renderCustomers();
 	}
 
@@ -339,6 +418,16 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 
 	private List<Customer> renderCustomers() {
 		logger.debug(Literal.ENTERING);
+
+		doSetValidations();
+		List<Customer> renderList = searchCustomer();
+
+		logger.debug(Literal.LEAVING);
+		return renderList;
+	}
+
+	private List<Customer> searchCustomer() {
+		logger.debug(Literal.ENTERING);
 		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
 
 		searchObject.addField("custId");
@@ -352,7 +441,18 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		searchObject.addField("LovDescRequestStage");
 		searchObject.addField("recordStatus");
 		searchObject.addField("recordType");
+		searchObject.addField("lastMntOn");
 		searchObject.addTabelName(this.tableName);
+
+		if (fromDate.getValue() != null && toDate.getValue() != null) {
+			String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
+			String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+
+			StringBuilder whereClause = new StringBuilder();
+			whereClause.append("(LASTMNTON >= ").append("'").append(fromDate).append("'").append(" AND LASTMNTON <= ")
+					.append("'").append(toDate).append("'").append(")");
+			searchObject.addWhereClause(whereClause.toString());
+		}
 
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filters = searchControl.getFilter();
@@ -366,11 +466,11 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		Map<String, String> corpMap = null;
 		Map<String, String> smeMap = null;
 		retailMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
-				PennantConstants.PFF_CUSTCTG_INDIV, "", "");
+				PennantConstants.PFF_CUSTCTG_INDIV, "", "", true);
 		corpMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
-				PennantConstants.PFF_CUSTCTG_CORP, "", "");
+				PennantConstants.PFF_CUSTCTG_CORP, "", "", true);
 		smeMap = getExtendedFieldDetailsService().getAllExtndedFieldDetails("CUSTOMER",
-				PennantConstants.PFF_CUSTCTG_SME, "", "");
+				PennantConstants.PFF_CUSTCTG_SME, "", "", true);
 		List<Customer> renderList = new ArrayList<Customer>();
 		if (CollectionUtils.isNotEmpty(searchList)) {
 			for (Customer customer : searchList) {
@@ -393,6 +493,55 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		getPagedListWrapper().initList(renderList, this.listBoxCustomerDownload, this.paging);
 		logger.debug(Literal.LEAVING);
 		return renderList;
+	}
+
+	private void doSetValidations() {
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		if (toDate.getValue() != null || fromDate.getValue() != null) {
+			try {
+				if (!this.fromDate.isDisabled())
+					this.fromDate.setConstraint(new PTDateValidator("From Date", true));
+				this.fromDate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				if (!this.toDate.isDisabled())
+					this.toDate.setConstraint(new PTDateValidator("To Date", true));
+				this.toDate.getValue();
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			if (this.fromDate.getValue().compareTo(this.toDate.getValue()) == 1) {
+				throw new WrongValueException(this.toDate, "To date should be greater than or equal to From date.");
+			}
+		} else {
+			this.toDate.setConstraint("");
+			this.fromDate.setConstraint("");
+			this.fromDate.setErrorMessage("");
+			this.toDate.setErrorMessage("");
+		}
+
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+	}
+
+	private void doRemoveValidation() {
+		logger.debug("Entering ");
+		this.fromDate.setConstraint("");
+		this.toDate.setConstraint("");
+		logger.debug("Leaving ");
+
 	}
 
 	private class CustomerDownloadListModelItemRenderer implements ListitemRenderer<Customer>, Serializable {
@@ -430,7 +579,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 			lc.setParent(item);
 			lc = new Listcell(customer.getRecordStatus());
 			lc.setParent(item);
-			lc = new Listcell(PennantJavaUtil.getLabel(customer.getRecordType()));
+			lc = new Listcell(PennantAppUtil.formateDate(customer.getLastMntOn(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
 			item.setAttribute("id", customer.getCustID());

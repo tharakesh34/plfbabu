@@ -80,6 +80,7 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -271,6 +272,10 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setValueColumn("PromotionCode");
 				this.finType.setDescColumn("PromotionDesc");
 				this.finType.setValidateColumns(new String[] { "PromotionCode" });
+
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("ReferenceId", 0, Filter.OP_EQUAL);
+				this.finType.setFilters(filters);
 				this.row_finEvent.setVisible(true);
 			} else if (this.moduleName.getSelectedItem().getValue().toString()
 					.equals(PennantConstants.WORFLOW_MODULE_COLLATERAL)) {

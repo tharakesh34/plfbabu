@@ -9,7 +9,7 @@ public class PaymentTransaction {
 	private String tranReference;
 	private String tranBatch;
 	private String tranStatus;
-	private long messageId;
+	private String messageId;
 	private long paymentId;
 	private String respReference;
 	private String finReference;
@@ -18,7 +18,8 @@ public class PaymentTransaction {
 	private Date transctionInitOn;
 	private Date statusUpdateOn;
 	private PaymentTransaction befImage;
-	
+	private int seqNo;
+
 	private FinAdvancePayments finAdvancePayments;
 
 	public long getTransactionId() {
@@ -119,7 +120,7 @@ public class PaymentTransaction {
 	/**
 	 * @return the messageId
 	 */
-	public long getMessageId() {
+	public String getMessageId() {
 		return messageId;
 	}
 
@@ -127,7 +128,7 @@ public class PaymentTransaction {
 	 * @param messageId
 	 *            the messageId to set
 	 */
-	public void setMessageId(long messageId) {
+	public void setMessageId(String messageId) {
 		this.messageId = messageId;
 	}
 
@@ -139,7 +140,8 @@ public class PaymentTransaction {
 	}
 
 	/**
-	 * @param finReference the finReference to set
+	 * @param finReference
+	 *            the finReference to set
 	 */
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
@@ -153,7 +155,8 @@ public class PaymentTransaction {
 	}
 
 	/**
-	 * @param finAdvancePayments the finAdvancePayments to set
+	 * @param finAdvancePayments
+	 *            the finAdvancePayments to set
 	 */
 	public void setFinAdvancePayments(FinAdvancePayments finAdvancePayments) {
 		this.finAdvancePayments = finAdvancePayments;
@@ -167,10 +170,19 @@ public class PaymentTransaction {
 	}
 
 	/**
-	 * @param befImage the befImage to set
+	 * @param befImage
+	 *            the befImage to set
 	 */
 	public void setBefImage(PaymentTransaction befImage) {
 		this.befImage = befImage;
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
 	}
 
 }

@@ -26,6 +26,10 @@ public class JsonServiceDetail implements Serializable {
 	private boolean xmlRequest = false;
 	private String serviceEndPoint;
 
+	private boolean proxyRequired = false;
+	private String proxyUrl;
+	private int proxyPort = 0;
+
 	public String getReference() {
 		return reference;
 	}
@@ -144,6 +148,30 @@ public class JsonServiceDetail implements Serializable {
 
 	public void setServiceEndPoint(String serviceEndPoint) {
 		this.serviceEndPoint = serviceEndPoint;
+	}
+
+	public boolean isProxyRequired() {
+		return proxyRequired;
+	}
+
+	public void setProxyRequired(boolean proxyRequired) {
+		this.proxyRequired = proxyRequired;
+	}
+
+	public String getProxyUrl() {
+		return proxyUrl;
+	}
+
+	public void setProxyUrl(String proxyUrl) {
+		this.proxyUrl = proxyUrl;
+	}
+
+	public int getProxyPort() {
+		return proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
 	}
 
 }

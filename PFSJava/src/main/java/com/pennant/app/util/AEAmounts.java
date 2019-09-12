@@ -75,7 +75,7 @@ public class AEAmounts implements Serializable {
 
 		aeEvent.setFinReference(pftDetail.getFinReference());
 		aeEvent.setAccountingEvent(finEvent);
-		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setPostDate(SysParamUtil.getAppDate());
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(dateSchdDate);
 		aeEvent.setBranch(pftDetail.getFinBranch());
@@ -115,6 +115,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setAmz(pftDetail.getPftAmz());
 		amountCodes.setAmzS(pftDetail.getPftAmzSusp());
 		amountCodes.setdAmz(amountCodes.getAmz().subtract(pftDetail.getAmzTillLBD()));
+		amountCodes.setdGapAmz(pftDetail.getGapIntAmz().subtract(pftDetail.getGapIntAmzLbd()));
 
 		// LPI Amortization calculation
 		if (pftDetail.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
@@ -165,8 +166,9 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPenaltyWaived(pftDetail.getPenaltyWaived());
 		//others
 		amountCodes.setPaidInst(pftDetail.getNOPaidInst());
-		amountCodes.setDisburse(pftDetail.getDisburse());
-		amountCodes.setDownpay(pftDetail.getDownpay());
+		//amountCodes.setDisburse(pftDetail.getDisburse());
+		//amountCodes.setDownpay(pftDetail.getDownpay());
+		amountCodes.setDownpay(pftDetail.getDownPayment());
 		amountCodes.setAdvanceEMI(pftDetail.getAdvanceEMI());
 		amountCodes.setDaysFromFullyPaid(getNoDays(pftDetail.getFullPaidDate(), valueDate));
 		amountCodes.setAccrue(pftDetail.getPftAccrued());
@@ -185,6 +187,9 @@ public class AEAmounts implements Serializable {
 		if (amountCodes.getuAmz().compareTo(BigDecimal.ZERO) < 0) {
 			amountCodes.setuAmz(BigDecimal.ZERO);
 		}
+
+		amountCodes.setSvAmount(pftDetail.getSvAmount());
+		amountCodes.setCbAmount(pftDetail.getCbAmount());
 
 		logger.debug("Leaving");
 		return aeEvent;

@@ -130,6 +130,7 @@ import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
@@ -566,6 +567,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			// READ OVERHANDED parameters !
 			FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
+
+			boolean applySanctionCheck = SanctionBasedSchedule.isApplySanctionBasedSchedule(fsd);
+			fsd.getFinanceMain().setApplySanctionCheck(applySanctionCheck);
 
 			FinanceProfitDetail finPftDeatils = fsd.getFinPftDeatil();
 			finPftDeatils = accrualService.calProfitDetails(financeMain, fsd.getFinanceScheduleDetails(), finPftDeatils,
@@ -2760,7 +2764,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType finType = finScheduleData.getFinanceType();
 		List<ValueLabel> epyMethodList = new ArrayList<>();
-		if (finMain.isAlwFlexi() || finType.isDeveloperFinance()) {
+
+		if (finMain.isApplySanctionCheck()) {
+			epyMethodList.add(
+					new ValueLabel(CalculationConstants.EARLYPAY_ADJMUR, Labels.getLabel("label_Adjust_To_Maturity")));
+			epyMethodList.add(
+					new ValueLabel(CalculationConstants.EARLYPAY_PRIHLD, Labels.getLabel("label_Principal_Holiday")));
+		} else if (finMain.isAlwFlexi() || finType.isDeveloperFinance()) {
 			epyMethodList.add(
 					new ValueLabel(CalculationConstants.EARLYPAY_PRIHLD, Labels.getLabel("label_Principal_Holiday")));
 		} else {

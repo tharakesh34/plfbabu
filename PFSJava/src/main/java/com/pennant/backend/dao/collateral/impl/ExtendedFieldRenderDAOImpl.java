@@ -576,17 +576,17 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 		StringBuilder sql = new StringBuilder();
 		if (StringUtils.startsWith(type, "_view")) {
-			sql.append("select * from (select Reference,CreditParentId from ");
+			sql.append("select * from (select Reference,UpdateCpID from ");
 			sql.append(tableName);
 			sql.append("_TEMP");
-			sql.append(" t1  union all select Reference,CreditParentId from ");
+			sql.append(" t1  union all select Reference,UpdateCpID from ");
 			sql.append(tableName);
 			sql.append(" t1  where not exists (select 1 from ");
 			sql.append(tableName);
 			sql.append("_TEMP");
 			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
 		} else {
-			sql.append("select Reference,CreditParentId  from ");
+			sql.append("select Reference,UpdateCpID  from ");
 			sql.append(tableName);
 			sql.append(StringUtils.trimToEmpty(type));
 		}
@@ -597,8 +597,57 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
 					HashMap<String, String> mapRet = new HashMap<String, String>();
 					while (rs.next()) {
-						if (rs.getString("CreditParentId") == null) {
-							mapRet.put(rs.getString("Reference"), rs.getString("CreditParentId"));
+						if (rs.getString("UpdateCpID") == null) {
+							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
+						}
+					}
+					return mapRet;
+				}
+			});
+		} catch (Exception e) {
+			logger.error(Literal.ENTERING, e);
+			renderMap = new HashMap<String, String>();
+		}
+
+		logger.debug(Literal.LEAVING);
+		return renderMap;
+	}
+
+	@Override
+	public Map<String, String> getAllExtendedFieldMapForUpdateCpid(String tableName, String type) {
+		logger.debug(Literal.ENTERING);
+
+		Map<String, String> renderMap = null;
+
+		type = StringUtils.trimToEmpty(type);
+
+		type = type.toLowerCase();
+
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWith(type, "_view")) {
+			sql.append("select * from (select Reference,UpdateCpID from ");
+			sql.append(tableName);
+			sql.append("_TEMP");
+			sql.append(" t1  union all select Reference,UpdateCpID from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_TEMP");
+			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+		} else {
+			sql.append("select Reference,UpdateCpID  from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(type));
+		}
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			renderMap = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, String>>() {
+				@Override
+				public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					HashMap<String, String> mapRet = new HashMap<String, String>();
+					while (rs.next()) {
+						if (rs.getString("UpdateCpID") != null) {
+							mapRet.put(rs.getString("Reference"), rs.getString("UpdateCpID"));
 						}
 					}
 					return mapRet;

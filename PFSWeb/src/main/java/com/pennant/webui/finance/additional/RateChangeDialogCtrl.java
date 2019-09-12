@@ -48,6 +48,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -70,10 +71,13 @@ import org.zkoss.zul.Window;
 import com.pennant.FrequencyBox;
 import com.pennant.RateBox;
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.RateUtil;
+import com.pennant.app.util.SanctionBasedSchedule;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
@@ -83,15 +87,18 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -146,6 +153,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	Calendar calender = Calendar.getInstance();
 	private transient boolean validationOn;
 	private transient RateChangeService rateChangeService;
+	private transient BaseRateCodeService baseRateCodeService;
 	private boolean appDateValidationReq = false;
 	private String moduleDefiner = "";
 
@@ -400,6 +408,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			excludeFileds.append("STEPPOS,");
 		}
 
+		excludeFileds = SanctionBasedSchedule.getSanctionRecalExcludeFlds(aFinSchData, excludeFileds);
+
 		//TillDate is being Excluded if there is no ratereview in Grace and Payment
 		if (!aFinanceMain.isAllowGrcPftRvw() && !aFinanceMain.isAllowRepayRvw()) {
 			excludeFileds.append("TILLDATE,");
@@ -411,7 +421,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			//Check if schedule header is null or not and set the recal type fields.
 
 			String schmethod = StringUtils.trimToEmpty(aFinSchData.getFinanceMain().getScheduleMethod());
-			if (schmethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
+
+			//PV: 24AUG19. Kotak Sanction Based Schedule only allow PRI_PFT and Recal Type as ADJMDT 
+			if (!aFinSchData.getFinanceMain().isSanBsdSchdle()
+					&& schmethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)) {
 				excludeFileds.append("ADJMDT,");
 			}
 			if (getFinScheduleData().getFinanceMain().getNumberOfTerms() == 1) {
@@ -510,7 +523,21 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			isOverdraft = true;
 		}
 
+		boolean allowBackDatedRateChange = SysParamUtil
+				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
 		Date curBussDate = DateUtility.getAppDate();
+		Date allowBackDate = null;
+
+		if (allowBackDatedRateChange) {
+			appDateValidationReq = false;
+			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
+				if (DateUtility.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
+					if (scheduleDetail.isRvwOnSchDate()) {
+						allowBackDate = scheduleDetail.getSchDate();
+					}
+				}
+			}
+		}
 
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
@@ -524,7 +551,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				//Not Review Date
-				if (!curSchd.isRvwOnSchDate()) {
+				if (!curSchd.isRvwOnSchDate() && !allowBackDatedRateChange) {
 					if (getFinScheduleData().getFinanceMain().isAllowGrcPeriod()
 							&& curSchd.getSchDate()
 									.compareTo(getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()) == 0
@@ -532,6 +559,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									.compareTo(getFinScheduleData().getFinanceMain().getFinStartDate()) != 0) {
 						//Proceed Further
 					} else {
+						continue;
+					}
+				}
+
+				if (allowBackDatedRateChange) {
+					if (DateUtility.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
 						continue;
 					}
 				}
@@ -650,15 +683,39 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			isOverdraft = true;
 		}
 
+		boolean allowBackDatedRateChange = SysParamUtil
+				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
+		Date curBussDate = DateUtility.getAppDate();
+		Date allowBackDate = null;
+
+		if (allowBackDatedRateChange) {
+			appDateValidationReq = false;
+			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
+				if (DateUtility.compare(scheduleDetail.getSchDate(), curBussDate) < 0) {
+					if (scheduleDetail.isRvwOnSchDate()) {
+						allowBackDate = scheduleDetail.getSchDate();
+					}
+				}
+			}
+		}
+
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
 				//in Overdraft the Review from Date should be Greater than the appdate 
-				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) < 0) {
+				if (isOverdraft && DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) < 0
+						&& !allowBackDatedRateChange) {
 					continue;
 				}
+
+				if (allowBackDatedRateChange) {
+					if (DateUtility.compare(curSchd.getSchDate(), allowBackDate) <= 0) {
+						continue;
+					}
+				}
+
 				//Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
@@ -670,7 +727,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				//Not Review Date
-				if (!curSchd.isRvwOnSchDate()) {
+				if (!curSchd.isRvwOnSchDate() && !allowBackDatedRateChange) {
 					if (curSchd.getSchDate().compareTo(maturityDate) != 0
 							|| this.cbRateChangeFromDate.getSelectedIndex() <= 0) {
 						continue;
@@ -740,6 +797,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClearMessage();
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		boolean allowBackDatedRateChange = SysParamUtil
+				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
 
 		try {
 			finServiceInstruction.setBaseRate(StringUtils.trimToNull(this.rate.getBaseValue()));
@@ -825,11 +885,29 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				lastPaidDate = curSchd.getSchDate();
 			}
 
-			if (curSchd.getSchDate().compareTo(currBussDate) == 0) {
-				lastPaidDate = currBussDate;
-			} else if (curSchd.getSchDate().compareTo(currBussDate) < 0) {
-				if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-					lastPaidDate = curSchd.getSchDate();
+			if (allowBackDatedRateChange) {
+				Date allowdBackDate = null;
+				for (FinanceScheduleDetail scheduleDetail : getFinScheduleData().getFinanceScheduleDetails()) {
+					if (DateUtility.compare(scheduleDetail.getSchDate(), currBussDate) < 0) {
+						if (scheduleDetail.isRvwOnSchDate()) {
+							allowdBackDate = scheduleDetail.getSchDate();
+						}
+					}
+				}
+
+				if ((curSchd.getSchDate().compareTo(currBussDate) < 0)
+						&& (DateUtility.compare(curSchd.getSchDate(), allowdBackDate) <= 0)) {
+					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+						lastPaidDate = curSchd.getSchDate();
+					}
+				}
+			} else {
+				if (curSchd.getSchDate().compareTo(currBussDate) == 0) {
+					lastPaidDate = currBussDate;
+				} else if ((curSchd.getSchDate().compareTo(currBussDate) < 0)) {
+					if (curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+						lastPaidDate = curSchd.getSchDate();
+					}
 				}
 			}
 
@@ -839,10 +917,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 		}
 
-		// Month End Date or Last installment which is Greater should be considered
-		Date mnthEndDate = DateUtility.getMonthEnd(DateUtility.addMonths(currBussDate, -1));
-		if (mnthEndDate.compareTo(lastPaidDate) > 0) {
-			lastPaidDate = DateUtility.addDays(mnthEndDate, 1);
+		if (!allowBackDatedRateChange) {
+			// Month End Date or Last installment which is Greater should be considered
+			Date mnthEndDate = DateUtility.getMonthEnd(DateUtility.addMonths(currBussDate, -1));
+			if (mnthEndDate.compareTo(lastPaidDate) > 0) {
+				lastPaidDate = DateUtility.addDays(mnthEndDate, 1);
+			}
 		}
 
 		// Back Date Allowed Condition Check
@@ -1030,6 +1110,26 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 
+		BaseRateCode baseRateCode = null;
+		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null) {
+
+			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServiceInstruction.getBaseRate());
+			String errMsg = validateFrq(getFinScheduleData(), finServiceInstruction, baseRateCode);
+
+			if (StringUtils.trimToNull(errMsg) != null) {
+				throw new WrongValueException(this.rate, errMsg);
+			}
+
+			BigDecimal marginRate = finServiceInstruction.getMargin();
+			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) > 0) {
+				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
+						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
+					// Calculating the old base rate if margin exists
+					calcRates(getFinScheduleData(), finServiceInstruction, baseRateCode);
+				}
+			}
+		}
+
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
 				getFinScheduleData().getFinanceMain().getProductCategory())) {
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
@@ -1038,6 +1138,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
 		finServiceInstruction.setFinEvent(FinanceConstants.FINSER_EVENT_RATECHG);
+
+		if (allowBackDatedRateChange && StringUtils.trimToNull(finServiceInstruction.getBaseRate()) != null
+				&& StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+			String bRRpyRvwFrq = baseRateCode.getbRRepayRvwFrq();
+			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(bRRpyRvwFrq);
+		}
 
 		// Service details calling for Schedule calculation
 		setFinScheduleData(
@@ -1215,7 +1321,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						this.rate.setBaseValue("");
 					}
 
-					if (StringUtils.trimToNull(details.getbRRepayRvwFrq()) != null) {
+					if (StringUtils.trimToNull(details.getbRRepayRvwFrq()) != null
+							&& (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE))) {
 						this.bRRepayRvwFrq.setValue(details.getbRRepayRvwFrq());
 						this.baseRateRvwFrqRow.setVisible(true);
 					}
@@ -1401,6 +1508,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			excludeFileds.append("STEPPOS,");
 		}
 
+		SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
+
 		fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 		changeRecalType();
 
@@ -1499,11 +1608,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				// FIXME PV @03/JUN/2018 ADJTERMS Testing
 				//excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 				excludeFileds.append(",TILLMDT,ADDTERM,ADDLAST,ADDRECAL,");
+
+				SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
+
 				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 			} else {
 				// FIXME PV @03/JUN/2018 ADJTERMS Testing
 				//excludeFileds.append(",ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 				excludeFileds.append(",ADDTERM,ADDLAST,ADDRECAL,");
+				SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
 				fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(), excludeFileds.toString());
 			}
 
@@ -1534,12 +1647,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						// FIXME PV @03/JUN/2018 ADJTERMS Testing
 						//excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
 						excludeFileds.append(",TILLMDT,CURPRD,TILLDATE,ADDTERM,ADDLAST,ADDRECAL,");
+						SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
 						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),
 								excludeFileds.toString());
 					} else {
 						// FIXME PV @03/JUN/2018 ADJTERMS Testing
 						//excludeFileds.append(",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADDRECAL,");
 						excludeFileds.append(",CURPRD,TILLDATE,ADDTERM,ADDLAST,ADJTERMS,ADDRECAL,");
+						SanctionBasedSchedule.getSanctionRecalExcludeFlds(getFinScheduleData(), excludeFileds);
 						fillComboBox(this.cbReCalType, "", PennantStaticListUtil.getSchCalCodes(),
 								excludeFileds.toString());
 					}
@@ -1599,6 +1714,152 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	//Validating the baserate frequency against the recal from date and to date.
+	private String validateFrq(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction,
+			BaseRateCode baseRateCode) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder errMsg = new StringBuilder();
+
+		if (baseRateCode == null || StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) == null) {
+			return errMsg.toString();
+		}
+
+		String bRRepayRvwFrq = baseRateCode.getbRRepayRvwFrq();
+		String frqCode = FrequencyUtil.getFrequencyCode(bRRepayRvwFrq);
+
+		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+
+		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
+			return errMsg.toString();
+		}
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
+
+		Date schdDate = financeScheduleDetails.get(0).getSchDate();
+		int schdDay = DateUtil.getDay(schdDate);
+
+		int schdCount = 0;
+		Date newEvtFromDate = evtFromDate;
+
+		//Calculating the number of schedules between recal from and to dates
+		while (DateUtility.compare(evtToDate, newEvtFromDate) >= 0) {
+			int day = DateUtil.getDay(newEvtFromDate);
+			if (schdDay == day) {
+				schdCount = schdCount + 1;
+			}
+			newEvtFromDate = DateUtil.addDays(newEvtFromDate, 1);
+		}
+
+		//Validating the number schedules against the frequency code.
+		switch (frqCode) {
+		case FrequencyCodeTypes.FRQ_YEARLY:
+			if (schdCount < 12) {
+				errMsg.append(" Selected Frequency is Yearly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate review frequency Yearly.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_2YEARLY:
+			if (schdCount < 24) {
+				errMsg.append(" Selected Frequency is 2-Yearly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency 2-Yearly.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_3YEARLY:
+			if (schdCount < 36) {
+				errMsg.append(" Selected Frequency is Yearly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency 3-Yearly.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
+			if (schdCount < 6) {
+				errMsg.append(" Selected Frequency is HalfYearly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency Half Yearly.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_QUARTERLY:
+			if (schdCount < 3) {
+				errMsg.append(" Selected Frequency is Quarterly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency Quarterly.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_BIMONTHLY:
+			if (schdCount < 2) {
+				errMsg.append(" Selected Frequency is Every two months, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency Every two months.");
+			}
+			break;
+		case FrequencyCodeTypes.FRQ_MONTHLY:
+			if (schdCount < 1) {
+				errMsg.append(" Selected Frequency is monthly, from date : ");
+				errMsg.append(DateUtil.formatToLongDate(evtFromDate));
+				errMsg.append(", to date : ").append(DateUtil.formatToLongDate(evtToDate));
+				errMsg.append(". not allowed for the rate frequency monthly.");
+			}
+			break;
+		default:
+			break;
+		}
+		logger.debug(Literal.LEAVING);
+
+		return errMsg.toString();
+	}
+
+	//Calculating the old base rate if margin exists
+	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction,
+			BaseRateCode baseRateCode) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
+		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
+			financeMain.setBaseRateReq(false);
+			return;
+		}
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		Date evtFromDate = finMain.getEventFromDate();
+
+		FinanceScheduleDetail prevScheduleDetail = null;
+
+		// Fetching the Schedule details from recal from date.
+		for (FinanceScheduleDetail detail : financeScheduleDetails) {
+			if (DateUtility.compare(detail.getSchDate(), evtFromDate) >= 0) {
+				break;
+			} else {
+				prevScheduleDetail = detail;
+			}
+		}
+
+		if (prevScheduleDetail == null) {
+			financeMain.setBaseRateReq(false);
+			return;
+		}
+
+		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
+		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
+		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
+		finServiceInstruction.setActualRate(oldBaseRate.add(finServiceInstruction.getMargin()));
+		financeMain.setBaseRateReq(true);
+		logger.debug(Literal.LEAVING);
+		return;
+	}
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -1637,6 +1898,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void setRateChangeService(RateChangeService rateChangeService) {
 		this.rateChangeService = rateChangeService;
+	}
+
+	public void setBaseRateCodeService(BaseRateCodeService baseRateCodeService) {
+		this.baseRateCodeService = baseRateCodeService;
 	}
 
 }

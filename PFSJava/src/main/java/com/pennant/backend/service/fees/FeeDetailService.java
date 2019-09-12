@@ -82,6 +82,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -428,14 +429,15 @@ public class FeeDetailService {
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		if (!financeDetail.getFinScheduleData().getFinanceType().isPromotionType()) {
+		if (StringUtils.isBlank(financeMain.getPromotionCode()) || financeMain.getPromotionSeqId() == 0) {
 			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
 					isOrigination, FinanceConstants.MODULEID_FINTYPE));
 		} else {
-			String promotionType = financeDetail.getFinScheduleData().getFinanceType().getPromotionCode();
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(promotionType, finEvent, isOrigination,
-					FinanceConstants.MODULEID_PROMOTION));
+			Promotion promotion = financeDetail.getFinScheduleData().getPromotion();
+			financeDetail.setFinTypeFeesList(financeDetailService.getSchemeFeesList(promotion.getReferenceID(),
+					finEvent, isOrigination, FinanceConstants.MODULEID_PROMOTION));
 		}
+
 		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 

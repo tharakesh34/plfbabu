@@ -185,6 +185,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 	protected Listheader listheader_BankingArrangement;
 	protected Listheader listheader_LimitCondition;
 	protected Listheader listheader_ExternalReference;
+	protected Listheader listheader_ExternalReference1;
 	protected Listheader listheader_Tenor;
 
 	private String limitType;
@@ -534,6 +535,16 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onClickReference1(ForwardEvent event) throws Exception {
+		logger.debug("Entering" + event.toString());
+		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
+		Textbox reference1 = (Textbox) event.getOrigin().getTarget();
+		LimitDetails limitDetails = (LimitDetails) item.getAttribute("DATA");
+		limitDetails.setExternalRef1(reference1.getValue());
+		setLimitstatus(limitDetails);
+		logger.debug("Leaving" + event.toString());
+	}
+
 	public void onClicktenor(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -718,6 +729,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 		this.listheader_BankingArrangement.setVisible(isVisible);
 		this.listheader_LimitCondition.setVisible(isVisible);
 		this.listheader_ExternalReference.setVisible(isVisible);
+		this.listheader_ExternalReference1.setVisible(isVisible);
 		this.listheader_Tenor.setVisible(isVisible);
 
 		setStatusDetails();
@@ -1192,6 +1204,17 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 				reference.setWidth("100px");
 				lc.setParent(item);
 
+				//Reference
+				Textbox reference1 = new Textbox();
+				lc = new Listcell();
+				reference1.setId("ExternalReference1_" + strdId);
+				reference1.addForward("onClick", self, "onClickReference1");
+				reference1.setValue(limitDetails.getExternalRef1());
+				reference1.setParent(lc);
+				reference1.setReadonly(getUserWorkspace().isReadOnly("LimitHeaderDialog_Remarks"));
+				reference1.setWidth("100px");
+				lc.setParent(item);
+
 				//Tenor
 				Intbox tenor = new Intbox();
 				lc = new Listcell();
@@ -1494,6 +1517,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			Combobox bnkAggrmt = (Combobox) item.getFellowIfAny("BankingArrangement_" + strdId);
 			Combobox lmtCondition = (Combobox) item.getFellowIfAny("LimitCondition_" + strdId);
 			Textbox reference = (Textbox) item.getFellowIfAny("ExternalReference_" + strdId);
+			Textbox reference1 = (Textbox) item.getFellowIfAny("ExternalReference1_" + strdId);
 			Intbox tenor = (Intbox) item.getFellowIfAny("Tenor_" + strdId);
 			expireDate.setErrorMessage("");
 			amountBox.setErrorMessage("");
@@ -1519,6 +1543,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitDetails> implements 
 			limit.setBankingArrangement(bnkAggrmt.getSelectedItem().getValue());
 			limit.setLimitCondition(lmtCondition.getSelectedItem().getValue());
 			limit.setExternalRef(reference.getValue());
+			limit.setExternalRef1(reference1.getValue());
 			limit.setTenor(tenor.intValue());
 
 			limitDetails.add(limit);

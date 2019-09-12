@@ -2048,34 +2048,46 @@ public class PennantAppUtil {
 		return accountEngineEventsList;
 	}
 
-	public static List<AccountEngineEvent> getOverdraftAccountingEvents() {
+	/**
+	 * Method for Fetching List of Accounting Event Codes based on Category Code
+	 * 
+	 * @param categoryCode
+	 * @return
+	 */
+	public static List<AccountEngineEvent> getCategoryWiseEvents(String categoryCode) {
 
-		List<AccountEngineEvent> accountEngineEventsList = new ArrayList<AccountEngineEvent>();
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
-
 		JdbcSearchObject<AccountEngineEvent> searchObject = new JdbcSearchObject<AccountEngineEvent>(
 				AccountEngineEvent.class);
 
 		Filter[] filters = null;
-		if (ImplementationConstants.ALLOW_ADDDBSF) {
-			filters = new Filter[2];
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
-		} else {
-			List<String> accEngineEventsList = new ArrayList<String>();
+		List<String> accEngineEventsList = new ArrayList<String>();
+		;
+		if (!ImplementationConstants.ALLOW_ADDDBSF) {
 			accEngineEventsList.add(AccountEventConstants.ACCEVENT_ADDDBSF);
+		}
+
+		if (!ImplementationConstants.ALLOW_DEPRECIATION) {
+			accEngineEventsList.add(AccountEventConstants.ACCEVENT_DPRCIATE);
+		}
+
+		if (accEngineEventsList.isEmpty()) {
+			filters = new Filter[2];
+		} else {
 			filters = new Filter[3];
-			filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
-			filters[1] = new Filter("ODApplicable", 1, Filter.OP_EQUAL);
+		}
+
+		filters[0] = new Filter("Active", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("CategoryCode", categoryCode, Filter.OP_EQUAL);
+		if (!accEngineEventsList.isEmpty()) {
 			filters[2] = new Filter("AEEventCode", accEngineEventsList, Filter.OP_NOT_IN);
 		}
 
 		searchObject.addFilters(filters);
-		searchObject.addTabelName("BMTAEevents");
-		searchObject.addSort("AEEventCode", false);
-		accountEngineEventsList = pagedListService.getBySearchObject(searchObject);
+		searchObject.addTabelName("CategoryWiseEvents_VIEW");
+		searchObject.addSort("SeqOrder", false);
+		return pagedListService.getBySearchObject(searchObject);
 
-		return accountEngineEventsList;
 	}
 
 	public static List<AccountEngineEvent> fetchAccountingEvents() {
