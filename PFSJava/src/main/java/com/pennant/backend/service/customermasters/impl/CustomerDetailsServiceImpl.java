@@ -1462,6 +1462,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					// BankInfoDetails
 					if (custBankInfo.getBankInfoDetails().size() > 0) {
 						for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
+							bankInfoDetail.setBankId(custBankInfo.getBankId());
 							customerBankInfoDAO.save(bankInfoDetail, tableType);
 							// Audit
 							fields = PennantJavaUtil.getFieldDetails(bankInfoDetail, bankInfoDetail.getExcludeFields());
@@ -4695,7 +4696,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customerBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				customerBankInfoDAO.save(customerBankInfo, type);
+				customerBankInfo.setBankId(customerBankInfoDAO.save(customerBankInfo, type));
 			}
 
 			if (updateRecord) {

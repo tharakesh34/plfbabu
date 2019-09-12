@@ -47,7 +47,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -494,6 +496,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		} else {
 			readOnlyComponent(true, monthYear);
 		}
+		monthYear.setReadonly(true); //Intentionally we put as read-only here
 		monthYear.setValue(bankInfoDetail.getMonthYear());
 		listCell.setId("monthYear".concat(String.valueOf(bankInfoDetail.getKeyValue())));
 		hbox = new Hbox();
@@ -1111,9 +1114,29 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		List<BankInfoDetail> infoList = customerBankInfo.getBankInfoDetails();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
+		Set<Date> dateValidatioinSet = new HashSet<>();
+
 		for (Listitem listitem : listBoxAccBehaviour.getItems()) {
+
+			BankInfoDetail bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
+
 			try {
 				getCompValuetoBean(listitem, "monthYear");
+
+				if (bankInfoDetail != null) {
+					Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
+					Datebox monthYear = (Datebox) hbox1.getLastChild();
+
+					if (dateValidatioinSet.contains(bankInfoDetail.getMonthYear())) {
+						if (!PennantConstants.RECORD_TYPE_DEL.equals(bankInfoDetail.getRecordType())
+								&& !PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())) {
+							throw new WrongValueException(monthYear,
+									Labels.getLabel("listheader_MonthYear.label") + " combination already exist.");
+						}
+					} else {
+						dateValidatioinSet.add(bankInfoDetail.getMonthYear());
+					}
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -1172,7 +1195,6 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 
 			showErrorDetails(wve);
-			BankInfoDetail bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
 
 			boolean isNew = false;
 			isNew = bankInfoDetail.isNew();
@@ -1330,9 +1352,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		BankInfoDetail bankInfoDetail = null;
 
 		bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
+
 		switch (comonentId) {
 		case "monthYear":
-
 			Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
 			Datebox monthYear = (Datebox) hbox1.getLastChild();
 			Clients.clearWrongValue(monthYear);
@@ -1352,9 +1374,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			monthYearValue.setDate(1);
 			bankInfoDetail.setMonthYear(monthYearValue);
 			break;
+
 		case "balance":
 			bankInfoDetail = getDayBalanceList(listitem, "balance", bankInfoDetail);
 			break;
+
 		case "debitNo":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "debitNo");
 			Intbox debitNo = (Intbox) hbox3.getLastChild();
@@ -1367,6 +1391,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setDebitNo(debitNo.getValue());
 			break;
+
 		case "debitAmt":
 			BigDecimal debitAmt = BigDecimal.ZERO;
 			Hbox hbox4 = (Hbox) getComponent(listitem, "debitAmt");
@@ -1381,6 +1406,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setDebitAmt(PennantAppUtil.unFormateAmount(debitAmt, 2));
 			break;
+
 		case "creditNo":
 			Hbox hbox5 = (Hbox) getComponent(listitem, "creditNo");
 			Intbox creditNo = (Intbox) hbox5.getLastChild();
@@ -1393,6 +1419,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setCreditNo(creditNo.getValue());
 			break;
+
 		case "creditAmt":
 			BigDecimal creditAmt = BigDecimal.ZERO;
 			Hbox hbox6 = (Hbox) getComponent(listitem, "creditAmt");
@@ -1407,6 +1434,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setCreditAmt(PennantAppUtil.unFormateAmount(creditAmt, 2));
 			break;
+
 		case "bounceInWard":
 			BigDecimal bounceInWard = BigDecimal.ZERO;
 			Hbox hbox7 = (Hbox) getComponent(listitem, "bounceInWard");
@@ -1421,6 +1449,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setBounceIn(PennantAppUtil.unFormateAmount(bounceInWard, 2));
 			break;
+
 		case "bounceOutWard":
 			BigDecimal bounceInOut = BigDecimal.ZERO;
 			Hbox hbox8 = (Hbox) getComponent(listitem, "bounceOutWard");
@@ -1435,6 +1464,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setBounceOut(PennantAppUtil.unFormateAmount(bounceInOut, 2));
 			break;
+
 		case "closingBal":
 			BigDecimal closingBal = BigDecimal.ZERO;
 			Hbox hbox9 = (Hbox) getComponent(listitem, "closingBal");
@@ -1445,6 +1475,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setClosingBal(PennantAppUtil.unFormateAmount(closingBal, 2));
 			break;
+
 		case "odCCLimit":
 			BigDecimal odCCLimit = BigDecimal.ZERO;
 			Hbox hbox10 = (Hbox) getComponent(listitem, "odCCLimit");
@@ -1455,6 +1486,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setoDCCLimit(PennantAppUtil.unFormateAmount(odCCLimit, 2));
 			break;
+
 		default:
 			break;
 		}
