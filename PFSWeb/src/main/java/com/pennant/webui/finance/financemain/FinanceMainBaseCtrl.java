@@ -3810,8 +3810,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.grcPftRvwFrqRow.setVisible(true);
 					this.gracePftRvwFrq.setValue(aFinanceMain.getGrcPftRvwFrq());
 					if (aFinanceMain.isGrcFrqEditable()) {
-						this.gracePftRvwFrq.setDisabled(true);
-						readOnlyComponent(true, this.nextGrcPftRvwDate);
+						this.gracePftRvwFrq.setDisableFrqCode(true);
 					}
 				}
 			} else {
@@ -4118,13 +4117,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
 				this.repayRvwFrq.setValue(aFinanceMain.getRepayRvwFrq());
 				if (aFinanceMain.isFrqEditable()) {
-					this.repayRvwFrq.setDisabled(true);
-					readOnlyComponent(true, this.nextRepayRvwDate);
+					this.repayRvwFrq.setDisableFrqCode(true);
 				}
 			}
 		} else {
 			this.repayRvwFrq.setDisabled(true);
-			readOnlyComponent(true, this.nextRepayRvwDate);
 		}
 
 		if (aFinanceMain.isAllowRepayCpz()) {
@@ -6646,6 +6643,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		onChangeGrcSchdMthd();
+		
+		if (this.allowGrace.isChecked()) {
+			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(),
+					"");
+			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+				setGrcRvwFrq(baseRateCode);
+			}
+		}
+
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -8696,10 +8702,74 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						PennantStaticListUtil.getDftBpiTreatment(), "");
 			}
 		}
+		
+		// Interest review frequency and grace interest review frequency changed
+		// when loan start date changes
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
+
+			if (StringUtils.isNotBlank(this.gracePftRvwFrq.getValue())) {
+
+				BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
+				processRvwFrqChange(this.gracePftRvwFrq, baseRateCode);
+			}
+
+			if (StringUtils.isNotBlank(this.repayRvwFrq.getValue())) {
+
+				BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
+				processRvwFrqChange(this.repayRvwFrq, baseRateCode);
+			}
+		}
 
 		autoBuildSchedule();
 	}
 
+
+	/**
+	 * This method is for updating Review frequency with latest data based on base rate code against frequency date if exists.
+	 * @param baseRateCode 
+	 */
+	public void processRvwFrqChange(FrequencyBox frequencyBox, BaseRateCode baseRateCode) {
+		logger.debug(Literal.ENTERING);
+		String mnth = "";
+		String frqCode = frequencyBox.getFrqCodeValue();
+		frequencyBox.setFrqCodeDetails();
+		if (!PennantConstants.List_Select.equals(frqCode)) {
+			if (null != this.finStartDate.getValue()) {
+				if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_BIMONTHLY.equals(frqCode)) {
+					mnth = FrequencyUtil.getMonthFrqValue(DateUtility
+							.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[1],
+							frqCode);
+				} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_2YEARLY.equals(frqCode)
+						|| FrequencyCodeTypes.FRQ_3YEARLY.equals(frqCode)) {
+					mnth = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat)
+							.split("-")[1];
+				}
+			}
+			mnth = frqCode.concat(mnth).concat("00");
+			
+			String day = "";
+			
+			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+				day = StringUtils.substring(baseRateCode.getbRRepayRvwFrq(), 3,5);
+			} else {
+				day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
+			}
+			 
+			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
+				day = "00";
+			} else if (FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)) {
+				day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 7), 2, "0");
+			} else if (FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(frqCode)) {
+				day = StringUtils.leftPad(String.valueOf(Integer.parseInt(day) % 14), 2, "0");
+			}
+			frequencyBox.updateFrequency(mnth, day);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public void onChangefinStartDate() {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -9181,7 +9251,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				} else {
 					this.gracePftRvwFrq.setDisabled(true);
 					this.nextGrcPftRvwDate.setValue(SysParamUtil.getValueAsDate("APP_DFT_ENDDATE"));
-					readOnlyComponent(true, this.nextGrcPftRvwDate);
 				}
 
 				if (finType.isFinGrcIsIntCpz()) {
@@ -10338,16 +10407,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeMain.getRepayRvwFrq() != null && (StringUtils.isNotEmpty(financeMain.getRepayRvwFrq())
 				|| !financeMain.getRepayRvwFrq().equals(PennantConstants.List_Select))) {
 			this.rpyRvwFrqRow.setVisible(true);
-			this.repayRvwFrq.setVisible(true);
 			this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
 			this.repayRvwFrq.setValue(financeMain.getRepayRvwFrq());
 			if (financeMain.isFrqEditable()) {
+				this.repayRvwFrq.setDisableFrqCode(true);
+			} else {
 				this.repayRvwFrq.setDisabled(true);
-				readOnlyComponent(true, this.nextRepayRvwDate);
 			}
 		}
 		this.nextRepayRvwDate_two.setValue(financeMain.getNextRepayRvwDate());
 
+		processRvwFrqChange(this.repayRvwFrq, baseRateCode);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -10377,21 +10447,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					"A", false, financeType.getFddLockPeriod()).getNextFrequencyDate());
 		}
 
-		this.repayRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_repayRvwFrq"));
-		readOnlyComponent(isReadOnly("FinanceMainDialog_nextRepayRvwDate"), this.nextRepayRvwDate);
-		if (financeMain.getRepayRvwFrq() != null && (StringUtils.isNotEmpty(financeMain.getRepayRvwFrq())
+		this.gracePftRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_gracePftRvwFrq"));
+		readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcPftRvwDate"), this.nextGrcPftRvwDate);
+		
+		if (financeMain.getGrcPftRvwFrq() != null && (StringUtils.isNotEmpty(financeMain.getRepayRvwFrq())
 				|| !financeMain.getRepayRvwFrq().equals(PennantConstants.List_Select))) {
-			this.rpyRvwFrqRow.setVisible(true);
-			this.repayRvwFrq.setVisible(true);
+			this.grcPftRvwFrqRow.setVisible(true);
+			this.gracePftRvwFrq.setVisible(true);
 			this.label_FinanceMainDialog_RepayRvwFrq.setVisible(true);
-			this.repayRvwFrq.setValue(financeMain.getRepayRvwFrq());
-			if (financeMain.isFrqEditable()) {
-				this.repayRvwFrq.setDisabled(true);
-				readOnlyComponent(true, this.nextRepayRvwDate);
+			this.gracePftRvwFrq.setValue(financeMain.getGrcPftRvwFrq());
+			if (financeMain.isGrcFrqEditable()) {
+				this.gracePftRvwFrq.setDisableFrqCode(true);
 			}
 		}
-		this.nextRepayRvwDate_two.setValue(financeMain.getNextRepayRvwDate());
+		this.nextGrcPftRvwDate_two.setValue(financeMain.getNextGrcPftRvwDate());
 
+		processRvwFrqChange(this.gracePftRvwFrq, baseRateCode);
+		
 		logger.debug(Literal.LEAVING);
 	}
 
