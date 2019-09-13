@@ -194,14 +194,14 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 		this.grade.setMaxlength(35);
 		this.mobileNO.setMaxlength(20);
 		this.rOfficerDeptCode.setMandatoryStyle(true);
-		this.rOfficerDeptCode.setModuleName("GeneralDepartment");
-		this.rOfficerDeptCode.setValueColumn("GenDepartment");
-		this.rOfficerDeptCode.setDescColumn("GenDeptDesc");
-		this.rOfficerDeptCode.setValidateColumns(new String[] { "GenDepartment" });
-		this.genDesignation.setModuleName("GeneralDesignation");
-		this.genDesignation.setValueColumn("GenDesignation");
-		this.genDesignation.setDescColumn("GenDesgDesc");
-		this.genDesignation.setValidateColumns(new String[] { "GenDesignation" });
+		this.rOfficerDeptCode.setModuleName("Department");
+		this.rOfficerDeptCode.setValueColumn("DeptCode");
+		this.rOfficerDeptCode.setDescColumn("DeptDesc");
+		this.rOfficerDeptCode.setValidateColumns(new String[] { "DeptCode" });
+		this.genDesignation.setModuleName("Designation");
+		this.genDesignation.setValueColumn("DesgCode");
+		this.genDesignation.setDescColumn("DesgDesc");
+		this.genDesignation.setValidateColumns(new String[] { "DesgCode" });
 		this.dateOfJoin.setFormat(DateFormat.SHORT_DATE.getPattern());
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
