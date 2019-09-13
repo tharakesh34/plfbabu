@@ -187,7 +187,7 @@ public class RelationshipOfficerDialogCtrl extends GFCBaseCtrl<RelationshipOffic
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
 		// Empty sent any required attributes
-		this.rOfficerCode.setMaxlength(8);
+		this.rOfficerCode.setMaxlength(9);
 		this.rOfficerDesc.setMaxlength(50);
 		this.rOfficerDeptCode.setMaxlength(8);
 		this.genDesignation.setMaxlength(8);

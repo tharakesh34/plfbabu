@@ -6532,5 +6532,9 @@ UNION ALL
 				LEFT JOIN BMTDESIGNATIONS T3 ON T1.GENDESIGNATION = T3.DESGCODE
 		</createView>
 	</changeSet>
+	<changeSet id="113" author="Varaprasad.K">
+		<modifyDataType tableName="RelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers"      columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+	</changeSet>
 
 </databaseChangeLog>

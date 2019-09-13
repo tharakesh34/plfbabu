@@ -757,29 +757,36 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			}
 		}
 
+		String narration = "Late Payment Penalty";
+
+		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("LATE_PAYMENT_INTEREST_CLIX"))) {
+			narration = "Late Payment Interest";
+		} else {
+
+			due = lpiAmt.subtract(lpiWaived);
+			receipt = lpiPaid;
+			overDue = due.subtract(receipt);
+			netDue = netDue.add(overDue);
+
+			soaSummaryReport = new SOASummaryReport();
+			soaSummaryReport.setComponent("Late Payment Interest");
+			soaSummaryReport.setDue(due);
+			soaSummaryReport.setReceipt(receipt);
+			soaSummaryReport.setOverDue(overDue);
+
+			soaSummaryReportsList.add(soaSummaryReport);
+
+		}
 		due = totPenaltyAmt.subtract(totwaived);
 		receipt = totPenaltyPaid;
 		overDue = due.subtract(receipt);
 
 		soaSummaryReport = new SOASummaryReport();
-		soaSummaryReport.setComponent("Late Payment Penalty");
+		soaSummaryReport.setComponent(narration);
 		soaSummaryReport.setDue(due);
 		soaSummaryReport.setReceipt(receipt);
 		soaSummaryReport.setOverDue(overDue);
 		netDue = netDue.add(overDue);
-
-		soaSummaryReportsList.add(soaSummaryReport);
-
-		due = lpiAmt.subtract(lpiWaived);
-		receipt = lpiPaid;
-		overDue = due.subtract(receipt);
-		netDue = netDue.add(overDue);
-
-		soaSummaryReport = new SOASummaryReport();
-		soaSummaryReport.setComponent("Late Payment Interest");
-		soaSummaryReport.setDue(due);
-		soaSummaryReport.setReceipt(receipt);
-		soaSummaryReport.setOverDue(overDue);
 
 		soaSummaryReportsList.add(soaSummaryReport);
 

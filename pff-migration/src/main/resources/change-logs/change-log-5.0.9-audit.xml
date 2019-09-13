@@ -154,4 +154,8 @@
 			<column name="remarks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="16" author="Varaprasad.K">
+		<modifyDataType tableName="AdtRelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		
+</changeSet>
 </databaseChangeLog>
