@@ -3275,4 +3275,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			<column name="STATUSUPDATEON" type="DATETIME" />
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="61" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='RESET_FREQUENCY_DATES_REQ';
+			 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
