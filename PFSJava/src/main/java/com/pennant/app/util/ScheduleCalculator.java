@@ -2269,9 +2269,8 @@ public class ScheduleCalculator {
 
 				}
 			}
-
-			if (finMain.isSanBsdSchdle()
-					&& !StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			
+			if (finMain.isSanBsdSchdle() && !StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
 				finScheduleData = setRepayForSanctionBasedDisb(finScheduleData);
 			} else {
 				finScheduleData = setRecalAttributes(finScheduleData, PROC_ADDDISBURSEMENT, newDisbAmount,
@@ -3878,18 +3877,12 @@ public class ScheduleCalculator {
 							|| (StringUtils.trimToEmpty(finMain.getRvwRateApplFor())
 									.equals(CalculationConstants.RATEREVIEW_RVWUPR)
 									&& DateUtility.compare(curSchd.getSchDate(), dateAllowedChange) == 0)) {
-						if (!finMain.isBaseRateReq()) {
-							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
-						}
+						curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 					} else {
-						if (fixedRateTenor == 0) {
-							if (!finMain.isBaseRateReq()) {
-								curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
-							}
+						if (fixedRateTenor == 0 && curSchd.isRvwOnSchDate()) {
+							curSchd.setCalculatedRate(RateUtil.ratesFromLoadedData(finScheduleData, i));
 						} else {
-							if (!finMain.isBaseRateReq()) {
-								curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
-							}
+							curSchd.setCalculatedRate(finSchdDetails.get(i - 1).getCalculatedRate());
 						}
 					}
 					curSchd.setCalOnIndRate(false);

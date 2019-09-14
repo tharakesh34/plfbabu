@@ -688,6 +688,17 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Date curBussDate = DateUtility.getAppDate();
 		Date allowBackDate = null;
 
+		
+		Date lastSchdDate = null;
+				
+		if (allowBackDatedRateChange) {
+			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
+				if (DateUtility.compare(scheduleDetail.getSchDate(), maturityDate) <= 0) {
+					lastSchdDate = scheduleDetail.getSchDate();
+				}
+			}
+		}
+		
 		if (allowBackDatedRateChange) {
 			appDateValidationReq = false;
 			for (FinanceScheduleDetail scheduleDetail : financeScheduleDetails) {
@@ -763,6 +774,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					}
 				}
 
+				if (allowBackDatedRateChange && (DateUtility.compare(curSchd.getSchDate(), lastSchdDate) != 0)) {
+					continue;
+				}
+				
 				comboitem = new Comboitem();
 				comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()) + " " + curSchd.getSpecifier());
 				comboitem.setValue(curSchd.getSchDate());
@@ -1440,12 +1455,17 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void fillSchToDates(Combobox dateCombobox, List<FinanceScheduleDetail> financeScheduleDetails,
 			Date fillAfter, boolean includeFromDate) {
 		logger.debug("Entering");
+		
 		dateCombobox.getItems().clear();
 		Comboitem comboitem = new Comboitem();
 		comboitem.setValue("#");
 		comboitem.setLabel(Labels.getLabel("Combo.Select"));
 		dateCombobox.appendChild(comboitem);
 		dateCombobox.setSelectedItem(comboitem);
+		
+		boolean allowBackDatedRateChange = SysParamUtil
+				.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE);
+		
 		if (financeScheduleDetails != null) {
 			for (int i = 0; i < financeScheduleDetails.size(); i++) {
 
@@ -1461,6 +1481,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 								&& curSchd.isRepayOnSchDate() && !curSchd.isSchPftPaid())
 								|| (curSchd.getPrincipalSchd().compareTo(curSchd.getSchdPriPaid()) >= 0
 										&& curSchd.isRepayOnSchDate() && !curSchd.isSchPriPaid()))) {
+					
+					 		
+					if (allowBackDatedRateChange && DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) < 0) {
+						continue;
+					}
 
 					comboitem = new Comboitem();
 					comboitem.setLabel(

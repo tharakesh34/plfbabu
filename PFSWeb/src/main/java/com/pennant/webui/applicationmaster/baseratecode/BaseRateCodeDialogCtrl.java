@@ -56,10 +56,12 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.FrequencyBox;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -67,6 +69,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.BaseRateCodeService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -90,6 +93,8 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 	protected Textbox bRTypeDesc; // autoWired
 	protected Checkbox bRTypeIsActive; // autoWired
 	protected FrequencyBox bRRepayRvwFrq; // autoWired
+
+	protected Row row_BRRepayRvwFrq; // autoWired
 
 	// not autoWired Var's
 	private BaseRateCode baseRateCode; // overHanded per parameter
@@ -184,6 +189,10 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		this.bRType.setMaxlength(8);
 		this.bRTypeDesc.setMaxlength(50);
 
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
+			this.row_BRRepayRvwFrq.setVisible(true);
+		}
+		
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {

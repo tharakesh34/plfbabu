@@ -8928,14 +8928,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 
 		if (this.graceTerms.getValue() != null) {
+			 
+			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
+			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), this.graceTerms.intValue(),
+						"Moratorium  terms");
+
+				if (errMsg != null) {
+					throw new WrongValueException(this.graceTerms, errMsg);
+				}
+			}
+			
 			this.graceTerms_Two.setValue(this.graceTerms.intValue());
 
 			if (this.graceTerms_Two.intValue() > 0 && this.gracePeriodEndDate.getValue() == null) {
 
 				int checkDays = 0;
-				//if (this.graceTerms_Two.intValue() == 1) {
+				// if (this.graceTerms_Two.intValue() == 1) {
 				checkDays = getFinanceDetail().getFinScheduleData().getFinanceType().getFddLockPeriod();
-				//}
+				// }
 
 				List<Calendar> scheduleDateList = FrequencyUtil
 						.getNextDate(this.gracePftFrq.getValue(), this.graceTerms_Two.intValue(),
@@ -8951,6 +8962,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else {
 			this.graceTerms_Two.setValue(0);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * Checking the number of terms against the base rate frequency
+	 * @param event
+	 */
+	public void onChange$numberOfTerms(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		if (this.numberOfTerms.getValue() != null) {
+			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
+			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), this.numberOfTerms.intValue(),
+						"Number Of installments");
+
+				if (errMsg != null) {
+					throw new WrongValueException(this.numberOfTerms, errMsg);
+				}
+			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -9924,9 +9956,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$graceRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		Clients.clearWrongValue(this.graceRate);
-		this.graceRate.setBaseErrorMessage("");
-
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10296,9 +10325,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$repayRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
-		Clients.clearWrongValue(this.repayRate);
-		this.repayRate.setBaseErrorMessage("");
-
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10411,9 +10437,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayRvwFrq.setValue(financeMain.getRepayRvwFrq());
 			if (financeMain.isFrqEditable()) {
 				this.repayRvwFrq.setDisableFrqCode(true);
-			} else {
-				this.repayRvwFrq.setDisabled(true);
-			}
+			}  
 		}
 		this.nextRepayRvwDate_two.setValue(financeMain.getNextRepayRvwDate());
 
@@ -10477,6 +10501,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String validateFrequency(String bRRepayRvwFrq, int terms, String param) {
 		logger.debug(Literal.LEAVING);
 
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
+			return null;
+		}
+		
+		Clients.clearWrongValue(this.graceTerms);
+		this.graceTerms.setErrorMessage("");
+
+		Clients.clearWrongValue(this.numberOfTerms);
+		this.numberOfTerms.setErrorMessage("");
+
+		Clients.clearWrongValue(this.graceRate);
+		this.graceRate.setBaseErrorMessage("");
+
+		Clients.clearWrongValue(this.repayRate);
+		this.repayRate.setBaseErrorMessage("");
+		
 		String frqCode = FrequencyUtil.getFrequencyCode(bRRepayRvwFrq);
 
 		StringBuilder errMsg = new StringBuilder();
@@ -10484,49 +10524,49 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		switch (frqCode) {
 		case FrequencyCodeTypes.FRQ_YEARLY:
 			if (terms < 13) {
-				errMsg.append(" Selected Frequency is Yearly, ");
+				errMsg.append(" Frequency is Yearly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 12.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_2YEARLY:
 			if (terms < 25) {
-				errMsg.append(" Selected Frequency is 2-Yearly, ");
+				errMsg.append(" Frequency is 2-Yearly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 24.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_3YEARLY:
 			if (terms < 37) {
-				errMsg.append(" Selected Frequency is 3-Yearly, ");
+				errMsg.append(" Frequency is 3-Yearly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 36.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
 			if (terms < 7) {
-				errMsg.append(" Selected Frequency is Half Yearly, ");
+				errMsg.append("  Frequency is Half Yearly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 6.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_QUARTERLY:
 			if (terms < 4) {
-				errMsg.append(" Selected Frequency is Quarterly, ");
+				errMsg.append(" Frequency is Quarterly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 3.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_BIMONTHLY:
 			if (terms < 3) {
-				errMsg.append(" Selected Frequency is Every two months, ");
+				errMsg.append(" Frequency is Every two months, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 2.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_MONTHLY:
 			if (terms < 2) {
-				errMsg.append(" Selected Frequency is monthly, ");
+				errMsg.append(" Frequency is monthly, ");
 				errMsg.append(param);
 				errMsg.append(" should be greater than 1.");
 			}

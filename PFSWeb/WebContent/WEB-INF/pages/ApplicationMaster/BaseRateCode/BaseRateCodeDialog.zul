@@ -68,7 +68,7 @@
 									<textbox id="bRTypeDesc" maxlength="50" width="400px" />
 								</hbox>
 							</row>
-							<row>
+							<row id="row_BRRepayRvwFrq" visible="false">
 								<label id="label_BaseRateCodeDialog_BRRepayRvwFrq" value="${c:l('label_BaseRateCodeDialog_BRRepayRvwFrq.value')}" />
 								<frequencybox id="bRRepayRvwFrq" />
 							</row>
