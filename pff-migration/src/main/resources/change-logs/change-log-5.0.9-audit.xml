@@ -155,7 +155,7 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="16" author="Varaprasad.K">
-		<modifyDataType tableName="AdtRelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="AdtRelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
 		
 </changeSet>
 </databaseChangeLog>
