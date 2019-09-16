@@ -13904,7 +13904,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			aFinanceMain.setBusinessVertical(null);
 		}
-
+		aFinanceMain.setTotalFinAmount(aFinanceMain.getFinAssetValue().add(aFinanceMain.getFeeChargeAmt()));
 		return wve;
 	}
 
