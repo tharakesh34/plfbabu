@@ -9065,13 +9065,21 @@ UNION ALL
 			     LEFT JOIN bankbranches t6 ON t6.branchcode = t1.printingloc	
 	</createView>
 	</changeSet>
-	
+
 	<changeSet id="184" author="Varaprasad.K">
 		<sql>
 	    <![CDATA[
 	        Delete from SMTparameters where SysParmCode = 'QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES';
 			INSERT INTO SMTparameters  VALUES ('QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES', 'Query assign to loan and legal loans', 'String', '1', 'N', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
 		]]>
+		</sql>
+	</changeSet>
+	<changeSet id="185" author="naga.g">
+		<sql>
+           <![CDATA[
+               Delete from reportList where code ='VASProviderAccDetail';
+               INSERT INTO ReportList VALUES ('VASProviderAccDetail','VASProviderAccDetail', 'listheader_ProviderId.label,listheader_PaymentMode.label,listheader_EntityCode.label,listheader_BankBranchID.label,listheader_AccountNumber.label,listheader_ReceivableAdjustment.label,listheader_ReconciliationAmount.label','ProviderId,PaymentMode,EntityCode,BankBranchID,AccountNumber,ReceivableAdjustment,ReconciliationAmount','Long,String,String,Long,String,boolean,BigDecimal',' ', 'ReportList07', 'VASProviderAccDetail',  'Administration', 1, 1000, CURRENT_TIMESTAMP, 'Approved', ' ', ' ', ' ', ' ', ' ', 0, 0);
+           ]]>
 		</sql>
 	</changeSet>
 </databaseChangeLog>
