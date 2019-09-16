@@ -258,5 +258,6 @@ public class SMTParameterConstants {
 
 	public static final String EXCLUDE_SUB_RECEIPT_MODE_VALUE = "EXCLUDE_SUB_RECEIPT_MODE_VALUE"; //To exclude values from List
 	public static final String ALLOW_BACK_DATED_ADD_RATE_CHANGE = "ALLOW_BACK_DATED_ADD_RATE_CHANGE";
+	public static final String ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE = "ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE"; 
 
 }

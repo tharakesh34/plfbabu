@@ -1712,6 +1712,10 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	public void onChange$cbRecalFromDate(Event event) {
 		logger.debug("Entering" + event.toString());
+		
+		boolean allowBackDatedRateChange = SysParamUtil
+				.isAllowed(SMTParameterConstants.ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE);
+		
 		if (this.cbRecalFromDate.getSelectedIndex() > 0) {
 			this.cbRecalToDate.getItems().clear();
 			//As discussed with Pradeep ,include from date has set to true,if any issue should recheck it
@@ -1721,18 +1725,18 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					Date ratechgTo = (Date) this.cbRateChangeToDate.getSelectedItem().getValue();
 					if (ratechgTo.compareTo(recalFrom) > 0) {
 						fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo,
-								true);
+								allowBackDatedRateChange);
 					} else {
 						fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom,
-								true);
+								allowBackDatedRateChange);
 					}
 				}
 			} else if (anyDate.isChecked()) {
 				Date ratechgTo = (Date) this.anyDateRateChangeFromDate.getValue();
 				if (DateUtility.compare(ratechgTo, recalFrom) > 0) {
-					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo, true);
+					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), ratechgTo, allowBackDatedRateChange);
 				} else {
-					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom, true);
+					fillSchToDates(cbRecalToDate, getFinScheduleData().getFinanceScheduleDetails(), recalFrom, allowBackDatedRateChange);
 				}
 			}
 		}
