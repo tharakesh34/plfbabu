@@ -6712,6 +6712,7 @@ UNION ALL
 			     LEFT JOIN partnerbanks t6 ON t6.partnerbankid = t2.fundingac
 		</createView>
 	</changeSet>
+	
 	<changeSet id="116" author="meena.a">
 		<sql>
 			<![CDATA[
