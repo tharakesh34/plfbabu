@@ -3811,6 +3811,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.gracePftRvwFrq.setValue(aFinanceMain.getGrcPftRvwFrq());
 					if (aFinanceMain.isGrcFrqEditable()) {
 						this.gracePftRvwFrq.setDisableFrqCode(true);
+						this.gracePftRvwFrq.setDisableFrqDay(true);
 					}
 				}
 			} else {
@@ -4118,6 +4119,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.repayRvwFrq.setValue(aFinanceMain.getRepayRvwFrq());
 				if (aFinanceMain.isFrqEditable()) {
 					this.repayRvwFrq.setDisableFrqCode(true);
+					this.repayRvwFrq.setDisableFrqDay(true);
 				}
 			}
 		} else {
@@ -8927,6 +8929,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$graceTerms(Event event) {
 		logger.debug("Entering" + event.toString());
 
+		Clients.clearWrongValue(this.graceTerms);
+		this.graceTerms.clearErrorMessage();
+		
 		if (this.graceTerms.getValue() != null) {
 			 
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
@@ -8936,6 +8941,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (errMsg != null) {
 					throw new WrongValueException(this.graceTerms, errMsg);
+				} else {
+					setGrcRvwFrq(baseRateCode);
 				}
 			}
 			
@@ -8973,6 +8980,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onChange$numberOfTerms(Event event) {
 		logger.debug("Entering" + event.toString());
 
+		Clients.clearWrongValue(this.numberOfTerms);
+		this.numberOfTerms.clearErrorMessage();
+		
 		if (this.numberOfTerms.getValue() != null) {
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
@@ -8981,12 +8991,46 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (errMsg != null) {
 					throw new WrongValueException(this.numberOfTerms, errMsg);
+				} else {
+					setRvwFrq(baseRateCode);
 				}
 			}
 		}
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	private String validateNumOfTerms() {
+		
+		BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
+		if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+			
+			int numberOfterms = this.numberOfTerms.intValue();
+			if (numberOfterms == 0) {
+				numberOfterms = this.numberOfTerms_two.intValue();
+			}
+			
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), numberOfterms,
+					"Number Of installments");
 
+		}
+		return null;
+	}
+
+	private String validateNumOfGrcTerms() {
+		BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
+		if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+			int graceTerms = this.graceTerms.intValue();
+			if (graceTerms == 0) {
+				graceTerms = this.graceTerms_Two.intValue();
+			}
+			
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), graceTerms,
+					"Moratorium  terms");
+		}
+		return null;
+	}
+	 
+	
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
@@ -9956,6 +10000,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$graceRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
+		Clients.clearWrongValue(this.graceTerms);
+		this.graceTerms.clearErrorMessage();
+		
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10325,6 +10372,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void onFulfill$repayRate(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 
+		Clients.clearWrongValue(this.numberOfTerms);
+		this.numberOfTerms.clearErrorMessage();
+		
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10437,6 +10487,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayRvwFrq.setValue(financeMain.getRepayRvwFrq());
 			if (financeMain.isFrqEditable()) {
 				this.repayRvwFrq.setDisableFrqCode(true);
+				this.repayRvwFrq.setDisableFrqDay(true);
 			}  
 		}
 		this.nextRepayRvwDate_two.setValue(financeMain.getNextRepayRvwDate());
@@ -10482,6 +10533,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.gracePftRvwFrq.setValue(financeMain.getGrcPftRvwFrq());
 			if (financeMain.isGrcFrqEditable()) {
 				this.gracePftRvwFrq.setDisableFrqCode(true);
+				this.gracePftRvwFrq.setDisableFrqDay(true);
 			}
 		}
 		this.nextGrcPftRvwDate_two.setValue(financeMain.getNextGrcPftRvwDate());
@@ -12129,6 +12181,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												Labels.getLabel("label_FinanceMainDialog_FinStartDate.value") }));
 					}
 				}
+				
+				//Validate grace terms against the grace frequency
+				String errMsg = validateNumOfGrcTerms();
+
+				if (errMsg != null) {
+					throw new WrongValueException(this.graceTerms, errMsg);
+				}
+				
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -12928,6 +12988,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 				}
+				
+				//Validate number of terms against the repay frequency.
+				String errMsg = validateNumOfTerms();
+				if (errMsg != null) {
+					throw new WrongValueException(this.numberOfTerms, errMsg);
+				}  
+				
 
 				aFinanceMain.setNumberOfTerms(noterms);
 			}

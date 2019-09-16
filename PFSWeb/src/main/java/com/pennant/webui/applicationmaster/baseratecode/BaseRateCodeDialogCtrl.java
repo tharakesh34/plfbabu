@@ -582,12 +582,17 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		if (isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq")) {
 			this.bRRepayRvwFrq.setDisabled(true);
 		} else {
-			boolean exists = this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType());
-			if (exists) {
-				this.bRRepayRvwFrq.setDisabled(true);
+			if(StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) == null){
+				this.bRRepayRvwFrq.setDisabled(isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq"));
 			} else {
-				this.bRRepayRvwFrq.setDisabled(this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType()));
+				boolean exists = this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType());
+				if (exists) {
+					this.bRRepayRvwFrq.setDisabled(true);
+				} else {
+					this.bRRepayRvwFrq.setDisabled(this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType()));
+				}
 			}
+			
 		}
 
 	}
