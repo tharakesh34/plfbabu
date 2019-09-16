@@ -648,7 +648,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 
 								if (finMain.getFinStartDate().compareTo(miscPostingUpload.getValueDate()) > 0) {
 									errorCount++;
-									reason = " Value Date should less than or equal to Loan StartDate";
+									reason = " Value Date should greater than or equal to Loan StartDate";
 								}
 
 							} else {
