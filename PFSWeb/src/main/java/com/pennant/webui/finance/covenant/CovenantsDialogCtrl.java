@@ -1061,10 +1061,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			String receivableDateLabel = Labels.getLabel("label_FinCovenantTypeDialog_RecvbleDate.value");
 			if (receivableDate == null) {
 				this.receivableDate.setConstraint(new PTDateValidator(receivableDateLabel, true));
-			} else if (DateUtility.compare(receivableDate, appDate) < 0
+			} else if (DateUtility.compare(receivableDate, loanStartDt) < 0
 					|| DateUtility.compare(receivableDate, maturityDate) > 0) {
 				this.receivableDate
-						.setConstraint(new PTDateValidator(receivableDateLabel, true, appDate, maturityDate, false));
+						.setConstraint(new PTDateValidator(receivableDateLabel, true, loanStartDt, maturityDate, false));
 			}
 		}
 
