@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.receipts;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -141,6 +142,7 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -3645,13 +3647,21 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			}
 		}
 
-		// Word Format
-		String reportName = "Foreclosure Letter.docx";
-		String templatePath = PathUtil.getPath(PathUtil.FINANCE_LOANCLOSURE);
+		String templatePath = App.getResourcePath(PathUtil.FINANCE_LOANCLOSURE);
+		String reportName = templatePath + File.separator + financeMain.getFinType().concat("_Foreclosure Letter.docx");
+
+		File file = new File(reportName);
+		if (!file.exists()) {
+			reportName = "Foreclosure Letter.docx";
+		} else {
+			reportName = file.getName();
+		}
+
 		TemplateEngine engine = null;
 		try {
 			engine = new TemplateEngine(templatePath, templatePath);
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError("Path Not Found");
 			return;
 		}
@@ -3659,6 +3669,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		try {
 			engine.setTemplate(reportName);
 		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
 			MessageUtil.showError(reportName + " Not Found");
 			return;
 		}
