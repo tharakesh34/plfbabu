@@ -3390,32 +3390,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="49" author="Pruthvi" dbms="postgresql">
-		<sql>
-			<![CDATA[
-	
-				INSERT INTO promotions VALUES ((select max(promotionid)+1 from promotions), 'ECOMDD', 'ECOM Discounting', 'PTL', '2019-01-01 00:00:00', '2029-12-31 00:00:00', 0, 0,21.00, null, null, 0.00, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0,
-				1001, 1, 15, 4, 'P/360', 21.00, 1, 0, 0);
-			 
-				INSERT INTO promotions VALUES ((select max(promotionid)+1 from promotions), 'OFFLD', 'OFF-Line Discounting', 'PTL', '2019-01-01 00:00:00', '2029-12-31 00:00:00', 0, 0,
-				21.00, null, null, 0.00, 0, 0, 0, 0,
-				0, 0, 0, 0, 1, 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0,
-				1002, 1, 15, 4, 'P/360', 21.00, 1, 0, 0);
-
-				INSERT INTO promotions VALUES ((select max(promotionid)+1 from promotions), 'OFFLXRC', 'OFF-Line Transfer to Customer', 'PTL', '2019-01-01 00:00:00', '2029-12-31 00:00:00', 0, 0,
-				21.00, null, null, 0.00, 0, 0, 0, 0,
-				0, 0, 0, 0, 1, 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0,
-				1003, 0, 15, 4, 'P/360', 11.31, 1, 0, 0);
-
-				INSERT INTO promotions VALUES ((select max(promotionid)+1 from promotions), 'OFFLRTN', 'OFF-Line Subvention Retained', 'PTL', '2019-01-01 00:00:00', '2029-12-31 00:00:00', 0, 0,
-				21.00, null, null, 0.00, 0, 0, 0, 0,
-				0, 0, 0, 0, 1, 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0,
-				1004, 0, 15, 4, 'P/360', 21.00, 1, 3, 3);
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="49" author="Pruthvi" dbms="mssql,oracle">
+	<changeSet id="49" author="Pruthvi">
 		<sql>
 		<![CDATA[
 			INSERT INTO promotions VALUES ((select coalesce(max(promotionid),0 + 1) from promotions), 'ECOMDD', 'ECOM Discounting', 'PTL', '2019-01-01 00:00:00', '2029-12-31 00:00:00', 0, 0,
@@ -6384,7 +6359,7 @@ UNION ALL
 				                            WHERE      (FinType = T1.FinType AND FinEvent = T1.FinEvent AND ModuleName = T1.ModuleName)))
 											
 			</createView>
-		</changeSet>
+	</changeSet>
 
 	<changeSet id="109" author="Srikanth">
 		<createView viewName="LMTFINANCEWORKFLOWDEF_AVIEW"
@@ -6450,9 +6425,9 @@ UNION ALL
             LEFT JOIN Promotions T6 ON T6.PromotionCode= T1.Fintype
 		</createView>
 	</changeSet>
-	
-	<changeSet id="111" author="Saikiran.V">
-		<createView viewName="RELATIONSHIPOFFICERS_VIEW">
+
+	<changeSet id="111" author="Saikiran.V" >
+		<createView viewName="RELATIONSHIPOFFICERS_VIEW" replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6504,9 +6479,9 @@ UNION ALL
 				WHERE RELATIONSHIPOFFICERS_TEMP.ROFFICERCODE = T1.ROFFICERCODE))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="112" author="Saikiran.V">
-		<createView viewName="RELATIONSHIPOFFICERS_AVIEW">
+		<createView viewName="RELATIONSHIPOFFICERS_AVIEW" replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6532,9 +6507,54 @@ UNION ALL
 				LEFT JOIN BMTDESIGNATIONS T3 ON T1.GENDESIGNATION = T3.DESGCODE
 		</createView>
 	</changeSet>
-	<changeSet id="113" author="Varaprasad.K">
-		<modifyDataType tableName="RelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
-		<modifyDataType tableName="RelationshipOfficers"      columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+
+	<changeSet id="113_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'relationshipofficers_temp');
+					select deps_save_and_drop_dependencies ('plf', 'relationshipofficers');
+			]]>
+		</sql>
 	</changeSet>
 
+	<changeSet id="113_pre" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				drop INDEX IX_RLTNSHPOFCRS_ROFCCOD;
+				drop INDEX	IX_T_RLTNSHPOFCRS_ROFCCOD;			
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="113" author="Varaprasad.K" dbms="postgresql,oracle">
+		<modifyDataType tableName="RelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+	</changeSet>
+
+	<changeSet id="113" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[
+				alter table RelationshipOfficers alter column rOfficerCode VARCHAR(10) not null;
+				alter table RelationshipOfficers_Temp alter column rOfficerCode VARCHAR(10) not null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="113_post" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_RLTNSHPOFCRS_ROFCCOD ON RELATIONSHIPOFFICERS (NLSSORT(ROFFICERCODE,'nls_sort=''BINARY_CI'''));
+				CREATE INDEX IX_T_RLTNSHPOFCRS_ROFCCOD ON RELATIONSHIPOFFICERS_TEMP (NLSSORT(ROFFICERCODE,'nls_sort=''BINARY_CI'''));
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="113_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'relationshipofficers_temp');
+					select deps_restore_dependencies ('plf', 'relationshipofficers');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
