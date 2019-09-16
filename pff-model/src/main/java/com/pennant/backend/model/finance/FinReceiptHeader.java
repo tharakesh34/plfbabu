@@ -165,6 +165,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	private long batchId;
 	private long bounceId;
 	private String custBaseCcy;
+	private String favourNumber;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -271,6 +272,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("batchId");
 		excludeFields.add("bounceId");
 		excludeFields.add("custBaseCcy");
+		excludeFields.add("favourNumber");
 
 		return excludeFields;
 	}
@@ -1396,6 +1398,14 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustBaseCcy(String custBaseCcy) {
 		this.custBaseCcy = custBaseCcy;
+	}
+
+	public String getFavourNumber() {
+		return favourNumber;
+	}
+
+	public void setFavourNumber(String favourNumber) {
+		this.favourNumber = favourNumber;
 	}
 
 }

@@ -237,6 +237,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			registerField("paymentType", listheader_ExcessType);
 			registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode, sortOperator_receiptMode,
 					Operators.DEFAULT);
+			registerField("favourNumber");
 		}
 		registerField("recordStatus", listheader_RecordStatus);
 		registerField("receiptModeStatus", listheader_ReceiptModeStatus);
@@ -564,7 +565,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getPaymentType());
 			lc.setParent(item);
 
-			lc = new Listcell(finReceiptHeader.getTransactionRef());
+			if (finReceiptHeader.getReceiptMode().equals("CHEQUE") || finReceiptHeader.getReceiptMode().equals("DD")) {
+				lc = new Listcell(finReceiptHeader.getFavourNumber());
+			} else {
+				lc = new Listcell(finReceiptHeader.getTransactionRef());
+			}
 			lc.setParent(item);
 
 			lc = new Listcell(PennantAppUtil.amountFormate(finReceiptHeader.getReceiptAmount(),

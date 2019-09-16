@@ -3412,6 +3412,11 @@ public class PennantJavaUtil {
 						new String[] { "UploadHeader", "MiscUploadPostings_Rview" }, null,
 						new String[] { "UploadId", "FileName" }, null, 600));
 
+		ModuleUtil.register("ExtendedSecurityUser",
+				new ModuleMapping("SecurityUser", SecurityUser.class, new String[] { "SecUsers", "SecUsers" },
+						securityWF, new String[] { "UsrLogin", "UsrFName" },
+						new Object[][] { { "usrdeptcode", "0", "CREDIT" } }, 600));
+
 		registerCustomModules();
 	}
 
