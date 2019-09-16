@@ -34,14 +34,14 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 
 	@Override
 	protected void registerJobs() throws Exception {
-	/*	registerGstInvoiceJob();
+		registerGstInvoiceJob();
 		registerSystemNotificationInvokeJob();
 		registerSystemNotificationProcessJob();
 		autoReceiptResponseJob();
 		registercovenantAlertsJob();
 		registerPutCallAlertsJob();
 		registerLMSServiceAlertsJob();
-		registerUserAccountLockingJob();*/
+		registerUserAccountLockingJob();
 	}
 
 	/**
