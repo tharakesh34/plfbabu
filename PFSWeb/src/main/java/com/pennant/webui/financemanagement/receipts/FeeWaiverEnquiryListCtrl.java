@@ -350,7 +350,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		if (isEnquiry) {
 			this.listheader_FinProduct.setVisible(false);
-			this.listheader_CustCIF.setVisible(false);
+			//this.listheader_CustCIF.setVisible(false);
 			this.listheader_RequestStage.setVisible(false);
 		}
 
@@ -1082,7 +1082,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		this.searchObject.addTabelName("FinanceMain_AView");
+		this.searchObject.addTabelName("FeeWaivers_View");
 
 		Filter[] rcdTypeFilter = new Filter[2];
 		rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
