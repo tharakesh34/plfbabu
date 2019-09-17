@@ -96,8 +96,8 @@
 			alter table AdtPromotions drop constraint DF_AdtPromotions_SchemeIRR;
 			]]>
 		</sql>
-</changeSet>
-	
+	</changeSet>
+
 
 	<changeSet id="06" author="Siva">
 		<dropColumn tableName="AdtPromotions" columnName="SubventionMethod" />
@@ -133,33 +133,36 @@
 			<column name="CBAmount" type="Decimal(18,2)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="13" author="meena.a">
 		<comment>extra fields added in Limitdetails</comment>
 		<addColumn tableName="AdtLimitdetails">
 			<column name="ExternalRef1" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="14" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="AdtPromotions">
-			<column name="specialScheme" type="smallint" defaultValue="0"/>
+			<column name="specialScheme" type="smallint" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="15" author="Siva">
 		<comment>New columns added for CD Schemes in Promotion</comment>
 		<addColumn tableName="AdtPromotions">
 			<column name="remarks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+	
 	<changeSet id="16" author="Varaprasad.K">
-		<modifyDataType tableName="AdtRelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />		
-</changeSet>
-<changeSet id="17" author="Varaprasad.K">
+		<modifyDataType tableName="AdtRelationshipOfficers"
+			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+	</changeSet>
+	
+	<changeSet id="17" author="Varaprasad.K">
 		<addColumn tableName="ADTFINANCEMAIN">
-			<column name="AppliedLoanAmt" type="DECIMAL(18,0)"/>
+			<column name="AppliedLoanAmt" type="DECIMAL(18,0)" />
 		</addColumn>
 	</changeSet>
 
@@ -171,5 +174,5 @@
 			]]>
 		</sql>
 	</changeSet>
-    
+
 </databaseChangeLog>
