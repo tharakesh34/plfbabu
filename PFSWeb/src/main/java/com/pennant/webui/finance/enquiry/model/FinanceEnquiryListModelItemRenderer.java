@@ -11,6 +11,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.PennantAppUtil;
 
 public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<FinanceEnquiry>, Serializable {
@@ -47,7 +48,12 @@ public class FinanceEnquiryListModelItemRenderer implements ListitemRenderer<Fin
 		lc.setParent(item);
 		lc = new Listcell(enquiry.getFinCcy());
 		lc.setParent(item);
-		BigDecimal finAmount = enquiry.getFinCurrAssetValue();
+		BigDecimal finAmount=BigDecimal.ZERO;
+		if (enquiry.getLovDescProductCodeName().equals(PennantConstants.WORFLOW_MODULE_CD)) {
+			finAmount = enquiry.getFinAmount();
+		} else {
+			finAmount = enquiry.getFinCurrAssetValue();
+		}
 		if (enquiry.getFeeChargeAmt() != null && enquiry.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
 			finAmount = finAmount.add(enquiry.getFeeChargeAmt());
 		}
