@@ -6721,6 +6721,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="117" author="Varaprasad.K">
 	<addColumn tableName="FINANCEMAIN">
 		<column name="AppliedLoanAmt" type="DECIMAL(18,0)" />
@@ -6786,7 +6787,7 @@ UNION ALL
 	<changeSet id="126" author="Varaprasad.K" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_AppliedLoanAmt DEFAULT 0 FOR AppliedLoanAmt;
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_PA_AppliedLoanAmt DEFAULT 0 FOR AppliedLoanAmt;
 			]]>
 		</sql>
 	</changeSet>
@@ -6819,6 +6820,7 @@ UNION ALL
 		<addDefaultValue columnName="AppliedLoanAmt"
 			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
+	
 	<changeSet id="131_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -7103,23 +7105,23 @@ UNION ALL
 			t1.svamount,
 			t1.cbamount,
 			t1.appliedLoanAmt
-		   FROM plf.financemain_temp t1
-			 JOIN plf.rmtfinancetypes t7 ON t1.fintype OPERATOR(plf.=) t7.fintype
-			 LEFT JOIN plf.rmtbranches t12 ON t1.finbranch OPERATOR(plf.=) t12.branchcode
-			 LEFT JOIN plf.finpftdetails t17 ON t17.finreference OPERATOR(plf.=) t1.finreference
-			 LEFT JOIN plf.steppolicyheader t24 ON t1.steppolicy OPERATOR(plf.=) t24.policycode
-			 LEFT JOIN plf.bmtcuststatuscodes t27 ON t1.finstatus OPERATOR(plf.=) t27.custstscode
-			 LEFT JOIN plf.amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
-			 LEFT JOIN plf.relationshipofficers t30 ON t1.dsacode OPERATOR(plf.=) t30.rofficercode
-			 LEFT JOIN plf.relationshipofficers t33 ON t1.referralid OPERATOR(plf.=) t33.rofficercode
-			 LEFT JOIN plf.relationshipofficers t34 ON t1.dmacode OPERATOR(plf.=) t34.rofficercode
-			 LEFT JOIN plf.rmtgendepartments t35 ON t1.salesdepartment OPERATOR(plf.=) t35.gendepartment
-			 LEFT JOIN plf.smtdivisiondetail t36 ON t7.findivision OPERATOR(plf.=) t36.divisioncode
-			 LEFT JOIN plf.relationshipofficers t37 ON t1.employeename OPERATOR(plf.=) t37.rofficercode
-			 LEFT JOIN plf.rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode OPERATOR(plf.=) 'ELGMETHOD'
-			 LEFT JOIN plf.loanpurposes t39 ON t1.finpurpose OPERATOR(plf.=) t39.loanpurposecode
-			 LEFT JOIN plf.amtvehicledealer t40 ON t1.connector = t40.dealerid
-			 LEFT JOIN plf.business_vertical bv ON bv.id = t1.businessvertical
+		   FROM financemain_temp t1
+			 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+			 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+			 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+			 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+			 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+			 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+			 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+			 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+			 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+			 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+			 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+			 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+			 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+			 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+			 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+			 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
 		UNION ALL
 		 SELECT t1.finreference,
 			t1.investmentref,
@@ -7395,30 +7397,29 @@ UNION ALL
 			t1.svamount,
 			t1.cbamount,
 			t1.appliedLoanAmt
-		   FROM plf.financemain t1
-			 JOIN plf.rmtfinancetypes t7 ON t1.fintype OPERATOR(plf.=) t7.fintype
-			 LEFT JOIN plf.rmtbranches t12 ON t1.finbranch OPERATOR(plf.=) t12.branchcode
-			 LEFT JOIN plf.finpftdetails t17 ON t17.finreference OPERATOR(plf.=) t1.finreference
-			 LEFT JOIN plf.steppolicyheader t24 ON t1.steppolicy OPERATOR(plf.=) t24.policycode
-			 LEFT JOIN plf.bmtcuststatuscodes t27 ON t1.finstatus OPERATOR(plf.=) t27.custstscode
-			 LEFT JOIN plf.amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
-			 LEFT JOIN plf.relationshipofficers t30 ON t1.dsacode OPERATOR(plf.=) t30.rofficercode
-			 LEFT JOIN plf.relationshipofficers t33 ON t1.referralid OPERATOR(plf.=) t33.rofficercode
-			 LEFT JOIN plf.relationshipofficers t34 ON t1.dmacode OPERATOR(plf.=) t34.rofficercode
-			 LEFT JOIN plf.rmtgendepartments t35 ON t1.salesdepartment OPERATOR(plf.=) t35.gendepartment
-			 LEFT JOIN plf.smtdivisiondetail t36 ON t7.findivision OPERATOR(plf.=) t36.divisioncode
-			 LEFT JOIN plf.relationshipofficers t37 ON t1.employeename OPERATOR(plf.=) t37.rofficercode
-			 LEFT JOIN plf.rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode OPERATOR(plf.=) 'ELGMETHOD'
-			 LEFT JOIN plf.loanpurposes t39 ON t1.finpurpose OPERATOR(plf.=) t39.loanpurposecode
-			 LEFT JOIN plf.amtvehicledealer t40 ON t1.connector = t40.dealerid
-			 LEFT JOIN plf.business_vertical bv ON bv.id = t1.businessvertical
+		   FROM financemain t1
+			 JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+			 LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+			 LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+			 LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+			 LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+			 LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+			 LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+			 LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+			 LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+			 LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+			 LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+			 LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+			 LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+			 LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+			 LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+			 LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
   WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.financemain_temp
-          WHERE financemain_temp.finreference OPERATOR(plf.=) t1.finreference))
+           FROM financemain_temp
+          WHERE financemain_temp.finreference = t1.finreference))
 
 	</createView>
 	</changeSet>
-
 
 	<changeSet id="131_post" author="Varaprasad.K" dbms="postgresql">
 		<sql>
@@ -7712,23 +7713,23 @@ UNION ALL
     t1.svamount,
     t1.cbamount,
 	t1.appliedLoanAmt
-   FROM plf.financemain_temp t1
-     JOIN plf.rmtfinancetypes t7 ON t1.fintype OPERATOR(plf.=) t7.fintype
-     LEFT JOIN plf.rmtbranches t12 ON t1.finbranch OPERATOR(plf.=) t12.branchcode
-     LEFT JOIN plf.finpftdetails t17 ON t17.finreference OPERATOR(plf.=) t1.finreference
-     LEFT JOIN plf.steppolicyheader t24 ON t1.steppolicy OPERATOR(plf.=) t24.policycode
-     LEFT JOIN plf.bmtcuststatuscodes t27 ON t1.finstatus OPERATOR(plf.=) t27.custstscode
-     LEFT JOIN plf.amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
-     LEFT JOIN plf.relationshipofficers t30 ON t1.dsacode OPERATOR(plf.=) t30.rofficercode
-     LEFT JOIN plf.relationshipofficers t33 ON t1.referralid OPERATOR(plf.=) t33.rofficercode
-     LEFT JOIN plf.relationshipofficers t34 ON t1.dmacode OPERATOR(plf.=) t34.rofficercode
-     LEFT JOIN plf.rmtgendepartments t35 ON t1.salesdepartment OPERATOR(plf.=) t35.gendepartment
-     LEFT JOIN plf.smtdivisiondetail t36 ON t7.findivision OPERATOR(plf.=) t36.divisioncode
-     LEFT JOIN plf.relationshipofficers t37 ON t1.employeename OPERATOR(plf.=) t37.rofficercode
-     LEFT JOIN plf.rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode OPERATOR(plf.=) 'ELGMETHOD'
-     LEFT JOIN plf.loanpurposes t39 ON t1.finpurpose OPERATOR(plf.=) t39.loanpurposecode
-     LEFT JOIN plf.amtvehicledealer t40 ON t1.connector = t40.dealerid
-     LEFT JOIN plf.business_vertical bv ON bv.id = t1.businessvertical
+   FROM financemain_temp t1
+     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+     LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+     LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+     LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+     LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+     LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+     LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+     LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+     LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+     LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+     LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+     LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+     LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+     LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
 		</createView>
 	</changeSet>
 
@@ -8024,23 +8025,23 @@ UNION ALL
     t1.svamount,
     t1.cbamount,
 	t1.appliedLoanAmt
-   FROM plf.financemain t1
-     JOIN plf.rmtfinancetypes t7 ON t1.fintype OPERATOR(plf.=) t7.fintype
-     LEFT JOIN plf.rmtbranches t12 ON t1.finbranch OPERATOR(plf.=) t12.branchcode
-     LEFT JOIN plf.finpftdetails t17 ON t17.finreference OPERATOR(plf.=) t1.finreference
-     LEFT JOIN plf.steppolicyheader t24 ON t1.steppolicy OPERATOR(plf.=) t24.policycode
-     LEFT JOIN plf.bmtcuststatuscodes t27 ON t1.finstatus OPERATOR(plf.=) t27.custstscode
-     LEFT JOIN plf.amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
-     LEFT JOIN plf.relationshipofficers t30 ON t1.dsacode OPERATOR(plf.=) t30.rofficercode
-     LEFT JOIN plf.relationshipofficers t33 ON t1.referralid OPERATOR(plf.=) t33.rofficercode
-     LEFT JOIN plf.relationshipofficers t34 ON t1.dmacode OPERATOR(plf.=) t34.rofficercode
-     LEFT JOIN plf.rmtgendepartments t35 ON t1.salesdepartment OPERATOR(plf.=) t35.gendepartment
-     LEFT JOIN plf.smtdivisiondetail t36 ON t7.findivision OPERATOR(plf.=) t36.divisioncode
-     LEFT JOIN plf.relationshipofficers t37 ON t1.employeename OPERATOR(plf.=) t37.rofficercode
-     LEFT JOIN plf.rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode OPERATOR(plf.=) 'ELGMETHOD'
-     LEFT JOIN plf.loanpurposes t39 ON t1.finpurpose OPERATOR(plf.=) t39.loanpurposecode
-     LEFT JOIN plf.amtvehicledealer t40 ON t1.connector = t40.dealerid
-     LEFT JOIN plf.business_vertical bv ON bv.id = t1.businessvertical
+   FROM financemain t1
+     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+     LEFT JOIN rmtbranches t12 ON t1.finbranch = t12.branchcode
+     LEFT JOIN finpftdetails t17 ON t17.finreference = t1.finreference
+     LEFT JOIN steppolicyheader t24 ON t1.steppolicy = t24.policycode
+     LEFT JOIN bmtcuststatuscodes t27 ON t1.finstatus = t27.custstscode
+     LEFT JOIN amtvehicledealer t28 ON t1.accountsofficer = t28.dealerid
+     LEFT JOIN relationshipofficers t30 ON t1.dsacode = t30.rofficercode
+     LEFT JOIN relationshipofficers t33 ON t1.referralid = t33.rofficercode
+     LEFT JOIN relationshipofficers t34 ON t1.dmacode = t34.rofficercode
+     LEFT JOIN rmtgendepartments t35 ON t1.salesdepartment = t35.gendepartment
+     LEFT JOIN smtdivisiondetail t36 ON t7.findivision = t36.divisioncode
+     LEFT JOIN relationshipofficers t37 ON t1.employeename = t37.rofficercode
+     LEFT JOIN rmtlovfielddetail t38 ON t1.eligibilitymethod = t38.fieldcodeid AND t38.fieldcode = 'ELGMETHOD'
+     LEFT JOIN loanpurposes t39 ON t1.finpurpose = t39.loanpurposecode
+     LEFT JOIN amtvehicledealer t40 ON t1.connector = t40.dealerid
+     LEFT JOIN business_vertical bv ON bv.id = t1.businessvertical
 		</createView>
 	</changeSet>
 
@@ -8051,6 +8052,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="134_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8239,11 +8241,11 @@ UNION ALL
     t1.allowdrawingpower,
     t1.allowrevolving,
     t1.appliedLoanAmt
-   FROM plf.wiffinancemain_temp t1
-     LEFT JOIN plf.wifindicativetermdetail_temp t14 ON t14.finreference::text OPERATOR(plf.=) t1.finreference::text
-     LEFT JOIN plf.customers t15 ON t15.custid = t1.custid
-     JOIN plf.rmtfinancetypes t7 ON t1.fintype::text OPERATOR(plf.=) t7.fintype::text
-     LEFT JOIN plf.rmtbranches t16 ON t1.finbranch::text OPERATOR(plf.=) t16.branchcode::text
+   FROM wiffinancemain_temp t1
+     LEFT JOIN wifindicativetermdetail_temp t14 ON t14.finreference = t1.finreference
+     LEFT JOIN customers t15 ON t15.custid = t1.custid
+     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+     LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
 UNION ALL
  SELECT t1.finreference,
     t1.numberofterms,
@@ -8423,14 +8425,14 @@ UNION ALL
     t1.allowdrawingpower,
     t1.allowrevolving,
     t1.appliedLoanAmt
-   FROM plf.wiffinancemain t1
-     LEFT JOIN plf.wifindicativetermdetail_temp t14 ON t14.finreference::text OPERATOR(plf.=) t1.finreference::text
-     LEFT JOIN plf.customers t15 ON t15.custid = t1.custid
-     JOIN plf.rmtfinancetypes t7 ON t1.fintype::text OPERATOR(plf.=) t7.fintype::text
-     LEFT JOIN plf.rmtbranches t16 ON t1.finbranch::text OPERATOR(plf.=) t16.branchcode::text
+   FROM wiffinancemain t1
+     LEFT JOIN wifindicativetermdetail_temp t14 ON t14.finreference = t1.finreference
+     LEFT JOIN customers t15 ON t15.custid = t1.custid
+     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+     LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
   WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.wiffinancemain_temp
-          WHERE wiffinancemain_temp.finreference::text OPERATOR(plf.=) t1.finreference::text))
+           FROM wiffinancemain_temp
+          WHERE wiffinancemain_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
 
@@ -8441,6 +8443,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="135_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8448,6 +8451,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="135" author="Varaprasad.K">
 		<createView viewName="wiffinancemain_aview"
 			replaceIfExists="true">
@@ -8625,11 +8629,11 @@ UNION ALL
     t1.allowdrawingpower,
     t1.allowrevolving,
     t1.appliedLoanAmt
-   FROM plf.wiffinancemain t1
-     LEFT JOIN plf.wifindicativetermdetail_temp t14 ON t14.finreference::text OPERATOR(plf.=) t1.finreference::text
-     LEFT JOIN plf.customers t15 ON t15.custid = t1.custid
-     JOIN plf.rmtfinancetypes t7 ON t1.fintype::text OPERATOR(plf.=) t7.fintype::text
-     LEFT JOIN plf.rmtbranches t16 ON t1.finbranch::text OPERATOR(plf.=) t16.branchcode::text
+   FROM wiffinancemain t1
+     LEFT JOIN wifindicativetermdetail_temp t14 ON t14.finreference = t1.finreference
+     LEFT JOIN customers t15 ON t15.custid = t1.custid
+     JOIN rmtfinancetypes t7 ON t1.fintype = t7.fintype
+     LEFT JOIN rmtbranches t16 ON t1.finbranch = t16.branchcode
 		</createView>
 	</changeSet>
 
@@ -8640,6 +8644,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="136" author="Varaprasad.K">
 		<sql>
             <![CDATA[
