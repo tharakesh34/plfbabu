@@ -6716,7 +6716,8 @@ UNION ALL
 	<changeSet id="116" author="meena.a">
 		<sql>
 			<![CDATA[
-			   	INSERT INTO SMTPARAMETERS VALUES ('ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE','Limit additional fields required or not','String',1,'N',1,0,null,null,'Allow Base Rate Interest Review FrqCode Value Req',3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
+				delete from SMTPARAMETERS where sysparmcode='ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE';
+			   	INSERT INTO SMTPARAMETERS VALUES ('ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE','Add rate change allow after from date','String',1,'N',1,0,null,null,'Allow Base Rate Interest Review FrqCode Value Req',3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
 			]]>
 		</sql>
 	</changeSet>
