@@ -6713,7 +6713,7 @@ UNION ALL
 		</createView>
 	</changeSet>
 	
-	<changeSet id="116" author="meena.a">
+	<changeSet id="116.0" author="meena.a">
 		<sql>
 			<![CDATA[
 				delete from SMTPARAMETERS where sysparmcode='ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE';
