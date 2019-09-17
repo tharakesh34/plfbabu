@@ -8640,4 +8640,13 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="136" author="Varaprasad.K">
+		<sql>
+            <![CDATA[
+                    Delete from secrights where rightname='FinanceMainDialog_AppliedLoanAmt';
+                    insert into secrights values ((select max(rightid)+1 from secrights), 3, 'FinanceMainDialog_AppliedLoanAmt','FinanceMainDialog', 1, 1000, current_timestamp, 'Approved',' ',' ',' ',' ',' ',0);
+                   
+            ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
