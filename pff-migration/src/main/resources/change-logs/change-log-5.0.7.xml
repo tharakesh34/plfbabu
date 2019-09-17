@@ -5468,4 +5468,48 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="189" author="murthy.y">
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_CID" />
+	</changeSet>
+
+	<changeSet id="190" author="murthy">
+		<comment>New RBFields Added for Limit Rule</comment>
+		<sql>
+            <![CDATA[ 
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_dmaName';
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_dmaName', 'DMA Code', 'varchar', 100, 0, 0, '', 'dbvalue', 'DMA');
+				Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_dmaName', 'DMA Code', 'varchar', 100, 0, 0, '', 'dbvalue', 'DMA');
+    	     ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="191" author="murthy">
+		<sql>
+            <![CDATA[ 
+				update SecGroups set GrpCode = 'MISC_POSTING_UPLOAD_MAKER' where GrpCode = 'MISCPOSTINGUPLOAD_MAKER';
+				update SecGroups set GrpCode = 'MISC_POSTING_UPLOAD_APPROVER' where GrpCode = 'MISCPOSTINGUPLOAD_APPROVER';
+    	     ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="191" author="murthy">
+		<sql>
+            <![CDATA[ 
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RBFldName = 'ct_custAddrProvince';
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_dmaName';
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_dmaCodeDesc';
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_numOfMonths';
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_lovDescAccountsOfficer';
+
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_dmaCode';
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_dmaCode', 'DMA Id', 'bigint', 100, 0, 0, '', 'dbvalue', 'DMA_LMT');
+				Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_dmaCode', 'DMA Id', 'bigint', 100, 0, 0, '', 'dbvalue', 'DMA_LMT');
+
+				delete from RBFieldDetails where RBModule = 'LMTLINE' and RbFldName = 'fm_AccountsOfficer';
+				Insert into RBFieldDetails Values ('LMTLINE', 'BANK', 'fm_AccountsOfficer', 'Sourcing Officer', 'bigint', 100, 0, 0, '', 'dbvalue', 'SourceOfficer_LMT');
+				Insert into RBFieldDetails Values ('LMTLINE', 'CUSTOMER', 'fm_AccountsOfficer', 'Sourcing Officer', 'bigint', 100, 0, 0, '', 'dbvalue', 'SourceOfficer_LMT');
+    	     ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
