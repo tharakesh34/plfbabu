@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -20,7 +20,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -57,8 +58,10 @@
 	</changeSet>
 
 	<changeSet id="4" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="5_pre" author="Saikiran.v" dbms="postgresql">
@@ -71,7 +74,8 @@
 	</changeSet>
 
 	<changeSet id="5" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_aview" replaceIfExists="true">
+		<createView viewName="rmtfinancetypes_aview"
+			replaceIfExists="true">
 		SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -331,7 +335,8 @@
 	</changeSet>
 
 	<changeSet id="6" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_orgview " replaceIfExists="true">	 
+		<createView viewName="rmtfinancetypes_orgview "
+			replaceIfExists="true">	 
 		SELECT t1.fintype,
 			t1.fincategory,
 			t1.fintypedesc,
@@ -548,7 +553,8 @@
 		</sql>
 	</changeSet>
 	<changeSet id="7" author="Saikiran.v">
-		<createView viewName="rmtfinancetypes_view " replaceIfExists="true">	 	 
+		<createView viewName="rmtfinancetypes_view "
+			replaceIfExists="true">	 	 
 	
 			 SELECT t1.fintype,
 				t1.fincategory,
@@ -1087,16 +1093,20 @@
 	<changeSet author="Kesav" id="11">
 		<comment>New columns added for GST Waivers</comment>
 		<addColumn tableName="FinRepayScheduleDetail_Temp">
-			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -1105,16 +1115,20 @@
 	<changeSet author="Kesav" id="12">
 		<comment>New columns added for GST Waivers</comment>
 		<addColumn tableName="FinRepayScheduleDetail">
-			<column name="PenaltyWaiverCGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverCGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverSGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverSGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverUGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverUGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="PenaltyWaiverIGST" type="decimal(18,0)" defaultValue="0">
+			<column name="PenaltyWaiverIGST" type="decimal(18,0)"
+				defaultValue="0">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -1140,7 +1154,8 @@
 
 	<changeSet id="15" author="Kesav">
 		<comment> WaivedGST column added for GST Waivers</comment>
-		<createView viewName="ReceiptAllocationDetail_Aview" replaceIfExists="true">
+		<createView viewName="ReceiptAllocationDetail_Aview"
+			replaceIfExists="true">
 			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
 						T1.paidgst, T1.WaivedGST
 			FROM 		ReceiptAllocationDetail T1
@@ -1153,7 +1168,8 @@
 
 	<changeSet id="16" author="Kesav">
 		<comment> WaivedGST column added for GST Waivers</comment>
-		<createView viewName="ReceiptAllocationDetail_View" replaceIfExists="true">
+		<createView viewName="ReceiptAllocationDetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.receiptallocationid, T1.receiptid, T1.allocationid, T1.allocationtype, T1.allocationto, T1.paidamount, T1.waivedamount, COALESCE(T3.feetypedesc, T5.feetypedesc) AS typedesc, 
 						T1.paidgst, T1.waivedreqamount, T1.waiveraccepted, T1.totaldue, T1.WaivedGST
 			FROM 		ReceiptAllocationDetail_Temp T1
@@ -1325,7 +1341,8 @@
 
 	<changeSet id="25" author="Kesav">
 		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
-		<createView viewName="ManualAdvisemovements_AView" replaceIfExists="true">
+		<createView viewName="ManualAdvisemovements_AView"
+			replaceIfExists="true">
 			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
 						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
 						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
@@ -1337,7 +1354,8 @@
 
 	<changeSet id="26" author="Kesav">
 		<comment>WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST columns added for GST Waivers</comment>
-		<createView viewName="ManualAdvisemovements_TView" replaceIfExists="true">
+		<createView viewName="ManualAdvisemovements_TView"
+			replaceIfExists="true">
 			SELECT  	T1.movementid, T1.adviseid, T1.movementdate, T1.movementamount, T1.paidamount, T1.waivedamount, T1.status, T1.receiptid, T1.receiptseqid, 
 						T1.paidcgst, T1.paidsgst, T1.paidigst, T1.paidugst, 
 						T2.advisetype, T3.feetypecode, COALESCE(T3.taxapplicable, 0) AS taxapplicable, T3.taxcomponent, T3.feetypedesc, T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST
@@ -1604,7 +1622,8 @@
 
 	<changeSet id="41" author="Kesav">
 		<comment>WaivedGST column added for GST Waivers</comment>
-		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+		<createView viewName="Wiffinfeedetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
 						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
 						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
@@ -1747,7 +1766,8 @@
 
 	<changeSet id="49" author="Kesav">
 		<comment>ReferenceId column added for Receipt Fees</comment>
-		<createView viewName="Wiffinfeedetail_View" replaceIfExists="true">
+		<createView viewName="Wiffinfeedetail_View"
+			replaceIfExists="true">
 			SELECT 		T1.feeid, T1.finreference, T1.feeseq, T1.originationfee, T1.finevent, T1.feetypeid, T1.feeorder, T1.calculatedamount, T1.actualamount, T1.waivedamount, T1.paidamount, 
 						T1.feeschedulemethod, T1.terms, T1.remainingfee, T1.paymentref, T1.calculationtype, T1.rulecode, T1.fixedamount, T1.percentage, T1.calculateon, T1.alwdeviation, T1.maxwaiverperc, 
 						T1.alwmodifyfee, T1.alwmodifyfeeschdmthd, T1.vasreference, T1.status, T1.taxapplicable, T1.taxcomponent, T1.paidamountoriginal, T1.paidamountgst, T1.netamountoriginal, 
@@ -1817,35 +1837,43 @@
 	</changeSet>
 
 	<changeSet id="54" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="NoticePeriodDays" newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="55" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="AlertDays" newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="56" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="57" author="prathap" dbms="oracle">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays" newDataType="Number(5,0)" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="Number(5,0)" />
 	</changeSet>
 
 	<changeSet id="54" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="NoticePeriodDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="NoticePeriodDays" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="55" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS_TEMP" columnName="AlertDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS_TEMP"
+			columnName="AlertDays" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="56" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="NoticePeriodDays"
+			newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="57" author="prathap" dbms="mssql">
-		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays" newDataType="smallint" />
+		<modifyDataType tableName="FIN_OPTIONS" columnName="AlertDays"
+			newDataType="smallint" />
 	</changeSet>
 	<!-- 5.0.7 is Under QC please use 5.0.8 -->
 
@@ -1867,14 +1895,21 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="60" author="vijaya.a"> <addColumn tableName="vasprovideraccdetail"> <column name="PartnerBankId" type="bigint" 
-		/> </addColumn> </changeSet> -->
+	<changeSet id="60" author="vijaya.a">
+		<addColumn tableName="vasprovideraccdetail">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
 
-	<!-- <changeSet id="61" author="vijaya.a"> <addColumn tableName="vasprovideraccdetail_temp"> <column name="PartnerBankId" 
-		type="bigint" /> </addColumn> </changeSet> -->
+	<changeSet id="61" author="vijaya.a">
+		<addColumn tableName="vasprovideraccdetail_temp">
+			<column name="PartnerBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="62" author="vijaya.a">
-		<createView viewName="Vasprovideraccdetail_view" replaceIfExists="true">
+		<createView viewName="Vasprovideraccdetail_view"
+			replaceIfExists="true">
 			SELECT t1.id,
     			t1.providerid,
     			t5.dealername AS providerdesc,
@@ -1953,7 +1988,8 @@
 	</changeSet>
 
 	<changeSet id="63" author="vijaya.a">
-		<createView viewName="Vasprovideraccdetail_aview" replaceIfExists="true">
+		<createView viewName="Vasprovideraccdetail_aview"
+			replaceIfExists="true">
 			SELECT t1.id,
 			    t1.providerid,
 			    t5.dealername AS providerdesc,
@@ -2045,7 +2081,8 @@
 	</changeSet>
 
 	<changeSet id="68" author="Varaprasad.k">
-		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="reasoncode" newDataType="varchar(8)" />
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT"
+			columnName="reasoncode" newDataType="varchar(8)" />
 	</changeSet>
 
 	<changeSet id="69" author="meena.a">
@@ -2063,7 +2100,8 @@
 	</changeSet>
 
 	<changeSet id="71" author="meena.a">
-		<addNotNullConstraint tableName="MANDATE_REQUESTS" columnName="PROCESS_ID" columnDataType="bigint" />
+		<addNotNullConstraint tableName="MANDATE_REQUESTS"
+			columnName="PROCESS_ID" columnDataType="bigint" />
 	</changeSet>
 
 	<changeSet id="72" author="meena.a">
@@ -2086,8 +2124,8 @@
 	</changeSet>
 
 	<changeSet id="74" author="meena.a">
-		<addUniqueConstraint tableName="MANDATE_REQUESTS" columnNames="MANDATEID, STATUS, PROCESS_ID"
-			constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
+		<addUniqueConstraint tableName="MANDATE_REQUESTS"
+			columnNames="MANDATEID, STATUS, PROCESS_ID" constraintName="UK_MANDATE_REQ_MID_STATUS_PID" />
 	</changeSet>
 
 	<changeSet id="75" author="Manoj.p" dbms="oracle">
@@ -2187,8 +2225,10 @@
 	</changeSet>
 
 	<changeSet id="77" author="satyanarayana.g">
-		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE" newDataType="varchar(20)" />
-		<modifyDataType tableName="QUERYDETAIL_TEMP" columnName="FINREFERENCE" newDataType="varchar(20)" />
+		<modifyDataType tableName="QUERYDETAIL" columnName="FINREFERENCE"
+			newDataType="varchar(20)" />
+		<modifyDataType tableName="QUERYDETAIL_TEMP"
+			columnName="FINREFERENCE" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet id="77_post" author="satyanarayana.g" dbms="postgresql">
@@ -2223,8 +2263,10 @@
 	</changeSet>
 
 	<changeSet id="80" author="Durgaprasad.G">
-		<modifyDataType tableName="ERRORDETAILS" columnName="Message" newDataType="Varchar(200)" />
-		<modifyDataType tableName="ERRORDETAILS_TEMP" columnName="Message" newDataType="Varchar(200)" />
+		<modifyDataType tableName="ERRORDETAILS" columnName="Message"
+			newDataType="Varchar(200)" />
+		<modifyDataType tableName="ERRORDETAILS_TEMP"
+			columnName="Message" newDataType="Varchar(200)" />
 	</changeSet>
 
 	<changeSet id="80_post" author="Durgaprasad.G" dbms="postgresql">
@@ -2236,9 +2278,17 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="81" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN"> <column name="AllowDrawingPower" type="boolean" 
-		/> </addColumn> </changeSet> <changeSet id="82" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN_TEMP"> <column 
-		name="AllowDrawingPower" type="boolean" /> </addColumn> </changeSet> -->
+	<changeSet id="81" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="82" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN_TEMP">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="83" author="satyanarayana.g">
 		<sql>
@@ -2259,12 +2309,17 @@
 	</changeSet>
 
 	<changeSet id="85" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
-	<!-- <changeSet id="86" author="satyanarayana.g"> <addColumn tableName="FINANCEMAIN_PA"> <column name="AllowDrawingPower" 
-		type="boolean" /> </addColumn> </changeSet> -->
+	<changeSet id="86" author="satyanarayana.g">
+		<addColumn tableName="FINANCEMAIN_PA">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="87" author="satyanarayana.g">
 		<sql>
@@ -2283,11 +2338,15 @@
 	</changeSet>
 
 	<changeSet id="89" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
-	<!-- <changeSet id="90" author="satyanarayana.g"> <addColumn tableName="REJECTFINANCEMAIN"> <column name="AllowDrawingPower" 
-		type="boolean" /> </addColumn> </changeSet> -->
+	<changeSet id="90" author="satyanarayana.g">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="AllowDrawingPower" type="boolean" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="92" author="satyanarayana.g">
 		<sql>
@@ -2306,7 +2365,8 @@
 	</changeSet>
 
 	<changeSet id="94" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowDrawingPower" tableName="REJECTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowDrawingPower"
+			tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="95_pre" author="satyanarayana.g" dbms="postgresql">
@@ -3523,7 +3583,8 @@
 	</changeSet>
 
 	<changeSet id="99" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			SELECT F.FINREFERENCE,
 					T.FINCATEGORY  LOVDESCPRODUCTCODENAME,
 					F.FINTYPE,
@@ -3647,7 +3708,8 @@
 	</changeSet>
 
 	<changeSet id="108" author="Varaprasad.k">
-		<modifyDataType tableName="SecUsers_Rtemp" columnName="USERSTAFFID" newDataType="varchar(10)" />
+		<modifyDataType tableName="SecUsers_Rtemp" columnName="USERSTAFFID"
+			newDataType="varchar(10)" />
 	</changeSet>
 
 	<changeSet id="108_post" author="murthy.y" dbms="postgresql">
@@ -3686,10 +3748,14 @@
 	</changeSet>
 
 	<changeSet id="110" author="Varaprasad.k">
-		<modifyDataType tableName="finprovisions" columnName="USENFPROV" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions_temp" columnName="USENFPROV" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP" newDataType="boolean" />
-		<modifyDataType tableName="finprovisions_temp" columnName="AUTORELEASENFP" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions" columnName="USENFPROV"
+			newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp"
+			columnName="USENFPROV" newDataType="boolean" />
+		<modifyDataType tableName="finprovisions" columnName="AUTORELEASENFP"
+			newDataType="boolean" />
+		<modifyDataType tableName="finprovisions_temp"
+			columnName="AUTORELEASENFP" newDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="110_post" author="murthy.y" dbms="postgresql">
@@ -3725,14 +3791,19 @@
 	</changeSet>
 
 	<changeSet id="113" author="Saikiran.v" dbms="postgresql, oracle">
-		<addDefaultValue columnName="USENFPROV" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="USENFPROV" tableName="finprovisions_temp" defaultValue="0" />
-		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions" defaultValue="0" />
-		<addDefaultValue columnName="AUTORELEASENFP" tableName="finprovisions_temp" defaultValue="0" />
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions"
+			defaultValue="0" />
+		<addDefaultValue columnName="USENFPROV" tableName="finprovisions_temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP"
+			tableName="finprovisions" defaultValue="0" />
+		<addDefaultValue columnName="AUTORELEASENFP"
+			tableName="finprovisions_temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="114" author="Saikiran.V">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 					SELECT t1.receiptallocationid,
 				    t1.receiptid,
 				    t1.allocationid,
@@ -3776,7 +3847,8 @@
 		</createView>
 	</changeSet>
 	<changeSet id="115" author="Saikiran.V">
-		<createView viewName="receiptallocationdetail_view" replaceIfExists="true">
+		<createView viewName="receiptallocationdetail_view"
+			replaceIfExists="true">
 					SELECT t1.receiptallocationid,
 				    t1.receiptid,
 				    t1.allocationid,
@@ -4047,8 +4119,10 @@
 	</changeSet>
 
 	<changeSet id="130" author="Manoj.P">
-		<modifyDataType tableName="fintypevasproducts" columnName="mandatory" newDataType="smallint" />
-		<modifyDataType tableName="fintypevasproducts_temp" columnName="mandatory" newDataType="smallint" />
+		<modifyDataType tableName="fintypevasproducts"
+			columnName="mandatory" newDataType="smallint" />
+		<modifyDataType tableName="fintypevasproducts_temp"
+			columnName="mandatory" newDataType="smallint" />
 	</changeSet>
 
 	<changeSet id="130_post" author="Manoj.P" dbms="postgresql">
@@ -4086,7 +4160,8 @@
 	</changeSet>
 
 	<changeSet id="133" author="murthy">
-		<modifyDataType tableName="BMTSUBSECTORS" columnName="SubSectorDesc" newDataType="varchar(100)" />
+		<modifyDataType tableName="BMTSUBSECTORS" columnName="SubSectorDesc"
+			newDataType="varchar(100)" />
 	</changeSet>
 
 	<changeSet id="133_post" author="Manoj.P" dbms="postgresql">
@@ -4116,12 +4191,14 @@
 
 	<changeSet author="Kesav" id="135">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="ExtendedFieldHeader_Temp" columnName="ModuleName" newDataType="varchar(20)" />
+		<modifyDataType tableName="ExtendedFieldHeader_Temp"
+			columnName="ModuleName" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet author="Kesav" id="136">
 		<comment>data type modified from varchar(10) to varchar(20)</comment>
-		<modifyDataType tableName="ExtendedFieldHeader" columnName="ModuleName" newDataType="varchar(20)" />
+		<modifyDataType tableName="ExtendedFieldHeader"
+			columnName="ModuleName" newDataType="varchar(20)" />
 	</changeSet>
 
 	<changeSet id="135_post" author="Kesav" dbms="postgresql">
@@ -4144,7 +4221,8 @@
 
 		</sql>
 		<insert tableName="WorkFlowDetails">
-			<column name="WorkFlowId" valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
+			<column name="WorkFlowId"
+				valueComputed="(select max(WorkFlowId) + 1 from WorkFlowDetails)" />
 			<column name="WorkFlowType">RECEIPTUPLOAD</column>
 			<column name="WorkFlowSubType">Receipt Upload</column>
 			<column name="WorkFlowDesc">Receipt Upload</column>
@@ -4463,7 +4541,8 @@
 	</changeSet>
 
 	<changeSet id="148" author="vijaya.a">
-		<addPrimaryKey tableName="MiscPostingUploads" columnNames="MISCPOSTINGID" constraintName="PK_MISCPOSTINGUPLOADS" />
+		<addPrimaryKey tableName="MiscPostingUploads"
+			columnNames="MISCPOSTINGID" constraintName="PK_MISCPOSTINGUPLOADS" />
 	</changeSet>
 
 	<changeSet id="149" author="Rahul">
@@ -4568,7 +4647,8 @@
 	</changeSet>
 
 	<changeSet id="154" author="vijaya.a">
-		<createView viewName="MISCPOSTINGUPLOADS_AVIEW" replaceIfExists="true">
+		<createView viewName="MISCPOSTINGUPLOADS_AVIEW"
+			replaceIfExists="true">
     		SELECT 		
     			T1.UploadId, 
     			T1.MISCPOSTINGID, 
@@ -4635,7 +4715,8 @@
 	</changeSet>
 
 	<changeSet id="158" author="vijaya.a">
-		<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="00000001" />
+		<createSequence sequenceName="SeqMscPostRef"
+			incrementBy="1" startValue="00000001" />
 	</changeSet>
 
 	<changeSet id="159" author="vijaya.a">
@@ -4650,7 +4731,8 @@
 
 
 	<changeSet id="161" author="vijaya.a">
-		<modifyDataType tableName="MiscPostingUploads" columnName="BATCHPURPOSE" newDataType="varchar(200)" />
+		<modifyDataType tableName="MiscPostingUploads"
+			columnName="BATCHPURPOSE" newDataType="varchar(200)" />
 	</changeSet>
 
 	<changeSet id="162" author="vijaya.a">
@@ -4669,7 +4751,8 @@
 	</changeSet>
 
 	<changeSet id="164" author="vijaya.a">
-		<createSequence sequenceName="SeqMscPostRef" incrementBy="1" startValue="10000000" />
+		<createSequence sequenceName="SeqMscPostRef"
+			incrementBy="1" startValue="10000000" />
 	</changeSet>
 
 
@@ -5457,7 +5540,8 @@
 	</changeSet>
 
 	<changeSet id="187" author="vijaya.a">
-		<createSequence sequenceName="SeqJVpostings" incrementBy="1" startValue="1" />
+		<createSequence sequenceName="SeqJVpostings"
+			incrementBy="1" startValue="1" />
 	</changeSet>
 
 	<changeSet id="188" author="murthy.y">
@@ -5469,7 +5553,8 @@
 	</changeSet>
 
 	<changeSet id="189" author="murthy.y">
-		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" constraintName="FK_COVENANT_DOCUMENTS_CID" />
+		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS"
+			constraintName="FK_COVENANT_DOCUMENTS_CID" />
 	</changeSet>
 
 	<changeSet id="190" author="murthy">
@@ -5482,7 +5567,7 @@
     	     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="191" author="murthy">
 		<sql>
             <![CDATA[ 
@@ -5491,7 +5576,7 @@
     	     ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="192" author="murthy">
 		<sql>
             <![CDATA[ 
