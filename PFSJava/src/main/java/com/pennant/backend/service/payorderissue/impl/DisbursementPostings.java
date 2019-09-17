@@ -176,7 +176,7 @@ public class DisbursementPostings {
 					boolean posted = true;
 					dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
-					if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
+					if (StringUtils.isNotBlank(finMain.getPromotionCode()) && finMain.getPromotionSeqId() == 0) {
 						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
 								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 					} else {

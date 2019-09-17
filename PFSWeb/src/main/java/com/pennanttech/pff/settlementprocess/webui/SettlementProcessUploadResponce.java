@@ -41,7 +41,7 @@ import com.pennanttech.pff.settlement.dao.SettlementProcessDAO;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
 
 public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess> implements ProcessRecord {
-	SettlementProcessDAO settlementProcessDAO;
+	private SettlementProcessDAO settlementProcessDAO;
 	private DataSource dataSource;
 	private FinanceMainDAO financeMainDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
@@ -157,7 +157,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 			FinanceMain finMain = financeMainDAO
-					.getFinanceMainByOldFinReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
+					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO
 					.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "_AView");
 			for (FinAdvancePayments finAdvancePayment : advPayments) {
