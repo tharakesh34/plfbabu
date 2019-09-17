@@ -157,4 +157,19 @@
 	<changeSet id="16" author="Varaprasad.K">
 		<modifyDataType tableName="AdtRelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />		
 </changeSet>
+<changeSet id="17" author="Varaprasad.K">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="AppliedLoanAmt" type="DECIMAL(18,0)"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="18" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				
+				UPDATE ADTFINANCEMAIN Set AppliedLoanAmt = 0;
+			]]>
+		</sql>
+	</changeSet>
+    
 </databaseChangeLog>

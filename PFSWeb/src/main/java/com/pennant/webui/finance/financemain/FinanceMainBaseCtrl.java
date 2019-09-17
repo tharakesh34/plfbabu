@@ -878,6 +878,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Button btnSplitDocClose;
 	protected East btnSplitDoc;
 	protected Iframe splitScreen_Iframe;
+	protected Label label_FinanceMainDialog_AppliedLoanAmt;
 	// Split screen components End
 
 	//Sub Window Child Details Dialog Controllers
@@ -1089,6 +1090,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<JointAccountDetail> jointAccountDetailList = new ArrayList<>();
 	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
+	protected CurrencyBox appliedLoanAmt;
 
 	/**
 	 * default constructor.<br>
@@ -1204,6 +1206,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.tDSEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		this.finAmount.setProperties(true, finFormatter);
+		this.appliedLoanAmt.setProperties(true, finFormatter);
 		this.downPayBank.setProperties(true, finFormatter);
 
 		this.finAssetValue.setProperties(false, finFormatter);
@@ -3347,6 +3350,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPayAccount.setCustCIF(aFinanceMain.getLovDescCustCIF());
 		this.finPurpose.setValue(aFinanceMain.getFinPurpose());
 		this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), format));
+		this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), format));
 		this.finAssetValue.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAssetValue(), format));
 		this.finCurrentAssetValue
 				.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), format));
@@ -4859,6 +4863,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// setFocus
 		this.finAmount.focus();
+		
 
 		boolean isOverDraft = false;
 		//Reset Maintenance Buttons for finance modification
@@ -5731,6 +5736,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAmount.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_FinanceMainDialog_FinAmount.value"), finFormatter, true, false));
 		}
+		
 
 		if (this.gb_RolloverFinance.isVisible()) {
 			if (!recSave && this.custPayAccId.isVisible() && this.custPayAccId.isMandatory()
@@ -11546,6 +11552,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
 		financeMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
+		financeMain.setAppliedLoanAmt(PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getActualValue(), formatter));
 		financeMain.setFinAssetValue(
 				PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
 		financeMain.setFinCurrAssetValue(
@@ -11644,7 +11651,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<Object> list = new ArrayList<Object>();
 
 		this.finAmount.setConstraint("");
+		this.appliedLoanAmt.setConstraint("");
 		this.finAmount.setErrorMessage("");
+		this.appliedLoanAmt.setErrorMessage("");
 		this.finCcy.setConstraint("");
 		this.finCcy.setErrorMessage("");
 
@@ -11905,6 +11914,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		try {
 			aFinanceMain.setVanReq(this.vanReq.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setAppliedLoanAmt(PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -15556,6 +15570,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Allow Drawing power, Allow Revolving
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowDrawingPower"), this.allowDrawingPower);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_AppliedLoanAmt"), this.appliedLoanAmt);
+		
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));

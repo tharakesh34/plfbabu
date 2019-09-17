@@ -512,6 +512,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean chartReportLoaded;
 	// tasks #1152 Business Vertical Tagged with Loan
 	protected Textbox businessVertical;
+	protected Decimalbox appliedLoanAmt;
+	protected Label label_FinanceMainDialog_AppliedLoanAmt;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -615,6 +617,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.collateralRef.setMaxlength(20);
 			this.finStatus.setMaxlength(20);
 			this.finAmount.setMaxlength(18);
+			this.appliedLoanAmt.setMaxlength(18);
 			this.finAmount.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.curFinAmountValue.setMaxlength(18);
 			this.curFinAmountValue.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
@@ -744,6 +747,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayBank.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.downPayBank.setScale(formatter);
 			this.downPayBank.setTextBoxWidth(200);
+			this.appliedLoanAmt.setMaxlength(18);
 
 			if (StringUtils.equals(FinanceConstants.FIN_DIVISION_CORPORATE, this.finDivision)) {
 				this.row_accountsOfficer.setVisible(false);
@@ -864,6 +868,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
+			this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), formatter));
 
 			//FXIME: PV. 28AUG19. SOme confusion over deducting DISBDEDUCT amounts from current asset value.
 			BigDecimal curFinAmountValue = BigDecimal.ZERO;
@@ -1973,6 +1978,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.maturityDate.setDisabled(true);
 		this.finRemarks.setReadonly(true);
 		this.finAmount.setReadonly(true);
+		this.appliedLoanAmt.setReadonly(true);
 		this.curFinAmountValue.setReadonly(true);
 		this.defferments.setReadonly(true);
 		this.utilisedDef.setReadonly(true);

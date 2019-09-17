@@ -232,6 +232,10 @@
 													<label id="label_FinanceMainDialog_FinCurrentAssetValue" />
 													<currencyBox id="finCurrentAssetValue" />
 												</row>
+												<row>
+												<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
+													<currencyBox id="appliedLoanAmt" />
+												</row>
 												<row id="row_disbAcctId">
 													<label id="label_FinanceMainDialog_DisbAcctId" value="${c:l('label_FinanceMainDialog_DisbAcctId.value')}" />
 													<accountSelectionBox id="disbAcctId" />
