@@ -78,6 +78,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleReturnType;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -144,7 +145,6 @@ public class NotificationService {
 				parseMail(template, data);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
-				template = null;
 			}
 		}
 
@@ -350,7 +350,6 @@ public class NotificationService {
 						parseMail(template, data);
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
-						template = null;
 					}
 				} else {
 					template = null;
@@ -407,7 +406,11 @@ public class NotificationService {
 			}
 		}
 
-		emailMessage.setMessage(template.getSmsMessage());
+		if (template.getSmsMessage() != null && !template.getSmsMessage().isEmpty()) {
+			emailMessage.setMessage(template.getSmsMessage());
+		} else if (template.getSmsContent() != null && !template.getSmsContent().isEmpty()) {
+			emailMessage.setMessage(template.getSmsContent());
+		}
 
 		NotificationAttribute attribute = new NotificationAttribute();
 		attribute.setAttribute("Notification_Desc");
@@ -446,6 +449,7 @@ public class NotificationService {
 	 * @param templateData
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	private void parseMail(MailTemplate mailTemplate, Object templateData) throws Exception {
 		logger.debug("Entering");
 
@@ -455,62 +459,65 @@ public class NotificationService {
 		model.put("vo", templateData);
 
 		Map<String, Object> tempMap = (Map<String, Object>) model.get("vo");
-
 		Map<String, Object> notificationDataMap = new HashMap<String, Object>();
 		StringTemplateLoader loader = new StringTemplateLoader();
-		loader.putTemplate("mailTemplate",
-				new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
-		freemarkerMailConfiguration.setTemplateLoader(loader);
-		Template template = freemarkerMailConfiguration.getTemplate("mailTemplate");
+		Template template = null;
+		Template templateSubject = null;
+		if (mailTemplate.isEmailTemplate()) {
+			loader.putTemplate("mailTemplate",
+					new String(mailTemplate.getEmailContent(), NotificationConstants.DEFAULT_CHARSET));
+			freemarkerMailConfiguration.setTemplateLoader(loader);
+			template = freemarkerMailConfiguration.getTemplate("mailTemplate");
 
-		try {
-			Pattern pattern = Pattern.compile("\\{(.*?)\\}");
-			Matcher matchPattern = pattern.matcher(template.toString());
-			while (matchPattern.find()) {
-				String[] array = matchPattern.group(1).split("\\.");
-				String key = array[1];
-				notificationDataMap.put(matchPattern.group(1), tempMap.get(key));
+			try {
+				Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+				Matcher matchPattern = pattern.matcher(template.toString());
+				while (matchPattern.find()) {
+					String[] array = matchPattern.group(1).split("\\.");
+					String key = array[1];
+					notificationDataMap.put(matchPattern.group(1), tempMap.get(key));
+				}
+			} catch (Exception e) {
+				throw new Exception("Error While Preparing NotificationData", e);
 			}
-		} catch (Exception e) {
-			throw new Exception("Error While Preparing NotificationData", e);
-		}
 
-		try {
-			result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-		} catch (IOException e) {
-			throw new Exception("Unable to read or process freemarker configuration or template", e);
-		} catch (TemplateException e) {
-			throw new Exception("Problem initializing freemarker or rendering template ", e);
-		}
-
-		StringTemplateLoader subloader = new StringTemplateLoader();
-		subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
-		freemarkerMailConfiguration.setTemplateLoader(subloader);
-		Template templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
-
-		try {
-			Pattern subPattern = Pattern.compile("\\{(.*?)\\}");
-			Matcher subMatchPattern = subPattern.matcher(templateSubject.toString());
-			while (subMatchPattern.find()) {
-				String[] array = subMatchPattern.group(1).split("\\.");
-				String key = array[1];
-				notificationDataMap.put(subMatchPattern.group(1), tempMap.get(key));
+			try {
+				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+			} catch (IOException e) {
+				throw new AppException("Unable to read or process freemarker configuration or template", e);
+			} catch (TemplateException e) {
+				throw new AppException("Problem initializing freemarker or rendering template ", e);
 			}
-		} catch (Exception e) {
-			throw new Exception("Error While Preparing NotificationData", e);
 
+			StringTemplateLoader subloader = new StringTemplateLoader();
+			subloader.putTemplate("mailSubject", mailTemplate.getEmailSubject());
+			freemarkerMailConfiguration.setTemplateLoader(subloader);
+			templateSubject = freemarkerMailConfiguration.getTemplate("mailSubject");
+
+			try {
+				Pattern subPattern = Pattern.compile("\\{(.*?)\\}");
+				Matcher subMatchPattern = subPattern.matcher(templateSubject.toString());
+				while (subMatchPattern.find()) {
+					String[] array = subMatchPattern.group(1).split("\\.");
+					String key = array[1];
+					notificationDataMap.put(subMatchPattern.group(1), tempMap.get(key));
+				}
+			} catch (Exception e) {
+				throw new AppException("Error While Preparing NotificationData", e);
+
+			}
+
+			try {
+				subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
+			} catch (IOException e) {
+				throw new AppException("Unable to read or process freemarker configuration or template", e);
+			} catch (TemplateException e) {
+				throw new AppException("Problem initializing freemarker or rendering template ", e);
+			}
+
+			mailTemplate.setEmailMessage(result);
+			mailTemplate.setEmailSubject(subject);
 		}
-
-		try {
-			subject = FreeMarkerTemplateUtils.processTemplateIntoString(templateSubject, model);
-		} catch (IOException e) {
-			throw new Exception("Unable to read or process freemarker configuration or template", e);
-		} catch (TemplateException e) {
-			throw new Exception("Problem initializing freemarker or rendering template ", e);
-		}
-
-		mailTemplate.setEmailMessage(result);
-		mailTemplate.setEmailSubject(subject);
 
 		if (mailTemplate.isSmsTemplate()) {
 			loader = new StringTemplateLoader();
@@ -520,14 +527,14 @@ public class NotificationService {
 
 			try {
 				Pattern smsPattern = Pattern.compile("\\{(.*?)\\}");
-				Matcher smsMatchPattern = smsPattern.matcher(templateSubject.toString());
+				Matcher smsMatchPattern = smsPattern.matcher(template.toString());
 				while (smsMatchPattern.find()) {
 					String[] array = smsMatchPattern.group(1).split("\\.");
 					String key = array[1];
 					notificationDataMap.put(smsMatchPattern.group(1), tempMap.get(key));
 				}
 			} catch (Exception e) {
-				throw new Exception("Error While Preparing NotificationData", e);
+				throw new AppException("Error While Preparing NotificationData", e);
 			}
 
 			try {
@@ -535,10 +542,10 @@ public class NotificationService {
 				mailTemplate.setSmsMessage(result);
 			} catch (IOException e) {
 				logger.error(Literal.EXCEPTION, e);
-				throw new Exception("Unable to read or process freemarker configuration or template", e);
+				throw new AppException("Unable to read or process freemarker configuration or template", e);
 			} catch (TemplateException e) {
 				logger.debug(Literal.EXCEPTION, e);
-				throw new Exception("Problem initializing freemarker or rendering template ", e);
+				throw new AppException("Problem initializing freemarker or rendering template ", e);
 			}
 		}
 
@@ -1127,7 +1134,7 @@ public class NotificationService {
 			declaredFieldValues.put("rc_" + "effectiveDate",
 					DateUtility.formatToLongDate(lmsServiceLog.getEffectiveDate()));
 		}
-		//put call email template datamap added
+		// put call email template datamap added
 		FinOption finOption = aFinanceDetail.getFinOption();
 		if (finOption != null) {
 			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("_code"), finOption.getOptionType());

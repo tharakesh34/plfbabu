@@ -43,7 +43,6 @@ package com.pennant.backend.service.finance;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,7 +63,6 @@ import org.zkoss.util.resource.Labels;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.core.InstallmentDueService;
 import com.pennant.app.util.AEAmounts;
@@ -97,7 +95,6 @@ import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.ext.ExtTablesDAO;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
-import com.pennant.backend.dao.finance.AdvancePaymentDetailDAO;
 import com.pennant.backend.dao.finance.FinCollateralsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
@@ -114,7 +111,6 @@ import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
 import com.pennant.backend.dao.finance.SecondaryAccountDAO;
 import com.pennant.backend.dao.financemanagement.FinanceStepDetailDAO;
@@ -123,7 +119,6 @@ import com.pennant.backend.dao.findedup.FinanceDedupeDAO;
 import com.pennant.backend.dao.insurancedetails.FinInsurancesDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.policecase.PoliceCaseDAO;
-import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
@@ -152,8 +147,6 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinContributorDetail;
 import com.pennant.backend.model.finance.FinContributorHeader;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennant.backend.model.finance.FinInsurances;
@@ -175,7 +168,6 @@ import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayData;
 import com.pennant.backend.model.finance.SecondaryAccount;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
@@ -212,7 +204,6 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
@@ -308,9 +299,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected RuleDAO ruleDAO;
 	protected CovenantsService covenantsService;
 	protected FinOptionService finOptionService;
-	protected AdvancePaymentDetailDAO advancePaymentDetailDAO;
-	private ManualAdviseDAO manualAdviseDAO;
-	private FinExcessAmountDAO finExcessAmountDAO;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -1822,24 +1810,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				// Advance payment Details Resetting
 				if (instruction == serviceInsts.size() - 1) {
-					// Fetch Existing Advance Payment Summary object
-					AdvancePaymentDetail oldAdvPay = advancePaymentDetailDAO
-							.getAdvancePaymentDetailBalByRef(financeMain.getFinReference());
-
-					AdvancePaymentDetail curAdvpay = AdvancePaymentUtil.getDiffOnAdvIntAndAdvEMI(
-							financeDetail.getFinScheduleData(), oldAdvPay, financeDetail.getModuleDefiner());
-					if (curAdvpay != null) {
-						amountCodes.setIntAdjusted(curAdvpay.getAdvInt());
-						amountCodes.setEmiAdjusted(curAdvpay.getAdvEMI());
-						if (SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF)) {
-							amountCodes.setIntTdsAdjusted(curAdvpay.getAdvIntTds());
-							amountCodes.setEmiTdsAdjusted(curAdvpay.getAdvEMITds());
-						} else {
-							amountCodes.setIntTdsAdjusted(BigDecimal.ZERO);
-							amountCodes.setEmiTdsAdjusted(BigDecimal.ZERO);
-						}
-					}
-					financeDetail.setAdvancePaymentDetail(curAdvpay);
+					advancePaymentService.setAdvancePaymentDetails(financeDetail, amountCodes);
 				}
 
 				aeEvent.setDataMap(dataMap);
@@ -2946,150 +2917,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return aeEvent;
 	}
 
-	protected void processAdvancePayment(AdvancePaymentDetail advPay, String moduleDefiner, long lastMntBy) {
-		if (advPay.getAdvInt().compareTo(BigDecimal.ZERO) == 0 && advPay.getAdvEMI().compareTo(BigDecimal.ZERO) == 0) {
-			return;// Requires Zero log Entries also, should not return
-		}
-
-		boolean procWOCheck = false;
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)
-				|| StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
-			procWOCheck = true;
-		}
-
-		// Advance Interest Amount Process
-		if ((advPay.getAdvInt().compareTo(BigDecimal.ZERO) > 0
-				&& (ImplementationConstants.RCVADV_CREATE_ON_INTEMI || procWOCheck))
-				|| (advPay.getAdvInt().compareTo(BigDecimal.ZERO) < 0
-						&& ImplementationConstants.PYBADV_CREATE_ON_INTEMI)) {
-			updateExcess(advPay, RepayConstants.EXAMOUNTTYPE_ADVINT, moduleDefiner, lastMntBy);
-		}
-
-		// Advance EMI Amount Process
-		if ((advPay.getAdvEMI().compareTo(BigDecimal.ZERO) > 0
-				&& (ImplementationConstants.RCVADV_CREATE_ON_INTEMI || procWOCheck))
-				|| (advPay.getAdvEMI().compareTo(BigDecimal.ZERO) < 0
-						&& ImplementationConstants.PYBADV_CREATE_ON_INTEMI)) {
-			updateExcess(advPay, RepayConstants.EXAMOUNTTYPE_ADVEMI, moduleDefiner, lastMntBy);
-		}
-
-	}
-
-	/**
-	 * Method for Updating Excess details based on Advance Payment Preparation
-	 * 
-	 * @param advPay
-	 * @param excessType
-	 * @param moduleDefiner
-	 */
-	protected void updateExcess(AdvancePaymentDetail advPay, String excessType, String moduleDefiner, long lastMntBy) {
-
-		FinExcessAmount excess = null;
-		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
-			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinReference(),
-					RepayConstants.EXAMOUNTTYPE_ADVINT);
-		}
-
-		if (excess == null) {
-			excess = new FinExcessAmount();
-		}
-
-		BigDecimal amount = BigDecimal.ZERO;
-		if (StringUtils.equals(excessType, RepayConstants.EXAMOUNTTYPE_ADVINT)) {
-			amount = advPay.getAdvInt();
-			boolean advIntTDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
-			if (advIntTDSInczUpf) {
-				amount = amount.add(advPay.getAdvIntTds());
-			}
-
-		} else if (StringUtils.equals(excessType, RepayConstants.EXAMOUNTTYPE_ADVEMI)) {
-			amount = advPay.getAdvEMI();
-			boolean advEMITDSInczUpf = SysParamUtil.isAllowed(SMTParameterConstants.ADVANCE_TDS_INCZ_UPF);
-			if (advEMITDSInczUpf) {
-				amount = amount.add(advPay.getAdvEMITds());
-			}
-		}
-
-		if (amount.compareTo(BigDecimal.ZERO) == 0) {
-			return;
-		}
-
-		excess.setFinReference(advPay.getFinReference());
-		excess.setAmountType(excessType);
-		excess.setAmount(excess.getAmount().add(amount));
-		excess.setBalanceAmt(excess.getBalanceAmt().add(amount));
-
-		if (excess.getExcessID() == Long.MIN_VALUE || excess.getExcessID() == 0) {
-			finExcessAmountDAO.saveExcess(excess);
-		} else {
-			finExcessAmountDAO.updateExcess(excess);
-		}
-
-		FinExcessMovement movement = new FinExcessMovement();
-		movement.setExcessID(excess.getExcessID());
-		movement.setReceiptID(advPay.getInstructionUID());
-		movement.setMovementType(RepayConstants.RECEIPTTYPE_ADJUST);
-		if (amount.compareTo(BigDecimal.ZERO) < 0) {
-			movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-		} else {
-			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
-		}
-		movement.setAmount(amount.abs());
-		finExcessAmountDAO.saveExcessMovement(movement);
-
-		// Create Advise based on Amount for the Excess Type
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ORG)) {
-			return;
-		}
-		if (StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_ADDDISB)) {
-			if (!ImplementationConstants.RCVADV_CREATE_ON_INTEMI) {
-				return;
-			}
-		}
-
-		// Advise Creation
-		createAdvise(advPay.getFinReference(), excessType, DateUtility.getAppDate(), amount, lastMntBy);
-
-	}
-
-	/**
-	 * Creating a Receivable advise for insurance Cancel or surrender amount.
-	 * 
-	 * @param vASRecording
-	 */
-	protected void createAdvise(String finReference, String amountType, Date valueDate, BigDecimal adviseAmount,
-			long lastMntBy) {
-		logger.debug(Literal.ENTERING);
-
-		// Fetch Fee Type ID
-		long feeTypeID = getFeeTypeDAO().getFeeTypeId(amountType);
-
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setAdviseID(Long.MIN_VALUE);
-		if (adviseAmount.compareTo(BigDecimal.ZERO) > 0) {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-		} else {
-			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		}
-		manualAdvise.setFinReference(finReference);
-		manualAdvise.setFeeTypeID(feeTypeID);
-		manualAdvise.setAdviseAmount(adviseAmount.abs());
-		manualAdvise.setRemarks("Advise for Advance Interest/EMI");
-		manualAdvise.setValueDate(valueDate);
-		manualAdvise.setPostDate(valueDate);
-		manualAdvise.setBalanceAmt(adviseAmount.abs());
-
-		manualAdvise.setVersion(0);
-		manualAdvise.setLastMntBy(lastMntBy);
-		manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		manualAdvise.setWorkflowId(0);
-
-		getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -3768,25 +3595,4 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	public void setFinOptionService(FinOptionService finOptionService) {
 		this.finOptionService = finOptionService;
 	}
-
-	public AdvancePaymentDetailDAO getAdvancePaymentDetailDAO() {
-		return advancePaymentDetailDAO;
-	}
-
-	public void setAdvancePaymentDetailDAO(AdvancePaymentDetailDAO advancePaymentDetailDAO) {
-		this.advancePaymentDetailDAO = advancePaymentDetailDAO;
-	}
-
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
 }

@@ -111,6 +111,16 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 		for (Covenant covenant : covenants) {
 			covenant.getCovenantDocuments().addAll(covenantsDAO.getCovenantDocuments(covenant.getId(), tableType));
+
+			if (CollectionUtils.isEmpty(covenant.getCovenantDocuments())) {
+				continue;
+			}
+
+			for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
+				covenant.getDocumentDetails().add(
+						documentDetailsDAO.getDocumentDetails(covenantDocument.getDocumentId(), tableType.getSuffix()));
+			}
+
 		}
 
 		return covenants;

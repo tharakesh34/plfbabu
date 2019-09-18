@@ -2998,7 +2998,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			notification.setKeyReference(financeMain.getFinReference());
 			notification.setModule("LOAN");
 			notification.setSubModule(FinanceConstants.FINSER_EVENT_ORG);
-			notification.setTemplateCode(PennantConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
+			notification.setTemplateCode(NotificationConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
 
 			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 			if (customerDetails == null) {
@@ -4930,16 +4930,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			AdvancePaymentDetail advPay = financeDetail.getAdvancePaymentDetail();
 			if ((grcAdvType != null || repayAdvType != null) && advPay != null) {
-
 				advPay.setInstructionUID(serviceUID);
 
 				// If Advance Payment updation Required
 				if (AdvancePaymentUtil.advPayUpdateReq(moduleDefiner)) {
-					processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
+					advancePaymentService.processAdvancePayment(advPay, moduleDefiner, financeMain.getLastMntBy());
 				}
 
 				// Saving of Advance Payment Detail
-				advancePaymentDetailDAO.save(financeDetail.getAdvancePaymentDetail());
+				advancePaymentService.save(financeDetail.getAdvancePaymentDetail());
 
 			}
 			// tasks # >>End Advance EMI and DSF

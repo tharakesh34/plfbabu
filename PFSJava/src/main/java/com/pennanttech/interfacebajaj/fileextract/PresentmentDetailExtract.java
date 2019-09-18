@@ -42,6 +42,7 @@ import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -470,8 +471,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									saveBatchLog(batchId, RepayConstants.PEXC_BOUNCE, presentmentRef,
 											detail.getErrorDesc());
 
-									//Sending the Email Notification
-									sendMailNotification(detail);
+									// Sending the Email Notification
+									sendMailNotification(detail, "");
 								} else {
 									failedCount++;
 									updatePresentmentDetails(presentmentRef, RepayConstants.PEXC_FAILURE, "PR0001",
@@ -481,6 +482,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 									saveBatchLog(batchId, RepayConstants.PEXC_FAILURE, presentmentRef,
 											detail.getErrorDesc());
 									updateLog(dataEngineStatus.getId(), presentmentRef, "F", detail.getErrorDesc());
+
+									sendMailNotification(detail, RepayConstants.MODULETYPE_BOUNCE);
 								}
 							} catch (Exception e) {
 								logger.error(Literal.EXCEPTION, e);
@@ -1585,15 +1588,20 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	 * 
 	 * @param presentmentDetail
 	 */
-	protected void sendMailNotification(PresentmentDetail presentmentDetail) {
+	protected void sendMailNotification(PresentmentDetail presentmentDetail, String status) {
 		logger.debug(Literal.ENTERING);
-		//Bounce Mail Alert Notification
 		try {
 			Notification notification = new Notification();
 			notification.setKeyReference(presentmentDetail.getFinReference());
 			notification.setModule("LOAN");
-			notification.setSubModule("PRESENTMENT_BOUNCE");
-			notification.setTemplateCode(PennantConstants.PRESENTMENT_BOUNCE_MAIL_NOTIFICATION);
+
+			if (StringUtils.equals(status, RepayConstants.MODULETYPE_BOUNCE)) {
+				notification.setSubModule("PRESENTMENT_BOUNCE");
+				notification.setTemplateCode(NotificationConstants.PRESENTMENT_BOUNCE_MAIL_NOTIFICATION);
+			} else {
+				notification.setSubModule("PRESENTMENT_SUCCESS");
+				notification.setTemplateCode(NotificationConstants.PRESENTMENT_SUCCESS_MAIL_NOTIFICATION);
+			}
 
 			FinanceDetail financeDetail = this.presentmentDetailService
 					.getFinanceDetailsByRef(presentmentDetail.getFinReference());
@@ -1606,11 +1614,7 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 			if (customerDetails.getCustomer() == null) {
 				return;
 			}
-			//For Customers marked as DND true are not allow to Trigger a Mail. 
-			if (customerDetails.getCustomer().isDnd()) {
-				return;
-			}
-			
+
 			// Customer Email
 			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
 			if (CollectionUtils.isEmpty(emailList)) {

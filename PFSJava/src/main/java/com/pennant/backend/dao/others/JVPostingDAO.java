@@ -67,8 +67,6 @@ public interface JVPostingDAO {
 
 	long save(JVPosting jVPosting, String type);
 
-	long getMaxSeqNum(JVPosting jvPosting);
-
 	long getBatchRerbyExpRef(String expReference);
 
 	long createBatchReference();

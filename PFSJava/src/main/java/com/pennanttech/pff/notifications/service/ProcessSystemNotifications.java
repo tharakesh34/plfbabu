@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,15 +23,16 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.Notifications.SystemNotificationExecutionDetails;
 import com.pennant.backend.model.Notifications.SystemNotifications;
+import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
-import com.pennanttech.pennapps.notification.email.configuration.EmailBodyType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
@@ -50,6 +52,9 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	@Autowired
 	private SmsEngine smsEngine;
 
+	@Autowired
+	private MailTemplateDAO mailTemplateDAO;
+
 	public void processNotifications() {
 		logger.info(Literal.ENTERING);
 
@@ -57,19 +62,105 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			List<SystemNotificationExecutionDetails> notifications = getSystemNotificationExecDetails();
 
 			for (SystemNotificationExecutionDetails detail : notifications) {
-				if ("EMAIL".equals(detail.getNotificationType())) {
-					prepareEmailMessage(detail);
-				} else if ("SMS".equals(detail.getNotificationType())) {
-					prepareSMSMessage(detail);
+				if (detail.getTemplateCode() != null) {
+					if ("EMAIL".equals(detail.getNotificationType())) {
+						prepareEmail(detail);
+					} else if ("SMS".equals(detail.getNotificationType())) {
+						prepareSMSMsg(detail);
+					}
+				} else {
+					if ("EMAIL".equals(detail.getNotificationType())) {
+						prepareEmailMessage(detail);
+					} else if ("SMS".equals(detail.getNotificationType())) {
+						prepareSMSMessage(detail);
+					}
 				}
 				updateProcessFlag(detail);
 			}
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.info(Literal.LEAVING);
 
+	}
+
+	private void prepareEmail(SystemNotificationExecutionDetails detail) {
+		logger.debug("Entering");
+
+		Notification notification = new Notification();
+		String header = "";
+		MessageAddress address = new MessageAddress();
+		address.setEmailId(detail.getEmail());
+		address.setRecipientType(RecipientType.TO.getKey());
+		notification.getAddressesList().add(address);
+		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
+		notification.setSubModule(detail.getNotificationCode());
+		notification.setKeyReference(detail.getKeyReference());
+
+		try {
+			header = getTemplateContent(detail, "EML");
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		if (StringUtils.isNotBlank(header)) {
+			String[] data = header.split("~@#");
+			notification.setContent(data[0].getBytes());
+			notification.setSubject(data[1]);
+			emailEngine.sendEmail(notification);
+		}
+		logger.debug("LEAVING");
+	}
+
+	public String getTemplateContent(SystemNotificationExecutionDetails detail, String type) throws Exception {
+		logger.debug("Entering");
+		MailTemplate template = null;
+		template = mailTemplateDAO.getMailTemplateByCode(detail.getTemplateCode(), "");
+		if (template == null) {
+			logger.error("No Template exists with templatecode " + detail.getTemplateCode());
+		}
+		String content = null;
+		String subject = null;
+
+		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+				.parse(new InputSource(new StringReader(new String(detail.getNotificationData(), "UTF-8"))));
+		try {
+			if (type.equalsIgnoreCase("SMS")) {
+				content = parseData(new String(template.getSmsContent()), document);
+				// content = content ;
+			} else if (type.equalsIgnoreCase("EML")) {
+				subject = parseData(template.getEmailSubject(), document);
+				content = parseData(new String(template.getEmailContent(), "UTF-16"), document);
+				content = content + "~@#" + subject;
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw e;
+		}
+		logger.debug("Entering");
+		return content;
+	}
+
+	private String parseData(String content, Document document) throws Exception {
+		logger.debug("Entering");
+		String result = "";
+		try {
+			Configuration freemarkerMailConfiguration = new Configuration();
+			StringTemplateLoader loader = new StringTemplateLoader();
+			loader.putTemplate("template", content);
+			freemarkerMailConfiguration.setTemplateLoader(loader);
+			freemarker.template.Template freeMarkerTemplate = freemarkerMailConfiguration.getTemplate("template");
+			result = FreeMarkerTemplateUtils.processTemplateIntoString(freeMarkerTemplate, document);
+		} catch (IOException e) {
+			throw new Exception("Unable to read or process freemarker configuration or template", e);
+		} catch (TemplateException e) {
+			throw new Exception("Problem initializing freemarker or rendering template ", e);
+		}
+
+		logger.debug("Entering");
+		return result;
 	}
 
 	private void updateProcessFlag(SystemNotificationExecutionDetails detail) {
@@ -99,7 +190,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 		MessageAddress address = new MessageAddress();
 		address.setEmailId(detail.getEmail());
-		notification.setContentType(EmailBodyType.PLAIN.getKey());
+		// notification.setContentType(EmailBodyType.PLAIN.getKey());
 		address.setRecipientType(RecipientType.TO.getKey());
 		notification.getAddressesList().add(address);
 
@@ -108,6 +199,27 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		notification.setKeyReference(detail.getKeyReference());
 
 		emailEngine.sendEmail(notification);
+
+	}
+
+	private void prepareSMSMsg(SystemNotificationExecutionDetails detail) {
+		Notification notification = new Notification();
+		notification.getMobileNumbers().add(detail.getMobileNumber());
+		notification.setMobileNumber(detail.getMobileNumber());
+		notification.setNotificationId(detail.getNotificationId());
+		String header = "";
+		try {
+			header = getTemplateContent(detail, "SMS");
+			notification.setMessage(header);
+			// parseSMS(detail, notification);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		notification.setKeyReference(detail.getKeyReference());
+		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
+		notification.setSubModule(detail.getNotificationCode());
+
+		smsEngine.sendSms(notification);
 
 	}
 
@@ -222,7 +334,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select snl.id, Executionid, Notificationid, Email, Mobilenumber, Notificationdata, Attributes,");
 		sql.append(" Notificationtype, Contentlocation, Contentfilename, Subject, code as Notificationcode, ");
-		sql.append(" keyreference from sys_notification_exec_log snl");
+		sql.append(" TemplateCode, keyreference from sys_notification_exec_log snl");
 		sql.append(" inner join sys_notifications sn on sn.id = snl.notificationid");
 		sql.append(" where snl.processingflag = :ProcessingFlag");
 		systemNotifications.setProcessingFlag(false);

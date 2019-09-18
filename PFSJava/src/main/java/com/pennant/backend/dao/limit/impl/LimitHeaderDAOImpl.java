@@ -1,6 +1,8 @@
 package com.pennant.backend.dao.limit.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -14,11 +16,18 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.limit.LimitHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements LimitHeaderDAO {
 	private static Logger logger = Logger.getLogger(LimitHeaderDAOImpl.class);
@@ -574,5 +583,88 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		logger.debug("Leaving");
 		return count;
 
+	}
+
+	public List<String> getLimitRuleFields() {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("RBModule", "LMTLINE");
+
+		return jdbcTemplate.queryForList("select distinct RBFldName from RBFieldDetails where RBModule = :RBModule",
+				parameterSource, String.class);
+	}
+
+	@Override
+	public FinanceType getLimitFieldsByFinTpe(String finType, Set<String> ruleFields) {
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(ruleFields.toString().replace("[", "").replace("]", ""));
+		sql.append(" from RMTFinanceTypes");
+		sql.append(" where FinType = :FinType");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("FinType", finType);
+
+		RowMapper<FinanceType> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceType.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public Customer getLimitFieldsByCustId(long custId, Set<String> ruleFields) {
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(ruleFields.toString().replace("[", "").replace("]", ""));
+		sql.append(" from Customers");
+		sql.append(" where CustID = :CustID");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("CustID", custId);
+
+		RowMapper<Customer> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(Customer.class);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<FinanceMain> getLimitFieldsByCustId(long custId, Set<String> ruleFields, boolean orgination) {
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(ruleFields.toString().replace("[", "").replace("]", ""));
+
+		if (orgination) {
+			sql.append(", 1 LimitValid");
+		}
+		sql.append(" from FinanceMain");
+		if (orgination) {
+			sql.append(TableType.TEMP_TAB.getSuffix());
+		}
+		sql.append(" where CustID=:CustID");
+		if (orgination) {
+			if (App.DATABASE == Database.ORACLE) {
+				sql.append(" and RcdMaintainSts IS NULL ");
+			} else {
+				sql.append(" and RcdMaintainSts = '' ");
+			}
+		}
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("CustID", custId);
+
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+
+		try {
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+
+		return new ArrayList<FinanceMain>();
 	}
 }

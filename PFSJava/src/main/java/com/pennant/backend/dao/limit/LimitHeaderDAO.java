@@ -1,8 +1,12 @@
 package com.pennant.backend.dao.limit;
 
 import java.util.List;
+import java.util.Set;
 
+import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 
 public interface LimitHeaderDAO {
 
@@ -41,5 +45,13 @@ public interface LimitHeaderDAO {
 	long isLimitBlock(long custID, String type, boolean limitBlock);
 
 	int updateBlockLimit(long custId, long headerId, boolean blockLimit);
+
+	List<String> getLimitRuleFields();
+	
+	Customer getLimitFieldsByCustId(long custId, Set<String> ruleFields);
+	
+	List<FinanceMain> getLimitFieldsByCustId(long custId, Set<String> ruleFields, boolean orgination);
+
+	FinanceType getLimitFieldsByFinTpe(String finType, Set<String> fields);
 
 }

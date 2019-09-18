@@ -3416,6 +3416,20 @@ public class PennantJavaUtil {
 				new ModuleMapping("SecurityUser", SecurityUser.class, new String[] { "SecUsers", "SecUsers" },
 						securityWF, new String[] { "UsrLogin", "UsrFName" },
 						new Object[][] { { "usrdeptcode", "0", "CREDIT" } }, 600));
+		ModuleUtil.register("FinOptionReport",
+				new ModuleMapping("FinOptionReport", FinOption.class,
+						new String[] { "FIN_OPTIONS", "FIN_OPTIONS_AVIEW" }, masterWF, new String[] { "FinReference" },
+						null, 600));
+
+		ModuleUtil.register("DMA_LMT",
+				new ModuleMapping("DMA_LMT", VehicleDealer.class,
+						new String[] { "AMTVehicleDealer", "AMTVehicleDealer" }, masterWF,
+						new String[] { "DealerId", "Code", "DealerName" },
+						new Object[][] { { "DealerType", "0", "DMA" }, { "Active", "0", 1 } }, 350));
+		ModuleUtil.register("SourceOfficer_LMT", new ModuleMapping("SourceOfficer_LMT", VehicleDealer.class,
+				new String[] { "AMTVehicleDealer", "AMTVehicleDealer_AView" }, masterWF,
+				new String[] { "DealerId", "Code", "DealerName" },
+				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER }, { "Active", "0", 1 } }, 350));
 
 		registerCustomModules();
 	}

@@ -195,7 +195,10 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								String columnName = "";
 
 								SystemNotificationAttributes attr = column.getValue();
-								if (column.getKey().contains(".")) {
+								if (column.getKey().startsWith("(") || column.getKey().startsWith("DISTINCT")) {
+									int index = column.getKey().lastIndexOf(" ");
+									columnName = column.getKey().substring(index).trim();
+								} else if (column.getKey().contains(".")) {
 									columnName = column.getKey().split("\\.")[1];
 								} else {
 									columnName = column.getKey();
@@ -216,6 +219,7 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								} else if ("MOBILENUM".equals(attr.getType())) {
 									if (rs.getString(columnName) != null) {
 										mobileNum = rs.getString(columnName);
+										map.put(columnName, mobileNum);
 									}
 								} else if ("AMOUNT".equals(attr.getType())) {
 									if (rs.getBigDecimal(columnName) != null) {

@@ -63,8 +63,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	}
 
 	/**
-	 * This method insert new Records into MiscPostingUploads or
-	 * MiscPostingUploads_Temp.
+	 * This method insert new Records into MiscPostingUploads or MiscPostingUploads_Temp.
 	 * 
 	 * save Finance Types
 	 * 
@@ -81,7 +80,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 		logger.debug(Literal.ENTERING);
 
 		if (miscPostingUpload.getMiscPostingId() < 0) {
-			miscPostingUpload.setMiscPostingId(getNextValue("SeqJVpostings"));
+			miscPostingUpload.setMiscPostingId(getNextId("SeqJVpostings"));
 			logger.debug("get NextID:" + miscPostingUpload.getMiscPostingId());
 		}
 
@@ -110,10 +109,8 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	}
 
 	/**
-	 * This method updates the Record MiscPostingUploads or
-	 * MiscPostingUploads_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Finance Types by key FinType
-	 * and Version
+	 * This method updates the Record MiscPostingUploads or MiscPostingUploads_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
 	 * @param Finance
 	 *            Types (financeType)
@@ -218,7 +215,7 @@ public class MiscPostingUploadDAOImpl extends SequenceDao<MiscPostingUpload> imp
 	@Override
 	public long getMiscPostingBranchSeq() {
 		logger.debug(Literal.ENTERING);
-		long seq = getNextValue("SeqJVpostings");
+		long seq = getNextId("SeqJVpostings");
 		logger.trace("get NextID:" + seq);
 		return seq;
 	}

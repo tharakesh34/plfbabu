@@ -21,6 +21,7 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 	private String subject;
 	private String notificationCode;
 	private String keyReference;
+	private String templateCode;
 
 	@Override
 	public boolean isNew() {
@@ -131,6 +132,14 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 
 	public void setKeyReference(String keyReference) {
 		this.keyReference = keyReference;
+	}
+
+	public String getTemplateCode() {
+		return templateCode;
+	}
+
+	public void setTemplateCode(String templateCode) {
+		this.templateCode = templateCode;
 	}
 
 }

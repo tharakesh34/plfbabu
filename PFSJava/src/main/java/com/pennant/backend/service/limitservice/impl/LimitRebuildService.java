@@ -45,7 +45,10 @@ package com.pennant.backend.service.limitservice.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -57,7 +60,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
@@ -82,7 +84,6 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 
 public class LimitRebuildService implements LimitRebuild {
-
 	private static Logger logger = Logger.getLogger(LimitManagement.class);
 
 	@Autowired
@@ -91,8 +92,6 @@ public class LimitRebuildService implements LimitRebuild {
 	private LimitDetailDAO limitDetailDAO;
 	@Autowired
 	private LimitHeaderDAO limitHeaderDAO;
-	@Autowired
-	private FinanceMainDAO financeMainDAO;
 	@Autowired
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	@Autowired
@@ -113,119 +112,171 @@ public class LimitRebuildService implements LimitRebuild {
 
 	@Override
 	public void processCustomerRebuild(long custID, boolean rebuildOnStrChg) {
-
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerId(custID, "");
-		if (limitHeader != null && limitHeader.isActive()) {
-			//get the limit details
-			long headerId = limitHeader.getHeaderId();
-			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
-			// Verify the structure for changes
-			if (rebuildOnStrChg) {
-				processStructuralChanges(limitDetailsList, limitHeader);
-			}
 
-			//reset limit details
-			resetLimitDetails(limitDetailsList);
-			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-			// get all the finance in the group
-			financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, false));
-			financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(custID, true));
-
-			List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
-			for (FinanceMain finMain : financeMains) {
-
-				//identify the limit line 
-				LimitReferenceMapping mapping = identifyLine(finMain, null, null, headerId, limitDetailsList);
-
-				//process rebuild
-				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-					processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
-				}
-
-				mappings.add(mapping);
-			}
-
-			//save mapping by deleting and delete or move the transaction log
-			if (!mappings.isEmpty()) {
-				limitReferenceMappingDAO.deleteByHeaderID(headerId);
-				limitReferenceMappingDAO.saveBatch(mappings);
-			}
-			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+		if (limitHeader == null || !limitHeader.isActive()) {
+			return;
 		}
+
+		Map<String, Set<String>> fieldMap = getLimitFieldMap();
+		Customer customer = limitHeaderDAO.getLimitFieldsByCustId(custID, fieldMap.get("ct_"));
+
+		long headerId = limitHeader.getHeaderId();
+		List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
+
+		if (rebuildOnStrChg) {
+			processStructuralChanges(limitDetailsList, limitHeader);
+		}
+
+		resetLimitDetails(limitDetailsList);
+
+		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
+		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, fieldMap.get("fm_"), false));
+		financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custID, fieldMap.get("fm_"), true));
+
+		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+
+		Map<String, FinanceType> finTypeMap = new HashMap<>();
+		FinanceType financeType = null;
+		LimitReferenceMapping mapping = null;
+		for (FinanceMain finMain : financeMains) {
+			String finType = finMain.getFinType();
+
+			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
+			mapping = identifyLine(finMain, financeType, customer, headerId, limitDetailsList);
+
+			if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+				processRebuild(finMain, limitHeader, limitHeader.getHeaderId(), limitDetailsList, mapping);
+			}
+
+			mappings.add(mapping);
+		}
+
+		if (!mappings.isEmpty()) {
+			limitReferenceMappingDAO.deleteByHeaderID(headerId);
+			limitReferenceMappingDAO.saveBatch(mappings);
+		}
+
+		limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+
+	}
+
+	private FinanceType getFinanceTye(String finType, Set<String> fields) {
+		return limitHeaderDAO.getLimitFieldsByFinTpe(finType, fields);
+	}
+
+	private Map<String, Set<String>> getLimitFieldMap() {
+		Map<String, Set<String>> limitFieldMap = new HashMap<>();
+
+		List<String> limitFields = limitHeaderDAO.getLimitRuleFields();
+
+		Set<String> fm = new HashSet<>();
+		Set<String> ct = new HashSet<>();
+		Set<String> ft = new HashSet<>();
+
+		for (String field : limitFields) {
+			if (StringUtils.startsWithIgnoreCase(field, "fm_")) {
+				fm.add(StringUtils.substring(field, 3));
+			} else if (StringUtils.startsWithIgnoreCase(field, "ct_")) {
+				ct.add(StringUtils.substring(field, 3));
+			} else if (StringUtils.startsWithIgnoreCase(field, "ft_")) {
+				ft.add(StringUtils.substring(field, 3));
+			}
+		}
+
+		fm.add("finReference");
+
+		limitFieldMap.put("fm_", fm);
+		limitFieldMap.put("ct_", ct);
+		limitFieldMap.put("ft_", ft);
+
+		return limitFieldMap;
 	}
 
 	@Override
 	public void processCustomerGroupRebuild(long rebuildGroupID, boolean removedFromGroup, boolean addedNewlyToGroup) {
-
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(rebuildGroupID, "");
-		if (limitHeader != null && limitHeader.isActive()) {
-			//get the limit details
-			long headerId = limitHeader.getHeaderId();
-			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
-			//Verify the structure for changes
-			processStructuralChanges(limitDetailsList, limitHeader);
-			//reset limit details
-			resetLimitDetails(limitDetailsList);
-			// get the all the customers in the group 
-			List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
-			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-			List<LimitHeader> headers = new ArrayList<LimitHeader>();
-			// get all the finance in the group
-			for (Customer customer : customers) {
-				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(customer.getCustID(), false));
-				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(customer.getCustID(), true));
-				LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(customer.getCustID(),
-						"");
-				if (limitHeaderByCustomerId != null) {
-					headers.add(limitHeaderByCustomerId);
-				}
-			}
 
-			List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
-			if (!financeMains.isEmpty()) {
-				for (FinanceMain finMain : financeMains) {
-					if (addedNewlyToGroup) {
-						limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), 0,
-								limitHeader.getHeaderId());
-					}
-					//identify the limit line 
-					Customer customer = getCustomer(customers, finMain.getCustID());
-					LimitReferenceMapping mapping = identifyLine(finMain, null, customer, headerId, limitDetailsList);
-					long transactionID = 0;
-					LimitHeader custHeader = getCustLimitHeader(headers, customer.getCustID());
-					if (custHeader != null) {
-						transactionID = custHeader.getHeaderId();
-					} else {
-						transactionID = limitHeader.getHeaderId();
-					}
-					//process rebuild
-					if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-						processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
-					}
-
-					if (removedFromGroup) {
-						limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(),
-								limitHeader.getHeaderId(), 0);
-					}
-					// add the mapping
-					mappings.add(mapping);
-				}
-			} else {
-				if (removedFromGroup) {
-					limitTransactionDetailsDAO.updateHeaderID(limitHeader.getHeaderId(), 0);
-				}
-			}
-			//save mapping by deleting and delete or move the transaction log
-			limitReferenceMappingDAO.deleteByHeaderID(headerId);
-			if (!mappings.isEmpty()) {
-				limitReferenceMappingDAO.saveBatch(mappings);
-			}
-			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+		if (limitHeader == null || !limitHeader.isActive()) {
+			return;
 		}
+
+		long headerId = limitHeader.getHeaderId();
+		List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
+
+		processStructuralChanges(limitDetailsList, limitHeader);
+
+		resetLimitDetails(limitDetailsList);
+
+		Map<String, Set<String>> fieldMap = getLimitFieldMap();
+		List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
+
+		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
+		List<LimitHeader> headers = new ArrayList<LimitHeader>();
+
+		long custId;
+		for (Customer customer : customers) {
+			custId = customer.getCustID();
+			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), false));
+			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), true));
+
+			LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "");
+
+			if (limitHeaderByCustomerId != null) {
+				headers.add(limitHeaderByCustomerId);
+			}
+		}
+
+		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+
+		Map<String, FinanceType> finTypeMap = new HashMap<>();
+		FinanceType financeType = null;
+
+		if (!financeMains.isEmpty()) {
+			for (FinanceMain finMain : financeMains) {
+				if (addedNewlyToGroup) {
+					limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), 0, headerId);
+				}
+
+				String finType = finMain.getFinType();
+				financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
+
+				Customer customer = getCustomer(customers, finMain.getCustID());
+				LimitReferenceMapping mapping = identifyLine(finMain, financeType, customer, headerId,
+						limitDetailsList);
+				long transactionID = 0;
+				LimitHeader custHeader = getCustLimitHeader(headers, customer.getCustID());
+				if (custHeader != null) {
+					transactionID = custHeader.getHeaderId();
+				} else {
+					transactionID = headerId;
+				}
+				//process rebuild
+				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+					processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
+				}
+
+				if (removedFromGroup) {
+					limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), headerId, 0);
+				}
+				// add the mapping
+				mappings.add(mapping);
+			}
+		} else {
+			if (removedFromGroup) {
+				limitTransactionDetailsDAO.updateHeaderID(headerId, 0);
+			}
+		}
+
+		limitReferenceMappingDAO.deleteByHeaderID(headerId);
+		if (!mappings.isEmpty()) {
+			limitReferenceMappingDAO.saveBatch(mappings);
+		}
+		limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+
 	}
 
 	private LimitHeader getCustLimitHeader(List<LimitHeader> headers, long custid) {
-
 		if (headers != null && !headers.isEmpty()) {
 			for (LimitHeader limitHeader : headers) {
 				if (limitHeader.getCustomerId() == custid) {
@@ -234,74 +285,88 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 		}
 		return null;
-
 	}
 
 	@Override
 	public void processCustomerGroupSwap(long rebuildGroupID, long prvGroupID) {
-
 		LimitHeader limitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(rebuildGroupID, "");
+
+		if (limitHeader == null || !limitHeader.isActive()) {
+			return;
+		}
+
 		LimitHeader prvlimitHeader = limitHeaderDAO.getLimitHeaderByCustomerGroupCode(prvGroupID, "");
+
 		long prvLimitHeaderID = 0;
+
 		if (prvlimitHeader != null) {
 			prvLimitHeaderID = prvlimitHeader.getHeaderId();
 		}
 
-		if (limitHeader != null && limitHeader.isActive()) {
-			//get the limit details
-			long headerId = limitHeader.getHeaderId();
-			List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
-			//Verify the structure for changes
-			processStructuralChanges(limitDetailsList, limitHeader);
-			//reset limit details
-			resetLimitDetails(limitDetailsList);
-			// get the all the customers in the group 
-			List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
-			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
-			List<LimitHeader> headers = new ArrayList<LimitHeader>();
-			// get all the finance in the group
-			for (Customer customer : customers) {
-				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(customer.getCustID(), false));
-				financeMains.addAll(financeMainDAO.getBYCustIdForLimitRebuild(customer.getCustID(), true));
-				LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(customer.getCustID(),
-						"");
-				if (limitHeaderByCustomerId != null) {
-					headers.add(limitHeaderByCustomerId);
-				}
+		long headerId = limitHeader.getHeaderId();
+
+		List<LimitDetails> limitDetailsList = limitDetailDAO.getLimitDetails(headerId);
+
+		processStructuralChanges(limitDetailsList, limitHeader);
+
+		resetLimitDetails(limitDetailsList);
+
+		List<Customer> customers = customerDAO.getCustomerByGroupID(rebuildGroupID);
+		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
+		List<LimitHeader> headers = new ArrayList<LimitHeader>();
+
+		Map<String, Set<String>> fieldMap = getLimitFieldMap();
+
+		long custId;
+		for (Customer customer : customers) {
+			custId = customer.getCustID();
+
+			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), false));
+			financeMains.addAll(limitHeaderDAO.getLimitFieldsByCustId(custId, fieldMap.get("fm_"), true));
+
+			LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(customer.getCustID(), "");
+
+			if (limitHeaderByCustomerId != null) {
+				headers.add(limitHeaderByCustomerId);
 			}
-
-			List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
-			for (FinanceMain finMain : financeMains) {
-				//identify the limit line 
-				Customer customer = getCustomer(customers, finMain.getCustID());
-				LimitReferenceMapping mapping = identifyLine(finMain, null, customer, headerId, limitDetailsList);
-
-				long transactionID = 0;
-				LimitHeader custHeader = getCustLimitHeader(headers, customer.getCustID());
-				if (custHeader != null) {
-					transactionID = custHeader.getHeaderId();
-				} else {
-					transactionID = prvLimitHeaderID;
-				}
-
-				//process rebuild
-				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
-					processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
-				}
-
-				//update the transaction with the limit header id
-				limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), prvLimitHeaderID, headerId);
-				// add the mapping
-				mappings.add(mapping);
-			}
-
-			//save mapping by deleting and delete or move the transaction log
-			if (!mappings.isEmpty()) {
-				limitReferenceMappingDAO.deleteByHeaderID(headerId);
-				limitReferenceMappingDAO.saveBatch(mappings);
-			}
-			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
 		}
+
+		List<LimitReferenceMapping> mappings = new ArrayList<LimitReferenceMapping>();
+
+		Map<String, FinanceType> finTypeMap = new HashMap<>();
+		FinanceType financeType = null;
+
+		for (FinanceMain finMain : financeMains) {
+			Customer customer = getCustomer(customers, finMain.getCustID());
+
+			String finType = finMain.getFinType();
+			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
+
+			LimitReferenceMapping mapping = identifyLine(finMain, financeType, customer, headerId, limitDetailsList);
+
+			long transactionID = 0;
+			LimitHeader custHeader = getCustLimitHeader(headers, customer.getCustID());
+			if (custHeader != null) {
+				transactionID = custHeader.getHeaderId();
+			} else {
+				transactionID = prvLimitHeaderID;
+			}
+
+			if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
+				processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
+			}
+
+			limitTransactionDetailsDAO.updateHeaderIDWithFin(finMain.getFinReference(), prvLimitHeaderID, headerId);
+			mappings.add(mapping);
+		}
+
+		if (!mappings.isEmpty()) {
+			limitReferenceMappingDAO.deleteByHeaderID(headerId);
+			limitReferenceMappingDAO.saveBatch(mappings);
+		}
+
+		limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
+
 	}
 
 	private Customer getCustomer(List<Customer> customers, long custID) {

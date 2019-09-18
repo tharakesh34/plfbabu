@@ -75,8 +75,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method set the Work Flow id based on the module name and return the
-	 * new JVPosting
+	 * This method set the Work Flow id based on the module name and return the new JVPosting
 	 * 
 	 * @return JVPosting
 	 */
@@ -94,8 +93,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method get the module from method getJVPosting() and set the new
-	 * record flag as true and return JVPosting()
+	 * This method get the module from method getJVPosting() and set the new record flag as true and return JVPosting()
 	 * 
 	 * @return JVPosting
 	 */
@@ -175,9 +173,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if
-	 * Record not deleted then throws DataAccessException with error 41003.
-	 * delete JV Posting Details by key BatchReference
+	 * This method Deletes the Record from the JVPostings or JVPostings_Temp. if Record not deleted then throws
+	 * DataAccessException with error 41003. delete JV Posting Details by key BatchReference
 	 * 
 	 * @param JV
 	 *            Posting Details (jVPosting)
@@ -265,9 +262,8 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 	}
 
 	/**
-	 * This method updates the Record JVPostings or JVPostings_Temp. if Record
-	 * not updated then throws DataAccessException with error 41004. update JV
-	 * Posting Details by key BatchReference and Version
+	 * This method updates the Record JVPostings or JVPostings_Temp. if Record not updated then throws
+	 * DataAccessException with error 41004. update JV Posting Details by key BatchReference and Version
 	 * 
 	 * @param JV
 	 *            Posting Details (jVPosting)
@@ -367,33 +363,6 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	/**
-	 * Fetch the Max Seq Number From SeqJVPostings
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JVPosting
-	 */
-	public long getMaxSeqNum(JVPosting jvPosting) {
-		logger.debug("Entering");
-		long count = 0;
-		StringBuilder selectSql = new StringBuilder("Select COALESCE(MAX(SeqNo),0)");
-		selectSql.append(" From SeqJVPostings");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jvPosting);
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		jvPosting = null;
-		logger.debug("Leaving");
-		return count;
 	}
 
 	@Override

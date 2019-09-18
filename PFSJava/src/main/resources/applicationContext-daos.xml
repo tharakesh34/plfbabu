@@ -3372,9 +3372,6 @@
 		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
 		<property name="pSLDetailDAO" ref="pSLDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
-		<property name="advancePaymentDetailDAO" ref="advancePaymentDetailDAO" />
-		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
-		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 
 		<!-- Services -->
@@ -3428,9 +3425,8 @@
 		<!-- Payments process service -->
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
 		<property name="baseRateCodeDAO" ref="baseRateCodeDAO" />
-
 		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
-
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
 	</bean>
 
 	<!-- Finance Data Validation Service -->

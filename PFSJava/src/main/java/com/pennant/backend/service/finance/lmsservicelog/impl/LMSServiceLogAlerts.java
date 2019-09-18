@@ -16,6 +16,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LMSServiceLog;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -75,7 +76,7 @@ public class LMSServiceLogAlerts {
 		}
 
 		Notification lmsServiceNotifyCust = new Notification();
-		lmsServiceNotifyCust.setTemplateCode(PennantConstants.ADD_RATE_CHANGE_NOTIFICATION);
+		lmsServiceNotifyCust.setTemplateCode(NotificationConstants.ADD_RATE_CHANGE_NOTIFICATION);
 		lmsServiceNotifyCust.setKeyReference(financeDetail.getFinReference());
 		lmsServiceNotifyCust.setModule("LOAN");
 		lmsServiceNotifyCust.setSubModule(FinanceConstants.FINSER_EVENT_RATECHG);

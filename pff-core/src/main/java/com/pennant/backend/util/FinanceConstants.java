@@ -196,6 +196,7 @@ public class FinanceConstants {
 	public static final String FINSER_EVENT_SUSPHEAD = "Suspense";
 	public static final String FINSER_EVENT_CANCELFIN = "CancelFinance";
 	public static final String FINSER_EVENT_ROLLOVER = "Rollover";
+	public static final String FINSER_EVENT_DUEALERTS = "DueAlerts";
 	public static final String FINSER_EVENT_BASICMAINTAIN = "MaintainBasicDetail";
 	public static final String FINSER_EVENT_RPYBASICMAINTAIN = "MaintainRepayDetail";
 	public static final String FINSER_EVENT_CANCELRPY = "CancelRepay";

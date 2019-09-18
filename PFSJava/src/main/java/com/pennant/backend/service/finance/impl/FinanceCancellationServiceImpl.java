@@ -53,6 +53,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jaxen.JaxenException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
 import com.pennant.app.constants.AccountEventConstants;
@@ -93,11 +94,15 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.notifications.service.NotificationService;
 import com.rits.cloning.Cloner;
 
 public class FinanceCancellationServiceImpl extends GenericFinanceDetailService implements FinanceCancellationService {
@@ -115,6 +120,9 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	@Autowired(required = false)
+	private NotificationService notificationService;
+	private long tempWorkflowId;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -613,6 +621,28 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
 					financeDetail.getExtendedFieldHeader(), "", serviceUID);
 			auditDetails.addAll(details);
+		}
+
+		// Notification
+		tempWorkflowId = financeMain.getWorkflowId();
+		Notification notification = new Notification();
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
+		notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
+		notification.setModule("LOAN_CANCELLATION");
+		notification.setSubModule(FinanceConstants.FINSER_EVENT_CANCELFIN);
+		notification.setKeyReference(financeMain.getFinReference());
+		notification.setStage(PennantConstants.REC_ON_APPR);
+		notification.setReceivedBy(financeMain.getLastMntBy());
+		financeMain.setWorkflowId(tempWorkflowId);
+		try {
+
+			if (notificationService != null) {
+				notificationService.sendNotifications(notification, financeDetail, financeMain.getFinType(),
+						financeDetail.getDocumentDetailsList());
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug("Leaving");

@@ -44,4 +44,5 @@ public interface LimitDetailDAO {
 	public void saveList(List<LimitDetails> limitDetailsList, String type);
 
 	public List<LimitDetails> getLatestLimitExposures(final long id, String type);
+
 }
