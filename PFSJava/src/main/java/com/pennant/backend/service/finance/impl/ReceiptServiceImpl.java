@@ -3913,7 +3913,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					parm0 = DateUtility.formatToLongDate(fsi.getValueDate());
 					parm1 = DateUtility.formatToLongDate(appDate);
 					parm2 = String.valueOf(paramDays);
-					finScheduleData = setErrorToFSD(finScheduleData, "RU0010", parm0, parm1, parm2);
+					finScheduleData = setErrorToFSD(finScheduleData, "RU0009", parm0, parm1, parm2);
 					return receiptData;
 				}
 			}

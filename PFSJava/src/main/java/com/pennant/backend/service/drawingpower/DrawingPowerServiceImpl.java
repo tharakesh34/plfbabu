@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -31,6 +32,8 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	private DrawingPower drawingPower;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
+	private FinanceMainDAO financeMainDAO;
+	
 
 	@Override
 	public String doRevolvingValidations(FinanceDetail financeDetail) {
@@ -53,7 +56,16 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		BigDecimal availableLimit = BigDecimal.ZERO;
 		if (financeType.isAllowRevolving()) {
-			availableLimit = financeMain.getFinAssetValue().subtract(financeMain.getFinCurrAssetValue())
+
+			FinanceMain main = financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "", false);
+			
+			BigDecimal currAssetVal = BigDecimal.ZERO;
+			if(main != null){
+				currAssetVal = main.getFinCurrAssetValue();
+			} else {
+				currAssetVal = financeMain.getFinCurrAssetValue();
+			}
+			availableLimit = financeMain.getFinAssetValue().subtract(currAssetVal)
 					.add(financeMain.getFinRepaymentAmount());
 
 			logger.debug("Available Amt " + disbAmt);
@@ -152,6 +164,10 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }
