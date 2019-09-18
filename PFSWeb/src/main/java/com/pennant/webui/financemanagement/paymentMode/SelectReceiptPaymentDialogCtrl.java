@@ -671,25 +671,23 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private void validateReceiptData() {
 		String loanReference = null;
 		String tranBranch = null;
-		int idx = 0;
+		// int idx = 0;
 		loanReference = this.finReference.getValue().toString();
 		tranBranch = this.tranBranch.getValue().toString();
-		idx = this.receiptPurpose.getSelectedIndex();
-		String method = "";
+		// idx = this.receiptPurpose.getSelectedIndex();
+		String method = this.receiptPurpose.getSelectedItem().getValue();
 		String eventCode = null;
 
 		if (isForeClosure) {
-			idx = 3;
+			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}
 
-		if (idx == 1) {
-			method = FinanceConstants.FINSER_EVENT_SCHDRPY;
+		if (StringUtils.equals(FinanceConstants.FINSER_EVENT_SCHDRPY, method)) {
 			eventCode = AccountEventConstants.ACCEVENT_REPAY;
-		} else if (idx == 2) {
+		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYRPY, method)) {
 			method = FinanceConstants.FINSER_EVENT_EARLYRPY;
 			eventCode = AccountEventConstants.ACCEVENT_EARLYPAY;
-		} else if (idx == 3) {
-			method = FinanceConstants.FINSER_EVENT_EARLYSETTLE;
+		} else if (StringUtils.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE, method)) {
 			eventCode = AccountEventConstants.ACCEVENT_EARLYSTL;
 		}
 
