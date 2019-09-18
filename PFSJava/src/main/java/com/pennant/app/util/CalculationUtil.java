@@ -467,7 +467,7 @@ public class CalculationUtil implements Serializable {
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
 			double daysInMonth = 30d;
 			double noOfmonths = DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInMonth;
-			noOfmonths = Math.round(noOfmonths);
+			noOfmonths = Math.ceil(noOfmonths);
 
 			if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)
 					&& startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
