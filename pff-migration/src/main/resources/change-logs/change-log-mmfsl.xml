@@ -2947,25 +2947,5 @@
 			<column name="TOUSRID" type="varchar(50)" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="41" author="naga.g">
-		<createTable tableName="BatchFileDetails">
-			<column name="id" type="NUMBER(10,0)" autoIncrement="true">
-				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="batchFileDetails_pkey" />
-			</column>
-			<column name="FileId" type="bigint">
-				<constraints nullable="false" />
-			</column>
-			<column name="Reference" type="varchar(30)">
-				<constraints nullable="false" />
-			</column>
-			<column name="Status" type="char(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="ErrorDesc" type="varchar(1000)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-
+	
 </databaseChangeLog>	
