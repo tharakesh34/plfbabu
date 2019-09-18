@@ -6682,7 +6682,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					return;
 				}
 
-				if (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+				if (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						&&!"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 					// Allow DP and sanction amount check.
 					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 					if (financeMain.isAllowRevolving()) {
@@ -12243,12 +12245,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				//Validate grace terms against the grace frequency
-				String errMsg = validateNumOfGrcTerms();
-
-				if (errMsg != null) {
-					throw new WrongValueException(this.graceTerms, errMsg);
+				if (!this.graceTerms.isReadonly()) {
+					String errMsg = validateNumOfGrcTerms();
+					if (errMsg != null) {
+						throw new WrongValueException(this.graceTerms, errMsg);
+					}
 				}
-
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -13050,10 +13052,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				//Validate number of terms against the repay frequency.
-				String errMsg = validateNumOfTerms();
-				if (errMsg != null) {
-					throw new WrongValueException(this.numberOfTerms, errMsg);
+				if(!this.numberOfTerms.isReadonly()){
+					String errMsg = validateNumOfTerms();
+					if (errMsg != null) {
+						throw new WrongValueException(this.numberOfTerms, errMsg);
+					}
 				}
+				
 
 				aFinanceMain.setNumberOfTerms(noterms);
 			}
