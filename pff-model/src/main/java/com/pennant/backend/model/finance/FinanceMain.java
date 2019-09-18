@@ -759,7 +759,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal svAmount = BigDecimal.ZERO;
 	private BigDecimal cbAmount = BigDecimal.ZERO;
 	private String bRRpyRvwFrq;
-	private boolean baseRateReq;
 	private BigDecimal totalFinAmount = BigDecimal.ZERO;
 	private BigDecimal appliedLoanAmt = BigDecimal.ZERO;
 
@@ -960,7 +959,6 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("grcFrqEditable");
 		excludeFields.add("frqEditable");
 		excludeFields.add("bRRpyRvwFrq");
-		excludeFields.add("baseRateReq");
 		excludeFields.add("totalFinAmount");
 
 		return excludeFields;
@@ -4500,15 +4498,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setbRRpyRvwFrq(String bRRpyRvwFrq) {
 		this.bRRpyRvwFrq = bRRpyRvwFrq;
 	}
-
-	public boolean isBaseRateReq() {
-		return baseRateReq;
-	}
-
-	public void setBaseRateReq(boolean baseRateReq) {
-		this.baseRateReq = baseRateReq;
-	}
-
+ 
 	public BigDecimal getTotalFinAmount() {
 		return totalFinAmount;
 	}

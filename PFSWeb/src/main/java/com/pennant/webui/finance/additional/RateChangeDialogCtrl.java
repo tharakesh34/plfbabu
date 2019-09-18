@@ -1136,7 +1136,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			BigDecimal marginRate = finServiceInstruction.getMargin();
-			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) > 0) {
+			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) != 0) {
 				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
 						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
 					// Calculating the old base rate if margin exists
@@ -1158,6 +1158,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				&& StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 			String bRRpyRvwFrq = baseRateCode.getbRRepayRvwFrq();
 			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(bRRpyRvwFrq);
+		} else {
+			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(null);
 		}
 
 		// Service details calling for Schedule calculation
@@ -1853,11 +1855,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			BaseRateCode baseRateCode) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
-			financeMain.setBaseRateReq(false);
 			return;
 		}
 
@@ -1876,15 +1875,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		if (prevScheduleDetail == null) {
-			financeMain.setBaseRateReq(false);
 			return;
 		}
-
-		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
-		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
-		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
-		finServiceInstruction.setActualRate(oldBaseRate.add(finServiceInstruction.getMargin()));
-		financeMain.setBaseRateReq(true);
+		
+		finServiceInstruction.setBaseRate(prevScheduleDetail.getBaseRate());
+		 
 		logger.debug(Literal.LEAVING);
 		return;
 	}

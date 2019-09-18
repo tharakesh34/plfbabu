@@ -1541,10 +1541,13 @@ public class ScheduleCalculator {
 				recalculateRate = calculatedRate;
 
 				//Resetting the Schedule review on dates based on the base rate code frequency.
-				setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
+				if((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0) ||
+						DateUtility.compare(finMain.getMaturityDate(), evtToDate) == 0){
+					setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
+				}
 
 				if (curSchd.isRvwOnSchDate()) {
-					if (StringUtils.isNotBlank(baseRate) && !finMain.isBaseRateReq()) {
+					if (StringUtils.isNotBlank(baseRate)) {
 						if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
 							recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
 									finMain.getGrcMinRate(), finMain.getGrcMaxRate()).getNetRefRateLoan();
@@ -1560,7 +1563,7 @@ public class ScheduleCalculator {
 				curSchd.setMrgRate(mrgRate);
 				curSchd.setCalculatedRate(recalculateRate);
 
-				if (StringUtils.isBlank(baseRate) || finMain.isBaseRateReq()) {
+				if (StringUtils.isBlank(baseRate)) {
 					curSchd.setActRate(recalculateRate);
 				}
 				schdCount++;
