@@ -44,6 +44,7 @@
 package com.pennant.webui.customermasters.customer;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -565,6 +566,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			} else {
 				box.setValue(BigDecimal.ZERO);
 			}
+			box.addForward("onFulfill", self, "onChangeConfigDay", box);
 			box.setReadonly(isReadOnly);
 			space.setParent(hbox);
 			box.setParent(hbox);
@@ -697,7 +699,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listCell.appendChild(hbox);
 		listCell.setParent(listItem);
 
-		// Closing Balance
+		// ODCC Limit
 		listCell = new Listcell();
 		hbox = new Hbox();
 		space = new Space();
@@ -708,7 +710,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		odCCLimit.setFormat(PennantApplicationUtil.getAmountFormate(2));
 		odCCLimit.setScale(2);
 		odCCLimit.setValue(PennantApplicationUtil.formateAmount(bankInfoDetail.getoDCCLimit(), 2));
-		odCCLimit.setReadonly(isReadOnly);
+		odCCLimit.setReadonly(true);
 		hbox.appendChild(space);
 		hbox.appendChild(odCCLimit);
 		listCell.appendChild(hbox);
@@ -731,6 +733,49 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		listItem.setAttribute("data", bankInfoDetail);
 		this.listBoxAccBehaviour.appendChild(listItem);
+	}
+	
+	public void onChangeConfigDay(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		BigDecimal balanceSum = BigDecimal.ZERO;
+
+		for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+			int count = 0;
+			balanceSum = BigDecimal.ZERO;
+			BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+			List<Listcell> listcels = listItem.getChildren();
+			String[] array = configDay.split(",");
+
+			for (Listcell listcell : listcels) {
+				String id = StringUtils.trimToNull(listcell.getId());
+
+				if (id == null) {
+					continue;
+				}
+
+				id = id.replaceAll("\\d", "");
+
+				if (StringUtils.equals(id, "balance")) {
+					for (int i = 1; i <= array.length; i++) {
+						CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
+								.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
+						Clients.clearWrongValue(balanceValue);
+						if (balanceValue.getValidateValue() != null) {
+							balanceSum = balanceSum.add(balanceValue.getValidateValue());
+							count++;
+						}
+					}
+
+				}
+			}
+
+			Hbox hbox1 = (Hbox) getComponent(listItem, "odCCLimit");
+			CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
+			db.setValue(balanceSum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP));
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClickAccBehaviourButtonDelete(ForwardEvent event) {
@@ -1209,8 +1254,18 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (StringUtils.isBlank(bankInfoDetail.getRecordType())) {
 				bankInfoDetail.setVersion(bankInfoDetail.getVersion() + 1);
+				if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+					for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+						if (isFinanceProcess) {
+							bankInfoSubDetail.setVersion(bankInfoSubDetail.getVersion() + 1);
+						}
+					}
+				}
 				bankInfoDetail.setRecordType(PennantConstants.RCD_UPD);
-				bankInfoDetail.setNewRecord(true);
+				if (!isFinanceProcess && getCustomerDialogCtrl() != null
+						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+					bankInfoDetail.setNewRecord(true);
+				}
 			}
 
 			if (bankInfoDetail.getRecordType().equals(PennantConstants.RCD_ADD) && bankInfoDetail.isNewRecord()) {
@@ -2206,12 +2261,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					aCustomerBankInfo.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
+					if (!isFinanceProcess && getCustomerDialogCtrl() != null
+							&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+						aCustomerBankInfo.setNewRecord(true);
+					}
 				}
 
 				if (StringUtils.isBlank(aCustomerBankInfo.getRecordType())) {
 					aCustomerBankInfo.setVersion(aCustomerBankInfo.getVersion() + 1);
 					aCustomerBankInfo.setRecordType(PennantConstants.RCD_UPD);
-					aCustomerBankInfo.setNewRecord(true);
 				}
 
 				if (aCustomerBankInfo.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {

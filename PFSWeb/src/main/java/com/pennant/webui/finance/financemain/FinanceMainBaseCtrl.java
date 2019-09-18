@@ -4591,7 +4591,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 						if (noOfMonths > 0) {
 							accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
-							accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
+							//accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
 						}
 					}
 					creditReviewDetail.setAvgBankBal(
@@ -4675,6 +4675,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
 			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
+			setEligibilityMethod(aFinanceMain.getLovEligibilityMethod());
 		} catch (Exception e) {
 			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
 			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
@@ -4863,7 +4864,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// setFocus
 		this.finAmount.focus();
-		
 
 		boolean isOverDraft = false;
 		//Reset Maintenance Buttons for finance modification
@@ -5736,7 +5736,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.finAmount.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_FinanceMainDialog_FinAmount.value"), finFormatter, true, false));
 		}
-		
 
 		if (this.gb_RolloverFinance.isVisible()) {
 			if (!recSave && this.custPayAccId.isVisible() && this.custPayAccId.isMandatory()
@@ -6651,15 +6650,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		onChangeGrcSchdMthd();
-		
+
 		if (this.allowGrace.isChecked()) {
-			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(),
-					"");
+			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
 			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 				setGrcRvwFrq(baseRateCode);
 			}
 		}
-
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -8710,7 +8707,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						PennantStaticListUtil.getDftBpiTreatment(), "");
 			}
 		}
-		
+
 		// Interest review frequency and grace interest review frequency changed
 		// when loan start date changes
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
@@ -8731,10 +8728,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		autoBuildSchedule();
 	}
 
-
 	/**
-	 * This method is for updating Review frequency with latest data based on base rate code against frequency date if exists.
-	 * @param baseRateCode 
+	 * This method is for updating Review frequency with latest data based on base rate code against frequency date if
+	 * exists.
+	 * 
+	 * @param baseRateCode
 	 */
 	public void processRvwFrqChange(FrequencyBox frequencyBox, BaseRateCode baseRateCode) {
 		logger.debug(Literal.ENTERING);
@@ -8757,15 +8755,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			mnth = frqCode.concat(mnth).concat("00");
-			
+
 			String day = "";
-			
+
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-				day = StringUtils.substring(baseRateCode.getbRRepayRvwFrq(), 3,5);
+				day = StringUtils.substring(baseRateCode.getbRRepayRvwFrq(), 3, 5);
 			} else {
 				day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
 			}
-			 
+
 			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
 				day = "00";
 			} else if (FrequencyCodeTypes.FRQ_WEEKLY.equals(frqCode)) {
@@ -8777,7 +8775,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onChangefinStartDate() {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -8937,9 +8935,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.graceTerms);
 		this.graceTerms.clearErrorMessage();
-		
+
 		if (this.graceTerms.getValue() != null) {
-			 
+
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), this.graceTerms.intValue(),
@@ -8951,7 +8949,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					setGrcRvwFrq(baseRateCode);
 				}
 			}
-			
+
 			this.graceTerms_Two.setValue(this.graceTerms.intValue());
 
 			if (this.graceTerms_Two.intValue() > 0 && this.gracePeriodEndDate.getValue() == null) {
@@ -8978,9 +8976,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * Checking the number of terms against the base rate frequency
+	 * 
 	 * @param event
 	 */
 	public void onChange$numberOfTerms(Event event) {
@@ -8988,7 +8987,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.numberOfTerms);
 		this.numberOfTerms.clearErrorMessage();
-		
+
 		if (this.numberOfTerms.getValue() != null) {
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
@@ -9004,19 +9003,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	private String validateNumOfTerms() {
-		
+
 		BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
 		if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-			
+
 			int numberOfterms = this.numberOfTerms.intValue();
 			if (numberOfterms == 0) {
 				numberOfterms = this.numberOfTerms_two.intValue();
 			}
-			
-			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), numberOfterms,
-					"Number Of installments");
+
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), numberOfterms, "Number Of installments");
 
 		}
 		return null;
@@ -9029,14 +9027,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (graceTerms == 0) {
 				graceTerms = this.graceTerms_Two.intValue();
 			}
-			
-			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), graceTerms,
-					"Moratorium  terms");
+
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), graceTerms, "Moratorium  terms");
 		}
 		return null;
 	}
-	 
-	
+
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
@@ -9905,23 +9901,71 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void setEligibilityMethod(String value) {
+	private void setEligibilityMethod(String elgMethod) {
 		logger.debug(Literal.ENTERING);
 
-		Window window = extendedFieldCtrl.getWindow();
-		Textbox eligmethod;
-		if (window != null) {
-			try {
-				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
+		if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+			return;
+		} else {
+			Window window = extendedFieldCtrl.getWindow();
+			Textbox elgMethodBox = null;
+			Groupbox workingcapGrpBox = null;
+			Groupbox baltransferGrpBox = null;
+			Groupbox expTopupGrpBox = null;
 
-					eligmethod = (Textbox) window.getFellow("ad_ELGMETHOD");
-					eligmethod.setValue(value);
+			try {
+				if (window.getFellow("WORKINGCAPITAL") instanceof Groupbox) {
+					workingcapGrpBox = (Groupbox) window.getFellow("WORKINGCAPITAL");
+				}
+
+				if (window.getFellow("BALANCETRANSFER") instanceof Groupbox) {
+					baltransferGrpBox = (Groupbox) window.getFellow("BALANCETRANSFER");
+				}
+
+				if (window.getFellow("EXPRESS_TOPUP") instanceof Groupbox) {
+					expTopupGrpBox = (Groupbox) window.getFellow("EXPRESS_TOPUP");
+				}
+
+				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
+					elgMethodBox = (Textbox) window.getFellow("ad_ELGMETHOD");
+				}
+
+				if (workingcapGrpBox != null) {
+					workingcapGrpBox.setVisible(false);
+				}
+				if (baltransferGrpBox != null) {
+					baltransferGrpBox.setVisible(false);
+				}
+				if (expTopupGrpBox != null) {
+					expTopupGrpBox.setVisible(false);
+				}
+
+				if (elgMethodBox != null) {
+					elgMethodBox.setValue(elgMethod);
+				}
+
+				if ("WC".equals(elgMethod)) {
+					if (workingcapGrpBox != null) {
+						workingcapGrpBox.setVisible(true);
+					}
+				} else if ("BT".equals(elgMethod)) {
+					if (baltransferGrpBox != null) {
+						baltransferGrpBox.setVisible(true);
+					}
+				} else if ("ET".equals(elgMethod)) {
+					if (expTopupGrpBox != null) {
+						expTopupGrpBox.setVisible(true);
+					}
+				} else {
+					if (elgMethodBox != null) {
+						elgMethodBox.setValue("");
+					}
 				}
 			} catch (Exception e) {
-				logger.error(Literal.LEAVING);
+				logger.error(Literal.EXCEPTION, e);
 			}
-
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -10008,7 +10052,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.graceTerms);
 		this.graceTerms.clearErrorMessage();
-		
+
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10380,7 +10424,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.numberOfTerms);
 		this.numberOfTerms.clearErrorMessage();
-		
+
 		ForwardEvent forwardEvent = (ForwardEvent) event;
 		String rateType = (String) forwardEvent.getOrigin().getData();
 		if (StringUtils.equals(rateType, PennantConstants.RATE_BASE)) {
@@ -10494,7 +10538,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (financeMain.isFrqEditable()) {
 				this.repayRvwFrq.setDisableFrqCode(true);
 				this.repayRvwFrq.setDisableFrqDay(true);
-			}  
+			}
 		}
 		this.nextRepayRvwDate_two.setValue(financeMain.getNextRepayRvwDate());
 
@@ -10530,7 +10574,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		this.gracePftRvwFrq.setDisabled(isReadOnly("FinanceMainDialog_gracePftRvwFrq"));
 		readOnlyComponent(isReadOnly("FinanceMainDialog_nextGrcPftRvwDate"), this.nextGrcPftRvwDate);
-		
+
 		if (financeMain.getGrcPftRvwFrq() != null && (StringUtils.isNotEmpty(financeMain.getRepayRvwFrq())
 				|| !financeMain.getRepayRvwFrq().equals(PennantConstants.List_Select))) {
 			this.grcPftRvwFrqRow.setVisible(true);
@@ -10545,7 +10589,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextGrcPftRvwDate_two.setValue(financeMain.getNextGrcPftRvwDate());
 
 		processRvwFrqChange(this.gracePftRvwFrq, baseRateCode);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -10562,7 +10606,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
 			return null;
 		}
-		
+
 		Clients.clearWrongValue(this.graceTerms);
 		this.graceTerms.setErrorMessage("");
 
@@ -10574,7 +10618,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.repayRate);
 		this.repayRate.setBaseErrorMessage("");
-		
+
 		String frqCode = FrequencyUtil.getFrequencyCode(bRRepayRvwFrq);
 
 		StringBuilder errMsg = new StringBuilder();
@@ -11552,7 +11596,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
 		financeMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
-		financeMain.setAppliedLoanAmt(PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getActualValue(), formatter));
+		financeMain.setAppliedLoanAmt(
+				PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getActualValue(), formatter));
 		financeMain.setFinAssetValue(
 				PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
 		financeMain.setFinCurrAssetValue(
@@ -11918,7 +11963,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 		try {
-			aFinanceMain.setAppliedLoanAmt(PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getValidateValue(), formatter));
+			aFinanceMain.setAppliedLoanAmt(
+					PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getValidateValue(), formatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -12195,14 +12241,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 												Labels.getLabel("label_FinanceMainDialog_FinStartDate.value") }));
 					}
 				}
-				
+
 				//Validate grace terms against the grace frequency
 				String errMsg = validateNumOfGrcTerms();
 
 				if (errMsg != null) {
 					throw new WrongValueException(this.graceTerms, errMsg);
 				}
-				
+
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -13002,13 +13048,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						}
 					}
 				}
-				
+
 				//Validate number of terms against the repay frequency.
 				String errMsg = validateNumOfTerms();
 				if (errMsg != null) {
 					throw new WrongValueException(this.numberOfTerms, errMsg);
-				}  
-				
+				}
 
 				aFinanceMain.setNumberOfTerms(noterms);
 			}
@@ -15572,7 +15617,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AppliedLoanAmt"), this.appliedLoanAmt);
-		
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));
