@@ -5476,10 +5476,6 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="187" author="vijaya.a">
-		<createSequence sequenceName="SeqJVpostings" incrementBy="1" startValue="1" />
-	</changeSet>
-
 	<changeSet id="188" author="murthy.y">
 		<sql>
 	    	<![CDATA[
@@ -5532,7 +5528,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="192" author="murthy">
+	<changeSet id="193" author="murthy">
 		<sql>
             <![CDATA[ 
 				update REPORTFILTERFIELDS set mandatory=0,MULTISELECTSEARCH=1 where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_LoanwiseVoucherDetail') and FIELDID=2;
