@@ -53,7 +53,7 @@ public class IDBInterfaceLoggingDaoImpl extends SequenceDao<InterfaceLogDetail> 
 		logger.debug(Literal.ENTERING);
 		StringBuilder sql = new StringBuilder("Update IDB_INTERFACES_LOG ");
 		sql.append(
-				" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,Interface_Info=:InterfaceInfo ");
+				" set End_Date=:EndDate, RECORDS_PROCESSED =:RecordProcessed , Status =:Status,Status_desc=:Status_desc,Interface_Info=:InterfaceInfo ");
 		sql.append(" where Interface_Name = :InterfaceName and Ref_Num =:RefNum");
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
 		logger.debug("selectSql: " + sql.toString());
