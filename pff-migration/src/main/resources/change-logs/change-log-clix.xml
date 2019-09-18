@@ -3643,14 +3643,16 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="92" author="vijaya.a">
+	<changeSet id="92.1" author="vijaya.a">
 		<sql>
 	    	<![CDATA[
+	    		delete from plf.SMTparameters where sysparmcode = 'CLIX_VERIFICATIONS_CUSTOMERVIEW';
 	        	INSERT INTO plf.SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('CLIX_VERIFICATIONS_CUSTOMERVIEW','Clix not required fields', 'String', '1', 'Y', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="93" author="Varaprasad.K">
 		<sql>
 	    	<![CDATA[
