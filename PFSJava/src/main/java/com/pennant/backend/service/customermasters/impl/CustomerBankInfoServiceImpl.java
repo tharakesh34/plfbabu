@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -138,10 +139,24 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 				if (customerBankInfo.getBankInfoDetails().size() > 0) {
 					for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
 						bankInfoDetail.setBankId(customerBankInfo.getBankId());
-						customerBankInfoDAO.update(bankInfoDetail, "");
-						for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-							bankInfoSubDetail.setBankId(customerBankInfo.getBankId());
-							customerBankInfoDAO.update(bankInfoSubDetail, "");
+						if (bankInfoDetail.isNewRecord()) {
+							customerBankInfoDAO.save(bankInfoDetail, "");
+							for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								bankInfoSubDetail.setBankId(customerBankInfo.getBankId());
+							}
+							if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+								customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), "");
+							}
+						} else {
+							customerBankInfoDAO.update(bankInfoDetail, "");
+							if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+								for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+									bankInfoSubDetail.setBankId(customerBankInfo.getBankId());
+									if (!bankInfoSubDetail.isNewRecord()) {
+										customerBankInfoDAO.update(bankInfoSubDetail, "");
+									}
+								}
+							}
 						}
 					}
 				}
@@ -330,7 +345,7 @@ public class CustomerBankInfoServiceImpl implements CustomerBankInfoService {
 							valueParm[1] = "Zero";
 							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 							auditDetail.setErrorDetail(errorDetail);
-						}else{
+						} else {
 							daysInputlis.add(String.valueOf(bankInfoSubDetail.getDay()));
 						}
 						if (bankInfoSubDetail.getBalance() == null

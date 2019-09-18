@@ -323,9 +323,11 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
 		updateSql.append(" Where BankId = :BankId ");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("AND Version= :Version-1");
-		}
+
+		// TODO : TEMPERORY COMMENTED, NEED TO PROVIDE PERMINANT FIX
+		/*
+		 * if (!type.endsWith("_Temp")) { updateSql.append("AND Version= :Version - 1"); }
+		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerBankInfo);
@@ -629,10 +631,12 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
-		}
+		updateSql.append(" Where BankId = :BankId And MonthYear = :MonthYear");
+
+		// TODO : TEMPERORY COMMENTED, NEED TO PROVIDE PERMINANT FIX
+		/*
+		 * if (!type.endsWith("_Temp")) { updateSql.append(" AND Version = :Version - 1"); }
+		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoDetail);
@@ -747,18 +751,21 @@ public class CustomerBankInfoDAOImpl extends SequenceDao<CustomerBankInfo> imple
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
 		updateSql.append(
 				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
-		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear And Day =:Day");
-		if (!type.endsWith("_Temp")) {
-			updateSql.append("AND Version= :Version-1");
-		}
+		updateSql.append(" Where BankId = :BankId And MonthYear =:MonthYear And Day = :Day");
+
+		// TODO : TEMPERORY COMMENTED, NEED TO PROVIDE PERMINANT FIX
+		/*
+		 * if (!type.endsWith("_Temp")) { updateSql.append(" AND Version  = :Version - 1"); }
+		 */
 
 		logger.debug("updateSql: " + updateSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankInfoSubDetail);
 		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
+		/*
+		 * if (recordCount <= 0) { throw new ConcurrencyException(); }
+		 */
+
 		logger.debug("Leaving");
 	}
 

@@ -807,6 +807,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				for (CustomerBankInfo customerBankInfo : customerDetails.getCustomerBankInfoList()) {
 					customerBankInfo.setBankInfoDetails(
 							customerBankInfoDAO.getBankInfoDetailById(customerBankInfo.getBankId(), type));
+
+					if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
+						for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+							bankInfoDetail.setBankInfoSubDetails(customerBankInfoDAO.getBankInfoSubDetailById(
+									bankInfoDetail.getBankId(), bankInfoDetail.getMonthYear(), type));
+						}
+					}
 				}
 			}
 			customerDetails.setCustomerGstList(customerGstDetailDAO.getCustomerGSTById(id, type));
@@ -1476,7 +1483,43 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					// BankInfoDetails
 					if (custBankInfo.getBankInfoDetails().size() > 0) {
 						for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
-							customerBankInfoDAO.update(bankInfoDetail, tableType);
+							if (StringUtils.isBlank(tableType)) {
+								bankInfoDetail.setRecordType("");
+								bankInfoDetail.setRoleCode("");
+								bankInfoDetail.setNextRoleCode("");
+								bankInfoDetail.setTaskId("");
+								bankInfoDetail.setNextTaskId("");
+							}
+							if (bankInfoDetail.isNewRecord()) {
+								bankInfoDetail.setBankId(custBankInfo.getBankId());
+								customerBankInfoDAO.save(bankInfoDetail, tableType);
+
+								/*
+								 * for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo.getBankId()); if
+								 * (StringUtils.isBlank(tableType)) { bankInfoSubDetail.setRecordType("");
+								 * bankInfoSubDetail.setRoleCode(""); bankInfoSubDetail.setNextRoleCode("");
+								 * bankInfoSubDetail.setTaskId(""); bankInfoSubDetail.setNextTaskId(""); } }
+								 * 
+								 * if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+								 * customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), tableType); }
+								 */
+
+							} else {
+								customerBankInfoDAO.update(bankInfoDetail, tableType);
+
+								/*
+								 * if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) { for
+								 * (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								 * bankInfoSubDetail.setBankId(custBankInfo.getBankId()); if
+								 * (!bankInfoSubDetail.isNewRecord()) { if (StringUtils.isBlank(tableType)) {
+								 * bankInfoSubDetail.setRecordType(""); bankInfoSubDetail.setRoleCode("");
+								 * bankInfoSubDetail.setNextRoleCode(""); bankInfoSubDetail.setTaskId("");
+								 * bankInfoSubDetail.setNextTaskId(""); } customerBankInfoDAO.update(bankInfoSubDetail,
+								 * tableType); } } }
+								 */
+							}
+
 							// Audit
 							fields = PennantJavaUtil.getFieldDetails(bankInfoDetail, bankInfoDetail.getExcludeFields());
 							auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0],
@@ -1484,6 +1527,28 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
+
+				// TOTO : TEMPERORY FIX, NEED TO HANDLE PERMENANTLY
+				if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
+					for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
+						if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+							for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+								bankInfoSubDetail.setBankId(custBankInfo.getBankId());
+								if (StringUtils.isBlank(tableType)) {
+									bankInfoSubDetail.setRecordType("");
+									bankInfoSubDetail.setRoleCode("");
+									bankInfoSubDetail.setNextRoleCode("");
+									bankInfoSubDetail.setTaskId("");
+									bankInfoSubDetail.setNextTaskId("");
+								}
+							}
+
+							customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), tableType);
+							customerBankInfoDAO.save(bankInfoDetail.getBankInfoSubDetails(), tableType);
+						}
+					}
+				}
+
 				fields = PennantJavaUtil.getFieldDetails(custBankInfo, custBankInfo.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 						custBankInfo.getBefImage(), custBankInfo));
