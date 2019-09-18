@@ -63,7 +63,7 @@
 													<space spacing="2px" />
 													<textbox id="finDivisionName" width="250px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceMain Dialog_BusinessVertical" value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
+												<label id="label_FinanceMainDialog_BusinessVertical" value="${c:l('label_FinanceMainDialog_BusinessVertical.value')}" />
 												<hbox>
 													<textbox id="businessVertical" width="250px" readonly="true" />
 												</hbox>
@@ -110,6 +110,11 @@
 												<hbox>
 													<space spacing="2px" />
 													<label id="netFinAmount" style="font-weight: bold;" />
+												</hbox>
+												<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<decimalbox id="appliedLoanAmt" width="198px" maxlength="25" style="text-align:right" />
 												</hbox>
 											</row>
 											<row>
@@ -167,8 +172,6 @@
 													<space spacing="2px" />
 													<checkbox id="tDSApplicable" checked="false" />
 												</hbox>
-												<label id="label_FinanceMainDialog_AppliedLoanAmt" value="${c:l('label_FinanceMainDialog_AppliedLoanAmt.value')}" />
-													<currencyBox id="appliedLoanAmt" />
 											</row>
 											<row id="row_downPayBank" visible="false">
 
