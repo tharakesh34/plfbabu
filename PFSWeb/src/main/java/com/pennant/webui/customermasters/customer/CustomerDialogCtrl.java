@@ -109,6 +109,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Notes;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.amtmasters.VehicleDealer;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -192,6 +193,7 @@ import com.pennanttech.pff.document.external.ExternalDocumentManager;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
 import com.pennanttech.pff.external.FinnovService;
+import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 import com.pennanttech.webui.verification.FieldVerificationDialogCtrl;
 import com.pennanttech.webui.verification.LVerificationCtrl;
 import com.pennanttech.webui.verification.PDVerificationDialogCtrl;
@@ -508,6 +510,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	
+	private PrimaryAccountService primaryAccountService;
 
 	/**
 	 * default constructor.<br>
@@ -1664,7 +1668,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				aCustomer.setCustCRCPR(this.eidNumber.getValue());
 			}
-
+			if (primaryAccountService.panValidationRequired()) {
+				setPrimaryAccountDetails(aCustomerDetails);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -6791,6 +6797,60 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		processDateDiff(this.empFrom.getValue(), this.exp);
 		logger.debug("Leaving" + event.toString());
 	}
+	
+	public void onChange$eidNumber(Event event) {
+		if (primaryAccountService.panValidationRequired()) {
+			CustomerDetails aCustomerDetails = getCustomerDetails();
+			aCustomerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
+			setPrimaryAccountDetails(aCustomerDetails);
+		}
+	}
+	
+	private void setPrimaryAccountDetails(CustomerDetails aCustomerDetails) {
+		logger.debug(Literal.ENTERING);
+
+		Customer customer = aCustomerDetails.getCustomer();
+		String panNumber = customer.getCustCRCPR();
+		
+		if (StringUtils.isBlank(panNumber)) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
+
+		try {
+			try {
+				PrimaryAccount primaryAccount = new PrimaryAccount();
+				primaryAccount.setPanNumber(panNumber);
+				
+				//Verifying/Validating the PAN Number
+				primaryAccountService.retrivePanDetails(primaryAccount);
+				
+				if (isRetailCustomer) {
+					customer.setCustFName(primaryAccount.getCustFName());
+					customer.setCustMName(primaryAccount.getCustMName());
+				} 
+				
+				customer.setCustLName(primaryAccount.getCustLName());
+			} catch (Exception e) {
+				throw new WrongValueException(this.eidNumber,
+						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
+			}
+
+			if (isRetailCustomer) {
+				this.custFirstName.setValue(customer.getCustFName());
+				this.custLastName.setValue(customer.getCustLName());
+				this.custMiddleName.setValue(customer.getCustMName());
+			} else {
+				this.custShrtName.setValue(StringUtils.trimToEmpty(customer.getCustLName()));
+			}
+
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new WrongValueException(this.eidNumber, "Invalid PAN");
+		} finally {
+			logger.debug(Literal.LEAVING);
+		}
+	}
 
 	private BigDecimal processDateDiff(Date fromDate, Label displayComp) {
 		BigDecimal dateDiff = BigDecimal.ZERO;
@@ -7014,5 +7074,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}	
+	
+	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
+		this.primaryAccountService = primaryAccountService;
 	}
+
 }

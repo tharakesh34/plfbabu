@@ -59,4 +59,8 @@
 	<bean id="vocherDownloadService" class="com.pennanttech.pff.external.gl.VocherDownloadServiceImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+		
+    <!--  PAN Validation Service-->
+    <bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
+	
 </beans>

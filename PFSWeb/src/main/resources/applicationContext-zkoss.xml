@@ -1051,6 +1051,7 @@
 		<property name="externalDocumentManager" ref="externalDocumentManager" />
 		<property name="dedupParmService" ref="dedupParmService" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="primaryAccountService" ref="primaryAccountService" />
 	</bean>
 
 	<bean id="prospectCustomerDialogCtrl" class="com.pennant.webui.customermasters.customer.ProspectCustomerDialogCtrl"

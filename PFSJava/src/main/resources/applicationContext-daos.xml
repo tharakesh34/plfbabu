@@ -11275,4 +11275,8 @@
 		<property name="jVPostingService" ref="jVPostingService"/>
 		<property name="divisionDetailDAO" ref="divisionDetailDAO"/>
 	</bean> 
+	
+	<!-- PAN Number Validation -->
+	<bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
+	
 </beans>
