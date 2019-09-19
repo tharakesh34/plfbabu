@@ -397,54 +397,7 @@ public class CalculationUtil implements Serializable {
 			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_30E360I)) {
-			boolean isFebSetReq = true;
-			if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
-				if (DateUtility.isLeapYear(yearOfStart)) {
-					if (dayOfStart == 29 && dayOfEnd == 29) {
-						isFebSetReq = false;
-					}
-				} else {
-					if (dayOfStart == 28 && dayOfEnd == 28) {
-						isFebSetReq = false;
-					}
-				}
-			}
-
-			if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
-				if (DateUtility.isLeapYear(yearOfStart)) {
-					if (dayOfStart > 28) {
-						dayOfStart = 30;
-					}
-				} else {
-					if (dayOfStart > 27) {
-						dayOfStart = 30;
-					}
-				}
-			}
-
-			if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
-				dayOfEnd = 30;
-
-				if (DateUtility.isLeapYear(yearOfEnd)) {
-					if (dayOfEnd > 28) {
-						dayOfEnd = 30;
-					}
-				} else {
-					if (dayOfEnd > 27) {
-						dayOfEnd = 30;
-					}
-				}
-			}
-
-			if (dayOfEnd == 31) {
-				dayOfEnd = 30;
-			}
-
-			if (dayOfStart == 31) {
-				dayOfStart = 30;
-			}
-			return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
-
+			return calNumberOfDays30E360ISDA(dayOfStart, dayOfEnd, monthOfStart, monthOfEnd, yearOfStart, yearOfEnd);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_30EP360)) {
 			if (dayOfStart == 31) {
 				dayOfStart = 30;
@@ -466,13 +419,16 @@ public class CalculationUtil implements Serializable {
 			return (int) DateUtility.getDaysBetween(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
 			double daysInMonth = 30d;
-			double noOfmonths = DateUtility.getDaysBetween(startCalendar, endCalendar) / daysInMonth;
+			
+			int days = calNumberOfDays30E360ISDA(dayOfStart, dayOfEnd, monthOfStart, monthOfEnd, yearOfStart, yearOfEnd);
+			double noOfmonths = days / daysInMonth;
+			
 			noOfmonths = Math.ceil(noOfmonths);
 
-			if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)
+			/*if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)
 					&& startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
 				noOfmonths = noOfmonths + 1;
-			}
+			}*/
 
 			int numberOfDays = (int) (noOfmonths * 30);
 
@@ -480,6 +436,57 @@ public class CalculationUtil implements Serializable {
 		}
 
 		return 0;
+	}
+
+	private static int calNumberOfDays30E360ISDA(int dayOfStart, int dayOfEnd, int monthOfStart, int monthOfEnd,
+			int yearOfStart, int yearOfEnd) {
+		boolean isFebSetReq = true;
+		if (yearOfStart == yearOfEnd && (monthOfStart == Calendar.FEBRUARY || monthOfEnd == Calendar.FEBRUARY)) {
+			if (DateUtility.isLeapYear(yearOfStart)) {
+				if (dayOfStart == 29 && dayOfEnd == 29) {
+					isFebSetReq = false;
+				}
+			} else {
+				if (dayOfStart == 28 && dayOfEnd == 28) {
+					isFebSetReq = false;
+				}
+			}
+		}
+
+		if (isFebSetReq && monthOfStart == Calendar.FEBRUARY) {
+			if (DateUtility.isLeapYear(yearOfStart)) {
+				if (dayOfStart > 28) {
+					dayOfStart = 30;
+				}
+			} else {
+				if (dayOfStart > 27) {
+					dayOfStart = 30;
+				}
+			}
+		}
+
+		if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
+			dayOfEnd = 30;
+
+			if (DateUtility.isLeapYear(yearOfEnd)) {
+				if (dayOfEnd > 28) {
+					dayOfEnd = 30;
+				}
+			} else {
+				if (dayOfEnd > 27) {
+					dayOfEnd = 30;
+				}
+			}
+		}
+
+		if (dayOfEnd == 31) {
+			dayOfEnd = 30;
+		}
+
+		if (dayOfStart == 31) {
+			dayOfStart = 30;
+		}
+		return 360 * (yearOfEnd - yearOfStart) + (30 * (monthOfEnd - monthOfStart)) + (dayOfEnd - dayOfStart);
 	}
 
 	public static BigDecimal calInstallment(BigDecimal principle, BigDecimal rate, String paymentFrequency,
