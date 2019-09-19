@@ -222,6 +222,8 @@
 
 	<!-- Finance Repayment -->
 	<bean id="financeRepaymentsDAO" class="com.pennant.backend.dao.Repayments.impl.FinanceRepaymentsDAOImpl" parent="sequenceDao" />
+	<bean id="advancePaymentDetailDAO" class="com.pennant.backend.dao.finance.impl.AdvancePaymentDetailDAOImpl"
+		parent="basicDao" />
 
 	<!-- Suspense Posting util -->
 	<bean id="suspensePostingUtil" class="com.pennant.app.util.SuspensePostingUtil">
