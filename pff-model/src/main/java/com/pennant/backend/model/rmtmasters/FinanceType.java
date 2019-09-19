@@ -273,6 +273,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	private boolean alwSanctionAmt;
 	private boolean alwSanctionAmtOverride;
+	private boolean finIsRateRvwAtGrcEnd;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -2508,6 +2509,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setSanBsdSchdle(boolean sanBsdSchdle) {
 		this.sanBsdSchdle = sanBsdSchdle;
+	}
+
+	public boolean isFinIsRateRvwAtGrcEnd() {
+		return finIsRateRvwAtGrcEnd;
+	}
+
+	public void setFinIsRateRvwAtGrcEnd(boolean finIsRateRvwAtGrcEnd) {
+		this.finIsRateRvwAtGrcEnd = finIsRateRvwAtGrcEnd;
 	}
 
 }

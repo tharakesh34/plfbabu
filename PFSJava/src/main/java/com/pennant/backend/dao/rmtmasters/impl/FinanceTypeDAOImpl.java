@@ -103,7 +103,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod, FinIsAlwPartialRpy,");
 		sql.append(" FinIsAlwDifferment,FinMaxDifferment, FinIsAlwEarlyRpy, FinIsAlwEarlySettle,");
 		sql.append(" FinODRpyTries, AlwPlanDeferment,PlanDeferCount ,");
-		sql.append(" FinIsDwPayRequired,  FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd,");
+		sql.append(" FinIsDwPayRequired,  FinRvwRateApplFor, FinAlwRateChangeAnyDate, FinIsIntCpzAtGrcEnd, FinIsRateRvwAtGrcEnd,");
 		sql.append(
 				" FinSchCalCodeOnRvw, FinAssetType , FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity,FinIsActive,PftPayAcType,");
 		sql.append(" FinIsOpenPftPayAcc,FinGrcSchdMthd,FinIsAlwGrcRepay,FinMargin,FinGrcMargin,");
@@ -192,7 +192,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FInRepayMethod, finIsalwpartialrpy, FinIsAlwDifferment, FinMaxDifferment, FinIsActive, StepFinance, SteppingMandatory, ");
 		sql.append(" AlwManualSteps, AlwdStepPolicies, DftStepPolicy, FinIsDwPayRequired, FinRvwRateApplFor, ");
-		sql.append(" FinAlwRateChangeAnyDate,  FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw, AlwPlanDeferment, ");
+		sql.append(" FinAlwRateChangeAnyDate,  FinIsIntCpzAtGrcEnd, FinSchCalCodeOnRvw, AlwPlanDeferment, FinIsRateRvwAtGrcEnd, ");
 		sql.append(
 				" PlanDeferCount, PftPayAcType, FinIsOpenPftPayAcc, FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, ");
 		sql.append(" FinMargin, FinCommitmentReq, FinCollateralReq, FinDepreciationReq, FinDepreciationFrq, ");
@@ -376,7 +376,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" FinMaxTerm, FinDftTerms, FinRpyFrq,  finRepayMethod,FinIsAlwPartialRpy, FinIsAlwDifferment, FinMaxDifferment,");
 		sql.append(" AlwPlanDeferment, PlanDeferCount,FinIsAlwEarlyRpy, FinIsAlwEarlySettle, FinODRpyTries, ");
-		sql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, ");
+		sql.append(" FinIsDwPayRequired, FinRvwRateApplFor,FinIsIntCpzAtGrcEnd, FinIsRateRvwAtGrcEnd, ");
 		sql.append(" FinAlwRateChangeAnyDate, ");
 		sql.append(
 				" FinSchCalCodeOnRvw,FinAssetType ,FinDepositRestrictedTo,FinAEBuyOrInception,FinAESellOrMaturity, ");
@@ -426,7 +426,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(
 				" :FinMaxTerm, :FinDftTerms, :FinRpyFrq,  :finRepayMethod,:FinIsAlwPartialRpy, :FinIsAlwDifferment, :FinMaxDifferment,");
 		sql.append(" :AlwPlanDeferment, :PlanDeferCount,:FinIsAlwEarlyRpy, :FinIsAlwEarlySettle, :FinODRpyTries, ");
-		sql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, ");
+		sql.append(" :FinIsDwPayRequired, :FinRvwRateApplFor,:FinIsIntCpzAtGrcEnd, :FinAlwRateChangeAnyDate, :FinIsRateRvwAtGrcEnd,");
 		sql.append(
 				" :FinSchCalCodeOnRvw,:FinAssetType ,:FinDepositRestrictedTo,:FinAEBuyOrInception,:FinAESellOrMaturity, ");
 		sql.append(
@@ -522,7 +522,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinODRpyTries = :FinODRpyTries,");
 		sql.append(" FinIsDwPayRequired = :FinIsDwPayRequired,");
 		sql.append(
-				" FinRvwRateApplFor = :FinRvwRateApplFor,FinIsIntCpzAtGrcEnd = :FinIsIntCpzAtGrcEnd,FinAlwRateChangeAnyDate = :FinAlwRateChangeAnyDate,  ");
+				" FinRvwRateApplFor = :FinRvwRateApplFor,FinIsIntCpzAtGrcEnd = :FinIsIntCpzAtGrcEnd,FinAlwRateChangeAnyDate = :FinAlwRateChangeAnyDate, FinIsRateRvwAtGrcEnd = :FinIsRateRvwAtGrcEnd, ");
 		sql.append(
 				" FinSchCalCodeOnRvw = :FinSchCalCodeOnRvw,FinAssetType=:FinAssetType,FinDepositRestrictedTo=:FinDepositRestrictedTo,");
 		sql.append(

@@ -511,6 +511,11 @@
 												<space spacing="2px" />
 												<checkbox id="finIsIntCpzAtGrcEnd" checked="false" />
 											</hbox>
+											<label id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd" value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" />
+											<hbox>
+												<space spacing="2px" />
+												<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
+											</hbox>
 										</row>
 
 									</rows>

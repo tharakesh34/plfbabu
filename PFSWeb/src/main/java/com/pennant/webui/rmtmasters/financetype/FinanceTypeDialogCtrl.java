@@ -268,6 +268,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Combobox cbfinGrcRvwRateApplFor; // autoWired
 	protected Row row_FinGrcRvwRateApplFor; // autoWired
 	protected Checkbox finIsIntCpzAtGrcEnd; // autoWired
+	protected Checkbox finIsRateRvwAtGrcEnd; // autoWired
 
 	protected Checkbox applyGrcPricing;
 	protected ExtendedCombobox grcPricingMethod;
@@ -1238,6 +1239,8 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		if (!isOverdraft && !consumerDurable) {
 			this.allowDrawingPower.setChecked(aFinanceType.isAllowDrawingPower());
 			this.allowRevolving.setChecked(aFinanceType.isAllowRevolving());
+			this.sanBsdSchdle.setChecked(aFinanceType.isSanBsdSchdle());
+			this.finIsRateRvwAtGrcEnd.setChecked(aFinanceType.isFinIsRateRvwAtGrcEnd());
 		}
 		this.rollOverFrq.setValue(aFinanceType.getRollOverFrq());
 		this.tDSApplicable.setChecked(aFinanceType.isTdsApplicable());
@@ -1334,7 +1337,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.finIntRate.setValue(aFinanceType.getFinIntRate());
 		this.financeBaserate.setEffectiveRateVisible(true);
 		this.alwHybridRate.setChecked(aFinanceType.isAlwHybridRate());
-		this.sanBsdSchdle.setChecked(aFinanceType.isSanBsdSchdle());
 		setFixedRateTenor(aFinanceType.isAlwHybridRate(), this.isCompReadonly);
 		this.fixedRateTenor.setValue(aFinanceType.getFixedRateTenor());
 
@@ -2531,6 +2533,14 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			}
 			try {
 				aFinanceType.setFinIsIntCpzAtGrcEnd(this.finIsIntCpzAtGrcEnd.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+			
+			try {
+				if (!isOverdraft && !consumerDurable) {
+					aFinanceType.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd.isChecked());
+				}
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -4550,6 +4560,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.allowDrawingPower.setDisabled(isTrue);
 			this.allowRevolving.setDisabled(isTrue);
 			this.sanBsdSchdle.setDisabled(isTrue);
+			this.finIsRateRvwAtGrcEnd.setDisabled(isTrue);
 		}
 
 		this.rollOverFrq.setDisabled(isTrue);
@@ -4848,6 +4859,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.financeBaserate.setMarginValue(BigDecimal.ZERO);
 		this.finAlwRateChangeAnyDate.setChecked(false);
 		this.finIsIntCpzAtGrcEnd.setChecked(false);
+		this.finIsRateRvwAtGrcEnd.setChecked(false);
 		this.downPayRule.setValue(null);
 		this.cbfinSchdMthd.setSelectedIndex(0);
 		this.cbfinDaysCalType.setSelectedIndex(0);
