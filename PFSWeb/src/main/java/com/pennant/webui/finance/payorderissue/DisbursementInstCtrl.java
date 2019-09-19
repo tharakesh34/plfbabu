@@ -78,6 +78,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -526,7 +527,7 @@ public class DisbursementInstCtrl {
 		logger.debug("Leaving");
 	}
 
-	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list)
+	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,PayOrderIssueHeader payOrderIssueHeader)
 			throws Exception {
 		logger.debug("Entering");
 
@@ -540,12 +541,12 @@ public class DisbursementInstCtrl {
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
 		map.put("documentDetails", getDocumentDetails());
-		doshowDialog(map, listCtrl, dialogCtrl, module, false);
+		doshowDialog(map, listCtrl, dialogCtrl, module, false,payOrderIssueHeader);
 
 		logger.debug("Leaving");
 	}
 
-	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry) throws Exception {
+	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry,PayOrderIssueHeader payOrderIssueHeader) throws Exception {
 		logger.debug("Entering");
 
 		Listitem listitem = listbox.getSelectedItem();
@@ -563,7 +564,7 @@ public class DisbursementInstCtrl {
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("finAdvancePayments", aFinAdvancePayments);
 					map.put("documentDetails", documentDetails);
-					doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry);
+					doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry,payOrderIssueHeader);
 
 				}
 			} else if (listitem.getAttribute("data") instanceof VASProviderAccDetail) {
@@ -589,7 +590,7 @@ public class DisbursementInstCtrl {
 	}
 
 	private void doshowDialog(HashMap<String, Object> map, Object listCtrl, Object dialogCtrl, String module,
-			boolean isEnquiry) throws InterruptedException {
+			boolean isEnquiry,PayOrderIssueHeader payOrderIssueHeader) throws InterruptedException {
 
 		map.put("ccyFormatter", ccyFormat);
 		map.put("custID", financeMain.getCustID());
@@ -601,6 +602,10 @@ public class DisbursementInstCtrl {
 		map.put("financeDisbursement", financeDisbursements);
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
+		if(payOrderIssueHeader != null){
+			map.put("documentDetails", payOrderIssueHeader.getDocumentDetails());
+		}
+		
 		if ("CUSTPMTTXN".equals(module)) {
 			map.put("customerPaymentTxnsDialogCtrl", dialogCtrl);
 			map.put("customerPaymentTxnsListCtrl", listCtrl);

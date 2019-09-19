@@ -981,7 +981,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		if (media != null) {
 			this.docName.setContent(media);
 			eastDocument.setVisible(true);
-			eastDocument.setTitle(documentDetails.getLovDescDocCategoryName());
+			eastDocument.setTitle(documentDetails.getDocName());
 		}
 
 		logger.debug("Leaving");

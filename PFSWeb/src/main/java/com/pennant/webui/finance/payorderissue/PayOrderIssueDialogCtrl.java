@@ -952,14 +952,14 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<FinAdvancePayments> {
 	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 		disbursementInstCtrl.onClickNew(this.payOrderIssueListCtrl, this, ModuleType_POISSUE,
-				getFinAdvancePaymentsList());
+				getFinAdvancePaymentsList(),payOrderIssueHeader);
 
 		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
-		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule);
+		disbursementInstCtrl.onDoubleClick(this.payOrderIssueListCtrl, this, ModuleType_POISSUE, enqiryModule,payOrderIssueHeader);
 		logger.debug("Leaving" + event.toString());
 	}
 
