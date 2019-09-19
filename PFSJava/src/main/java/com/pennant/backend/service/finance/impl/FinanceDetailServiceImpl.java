@@ -7368,8 +7368,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Eligibility Details
 				// =======================================
-				getEligibilityDetailService().validate(financeDetail.getElgRuleList(), auditDetail, errParm, valueParm,
-						usrLanguage);
+				// FIX ME: Eligibility Rules should be executed before coming here 
+				if (!StringUtils.equals("MoveLoanStage", financeMain.getServiceName())) {
+					getEligibilityDetailService().validate(financeDetail.getElgRuleList(), auditDetail, errParm,
+							valueParm, usrLanguage);
+				}
 
 				// Scoring Details
 				// =======================================
