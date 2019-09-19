@@ -72,7 +72,13 @@
 		<step id="ledgerNotification">
 			<tasklet ref="ledgerNotificationTaskLet" />
 			<fail on="FAILED" />
+			<next on="*" to="gstDownload" />
+		</step>
+
+		<step id="gstDownload">
+			<tasklet ref="gSTDownloadTaskLet" />
 			<next on="*" to="datesUpdate" />
+			<fail on="FAILED" />
 		</step>
 
 		<step id="datesUpdate">
@@ -96,15 +102,11 @@
 
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
-			<next on="*" to="gstDownload" />
-			<fail on="FAILED" />
-		</step>
-		<step id="gstDownload">
-			<tasklet ref="gSTDownloadTaskLet" />
 			<next on="*" to="collateralRevaluation" />
 			<fail on="FAILED" />
+		
 		</step>
-		<step id="collateralRevaluation">
+			<step id="collateralRevaluation">
 			<tasklet>
 				<chunk reader="collateralRevaluationItemReader" processor="collateralRevaluationProcessor" writer="collateralRevaluationItemWriter"
 					commit-interval="10" />
