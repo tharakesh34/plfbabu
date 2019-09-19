@@ -1,3 +1,4 @@
+
 package com.pennant.webui.financemanagement.receipts;
 
 import java.io.ByteArrayOutputStream;
@@ -3582,17 +3583,26 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				Cloner clone = new Cloner();
 				Map<Date, BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
+				
+				int defaultDays = 7;
+				int noOfdays = DateUtility.getDaysBetween(chrgTillDate, financeMain.getMaturityDate());
+				if (defaultDays >= noOfdays) {
+					defaultDays = noOfdays;
+				}
 
 				// calculate net recievable amount for next 7 days
-				for (int i = 1; i <= 7; i++) {
+				for (int i = 1; i <= defaultDays; i++) {
 					Date valueDate = DateUtils.addDays(chrgTillDate, i);
 					FinReceiptData localReceiptData = doFillData(financeMain.getFinReference(), valueDate);
 					BigDecimal amount = BigDecimal.ZERO;
 
 					/*
-					 * List<Date> presentmentDates = receiptCalculator.getPresentmentDates(localReceiptData, valueDate);
-					 * // get presentment dates localReceiptData = receiptCalculator.fetchODPenalties(localReceiptData,
-					 * valueDate,presentmentDates); // calculate late pay penalties
+					 * List<Date> presentmentDates =
+					 * receiptCalculator.getPresentmentDates(localReceiptData,
+					 * valueDate); // get presentment dates localReceiptData =
+					 * receiptCalculator.fetchODPenalties(localReceiptData,
+					 * valueDate,presentmentDates); // calculate late pay
+					 * penalties
 					 */ List<ReceiptAllocationDetail> allocationsList = localReceiptData.getReceiptHeader()
 							.getAllocations();
 					for (ReceiptAllocationDetail receiptAllocationDetail : allocationsList) {
@@ -3611,21 +3621,37 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
 				// setting next 7 days Dates
 				closureReport.setValueDate1(DateFormatUtils.format(dates[0], "dd-MMM-yyyy"));
-				closureReport.setValueDate2(DateFormatUtils.format(dates[1], "dd-MMM-yyyy"));
-				closureReport.setValueDate3(DateFormatUtils.format(dates[2], "dd-MMM-yyyy"));
-				closureReport.setValueDate4(DateFormatUtils.format(dates[3], "dd-MMM-yyyy"));
-				closureReport.setValueDate5(DateFormatUtils.format(dates[4], "dd-MMM-yyyy"));
-				closureReport.setValueDate6(DateFormatUtils.format(dates[5], "dd-MMM-yyyy"));
-				closureReport.setValueDate7(DateFormatUtils.format(dates[6], "dd-MMM-yyyy"));
-
-				// setting next 7 Days net receivable amount
 				closureReport.setAmount1(next7DayMap.get(dates[0]));
-				closureReport.setAmount2(next7DayMap.get(dates[1]));
-				closureReport.setAmount3(next7DayMap.get(dates[2]));
-				closureReport.setAmount4(next7DayMap.get(dates[3]));
-				closureReport.setAmount5(next7DayMap.get(dates[4]));
-				closureReport.setAmount6(next7DayMap.get(dates[5]));
-				closureReport.setAmount7(next7DayMap.get(dates[6]));
+
+				if (dates.length > 1) {
+					closureReport.setValueDate2(DateFormatUtils.format(dates[1], "dd-MMM-yyyy"));
+					closureReport.setAmount2(next7DayMap.get(dates[1]));
+				}
+
+				if (dates.length > 2) {
+					closureReport.setValueDate3(DateFormatUtils.format(dates[2], "dd-MMM-yyyy"));
+					closureReport.setAmount3(next7DayMap.get(dates[2]));
+				}
+
+				if (dates.length > 3) {
+					closureReport.setValueDate4(DateFormatUtils.format(dates[3], "dd-MMM-yyyy"));
+					closureReport.setAmount4(next7DayMap.get(dates[3]));
+				}
+
+				if (dates.length > 4) {
+					closureReport.setValueDate5(DateFormatUtils.format(dates[4], "dd-MMM-yyyy"));
+					closureReport.setAmount4(next7DayMap.get(dates[4]));
+				}
+
+				if (dates.length > 5) {
+					closureReport.setValueDate6(DateFormatUtils.format(dates[5], "dd-MMM-yyyy"));
+					closureReport.setAmount6(next7DayMap.get(dates[5]));
+				}
+
+				if (dates.length > 6) {
+					closureReport.setValueDate7(DateFormatUtils.format(dates[6], "dd-MMM-yyyy"));
+					closureReport.setAmount7(next7DayMap.get(dates[6]));
+				}
 
 				List<FinanceMain> financeMainList = financeDetailService
 						.getFinanceMainForLinkedLoans(financeMain.getFinReference());
