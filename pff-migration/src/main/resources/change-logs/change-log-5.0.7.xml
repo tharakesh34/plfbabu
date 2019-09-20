@@ -5610,5 +5610,43 @@
 	<changeSet id="195" author="Prabhakar">
 		<modifyDataType tableName="Sys_Notification_Attributes" columnName="NAME" newDataType="varchar(200)" />
 	</changeSet>
-
+	
+	<changeSet id="196" author="SRINIVAS VARMA">
+		<addColumn tableName="INTERFACELOGDETAILS">
+			<column name="REQUEST_INT" type="clob" />
+		</addColumn>
+	</changeSet>
+		
+	<changeSet id="197" author="SRINIVAS VARMA" >
+		<sql>
+		<![CDATA[
+		UPDATE INTERFACELOGDETAILS SET REQUEST_INT = REQUEST;
+		]]>
+		</sql>
+	</changeSet>
+		
+	<changeSet id="198" author="SRINIVAS VARMA" >
+		<sql>
+		<![CDATA[
+		ALTER TABLE INTERFACELOGDETAILS DROP COLUMN REQUEST;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="199" author="SRINIVAS VARMA" dbms="postgresql,oracle" >
+		<sql>
+		<![CDATA[
+		ALTER TABLE INTERFACELOGDETAILS RENAME COLUMN REQUEST_INT TO REQUEST;
+		]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="200" author="SRINIVAS VARMA" dbms="mssql">
+		<sql>
+		<![CDATA[
+			EXEC sp_rename 'INTERFACELOGDETAILS.REQUEST_INT', 'REQUEST', 'COLUMN';
+		]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
