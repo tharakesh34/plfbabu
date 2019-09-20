@@ -71,12 +71,12 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 		source.addValue("TemplateName", templateName);
 		source.addValue("TemplateVersion", templateVersion);
 
-		selectSql.append(" Select FinReference, TemplateData, TemplateName, TemplateVersion");
+		selectSql.append(" Select FinReference, TemplateData, TemplateName, TemplateVersion,");
 		selectSql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		selectSql.append(" FROM  CreditReviewData");
 		selectSql.append(
-				" Where FinReference=:FinReference AND TemplateName =:TemplateName AND TemplateVersion=:TemplateVersion");
+				" Where FinReference = :FinReference AND TemplateName = :TemplateName AND TemplateVersion = :TemplateVersion");
 
 		logger.trace(Literal.SQL + selectSql.toString());
 		RowMapper<CreditReviewData> typeRowMapper = ParameterizedBeanPropertyRowMapper
