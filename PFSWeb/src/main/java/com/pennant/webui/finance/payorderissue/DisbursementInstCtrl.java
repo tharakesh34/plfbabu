@@ -307,7 +307,7 @@ public class DisbursementInstCtrl {
 					lc = new Listcell(PennantApplicationUtil.amountFormate(detail.getAmtToBeReleased(), ccyFormat));
 					lc.setParent(item);
 
-					if (detail.getStatus().equals("REJECTED")) {
+					if (detail.getStatus() != null && detail.getStatus().equals("REJECTED")) {
 						lc = new Listcell(detail.getStatus() + "-" + detail.getRejectReason());
 					} else {
 						lc = new Listcell(detail.getStatus());
@@ -527,8 +527,8 @@ public class DisbursementInstCtrl {
 		logger.debug("Leaving");
 	}
 
-	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,PayOrderIssueHeader payOrderIssueHeader)
-			throws Exception {
+	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,
+			PayOrderIssueHeader payOrderIssueHeader) throws Exception {
 		logger.debug("Entering");
 
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
@@ -541,12 +541,13 @@ public class DisbursementInstCtrl {
 		map.put("finAdvancePayments", aFinAdvancePayments);
 		map.put("newRecord", "true");
 		map.put("documentDetails", getDocumentDetails());
-		doshowDialog(map, listCtrl, dialogCtrl, module, false,payOrderIssueHeader);
+		doshowDialog(map, listCtrl, dialogCtrl, module, false, payOrderIssueHeader);
 
 		logger.debug("Leaving");
 	}
 
-	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry,PayOrderIssueHeader payOrderIssueHeader) throws Exception {
+	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry,
+			PayOrderIssueHeader payOrderIssueHeader) throws Exception {
 		logger.debug("Entering");
 
 		Listitem listitem = listbox.getSelectedItem();
@@ -564,7 +565,7 @@ public class DisbursementInstCtrl {
 					final HashMap<String, Object> map = new HashMap<String, Object>();
 					map.put("finAdvancePayments", aFinAdvancePayments);
 					map.put("documentDetails", documentDetails);
-					doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry,payOrderIssueHeader);
+					doshowDialog(map, listCtrl, dialogCtrl, module, isEnquiry, payOrderIssueHeader);
 
 				}
 			} else if (listitem.getAttribute("data") instanceof VASProviderAccDetail) {
