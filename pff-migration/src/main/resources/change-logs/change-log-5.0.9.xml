@@ -9783,4 +9783,63 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="146" author="Varaprasad.K">
+	<addColumn tableName="REJECTFINANCEMAIN">
+		<column name="SvAmount" type="bigint" defaultValue="0" />
+	</addColumn>
+</changeSet>
+
+	<changeSet id="147" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE REJECTFINANCEMAIN Set SvAmount = 0  where SvAmount is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="148_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="148" author="Varaprasad.K">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
+			SELECT f.finreference,
+			    t.fincategory AS lovdescproductcodename,
+			    f.fintype,
+			    f.finbranch,
+			    f.finstartdate,
+			    f.maturitydate,
+			    f.numberofterms,
+			    f.finccy,
+			    f.finamount,
+			    f.finamount - f.downpayment + f.feechargeamt + f.insuranceamt AS financingamount,
+			    f.feechargeamt,
+			    f.insuranceamt,
+			    f.finamount - f.downpayment + f.feechargeamt + f.insuranceamt - f.finrepaymentamount AS curfinamount,
+			    f.downpayment,
+			    f.fincurrassetvalue,
+			    f.finassetvalue,
+			    f.allowdrawingpower,
+			    f.promotionseqid,
+			    f.sanbsdschdle,
+			    c.custcif AS lovdesccustcif,
+			    f.svAmount
+			   FROM plf.rejectfinancemain f
+			     LEFT JOIN plf.customers c ON f.custid = c.custid
+			     LEFT JOIN plf.rmtfinancetypes t ON f.fintype OPERATOR(plf.=) t.fintype
+	</createView>
+	</changeSet>
+
+	<changeSet id="148_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
