@@ -85,6 +85,7 @@ import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1177,7 +1178,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	private RepayScheduleDetail prepareRepaySchDetails(BigDecimal profitBal, FinanceScheduleDetail schDetail,
 			FinanceMain financeMain, FeeWaiverHeader waiverHeader) {
-
+		
+		FinRepayHeader finRepayHeader = new FinRepayHeader();
+		finRepayHeader.setFinReference(financeMain.getFinReference());
+		finRepayHeader.setValueDate(DateUtility.getAppDate());
+		finRepayHeader.setFinEvent(AccountEventConstants.ACCEVENT_WAIVER);
+		long id = getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
+		
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
 		rsd.setWaiverId(waiverHeader.getWaiverId());
 		rsd.setFinReference(schDetail.getFinReference());
@@ -1198,9 +1205,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		rsd.setPrincipalSchd(schDetail.getPrincipalSchd());
 		rsd.setPrincipalSchdPaid(schDetail.getSchdPriPaid());
 		rsd.setPenaltyPayNow(BigDecimal.ZERO);
-
+		
+		rsd.setRepayID(id);// wAIVERiD
 		rsd.setRepaySchID(1);
-		rsd.setRepayID(0);// wAIVERiD
 		rsd.setLinkedTranId(0);// pOSTiD
 		return rsd;
 	}
@@ -1801,6 +1808,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+	
+	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
+		return financeRepaymentsDAO;
+	}
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
@@ -1849,4 +1860,5 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
+	
 }
