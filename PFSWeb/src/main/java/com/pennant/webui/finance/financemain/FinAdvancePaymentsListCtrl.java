@@ -418,7 +418,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		disbursementInstCtrl.onClickNew(this, this.financeMainDialogCtrl, ModuleType_Loan, getFinAdvancePaymentsList(),null);
 
 		logger.debug("Leaving" + event.toString());
@@ -431,7 +431,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		financeDisbursement = findetails.getFinScheduleData().getDisbursementDetails();
 		disbursementInstCtrl.setFinanceDisbursement(financeDisbursement);
 		disbursementInstCtrl.setFinanceMain(findetails.getFinScheduleData().getFinanceMain());
-		disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
+		//disbursementInstCtrl.setDocumentDetails(getDisbursmentDoc());
 		disbursementInstCtrl.onDoubleClick(this, this.financeMainDialogCtrl, ModuleType_Loan, isEnquiry,null);
 
 		logger.debug("Leaving" + event.toString());

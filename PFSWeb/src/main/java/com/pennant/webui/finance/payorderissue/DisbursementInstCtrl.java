@@ -54,6 +54,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -604,7 +605,13 @@ public class DisbursementInstCtrl {
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
 		if(payOrderIssueHeader != null){
+			if(payOrderIssueHeader.getDocumentDetails().getDocImage() == null){
+				payOrderIssueHeader.getDocumentDetails().setDocImage(PennantApplicationUtil.getDocumentImage(payOrderIssueHeader.getDocumentDetails().getDocRefId()));
+			}
 			map.put("documentDetails", payOrderIssueHeader.getDocumentDetails());
+			
+		}else{
+			map.put("documentDetails", documentDetails);
 		}
 		
 		if ("CUSTPMTTXN".equals(module)) {
