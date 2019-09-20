@@ -1,9 +1,15 @@
 package com.pennant.backend.model.finance.financetaxdetail;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class GSTINInfo {
+public class GSTINInfo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String gSTNNumber; // gstin
 	private String legelName; // lgnm
 	private String tradeName; // tradeNam
@@ -19,6 +25,15 @@ public class GSTINInfo {
 	private String cityCode; // ctjCd
 	private String statusCode;
 	private String statusDesc;
+
+	// used for Interfaces
+	private String cif;
+	private Long usrID;
+	private String usrLogin;
+	
+	public GSTINInfo () {
+		super();
+	}
 
 	public String getgSTNNumber() {
 		return gSTNNumber;
@@ -138,6 +153,30 @@ public class GSTINInfo {
 
 	public void setRegisterDateStr(String registerDateStr) {
 		this.registerDateStr = registerDateStr;
+	}
+
+	public String getCif() {
+		return cif;
+	}
+
+	public void setCif(String cif) {
+		this.cif = cif;
+	}
+
+	public Long getUsrID() {
+		return usrID;
+	}
+
+	public void setUsrID(Long usrID) {
+		this.usrID = usrID;
+	}
+
+	public String getUsrLogin() {
+		return usrLogin;
+	}
+
+	public void setUsrLogin(String usrLogin) {
+		this.usrLogin = usrLogin;
 	}
 
 }

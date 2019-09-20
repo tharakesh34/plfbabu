@@ -192,6 +192,10 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private boolean cibilExecuted = false;
 	private boolean cibilALreadyRun = false;
+	
+	//used for Interfaces
+	private Long usrID; 
+	private String usrLogin;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -635,6 +639,22 @@ public class CustomerDetails implements java.io.Serializable {
 
 	public void setCustCardSales(List<CustCardSales> custCardSales) {
 		this.custCardSales = custCardSales;
+	}
+
+	public Long getUsrID() {
+		return usrID;
+	}
+
+	public void setUsrID(Long usrID) {
+		this.usrID = usrID;
+	}
+
+	public String getUsrLogin() {
+		return usrLogin;
+	}
+
+	public void setUsrLogin(String usrLogin) {
+		this.usrLogin = usrLogin;
 	}
 
 }

@@ -106,6 +106,9 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	private boolean beneficiaryActive;
 	private boolean defaultBeneficiary;
 	private String micr;
+	
+	private Long usrID;
+	private String usrLogin;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -134,6 +137,8 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("sourceId");
 		excludeFields.add("validateBeneficiary");
 		excludeFields.add("micr");
+		excludeFields.add("usrID");
+		excludeFields.add("usrLogin");
 		return excludeFields;
 	}
 
@@ -359,6 +364,22 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 
 	public void setMicr(String micr) {
 		this.micr = micr;
+	}
+
+	public Long getUsrID() {
+		return usrID;
+	}
+
+	public void setUsrID(Long usrID) {
+		this.usrID = usrID;
+	}
+
+	public String getUsrLogin() {
+		return usrLogin;
+	}
+
+	public void setUsrLogin(String usrLogin) {
+		this.usrLogin = usrLogin;
 	}
 
 }

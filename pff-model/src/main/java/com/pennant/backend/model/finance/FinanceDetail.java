@@ -279,6 +279,10 @@ public class FinanceDetail implements java.io.Serializable {
 	private Date appDate = null;
 	private CreditReviewData creditReviewData;
 	private AdvancePaymentDetail advancePaymentDetail;
+	
+	// used for Interfaces
+	private Long usrID;
+	private String usrLogin;
 
 	public FinanceDetail() {
 		super();
@@ -1404,5 +1408,21 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setAdvancePaymentDetail(AdvancePaymentDetail advancePaymentDetail) {
 		this.advancePaymentDetail = advancePaymentDetail;
+	}
+
+	public Long getUsrID() {
+		return usrID;
+	}
+
+	public void setUsrID(Long usrID) {
+		this.usrID = usrID;
+	}
+
+	public String getUsrLogin() {
+		return usrLogin;
+	}
+
+	public void setUsrLogin(String usrLogin) {
+		this.usrLogin = usrLogin;
 	}
 }
