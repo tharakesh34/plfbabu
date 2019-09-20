@@ -4583,19 +4583,70 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (getCustomerDialogCtrl() != null) {
 						List<CustomerBankInfo> bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
 						for (CustomerBankInfo customerBankInfo : bankInfo) {
-							List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
-							noOfMonths = noOfMonths + bankAccDetails.size();
-							for (BankInfoDetail bankInfoDetail : bankAccDetails) {
-								accBal = accBal.add(bankInfoDetail.getoDCCLimit());
+							if (!PennantConstants.RECORD_TYPE_CAN.equals(customerBankInfo.getRecordType())
+									&& !PennantConstants.RECORD_TYPE_DEL.equals(customerBankInfo.getRecordType())) {
+								List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
+								// noOfMonths = noOfMonths +
+								// bankAccDetails.size();
+								for (BankInfoDetail bankInfoDetail : bankAccDetails) {
+									if (!PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())
+											&& !PennantConstants.RECORD_TYPE_DEL
+													.equals(bankInfoDetail.getRecordType())) {
+										accBal = accBal.add(bankInfoDetail.getoDCCLimit());
+										noOfMonths = noOfMonths + 1;
+									}
+								}
 							}
+
 						}
 						if (noOfMonths > 0) {
 							accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
-							//accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
+							// accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
 						}
 					}
 					creditReviewDetail.setAvgBankBal(
 							PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
+					
+					if (extendedFieldCtrl != null) {
+						ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
+								.getExtendedFieldRender(financeMain.getFinReference());
+						Map<String, Object> mapValues = extendedFieldRender.getMapValues();
+
+						if (mapValues != null) {
+							if (mapValues.containsKey("ET_LN_SNCAMT")) {
+								BigDecimal sanctionedAmt = BigDecimal.ZERO;
+								if (mapValues.get("ET_LN_SNCAMT") != null) {
+									sanctionedAmt = (BigDecimal) mapValues.get("ET_LN_SNCAMT");
+								}
+								creditReviewDetail.setSanctionedAmt(PennantApplicationUtil.formateAmount(sanctionedAmt,
+										PennantConstants.defaultCCYDecPos));
+							}
+							if (mapValues.containsKey("ET_OT_LNAMNT")) {
+								BigDecimal outStandingAmt = BigDecimal.ZERO;
+								if (mapValues.get("ET_OT_LNAMNT") != null) {
+									outStandingAmt = (BigDecimal) mapValues.get("ET_OT_LNAMNT");
+								}
+								creditReviewDetail.setOutStandingLoanAmt(PennantApplicationUtil.formateAmount(outStandingAmt,
+										PennantConstants.defaultCCYDecPos));
+							}
+							if (mapValues.containsKey("WC_CC_ACNT_LIMIT")) {
+								BigDecimal wcAccountLimit = BigDecimal.ZERO;
+								if (mapValues.get("WC_CC_ACNT_LIMIT") != null) {
+									wcAccountLimit = (BigDecimal) mapValues.get("WC_CC_ACNT_LIMIT");
+								}
+								creditReviewDetail.setAccountLimit(PennantApplicationUtil
+										.formateAmount(wcAccountLimit, PennantConstants.defaultCCYDecPos));
+							}
+							if (mapValues.containsKey("BT_LN_AMT_BT")) {
+								BigDecimal btLoanAmtTrack = BigDecimal.ZERO;
+								if (mapValues.get("BT_LN_AMT_BT") != null) {
+									btLoanAmtTrack = (BigDecimal) mapValues.get("BT_LN_AMT_BT");
+								}
+								creditReviewDetail.setLoanAmout(PennantApplicationUtil
+										.formateAmount(btLoanAmtTrack, PennantConstants.defaultCCYDecPos));
+							}
+						}
+					}
 
 					map.put("fieldCodeValue", Arrays.asList(new String[] { "PL", "BL", "RT" }));
 					map.put("facility", "");
@@ -21141,130 +21192,84 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	public boolean isCreditReviewDataChanged(CreditReviewDetails creditReviewDetails, boolean isFromLoan) {
-		boolean isTotalEmiChanged = false;
+		logger.debug(Literal.ENTERING);
+		
 		boolean isModified = false;
 		boolean isLiabilitiesChanged = false;
 		BigDecimal roi = BigDecimal.ZERO;
 		int tenor = 0;
-		BigDecimal totalObligations = BigDecimal.ZERO;
-		BigDecimal finAmount = BigDecimal.ZERO;
 		CreditReviewDetails crRevDetails = new CreditReviewDetails();
 		StringBuilder fields = new StringBuilder();
 		Map<String, Object> dataMap = new HashMap<>();
 		List<CustomerExtLiability> extLiabilities = new ArrayList<>();
 
-		//ROI, TENOR
-
-		if (financeDetail.getFinScheduleData().getFinanceType().getFinRateType()
-				.equals(CalculationConstants.RATE_BASIS_F)) {
-			if (this.repayProfitRate.getValue() != null) {
-				roi = this.repayProfitRate.getValue();
+		if ("BS".equals(this.eligibilityMethod.getValue())) {
+			//ROI, TENOR
+			if (financeDetail.getFinScheduleData().getFinanceType().getFinRateType()
+					.equals(CalculationConstants.RATE_BASIS_F)) {
+				if (this.repayProfitRate.getValue() != null) {
+					roi = this.repayProfitRate.getValue();
+				}
+			} else if (this.repayRate.getEffRateValue() != null) {
+				roi = this.repayRate.getEffRateValue();
 			}
-		} else if (this.repayRate.getEffRateValue() != null) {
-			roi = this.repayRate.getEffRateValue();
-		}
-		tenor = this.numberOfTerms_two.intValue();
+			tenor = this.numberOfTerms_two.intValue();
+			
+			if (roi.compareTo(creditReviewDetails.getRoi()) != 0) {
+				fields.append("ROI,");
+				dataMap.put("ROI", roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
+				//dataMap.put("ROI", roi);
+			}
+			
+			if (tenor != creditReviewDetails.getTenor()) {
+				fields.append("TENOR,");
+				dataMap.put("TENOR", tenor);
+			}
+			
+			if (!isFromLoan) {
+				creditReviewDetails.setRoi(roi);
+				creditReviewDetails.setTenor(tenor);
+			}
+			
+			//Average Bank Balance
+			BigDecimal accBal = BigDecimal.ZERO;
+			int noOfMonths = 0;
+			
+			if (getCustomerDialogCtrl() != null) {
+				List<CustomerBankInfo> bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
+				for (CustomerBankInfo customerBankInfo : bankInfo) {
+					if (!PennantConstants.RECORD_TYPE_CAN.equals(customerBankInfo.getRecordType())
+							&& !PennantConstants.RECORD_TYPE_DEL.equals(customerBankInfo.getRecordType())) {
+						List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
+						// noOfMonths = noOfMonths + bankAccDetails.size();
+						for (BankInfoDetail bankInfoDetail : bankAccDetails) {
+							if (!PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())
+									&& !PennantConstants.RECORD_TYPE_DEL.equals(bankInfoDetail.getRecordType())) {
+								accBal = accBal.add(bankInfoDetail.getoDCCLimit());
+								noOfMonths = noOfMonths + 1;
+							}
+						}
+					}
+				}
 
-		if (roi.compareTo(creditReviewDetails.getRoi()) != 0) {
-			fields.append("ROI,");
-			dataMap.put("ROI", roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
-			//dataMap.put("ROI", roi);
-		}
-
-		if (tenor != creditReviewDetails.getTenor()) {
-			fields.append("TENOR,");
-			dataMap.put("TENOR", tenor);
-		}
-
-		if (!isFromLoan) {
-			creditReviewDetails.setRoi(roi);
-			creditReviewDetails.setTenor(tenor);
-		}
-
-		/*
-		 * finAmount = this.finAmount.getActualValue(); if
-		 * (!(finAmount.compareTo(creditReviewDetails.getTotalLoanAmount()) == 0)) { fields.append("Loan_Req,");
-		 * dataMap.put("Loan_Req", finAmount); if (!isFromLoan) { creditReviewDetails.setTotalLoanAmount(finAmount); } }
-		 */
-
-		//Obligations
-		/*
-		 * if (!("SURBAN".equals(creditReviewDetails.getEligibilityMethod()) ||
-		 * "SURLLT".equals(creditReviewDetails.getEligibilityMethod()) ||
-		 * "SURRSE".equals(creditReviewDetails.getEligibilityMethod()))) {
-		 * 
-		 * List<JointAccountDetail> liabilities = creditReviewDetails.getExtLiabilitiesjointAccDetails();
-		 * List<JointAccountDetail> newJointAccDetails = getJointAccountDetailList(); List<JointAccountDetail>
-		 * jointAccDetails = new ArrayList<>(); List<CustomerExtLiability> oldAppCoAppOblig =
-		 * creditReviewDetails.getAppCoAppObligations(); for (JointAccountDetail jointAccountDetail :
-		 * newJointAccDetails) { if (!(PennantConstants.RECORD_TYPE_CAN.equals(jointAccountDetail.getRecordType()) ||
-		 * PennantConstants.RECORD_TYPE_DEL.equals(jointAccountDetail.getRecordType()))) {
-		 * jointAccDetails.add(jointAccountDetail); } }
-		 * 
-		 * if (!(liabilities.size() == jointAccDetails.size())) { isLiabilitiesChanged = Boolean.TRUE; }
-		 * 
-		 * if (!isLiabilitiesChanged) { for (JointAccountDetail newJointAcc : jointAccDetails) { if
-		 * (isLiabilitiesChanged) { break; } isLiabilitiesChanged = Boolean.TRUE; for (JointAccountDetail oldJointAcc :
-		 * liabilities) { if (StringUtils.equals(oldJointAcc.getCustCIF(), (newJointAcc.getCustCIF()))) { if
-		 * (!isLiabilitiesChanged) { break; } isLiabilitiesChanged = Boolean.FALSE; } } } }
-		 * 
-		 * List<CustomerExtLiability> appLiabilities = customerDialogCtrl.getCustomerExtLiabilityDetailList(); for
-		 * (CustomerExtLiability customerExtLiability : appLiabilities) { if
-		 * (!(PennantConstants.RECORD_TYPE_CAN.equals(customerExtLiability.getRecordType()) ||
-		 * PennantConstants.RECORD_TYPE_DEL.equals(customerExtLiability.getRecordType()))) {
-		 * extLiabilities.add(customerExtLiability); } } if (!isFromLoan) {
-		 * creditReviewDetails.setExtLiabilitiesjointAccDetails(jointAccDetails); } for (JointAccountDetail
-		 * jointAccDetail : jointAccDetails) { List<CustomerExtLiability> coAppLiabilities = externalLiabilityDAO
-		 * .getLiabilities(jointAccDetail.getCustID(), "_aview"); extLiabilities.addAll(coAppLiabilities); } if
-		 * (!isFromLoan) { creditReviewDetails.setAppCoAppObligations(extLiabilities); } if (!isLiabilitiesChanged) { if
-		 * (oldAppCoAppOblig.size() != extLiabilities.size()) { isLiabilitiesChanged = Boolean.TRUE; } }
-		 * 
-		 * if (!isLiabilitiesChanged) { for (CustomerExtLiability newObligation : extLiabilities) { if
-		 * (isLiabilitiesChanged) { break; } isLiabilitiesChanged = Boolean.TRUE; for (CustomerExtLiability
-		 * oldObligation : oldAppCoAppOblig) { if (!isLiabilitiesChanged) { break; } if
-		 * (StringUtils.equals(oldObligation.getCustCif(), newObligation.getCustCif()) && oldObligation.getSeqNo() ==
-		 * newObligation.getSeqNo()) { if (oldObligation.getInstalmentAmount()
-		 * .compareTo(newObligation.getInstalmentAmount()) == 0 && (StringUtils.equals(oldObligation.getFinStatus(),
-		 * newObligation.getFinStatus()))) { isLiabilitiesChanged = Boolean.FALSE; } } } } }
-		 * 
-		 * if (isLiabilitiesChanged) { setTotalEmiConsideredObligations(BigDecimal.ZERO);
-		 * spreadSheetCtrl.setTotalExposure(BigDecimal.ZERO); }
-		 * 
-		 * totalObligations = PennantApplicationUtil.formateAmount(getTotalEmiConsideredObligations(),
-		 * PennantConstants.defaultCCYDecPos);
-		 * 
-		 * if (!(totalObligations.compareTo(creditReviewDetails.getTotalObligations()) == 0)) {
-		 * fields.append("EXT_MNTHLY_OBL,"); dataMap.put("EXT_MNTHLY_OBL", totalObligations); if (!isFromLoan) {
-		 * creditReviewDetails.setTotalObligations(totalObligations); } isTotalEmiChanged = Boolean.TRUE; } }
-		 */
-
-		//Average Bank Balance
-		BigDecimal accBal = BigDecimal.ZERO;
-		int noOfMonths = 0;
-		if (getCustomerDialogCtrl() != null) {
-			List<CustomerBankInfo> bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
-			for (CustomerBankInfo customerBankInfo : bankInfo) {
-				List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
-				noOfMonths = noOfMonths + bankAccDetails.size();
-				for (BankInfoDetail bankInfoDetail : bankAccDetails) {
-					accBal = accBal.add(bankInfoDetail.getoDCCLimit());
+				if (noOfMonths > 0) {
+					accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
+					// accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
 				}
 			}
-			if (noOfMonths > 0) {
-				accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
-				accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
+			
+			if (!(creditReviewDetails.getAvgBankBal()
+					.compareTo(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos)) == 0)) {
+				fields.append("ABB,");
+				dataMap.put("ABB", PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
+				if (!isFromLoan) {
+					creditReviewDetails
+					.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
+				}
 			}
 		}
-
-		if (!(creditReviewDetails.getAvgBankBal()
-				.compareTo(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos)) == 0)) {
-			fields.append("AVG_BAL,");
-			dataMap.put("AVG_BAL", PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-			if (!isFromLoan) {
-				creditReviewDetails
-						.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-			}
-		}
+		
+		setExtendedFieldsForCreditReview(fields, dataMap, creditReviewDetails, isFromLoan);
 
 		crRevDetails.setFields(fields.toString());
 		if (isLiabilitiesChanged) {
@@ -21279,8 +21284,99 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			isModified = true;
 		}
+		
+		logger.debug(Literal.LEAVING);
 
 		return isModified;
+	}
+	
+	public void setExtendedFieldsForCreditReview(StringBuilder fields, Map<String, Object> dataMap,
+			CreditReviewDetails creditReviewDetails, boolean isFromLoan) {
+		logger.debug(Literal.ENTERING);
+		
+		if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+			return;
+		} else {
+			Window window = extendedFieldCtrl.getWindow();
+			String elgMethodValue = "";
+			try {
+				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
+					elgMethodValue = ((Textbox) window.getFellow("ad_ELGMETHOD")).getValue();
+				}
+
+				//If Eligibility Method is ET(Express Top-Up)
+				if ("ET".equals(elgMethodValue)) {
+					
+					BigDecimal sanctionedAmt = BigDecimal.ZERO;
+					if (window.getFellow("ad_ET_LN_SNCAMT") instanceof CurrencyBox) {
+						sanctionedAmt = ((CurrencyBox) window.getFellow("ad_ET_LN_SNCAMT")).getActualValue();
+						if (sanctionedAmt == null) {
+							sanctionedAmt = BigDecimal.ZERO;
+						}
+					}
+
+					BigDecimal outSatandingAmt = BigDecimal.ZERO;
+					if (window.getFellow("ad_ET_OT_LNAMNT") instanceof CurrencyBox) {
+						outSatandingAmt = ((CurrencyBox) window.getFellow("ad_ET_OT_LNAMNT")).getActualValue();
+						if (outSatandingAmt == null) {
+							outSatandingAmt = BigDecimal.ZERO;
+						}
+					}
+					
+					if (!(creditReviewDetails.getSanctionedAmt().compareTo(sanctionedAmt) == 0)) {
+						fields.append("SNCTNAMNT,");
+						dataMap.put("SNCTNAMNT", String.valueOf(sanctionedAmt));
+						if (!isFromLoan) {
+							creditReviewDetails.setSanctionedAmt(sanctionedAmt);
+						}
+					}
+					
+					if (!(creditReviewDetails.getOutStandingLoanAmt().compareTo(outSatandingAmt) == 0)) {
+						fields.append("OTSTNDNGAMNT,");
+						dataMap.put("OTSTNDNGAMNT", String.valueOf(outSatandingAmt));
+						if (!isFromLoan) {
+							creditReviewDetails.setOutStandingLoanAmt(outSatandingAmt);
+						}
+					}
+				} else if ("WC".equals(elgMethodValue)) { 	//If Eligibility Method is WC(Working capital)
+					BigDecimal accountLimit = BigDecimal.ZERO;
+					
+					if (window.getFellow("ad_WC_CC_ACNT_LIMIT") instanceof CurrencyBox) {
+						accountLimit = ((CurrencyBox) window.getFellow("ad_WC_CC_ACNT_LIMIT")).getActualValue();
+						if (accountLimit == null) {
+							accountLimit = BigDecimal.ZERO;
+						}
+					}
+					if (!(creditReviewDetails.getAccountLimit().compareTo(accountLimit) == 0)) {
+						fields.append("CC_ACNTKIMIT,");
+						dataMap.put("CC_ACNTKIMIT", String.valueOf(accountLimit));
+						if (!isFromLoan) {
+							creditReviewDetails.setAccountLimit(accountLimit);
+						}
+					}
+				} else if ("BT".equals(elgMethodValue)) { //If Eligibility Method is BT(Balance Transfer)
+					BigDecimal btLoanAmtTrack = BigDecimal.ZERO;
+					
+					if (window.getFellow("ad_BT_LN_AMT_BT") instanceof CurrencyBox) {
+						btLoanAmtTrack = ((CurrencyBox) window.getFellow("ad_BT_LN_AMT_BT")).getActualValue();
+						if (btLoanAmtTrack == null) {
+							btLoanAmtTrack = BigDecimal.ZERO;
+						}
+					}
+
+					if (!(creditReviewDetails.getLoanAmount().compareTo(btLoanAmtTrack) == 0)) {
+						fields.append("LNAMNT_BT,");
+						dataMap.put("LNAMNT_BT", String.valueOf(btLoanAmtTrack));
+						if (!isFromLoan) {
+							creditReviewDetails.setLoanAmout(btLoanAmtTrack);
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public List<String> getAssignCollateralRef() {

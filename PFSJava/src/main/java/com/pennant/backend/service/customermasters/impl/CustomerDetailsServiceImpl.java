@@ -1459,9 +1459,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					custBankInfo.setRecordType("");
 					custBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
-				if (StringUtils.trimToEmpty(custBankInfo.getRecordType())
-						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.trimToEmpty(custBankInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					auditTranType = PennantConstants.TRAN_DEL;
+					
+					if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
+						for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
+							if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+								customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), tableType);
+							}
+							customerBankInfoDAO.delete(bankInfoDetail, tableType);
+						}
+					}
 					customerBankInfoDAO.delete(custBankInfo, tableType);
 				} else if (custBankInfo.isNewRecord()) {
 					auditTranType = PennantConstants.TRAN_ADD;
@@ -1529,7 +1537,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 
 				// TOTO : TEMPERORY FIX, NEED TO HANDLE PERMENANTLY
-				if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
+				if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())
+						&& !PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(custBankInfo.getRecordType())) {
 					for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
 						if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
 							for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
@@ -4769,6 +4778,18 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			if (deleteRecord) {
+				
+				if (StringUtils.isBlank(type)) {
+					if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
+						for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
+							if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+								customerBankInfoDAO.delete(bankInfoDetail.getBankInfoSubDetails(), type);
+							}
+							customerBankInfoDAO.delete(bankInfoDetail, type);
+						}
+					}
+				}
+				
 				customerBankInfoDAO.delete(customerBankInfo, type);
 			}
 
@@ -4779,9 +4800,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			auditDetails.get(i).setModelData(customerBankInfo);
 
 			// Bank Info Details
-			List<AuditDetail> details = customerBankInfo.getAuditDetailMap().get("BankInfoDetail");
-			if (details != null) {
-				details = processingBankInfoDetailList(details, type, customerBankInfo.getBankId());
+			boolean bankInfoUpdate = true;
+			if (StringUtils.isBlank(type) && deleteRecord && approveRec) {
+				bankInfoUpdate = false;
+			}
+			
+			if (bankInfoUpdate) {
+				List<AuditDetail> details = customerBankInfo.getAuditDetailMap().get("BankInfoDetail");
+				if (details != null) {
+					details = processingBankInfoDetailList(details, type, customerBankInfo.getBankId());
+				}
 			}
 		}
 

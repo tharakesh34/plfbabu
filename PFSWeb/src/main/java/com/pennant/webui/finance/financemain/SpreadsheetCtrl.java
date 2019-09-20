@@ -45,7 +45,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.FinanceConstants;
@@ -66,7 +65,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpreadsheetCtrl.class);
 	private static final String String = null;
-	private static final String ad_DEGREETYPE = "ad_DEGREETYPE";
 	protected Window window_SpreadSheetDialog;
 	protected Button button_FetchData;
 	protected Spreadsheet spreadSheet = null;
@@ -76,7 +74,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
 	private List<CustomerIncome> customerIncomeList = new ArrayList<CustomerIncome>();
-	private List<JointAccountDetail> jointAccountCustomers = new ArrayList<JointAccountDetail>();
 	private transient CreditApplicationReviewService creditApplicationReviewService;
 
 	private Object financeMainDialogCtrl = null;
@@ -86,8 +83,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceDetail financeDetail = null;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	StringBuilder fields = new StringBuilder();
-	private Map<String, BigDecimal> tempApplicantMap = new HashMap<>();
-	private Map<String, BigDecimal> tempCoApplicantMap = new HashMap<>();
 	//boolean isCheckedEligibility = false;
 	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
@@ -117,8 +112,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
+		
 		// Set the page level components.
 		setPageComponents(window_SpreadSheetDialog);
+		
 		try {
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("creditReviewDetails")) {
@@ -174,7 +171,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			MessageUtil.showError(e);
 			this.window_SpreadSheetDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		
+		logger.debug("Leaving");
 	}
 
 	private File getFile(String fileName) {
@@ -182,9 +180,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		return new File(reportSrc);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
+		
 		try {
 			if (!("PREA".equals(creditReviewDetails.getEligibilityMethod())
 					&& !(PennantConstants.List_Select.equals(creditReviewDetails.getFinCategory()))
@@ -215,6 +213,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
 		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -240,8 +239,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	 */
 	public void doWriteBeanToComponents(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
 		logger.debug("Entering");
-
-		//Fill Obligations
 
 		Map<String, Object> dataMap = new HashMap<>();
 		if (creditReviewData != null) {
@@ -289,6 +286,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	private void renderCellsData(CreditReviewDetails creditReviewDetails, CreditReviewData creditReviewData) {
+		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> dataMap = new HashMap<>();
 		if (creditReviewData != null) {
@@ -317,26 +315,34 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				range.setCellStyle(newStyle);
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public static Map<String, Object> convertStringToMap(String payload) {
+		logger.debug(Literal.ENTERING);
+		
 		ObjectMapper obj = new ObjectMapper();
-
 		HashMap<String, Object> map = null;
 		try {
 			map = obj.readValue(payload, new TypeReference<HashMap<String, Object>>() {
 			});
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug(Literal.EXCEPTION, e);
 		}
+		
+		logger.debug(Literal.LEAVING);
+		
 		return map;
 	}
 
 	public void doWriteComponentstoBean() {
+		logger.debug(Literal.ENTERING);
+		
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = null;
 
@@ -366,38 +372,52 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		this.creditReviewData.setTemplateName(this.creditReviewDetails.getTemplateName());
 		this.creditReviewData.setTemplateVersion(this.creditReviewDetails.getTemplateVersion());
 		this.creditReviewData.setTemplateData(jsonInString);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$button_FetchData(Event event) {
+		logger.debug(Literal.ENTERING);
 		checkCreditRevData();
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void checkCreditRevData() {
+		logger.debug(Literal.ENTERING);
 		try {
 			if (getFinanceMainDialogCtrl() instanceof FinanceMainBaseCtrl) {
 				((FinanceMainBaseCtrl) getFinanceMainDialogCtrl()).isCreditReviewDataChanged(creditReviewDetails,
 						false);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setDataToCells(CreditReviewDetails creditReviewDetails, Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
 
 		String fields = creditReviewDetails.getFields();
 
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
-				Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
-				range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+				try {
+					Range range = Ranges.rangeByName(spreadSheet.getSelectedSheet(), fieldsArray[i]);
+					range.setCellValue(dataMap.get(fieldsArray[i]) == null ? 0 : dataMap.get(fieldsArray[i]));
+				} catch (Exception e) {
+					logger.error(Literal.EXCEPTION, e);
+				}
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void setDataToCells(String fields, Map<String, BigDecimal> dataMap) {
-
+		logger.debug(Literal.ENTERING);
+		
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
@@ -408,6 +428,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				}
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public boolean doSave(Radiogroup userAction, boolean isFromLoan) {
@@ -429,6 +451,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	private boolean checkIsDataChanged(Radiogroup userAction, boolean isFromLoan) {
+		logger.debug(Literal.ENTERING);
 		boolean isDataChanged = false;
 		if (!(userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_RESUBMITTED)
 				|| userAction.getSelectedItem().getValue().equals(PennantConstants.RCD_STATUS_REJECTED)
@@ -441,6 +464,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				MessageUtil.showMessage("Loan details has changed.Eligibility needs to be verified.");
 			}
 		}
+		logger.debug(Literal.LEAVING);
 		return isDataChanged;
 	}
 
@@ -530,6 +554,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	}
 
 	public void onClickToBeConsidered(ForwardEvent event) {
+		logger.debug(Literal.ENTERING);
+		
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 		CustomerExtLiability custLiability = (CustomerExtLiability) checkBox.getAttribute("custExtLiability");
 		if (checkBox.isChecked()) {
@@ -547,12 +573,16 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				financeMainDialogCtrl.getClass().getMethod("setTotalEmiConsideredObligations", BigDecimal.class)
 						.invoke(financeMainDialogCtrl, totalEmi);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	public Map<String, Object> saveConsideredObligations(Map<String, Object> dataMap) {
+		logger.debug(Literal.ENTERING);
+		
 		if (this.listBoxCustomerExternalLiability.getItems().size() > 0) {
 			for (int i = 0; i < listBoxCustomerExternalLiability.getItems().size(); i++) {
 				Listitem listitem = listBoxCustomerExternalLiability.getItemAtIndex(i);
@@ -566,6 +596,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				}
 			}
 		}
+		
+		logger.debug(Literal.LEAVING);
+		
 		return dataMap;
 	}
 

@@ -47,8 +47,11 @@ public class CreditReviewDetails {
 	private List<JointAccountDetail> extLiabilitiesjointAccDetails = new ArrayList<>();
 	private List<CustomerExtLiability> appCoAppObligations = new ArrayList<>();
 	private String typeOfDegree;
-	//P and L
 	private String finBranchDesc = "";
+	private BigDecimal sanctionedAmt = BigDecimal.ZERO;
+	private BigDecimal outStandingLoanAmt = BigDecimal.ZERO;
+	private BigDecimal accountLimit = BigDecimal.ZERO;
+	private BigDecimal loanAmount = BigDecimal.ZERO;
 
 	public long getId() {
 		return id;
@@ -362,4 +365,34 @@ public class CreditReviewDetails {
 		this.finBranchDesc = finBranchDesc;
 	}
 
+	public BigDecimal getSanctionedAmt() {
+		return sanctionedAmt;
+	}
+
+	public void setSanctionedAmt(BigDecimal sanctionedAmt) {
+		this.sanctionedAmt = sanctionedAmt;
+	}
+
+	public BigDecimal getOutStandingLoanAmt() {
+		return outStandingLoanAmt;
+	}
+
+	public void setOutStandingLoanAmt(BigDecimal outStandingLoanAmt) {
+		this.outStandingLoanAmt = outStandingLoanAmt;
+	}
+	public BigDecimal getAccountLimit() {
+		return accountLimit;
+	}
+
+	public void setAccountLimit(BigDecimal accountLimit) {
+		this.accountLimit = accountLimit;
+	}
+
+	public BigDecimal getLoanAmount() {
+		return loanAmount;
+	}
+
+	public void setLoanAmout(BigDecimal loanAmount) {
+		this.loanAmount = loanAmount;
+	}
 }
