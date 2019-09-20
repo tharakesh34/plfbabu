@@ -4288,6 +4288,7 @@ public class ScheduleCalculator {
 		for (int i = schdIndex + 1; i < schdDetailsSize; i++) {
 
 			if (i < recalIdx) {
+				finScheduleData.getFinanceMain().setCalTerms(finScheduleData.getFinanceMain().getCalTerms() + 1);
 				continue;
 			}
 

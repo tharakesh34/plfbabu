@@ -9783,6 +9783,16 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="146" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE RMTFinanceTypes Set FinIsRateRvwAtGrcEnd = 1;
+				UPDATE RMTFinanceTypes_Temp Set FinIsRateRvwAtGrcEnd = 1;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="146" author="Varaprasad.K">
 	<addColumn tableName="REJECTFINANCEMAIN">
 		<column name="SvAmount" type="bigint" defaultValue="0" />

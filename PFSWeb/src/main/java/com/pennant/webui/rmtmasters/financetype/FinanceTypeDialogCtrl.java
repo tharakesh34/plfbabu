@@ -1240,7 +1240,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.allowDrawingPower.setChecked(aFinanceType.isAllowDrawingPower());
 			this.allowRevolving.setChecked(aFinanceType.isAllowRevolving());
 			this.sanBsdSchdle.setChecked(aFinanceType.isSanBsdSchdle());
-			this.finIsRateRvwAtGrcEnd.setChecked(aFinanceType.isFinIsRateRvwAtGrcEnd());
+			if (aFinanceType.isNewRecord()) {
+				this.finIsRateRvwAtGrcEnd.setChecked(true);
+			} else {
+				this.finIsRateRvwAtGrcEnd.setChecked(aFinanceType.isFinIsRateRvwAtGrcEnd());
+			}
 		}
 		this.rollOverFrq.setValue(aFinanceType.getRollOverFrq());
 		this.tDSApplicable.setChecked(aFinanceType.isTdsApplicable());
