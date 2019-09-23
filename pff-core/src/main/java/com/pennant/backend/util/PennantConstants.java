@@ -887,4 +887,18 @@ public class PennantConstants {
 	// Sorting
 	public static final String SortOrder_ASC = "ASC";
 	public static final String SortOrder_DESC = "DESC";
+	// External Service
+	public static final String TYPE_FILE = "FILE";
+	public static final String TYPE_DB = "DB";
+	public static final String TYPE_WEBSERVICE_REST = "WS_REST";
+	public static final String TYPE_WEBSERVICE_SOAP = "WS_SOAP";
+	public static final String TYPE_WEBSERVICE_XML = "WS_XML";
+	public static final String TYPE_HTP = "HTP";
+	public static final String NotificationTYPE_None = "0";
+	public static final String NotificationTYPE_Mobile = "1";
+	public static final String NotificationTYPE_Email = "2";
+	public static final String INTERFACE_TYPE_IDB = "IDB";
+	public static final String INTERFACE_TYPE_INTERFACE = "INTERFACE";
+	
+
 }

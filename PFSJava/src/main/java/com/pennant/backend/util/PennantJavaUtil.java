@@ -217,6 +217,7 @@ import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.facility.Facility;
 import com.pennant.backend.model.fees.FeePostings;
 import com.pennant.backend.model.feetype.FeeType;
@@ -3380,6 +3381,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("SettlementProcess", SettlementProcess.class,
 						new String[] { "SETTLEMENT_REQUEST", "SETTLEMENT_REQUEST" }, masterWF,
 						new String[] { "Id", "SettlementRef" }, null, 600));
+		ModuleUtil.register("InterfaceConfiguration",
+				new ModuleMapping("InterfaceConfiguration", InterfaceConfiguration.class,
+						new String[] { "InterfaceConfiguration", "ExtInterfaceConfiguration_AView" },
+						masterWF, new String[] { "Code", "Description", "NotificationType", "active" }, null, 600));
 
 		ModuleUtil.register("CustCardSales",
 				new ModuleMapping("CustCardSales", CustCardSales.class,

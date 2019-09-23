@@ -313,7 +313,11 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> vanAllocationMethods;
 	private static ArrayList<ValueLabel> disbursementStatus;
 
-	//GST Customers
+	private static ArrayList<ValueLabel> academicList;
+	private static ArrayList<ValueLabel> notificationTypeList;
+	private static ArrayList<ValueLabel> interfaceTypeList;
+
+	// GST Customers
 	private static ArrayList<ValueLabel> frequencyType;
 	private static ArrayList<ValueLabel> frequency;
 	private static ArrayList<ValueLabel> year;
@@ -5142,15 +5146,47 @@ public class PennantStaticListUtil {
 		return frequency;
 	}
 
-	public static ArrayList<ValueLabel> getDisbursementStatus() {
-		if (disbursementStatus == null) {
-			disbursementStatus = new ArrayList<ValueLabel>(2);
-			disbursementStatus
-					.add(new ValueLabel(DisbursementConstants.STATUS_PAID, DisbursementConstants.STATUS_PAID));
-			disbursementStatus
-					.add(new ValueLabel(DisbursementConstants.STATUS_REJECTED, DisbursementConstants.STATUS_REJECTED));
+	public static ArrayList<ValueLabel> getAcademicList() {
+		if (academicList == null) {
+			academicList = new ArrayList<ValueLabel>();
+			academicList.add(new ValueLabel(PennantConstants.TYPE_DB, Labels.getLabel("label_Type_DB")));
+			academicList.add(new ValueLabel(PennantConstants.TYPE_FILE, Labels.getLabel("label_Type_File")));
+			academicList.add(new ValueLabel(PennantConstants.TYPE_HTP, Labels.getLabel("label_Type_HTP")));
+			academicList.add(new ValueLabel(PennantConstants.TYPE_WEBSERVICE_REST,
+					Labels.getLabel("label_Type_WerService_Rest")));
+			academicList.add(new ValueLabel(PennantConstants.TYPE_WEBSERVICE_SOAP,
+					Labels.getLabel("label_Type_WerService_Soap")));
+			academicList.add(
+					new ValueLabel(PennantConstants.TYPE_WEBSERVICE_XML, Labels.getLabel("label_Type_WerService_Xml")));
+
 		}
-		return disbursementStatus;
+		return academicList;
+	}
+
+	public static ArrayList<ValueLabel> getInterfaceTypeList() {
+		if (interfaceTypeList == null) {
+			interfaceTypeList = new ArrayList<ValueLabel>();
+			interfaceTypeList.add(
+					new ValueLabel(PennantConstants.INTERFACE_TYPE_IDB, Labels.getLabel("label_InterfaceType_IBD")));
+			interfaceTypeList.add(new ValueLabel(PennantConstants.INTERFACE_TYPE_INTERFACE,
+					Labels.getLabel("label_InterfaceType_INTERFACE")));
+
+		}
+
+		return interfaceTypeList;
+	}
+
+	public static ArrayList<ValueLabel> getNotificationTypeList() {
+		if (notificationTypeList == null) {
+			notificationTypeList = new ArrayList<ValueLabel>();
+			notificationTypeList
+					.add(new ValueLabel(PennantConstants.NotificationTYPE_None, Labels.getLabel("label_Type_NONE")));
+			notificationTypeList.add(
+					new ValueLabel(PennantConstants.NotificationTYPE_Mobile, Labels.getLabel("label_Type_MOBILE")));
+			notificationTypeList
+					.add(new ValueLabel(PennantConstants.NotificationTYPE_Email, Labels.getLabel("label_Type_EMAIL")));
+		}
+		return notificationTypeList;
 	}
 
 }

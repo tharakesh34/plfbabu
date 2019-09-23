@@ -11279,4 +11279,64 @@
 	<!-- PAN Number Validation -->
 	<bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
 	
+		<!-- InterfaceConfiguration -->
+	<bean id="interfaceConfigurationDAO"
+		class="com.pennant.backend.dao.externalinterface.impl.InterfaceConfigurationDAOImpl"
+		parent="sequenceDao" />
+	<bean id="interfaceConfigurationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="interfaceConfigurationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="interfaceConfigurationServiceTarget"
+		class="com.pennant.backend.service.externalinterface.impl.InterfaceConfigurationServiceImpl">
+		<property name="interfaceConfigurationDAO" ref="interfaceConfigurationDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	<!-- ExternalInterfaceConfiguration -->
+	<bean id="extInterfaceConfigurationDAO"
+		class="com.pennant.backend.dao.externalinterface.impl.ExtInterfaceConfigurationDAOImpl"
+		parent="sequenceDao" />
+	<bean id="extInterfaceConfigurationService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="extInterfaceConfigurationServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="extInterfaceConfigurationServiceTarget"
+		class="com.pennant.backend.service.externalinterface.impl.ExtInterfaceConfigurationServiceImpl">
+		<property name="extInterfaceConfigurationDAO" ref="extInterfaceConfigurationDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	
+	
+	
 </beans>

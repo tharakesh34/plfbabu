@@ -5456,4 +5456,42 @@
 		<property name="miscPostingUploadService" ref="miscPostingUploadService"/>
 	</bean>
 	
+	<!-- InterfaceConfiguration -->
+	<bean id="interfaceConfigurationListCtrl"
+		class="com.pennant.webui.externalinterface.InterfaceConfiguration.InterfaceConfigurationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="interfaceConfigurationService" ref="interfaceConfigurationService" />
+	</bean>
+
+	<bean id="interfaceServiceListCtrl"
+		class="com.pennant.webui.externalinterface.InterfaceConfiguration.InterfaceServiceListCtrl"
+		parent="basisCtrl" scope="prototype">
+
+		<property name="pagedListService" ref="pagedListService"></property>
+	</bean>
+	<bean name="pagedListService" class="com.pennant.backend.service.impl.PagedListServiceImpl"
+		scope="session">
+		<property name="searchProcessor" ref="searchProcessor" />
+	</bean>
+	<bean id="interfaceDialogCtrl"
+		class="com.pennant.webui.externalinterface.InterfaceConfiguration.InterfaceServiceDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="interfaceConfigurationService" ref="interfaceConfigurationService" />
+
+	</bean>
+
+	<!-- ExternalInterfaceConfiguration -->
+	<bean id="extInterfaceConfigurationListCtrl"
+		class="com.pennant.webui.externalinterface.InterfaceConfiguration.ExtInterfaceConfigurationListCtrl"
+		parent="basisListCtrl" scope="prototype">
+		<property name="extInterfaceConfigurationService" ref="extInterfaceConfigurationService" />
+	</bean>
+	<bean id="extInterfaceConfigurationDialogCtrl"
+		class="com.pennant.webui.externalinterface.InterfaceConfiguration.ExtInterfaceConfigurationDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="extInterfaceConfigurationService" ref="extInterfaceConfigurationService" />
+	</bean>
+	
+	
+	
 </beans>
