@@ -531,6 +531,16 @@
 														<uppercasebox id="vanCode" width="180px" />
 													</hbox>
 												</row>
+												<row id="row_FinRateRvw" visible="false">
+													<label
+														id="label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd"
+														value="${c:l('label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.value')}" visible="false" />
+													<hbox id="hbox_finIsRateRvwAtGrcEnd" visible="false">
+														<space spacing="2px" />
+														<checkbox
+															id="finIsRateRvwAtGrcEnd" checked="false" />
+													</hbox>
+												</row>
 											</rows>
 										</grid>
 									</groupbox>

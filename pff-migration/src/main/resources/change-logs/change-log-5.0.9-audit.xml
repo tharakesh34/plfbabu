@@ -188,5 +188,19 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="21" author="satyanarayana.g">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="22" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN Set FinIsRateRvwAtGrcEnd = 0 where FinIsRateRvwAtGrcEnd is null;
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

@@ -234,6 +234,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	private boolean allowDrawingPower;
 	private boolean allowRevolving;
+	private boolean finIsRateRvwAtGrcEnd;
 
 	// ===========================================
 	// ==========Grace Period Details=============
@@ -4512,6 +4513,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setAppliedLoanAmt(BigDecimal appliedLoanAmt) {
 		this.appliedLoanAmt = appliedLoanAmt;
+	}
+	
+	public boolean isFinIsRateRvwAtGrcEnd() {
+		return finIsRateRvwAtGrcEnd;
+	}
+
+	public void setFinIsRateRvwAtGrcEnd(boolean finIsRateRvwAtGrcEnd) {
+		this.finIsRateRvwAtGrcEnd = finIsRateRvwAtGrcEnd;
 	}
 
 }

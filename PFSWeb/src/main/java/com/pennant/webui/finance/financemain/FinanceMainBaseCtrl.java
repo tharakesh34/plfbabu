@@ -465,7 +465,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox hbox_AlwRevolving;
 
 	//UD_LOANS END
-
+	
+	protected Row row_FinRateRvw;
+	protected Checkbox finIsRateRvwAtGrcEnd;
+	protected Label label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd;
+	protected Hbox hbox_finIsRateRvwAtGrcEnd;
+	
 	//Facility Details
 	protected Row rowFacilityAmounts;
 	protected Row rowFacilityDateRate;
@@ -3468,6 +3473,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.allowDrawingPower.setChecked(aFinanceMain.isAllowDrawingPower());
 			this.allowRevolving.setChecked(aFinanceMain.isAllowRevolving());
+		}
+		
+		//FinIsRateRvwAtGrcEnd
+		if ((aFinanceMain.isNewRecord() && financeType.isFinIsRateRvwAtGrcEnd()) || aFinanceMain.isFinIsRateRvwAtGrcEnd()) {
+			this.row_FinRateRvw.setVisible(true);
+			this.label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.setVisible(true);
+			this.hbox_finIsRateRvwAtGrcEnd.setVisible(true);
+		}
+		
+		if (aFinanceMain.isNewRecord()) {
+			this.finIsRateRvwAtGrcEnd.setChecked(financeType.isFinIsRateRvwAtGrcEnd());
+		} else {
+			this.finIsRateRvwAtGrcEnd.setChecked(aFinanceMain.isFinIsRateRvwAtGrcEnd());
 		}
 
 		this.finIsActive.setChecked(aFinanceMain.isFinIsActive());
@@ -13921,6 +13939,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Allow Drawing power, Allow Revolving
 		aFinanceMain.setAllowDrawingPower(this.allowDrawingPower.isChecked());
 		aFinanceMain.setAllowRevolving(this.allowRevolving.isChecked());
+		
+		//FinIsRateRvwAtGrcEnd
+		aFinanceMain.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd.isChecked());
 
 		//Lower tax deduction Details setting
 		aFinanceMain.setTDSApplicable(this.tDSApplicable.isChecked());
@@ -15671,8 +15692,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		//Allow Drawing power, Allow Revolving
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowDrawingPower"), this.allowDrawingPower);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
-		readOnlyComponent(isReadOnly("FinanceMainDialog_AllowRevolving"), this.allowRevolving);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AppliedLoanAmt"), this.appliedLoanAmt);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_FinIsRateRvwAtGrcEnd"), this.finIsRateRvwAtGrcEnd);
 
 		readOnlyComponent(true, this.flagDetails);
 		this.btnFlagDetails.setVisible(!isReadOnly("FinanceMainDialog_flagDetails"));
