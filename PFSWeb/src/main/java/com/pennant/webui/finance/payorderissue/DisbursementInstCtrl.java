@@ -604,7 +604,7 @@ public class DisbursementInstCtrl {
 		map.put("financeDisbursement", financeDisbursements);
 		map.put("approvedDisbursments", approvedDisbursments);
 		map.put("financeMain", financeMain);
-		if(payOrderIssueHeader != null){
+		if(payOrderIssueHeader != null && payOrderIssueHeader.getDocumentDetails() != null){
 			if(payOrderIssueHeader.getDocumentDetails().getDocImage() == null){
 				payOrderIssueHeader.getDocumentDetails().setDocImage(PennantApplicationUtil.getDocumentImage(payOrderIssueHeader.getDocumentDetails().getDocRefId()));
 			}
