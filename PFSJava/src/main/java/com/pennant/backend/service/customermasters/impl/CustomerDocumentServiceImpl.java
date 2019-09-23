@@ -421,7 +421,7 @@ public class CustomerDocumentServiceImpl extends GenericService<CustomerDocument
 			}
 
 			if ((StringUtils.isNotBlank(customerDocument.getDocUri()))
-					|| (customerDocument.getCustDocImage() != null || customerDocument.getCustDocImage().length > 0)) {
+					|| (customerDocument.getCustDocImage() != null && customerDocument.getCustDocImage().length > 0)) {
 				if (StringUtils.isBlank(customerDocument.getCustDocType())) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "docFormat";

@@ -10,7 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.customermasters.CustCardSales;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
@@ -277,5 +276,10 @@ public interface CustomerRESTService {
 	@Path("/customerService/addCreditReviewDetails")
 	public WSReturnStatus addCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData);
 
+	@GET
+	@Path("/customerService/doCustomerValidation/{coreBankId}")
+	public WSReturnStatus doCustomerValidation(@PathParam("coreBankId") String custCIF) throws ServiceException;
+
+	
 	
 }

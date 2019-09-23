@@ -2914,6 +2914,25 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 	}
 
+	
+	@Override
+	public WSReturnStatus doCustomerValidation(String coreBankId) throws ServiceException {
+		// Mandatory validation
+		if (StringUtils.isBlank(coreBankId)) {
+			validationUtility.fieldLevelException();
+		}
+
+		boolean status = customerDetailsService.getCustomerByCoreBankId(coreBankId);
+		if (status) {
+			return APIErrorHandlerService.getSuccessStatus();
+		} else {
+			String[] valueParm = new String[1];
+			valueParm[0] = "coreBank";
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+		}
+
+	}
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -3295,4 +3314,5 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
 
+	
 }
