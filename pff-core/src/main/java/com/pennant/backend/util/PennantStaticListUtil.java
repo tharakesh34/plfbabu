@@ -5145,6 +5145,17 @@ public class PennantStaticListUtil {
 		}
 		return frequency;
 	}
+	
+	public static ArrayList<ValueLabel> getDisbursementStatus() {
+		if (disbursementStatus == null) {
+			disbursementStatus = new ArrayList<ValueLabel>(2);
+			disbursementStatus
+					.add(new ValueLabel(DisbursementConstants.STATUS_PAID, DisbursementConstants.STATUS_PAID));
+			disbursementStatus
+					.add(new ValueLabel(DisbursementConstants.STATUS_REJECTED, DisbursementConstants.STATUS_REJECTED));
+		}
+		return disbursementStatus;
+	}
 
 	public static ArrayList<ValueLabel> getAcademicList() {
 		if (academicList == null) {
