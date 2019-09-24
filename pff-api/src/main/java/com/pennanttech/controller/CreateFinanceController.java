@@ -1373,23 +1373,24 @@ public class CreateFinanceController extends SummaryDetailService {
 		
 		//FIX ME: this should be removed from SetDisbursements 
 		// validate disbursement instructions
-		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
-				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (!approve && !moveLoanStage) {
-				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-				disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-				disbursementDetails.setDisbAmount(financeMain.getFinAmount());
-				disbursementDetails.setVersion(1);
-				disbursementDetails.setDisbSeq(1);
-				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
-				disbursementDetails
-						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
-				finScheduleData.getDisbursementDetails().add(disbursementDetails);
+		if (!stp) {
+			if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+					.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+				if (!approve && !moveLoanStage) {
+					FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+					disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+					disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+					disbursementDetails.setVersion(1);
+					disbursementDetails.setDisbSeq(1);
+					disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+					disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+					disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+					disbursementDetails.setDisbAccountId(
+							PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+					finScheduleData.getDisbursementDetails().add(disbursementDetails);
+				}
 			}
 		}
-
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
 			String stepPolicyCode = financeMain.getStepPolicy();
