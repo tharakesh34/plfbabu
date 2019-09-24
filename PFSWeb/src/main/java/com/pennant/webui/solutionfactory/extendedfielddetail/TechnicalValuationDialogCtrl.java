@@ -59,10 +59,10 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	protected Label subModuleDesc;
 	protected Longbox moduleId;
 	protected Textbox tabHeading;
-	protected Radiogroup numberOfColumns;
+/*	protected Radiogroup numberOfColumns;
 	protected Radio radio_column1;
 	protected Radio radio_column2;
-	protected Radio radio_column3;
+	protected Radio radio_column3;*/
 	protected Grid grid_basicDetails;
 
 	private transient boolean validationOn;
@@ -284,13 +284,13 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 					.setValue(Labels.getLabel("label_ExtendedField_" + aExtendedFieldHeader.getSubModuleName()));
 		}
 		this.tabHeading.setValue(aExtendedFieldHeader.getTabHeading());
-		for (int i = 0; i < numberOfColumns.getItemCount(); i++) {
+		/*for (int i = 0; i < numberOfColumns.getItemCount(); i++) {
 			if (this.numberOfColumns.getItemAtIndex(i).getValue()
 					.equals(aExtendedFieldHeader.getNumberOfColumns() == null ? ""
 							: aExtendedFieldHeader.getNumberOfColumns().trim())) {
 				this.numberOfColumns.setSelectedIndex(i);
 			}
-		}
+		}*/
 
 		// Extended Fields Rendering
 		doFillFieldsList(aExtendedFieldHeader.getTechnicalValuationDetailList());
@@ -311,7 +311,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			wve.add(we);
 		}
 		try {
-			aExtendedFieldHeader.setNumberOfColumns(this.numberOfColumns.getSelectedItem().getValue().toString());
+			//aExtendedFieldHeader.setNumberOfColumns(this.numberOfColumns.getSelectedItem().getValue().toString());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -562,7 +562,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 			map.put("technicalValuationDialogCtrl", this);
 			map.put("roleCode", getRole());
 			map.put("firstTaskRole", this.firstTaskRole);
-			map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
+			//map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
 			// call the zul-file with the parameters packed in a map
 			try {
 				Executions.createComponents(

@@ -69,9 +69,9 @@
 									</hlayout>
 								</row>
 								<row>
-									<label id="label_ExtendedFieldDialog_NumberOfColumns" value="${c:l('label_ExtendedFieldDialog_NumberOfColumns.value')}" />
+									<!-- <label id="label_ExtendedFieldDialog_NumberOfColumns" value="${c:l('label_ExtendedFieldDialog_NumberOfColumns.value')}" /> -->
 									<hlayout>
-										<radiogroup id="numberOfColumns">
+										<!-- <radiogroup id="numberOfColumns">
 											<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 												<columns>
 													<column width="90px" />
@@ -86,7 +86,7 @@
 													</row>
 												</rows>
 											</grid>
-										</radiogroup>
+										</radiogroup> -->
 									</hlayout>
 									<label id="label_ExtendedFieldDialog_TabHeading" value="${c:l('label_ExtendedFieldDialog_TabHeading.value')}"
 										visible="false" />
