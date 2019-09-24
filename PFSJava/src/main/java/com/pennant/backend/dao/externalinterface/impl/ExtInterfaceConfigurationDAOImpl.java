@@ -159,7 +159,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (interfaceConfiguration.getId()==Long.MIN_VALUE){
-			interfaceConfiguration.setId(getNextValue("SeqExtInterfaceConfiguration"));
+			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfiguration"));
 			logger.debug("get NextID:"+interfaceConfiguration.getId());
 		}
 

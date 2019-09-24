@@ -13,7 +13,7 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 	private String endPoint;
 	private String request;
 	private String response;
-	private Timestamp reqSentOn;
+	private Date reqSentOn;
 	private Timestamp respReceivedOn;
 	private String status;
 	private String errorCode;
@@ -22,7 +22,7 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 	private String ref_num;
 	private String interface_Name;
 	private String records_Processed;
-	private Date start_Date;
+	private Timestamp start_Date;
 	private String status_Desc;
 	private String interface_Info;
 
@@ -99,11 +99,11 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 		this.response = response;
 	}
 
-	public Timestamp getReqSentOn() {
+	public Date getReqSentOn() {
 		return reqSentOn;
 	}
 
-	public void setReqSentOn(Timestamp reqSentOn) {
+	public void setReqSentOn(Date reqSentOn) {
 		this.reqSentOn = reqSentOn;
 	}
 
@@ -163,11 +163,11 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 		this.records_Processed = records_Processed;
 	}
 
-	public Date getStart_Date() {
+	public Timestamp getStart_Date() {
 		return start_Date;
 	}
 
-	public void setStart_Date(Date start_Date) {
+	public void setStart_Date(Timestamp start_Date) {
 		this.start_Date = start_Date;
 	}
 
