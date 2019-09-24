@@ -5649,4 +5649,67 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="201" author="vijaya.a">
+		<createView viewName="FIN_OPTIONS_VIEW" replaceIfExists="true">
+			SELECT T1.Id,
+					  T1.Finreference,
+					  T1.OptionType,
+					  T1.CurrentOptionDate,
+					  T1.Frequency,
+					  T1.NoticePeriodDays,
+					  T1.AlertDays,
+					  T1.OptionExercise,
+					  T1.NextOptionDate,
+					  T1.AlertType,
+					  T1.AlertToRoles,
+					  T1.UserTemplate,
+					  T1.CustomerTemplate,
+					  ut.TemplateCode UserTemplateCode,
+                      cust.TemplateCode CustomerTemplateCode,
+					  T1.Version,
+					  T1.LastMntBy,
+					  T1.LastMntOn,
+					  T1.RecordStatus,
+					  T1.RoleCode,
+					  T1.NextRoleCode,
+					  T1.TaskId,
+					  T1.NextTaskId,
+					  T1.RecordType,
+					  T1.WorkflowId
+					FROM FIN_OPTIONS_TEMP T1
+					 left join Templates ut on ut.TemplateId = T1.UserTemplate
+					 left join Templates cust on cust.TemplateId =T1.CustomerTemplate
+					UNION ALL
+					SELECT T1.Id,
+					  T1.Finreference,
+					  T1.OptionType,
+					  T1.CurrentOptionDate,
+					  T1.Frequency,
+					  T1.NoticePeriodDays,
+					  T1.AlertDays,
+					  T1.OptionExercise,
+					  T1.NextOptionDate,
+					  T1.AlertType,
+					  T1.AlertToRoles,
+					  T1.UserTemplate,
+					  T1.CustomerTemplate,
+					  ut.TemplateCode UserTemplateCode,
+                      cust.TemplateCode CustomerTemplateCode,
+					  T1.Version,
+					  T1.LastMntBy,
+					  T1.LastMntOn,
+					  T1.RecordStatus,
+					  T1.RoleCode,
+					  T1.NextRoleCode,
+					  T1.TaskId,
+					  T1.NextTaskId,
+					  T1.RecordType,
+					  T1.WorkflowId
+					FROM  FIN_OPTIONS T1
+					 left join Templates ut on ut.TemplateId = T1.UserTemplate
+					  left join Templates cust on cust.TemplateId =T1.CustomerTemplate
+					WHERE NOT EXISTS (SELECT 1 FROM FIN_OPTIONS_TEMP WHERE Id = T1.Id)
+	    </createView>
+	</changeSet>
+	
 </databaseChangeLog>
