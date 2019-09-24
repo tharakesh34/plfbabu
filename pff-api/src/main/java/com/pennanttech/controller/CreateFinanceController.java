@@ -303,7 +303,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
-			setDisbursements(financeDetail, loanWithWIF, false, false);
+			
+			
+			
+			if (stp) {
+				setDisbursements(financeDetail, loanWithWIF, false, false);
+			}
 
 			finScheduleData = financeDetail.getFinScheduleData();
 			financeMain = finScheduleData.getFinanceMain();
@@ -1365,6 +1370,25 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
 		// Durables where default down payment calculated. METHOD. setDisbursements
+		
+		//FIX ME: this should be removed from SetDisbursements 
+		// validate disbursement instructions
+		if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
+				.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (!approve && !moveLoanStage) {
+				FinanceDisbursement disbursementDetails = new FinanceDisbursement();
+				disbursementDetails.setDisbDate(financeMain.getFinStartDate());
+				disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+				disbursementDetails.setVersion(1);
+				disbursementDetails.setDisbSeq(1);
+				disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
+				disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
+				disbursementDetails.setInsuranceAmt(financeMain.getInsuranceAmt());
+				disbursementDetails
+						.setDisbAccountId(PennantApplicationUtil.unFormatAccountNumber(financeMain.getDisbAccountId()));
+				finScheduleData.getDisbursementDetails().add(disbursementDetails);
+			}
+		}
 
 		// Step Policy Details
 		if (financeMain.isStepFinance()) {
