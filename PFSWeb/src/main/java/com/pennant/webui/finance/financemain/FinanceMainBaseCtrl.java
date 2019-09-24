@@ -3476,10 +3476,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		
 		//FinIsRateRvwAtGrcEnd
-		if ((aFinanceMain.isNewRecord() && financeType.isFinIsRateRvwAtGrcEnd()) || aFinanceMain.isFinIsRateRvwAtGrcEnd()) {
-			this.row_FinRateRvw.setVisible(true);
-			this.label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.setVisible(true);
-			this.hbox_finIsRateRvwAtGrcEnd.setVisible(true);
+		if ((aFinanceMain.isNewRecord() && financeType.isFinIsRateRvwAtGrcEnd())) {
+			if (aFinanceMain.isFinIsRateRvwAtGrcEnd()) {
+				this.row_FinRateRvw.setVisible(true);
+				this.label_FinanceTypeDialog_FinIsRateRvwAtGrcEnd.setVisible(true);
+				this.hbox_finIsRateRvwAtGrcEnd.setVisible(true);
+			}
 		}
 		
 		if (aFinanceMain.isNewRecord()) {
