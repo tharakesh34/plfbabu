@@ -3971,7 +3971,7 @@ UNION ALL
 	</changeSet>
 	
 	
-	<changeSet id="178" author="Manoj.P">
+	<changeSet id="179" author="Manoj.P">
 	<sql>
 		<![CDATA[
 				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='LAEP') and fieldname = 'CREDITMANAGER'
