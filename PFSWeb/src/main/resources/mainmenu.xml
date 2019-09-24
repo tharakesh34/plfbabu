@@ -1266,9 +1266,10 @@
 				zulNavigation="/WEB-INF/pages/RMTMasters/GSTRate/GSTRateEnquiryList.zul?enqiryModule=Y"
 				rightName="menuItem_RMTMasters_GSTRateEnquiry" />
 		</menu>
+		
 		<menuItem id="menu_Item_InterfaceConfigurationEnquiry"
-			zulNavigation="/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/InterfaceConfigurationList.zul?enqiryModule=Y" />
-			
+			zulNavigation="/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/InterfaceConfigurationList.zul?enqiryModule=Y" rightName="menuCat_ExtInterfaceEnquiry"/>
+	
 		<menuItem id="menu_Item_InterfaceConfiguration"
 			zulNavigation="/WEB-INF/pages/ExternalInterface/ExternalInterfaceConfiguration/ExtInterfaceConfigurationList.zul" rightName="menuCat_ExtInterface"/>
 	</menu>
