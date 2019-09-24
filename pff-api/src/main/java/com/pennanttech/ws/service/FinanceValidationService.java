@@ -40,8 +40,8 @@ import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.applicationmaster.BranchService;
@@ -49,6 +49,7 @@ import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.rmtmasters.FinanceTypeService;
+import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.util.DisbursementConstants;
@@ -75,6 +76,7 @@ public class FinanceValidationService {
 	private FlagDAO flagDAO;
 	private RuleDAO ruleDAO;
 	private GeneralDepartmentService generalDepartmentService;
+	private DepartmentService departmentService;
 	private RelationshipOfficerService relationshipOfficerService;
 	private VehicleDealerService vehicleDealerService;
 
@@ -928,10 +930,18 @@ public class FinanceValidationService {
 				}
 
 			}
-			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
+			/*if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
 				GeneralDepartment generalDepartment = generalDepartmentService
 						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
 				if (generalDepartment == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = financeMain.getSalesDepartment();
+					return getErrorDetails("90501", valueParm);
+				}
+			}*/
+			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
+				Department department = departmentService.getApprovedDepartmentById(financeMain.getSalesDepartment());
+				if (department == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = financeMain.getSalesDepartment();
 					return getErrorDetails("90501", valueParm);
@@ -1043,6 +1053,11 @@ public class FinanceValidationService {
 	@Autowired
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
+	}
+
+	@Autowired
+	public void setDepartmentService(DepartmentService departmentService) {
+		this.departmentService = departmentService;
 	}
 
 }

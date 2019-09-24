@@ -1175,7 +1175,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.setProperties("DMA", "DealerName", "Code", false, LengthConstants.LEN_MASTER_CODE);
 		this.dmaCode.getTextbox().setMaxlength(50);
-		this.salesDepartment.setProperties("GeneralDepartment", "GenDepartment", "GenDeptDesc", false,
+		this.salesDepartment.setProperties("Department", "DeptCode", "DeptDesc", false,
 				LengthConstants.LEN_MASTER_CODE);
 
 		this.finCcy.setProperties("Currency", "CcyCode", "CcyDesc", true, LengthConstants.LEN_CURRENCY);

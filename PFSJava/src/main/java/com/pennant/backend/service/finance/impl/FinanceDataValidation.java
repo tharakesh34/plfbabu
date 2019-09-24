@@ -104,8 +104,8 @@ import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.solutionfactory.StepPolicyHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.DocumentType;
-import com.pennant.backend.model.systemmasters.GeneralDepartment;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Salutation;
@@ -124,6 +124,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.service.solutionfactory.StepPolicyService;
+import com.pennant.backend.service.systemmasters.DepartmentService;
 import com.pennant.backend.service.systemmasters.DocumentTypeService;
 import com.pennant.backend.service.systemmasters.GeneralDepartmentService;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
@@ -185,6 +186,7 @@ public class FinanceDataValidation {
 	private GeneralDepartmentService generalDepartmentService;
 	private LovFieldDetailService lovFieldDetailService;
 	private SalutationDAO salutationDAO;
+	private DepartmentService departmentService;
 	private DocumentTypeDAO documentTypeDAO;
 	private QueryCategoryDAO queryCategoryDAO;
 	private LimitHeaderDAO limitHeaderDAO;
@@ -1241,10 +1243,18 @@ public class FinanceDataValidation {
 			 * valueParm[0] = finMain.getSalesDepartment(); errorDetails.add(ErrorUtil.getErrorDetail(new
 			 * ErrorDetail("90501", valueParm))); }
 			 */
-			GeneralDepartment generalDepartment = generalDepartmentService
+		/*	GeneralDepartment generalDepartment = generalDepartmentService
 					.getApprovedGeneralDepartmentById(finMain.getSalesDepartment());
 
 			if (generalDepartment == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finMain.getSalesDepartment();
+				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+			}*/
+			Department department = departmentService
+					.getApprovedDepartmentById(finMain.getSalesDepartment());
+			
+			if (department == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getSalesDepartment();
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
@@ -6154,6 +6164,14 @@ public class FinanceDataValidation {
 
 	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
 		this.limitHeaderDAO = limitHeaderDAO;
+	}
+
+	public DepartmentService getDepartmentService() {
+		return departmentService;
+	}
+
+	public void setDepartmentService(DepartmentService departmentService) {
+		this.departmentService = departmentService;
 	}
 
 }
