@@ -2,6 +2,7 @@ package com.pennanttech.pff.external.pan.service;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,7 @@ public class PrimaryAccountServiceImpl implements PrimaryAccountService {
 	}
 
 	@Autowired
+	@Qualifier("nsdlPANService")
 	public void setNsdlPANService(PANService nsdlPANService) {
 		this.nsdlPANService = nsdlPANService;
 	}
