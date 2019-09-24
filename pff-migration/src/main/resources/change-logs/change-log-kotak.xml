@@ -3576,5 +3576,11 @@ UPDATE SeqSecGroupRights SET SeqNo= (sELECT MAX(GRPrightID) FROM ( SELECT GRPrig
 		
       </sql>
 	</changeSet> -->
-
+	<changeSet id="69" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_EOD_SNAPSHOT';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
