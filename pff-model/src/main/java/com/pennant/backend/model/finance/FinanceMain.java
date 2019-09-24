@@ -761,6 +761,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private BigDecimal cbAmount = BigDecimal.ZERO;
 	private String bRRpyRvwFrq;
 	private BigDecimal totalFinAmount = BigDecimal.ZERO;
+	@XmlElement
 	private BigDecimal appliedLoanAmt = BigDecimal.ZERO;
 
 	public Set<String> getExcludeFields() {
