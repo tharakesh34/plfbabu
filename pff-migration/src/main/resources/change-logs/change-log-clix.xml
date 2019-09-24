@@ -3956,4 +3956,29 @@ UNION ALL
 		]]>
 		</sql>
 </changeSet>
+
+
+<changeSet id="178" author="Manoj.P">
+		<dropColumn tableName="loan_business_org_ed" columnName="creditmanager" />
+		<dropColumn tableName="loan_business_org_ed_temp" columnName="creditmanager" />
+		<dropColumn tableName="loan_business_org_ed" columnName="requestedloan" />
+		<dropColumn tableName="loan_business_org_ed_temp" columnName="requestedloan" />
+		
+		<dropColumn tableName="loan_laep_org_ed" columnName="creditmanager" />
+		<dropColumn tableName="loan_laep_org_ed_temp" columnName="creditmanager" />
+		<dropColumn tableName="loan_laep_org_ed" columnName="requestedloan" />
+		<dropColumn tableName="loan_laep_org_ed_temp" columnName="requestedloan" />
+	</changeSet>
+	
+	
+	<changeSet id="178" author="Manoj.P">
+		<![CDATA[
+				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='LAEP') and fieldname = 'CREDITMANAGER'
+				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='LAEP') and fieldname = 'REQUESTEDLOAN'
+
+				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='BUSINESS') and fieldname = 'CREDITMANAGER'
+				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='BUSINESS') and fieldname = 'REQUESTEDLOAN'
+
+			 ]]>
+</changeSet>
 </databaseChangeLog>
