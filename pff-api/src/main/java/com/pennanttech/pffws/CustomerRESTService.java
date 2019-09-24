@@ -17,6 +17,7 @@ import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
+import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
@@ -278,7 +279,7 @@ public interface CustomerRESTService {
 
 	@GET
 	@Path("/customerService/doCustomerValidation/{coreBankId}")
-	public WSReturnStatus doCustomerValidation(@PathParam("coreBankId") String custCIF) throws ServiceException;
+	public CustValidationResponse doCustomerValidation(@PathParam("coreBankId") String custCIF) throws ServiceException;
 
 	
 	

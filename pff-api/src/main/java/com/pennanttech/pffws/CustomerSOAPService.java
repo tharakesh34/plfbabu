@@ -13,6 +13,7 @@ import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
+import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
@@ -190,6 +191,6 @@ public interface CustomerSOAPService {
 
 	WSReturnStatus deleteCustomerGstInformation(
 			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
-	public WSReturnStatus doCustomerValidation(@WebParam(name = "cif") String custCIF) throws ServiceException;
+	public CustValidationResponse doCustomerValidation(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
 }

@@ -16,6 +16,7 @@ import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
+import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -76,6 +77,7 @@ import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
+import com.pennanttech.ws.model.customer.CustValidationResponse;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
@@ -114,7 +116,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private BlackListCustomerDAO blacklistCustomerDAO;
 	private CustomerCategoryDAO customerCategoryDAO;
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
+	private CustomerDAO customerDAO;
 
+	
 	private CreditApplicationReviewService creditApplicationReviewService;
 
 	/**
@@ -2916,19 +2920,29 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	
 	@Override
-	public WSReturnStatus doCustomerValidation(String coreBankId) throws ServiceException {
+	public CustValidationResponse doCustomerValidation(String coreBankId) throws ServiceException {
 		// Mandatory validation
 		if (StringUtils.isBlank(coreBankId)) {
 			validationUtility.fieldLevelException();
 		}
-
+		CustValidationResponse response = null;
 		boolean status = customerDetailsService.getCustomerByCoreBankId(coreBankId);
 		if (status) {
-			return APIErrorHandlerService.getSuccessStatus();
+			response = new CustValidationResponse();
+			Customer cust = customerDAO.getCustomerByCoreBankId(coreBankId, "");
+			if (cust != null) {
+				response.setCustomerPhoneNumber(
+						customerPhoneNumberService.getApprovedCustomerPhoneNumberById(cust.getCustID()));
+			}
+
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			return response;
 		} else {
 			String[] valueParm = new String[1];
 			valueParm[0] = "coreBank";
-			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			response = new CustValidationResponse();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
 		}
 
 	}
@@ -3308,6 +3322,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	@Autowired
 	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
 		return customerCardSalesInfoDAO;
+	}
+	@Autowired
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
 	}
 
 	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
