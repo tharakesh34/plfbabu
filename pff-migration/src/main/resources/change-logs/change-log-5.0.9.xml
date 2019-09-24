@@ -6426,8 +6426,9 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="111" author="Saikiran.V" >
-		<createView viewName="RELATIONSHIPOFFICERS_VIEW" replaceIfExists="true">
+	<changeSet id="111" author="Saikiran.V">
+		<createView viewName="RELATIONSHIPOFFICERS_VIEW"
+			replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6481,7 +6482,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="112" author="Saikiran.V">
-		<createView viewName="RELATIONSHIPOFFICERS_AVIEW" replaceIfExists="true">
+		<createView viewName="RELATIONSHIPOFFICERS_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.ROFFICERCODE,
 				  T1.ROFFICERDESC,
 				  T1.ROFFICERDEPTCODE,
@@ -6527,8 +6529,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="113" author="Varaprasad.K" dbms="postgresql,oracle">
-		<modifyDataType tableName="RelationshipOfficers_Temp" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
-		<modifyDataType tableName="RelationshipOfficers" columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers_Temp"
+			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
+		<modifyDataType tableName="RelationshipOfficers"
+			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
 	</changeSet>
 
 	<changeSet id="113" author="Varaprasad.K" dbms="mssql">
@@ -6557,9 +6561,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-		
+
 	<changeSet id="114" author="vijaya.a">
-		<createView viewName="RECEIPT_REALIZATION_VIEW" replaceIfExists="true">
+		<createView viewName="RECEIPT_REALIZATION_VIEW"
+			replaceIfExists="true">
 			SELECT t4.custcif,
 			    t1.reference,
 			    t3.fintype,
@@ -6660,9 +6665,10 @@ UNION ALL
 			          WHERE finreceiptheader_temp.receiptid = t1.receiptid))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="115" author="vijaya.a">
-		<createView viewName="RECEIPTDETAILS_TVIEW" replaceIfExists="true">
+		<createView viewName="RECEIPTDETAILS_TVIEW"
+			replaceIfExists="true">
 			SELECT t4.custcif,
 			    t1.reference,
 			    t3.fintype,
@@ -6712,7 +6718,7 @@ UNION ALL
 			     LEFT JOIN partnerbanks t6 ON t6.partnerbankid = t2.fundingac
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="116.0" author="meena.a">
 		<sql>
 			<![CDATA[
@@ -6721,12 +6727,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="117" author="Varaprasad.K">
-	<addColumn tableName="FINANCEMAIN">
-		<column name="AppliedLoanAmt" type="DECIMAL(18,0)" />
-	</addColumn>
-</changeSet>
+		<addColumn tableName="FINANCEMAIN">
+			<column name="AppliedLoanAmt" type="DECIMAL(18,0)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="118" author="Varaprasad.K">
 		<addColumn tableName="FINANCEMAIN_TEMP">
@@ -6820,7 +6826,7 @@ UNION ALL
 		<addDefaultValue columnName="AppliedLoanAmt"
 			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="131_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8052,7 +8058,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="134_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8443,7 +8449,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="135_pre" author="Varaprasad.K" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8451,7 +8457,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="135.1" author="Varaprasad.K">
 		<createView viewName="wiffinancemain_aview"
 			replaceIfExists="true">
@@ -8644,7 +8650,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="136" author="Varaprasad.K">
 		<sql>
             <![CDATA[
@@ -8654,7 +8660,7 @@ UNION ALL
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="137" author="satyanarayana.g">
 		<createView viewName="RECEIPTDETAILS_VIEW" replaceIfExists="true">
 			SELECT T4.CUSTCIF,
@@ -8761,7 +8767,7 @@ UNION ALL
 					)
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="138" author="satyanarayana.g">
 		<addColumn tableName="RMTFinanceTypes">
 			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
@@ -8792,10 +8798,12 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="142" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="RMTFinanceTypes" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="143_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -8803,9 +8811,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="143" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINTYPE,
 					  T1.FINCATEGORY,
 					  T1.FINTYPEDESC,
@@ -9057,7 +9066,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="144_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -9067,7 +9076,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="144" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW " replaceIfExists="true">	 
+		<createView viewName="RMTFINANCETYPES_ORGVIEW "
+			replaceIfExists="true">	 
 			SELECT T1.FINTYPE,
 				  T1.FINCATEGORY,
 				  T1.FINTYPEDESC,
@@ -9278,7 +9288,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="145_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -9288,7 +9298,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="145" author="satyanarayana.g">
-		<createView viewName="RMTFINANCETYPES_VIEW " replaceIfExists="true">	 	 
+		<createView viewName="RMTFINANCETYPES_VIEW "
+			replaceIfExists="true">	 	 
 			SELECT T1.FINTYPE,
 				    T1.FINCATEGORY,
 				    T1.FINTYPEDESC,
@@ -9783,7 +9794,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="146" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -9792,19 +9803,19 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		
-<changeSet id="146" author="Varaprasad.K">
-	<addColumn tableName="REJECTFINANCEMAIN">
-		<column name="SvAmount" type="Decimal(18,2)" defaultValue="0" />
-	</addColumn>
-</changeSet>
+
+
+	<changeSet id="146" author="Varaprasad.K">
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="SvAmount" type="Decimal(18,2)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="147" author="Varaprasad.K">
-	<addColumn tableName="REJECTFINANCEMAIN">
-		<column name="CBAmount" type="Decimal(18,2)" defaultValue="0" />
-	</addColumn>
-</changeSet>
+		<addColumn tableName="REJECTFINANCEMAIN">
+			<column name="CBAmount" type="Decimal(18,2)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="148" author="Varaprasad.K">
 		<sql>
@@ -9861,7 +9872,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="150" author="satyanarayana.g">
 		<addColumn tableName="FINANCEMAIN">
 			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
@@ -9893,8 +9904,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="154" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="AllowRevolving" tableName="FINANCEMAIN_Temp" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="AllowRevolving"
+			tableName="FINANCEMAIN_Temp" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="155" author="satyanarayana.g">
@@ -9914,13 +9927,14 @@ UNION ALL
 	<changeSet id="157" author="satyanarayana.g" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_FINRTRVGRSE DEFAULT 0 FOR FINISRATERVWATGRCEND;
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_PA_FINRTRVGRSE DEFAULT 0 FOR FINISRATERVWATGRCEND;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="158" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="FINANCEMAIN_PA" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="159" author="satyanarayana.g">
@@ -9946,9 +9960,10 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="162" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="REJECTFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="REJECTFINANCEMAIN" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="163_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -9956,7 +9971,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="163" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -10548,7 +10563,7 @@ UNION ALL
 				  WHERE FINANCEMAIN_TEMP.FINREFERENCE = T1.FINREFERENCE))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="163_post" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -10556,7 +10571,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="164_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -10564,7 +10579,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="164" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -10869,7 +10884,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="165_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -10877,7 +10892,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="165" author="satyanarayana.g">
 		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -11182,7 +11197,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="166_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -11192,7 +11207,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="166" author="satyanarayana.g">
-		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+		<createView viewName="REJECTFINANCEMAIN_VIEW"
+			replaceIfExists="true">
 			 SELECT F.FINREFERENCE,
 				    T.FINCATEGORY AS LOVDESCPRODUCTCODENAME,
 				    F.FINTYPE,
@@ -11229,7 +11245,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="167" author="satyanarayana.g">
 		<addColumn tableName="WIFFINANCEMAIN">
 			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
@@ -11261,10 +11277,12 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="171" author="satyanarayana.g" dbms="postgresql, oracle">
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="WIFFINANCEMAIN" defaultValue="0" />
-		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd" tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="WIFFINANCEMAIN" defaultValue="0" />
+		<addDefaultValue columnName="FinIsRateRvwAtGrcEnd"
+			tableName="WIFFINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="172_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -11667,7 +11685,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="173" author="satyanarayana.g">
-		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
+		<createView viewName="WIFFINANCEMAIN_AVIEW"
+			replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
 				    T1.NUMBEROFTERMS,
 				    T1.GRCPERIODENDDATE,
@@ -11858,7 +11877,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="174" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -11876,5 +11895,55 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
+
+	<changeSet id="175" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOW_EOD_SNAPSHOT';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_EOD_SNAPSHOT', 'Allow Eod SnapShot', 'String', '1', 'N', 1, 0, NULL, NULL, 'Allow Eod SnapShot.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="176" author="Saikiran.V">
+		<addColumn tableName="FINPFTDETAILS_SNAPSHOT">
+			<column name="ACTUALODDAYS" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="177" author="Saikiran.V">
+		<addColumn tableName="FINODDETAILS_SNAPSHOT">
+			<column name="LpCpz" type="boolean" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="178" author="Saikiran.V">
+		<addColumn tableName="FINODDETAILS_SNAPSHOT">
+			<column name="LockODRecalCal" type="Boolean" defaultValue="0">
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="179" author="Saikiran.V">
+		<addColumn tableName="FINODDETAILS_SNAPSHOT">
+			<column name="LpCpzAmount" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="180" author="Saikiran.V">
+		<addColumn tableName="FINODDETAILS_SNAPSHOT">
+			<column name="LpCurCpzBal" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="181" author="murthy.y">
+		<sql>
+	    	<![CDATA[
+	        	update FINODDETAILS_SNAPSHOT set LpCpz = 0 where LpCpz is null;
+	        	update FINODDETAILS_SNAPSHOT set LockODRecalCal = 0 where LockODRecalCal is null;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
