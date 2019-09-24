@@ -3469,6 +3469,7 @@
 		<property name="documentTypeDAO" ref="documentTypeDAO" />
 		<property name="queryCategoryDAO" ref="queryCategoryDAO" />
 		<property name="limitHeaderDAO" ref="limitHeaderDAO" />
+		<property name="departmentService" ref="departmentService" />
 	</bean>
 
 	<!-- Finance Data Defaulting Service -->
