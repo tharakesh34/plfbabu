@@ -101,4 +101,6 @@ public interface FinAdvancePaymentsService {
 	FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type);
 
 	void processPayments(PaymentTransaction paymentTransaction);
+
+	void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type);
 }

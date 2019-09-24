@@ -81,7 +81,7 @@ public class PaymentsProcessService {
 		logger.debug(Literal.ENTERING);
 
 		if (DisbursementConstants.CHANNEL_DISBURSEMENT.equals(channel)) {
-			this.finAdvancePaymentsService.updateStatus(finAdvancePayment, "");
+			this.finAdvancePaymentsService.updatePaymentStatus(finAdvancePayment, "");
 		} else if (DisbursementConstants.CHANNEL_PAYMENT.equals(channel)) {
 			PaymentInstruction instruction = new PaymentInstruction();
 			instruction.setPaymentInstructionId(finAdvancePayment.getPaymentId());

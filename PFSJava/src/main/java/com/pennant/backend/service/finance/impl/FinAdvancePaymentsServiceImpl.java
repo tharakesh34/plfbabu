@@ -1052,6 +1052,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void updateStatus(FinAdvancePayments finAdvancePayment, String type) {
 		finAdvancePaymentsDAO.updateStatus(finAdvancePayment, type);
 	}
+	
+	@Override
+	public void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type) {
+		finAdvancePaymentsDAO.updatePaymentStatus(finAdvancePayment, type);
+	}
 
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {

@@ -88,4 +88,6 @@ public interface FinAdvancePaymentsDAO {
 	int getCountByFinReference(String finReference);
 
 	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate, String type);
+
+	void updatePaymentStatus(FinAdvancePayments finAdvancePayments, String type);
 }

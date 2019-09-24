@@ -5462,6 +5462,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			aFinanceMain.setCpzAtGraceEnd(getFinanceDetail().getFinScheduleData().getFinanceMain().isCpzAtGraceEnd());
+			aFinanceMain.setFinIsRateRvwAtGrcEnd(getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsRateRvwAtGrcEnd());
 			aFinanceMain.setEqualRepay(financeType.isEqualRepayment());
 			aFinanceMain.setIncreaseTerms(false);
 			aFinanceMain.setRecordStatus(this.recordStatus.getValue());

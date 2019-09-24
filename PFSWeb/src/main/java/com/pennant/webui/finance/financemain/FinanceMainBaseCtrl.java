@@ -9013,8 +9013,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), this.graceTerms.intValue(),
-						"Moratorium  terms");
+				int terms = getTerms();
+				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), terms);
 
 				if (errMsg != null) {
 					throw new WrongValueException(this.graceTerms, errMsg);
@@ -9064,8 +9064,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.numberOfTerms.getValue() != null) {
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), this.numberOfTerms.intValue(),
-						"Number Of installments");
+				String errMsg = validateFrequency(baseRateCode.getbRRepayRvwFrq(), getTerms());
 
 				if (errMsg != null) {
 					throw new WrongValueException(this.numberOfTerms, errMsg);
@@ -9081,14 +9080,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
 		if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-
-			int numberOfterms = this.numberOfTerms.intValue();
-			if (numberOfterms == 0) {
-				numberOfterms = this.numberOfTerms_two.intValue();
-			}
-
-			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), numberOfterms, "Number Of installments");
-
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), getTerms());
 		}
 		return null;
 	}
@@ -9096,12 +9088,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	private String validateNumOfGrcTerms() {
 		BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
 		if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
-			int graceTerms = this.graceTerms.intValue();
-			if (graceTerms == 0) {
-				graceTerms = this.graceTerms_Two.intValue();
-			}
-
-			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), graceTerms, "Moratorium  terms");
+			return validateFrequency(baseRateCode.getbRRepayRvwFrq(), getTerms());
 		}
 		return null;
 	}
@@ -10142,12 +10129,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					if (StringUtils.trimToNull(details.getbRRepayRvwFrq()) != null) {
 						String finRvwFrq = details.getbRRepayRvwFrq();
-
-						int graceTerms = this.graceTerms.intValue();
-						if (graceTerms == 0) {
-							graceTerms = this.graceTerms_Two.intValue();
-						}
-						String errMsg = validateFrequency(finRvwFrq, graceTerms, "Moratorium  terms");
+						String errMsg = validateFrequency(finRvwFrq, getTerms());
 						if (errMsg != null) {
 							throw new WrongValueException(this.graceRate, errMsg);
 						}
@@ -10512,13 +10494,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (details != null) {
 					if (StringUtils.trimToNull(details.getbRRepayRvwFrq()) != null) {
 						String finRvwFrq = details.getbRRepayRvwFrq();
-
-						int numberOfterms = this.numberOfTerms.intValue();
-						if (numberOfterms == 0) {
-							numberOfterms = this.numberOfTerms_two.intValue();
-						}
-
-						String errMsg = validateFrequency(finRvwFrq, numberOfterms, "Number Of installments");
+						String errMsg = validateFrequency(finRvwFrq, getTerms());
 						if (errMsg != null) {
 							throw new WrongValueException(this.repayRate, errMsg);
 						}
@@ -10667,13 +10643,40 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
+	 * Sum of grace terms and number of terms
+	 * @return
+	 */
+	private int getTerms() {
+		int graceTerms = 0;
+		int noOfTerms = 0;
+
+		if (this.graceTerms.getValue() != null) {
+			graceTerms = this.graceTerms.intValue();
+		}
+
+		if (graceTerms == 0 && this.graceTerms_Two.getValue() != null) {
+			graceTerms = this.graceTerms_Two.intValue();
+		}
+		
+		if (this.numberOfTerms.getValue() != null) {
+			noOfTerms = this.numberOfTerms.intValue();
+		}
+		
+		if (noOfTerms == 0 && this.numberOfTerms_two.getValue() != null) {
+			noOfTerms = this.numberOfTerms_two.intValue();
+		}
+
+		return graceTerms + noOfTerms;
+	}
+	
+	/**
 	 * Validate frequency against the number of terms.
 	 * 
 	 * @param finRvwFrq
 	 * @param intValue
 	 * @return
 	 */
-	private String validateFrequency(String bRRepayRvwFrq, int terms, String param) {
+	private String validateFrequency(String bRRepayRvwFrq, int terms) {
 		logger.debug(Literal.LEAVING);
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
@@ -10700,49 +10703,49 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		case FrequencyCodeTypes.FRQ_YEARLY:
 			if (terms < 13) {
 				errMsg.append(" Frequency is Yearly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 12.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_2YEARLY:
 			if (terms < 25) {
 				errMsg.append(" Frequency is 2-Yearly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 24.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_3YEARLY:
 			if (terms < 37) {
 				errMsg.append(" Frequency is 3-Yearly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 36.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_HALF_YEARLY:
 			if (terms < 7) {
 				errMsg.append("  Frequency is Half Yearly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 6.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_QUARTERLY:
 			if (terms < 4) {
 				errMsg.append(" Frequency is Quarterly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 3.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_BIMONTHLY:
 			if (terms < 3) {
 				errMsg.append(" Frequency is Every two months, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 2.");
 			}
 			break;
 		case FrequencyCodeTypes.FRQ_MONTHLY:
 			if (terms < 2) {
 				errMsg.append(" Frequency is monthly, ");
-				errMsg.append(param);
+				errMsg.append(" Sum of Moratorium  terms and Number Of installments");
 				errMsg.append(" should be greater than 1.");
 			}
 			break;

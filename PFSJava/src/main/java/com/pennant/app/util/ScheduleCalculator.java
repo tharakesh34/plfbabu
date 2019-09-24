@@ -1547,7 +1547,7 @@ public class ScheduleCalculator {
 				}
 
 				if (curSchd.isRvwOnSchDate()) {
-					if (StringUtils.isNotBlank(baseRate)) {
+					if (StringUtils.isNotBlank(baseRate) && !finMain.isBaseRateReq()) {
 						if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
 							recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
 									finMain.getGrcMinRate(), finMain.getGrcMaxRate()).getNetRefRateLoan();
@@ -1563,7 +1563,7 @@ public class ScheduleCalculator {
 				curSchd.setMrgRate(mrgRate);
 				curSchd.setCalculatedRate(recalculateRate);
 
-				if (StringUtils.isBlank(baseRate)) {
+				if (StringUtils.isBlank(baseRate) || finMain.isBaseRateReq()) {
 					curSchd.setActRate(recalculateRate);
 				}
 				schdCount++;
@@ -2881,7 +2881,7 @@ public class ScheduleCalculator {
 			}
 
 			// Review Date
-			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)) {
+			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate) && finMain.isFinIsRateRvwAtGrcEnd()) {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
@@ -4053,7 +4053,18 @@ public class ScheduleCalculator {
 		curSchd.setProfitFraction(BigDecimal.ZERO);
 		curSchd.setClosingBalance(
 				curSchd.getDisbAmount().add(curSchd.getFeeChargeAmt()).subtract(curSchd.getDownPaymentAmount()));
-		curSchd.setRvwOnSchDate(true);
+		
+		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0) {
+			if (finMain.isFinIsRateRvwAtGrcEnd()) {
+				curSchd.setRvwOnSchDate(true);
+			} else {
+				curSchd.setCpzOnSchDate(false);
+			}
+		} else {
+			curSchd.setRvwOnSchDate(true);
+		}
+		
+		
 
 		if (AdvanceType.hasAdvEMI(finMain.getAdvType())) {
 			if (finMain.isAdjustClosingBal()) {

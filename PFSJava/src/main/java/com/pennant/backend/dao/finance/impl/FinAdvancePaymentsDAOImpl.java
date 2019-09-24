@@ -134,7 +134,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		selectSql.append(
 				" PhoneAreaCode, PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy, POIssued,PartnerBankID, TransactionRef,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId");
+		selectSql.append(" LinkedTranId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(
 					" ,BranchCode,BranchBankCode,BranchBankName,BranchDesc,BankName,City,IFSC,partnerbankCode,PartnerBankName,PartnerBankAcType, PartnerBankAc, PrintingLocDesc");
@@ -334,6 +334,22 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
 
+		logger.debug("Leaving");
+	}
+	@Override
+	public void updatePaymentStatus(FinAdvancePayments finAdvancePayments, String type) {
+		logger.debug("Entering");
+		
+		StringBuilder updateSql = new StringBuilder("Update FinAdvancePayments");
+		updateSql.append(StringUtils.trimToEmpty(type));
+		updateSql.append("  Set Status = :Status");
+		updateSql.append("  Where FinReference = :FinReference and PaymentId = :PaymentId");
+		
+		logger.debug("updateSql: " + updateSql.toString());
+		
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
+		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		
 		logger.debug("Leaving");
 	}
 

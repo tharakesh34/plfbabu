@@ -1855,8 +1855,11 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			BaseRateCode baseRateCode) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
+			financeMain.setBaseRateReq(false);
 			return;
 		}
 
@@ -1875,11 +1878,15 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		if (prevScheduleDetail == null) {
+			financeMain.setBaseRateReq(false);
 			return;
 		}
-		
-		finServiceInstruction.setBaseRate(prevScheduleDetail.getBaseRate());
-		 
+
+		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
+		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
+		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
+		finServiceInstruction.setActualRate(oldBaseRate.add(finServiceInstruction.getMargin()));
+		financeMain.setBaseRateReq(true);
 		logger.debug(Literal.LEAVING);
 		return;
 	}

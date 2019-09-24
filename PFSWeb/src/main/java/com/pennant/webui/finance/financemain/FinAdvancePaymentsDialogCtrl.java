@@ -90,7 +90,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
