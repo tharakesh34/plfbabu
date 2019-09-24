@@ -102,6 +102,12 @@
 
 		<step id="loadCollateralRevaluationData">
 			<tasklet ref="loadCollateralRevaluationDataTaskLet" />
+			<next on="*" to="snapShotPreparation" />
+			<fail on="FAILED" />
+		
+		</step>
+		<step id="snapShotPreparation">
+			<tasklet ref="snapShotPreparationTaskLet" />
 			<next on="*" to="collateralRevaluation" />
 			<fail on="FAILED" />
 		
