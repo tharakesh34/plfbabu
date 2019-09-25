@@ -49,7 +49,7 @@
 		</sql>
 	</changeSet>
 
-	 <changeSet id="01" author="Durgaprasad G">
+	<changeSet id="01" author="Durgaprasad G">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="SanBsdSchdle" type="boolean" defaultValue="0" />
 		</addColumn>
@@ -154,12 +154,12 @@
 			<column name="remarks" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="16" author="Varaprasad.K">
 		<modifyDataType tableName="AdtRelationshipOfficers"
 			columnName="rOfficerCode" newDataType="VARCHAR(10)" />
 	</changeSet>
-	
+
 	<changeSet id="17" author="Varaprasad.K">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="AppliedLoanAmt" type="DECIMAL(18,0)" />
@@ -174,7 +174,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="19" author="satyanarayana.g">
 		<addColumn tableName="AdtRMTFinanceTypes">
 			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
@@ -188,7 +188,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="21" author="satyanarayana.g">
 		<addColumn tableName="ADTFINANCEMAIN">
 			<column name="FinIsRateRvwAtGrcEnd" type="boolean" />
@@ -201,6 +201,40 @@
 				UPDATE ADTFINANCEMAIN Set FinIsRateRvwAtGrcEnd = 0 where FinIsRateRvwAtGrcEnd is null;
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="23" author="meena.a">
+		<comment>extra fields added in ADTCOMMITMENTS</comment>
+		<addColumn tableName="ADTCOMMITMENTS">
+			<column name="BankingArrangement" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="24" author="meena.a">
+		<comment>extra fields added in ADTCOMMITMENTS</comment>
+		<addColumn tableName="ADTCOMMITMENTS">
+			<column name="LimitCondition" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="25" author="meena.a">
+		<comment>extra fields added in ADTCOMMITMENTS</comment>
+		<addColumn tableName="ADTCOMMITMENTS">
+			<column name="ExternalRef" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="26" author="meena.a">
+		<comment>extra fields added in ADTCOMMITMENTS</comment>
+		<addColumn tableName="ADTCOMMITMENTS">
+			<column name="ExternalRef1" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="27" author="meena.a">
+		<comment>extra fields added in ADTCOMMITMENTS</comment>
+		<addColumn tableName="ADTCOMMITMENTS">
+			<column name="Tenor" type="int" />
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>

@@ -11946,4 +11946,230 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="182" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments">
+			<column name="BankingArrangement" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="183" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments">
+			<column name="LimitCondition" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="184" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments">
+			<column name="ExternalRef" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="185" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments">
+			<column name="ExternalRef1" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="186" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments">
+			<column name="Tenor" type="int" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="187" author="meena.a">
+		<comment>extra fields added in Commitments_temp</comment>
+		<addColumn tableName="Commitments_temp">
+			<column name="BankingArrangement" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="188" author="meena.a">
+		<comment>extra fields added in Commitments_temp</comment>
+		<addColumn tableName="Commitments_temp">
+			<column name="LimitCondition" type="char(1)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="189" author="meena.a">
+		<comment>extra fields added in Commitments_temp</comment>
+		<addColumn tableName="Commitments_temp">
+			<column name="ExternalRef" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="190" author="meena.a">
+		<comment>extra fields added in Commitments</comment>
+		<addColumn tableName="Commitments_temp">
+			<column name="ExternalRef1" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="191" author="meena.a">
+		<comment>extra fields added in Commitments_temp</comment>
+		<addColumn tableName="Commitments_temp">
+			<column name="Tenor" type="int" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="192" author="meena.a">
+		<createView viewName="COMMITMENTS_AVIEW" replaceIfExists="true">
+		SELECT   t1.cmtreference,
+			t1.custid,
+			t2.custshrtname,
+			t1.cmtbranch,
+			t3.branchdesc,
+			t1.openaccount,
+			t1.cmtaccount,
+			t1.cmtccy,
+			t1.cmtpftratemin,
+			t1.cmtpftratemax,
+			t1.cmtamount,
+			t1.cmtutilizedamount,
+			t1.cmtavailable,
+			t1.cmtpromiseddate,
+			t1.cmtstartdate,
+			t1.cmtexpdate,
+			t1.cmtrvwdate,
+			t1.cmttitle,
+			t1.cmtnotes,
+			t1.revolving,
+			t1.sharedcmt,
+			t1.multibranch,
+			t1.facilityref,
+			t1.version,
+			t1.lastmntby,
+			t1.lastmnton,
+			t1.recordstatus,
+			t1.rolecode,
+			t1.nextrolecode,
+			t1.taskid,
+			t1.nexttaskid,
+			t1.recordtype,
+			t1.workflowid,
+			t1.cmtstopraterange,
+			t1.cmtactive,
+			t1.nonperforming,
+			t1.cmtcharges,
+			t1.chargesaccount,
+			t2.custcif,
+			t6.fintypedesc AS facilityrefdesc,
+			t1.cmtavailablemonths,
+			t1.collateralrequired,
+			t1.cmtenddate,
+			t1.limitlineid,
+			t4.CcyEditField,
+			t1.BankingArrangement,
+			t1.LimitCondition,
+			t1.ExternalRef, 
+			t1.ExternalRef1, 
+			t1.Tenor
+			from commitments t1
+			JOIN customers t2 ON t1.custid = t2.custid
+			JOIN rmtbranches t3 ON t1.cmtbranch = t3.branchcode
+			JOIN RMTCurrencies t4 ON T1.CmtCcy = T4.CcyCode
+			JOIN limitdetails t5 ON t1.limitlineid = t5.detailid
+			LEFT JOIN rmtfinancetypes t6 ON t1.facilityref = t6.fintype
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="193" author="meena.a">
+		<createView viewName="COMMITMENTS_VIEW" replaceIfExists="true">
+						SELECT        T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy,  T1.CmtPftRateMin, 
+									  T1.CmtPftRateMax, T1.CmtAmount, T1.CmtUtilizedAmount, T1.CmtAvailable, T1.CmtPromisedDate, T1.CmtStartDate, T1.CmtExpDate, T1.CmtRvwDate, 
+									  T1.CmtTitle, T1.CmtNotes, T1.Revolving, T1.SharedCmt, T1.MultiBranch, T1.FacilityRef, T1.Version, T1.LastMntBy, T1.LastMntOn,  
+									  T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.CmtStopRateRange, T1.CmtActive, 
+									  T1.NonPerforming,T1.CmtCharges, T1.ChargesAccount, T2.CustCIF, T6.FinTypeDesc FacilityRefDesc,
+									  T1.CmtAvailableMonths, T1.CollateralRequired, T1.CmtEndDate, T1.LimitLineId, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.ExternalRef1,T1.Tenor
+				        FROM  Commitments_Temp T1 INNER JOIN
+									  Customers T2 ON T1.custID = T2.CustID INNER JOIN
+									  RMTBranches T3 ON T1.CmtBranch = T3.BranchCode  INNER JOIN
+									  LimitDetails T5 ON T1.LimitLineId = T5.DetailId LEFT OUTER JOIN
+									  RMTFinanceTypes T6 ON T1.FacilityRef = T6.FinType
+				   UNION ALL
+					SELECT    T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy,  T1.CmtPftRateMin, 
+									  T1.CmtPftRateMax, T1.CmtAmount, T1.CmtUtilizedAmount, T1.CmtAvailable, T1.CmtPromisedDate, T1.CmtStartDate, T1.CmtExpDate, T1.CmtRvwDate, 
+									  T1.CmtTitle, T1.CmtNotes,T1.Revolving, T1.SharedCmt, T1.MultiBranch, T1.FacilityRef, T1.Version, T1.LastMntBy, T1.LastMntOn,  
+									  T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.CmtStopRateRange, 
+									  T1.CmtActive, T1.NonPerforming, T1.CmtCharges, T1.ChargesAccount, T2.CustCIF, T6.FinTypeDesc FacilityRefDesc,
+									  T1.CmtAvailableMonths, T1.CollateralRequired, T1.CmtEndDate, T1.LimitLineId ,T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.ExternalRef,T1.Tenor
+					FROM  Commitments T1 INNER JOIN
+									  Customers T2 ON T1.custID = T2.CustID INNER JOIN
+									  RMTBranches T3 ON T1.CmtBranch = T3.BranchCode INNER JOIN
+									  LimitDetails T5 ON T1.LimitLineId = T5.DetailId LEFT OUTER JOIN
+									  RMTFinanceTypes T6 ON T1.FacilityRef = T6.FinType
+					WHERE     NOT EXISTS
+										  (SELECT     1
+											FROM          Commitments_TEMP
+											WHERE      CmtReference = T1.CmtReference)
+
+		</createView>
+	</changeSet>
+
+
+	<changeSet id="194" author="meena.a">
+		<createView viewName="COMMITMENTS_TVIEW" replaceIfExists="true">
+						SELECT     T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy, T1.CmtPftRateMin, 
+                      T1.CmtPftRateMax, T1.CmtAmount, T1.CmtUtilizedAmount, T1.CmtAvailable, T1.CmtPromisedDate, T1.CmtStartDate, T1.CmtExpDate, T1.CmtRvwDate, 
+					  T1.CmtTitle, T1.CmtNotes, T1.Revolving, T1.SharedCmt, T1.MultiBranch, T1.FacilityRef, T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.CmtStopRateRange, T1.CmtActive, T1.NonPerforming, 
+					  T1.CmtCharges, T1.ChargesAccount, T2.CustCIF, T6.FinTypeDesc FacilityRefDesc,
+					  T1.CmtAvailableMonths, T1.CollateralRequired, T1.CmtEndDate, T1.LimitLineId, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.ExternalRef1,T1.Tenor
+
+     FROM		      Commitments_Temp T1 INNER JOIN
+                      Customers T2 ON T1.custID = T2.CustID INNER JOIN
+                      RMTBranches T3 ON T1.CmtBranch = T3.BranchCode  INNER JOIN
+					  LimitDetails T5 ON T1.LimitLineId = T5.DetailId LEFT OUTER JOIN
+                      RMTFinanceTypes T6 ON T1.FacilityRef = T6.FinType
+		</createView>
+	</changeSet>
+
+	<changeSet id="195" author="meena.a">
+		<sql>
+		   <![CDATA[
+			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			 update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			 update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+			 
+			 INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 
+             'CommitmentDialog_BankingArrangement','CommitmentDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+
+             insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'), (select RightID from SecRights WHERE RightName='CommitmentDialog_BankingArrangement'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 
+              INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 
+             'CommitmentDialog_LimitCondition','CommitmentDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+
+             insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'),
+              (select RightID from SecRights WHERE RightName='CommitmentDialog_LimitCondition'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 
+             INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 
+             'CommitmentDialog_ExternalRef','CommitmentDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+
+             insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'),
+              (select RightID from SecRights WHERE RightName='CommitmentDialog_ExternalRef'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 
+              INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 
+             'CommitmentDialog_ExternalRef1','CommitmentDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+
+             insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'),
+              (select RightID from SecRights WHERE RightName='CommitmentDialog_ExternalRef1'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 
+             INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),3, 
+             'CommitmentDialog_Tenor','CommitmentDialog',0,1000,current_timestamp,'Approved',NULL,NULL,NULL,NULL,NULL,0);
+
+             insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='COMMITMENT_MAKER'),
+              (select RightID from SecRights WHERE RightName='CommitmentDialog_Tenor'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+ 
+ 			 update SeqSecGroups set SeqNo = (select max(grpid)+1 from SECGROUPS);
+			 update SeqSecRights set SeqNo = (select max(RightID)+1 from SECRIGHTS);
+			 update SeqSecGroupRights set SeqNo = (select max(GRPRIGHTID)+1 from SECGROUPRIGHTS);
+		    ]]>
+		</sql>
+	</changeSet>
+
+
 </databaseChangeLog>
