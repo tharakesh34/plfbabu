@@ -11966,7 +11966,7 @@ UNION ALL
 			<column name="ExternalRef" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="185" author="meena.a">
 		<comment>extra fields added in Commitments</comment>
 		<addColumn tableName="Commitments">
@@ -11980,7 +11980,7 @@ UNION ALL
 			<column name="Tenor" type="int" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="187" author="meena.a">
 		<comment>extra fields added in Commitments_temp</comment>
 		<addColumn tableName="Commitments_temp">
@@ -12001,7 +12001,7 @@ UNION ALL
 			<column name="ExternalRef" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="190" author="meena.a">
 		<comment>extra fields added in Commitments</comment>
 		<addColumn tableName="Commitments_temp">
@@ -12086,24 +12086,24 @@ UNION ALL
 									  T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.CmtStopRateRange, T1.CmtActive, 
 									  T1.NonPerforming,T1.CmtCharges, T1.ChargesAccount, T2.CustCIF, T6.FinTypeDesc FacilityRefDesc,
 									  T1.CmtAvailableMonths, T1.CollateralRequired, T1.CmtEndDate, T1.LimitLineId, T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.ExternalRef1,T1.Tenor
-				        FROM  Commitments_Temp T1 INNER JOIN
+				        FROM          Commitments_Temp T1 INNER JOIN
 									  Customers T2 ON T1.custID = T2.CustID INNER JOIN
 									  RMTBranches T3 ON T1.CmtBranch = T3.BranchCode  INNER JOIN
 									  LimitDetails T5 ON T1.LimitLineId = T5.DetailId LEFT OUTER JOIN
 									  RMTFinanceTypes T6 ON T1.FacilityRef = T6.FinType
 				   UNION ALL
-					SELECT    T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy,  T1.CmtPftRateMin, 
+				SELECT                T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy,  T1.CmtPftRateMin, 
 									  T1.CmtPftRateMax, T1.CmtAmount, T1.CmtUtilizedAmount, T1.CmtAvailable, T1.CmtPromisedDate, T1.CmtStartDate, T1.CmtExpDate, T1.CmtRvwDate, 
 									  T1.CmtTitle, T1.CmtNotes,T1.Revolving, T1.SharedCmt, T1.MultiBranch, T1.FacilityRef, T1.Version, T1.LastMntBy, T1.LastMntOn,  
 									  T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.CmtStopRateRange, 
 									  T1.CmtActive, T1.NonPerforming, T1.CmtCharges, T1.ChargesAccount, T2.CustCIF, T6.FinTypeDesc FacilityRefDesc,
 									  T1.CmtAvailableMonths, T1.CollateralRequired, T1.CmtEndDate, T1.LimitLineId ,T1.BankingArrangement, T1.LimitCondition, T1.ExternalRef, T1.ExternalRef,T1.Tenor
-					FROM  Commitments T1 INNER JOIN
+				FROM         		  Commitments T1 INNER JOIN
 									  Customers T2 ON T1.custID = T2.CustID INNER JOIN
 									  RMTBranches T3 ON T1.CmtBranch = T3.BranchCode INNER JOIN
 									  LimitDetails T5 ON T1.LimitLineId = T5.DetailId LEFT OUTER JOIN
 									  RMTFinanceTypes T6 ON T1.FacilityRef = T6.FinType
-					WHERE     NOT EXISTS
+				WHERE     NOT EXISTS
 										  (SELECT     1
 											FROM          Commitments_TEMP
 											WHERE      CmtReference = T1.CmtReference)
