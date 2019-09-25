@@ -2955,8 +2955,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.setParent(item);
 
 		ReceiptAllocationDetail xcess = receiptData.getReceiptHeader().getTotalXcess();
+		
+		//Issue Fixed 141140
 
-		addAmountCell(item, xcess.getDueAmount(), null, true);
+		addAmountCell(item, xcess.getTotalDue(), null, true);
 		addAmountCell(item, BigDecimal.ZERO, null, true);
 		addAmountCell(item, xcess.getTotalPaid(), null, true);
 		addAmountCell(item, xcess.getBalance(), null, true);
@@ -3479,9 +3481,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							RepayConstants.ALLOCATION_BOUNCE)) {
 						bncCharge = receiptAllocationDetail.getTotRecv();
 					}
+					//Issue Fixed 141089
 					if (StringUtils.equals(receiptAllocationDetail.getAllocationType(),
 							RepayConstants.ALLOCATION_MANADV)) {
-						receivableAmt = receiptAllocationDetail.getTotRecv();
+						receivableAmt = receivableAmt.add(receiptAllocationDetail.getTotRecv());
 					}
 
 					// Interest for the month
@@ -3558,10 +3561,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					closureReport
 							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
 				}
-				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
+				//Issue Fixed 141142
+				List<ReceiptAllocationDetail>  payableList =new ArrayList<ReceiptAllocationDetail>();
+				payableList.add(receiptData.getReceiptHeader().getTotalXcess());
 				BigDecimal payableAmt = BigDecimal.ZERO;
-				for (ManualAdvise manualAdvise : payableList) {
-					payableAmt = payableAmt.add(manualAdvise.getBalanceAmt());
+				for (ReceiptAllocationDetail recptAllctDetail : payableList) {
+					payableAmt = payableAmt.add(recptAllctDetail.getTotalDue());
 				}
 
 				// Other Refunds (All payable Advise)
@@ -3617,40 +3622,42 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 					next7DayMap.put(valueDate, amount);
 				}
+				
+				if (next7DayMap != null && next7DayMap.size() > 0) {
+					Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
+					// setting next 7 days Dates
+					closureReport.setValueDate1(DateFormatUtils.format(dates[0], "dd-MMM-yyyy"));
+					closureReport.setAmount1(next7DayMap.get(dates[0]));
 
-				Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
-				// setting next 7 days Dates
-				closureReport.setValueDate1(DateFormatUtils.format(dates[0], "dd-MMM-yyyy"));
-				closureReport.setAmount1(next7DayMap.get(dates[0]));
+					if (dates.length > 1) {
+						closureReport.setValueDate2(DateFormatUtils.format(dates[1], "dd-MMM-yyyy"));
+						closureReport.setAmount2(next7DayMap.get(dates[1]));
+					}
 
-				if (dates.length > 1) {
-					closureReport.setValueDate2(DateFormatUtils.format(dates[1], "dd-MMM-yyyy"));
-					closureReport.setAmount2(next7DayMap.get(dates[1]));
-				}
+					if (dates.length > 2) {
+						closureReport.setValueDate3(DateFormatUtils.format(dates[2], "dd-MMM-yyyy"));
+						closureReport.setAmount3(next7DayMap.get(dates[2]));
+					}
 
-				if (dates.length > 2) {
-					closureReport.setValueDate3(DateFormatUtils.format(dates[2], "dd-MMM-yyyy"));
-					closureReport.setAmount3(next7DayMap.get(dates[2]));
-				}
+					if (dates.length > 3) {
+						closureReport.setValueDate4(DateFormatUtils.format(dates[3], "dd-MMM-yyyy"));
+						closureReport.setAmount4(next7DayMap.get(dates[3]));
+					}
 
-				if (dates.length > 3) {
-					closureReport.setValueDate4(DateFormatUtils.format(dates[3], "dd-MMM-yyyy"));
-					closureReport.setAmount4(next7DayMap.get(dates[3]));
-				}
+					if (dates.length > 4) {
+						closureReport.setValueDate5(DateFormatUtils.format(dates[4], "dd-MMM-yyyy"));
+						closureReport.setAmount4(next7DayMap.get(dates[4]));
+					}
 
-				if (dates.length > 4) {
-					closureReport.setValueDate5(DateFormatUtils.format(dates[4], "dd-MMM-yyyy"));
-					closureReport.setAmount4(next7DayMap.get(dates[4]));
-				}
+					if (dates.length > 5) {
+						closureReport.setValueDate6(DateFormatUtils.format(dates[5], "dd-MMM-yyyy"));
+						closureReport.setAmount6(next7DayMap.get(dates[5]));
+					}
 
-				if (dates.length > 5) {
-					closureReport.setValueDate6(DateFormatUtils.format(dates[5], "dd-MMM-yyyy"));
-					closureReport.setAmount6(next7DayMap.get(dates[5]));
-				}
-
-				if (dates.length > 6) {
-					closureReport.setValueDate7(DateFormatUtils.format(dates[6], "dd-MMM-yyyy"));
-					closureReport.setAmount7(next7DayMap.get(dates[6]));
+					if (dates.length > 6) {
+						closureReport.setValueDate7(DateFormatUtils.format(dates[6], "dd-MMM-yyyy"));
+						closureReport.setAmount7(next7DayMap.get(dates[6]));
+					}
 				}
 
 				List<FinanceMain> financeMainList = financeDetailService
