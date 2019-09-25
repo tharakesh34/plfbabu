@@ -166,5 +166,11 @@
 			<column name="WORKFLOWID" type="Bigint" />
 			<column name="ENTITYCODE" type="Varchar(8)" />
 		</createTable>
+	</changeSet>
+	
+	<changeSet id="11" author="vijaya.a">
+		<addColumn tableName="ADTFIN_OPTIONS">
+			<column name="Remarks" type="varchar(250)" />
+		</addColumn>
 	</changeSet>	
 </databaseChangeLog>
