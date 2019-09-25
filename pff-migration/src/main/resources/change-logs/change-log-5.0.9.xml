@@ -12171,5 +12171,4 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
 </databaseChangeLog>
