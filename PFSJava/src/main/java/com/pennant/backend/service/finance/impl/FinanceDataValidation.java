@@ -1409,8 +1409,13 @@ public class FinanceDataValidation {
 			String subModule = financeDetail.getFinScheduleData().getFinanceMain().getFinCategory();
 			// ### 02-05-2018-Start- story #334 Extended fields for loan
 			// servicing
-			errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(financeDetail.getExtendedDetails(),
-					ExtendedFieldConstants.MODULE_LOAN, subModule, FinanceConstants.FINSER_EVENT_ORG);
+			if ((financeDetail.isStp()
+					|| (!financeDetail.isStp() && CollectionUtils.isNotEmpty(financeDetail.getExtendedDetails())))) {
+				errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
+						financeDetail.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
+						FinanceConstants.FINSER_EVENT_ORG);
+			}
+	
 			// ### 02-05-2018-END
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);
