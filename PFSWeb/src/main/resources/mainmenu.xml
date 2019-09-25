@@ -475,10 +475,10 @@
 				rightName="menuItem_SolutionFactory_OverdraftFinanceType" />
 			<menuItem id="menu_Item_CDFinanceType"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceType/CDFinanceTypeList.zul"
-				rightName="menuItem_SolutionFactory_CDFinanceType" />
+				rightName="menuItem_CD_LOANQUEUE" />
 			<menuItem id="menu_Item_CDSchemes"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/CDScheme/CDSchemeList.zul"
-				rightName="menuItem_SolutionFactory_CDScheme" />
+				rightName="menuItem_CD_SCHEME" />
 			<menuItem id="menu_Item_FinanceWorkFlow"
 				zulNavigation="/WEB-INF/pages/SolutionFactory/FinanceWorkFlow/FinanceWorkFlowList.zul?module=FINANCE&amp;eventAction=Origination"
 				rightName="menuItem_SolutionFactory_FinanceWorkFlow" />
