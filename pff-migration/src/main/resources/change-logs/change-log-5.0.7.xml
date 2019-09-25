@@ -5731,4 +5731,117 @@
 		</createView>
 	</changeSet>
 
+	<changeSet id="202" author="vijaya.a">
+		<addColumn tableName="FIN_OPTIONS">
+			<column name="Remarks" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="203" author="vijaya.a">
+		<addColumn tableName="FIN_OPTIONS_TEMP">
+			<column name="Remarks" type="varchar(250)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="204" author="vijaya.a">
+		<createView viewName="FIN_OPTIONS_VIEW" replaceIfExists="true">
+			SELECT t1.id,
+			    t1.finreference,
+			    t1.optiontype,
+			    t1.currentoptiondate,
+			    t1.frequency,
+			    t1.noticeperioddays,
+			    t1.alertdays,
+			    t1.optionexercise,
+			    t1.nextoptiondate,
+			    t1.alerttype,
+			    t1.alerttoroles,
+			    t1.usertemplate,
+			    t1.customertemplate,
+			    ut.templatecode AS usertemplatecode,
+			    cust.templatecode AS customertemplatecode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+				t1.remarks
+			   FROM fin_options_temp t1
+			     LEFT JOIN templates ut ON ut.templateid = t1.usertemplate
+			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
+			UNION ALL
+			 SELECT t1.id,
+			    t1.finreference,
+			    t1.optiontype,
+			    t1.currentoptiondate,
+			    t1.frequency,
+			    t1.noticeperioddays,
+			    t1.alertdays,
+			    t1.optionexercise,
+			    t1.nextoptiondate,
+			    t1.alerttype,
+			    t1.alerttoroles,
+			    t1.usertemplate,
+			    t1.customertemplate,
+			    ut.templatecode AS usertemplatecode,
+			    cust.templatecode AS customertemplatecode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+				t1.remarks
+			   FROM fin_options t1
+			     LEFT JOIN templates ut ON ut.templateid = t1.usertemplate
+			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
+			  WHERE NOT (EXISTS ( SELECT 1
+			           FROM fin_options_temp
+			          WHERE fin_options_temp.id = t1.id))
+		</createView>
+	</changeSet>
+	
+	<changeSet id="205" author="vijaya.a">
+		<createView viewName="FIN_OPTIONS_AVIEW" replaceIfExists="true">
+			SELECT t1.id,
+			    t1.finreference,
+			    t1.optiontype,
+			    t1.currentoptiondate,
+			    t1.frequency,
+			    t1.noticeperioddays,
+			    t1.alertdays,
+			    t1.optionexercise,
+			    t1.nextoptiondate,
+			    t1.alerttype,
+			    t1.alerttoroles,
+			    t1.usertemplate,
+			    t1.customertemplate,
+			    ut.templatecode AS usertemplatecode,
+			    cust.templatecode AS customertemplatecode,
+			    t1.version,
+			    t1.lastmntby,
+			    t1.lastmnton,
+			    t1.recordstatus,
+			    t1.rolecode,
+			    t1.nextrolecode,
+			    t1.taskid,
+			    t1.nexttaskid,
+			    t1.recordtype,
+			    t1.workflowid,
+				t1.remarks
+			   FROM fin_options t1
+			     LEFT JOIN templates ut ON ut.templateid = t1.usertemplate
+			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
