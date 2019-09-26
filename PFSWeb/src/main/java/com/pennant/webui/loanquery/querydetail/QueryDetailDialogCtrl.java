@@ -542,7 +542,13 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("documentDetails", documentDetails);
 			Executions.createComponents("/WEB-INF/pages/LoanQuery/QueryDetail/QueryDocumentView.zul", null, map);
-		}
+		} else if (docName.endsWith(".zip")) {
+			Filedownload.save(new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", documentDetails.getDocImage()));
+		} else if (docName.endsWith(".7z")) {
+			Filedownload.save(new AMedia(docName, "octet-stream", "application/octet-stream", documentDetails.getDocImage()));
+		} else if (docName.endsWith(".rar")) {
+			Filedownload.save(new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", documentDetails.getDocImage()));
+		} 
 		logger.debug(Literal.LEAVING);
 	}
 
