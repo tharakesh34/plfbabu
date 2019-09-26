@@ -199,7 +199,7 @@ public class DeviationRenderer {
 
 			String lable = "";
 			Button button = new Button();
-			if (approverScreen) {
+			if (approverScreen|| workflow) {
 				if (!approved) {
 					lable = "add";
 					button.addForward("onClick", "", "onClickAddNotes", deviationDetail);

@@ -1186,7 +1186,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (StringUtils.equals(PennantConstants.YES, elgMethodVisible) && !isOverdraft) {
-			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 4);
+			this.eligibilityMethod.setProperties("EligibilityMethod", "FieldCodeValue", "ValueDesc", false, 8);
 			List<Long> eligibilityIdsList = new ArrayList<>();
 			if (getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods() != null
 					&& !getFinanceDetail().getFinScheduleData().getFinanceType().getEligibilityMethods().isEmpty()) {
@@ -9972,7 +9972,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Groupbox workingcapGrpBox = null;
 			Groupbox baltransferGrpBox = null;
 			Groupbox expTopupGrpBox = null;
-
+			Groupbox expSepBox = null;
+			Groupbox expCibilGrpBox = null;
+			Groupbox expTurnoverGrpBox = null;
+			Groupbox expCacsGrpBox = null;
+			
 			try {
 				if (window.getFellow("WORKINGCAPITAL") instanceof Groupbox) {
 					workingcapGrpBox = (Groupbox) window.getFellow("WORKINGCAPITAL");
@@ -9985,11 +9989,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (window.getFellow("EXPRESS_TOPUP") instanceof Groupbox) {
 					expTopupGrpBox = (Groupbox) window.getFellow("EXPRESS_TOPUP");
 				}
-
+                 
+				if (window.getFellow("SEPSENP") instanceof Groupbox) {
+					expSepBox = (Groupbox) window.getFellow("SEPSENP");
+				}
+				
+				if (window.getFellow("CIBIL") instanceof Groupbox) {
+					expCibilGrpBox = (Groupbox) window.getFellow("CIBIL");
+				} 
+				
+				if (window.getFellow("TURNOVER") instanceof Groupbox) {
+					expTurnoverGrpBox = (Groupbox) window.getFellow("TURNOVER");
+				} 
+				
+				if (window.getFellow("CACS") instanceof Groupbox) {
+					expCacsGrpBox = (Groupbox) window.getFellow("CACS");
+				} 
+				
 				if (window.getFellow("ad_ELGMETHOD") instanceof Textbox) {
 					elgMethodBox = (Textbox) window.getFellow("ad_ELGMETHOD");
 				}
-
+				
 				if (workingcapGrpBox != null) {
 					workingcapGrpBox.setVisible(false);
 				}
@@ -9999,7 +10019,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (expTopupGrpBox != null) {
 					expTopupGrpBox.setVisible(false);
 				}
-
+                   
+				if (expSepBox != null) {
+					expSepBox.setVisible(false);
+				}
+				
+				if (expCibilGrpBox != null) {
+					expCibilGrpBox.setVisible(false);
+				}
+				
+				if (expTurnoverGrpBox != null) {
+					expTurnoverGrpBox.setVisible(false);
+				}
+				if (expCacsGrpBox != null) {
+					expCacsGrpBox.setVisible(false);
+				}
+				
 				if (elgMethodBox != null) {
 					elgMethodBox.setValue(elgMethod);
 				}
@@ -10016,7 +10051,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					if (expTopupGrpBox != null) {
 						expTopupGrpBox.setVisible(true);
 					}
-				} else {
+				} else if ("SENP".equals(elgMethod)) {
+					if (expSepBox != null) {
+						expSepBox.setVisible(true);
+					}
+				} else if ("CIBIL".equals(elgMethod)) {
+					if (expCibilGrpBox != null) {
+						expCibilGrpBox.setVisible(true);
+					}
+				}else if ("TURN".equals(elgMethod)) {
+					if (expTurnoverGrpBox != null) {
+						expTurnoverGrpBox.setVisible(true);
+					}
+				}else if ("CACS".equals(elgMethod)) {
+					if (expCacsGrpBox != null) {
+						expCacsGrpBox.setVisible(true);
+					}
+				}else {
 					if (elgMethodBox != null) {
 						elgMethodBox.setValue("");
 					}

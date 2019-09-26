@@ -258,6 +258,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("TENOR", creditReviewDetails.getTenor());
 			dataMap.put("ROI", creditReviewDetails.getRoi());
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
+			dataMap.put("COMPOUNDING", 12); // As per IIFL requirement it is defaulted to 12
 		}
 
 		String fields = creditReviewDetails.getFields();

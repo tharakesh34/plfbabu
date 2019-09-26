@@ -34,6 +34,7 @@ import com.pennant.backend.util.DeviationConstants;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.delegationdeviation.DeviationRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
@@ -259,11 +260,14 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	}
 
 	public void doFillAutoDeviationDetails(List<FinanceDeviations> financeDeviations) {
+		logger.debug(Literal.ENTERING);
 		deviationRenderer.renderAutoDeviations(financeDeviations, getFinanceDetail().getApprovedFinanceDeviations(),
 				this.listBoxAutoDeviations);
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnProceed() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
 
 		Executions.getCurrent().setAttribute("devationConfirm", true);
 		List<FinanceDeviations> list = getFinanceDetail().getFinanceDeviations();
@@ -282,6 +286,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 		Executions.notify(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
 		this.window_deviationDetailDialog.onClose();
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnCancel() {
