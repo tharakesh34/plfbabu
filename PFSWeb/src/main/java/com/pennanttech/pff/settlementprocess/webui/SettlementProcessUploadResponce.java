@@ -218,11 +218,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
-				int count = financeMainDAO
-						.getCountByOldHostReference(String.valueOf(settlementMapdata.getValue("HostReference")));
-				if (count > 0) {
 					throw new AppException("HostReference is not avilable in PLF or inacive");
-				}
 			}
 		}
 

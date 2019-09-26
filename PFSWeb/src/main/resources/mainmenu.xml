@@ -1366,6 +1366,9 @@
 				rightName="menu_Item_NDCReport" /> <menuItem id="menu_Item_BalanceCertificate" 
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_BalanceCertificate" 
 				/> -->
+				<menuItem id="menu_Item_IndASReport"
+				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
+				rightName="menu_Item_IndASReport" />
 		</menu>
 		<menu id="menu_Category_Disbursements">
 			<menuItem id="menu_Item_DAILYDISBURSALREPORT"
