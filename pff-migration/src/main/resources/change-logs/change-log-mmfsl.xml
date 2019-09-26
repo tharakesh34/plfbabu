@@ -3042,4 +3042,15 @@
 			]]>
 		</sql>
 	</changeSet>
+		
+	<changeSet id="46" author="vijaya.a">
+		<sql>
+			<![CDATA[
+					Insert into REPORTCONFIGURATION values ((select max(reportid)+1 from reportconfiguration),'Excel:IND AS Report','IND AS Report',1,'IndASReport','dataSource',1,'menu_Item_IndASReport',1,1000,null,null,null,null,null,null,0,current_timestamp,0,0,1);
+					Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_IndASReport'),1,'Entity','LOVSEARCH','Entity','sd.ENTITYCODE',null,'ENTITY','getEntityCode','getEntityDesc',0,0,0,0,1,1,null,null,null,null,150,0,'=',4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+					Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_IndASReport'),2,'FinReference','LOVSEARCH','Loan Reference','ir.finreference',null,'FinanceMain','getFinReference','getFinReference',1,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+					Insert into REPORTFILTERFIELDS  values ((select reportid from reportconfiguration where menuitemcode='menu_Item_IndASReport'),3,'FinType','LOVSEARCH','Loan Type','fm.fintype',null,'FinanceType','getFinType','getFinTypeDesc',1,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	
