@@ -773,7 +773,7 @@
 				rightName="menuItem_FinanceManagement_ReceiptBounce" /> <menuItem id="menu_Item_ReceiptCancellation" 
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/ReceiptCancellationList.zul?module=C" 
 				rightName="menuItem_FinanceManagement_ReceiptCancellation" /> -->
-			<menuItem id="menu_Item_InitMaker"
+			<!-- <menuItem id="menu_Item_InitMaker"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPT_MAKER" />
 			<menuItem id="menu_Item_ForeClosureDepositMaker"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=DEPOSIT_MAKER" />
@@ -798,20 +798,20 @@
 				rightName="menuItem_Receipts_ClosureMaker" />
 			<menuItem id="menu_Item_closureApprover"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPTCLOSURE_APPROVER"
-				rightName="menuItem_Receipts_ClosureApprover" />
+				rightName="menuItem_Receipts_ClosureApprover" /> -->
 			<!-- <menuItem id="menu_Item_closureMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_MAKER" 
 				rightName="menuItem_Receipts_KnockoffApprover"/> <menuItem id="menu_Item_closureApprover" 
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" 
 				rightName="menuItem_Receipts_KnockoffApprover"/> -->
-			<menuItem id="menu_Item_ReceiptEnquiry"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?enqiryModule=Y" />
+			<!-- <menuItem id="menu_Item_ReceiptEnquiry"
+				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?enqiryModule=Y" /> -->
 			<!-- <menuItem id="menu_Item_clousureApprover" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=CLOSURE_APPROVER" 
 				rightName="menuItem_Receipts_ClosureApprover"/> <menuItem id="menu_Item_BounceMaker" 
 				zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=BM" 
 				rightName="menuItem_Receipts_BounceMaker"/> <menuItem id="menu_Item_BounceApprover" 
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Pa ymentMode/ReceiptList.zul?module=RECEIPTBOUNCE_APPROVER" 
 				rightName="menuItem_Receipts_BounceApprover"/> -->
-			<menuItem id="menu_Item_FeeReceipts"
+			<!-- <menuItem id="menu_Item_FeeReceipts"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeReceiptList.zul"
 				rightName="menuItem_FinanceManagement_FeeReceipts" />
 			<menuItem id="menu_Item_FeeReceiptCancellation"
@@ -825,7 +825,7 @@
 				rightName="menu_Item_ReceiptUpload" />
 			<menuItem id="menu_Item_ReceiptUploadApproval"
 				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=Y"
-				rightName="menu_Item_ReceiptUploadApprover" />
+				rightName="menu_Item_ReceiptUploadApprover" /> -->
 		</menu>
 		<menu id="menu_Category_LmsManualPostings">
 			<menuItem id="menu_Item_ManualAdvise"
