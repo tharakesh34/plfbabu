@@ -108,17 +108,10 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		}
 		// Customer
 		this.customer.getTextbox().setReadonly(false);
-		this.customer.setModuleName("Customer");
+		this.customer.setModuleName("LimitsCustomer");
 		this.customer.setValueColumn("CustCIF");
 		this.customer.setValidateColumns(
 				new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
-		List<Long> existingcustomers = PennantAppUtil.getLimitHeaderCustomer(true, false);
-		Filter[] filters2 = new Filter[1];
-		filters2[0] = new Filter("CustID", existingcustomers, Filter.OP_NOT_IN);
-		if (existingcustomers != null && existingcustomers.size() > 0) {
-			this.customer.setFilters(filters2);
-		}
-
 		//Rule
 		logger.debug("Leaving");
 	}

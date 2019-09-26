@@ -12266,5 +12266,18 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="199" author="vijaya.a">
+		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
+			SELECT Distinct t1.custid, 
+				t1.custcif, 
+				t1.CustShrtName,
+			    t1.CustCtgCode,
+			    t1.CustFName,
+			    t1.CustLName
+			   FROM customers t1 
+			   inner join LimitHeader t2 on t1.CustId != t2.customerId	
+		</createView>
+	</changeSet>
 
 </databaseChangeLog>

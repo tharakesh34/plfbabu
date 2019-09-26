@@ -3436,6 +3436,11 @@ public class PennantJavaUtil {
 				new String[] { "DealerId", "Code", "DealerName" },
 				new Object[][] { { "DealerType", "0", VASConsatnts.VASAGAINST_PARTNER }, { "Active", "0", 1 } }, 350));
 
+		ModuleUtil.register("LimitsCustomer",
+				new ModuleMapping("Customer", Customer.class, new String[] { "Customers", "LimitCustomers_View" },
+						customerWF, new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" },
+						null, 700));
+
 		registerCustomModules();
 	}
 
