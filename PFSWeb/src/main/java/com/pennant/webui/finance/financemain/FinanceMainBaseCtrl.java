@@ -4471,6 +4471,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		fillList(this.advStage, AdvanceStage.getList(), aFinanceMain.getAdvStage());
 
+		// Interest review frequency and grace interest review frequency changed when loan start date changes
+		procRvwFrqs();
+				
 		// tasks # >>End Advance EMI and DSF
 		// Makes Frequency Dates to empty 
 		if (StringUtils.equals(menuItemRightName, "menuItem_FinanceManagement_ChangeGestation")
@@ -8783,6 +8786,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Interest review frequency and grace interest review frequency changed
 		// when loan start date changes
+		procRvwFrqs();
+
+		autoBuildSchedule();
+	}
+
+	private void procRvwFrqs() {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
 
 			if (StringUtils.isNotBlank(this.gracePftRvwFrq.getValue())) {
@@ -8797,8 +8806,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				processRvwFrqChange(this.repayRvwFrq, baseRateCode);
 			}
 		}
-
-		autoBuildSchedule();
 	}
 
 	/**
@@ -9008,7 +9015,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.graceTerms);
 		this.graceTerms.clearErrorMessage();
-
+		
+		Clients.clearWrongValue(this.numberOfTerms);
+		this.numberOfTerms.clearErrorMessage();
+		
 		if (this.graceTerms.getValue() != null) {
 
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
@@ -9060,6 +9070,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		Clients.clearWrongValue(this.numberOfTerms);
 		this.numberOfTerms.clearErrorMessage();
+		
+		Clients.clearWrongValue(this.graceTerms);
+		this.graceTerms.clearErrorMessage();
 
 		if (this.numberOfTerms.getValue() != null) {
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.repayRate.getBaseValue(), "");
@@ -10701,6 +10714,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		int graceTerms = 0;
 		int noOfTerms = 0;
 
+		Clients.clearWrongValue(this.graceTerms);
+		this.graceTerms.setErrorMessage("");
+
+		Clients.clearWrongValue(this.numberOfTerms);
+		this.numberOfTerms.setErrorMessage("");
+		
 		if (this.graceTerms.getValue() != null) {
 			graceTerms = this.graceTerms.intValue();
 		}
@@ -12371,9 +12390,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Validate grace terms against the grace frequency
 				if (!this.graceTerms.isReadonly()) {
-					String errMsg = validateNumOfGrcTerms();
-					if (errMsg != null) {
-						throw new WrongValueException(this.graceTerms, errMsg);
+					if (!(aFinanceMain.isNew() && this.maturityDate.getValue() != null)) {
+						String errMsg = validateNumOfGrcTerms();
+						if (errMsg != null) {
+							throw new WrongValueException(this.graceTerms, errMsg);
+						}
 					}
 				}
 			}
@@ -13178,12 +13199,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				//Validate number of terms against the repay frequency.
 				if(!this.numberOfTerms.isReadonly()){
-					String errMsg = validateNumOfTerms();
-					if (errMsg != null) {
-						throw new WrongValueException(this.numberOfTerms, errMsg);
+					if (!(aFinanceMain.isNew() && this.maturityDate.getValue() != null)) {
+						String errMsg = validateNumOfTerms();
+						if (errMsg != null) {
+							throw new WrongValueException(this.numberOfTerms, errMsg);
+						}
 					}
 				}
-				
 
 				aFinanceMain.setNumberOfTerms(noterms);
 			}
