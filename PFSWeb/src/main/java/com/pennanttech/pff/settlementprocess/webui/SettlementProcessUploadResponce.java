@@ -12,6 +12,10 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
 import com.pennant.app.util.DateUtility;
@@ -47,6 +51,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private DisbursementPostings disbursementPostings;
+	private PlatformTransactionManager	transactionManager;
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
@@ -104,6 +109,8 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table) {
+		TransactionStatus txStatus = null;
+
 		try {
 			MapSqlParameterSource settlementMapdata = new MapSqlParameterSource();
 
@@ -155,6 +162,10 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			validate(settlementMapdata);
 
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+			txStatus = this.transactionManager.getTransaction(txDef);
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
@@ -189,8 +200,9 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					}
 				}
 			}
-
+			this.transactionManager.commit(txStatus);
 		} catch (Exception e) {
+			this.transactionManager.rollback(txStatus);
 			throw new AppException(e.getMessage());
 
 		}
@@ -272,7 +284,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	}
 
-	public void settlementFileDownload(Object... params) throws Exception {
+	public DataEngineStatus settlementFileDownload(Object... params) throws Exception {
 		long userId = (Long) params[0];
 		String userName = (String) params[1];
 		String batchId = (String) params[2];
@@ -285,7 +297,9 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		genetare(dataEngine, userName, filterMap, parameterMap);
+		DataEngineStatus status= genetare(dataEngine, userName, filterMap, parameterMap);
+		
+		return status;
 
 	}
 
@@ -314,6 +328,14 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
+	}
+
+	public PlatformTransactionManager getTransactionManager() {
+		return transactionManager;
+	}
+
+	public void setTransactionManager(PlatformTransactionManager transactionManager) {
+		this.transactionManager = transactionManager;
 	}
 
 }

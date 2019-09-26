@@ -5368,6 +5368,9 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
 	</bean>
 
 	<bean id="settlementProcessDownloadListCtrl" class="com.pennanttech.framework.component.dataengine.SettlementProcessDownloadListCtrl"

@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.media.Media;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
@@ -30,8 +29,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
+import com.pennanttech.dataengine.model.Configuration;
 import com.pennanttech.dataengine.model.DataEngineStatus;
-import com.pennanttech.framework.component.dataengine.SettlementProcessUploadDialogueCtrl.ProcessData;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.settlementprocess.model.SettlementProcess;
@@ -138,9 +137,11 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 
 			try {
 				try {
-					Thread thread = new Thread(new ProcessData(this.userId, SETTLEMENT_REQUEST_DOWNLOAD,
-							settlementData.getRequestBatchId(), settlementData));
-					thread.start();
+					DataEngineStatus status = settlementProcessUploadResponce.settlementFileDownload(this.userId,
+							getUserWorkspace().getLoggedInUser().getUserName(), settlementData.getRequestBatchId());
+					Configuration config = dataEngineConfig.getConfigurationByName(status.getName());
+					downloadFromServer(status.getFileName(), config.getUploadPath());
+					
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 					return;
@@ -156,31 +157,25 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public class ProcessData implements Runnable {
-		private long userId;
-		private DataEngineStatus status;
-		private String Id;
-		SettlementProcess settlementProcess;
-
-		public ProcessData(long userId, DataEngineStatus status, String id, SettlementProcess settlementData) {
-			this.userId = userId;
-			this.status = status;
-			this.Id = id;
-			this.settlementProcess = settlementData;
+	private void downloadFromServer(String fileName, String filePath) throws FileNotFoundException, IOException {
+		if (filePath != null && fileName != null) {
+			filePath = filePath.concat("/").concat(fileName);
 		}
 
-		@Override
-		public void run() {
-			try {
-				settlementProcessUploadResponce.settlementFileDownload(this.userId,
-						getUserWorkspace().getLoggedInUser().getUserName(), this.Id);
-			} catch (Exception e) {
-				logger.error("Exception:", e);
-			}
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+		InputStream inputStream = new FileInputStream(filePath);
+		int data;
+		while ((data = inputStream.read()) >= 0) {
+			stream.write(data);
 		}
 
+		inputStream.close();
+		inputStream = null;
+		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
+		stream.close();
 	}
-
+	
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 
