@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExtInterfaceConfigurationDAOImpl.java                                                   * 	  
+ * FileName    		:  ExtInterfaceConfigurationDAOImpl.java                                * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -46,7 +46,6 @@ package com.pennant.backend.dao.externalinterface.impl;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -159,7 +158,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (interfaceConfiguration.getId()==Long.MIN_VALUE){
-			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfiguration"));
+			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfig"));
 			logger.debug("get NextID:"+interfaceConfiguration.getId());
 		}
 
