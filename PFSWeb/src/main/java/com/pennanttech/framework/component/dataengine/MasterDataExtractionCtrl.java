@@ -1,7 +1,9 @@
 package com.pennanttech.framework.component.dataengine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
@@ -43,7 +45,8 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that the window to be created.
+	 * The framework calls this event handler when an application requests that
+	 * the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -90,9 +93,10 @@ public class MasterDataExtractionCtrl extends GFCBaseCtrl<Configuration> {
 		DataEngineStatus status = new DataEngineStatus(config);
 		DataEngineExport export = new DataEngineExport(dataEngineConfig.getDataSource(), 1000, App.DATABASE.toString(),
 				true, null, status);
-
+		Map<String, Object> filterMap = new HashMap<String, Object>();
+		export.setFilterMap(filterMap);
+		export.setChecksumRequired(true);
 		export.exportData(config);
-
 		while ("I".equals(status.getStatus())) {
 			Thread.sleep(100);
 		}
