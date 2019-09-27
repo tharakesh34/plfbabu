@@ -6564,7 +6564,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
-					processFrqChange(this.gracePftFrq);
+					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
+						processFrqChange(this.gracePftFrq);
+					}
 				}
 			}
 			//
@@ -9152,7 +9154,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		return null;
 	}
-	
+
 	public void onChange$gracePeriodEndDate(Event event) throws SuspendNotAllowedException, InterruptedException {
 		logger.debug("Entering" + event.toString());
 		if (!StringUtils.equals(moduleDefiner, FinanceConstants.FINSER_EVENT_CHGGRCEND)) {
