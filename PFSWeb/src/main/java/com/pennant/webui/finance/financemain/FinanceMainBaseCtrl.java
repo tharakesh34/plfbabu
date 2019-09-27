@@ -7699,9 +7699,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 				// ### 01-05-2018 - End
+				
+				//Deviations should not invoke while resubmit and rejecting the  cases.
+				if (!("Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						|| this.userAction.getSelectedItem().getLabel().contains("Reject")
+						|| this.userAction.getSelectedItem().getLabel().contains("Resubmit")
+						|| this.userAction.getSelectedItem().getLabel().contains("Decline")
+						|| this.userAction.getSelectedItem().getLabel().contains("Hold")
+						|| this.userAction.getSelectedItem().getLabel().contains("Revert"))) {
 
-				if (!processDeviations(aFinanceDetail, recSave)) {
-					return;
+					if (!processDeviations(aFinanceDetail, recSave)) {
+						return;
+					}
 				}
 			} else {
 				aFinanceDetail.setFinanceDeviations(null);

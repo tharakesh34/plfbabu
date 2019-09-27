@@ -12279,5 +12279,58 @@ UNION ALL
 			   inner join LimitHeader t2 on t1.CustId != t2.customerId	
 		</createView>
 	</changeSet>
+	<changeSet id="200" author="Varaprasad.K">
+		<comment>New columns added for Raised user display in Deviations</comment>
+		<addColumn tableName="FinanceDeviations">
+			<column name="RaisedUser" type="varchar(50)" />
+		</addColumn>
+		<addColumn tableName="FinanceDeviations_Temp">
+			<column name="RaisedUser" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="201" author="Varaprasad.K">
+		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
+		   SELECT t1.deviationid,
+				    t1.finreference,
+				    t1.module,
+				    t1.deviationcode,
+				    t1.deviationtype,
+				    t1.userrole,
+				    t1.deviationvalue,
+				    t1.delegationrole,
+				    t1.approvalstatus,
+				    t1.deviationdate,
+				    t1.deviationuserid,
+				    t1.delegateduserid,
+				    t1.raisedUser
+				   FROM plf.financedeviations_temp t1
+				UNION ALL
+				 SELECT t1.deviationid,
+				    t1.finreference,
+				    t1.module,
+				    t1.deviationcode,
+				    t1.deviationtype,
+				    t1.userrole,
+				    t1.deviationvalue,
+				    t1.delegationrole,
+				    t1.approvalstatus,
+				    t1.deviationdate,
+				    t1.deviationuserid,
+				    t1.delegateduserid,
+				    t1.raisedUser
+				   FROM plf.financedeviations t1
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM plf.financedeviations_temp
+				          WHERE financedeviations_temp.deviationid = t1.deviationid))
+		</createView>
+	</changeSet>
+	<changeSet id="202" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE';
+					INSERT INTO SMTparameters  VALUES ('MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE', 'To exclude manual deviations triggering for same role', 'String', '1', 'Y', 1, 0, NULL, NULL,'To exclude manual deviations triggering for same role', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

@@ -63,6 +63,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -77,6 +78,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -601,13 +603,20 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		try {
 			//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
+			
+			if (SysParamUtil.isAllowed(SMTParameterConstants.MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE)) {
 
-			if (!initDelegationRole.equals(this.delegationRole.getSelectedItem().getValue())
-					&& !PennantConstants.List_Select.equals(this.status.getSelectedItem().getValue())) {
-				throw new WrongValueException(status, "Select either approval status or change approval authority.");
+				if (!initDelegationRole.equals(this.delegationRole.getSelectedItem().getValue())
+						&& !PennantConstants.List_Select.equals(this.status.getSelectedItem().getValue())) {
+					throw new WrongValueException(status, "Select either approval status or change approval authority.");
+				}
 			}
 			//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
+			
+			
+			
+			
 			aFinanceDeviations.setDelegationRole(this.delegationRole.getSelectedItem().getValue());
 
 		} catch (WrongValueException e) {
@@ -776,64 +785,67 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	public void doSave() throws InterruptedException {
 		logger.debug("Entering");
 
-		final FinanceDeviations aFinAdvancePayments = new FinanceDeviations();
-		BeanUtils.copyProperties(this.financeDeviations, aFinAdvancePayments);
+		final FinanceDeviations aFinanceDeviations = new FinanceDeviations();
+		BeanUtils.copyProperties(this.financeDeviations, aFinanceDeviations);
 		boolean isNew = false;
 
 		if (isWorkFlowEnabled()) {
-			aFinAdvancePayments.setRecordStatus(userAction.getSelectedItem().getValue().toString());
-			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinAdvancePayments.getNextTaskId(),
-					aFinAdvancePayments);
+			aFinanceDeviations.setRecordStatus(userAction.getSelectedItem().getValue().toString());
+			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinanceDeviations.getNextTaskId(),
+					aFinanceDeviations);
+		}
+		if(aFinanceDeviations.isNew()){
+			aFinanceDeviations.setRaisedUser(getUserWorkspace().getLoggedInUser().getUserName());
 		}
 
 		// force validation, if on, than execute by component.getValue()
-		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFinAdvancePayments.getRecordType()) && isValidation()) {
+		if (!PennantConstants.RECORD_TYPE_DEL.equals(aFinanceDeviations.getRecordType()) && isValidation()) {
 			doClearMessage();
 			doSetValidation();
 			// fill the FinAdvancePaymentsDetail object with the components data
-			doWriteComponentsToBean(aFinAdvancePayments);
+			doWriteComponentsToBean(aFinanceDeviations);
 		}
 
 		// Write the additional validations as per below example
 		// get the selected branch object from the listbox
 		// Do data level validations here
 
-		isNew = aFinAdvancePayments.isNew();
+		isNew = aFinanceDeviations.isNew();
 		String tranType = "";
 
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
-				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
+			if (StringUtils.isBlank(aFinanceDeviations.getRecordType())) {
+				aFinanceDeviations.setVersion(aFinanceDeviations.getVersion() + 1);
 				if (isNew) {
-					aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					aFinanceDeviations.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					aFinAdvancePayments.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					aFinAdvancePayments.setNewRecord(true);
+					aFinanceDeviations.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					aFinanceDeviations.setNewRecord(true);
 				}
 			}
 		} else {
 
 			if (isNewCustomer()) {
 				if (isNewRecord()) {
-					aFinAdvancePayments.setVersion(1);
-					aFinAdvancePayments.setRecordType(PennantConstants.RCD_ADD);
+					aFinanceDeviations.setVersion(1);
+					aFinanceDeviations.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 
-				if (StringUtils.isBlank(aFinAdvancePayments.getRecordType())) {
-					aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
-					aFinAdvancePayments.setRecordType(PennantConstants.RCD_UPD);
+				if (StringUtils.isBlank(aFinanceDeviations.getRecordType())) {
+					aFinanceDeviations.setVersion(aFinanceDeviations.getVersion() + 1);
+					aFinanceDeviations.setRecordType(PennantConstants.RCD_UPD);
 				}
 
-				if (aFinAdvancePayments.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
+				if (aFinanceDeviations.getRecordType().equals(PennantConstants.RCD_ADD) && isNewRecord()) {
 					tranType = PennantConstants.TRAN_ADD;
-				} else if (aFinAdvancePayments.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (aFinanceDeviations.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					tranType = PennantConstants.TRAN_UPD;
 				}
 			} else {
-				aFinAdvancePayments.setVersion(aFinAdvancePayments.getVersion() + 1);
+				aFinanceDeviations.setVersion(aFinanceDeviations.getVersion() + 1);
 				if (isNew) {
 					tranType = PennantConstants.TRAN_ADD;
 				} else {
@@ -846,7 +858,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 		try {
 
 			if (isNewCustomer()) {
-				AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinAdvancePayments, tranType);
+				AuditHeader auditHeader = newFinAdvancePaymentsProcess(aFinanceDeviations, tranType);
 				auditHeader = ErrorControl.showErrorDetails(this.window_ManualDeviationTrigger, auditHeader);
 				int retValue = auditHeader.getProcessStatus();
 				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {

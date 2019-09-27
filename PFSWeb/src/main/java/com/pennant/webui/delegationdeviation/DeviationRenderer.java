@@ -295,10 +295,16 @@ public class DeviationRenderer {
 			listcell = getNewListCell(PennantStaticListUtil.getPropertyValue(severities, deviation.getSeverity()),
 					devNotallowed);
 			listitem.appendChild(listcell);
+			
+			// Raised User
+			listcell = getNewListCell(deviation.getRaisedUser(), devNotallowed);
+			listitem.appendChild(listcell);
 
-			// Raised By
+			// Raised Role
 			listcell = getNewListCell(deviation.getUserRole(), devNotallowed);
 			listitem.appendChild(listcell);
+			
+			
 
 			// Raised On
 			listcell = getNewListCell(DateUtility.formatToShortDate(deviation.getDeviationDate()), devNotallowed);

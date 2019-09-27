@@ -45,6 +45,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private String severityCode;
 	private String severityName;
 	private boolean markDeleted;
+	private String  raisedUser;
 
 	public FinanceDeviations() {
 		super();
@@ -335,5 +336,13 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 
 	public void setDeviationDesc(String deviationDesc) {
 		this.deviationDesc = deviationDesc;
+	}
+
+	public String getRaisedUser() {
+		return raisedUser;
+	}
+
+	public void setRaisedUser(String raisedUser) {
+		this.raisedUser = raisedUser;
 	}
 }

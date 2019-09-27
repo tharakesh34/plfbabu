@@ -236,5 +236,11 @@
 			<column name="Tenor" type="int" />
 		</addColumn>
 	</changeSet>
+	<changeSet id="28" author="Varaprasad.K">
+	<comment>New columns added for Raised user display in Deviations</comment>
+	<addColumn tableName="AdtFinanceDeviations">
+		<column name="RaisedUser" type="varchar(50)" />
+	</addColumn>
+</changeSet>
 
 </databaseChangeLog>
