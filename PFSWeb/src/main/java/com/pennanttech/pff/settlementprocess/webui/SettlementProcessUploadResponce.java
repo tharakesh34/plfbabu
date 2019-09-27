@@ -160,12 +160,14 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					new BigDecimal((String) record.getValue("MaxValueOfProduct")));
 			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
-			validate(settlementMapdata);
 
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 			txStatus = this.transactionManager.getTransaction(txDef);
+			
+			validate(settlementMapdata);
+
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
 			FinanceMain finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
