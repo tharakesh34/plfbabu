@@ -3555,7 +3555,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// -TDS - Total Waiver)
 				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
 						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
-						.add(closureReport.getInstForTheMonth()).add(closureReport.getForeClosFees())
+						.add(closureReport.getInstForTheMonth()).add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 				if (noOfIntDays > 0) {
 					closureReport
