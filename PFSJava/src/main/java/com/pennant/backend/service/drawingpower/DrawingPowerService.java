@@ -4,7 +4,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface DrawingPowerService {
 
-	String doDrawingPowerCheck(FinanceDetail financeDetail);
+	String doDrawingPowerCheck(FinanceDetail financeDetail, String moduleDefiner);
 
 	String doRevolvingValidations(FinanceDetail financeDetail);
 }

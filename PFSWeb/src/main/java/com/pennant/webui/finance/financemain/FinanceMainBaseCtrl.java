@@ -6770,7 +6770,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail());
+				String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail(), moduleDefiner);
 
 				if (StringUtils.trimToNull(msg) != null) {
 					FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
@@ -6855,7 +6855,30 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
 		this.doWriteComponentsToBean(aFinScheduleData);
+		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		if (financeType.isAllowDrawingPower()) {
+			if (StringUtils.isEmpty(moduleDefiner) && "Submit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
 
+				if (!"Cancel".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						&& !"Resubmit".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
+						&& !"Reject".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
+
+					String msg = drawingPowerService.doDrawingPowerCheck(getFinanceDetail(), moduleDefiner);
+
+					if (StringUtils.trimToNull(msg) != null) {
+						if (financeType.isAlwSanctionAmtOverride()) {
+							if (MessageUtil.confirm(msg,
+									MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
+								return;
+							}
+						} else {
+							MessageUtil.showError(msg);
+							return;
+						}
+					}
+				}
+			}
+		}
 		// LTD Detail
 		resetLowerTaxDeductionDetail(aFinScheduleData);
 
