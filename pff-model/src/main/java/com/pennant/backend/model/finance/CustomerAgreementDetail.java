@@ -18,6 +18,7 @@ public class CustomerAgreementDetail {
 	private String customerPhoneNumber;
 	private Map<String, Object> extendedFields = new HashMap<>();
 	private Date appDate;
+	private Date dob;
 
 	public String getCustShrtName() {
 		return custShrtName;
@@ -89,6 +90,14 @@ public class CustomerAgreementDetail {
 
 	public void setCustomerPhoneNumber(String customerPhoneNumber) {
 		this.customerPhoneNumber = customerPhoneNumber;
+	}
+
+	public Date getDob() {
+		return dob;
+	}
+
+	public void setDob(Date dob) {
+		this.dob = dob;
 	}
 
 }
