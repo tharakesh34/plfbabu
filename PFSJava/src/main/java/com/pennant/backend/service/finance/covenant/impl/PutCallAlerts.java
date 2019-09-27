@@ -14,12 +14,14 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -40,6 +42,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 	private CustomerDetailsService customerDetailsService;
 	private NotificationService notificationService;
 	private FinOptionDAO finOptionDAO;
+	private ManualAdviseDAO manualAdviseDAO;
 
 	private Date appDate;
 
@@ -84,6 +87,13 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 		BigDecimal totalPriBal = finOption.getTotalPriBal();
 		BigDecimal penaltyPaid = finOption.getPenaltyPaid();
+		BigDecimal penaltyDue = finOption.getPenaltyDue() == null ? BigDecimal.ZERO : finOption.getPenaltyDue();
+		BigDecimal penaltyWaived = finOption.getPenaltyWaived() == null ? BigDecimal.ZERO
+				: finOption.getPenaltyWaived();
+		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO
+				: finOption.getTdSchdPftBal();// Interest receivable
+		BigDecimal pftAmz = finOption.getPftAmz() == null ? BigDecimal.ZERO : finOption.getPftAmz();
+		BigDecimal otherCharges = BigDecimal.ZERO;
 
 		if (totalPriBal == null) {
 			totalPriBal = BigDecimal.ZERO;
@@ -92,8 +102,20 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		if (penaltyPaid == null) {
 			penaltyPaid = BigDecimal.ZERO;
 		}
-
-		finOption.setTotalAmt(totalPriBal.add(penaltyPaid));
+		
+		BigDecimal interestIncludingAccrued =totSchdPftBal.add(pftAmz);
+		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finOption.getFinReference(),
+				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any Charges
+		if (CollectionUtils.isNotEmpty(advises)) {
+			for (ManualAdvise manualAdvise : advises) {
+				otherCharges = otherCharges.add(manualAdvise.getAdviseAmount()
+						.subtract(manualAdvise.getPaidAmount().subtract(manualAdvise.getWaivedAmount())));
+			}
+		}
+		finOption.setTotPenal(penaltyDue);
+		finOption.setInterestInclAccrued(interestIncludingAccrued); /* Interest Including Interest accrued till date */
+		finOption.setOtherChargers(otherCharges);
+		finOption.setTotalAmt(totalPriBal.add(penaltyDue).add(interestIncludingAccrued).add(otherCharges));
 
 		Date custUserFrequencyDate = DateUtil.addDays(currentOptionDate, -noticePeriodDays);
 
@@ -170,7 +192,8 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 			}
 			// Notification for Asset Review to Customer - End
 
-		} else if (finOption.getUserTemplateCode() != null && finOption.getAlertToRoles() != null) {
+		}
+		if (finOption.getUserTemplateCode() != null && finOption.getAlertToRoles() != null) {
 			List<SecurityUser> secUsers = securityUserDAO.getSecUsersByRoles(finOption.getAlertToRoles().split(","));
 			List<String> emails = new ArrayList<>();
 			for (SecurityUser securityUser : secUsers) {
@@ -290,5 +313,13 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 
 	public void setFinOptionDAO(FinOptionDAO finOptionDAO) {
 		this.finOptionDAO = finOptionDAO;
+	}
+
+	public ManualAdviseDAO getManualAdviseDAO() {
+		return manualAdviseDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 }

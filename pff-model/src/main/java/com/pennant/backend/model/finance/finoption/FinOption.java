@@ -40,6 +40,14 @@ public class FinOption extends AbstractWorkflowEntity {
 	private FinOption befImage;
 	private LoggedInUser userDetails;
 
+	private BigDecimal pftAmz = BigDecimal.ZERO;
+	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;// Interest receivable
+	private BigDecimal totPenal = BigDecimal.ZERO;// Total Penality
+	private BigDecimal penaltyDue = BigDecimal.ZERO;
+	private BigDecimal interestInclAccrued = BigDecimal.ZERO;
+	private BigDecimal penaltyWaived = BigDecimal.ZERO;
+	private BigDecimal otherChargers = BigDecimal.ZERO;
+	
 	public FinOption() {
 		super();
 	}
@@ -56,6 +64,13 @@ public class FinOption extends AbstractWorkflowEntity {
 		excludeFields.add("penaltyPaid");
 		excludeFields.add("totalAmt");
 		excludeFields.add("alertsentOn");
+		excludeFields.add("pftAmz");
+		excludeFields.add("tdSchdPftBal");
+		excludeFields.add("totPenal");
+		excludeFields.add("penaltyDue");
+		excludeFields.add("penaltyWaived");
+		excludeFields.add("interestInclAccrued");
+		excludeFields.add("otherChargers");
 		return excludeFields;
 
 	}
@@ -278,6 +293,63 @@ public class FinOption extends AbstractWorkflowEntity {
 
 	public void setCustomerTemplateCode(String customerTemplateCode) {
 		this.customerTemplateCode = customerTemplateCode;
+	}
+
+
+	public BigDecimal getTotPenal() {
+		return totPenal;
+	}
+
+	public void setTotPenal(BigDecimal totPenal) {
+		this.totPenal = totPenal;
+	}
+
+	public BigDecimal getPenaltyDue() {
+		return penaltyDue;
+	}
+
+	public void setPenaltyDue(BigDecimal penaltyDue) {
+		this.penaltyDue = penaltyDue;
+	}
+
+	public BigDecimal getPenaltyWaived() {
+		return penaltyWaived;
+	}
+
+	public void setPenaltyWaived(BigDecimal penaltyWaived) {
+		this.penaltyWaived = penaltyWaived;
+	}
+
+	public BigDecimal getInterestInclAccrued() {
+		return interestInclAccrued;
+	}
+
+	public void setInterestInclAccrued(BigDecimal interestInclAccrued) {
+		this.interestInclAccrued = interestInclAccrued;
+	}
+
+	public BigDecimal getOtherChargers() {
+		return otherChargers;
+	}
+
+	public void setOtherChargers(BigDecimal otherChargers) {
+		this.otherChargers = otherChargers;
+	}
+
+	public BigDecimal getTdSchdPftBal() {
+		return tdSchdPftBal;
+	}
+
+	public void setTdSchdPftBal(BigDecimal tdSchdPftBal) {
+		this.tdSchdPftBal = tdSchdPftBal;
+	}
+
+	public BigDecimal getPftAmz() {
+		return pftAmz;
+	}
+
+	public void setPftAmz(BigDecimal pftAmz) {
+		this.pftAmz = pftAmz;
 	}
 
 }

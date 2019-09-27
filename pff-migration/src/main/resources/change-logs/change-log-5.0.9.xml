@@ -12332,5 +12332,18 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
+	<changeSet id="203" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+			delete from TemplateFields where field='pc_interestInclAccrued';
+			INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_interestInclAccrued', 'Interest Including Interest accrued till date', 'A', 'Putcall');
 
+			delete from TemplateFields where field='pc_totPenal';
+			INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_totPenal', 'Penal interest including accrued penal interest till (Date)', 'A', 'Putcall');
+			
+			delete from TemplateFields where field='pc_otherChargers';
+			INSERT INTO TemplateFields(module, field, fielddesc, fieldformat, event) VALUES ('FIN', 'pc_otherChargers', 'Other Charges Receivable ', 'A', 'Putcall');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
