@@ -6566,6 +6566,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.isNotBlank(this.gracePftFrq.getValue())) {
 					if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
 						processFrqChange(this.gracePftFrq);
+					} else {
+						this.gracePftFrq.getFrqMonthCombobox().setDisabled(true);
 					}
 				}
 			}
