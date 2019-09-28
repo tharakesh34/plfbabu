@@ -75,6 +75,7 @@ public abstract class JsonService<T> {
 
 	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
+		InterfaceLogDetail logDetail =  new InterfaceLogDetail();;
 
 		if (serviceDetail.isXmlRequest()) {
 			serviceDetail.setRequestString(getObjectToXML(serviceDetail));
@@ -88,7 +89,9 @@ public abstract class JsonService<T> {
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
 			url = url + serviceDetail.getServiceEndPoint();
 		}
+		logDetail.setEndPoint(url);
 
+		
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
 			if (MapUtils.isNotEmpty(serviceDetail.getPathParams())) {
@@ -118,19 +121,21 @@ public abstract class JsonService<T> {
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
 				getHttpHeader(serviceDetail.getHeaders(), serviceDetail.isXmlRequest()));
 		ResponseEntity<String> response = null;
-		InterfaceLogDetail logDetail = null;
-
+	
 		String errorCode = "0000";
 		String errorDesc = null;
 		String status = InterfaceConstants.STATUS_SUCCESS;
 		try {
-			logDetail = new InterfaceLogDetail();
 			reqSentOn = new Timestamp(System.currentTimeMillis());
 
 			logDetail.setReference(serviceDetail.getReference());
 			logDetail.setServiceName(serviceDetail.getServiceName());
-			logDetail.setEndPoint(url);
-			logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
+			if(serviceDetail.getMethod()==HttpMethod.GET){
+				logDetail.setRequest(url);
+			}else{
+				logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
+			}
+			
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
 			response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
