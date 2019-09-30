@@ -12303,7 +12303,7 @@ UNION ALL
 				    t1.deviationuserid,
 				    t1.delegateduserid,
 				    t1.raisedUser
-				   FROM plf.financedeviations_temp t1
+				   FROM financedeviations_temp t1
 				UNION ALL
 				 SELECT t1.deviationid,
 				    t1.finreference,
@@ -12318,9 +12318,9 @@ UNION ALL
 				    t1.deviationuserid,
 				    t1.delegateduserid,
 				    t1.raisedUser
-				   FROM plf.financedeviations t1
+				   FROM financedeviations t1
 				  WHERE NOT (EXISTS ( SELECT 1
-				           FROM plf.financedeviations_temp
+				           FROM financedeviations_temp
 				          WHERE financedeviations_temp.deviationid = t1.deviationid))
 		</createView>
 	</changeSet>
