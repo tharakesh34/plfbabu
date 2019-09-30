@@ -7686,13 +7686,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					List<String> pendingDecisions = new ArrayList<>();
 
 					for (FinanceDeviations deviation : deviations) {
-						if (getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
+						if (!SysParamUtil.isAllowed(SMTParameterConstants.DEVIATION_APPROVAL_FOR_SAMEROLE)
+								&& getUserWorkspace().getUserRoles().contains(deviation.getDelegationRole())
 								&& (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
 										|| StringUtils.isBlank(deviation.getApprovalStatus()))) {
 							pendingDecisions.add(
 									StringUtils.equals(DeviationConstants.CAT_MANUAL, deviation.getDeviationCategory())
 											? deviation.getDeviationCodeDesc()
 											: deviation.getModule() + " - " + deviation.getDeviationCode());
+						} else {
+							if (SysParamUtil.isAllowed(SMTParameterConstants.DEVIATION_APPROVAL_FOR_SAMEROLE)
+									&& getRole().contains(deviation.getDelegationRole())
+									&& (StringUtils.equals(PennantConstants.List_Select, deviation.getApprovalStatus())
+											|| StringUtils.isBlank(deviation.getApprovalStatus()))) {
+								pendingDecisions.add(StringUtils.equals(DeviationConstants.CAT_MANUAL,
+										deviation.getDeviationCategory()) ? deviation.getDeviationCodeDesc()
+												: deviation.getModule() + " - " + deviation.getDeviationCode());
+							}
 						}
 					}
 
