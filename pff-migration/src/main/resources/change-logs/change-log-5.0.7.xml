@@ -5844,5 +5844,42 @@
 			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
 		</createView>
 	</changeSet>
-	
+	<changeSet id="204" author="satyanarayana.g">
+		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
+		   SELECT A.ID,
+				    A.ACTYPE,
+				    A.ACNUMBER,
+				    A.ACBALANCE,
+				    A.ACBRANCH,
+				    A.ACCCY,
+				    A.ACOPENDATE,
+				    AM.ACCOUNT,
+				    AM.ACCOUNTTYPE,
+				    AM.COSTCENTERID,
+				    AM.FINTYPE,
+				    AM.HOSTACCOUNT,
+				    AM.PROFITCENTERID,
+				    AT.ACCADDLCHAR1,
+				    AT.ACCADDLVAR1,
+				    AT.ACCADDLVAR2,
+				    AT.ACCADDLVAR3,
+				    AT.ACCADDLVAR4,
+				    AT.ACHEADCODE,
+				    AT.ACLMTCATEGORY,
+				    AT.ACPURPOSE,
+				    AT.ACTYPEDESC,
+				    AT.ACTYPEGRPID,
+				    AT.ACTYPEISACTIVE,
+				    AT.ALLOWOVERDRAW,
+				    AT.ASSERTORLIABILITY,
+				    AT.CONTROLAC,
+				    AT.CUSTSYSAC,
+				    AT.EXTRACTIONTYPE,
+				    AT.INTERNALAC,
+				    AT.ONBALANCESHEET,
+				    AT.TAXAPPLICABLE
+				  FROM ACCOUNTS A
+				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
+				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
+	 </createView>
 </databaseChangeLog>
