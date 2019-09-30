@@ -133,7 +133,11 @@ public abstract class JsonService<T> {
 			if(serviceDetail.getMethod()==HttpMethod.GET){
 				logDetail.setRequest(url);
 			}else{
-				logDetail.setRequest(StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getRequestString()), 1000));
+				if(StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))){
+					logDetail.setRequest(serviceDetail.getRequestString());
+				}else{
+					logDetail.setRequest(StringUtils.left(serviceDetail.getRequestString(), 1000));	
+				}
 			}
 			
 			logDetail.setReqSentOn(reqSentOn);
@@ -163,8 +167,11 @@ public abstract class JsonService<T> {
 		} finally {
 			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
 			if (logDetail != null) {
-				logDetail.setResponse(
-						StringUtils.left(StringUtils.trimToEmpty(serviceDetail.getResponseString()), 1000));
+				if(StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))){
+					logDetail.setRequest(serviceDetail.getResponseString());
+				}else{
+					logDetail.setResponse(StringUtils.left(serviceDetail.getResponseString(), 1000));
+				}
 				logDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));
 				logDetail.setStatus(status);
 				logDetail.setErrorCode(errorCode);
