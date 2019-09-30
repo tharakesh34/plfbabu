@@ -12111,7 +12111,6 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-
 	<changeSet id="194" author="meena.a">
 		<createView viewName="COMMITMENTS_TVIEW" replaceIfExists="true">
 						SELECT     T1.CmtReference, T1.custID, T2.CustShrtName, T1.CmtBranch, T3.BranchDesc, T1.OpenAccount, T1.CmtAccount, T1.CmtCcy, T1.CmtPftRateMin, 
