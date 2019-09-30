@@ -5732,19 +5732,19 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="202" author="vijaya.a">
+	<changeSet id="204" author="vijaya.a">
 		<addColumn tableName="FIN_OPTIONS">
 			<column name="Remarks" type="varchar(250)" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="203" author="vijaya.a">
+	<changeSet id="205" author="vijaya.a">
 		<addColumn tableName="FIN_OPTIONS_TEMP">
 			<column name="Remarks" type="varchar(250)" />
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="204" author="vijaya.a">
+	<changeSet id="206" author="vijaya.a">
 		<createView viewName="FIN_OPTIONS_VIEW" replaceIfExists="true">
 			SELECT t1.id,
 			    t1.finreference,
@@ -5811,7 +5811,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="205" author="vijaya.a">
+	<changeSet id="207" author="vijaya.a">
 		<createView viewName="FIN_OPTIONS_AVIEW" replaceIfExists="true">
 			SELECT t1.id,
 			    t1.finreference,
@@ -5844,7 +5844,8 @@
 			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
 		</createView>
 	</changeSet>
-	<changeSet id="204" author="satyanarayana.g">
+	
+	<changeSet id="208" author="satyanarayana.g">
 		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
 		   SELECT A.ID,
 				    A.ACTYPE,
@@ -5882,4 +5883,6 @@
 				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
 				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
 	 </createView>
+	 </changeSet>
+	 
 </databaseChangeLog>
