@@ -3996,7 +3996,7 @@ UNION ALL
 	<sql>
 		<![CDATA[
 			DELETE from SMTparameters WHERE SYSPARMCODE='DEVIATION_APPROVAL_FOR_SAMEROLE';
-		    INSERT INTO SMTparameters  VALUES ('DEVIATION_APPROVAL_FOR_SAMEROLE', 'To Approve deviations if user is having 2 roles', 'String', '1', 'Y', 1, 0, NULL, NULL,'To Approve deviations if user is having 2 roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);					INSERT INTO SMTparameters  VALUES ('MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE', 'To exclude manual deviations triggering for same role', 'String', '1', 'N', 1, 0, NULL, NULL,'To exclude manual deviations triggering for same role', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+		    INSERT INTO SMTparameters  VALUES ('DEVIATION_APPROVAL_FOR_SAMEROLE', 'To Approve deviations if user is having 2 roles', 'String', '1', 'Y', 1, 0, NULL, NULL,'To Approve deviations if user is having 2 roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 		]]>
 	</sql>
 </changeSet>
