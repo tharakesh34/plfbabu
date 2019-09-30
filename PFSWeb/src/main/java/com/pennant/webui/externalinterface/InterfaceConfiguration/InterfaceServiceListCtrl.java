@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,9 +60,11 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
@@ -73,7 +74,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 import org.zkoss.zul.event.PagingEvent;
 
-import com.ibm.icu.text.SimpleDateFormat;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
 import com.pennant.backend.model.externalinterface.InterfaceServiceLog;
@@ -85,7 +85,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -120,7 +119,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	protected Listheader listheader_InterfaceService_Error;
 	protected Listheader listheader_InterfaceService_RecordProcessed;
 	protected Listheader listheader_InterfaceService_StatusDesc;
-
+	protected Listbox sortOperator_Status;
 	protected Listbox listBoxExternalInterfaceDialog; // per
 	protected Listheader listheader_InterfaceService_ErrorDesc;
 	protected Datebox fromDate;
@@ -131,6 +130,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private InterfaceConfiguration interfaceDeatilData; // overhanded
 	protected Datebox toDate;
 	protected Grid searchGrid;
+	protected Combobox status;
+	protected Label interfaceCaption;
 	// per
 	// param
 	private transient PagedListService pagedListService;
@@ -139,7 +140,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 
 	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
 	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
-
+	private List<ValueLabel> statusList = PennantStaticListUtil.getInterfaceStatusList();
 	protected List<SearchFilterControl> searchControls = new ArrayList<SearchFilterControl>();
 
 	/**
@@ -172,8 +173,9 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			InterfaceConfiguration interfaceConfiguration = new InterfaceConfiguration();
 			BeanUtils.copyProperties(this.interfaceDeatilData, interfaceConfiguration);
 			this.interfaceDeatilData.setBefImage(interfaceConfiguration);
-
-			// Render the page and display the data.
+			interfaceCaption.setValue(this.interfaceDeatilData.getCode());
+			fillComboBox(this.status, "", statusList, "");
+			// Render the page and display the data
 			addSearchControl();
 			doShowDialog(this.interfaceDeatilData);
 		} catch (Exception e) {
@@ -194,9 +196,12 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 		this.paging_interfaceService.setDetailed(true);
 		this.paging_interfaceService.setActivePage(0);
 
-		List<InterfaceServiceLog> interfaceDetailList = searchInterfaceDeatils(interfaceConfiguration);
-		if (interfaceDetailList != null && !interfaceDetailList.isEmpty())
-			doFillInterfaceServiceDetails(interfaceDetailList);
+		/*
+		 * List<InterfaceServiceLog> interfaceDetailList =
+		 * searchInterfaceDeatils(interfaceConfiguration); if
+		 * (interfaceDetailList != null && !interfaceDetailList.isEmpty())
+		 * doFillInterfaceServiceDetails(interfaceDetailList);
+		 */
 
 		setDialog(DialogType.EMBEDDED);
 
@@ -204,6 +209,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	}
 
 	private void addSearchControl() {
+		searchControls.add(new SearchFilterControl("status", this.status, sortOperator_Status, Operators.STRING));
 		if (StringUtils.equalsIgnoreCase(interfaceDeatilData.getType(), "INTERFACE")) {
 			searchControls
 					.add(new SearchFilterControl("REQSENTON", this.fromDate, sortOperator_fromDate, Operators.DATE));
@@ -274,6 +280,11 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private List<InterfaceServiceLog> searchInterfaceDeatils(InterfaceConfiguration interfaceConf) {
 		logger.debug("Entering");
 
+		if (this.fromDate.getValue() == null || this.toDate.getValue() == null) {
+			MessageUtil.showError("Please Enter From Date and To Date ");
+			return new ArrayList<>();
+		}
+
 		this.paging_interfaceService.setActivePage(0);
 
 		PagedListService pagedListService = getPagedListService();
@@ -312,27 +323,27 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 				} else {
 					if (StringUtils.equalsIgnoreCase(interfaceConf.getType(), "INTERFACE")) {
 						if (StringUtils.equalsIgnoreCase("REQSENTON", filter.getProperty())) {
-							Date  date =  (Date) filter.getValue();
-							if(filter.getOperator()==4){
-								Calendar calendar=Calendar.getInstance();
+							Date date = (Date) filter.getValue();
+							if (filter.getOperator() == 4) {
+								Calendar calendar = Calendar.getInstance();
 								calendar.setTime(date);
 								calendar.set(Calendar.HOUR, 23);
 								calendar.set(Calendar.MINUTE, 59);
 								calendar.set(Calendar.SECOND, 59);
-								date =calendar.getTime(); 
+								date = calendar.getTime();
 							}
 							filter.setValue(date);
 						}
 					} else {
 						if (StringUtils.equalsIgnoreCase("START_DATE", filter.getProperty())) {
-							Date  date =  (Date) filter.getValue();
-							if(filter.getOperator()==4){
-								Calendar calendar=Calendar.getInstance();
+							Date date = (Date) filter.getValue();
+							if (filter.getOperator() == 4) {
+								Calendar calendar = Calendar.getInstance();
 								calendar.setTime(date);
 								calendar.set(Calendar.HOUR, 23);
 								calendar.set(Calendar.MINUTE, 59);
 								calendar.set(Calendar.SECOND, 59);
-								date =calendar.getTime(); 
+								date = calendar.getTime();
 							}
 							filter.setValue(date);
 						}

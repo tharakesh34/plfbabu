@@ -316,7 +316,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> academicList;
 	private static ArrayList<ValueLabel> notificationTypeList;
 	private static ArrayList<ValueLabel> interfaceTypeList;
-
+	private static ArrayList<ValueLabel> interfaceStatusTypeList;
 	// GST Customers
 	private static ArrayList<ValueLabel> frequencyType;
 	private static ArrayList<ValueLabel> frequency;
@@ -5198,6 +5198,18 @@ public class PennantStaticListUtil {
 					.add(new ValueLabel(PennantConstants.NotificationTYPE_Email, Labels.getLabel("label_Type_EMAIL")));
 		}
 		return notificationTypeList;
+	}
+
+	public static ArrayList<ValueLabel> getInterfaceStatusList() {
+		if (interfaceStatusTypeList == null) {
+			interfaceStatusTypeList = new ArrayList<ValueLabel>();
+			interfaceStatusTypeList.add(
+					new ValueLabel(PennantConstants.POSTSTS_SUCCESS, Labels.getLabel("label_Interface_Type_Sucess")));
+			interfaceStatusTypeList.add(
+					new ValueLabel(PennantConstants.POSTSTS_FAILED, Labels.getLabel("label_Interface_Type_Failed")));
+
+		}
+		return interfaceStatusTypeList;
 	}
 
 }

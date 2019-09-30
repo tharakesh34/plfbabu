@@ -152,6 +152,7 @@ public class ExtInterfaceConfigurationListCtrl extends GFCBaseListCtrl<Interface
 
 		// Render the page and display the data.
 		doRenderPage();
+		button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration.setVisible(false);
 		search();
 	}
 

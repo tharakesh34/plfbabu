@@ -13,13 +13,13 @@
 		<div sclass="z-toolbar" style="padding:0px">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"
 				width="100%" widths="30%,40%,30%">
-
-				<!-- COMMON BUTTONS -->
-				<label value="" />
+				<toolbar align="start" sclass="toolbar-start">
+					<label id="interfaceCaption" sclass="label-heading" />
+				</toolbar>
+				
 				<!-- SEARCH AREA -->
 				<toolbar align="center" style="toolbar-center">
-					<button
-						id="btnSearch"
+					<button id="btnSearch"
 						label="${c:l('label_Filter')}"
 						autodisable="button_InterfaceConfigurationList_InterfaceConfigurationSearch,print,button_InterfaceConfigurationList_NewInterfaceConfiguration,btnRefresh,help"
 						tooltiptext="${c:l('button_InterfaceConfigurationList_InterfaceConfigurationSearch.tooltiptext')}"
@@ -47,8 +47,8 @@
 
 			<center border="none" autoscroll="false">
 				<div>
-					<grid id="searchGrid" sclass="GridLayoutNoBorder" fixedLayout="true"
-						style="border:0px">
+					<grid id="searchGrid" sclass="GridLayoutNoBorder"
+						fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="15%" />
 							<column width="5%" />
@@ -77,7 +77,18 @@
 								<datebox id="toDate" width="200px"
 									maxlength="50" />
 							</row>
-							
+							<row>
+								<label
+									id="label_InterfaceConfigurationDialog_Status"
+									value="${c:l('label_InterfaceConfigurationDialog_Status.value')}" />
+								<listbox id="sortOperator_Status"
+									width="43px" mold="select" rows="1"
+									emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+								<combobox id="status" width="200px"
+									maxlength="50" />
+							</row>
+
+
 						</rows>
 					</grid>
 					<listbox id="listBoxExternalInterfaceDialog"
@@ -86,31 +97,39 @@
 						height="100%" multiple="false" sizedByContent="true"
 						span="true">
 						<listhead sizable="false">
-							<listheader id="listheader_InterfaceService_Reference"
-								label="${c:l('listheader_InterfaceService_Reference.label')}" sort="auto"
-								hflex="20%" />
-							<listheader id="listheader_InterfaceService_InitiateDate"
-								label="${c:l('listheader_InterfaceService_InitiateDate.label')}" sort="auto"
-								hflex="20%" />
-							<listheader id="listheader_InterfaceService_Status"
-								label="${c:l('listheader_InterfaceService_Status.label')}" sort="auto"
-								hflex="20%" />
-							<listheader id="listheader_InterfaceService_Error"
-								label="${c:l('listheader_InterfaceService_Error.label')}" sort="auto"
-								hflex="20%" />
-							<listheader id="listheader_InterfaceService_ErrorDesc"
-								label="${c:l('listheader_InterfaceService_ErrorDesc.label')}" sort="auto"
-								hflex="20%" />
-							<listheader id="listheader_InterfaceService_RecordProcessed"
-								label="${c:l('listheader_InterfaceService_RecordProcessed.label')}" sort="auto"
-								hflex="20%" visible="false" />
-							<listheader id="listheader_InterfaceService_StatusDesc"
-								label="${c:l('listheader_InterfaceService_StatusDesc.label')}" sort="auto"
-								hflex="20%" visible="false" />
-								
+							<listheader
+								id="listheader_InterfaceService_Reference"
+								label="${c:l('listheader_InterfaceService_Reference.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
+								id="listheader_InterfaceService_InitiateDate"
+								label="${c:l('listheader_InterfaceService_InitiateDate.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
+								id="listheader_InterfaceService_Status"
+								label="${c:l('listheader_InterfaceService_Status.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
+								id="listheader_InterfaceService_Error"
+								label="${c:l('listheader_InterfaceService_Error.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
+								id="listheader_InterfaceService_ErrorDesc"
+								label="${c:l('listheader_InterfaceService_ErrorDesc.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
+								id="listheader_InterfaceService_RecordProcessed"
+								label="${c:l('listheader_InterfaceService_RecordProcessed.label')}"
+								sort="auto" hflex="20%" visible="false" />
+							<listheader
+								id="listheader_InterfaceService_StatusDesc"
+								label="${c:l('listheader_InterfaceService_StatusDesc.label')}"
+								sort="auto" hflex="20%" visible="false" />
+
 						</listhead>
-					
-					</listbox>	 <paging id="paging_interfaceService"></paging>
+
+					</listbox>
+					<paging id="paging_interfaceService"></paging>
 				</div>
 			</center>
 
