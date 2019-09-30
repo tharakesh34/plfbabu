@@ -86,7 +86,7 @@ public class NSDLPANService  implements PANService {
 
 	@PostConstruct
 	public void loadConfiguration() {
-		if (panValidationRequired) {
+		if (panValidationRequired && certName != null) {
 			jksLocation = App.getResourcePath(App.CONFIG + File.separator + "certificates", "NSDL", certName);
 
 			File file = new File(jksLocation);
