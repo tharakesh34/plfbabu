@@ -12279,6 +12279,7 @@ UNION ALL
 			   inner join LimitHeader t2 on t1.CustId != t2.customerId	
 		</createView>
 	</changeSet>
+	
 	<changeSet id="200" author="Varaprasad.K">
 		<comment>New columns added for Raised user display in Deviations</comment>
 		<addColumn tableName="FinanceDeviations">
@@ -12288,7 +12289,8 @@ UNION ALL
 			<column name="RaisedUser" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="201" author="Varaprasad.K">
+	
+	<changeSet id="201.1" author="Varaprasad.K">
 		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
 		   SELECT t1.deviationid,
 				    t1.finreference,
@@ -12324,6 +12326,7 @@ UNION ALL
 				          WHERE financedeviations_temp.deviationid = t1.deviationid))
 		</createView>
 	</changeSet>
+	
 	<changeSet id="202" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
@@ -12332,6 +12335,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="203" author="Saikiran.V">
 		<sql>
 			<![CDATA[
