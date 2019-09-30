@@ -5678,6 +5678,7 @@
             ]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="203" author="vijaya.a">
 		<createView viewName="GL_VOCHERS_VIEW" replaceIfExists="true">
 			select 
@@ -5701,7 +5702,7 @@
 			inner join AccountMapping am on am.account = p.account
 			inner join RMTAccountTypes at on at.acType = am.accountType
 			inner join AccountTypeGroup atg on atg.GroupId = at.acTypeGrpId
-			where PostAmount != 0 and FinEvent <> 'JVPOST'
+			where PostAmount != 0 and FinEvent != 'JVPOST'
 			union all
 			select 
 			distinct 
