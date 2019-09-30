@@ -12190,10 +12190,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_LOANQUEUE_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_CD_LOANQUEUE'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_LOANQUEUE_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_CD_LOANQUEUE'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_LOANQUEUE_VIEW'),(select RoleID from secRoles where RoleCd='CD_LOANQUEUE_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_LOANQUEUE_MAKER'),(select RoleID from secRoles where RoleCd='CD_LOANQUEUE_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_LOANQUEUE_APPROVER'),(select RoleID from secRoles where RoleCd='CD_LOANQUEUE_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
 				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
@@ -12222,10 +12218,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_SCHEME_MAKER'), (Select RightID from SecRights where RightName = 'menuItem_CD_SCHEME'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'CD_SCHEME_APPROVER'), (Select RightID from SecRights where RightName = 'menuItem_CD_SCHEME'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_SCHEME_VIEW'),(select RoleID from secRoles where RoleCd='CD_SCHEME_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_SCHEME_MAKER'),(select RoleID from secRoles where RoleCd='CD_SCHEME_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='CD_SCHEME_APPROVER'),(select RoleID from secRoles where RoleCd='CD_SCHEME_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
 				Update SeqSecRoles set SeqNo = (Select max(RoleId)  from SecRoles);
@@ -12253,10 +12245,6 @@ UNION ALL
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INDASREPORT_VIEW'), (Select RightID from SecRights where RightName = 'menu_Item_IndASReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INDASREPORT_MAKER'), (Select RightID from SecRights where RightName = 'menu_Item_IndASReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
 				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'INDASREPORT_APPROVER'), (Select RightID from SecRights where RightName = 'menu_Item_IndASReport'), 1, 1, 1000, current_timestamp, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-				
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='INDASREPORT_VIEW'),(select RoleID from secRoles where RoleCd='INDASREPORT_VIEW'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='INDASREPORT_MAKER'),(select RoleID from secRoles where RoleCd='INDASREPORT_MAKER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-				Insert into secRoleGroups Values ((select MAX(RoleGrpID)+1 From secRoleGroups),(select GrpID from SecGroups where grpCode='INDASREPORT_APPROVER'),(select RoleID from secRoles where RoleCd='INDASREPORT_APPROVER'), 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				
 				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 				Update SeqSecGroups set SeqNo = (Select max(GrpId)  from SecGroups);
