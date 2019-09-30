@@ -12346,4 +12346,20 @@ UNION ALL
 		]]>
 	</sql>
 </changeSet>
+
+	<changeSet id="204" author="srikanth.m">
+		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
+			  CREATE OR REPLACE  VIEW LIMITCUSTOMERS_VIEW AS
+ 				SELECT Distinct t1.custid, 
+				t1.custcif, 
+				t1.CustShrtName,
+			    t1.CustCtgCode,
+			    t1.CustFName,
+			    t1.CustLName
+			   FROM customers t1 
+			   join LimitHeader_view t2 on cast(t2.customerId as number(19,0)) != t1.CustId and t1.custid not in 
+         (select cast(customerId as number(19,0)) from  LimitHeader_view)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
