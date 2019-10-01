@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
@@ -74,7 +75,9 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.external.AccountValidationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.beneficiary/Beneficiary/beneficiaryDialog.zul file.
@@ -101,6 +104,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	private transient BeneficiaryListCtrl beneficiaryListCtrl;
 	private transient BeneficiaryService beneficiaryService;
 	private transient BankDetailService bankDetailService;
+	@Autowired(required = false)
+	private transient AccountValidationService accountValidationService;
 
 	private Checkbox beneficiaryActive;
 	private Checkbox defaultBeneficiary;
@@ -433,6 +438,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 		// Acc Number
 		try {
+			this.accNumber.setErrorMessage("");
 			aBeneficiary.setAccNumber(this.accNumber.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -467,6 +473,22 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		
+		// Validate Account Number
+		if (wve.isEmpty()) {
+			try {
+				if (accountValidationService != null) {
+					aBeneficiary.setUsrID(getUserWorkspace().getLoggedInUser().getUserId());
+					aBeneficiary.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
+					
+					aBeneficiary = accountValidationService.validateAccount(aBeneficiary);
+				}
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
+				throw new WrongValueException(this.accNumber, "Invalid Account Number.");
+			}
+		}
+		
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
