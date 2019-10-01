@@ -847,7 +847,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}
 		String excludeField = "";
-		if (!SysParamUtil.isAllowed("ALLOW_INTERNAL_SETTLEMENTS")) {
+		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_INTERNAL_SETTLEMENTS)) {
 			excludeField = "," + DisbursementConstants.PAYMENT_TYPE_IST + ",";
 		}
 		fillComboBox(this.paymentType, aFinAdvnancePayments.getPaymentType(),
