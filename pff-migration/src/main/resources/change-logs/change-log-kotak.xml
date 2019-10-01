@@ -3560,4 +3560,33 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="71" author="Saikiran.V">
+		 <sql>
+			delete from SecRoleGroups   where grpid =(Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT');
+			delete from SECGROUPRIGHTS   where grpid =(Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT');
+			delete  SECGROUPS where grpcode='REPORTS_EXCESSAMOUNTRPT';
+			delete from SecRights where rightname='menu_Item_ExcessAmountReport';
+	
+	      	Insert into SecRights Values((Select max(RightID) + 1 from SecRights), 0, 'menu_Item_ExcessAmountReport', 'MENU', 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+				
+			INSERT INTO SECGROUPS VALUES ((SELECT MAX(GRPID)+1 FROM SECGROUPS), 'REPORTS_EXCESSAMOUNTRPT', 'Excess Amount Report', 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
+            INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPORTS_EXCESSAMOUNTRPT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menuCat_Reports'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
+            INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPORTS_EXCESSAMOUNTRPT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExcessAmountReport'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
+	        INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
+	    </sql>		
+	</changeSet>
+	<changeSet id="72" author="Saikiran.V">
+		<sql>
+			delete from REPORTFILTERFIELDS where reportid in (select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport');
+			delete from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport';
+
+			Insert into REPORTCONFIGURATION 
+			values ((select max(reportid)+1 from REPORTCONFIGURATION),'Excel:Excess Amount Report','Excess Amount Report',1,'ExcessAmountReport','dataSource',1,'menu_Item_ExcessAmountReport',1,1000,null,null,null,null,null,null,0,current_timestamp,1,0,1);
+			
+			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport'),1,'BranchCode','LOVSEARCH','Branch','T1.finbranch',null,'Branch','getBranchCode','getBranchDesc',0,0,0,0,1,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport'),2,'CustCIF','LOVSEARCH','Customer Number','T6.custcif',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport'),3,'FinReference','LOVSEARCH','Loan Reference','T1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		</sql>		
+	</changeSet>
+</databaseChangeLog>
 </databaseChangeLog>
