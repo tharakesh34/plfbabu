@@ -12169,7 +12169,7 @@ UNION ALL
 		    ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="196" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -12197,7 +12197,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="197" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -12225,7 +12225,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="198" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -12253,7 +12253,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="199" author="vijaya.a">
 		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
 			SELECT Distinct t1.custid, 
@@ -12266,7 +12266,7 @@ UNION ALL
 			   inner join LimitHeader t2 on t1.CustId != t2.customerId	
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="200" author="Varaprasad.K">
 		<comment>New columns added for Raised user display in Deviations</comment>
 		<addColumn tableName="FinanceDeviations">
@@ -12276,9 +12276,10 @@ UNION ALL
 			<column name="RaisedUser" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="201.1" author="Varaprasad.K">
-		<createView viewName="FinanceDeviations_view" replaceIfExists="true">
+		<createView viewName="FinanceDeviations_view"
+			replaceIfExists="true">
 		   SELECT t1.deviationid,
 				    t1.finreference,
 				    t1.module,
@@ -12313,7 +12314,7 @@ UNION ALL
 				          WHERE financedeviations_temp.deviationid = t1.deviationid))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="202" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
@@ -12322,7 +12323,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="203" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -12337,19 +12338,32 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="203" author="Manoj.P">
-	<sql>
+
+	<changeSet id="203" author="Manoj.P">
+		<sql>
 		<![CDATA[
 			DELETE from SMTparameters WHERE SYSPARMCODE='DEVIATION_APPROVAL_FOR_SAMEROLE';
 		    INSERT INTO SMTparameters  VALUES ('DEVIATION_APPROVAL_FOR_SAMEROLE', 'To Approve deviations if user is having 2 roles', 'String', '1', 'N', 1, 0, NULL, NULL,'To Approve deviations if user is having 2 roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-	<changeSet id="204" author="srikanth.m">
+	<changeSet id="204" author="srikanth.m" dbms="postgresql">
 		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
-			  CREATE OR REPLACE  VIEW LIMITCUSTOMERS_VIEW AS
+ 				SELECT Distinct t1.custid, 
+				t1.custcif, 
+				t1.CustShrtName,
+			    t1.CustCtgCode,
+			    t1.CustFName,
+			    t1.CustLName
+			   FROM customers t1 
+			   join LimitHeader_view t2 on cast(t2.customerId as bigint) != t1.CustId and t1.custid not in 
+         (select cast(customerId as bigint) from  LimitHeader_view)
+		</createView>
+	</changeSet>
+
+	<changeSet id="204" author="srikanth.m" dbms="oracle">
+		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
  				SELECT Distinct t1.custid, 
 				t1.custcif, 
 				t1.CustShrtName,
@@ -12361,5 +12375,19 @@ UNION ALL
          (select cast(customerId as number(19,0)) from  LimitHeader_view)
 		</createView>
 	</changeSet>
-	
+
+	<changeSet id="204" author="srikanth.m" dbms="mssql">
+		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
+	SELECT Distinct t1.custid, 
+				t1.custcif, 
+				t1.CustShrtName,
+			    t1.CustCtgCode,
+			    t1.CustFName,
+			    t1.CustLName
+			   FROM customers t1 
+			   join LimitHeader_view t2 on cast(t2.customerId as decimal(19,0)) != t1.CustId and 
+			   t1.custid not in  (select cast(customerId as decimal (19,0)) from  LimitHeader_view)
+	</createView>
+	</changeSet>
+
 </databaseChangeLog>
