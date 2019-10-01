@@ -387,6 +387,12 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 				docType = PennantConstants.DOC_TYPE_EXCEL;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
+			} else if (media.getName().endsWith(".sql")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				return;
+			} else if (media.getName().endsWith(".exe")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document"));
+				return;
 			} else if ("application/octet-stream".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
