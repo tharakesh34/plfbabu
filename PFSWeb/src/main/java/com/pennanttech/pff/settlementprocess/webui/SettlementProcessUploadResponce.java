@@ -139,7 +139,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			settlementMapdata.addValue("TransactionAmount",
 					new BigDecimal((String) record.getValue("TransactionAmount")));
 			settlementMapdata.addValue("Acquirer", (String) record.getValue("Acquirer"));
-			settlementMapdata.addValue("ManufactureId", Long.valueOf((String) record.getValue("ManufactureId")));
+			settlementMapdata.addValue("ManufactureId", (String) record.getValue("ManufactureId"));
 			settlementMapdata.addValue("TerminalId", (String) record.getValue("TerminalId"));
 			settlementMapdata.addValue("SettlementBatch", (String) record.getValue("SettlementBatch"));
 			settlementMapdata.addValue("BankInvoice", (String) record.getValue("BankInvoice"));
