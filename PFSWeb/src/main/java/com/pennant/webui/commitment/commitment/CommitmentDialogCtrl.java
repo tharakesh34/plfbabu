@@ -1370,8 +1370,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cmtAvailableMonths.setMaxlength(5);
 
-		boolean isVisible = SysParamUtil.isAllowed(SMTParameterConstants.COMMITE_ADDTNAL_FIELDS_REQ);
-		this.tab_CommitmentAdditionalDetails.setVisible(isVisible);
+		
+		this.tab_CommitmentAdditionalDetails.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.COMMITE_ADDTNAL_FIELDS_REQ));
 		
 		logger.debug("Leaving");
 	}
