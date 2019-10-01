@@ -410,4 +410,6 @@ public interface FinanceMainDAO {
 	boolean isRepayFrqExists(String brType);
 
 	boolean isGrcRepayFrqExists(String brType);
+
+	Date getFinStartDate(String finReference);
 }

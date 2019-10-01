@@ -10283,6 +10283,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {
 		return getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReferecne, type, isWIF);
 	}
+	
+	
+	@Override
+	public Date getFinStartDate(String finReference) {
+		return getFinanceMainDAO().getFinStartDate(finReference);
+	}
 
 	public TATDetail getTATDetail(String reference, String rolecode) {
 		return getTatDetailDAO().getTATDetail(reference, rolecode);
@@ -11527,5 +11533,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setIrrScheduleDetailDAO(IRRScheduleDetailDAO irrScheduleDetailDAO) {
 		this.irrScheduleDetailDAO = irrScheduleDetailDAO;
 	}
+
+	
 
 }

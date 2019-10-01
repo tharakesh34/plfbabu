@@ -78,6 +78,7 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.FieldComparator;
@@ -152,6 +153,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.core.EventManager;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
@@ -357,7 +359,15 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tab tab_Collateral;
 	protected Tab tab_Customer;
+	protected Tab tab_CommitmentAdditionalDetails;
 
+	//Additional details
+	protected Combobox bnkAggrmt;
+	protected Combobox lmtCondition;
+	protected Textbox reference;
+	protected Textbox reference1;
+	protected Intbox tenor;
+	
 	protected Component checkListChildWindow;
 	protected Component collateralAssignmentWindow;
 
@@ -1360,6 +1370,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cmtAvailableMonths.setMaxlength(5);
 
+		boolean isVisible = SysParamUtil.isAllowed(SMTParameterConstants.COMMITE_ADDTNAL_FIELDS_REQ);
+		this.tab_CommitmentAdditionalDetails.setVisible(isVisible);
+		
 		logger.debug("Leaving");
 	}
 
@@ -1493,6 +1506,18 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.cmtUnUtilizedAmount
 					.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAvailable(), defaultCCYDecPos));
 		}
+		
+		//Additional fields added
+		fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(),
+				PennantStaticListUtil.getBankingArrangement(), "");
+		this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
+		
+		fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(),
+				"");
+		this.lmtCondition.setValue(aCommitment.getLimitCondition());
+		this.reference.setValue(aCommitment.getExternalRef());
+		this.reference1.setValue(aCommitment.getExternalRef1());
+		this.tenor.setValue(aCommitment.getTenor());
 
 		//Customer Details Tab Addition 
 		appendCustomerDetailTab(true);
@@ -1999,7 +2024,13 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+			
+		//Additional fields added
+		aCommitment.setBankingArrangement(this.bnkAggrmt.getValue());
+		aCommitment.setLimitCondition(this.lmtCondition.getValue());
+		aCommitment.setExternalRef(this.reference.getValue());
+		aCommitment.setExternalRef1(this.reference1.getValue());
+		aCommitment.setTenor(this.tenor.getValue());
 		//Commitment Rates
 		Cloner cloner = new Cloner();
 		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));

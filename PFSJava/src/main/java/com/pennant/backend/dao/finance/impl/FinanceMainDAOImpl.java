@@ -5197,4 +5197,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 		return false;
 	}
+
+	 @Override
+		public Date getFinStartDate(String finReference) {
+			logger.debug("Entering");
+
+			MapSqlParameterSource source = new MapSqlParameterSource();
+			source.addValue("FinReference", finReference);
+			StringBuilder sql = new StringBuilder("SELECT FinStartdate From FinanceMain");
+			sql.append(" Where FinReference = :FinReference");
+			logger.debug("selectSql: " + sql.toString());
+			
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Date.class);
+		}
 }

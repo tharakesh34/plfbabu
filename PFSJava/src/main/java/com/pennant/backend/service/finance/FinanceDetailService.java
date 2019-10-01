@@ -328,4 +328,6 @@ public interface FinanceDetailService {
 	List<ReturnDataSet> getInsurancePostings(String finReference);
 
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
+
+	Date getFinStartDate(String finReference);
 }

@@ -121,6 +121,12 @@ public class Commitment extends AbstractWorkflowEntity {
 	private Date cmtRvwDate;
 	private boolean collateralRequired;
 	private Date cmtEndDate;
+	//extended fields
+	private String bankingArrangement;
+	private String limitCondition;
+	private String externalRef;
+	private String externalRef1;
+	private int tenor;
 
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 	private Map<Long, Long> selAnsCountMap = new HashMap<Long, Long>(1);
@@ -672,5 +678,46 @@ public class Commitment extends AbstractWorkflowEntity {
 	public BigDecimal getCmtAvailableExt() {
 		return PennantApplicationUtil.formateAmount(this.cmtAvailable, CurrencyUtil.getFormat(this.cmtCcy));
 	}
+
+	public String getBankingArrangement() {
+		return bankingArrangement;
+	}
+
+	public void setBankingArrangement(String bankingArrangement) {
+		this.bankingArrangement = bankingArrangement;
+	}
+
+	public String getLimitCondition() {
+		return limitCondition;
+	}
+
+	public void setLimitCondition(String limitCondition) {
+		this.limitCondition = limitCondition;
+	}
+
+	public String getExternalRef() {
+		return externalRef;
+	}
+
+	public void setExternalRef(String externalRef) {
+		this.externalRef = externalRef;
+	}
+
+	public String getExternalRef1() {
+		return externalRef1;
+	}
+
+	public void setExternalRef1(String externalRef1) {
+		this.externalRef1 = externalRef1;
+	}
+
+	public int getTenor() {
+		return tenor;
+	}
+
+	public void setTenor(int tenor) {
+		this.tenor = tenor;
+	}
+	
 
 }

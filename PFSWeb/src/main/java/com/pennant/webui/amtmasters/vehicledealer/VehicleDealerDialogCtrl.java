@@ -1127,7 +1127,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		if (!this.dealerName.isReadonly()) {
 			this.dealerName
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_VehicleDealerDialog_DealerName.value"),
-							PennantRegularExpressions.REGEX_ALPHANUM_SPL, true));
+							PennantRegularExpressions.REGEX_ALPHA_SPACE_SPL, true));
 		}
 
 		if (!this.dealerTelephone.isReadonly()) {

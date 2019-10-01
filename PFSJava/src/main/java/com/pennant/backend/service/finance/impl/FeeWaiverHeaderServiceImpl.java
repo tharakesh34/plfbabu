@@ -102,6 +102,7 @@ import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
@@ -135,6 +136,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceTypeDAO financeTypeDAO;
 
+	private int ccyFormatter = 0;
 	List<ManualAdvise> manualAdviseList; // TODO remove this
 	private ReceiptCalculator receiptCalculator;
 
@@ -1722,7 +1724,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						waiverAmount = waiverDetail.getCurrWaiverAmount();
 					}
 					if (waiverAmount.compareTo(totalPenalityBal) > 0) {
-						valueParm[0] = String.valueOf(waiverAmount);
+						valueParm[0] = String.valueOf(PennantApplicationUtil.amountFormate(waiverAmount, ccyFormatter));
 						errParm[0] = waiverDetail.getFeeTypeDesc() + ": " + valueParm[0];
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "91136", errParm, valueParm), usrLanguage));
