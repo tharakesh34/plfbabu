@@ -12,10 +12,10 @@ public class GSTNValidationServiceImpl implements GSTNValidationService {
 	private GSTINRequestService gstinRequestService;
 
 	@Override
-	public GSTINInfo validateGSTNNumber(String gstnNumber) {
+	public GSTINInfo validateGSTNNumber(GSTINInfo gstinInfo) {
 
 		if (gstinRequestService != null) {
-			return gstinRequestService.gstinValidation(gstnNumber);
+			return gstinRequestService.gstinValidation(gstinInfo);
 		}
 		return null;
 	}

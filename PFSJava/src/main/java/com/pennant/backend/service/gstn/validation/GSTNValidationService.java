@@ -4,6 +4,6 @@ import com.pennant.backend.model.finance.financetaxdetail.GSTINInfo;
 
 public interface GSTNValidationService {
 
-	GSTINInfo validateGSTNNumber(String gstnNumber);
+	GSTINInfo validateGSTNNumber(GSTINInfo gstinInfo);
 
 }

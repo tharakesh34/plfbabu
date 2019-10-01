@@ -1213,10 +1213,12 @@ public class TaxDetailDialogCtrl extends GFCBaseCtrl<TaxDetail> {
 		doWriteComponentsToBean(aTaxDetail);
 
 		// GSTIN Validation
-		String gstnNumber = aTaxDetail.getTaxCode();
-		if (!this.taxCode.isReadonly() && (!StringUtils.equals(gstnNumber, aTaxDetail.getBefImage().getTaxCode()))) {
+		String gSTNNumber = aTaxDetail.getTaxCode();
+		if (!this.taxCode.isReadonly() && (!StringUtils.equals(gSTNNumber, aTaxDetail.getBefImage().getTaxCode()))) {
 			try {
-				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+				GSTINInfo gstinInfo = new GSTINInfo();
+				gstinInfo.setgSTNNumber(gSTNNumber);
+				gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
 
 				if (null != gstinInfo) {
 					StringBuilder msg = new StringBuilder();

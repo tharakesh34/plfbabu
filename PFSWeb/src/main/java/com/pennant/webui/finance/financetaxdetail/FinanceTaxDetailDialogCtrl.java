@@ -1544,11 +1544,13 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		doWriteComponentsToBean(aFinanceTaxDetail);
 
 		// GSTIN Validation
-		String gstnNumber = this.financeTaxDetail.getTaxNumber();
-		if ((StringUtils.trimToNull(gstnNumber) != null) && !this.taxNumber.isReadonly()
-				&& (!StringUtils.equals(gstnNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
+		String gSTNNumber = this.financeTaxDetail.getTaxNumber();
+		if ((StringUtils.trimToNull(gSTNNumber) != null) && !this.taxNumber.isReadonly()
+				&& (!StringUtils.equals(gSTNNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
 			try {
-				GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+				GSTINInfo gstinInfo = new GSTINInfo();
+				gstinInfo.setgSTNNumber(gSTNNumber);
+				gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
 
 				if (null != gstinInfo) {
 					StringBuilder msg = new StringBuilder();
@@ -1646,12 +1648,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			parenttab.setSelected(true);
 		} else {
 			// GSTIN Validation
-			String gstnNumber = this.financeTaxDetail.getTaxNumber();
-			if ((StringUtils.trimToNull(gstnNumber) != null) && !this.taxNumber.isReadonly()
-					&& (!StringUtils.equals(gstnNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
+			String gSTNNumber = this.financeTaxDetail.getTaxNumber();
+			if ((StringUtils.trimToNull(gSTNNumber) != null) && !this.taxNumber.isReadonly()
+					&& (!StringUtils.equals(gSTNNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
 				try {
 					parenttab.setSelected(true);
-					GSTINInfo gstinInfo = this.gstnValidationService.validateGSTNNumber(gstnNumber);
+					GSTINInfo gstinInfo = new GSTINInfo();
+					gstinInfo.setgSTNNumber(gSTNNumber);
+					gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
 
 					if (null != gstinInfo) {
 						StringBuilder msg = new StringBuilder();
