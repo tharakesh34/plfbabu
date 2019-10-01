@@ -5678,7 +5678,7 @@
             ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="203" author="vijaya.a">
 		<createView viewName="GL_VOCHERS_VIEW" replaceIfExists="true">
 			select 
@@ -5737,13 +5737,13 @@
 			<column name="Remarks" type="varchar(250)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="205" author="vijaya.a">
 		<addColumn tableName="FIN_OPTIONS_TEMP">
 			<column name="Remarks" type="varchar(250)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="206" author="vijaya.a">
 		<createView viewName="FIN_OPTIONS_VIEW" replaceIfExists="true">
 			SELECT t1.id,
@@ -5810,7 +5810,7 @@
 			          WHERE fin_options_temp.id = t1.id))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="207" author="vijaya.a">
 		<createView viewName="FIN_OPTIONS_AVIEW" replaceIfExists="true">
 			SELECT t1.id,
@@ -5844,7 +5844,7 @@
 			     LEFT JOIN templates cust ON cust.templateid = t1.customertemplate
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="208" author="satyanarayana.g">
 		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
 		   SELECT A.ID,
@@ -5883,6 +5883,75 @@
 				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
 				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
 	 </createView>
-	 </changeSet>
-	 
+	</changeSet>
+
+	<changeSet id="209" author="satyanarayana.g">
+		<createView viewName="ACCOUNTS_AVIEW" replaceIfExists="true">
+		   SELECT A.ID,
+				    A.ACTYPE,
+				    A.ACNUMBER,
+				    A.ACBALANCE,
+				    A.ACBRANCH,
+				    A.ACCCY,
+				    A.ACOPENDATE,
+				    AM.ACCOUNT,
+				    AM.ACCOUNTTYPE,
+				    AM.COSTCENTERID,
+				    AM.FINTYPE,
+				    AM.HOSTACCOUNT,
+				    AM.PROFITCENTERID,
+				    AT.ACCADDLCHAR1,
+				    AT.ACCADDLVAR1,
+				    AT.ACCADDLVAR2,
+				    AT.ACCADDLVAR3,
+				    AT.ACCADDLVAR4,
+				    AT.ACHEADCODE,
+				    AT.ACLMTCATEGORY,
+				    AT.ACPURPOSE,
+				    AT.ACTYPEDESC,
+				    AT.ACTYPEGRPID,
+				    AT.ACTYPEISACTIVE,
+				    AT.ALLOWOVERDRAW,
+				    AT.ASSERTORLIABILITY,
+				    AT.CONTROLAC,
+				    AT.CUSTSYSAC,
+				    AT.EXTRACTIONTYPE,
+				    AT.INTERNALAC,
+				    AT.ONBALANCESHEET,
+				    AT.TAXAPPLICABLE
+				  FROM ACCOUNTS A
+				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
+				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
+	 </createView>
+		<changeSet id="210" author="vijaya.a">
+			<sql>
+            <![CDATA[
+            	delete from data_engine_column where TableId in (select id from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY')));
+				delete from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY'));
+				delete from data_engine_config  where name in ('GL_VOCHER_DOWNLOAD_TALLY');
+				
+				INSERT INTO data_engine_config (id, name, description, parser, worksheet, textqualifier, rowdelimiter, columndelimiter, startingrow, skipheaderrow, fieldnames, header, trailer, uploadlocation, uploadpath, fileprefixname, fileextension, filesequenceno, lastprocessedon, filenameformat, cronexpression, notificationstatusemail, postevent, backupfile, active) 
+				VALUES ((select max(id) + 1 from data_engine_config), 'GL_VOCHER_DOWNLOAD_TALLY', 'VOUCHER_UPLOAD', 3 , 'VOUCHER_UPLOAD', NULL, NULL, NULL, 0, 0, NULL , 'Voucher Number, Voucher Date,  Voucher Value Date, Voucher Type, GL Code, GL Description, DrCr Flag, Amount, Narration', NULL, 'A', 'C:/Pennant/PFF/DailyDownload/GLVochers' , 'GL_VOUCHERS_', '.xlsx', 1, NULL, '${VOCHER_DATE}', NULL, '0', NULL, 1, 1);
+				
+				INSERT INTO data_engine_table (id, configid, name, operation, keyfields, filter, statusupdate, skiprows, identifier, description, startindex, endindex, recordlength, multirow, headertable) 
+				VALUES ((select max(id) + 1 from data_engine_table), (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY'), 'GL_VOCHERS_VIEW', 0, 'ID', 'POSTDATE BETWEEN :FROM_DATE AND :TO_DATE', NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 0);
+				
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'LINKEDTRANID', 	 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, 'NUMBER:', 				'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'POSTDATE', 		 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, 'DATE:dd.MM.yyyy', 		'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'VALUEDATE', 		 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, 'DATE:dd.MM.yyyy', 		'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'GROUPDESCRIPTION', 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'HOSTACCOUNT', 	 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'TRANDESC', 		 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'DRORCR', 	 		 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'POSTAMOUNT', 	 	 0, 'N', NULL, NULL, NULL, 		NULL, '0', NULL, NULL, 												NULL, 'AMOUNT:###,###', 		'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'NARRATION', 	 	 1, 'N', NULL, NULL, 'FROM_RS', NULL, '0', NULL, '$FINREFERENCE$ - $FINEVENT$ -$ACTYPEDESC$',		NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'FINREFERENCE', 	 	 1, 'N', NULL, NULL, 'FROM_RS',	NULL, '0', NULL, NULL, 												NULL, NULL,						'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'FINEVENT', 	 	 	 1, 'N', NULL, NULL, 'FROM_RS',	NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				INSERT INTO data_engine_column (id, tableid, name, skip, seqtype, seqobject, defaultvalue, derivedfrom, referencecolumn, startindex, endindex, ruleforvalue, queryforvalue, format, constrainttype) VALUES ((select max(id) + 1 from data_engine_column), (select id from data_engine_table where configId = (select id from data_engine_config where name = 'GL_VOCHER_DOWNLOAD_TALLY')), 'ACTYPEDESC', 	 	 1, 'N', NULL, NULL, 'FROM_RS',	NULL, '0', NULL, NULL, 												NULL, NULL, 					'O');
+				
+				update seq_data_engine_config set SeqNo = (select max(id) from data_engine_config);
+				update seq_data_engine_table set SeqNo = (select max(id) from data_engine_table);
+            ]]>
+			</sql>
+		</changeSet>
 </databaseChangeLog>
