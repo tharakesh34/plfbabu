@@ -10,4 +10,6 @@ public interface MerchantDetailsDAO extends BasicCrudDao<MerchantDetails> {
 
 	boolean isDuplicateKey(MerchantDetails merchantDetails, TableType tableType);
 
+	boolean isDuplicatePOSIdKey(MerchantDetails merchantDetails, TableType tableType);
+
 }

@@ -1,5 +1,6 @@
 package com.pennant.webui.systemmasters.transactionmapping;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -307,7 +308,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 			this.tid.setText(String.valueOf(mapping.getTid()));
 		}
 
-		if (mapping.getMid() == Long.MIN_VALUE) {
+		if (mapping.getMid() == null) {
 			this.mid.setValue("");
 			this.mid.setDescription("");
 		} else {
@@ -362,7 +363,7 @@ public class TransactionMappingDialogCtrl extends GFCBaseCtrl<TransactionMapping
 		}
 
 		try {
-			aTransactionMapping.setMid(Long.valueOf(this.mid.getValue()));
+			aTransactionMapping.setMid(new BigDecimal(this.mid.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

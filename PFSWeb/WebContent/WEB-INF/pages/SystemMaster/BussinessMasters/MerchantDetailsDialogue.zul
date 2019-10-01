@@ -67,7 +67,7 @@
 									<label value="${c:l('label_MerchantDetails_StoreId.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<intbox id="storeId" width="300px" maxlength="8" />
+										<textbox id="storeId" width="300px" maxlength="20" />
 									</hbox>
 									<label value="${c:l('label_MerchantDetails_AvgTraAmtPerMnth.value')}" />
 									<hbox>

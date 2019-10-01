@@ -1,5 +1,6 @@
 package com.pennanttech.pff.mmfl.cd.webui;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 	protected Textbox merchantName;
 	protected CurrencyBox avgNumOfTransperMnth;
-	protected Intbox storeId;
+	protected Textbox storeId;
 	protected CurrencyBox avgTranAmtperMnth;
 	protected Textbox storeName;
 	protected CurrencyBox transAmtLmtPerTran;
@@ -318,7 +319,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		logger.debug(Literal.ENTERING);
 
 		this.merchantName.setText(merchantDetails.getMerchantName());
-		this.storeId.setValue(merchantDetails.getStoreId());
+		this.storeId.setValue(String.valueOf(merchantDetails.getStoreId()).equals("null") ? "0" : String.valueOf(merchantDetails.getStoreId()));
 		this.storeName.setText(merchantDetails.getStoreName());
 		this.addressLine1.setText(merchantDetails.getStoreAddressLine1());
 		this.addressLine2.setText(merchantDetails.getStoreAddressLine2());
@@ -371,7 +372,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		try {
-			merchantDetails.setStoreId(this.storeId.getValue());
+			merchantDetails.setStoreId(new BigDecimal(this.storeId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -563,7 +564,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 
 		if (!this.storeId.isReadonly()) {
 			this.storeId.setConstraint(
-					new PTNumberValidator(Labels.getLabel("label_MerchantDetails_PeakTransPerDay.value"), true, false));
+					new PTStringValidator(Labels.getLabel("label_MerchantDetails_StoreId.value"),
+							PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
 		if (!this.storeName.isReadonly()) {
@@ -833,7 +835,7 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
 		this.merchantName.setValue("");
-		this.storeId.setValue(0);
+		this.storeId.setValue("0");
 		this.storeName.setValue("");
 		this.addressLine1.setValue("");
 		this.addressLine2.setValue("");

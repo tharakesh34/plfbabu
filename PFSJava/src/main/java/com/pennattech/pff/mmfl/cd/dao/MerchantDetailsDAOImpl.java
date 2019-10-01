@@ -186,4 +186,38 @@ public class MerchantDetailsDAOImpl extends SequenceDao<MerchantDetails> impleme
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+
+	@Override
+	public boolean isDuplicatePOSIdKey(MerchantDetails merchantDetails, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+
+		String sql;
+		String whereClause = "POSId = :posId ";
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("CD_MERCHANTS", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("CD_MERCHANTS_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "CD_MERCHANTS_Temp", "CD_MERCHANTS" }, whereClause);
+			break;
+		}
+
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("posId", merchantDetails.getPOSId());
+
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }

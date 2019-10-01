@@ -463,4 +463,13 @@
 		</addColumn>
 	</changeSet>
 	
+	<changeSet id="11" author="Vijaya.a">
+		<sql>
+			<![CDATA[ 
+				alter table ADTCD_MERCHANTS modify (STOREID NUMBER(20));
+				alter table ADTTransactionMapping modify (MID NUMBER(20));
+				alter table ADTCD_DealerMapping modify (STOREID NUMBER(20));
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	

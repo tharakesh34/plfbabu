@@ -1,5 +1,6 @@
 package com.pennanttech.pff.mmfl.cd.model;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 	private int posId;
 	private long dealerCode = Long.MIN_VALUE;
 	private String dealerName;
-	private long mid = Long.MIN_VALUE;
+	private BigDecimal mid;
 	private long tid = Long.MIN_VALUE;
 	private String storeName;
 	private int storeId;
@@ -59,11 +60,11 @@ public class TransactionMapping extends AbstractWorkflowEntity implements Entity
 		this.dealerName = dealerName;
 	}
 
-	public long getMid() {
+	public BigDecimal getMid() {
 		return mid;
 	}
 
-	public void setMid(long mid) {
+	public void setMid(BigDecimal mid) {
 		this.mid = mid;
 	}
 

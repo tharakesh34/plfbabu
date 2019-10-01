@@ -3053,4 +3053,17 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="47" author="Vijaya.a">
+		<sql>
+			<![CDATA[ 
+				alter table CD_MERCHANTS modify (STOREID NUMBER(20));
+				alter table TransactionMapping modify (MID NUMBER(20));
+				alter table CD_MERCHANTS_Temp modify (STOREID NUMBER(20));
+				alter table TransactionMapping_Temp modify (MID NUMBER(20));
+				alter table CD_DealerMapping_Temp modify (STOREID NUMBER(20));
+				alter table CD_DealerMapping modify (STOREID NUMBER(20));
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	

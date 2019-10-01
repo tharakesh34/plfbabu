@@ -579,7 +579,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 			this.merchantName.setReadonly(true);
 		}
 
-		readOnlyComponent(isReadOnly("DealerMappingDialog_MerchantName"), this.merchantName);
+		//readOnlyComponent(isReadOnly("DealerMappingDialog_MerchantName"), this.merchantName);
 		readOnlyComponent(isReadOnly("DealerMappingDialog_StoreName"), this.storeName);
 		readOnlyComponent(isReadOnly("DealerMappingDialog_Active"), this.active);
 

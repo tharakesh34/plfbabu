@@ -1,5 +1,7 @@
 package com.pennanttech.pff.mmfl.cd.service;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
@@ -166,7 +168,8 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 
 		// Get the model object.
 		MerchantDetails merchantDetails = (MerchantDetails) auditDetail.getModelData();
-		int storeId = merchantDetails.getStoreId();
+		BigDecimal storeId = merchantDetails.getStoreId();
+		int posId = merchantDetails.getPOSId();
 
 		// Check the unique keys.
 		if (merchantDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
@@ -174,6 +177,14 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_MerchantDetails_StoreId.value") + ": " + storeId;
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
+		}
+		
+		if (merchantDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
+				&& merchantDetailsDAO.isDuplicatePOSIdKey(merchantDetails,
+						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_TransactionMapping_POSId.value") + ": " + posId;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

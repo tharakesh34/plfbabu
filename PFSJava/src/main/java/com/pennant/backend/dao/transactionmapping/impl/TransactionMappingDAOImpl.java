@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.transactionmapping.impl;
 
+import java.math.BigDecimal;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -182,7 +184,7 @@ public class TransactionMappingDAOImpl extends SequenceDao<TransactionMapping> i
 	public int getcountByMID(long mid, long tid) {
 		logger.debug("Entering");
 		TransactionMapping transactionMapping = new TransactionMapping();
-		transactionMapping.setMid(mid);
+		transactionMapping.setMid(new BigDecimal(mid) == null ? BigDecimal.ZERO : new BigDecimal(mid));
 		transactionMapping.setTid(tid);
 
 		StringBuilder selectSql = new StringBuilder();
