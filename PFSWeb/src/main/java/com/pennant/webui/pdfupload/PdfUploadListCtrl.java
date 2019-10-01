@@ -67,6 +67,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -169,6 +170,27 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 		logger.debug("Entering");
 
 		Media media = event.getMedia();
+
+		String filenamesplit[] = media.getName().split("\\.");
+		if (filenamesplit.length > 2) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+
+		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
+				|| filenamesplit[1].contains("sh"))) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+		
+		String docType = "";
+		if ("application/pdf".equals(media.getContentType())) {
+			docType = PennantConstants.DOC_TYPE_PDF;
+		} 
+		else {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
 		fileName.setText(media.getName());
 		fileByte = media.getByteData();
 		resetListBox();

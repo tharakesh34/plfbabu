@@ -261,6 +261,19 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 
+		String filenamesplit[] = media.getName().split("\\.");
+		if (filenamesplit.length > 2) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+
+		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
+				|| filenamesplit[1].contains("sh"))) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+		
+		
 		try {
 			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xls")
 					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {

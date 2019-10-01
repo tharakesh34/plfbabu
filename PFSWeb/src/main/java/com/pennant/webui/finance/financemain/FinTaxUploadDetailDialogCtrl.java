@@ -192,6 +192,18 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		int totalCount = 0;
 		String status = null;
 		media = event.getMedia();
+		
+		String filenamesplit[] = media.getName().split("\\.");
+		if (filenamesplit.length > 2) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+
+		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
+				|| filenamesplit[1].contains("sh"))) {
+			MessageUtil.showError(Labels.getLabel("GSTUpload_Supported_Document"));
+			return;
+		}
 		Sheet firstSheet;
 		retAuditHeader = null;
 		this.button_ErrorDetails.setVisible(false);
