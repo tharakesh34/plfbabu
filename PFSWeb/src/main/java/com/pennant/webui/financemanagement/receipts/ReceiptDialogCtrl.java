@@ -2468,14 +2468,14 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					Notification notification = new Notification();
 					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
 
-					notification.setModule("RECEIPTS");
-					notification.setSubModule(module);
+					notification.setModule("LOAN");
+					notification.setSubModule("RECEIPT");
 					notification.setKeyReference(financeMain.getFinReference());
-					notification.setStage(financeMain.getRoleCode());
+					notification.setStage(receiptData.getReceiptHeader().getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						notificationService.sendNotifications(notification, getFinanceDetail(),
+						notificationService.sendNotifications(notification, receiptData,
 								financeMain.getFinType(), getFinanceDetail().getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(Literal.EXCEPTION, e);

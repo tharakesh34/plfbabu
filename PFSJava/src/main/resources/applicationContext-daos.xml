@@ -6489,6 +6489,8 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<property name="customerGroupQueuingDAO" ref="customerGroupQueuingDAO" />
+		<property name="notificationService" ref="notificationService" />
+		
 	</bean>
 
 	<bean id="limitTransactionDetailDAO" class="com.pennant.backend.dao.limit.impl.LimitTransactionDetailsDAOImpl"

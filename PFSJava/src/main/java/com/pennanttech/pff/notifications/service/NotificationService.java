@@ -67,6 +67,7 @@ import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
+import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
@@ -135,6 +136,9 @@ public class NotificationService {
 		} else if (object instanceof FinanceDetail) {
 			FinanceDetail financeDetail = (FinanceDetail) object;
 			data = getTemplateData(financeDetail, null);
+		} else if (object instanceof LimitHeader) {
+			LimitHeader limitHeader = (LimitHeader) object;
+			data = getTemplateData(limitHeader, mailKeyData);
 		}
 
 		Map<String, byte[]> attachements = mailKeyData.getAttachments();
@@ -684,6 +688,30 @@ public class NotificationService {
 	}
 
 	/**
+	 * Preparing the template data for LimitHeader email and sms processing
+	 * 
+	 * @param limitHeader
+	 * @return
+	 */
+
+	private Map<String, Object> getTemplateData(LimitHeader limitHeader, Notification notification) {
+
+		MailTemplateData data = new MailTemplateData();
+		data.setCustShrtName(limitHeader.getCustShrtName());
+		data.setCustCIF(limitHeader.getCustCIF());
+		// Customer Mail
+		for (String notifMail : notification.getEmails()) {
+			data.setCustEmailId(notifMail);
+		}
+		// Customer Contact Number
+		for (String mobile : notification.getMobileNumbers()) {
+			data.setCustMobileNumber(mobile);
+		}
+
+		return data.getDeclaredFieldValues();
+	}
+
+	/**
 	 * Method for Data Preparion
 	 * 
 	 * @param data
@@ -1133,6 +1161,11 @@ public class NotificationService {
 			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
 			declaredFieldValues.put("rc_" + "effectiveDate",
 					DateUtility.formatToLongDate(lmsServiceLog.getEffectiveDate()));
+		}
+
+		if (receiptHeader != null) {
+			declaredFieldValues.put("recordStatus", receiptHeader.getRecordStatus());
+			declaredFieldValues.put("receiptPurpose", receiptHeader.getReceiptPurpose());
 		}
 		// put call email template datamap added
 		FinOption finOption = aFinanceDetail.getFinOption();

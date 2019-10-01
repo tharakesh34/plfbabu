@@ -56,6 +56,7 @@ import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -80,7 +81,10 @@ import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerGroup;
+import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customerqueuing.CustomerGroupQueuing;
 import com.pennant.backend.model.customerqueuing.CustomerQueuing;
 import com.pennant.backend.model.limit.LimitDetails;
@@ -97,13 +101,18 @@ import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.backend.service.limitservice.LimitRebuild;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.LimitConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.eod.dao.CustomerGroupQueuingDAO;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
  * Service implementation for methods that depends on <b>LimitDetail</b>.<br>
@@ -131,7 +140,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	protected long userID;
 	private String userLangauge;
-
+	private NotificationService notificationService;
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -474,10 +483,76 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.getAuditDetail().setModelData(limitHeader);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LIMIT_NOTIFICATION)) {
+			sendMailNotification(limitHeader);
+		}
 
+		logger.debug("Leaving");
 		return auditHeader;
 	}
+
+	protected void sendMailNotification(LimitHeader imitHeader) {
+		logger.debug(Literal.ENTERING);
+		try {
+			Notification notification = new Notification();
+			notification.setKeyReference(imitHeader.getCustCIF());
+			notification.setModule("LOAN");
+			notification.setSubModule("LIMIHEADER");
+			notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION);
+			CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(imitHeader.getCustomerId(),
+					"_AView");
+			if (customerDetails == null) {
+				return;
+			}
+
+			if (customerDetails.getCustomer() == null) {
+				return;
+			}
+
+			// Customer Email
+			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+			if (CollectionUtils.isEmpty(emailList)) {
+				return;
+			}
+
+			String emailId = null;
+			for (CustomerEMail email : emailList) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+					emailId = email.getCustEMail();
+					break;
+				}
+			}
+
+			if (StringUtils.isEmpty(emailId)) {
+				return;
+			}
+
+			List<String> emails = new ArrayList<>();
+			emails.add(emailId);
+			notification.setEmails(emails);
+
+			// Customer Contact Number
+			String mobileNumber = null;
+			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
+						.getPhoneTypePriority()) {
+					mobileNumber = customerPhoneNumber.getPhoneNumber();
+					break;
+				}
+			}
+
+			List<String> mobileNumberList = new ArrayList<>();
+			mobileNumberList.add(mobileNumber);
+			notification.setMobileNumbers(mobileNumberList);
+			notificationService.sendNotification(notification, imitHeader);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 
 	/**
 	 * Customer Limit Rebuild process
@@ -1853,5 +1928,13 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	public void setCustomerGroupQueuingDAO(CustomerGroupQueuingDAO customerGroupQueuingDAO) {
 		this.customerGroupQueuingDAO = customerGroupQueuingDAO;
+	}
+
+	public NotificationService getNotificationService() {
+		return notificationService;
+	}
+
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
 	}
 }
