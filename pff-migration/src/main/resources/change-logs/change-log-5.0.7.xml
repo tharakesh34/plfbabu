@@ -5923,8 +5923,9 @@
 				  INNER JOIN ACCOUNTMAPPING AM ON AM.ACCOUNT = A.ACNUMBER
 				  INNER JOIN RMTACCOUNTTYPES AT ON AT.ACTYPE = AM.ACCOUNTTYPE
 	 </createView>
-		<changeSet id="210" author="vijaya.a">
-			<sql>
+	</changeSet>
+	<changeSet id="210" author="vijaya.a">
+		<sql>
             <![CDATA[
             	delete from data_engine_column where TableId in (select id from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY')));
 				delete from data_engine_table where ConfigId in (select id from data_engine_config where name in ('GL_VOCHER_DOWNLOAD_TALLY'));
@@ -5952,6 +5953,18 @@
 				update seq_data_engine_config set SeqNo = (select max(id) from data_engine_config);
 				update seq_data_engine_table set SeqNo = (select max(id) from data_engine_table);
             ]]>
-			</sql>
-		</changeSet>
+		</sql>
+	</changeSet>
+	<changeSet id="" author="">
+		<sql>
+            <![CDATA[
+            	update REPORTFILTERFIELDS set modulename='FinOptionReport',LOVHIDDENFIELDMETHOD='getFinReference',LOVTEXTFIELDMETHOD='getFinReference' where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport')  and fieldid=1;
+				update REPORTFILTERFIELDS set MULTISELECTSEARCH=1 where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport')  and fieldid=1;
+				update REPORTFILTERFIELDS set MULTISELECTSEARCH=1 where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantRegisterReport')  and fieldid=1;
+				update REPORTFILTERFIELDS set modulename='CovenantReport',LOVHIDDENFIELDMETHOD='getKeyReference',LOVTEXTFIELDMETHOD='getKeyReference' where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_CovenantRegisterReport')  and fieldid=1;
+				update REPORTFILTERFIELDS set modulename='FinOptionReport',LOVHIDDENFIELDMETHOD='getFinReference',LOVTEXTFIELDMETHOD='getFinReference' where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport')  and fieldid=1;;
+				update REPORTFILTERFIELDS set FIELDNAME='CustCIF',FIELDLABEL='Customer Number',FIELDDBNAME='c.CustCIF', MODULENAME='Customer',LOVHIDDENFIELDMETHOD='getCustCIF',LOVTEXTFIELDMETHOD='getCustShrtName',MULTISELECTSEARCH=1,mandatory=0  where reportid in (select reportid from reportconfiguration where menuitemcode='menu_Item_CollateralRegisterReport') and fieldid=1;
+              ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
