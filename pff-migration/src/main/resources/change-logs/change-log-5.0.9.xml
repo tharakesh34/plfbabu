@@ -12348,7 +12348,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="204" author="srikanth.m" dbms="postgresql">
+	<changeSet id="204" author="srikanth.m" >
 		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
  				SELECT Distinct t1.custid, 
 				t1.custcif, 
@@ -12360,34 +12360,6 @@ UNION ALL
 			   join LimitHeader_view t2 on cast(t2.customerId as bigint) != t1.CustId and t1.custid not in 
          (select cast(customerId as bigint) from  LimitHeader_view)
 		</createView>
-	</changeSet>
-
-	<changeSet id="204" author="srikanth.m" dbms="oracle">
-		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
- 				SELECT Distinct t1.custid, 
-				t1.custcif, 
-				t1.CustShrtName,
-			    t1.CustCtgCode,
-			    t1.CustFName,
-			    t1.CustLName
-			   FROM customers t1 
-			   join LimitHeader_view t2 on cast(t2.customerId as number(19,0)) != t1.CustId and t1.custid not in 
-         (select cast(customerId as number(19,0)) from  LimitHeader_view)
-		</createView>
-	</changeSet>
-
-	<changeSet id="204" author="srikanth.m" dbms="mssql">
-		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
-	SELECT Distinct t1.custid, 
-				t1.custcif, 
-				t1.CustShrtName,
-			    t1.CustCtgCode,
-			    t1.CustFName,
-			    t1.CustLName
-			   FROM customers t1 
-			   join LimitHeader_view t2 on cast(t2.customerId as decimal(19,0)) != t1.CustId and 
-			   t1.custid not in  (select cast(customerId as decimal (19,0)) from  LimitHeader_view)
-	</createView>
 	</changeSet>
 
 </databaseChangeLog>
