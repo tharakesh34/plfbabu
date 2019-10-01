@@ -2086,6 +2086,19 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
+
+		String filenamesplit[] = media.getName().split("\\.");
+		if (filenamesplit.length > 2) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+
+		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
+				|| filenamesplit[1].contains("sh"))) {
+			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+			return;
+		}
+		
 		browseDoc(media, this.documnetName);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2094,6 +2107,7 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		logger.debug(Literal.ENTERING);
 		try {
 			String docType = "";
+					
 			if ("application/pdf".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_PDF;
 			} else if ("image/jpeg".equals(media.getContentType()) || "image/png".equals(media.getContentType())) {
@@ -2104,7 +2118,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 				docType = PennantConstants.DOC_TYPE_MSG;
 			} else if ("application/x-zip-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_ZIP;
-			} else if ("application/octet-stream".equals(media.getContentType())) {
+			}
+			else if ("application/octet-stream".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_7Z;
 			} else if ("application/x-rar-compressed".equals(media.getContentType())) {
 				docType = PennantConstants.DOC_TYPE_RAR;
