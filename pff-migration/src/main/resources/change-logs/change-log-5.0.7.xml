@@ -5955,7 +5955,7 @@
             ]]>
 		</sql>
 	</changeSet>
-	<changeSet id="" author="">
+	<changeSet id="211" author="murthy">
 		<sql>
             <![CDATA[
             	update REPORTFILTERFIELDS set modulename='FinOptionReport',LOVHIDDENFIELDMETHOD='getFinReference',LOVTEXTFIELDMETHOD='getFinReference' where reportid in (select reportid from  REPORTCONFIGURATION where menuitemcode='menu_Item_putcallreport')  and fieldid=1;
