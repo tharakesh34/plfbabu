@@ -3420,132 +3420,198 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 
 	<changeSet id="68" author="dheerendra.d">
 		<sql>
-			UPDATE SeqSecGroups SET SeqNo= (sELECT MAX(GRPID) FROM ( SELECT GRPID FROM
+			UPDATE SeqSecGroups SET SeqNo= (sELECT MAX(GRPID) FROM ( SELECT
+			GRPID FROM
 			SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEmp)t);
-			UPDATE SeqSecRights SET SeqNo= (sELECT MAX(rightid) FROM SecRights );
-			UPDATE SeqSecGroupRights SET SeqNo= (sELECT MAX(GRPrightID) FROM (
-			SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM
+			UPDATE
+			SeqSecRights SET SeqNo= (sELECT MAX(rightid) FROM SecRights );
+			UPDATE
+			SeqSecGroupRights SET SeqNo= (sELECT MAX(GRPrightID) FROM (
+			SELECT
+			GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM
 			SecGroupRights_TEmp)t);
-			UPDATE SeqSecRoleGroups SET SeqNo= (sELECT MAX(ROLEGRPID) FROM
+			UPDATE SeqSecRoleGroups SET SeqNo= (sELECT
+			MAX(ROLEGRPID) FROM
 			SecRoleGroups);
 
-			INSERT INTO SecGroups SELECT (select (SeqNo+1) from SeqSecGroups),
+			INSERT INTO SecGroups SELECT
+			(select (SeqNo+1) from SeqSecGroups),
 			'ExtInterfaceConfiguration_VIEW', 'Allow to view
 			ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ','
 			',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
-			INSERT INTO SecGroups SELECT (select (SeqNo+2) from SeqSecGroups),
+			INSERT INTO SecGroups
+			SELECT (select (SeqNo+2) from SeqSecGroups),
 			'ExtInterfaceConfiguration_MAKER', 'WF Maker for
 			ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ','
 			',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
-			INSERT INTO SecGroups SELECT (select (SeqNo+3) from SeqSecGroups),
+			INSERT INTO SecGroups
+			SELECT (select (SeqNo+3) from SeqSecGroups),
 			'ExtInterfaceConfiguration_APPROVER', 'WF Approver for
 			ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ','
 			',' ',' ',' ',0 FROM SeqSecGroups WHERE 0=0;
 
-			INSERT INTO SecRights SELECT (select (SeqNo+1) from
+			INSERT INTO SecRights
+			SELECT (select (SeqNo+1) from
 			SeqSecRights),0,'menuCat_ExtInterfaceEnquiry','MENU',0,1000,current_timestamp,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-			INSERT INTO SecRights SELECT (select (SeqNo+2) from
+			INSERT INTO SecRights
+			SELECT (select (SeqNo+2) from
 			SeqSecRights),0,'menuCat_ExtInterface','MENU',0,1000,current_timestamp,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-			INSERT INTO SecRights SELECT (select (SeqNo+3) from
+			INSERT INTO SecRights
+			SELECT (select (SeqNo+3) from
 			SeqSecRights),2,'button_ExtInterfaceConfigurationList_PrintList','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-			INSERT INTO SecRights SELECT (select (SeqNo+4) from
+			INSERT INTO SecRights
+			SELECT (select (SeqNo+4) from
 			SeqSecRights),2,'button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-			INSERT INTO SecRights SELECT (select (SeqNo+5) from
+			INSERT INTO SecRights
+			SELECT (select (SeqNo+5) from
 			SeqSecRights),2,'button_ExtInterfaceConfigurationDialog_btnSave','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecRights WHERE 0=0;
-			INSERT INTO SecRights values((SELECT (SeqNo+5) + 1 from SeqSecRights),
+			INSERT INTO SecRights
+			values((SELECT (SeqNo+5) + 1 from SeqSecRights),
 			3,'ExtInterfaceConfigurationDialog_Description','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','','
 			',' ',' ',' ',0);
-			INSERT INTO SecRights values((SELECT (SeqNo+5) + 2 from SeqSecRights),
+			INSERT INTO SecRights values((SELECT (SeqNo+5) + 2
+			from SeqSecRights),
 			3,'ExtInterfaceConfigurationDialog_Type','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','','
 			',' ',' ',' ',0);
-			INSERT INTO SecRights values((SELECT (SeqNo+5) + 3 from SeqSecRights),
+			INSERT INTO SecRights values((SELECT (SeqNo+5) + 3
+			from SeqSecRights),
 			3,'ExtInterfaceConfigurationDialog_NotificationType','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','','
 			',' ',' ',' ',0);
-			INSERT INTO SecRights values((SELECT (SeqNo+5) + 4 from SeqSecRights),
+			INSERT INTO SecRights values((SELECT (SeqNo+5) + 4
+			from SeqSecRights),
 			3,'ExtInterfaceConfigurationDialog_active','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','','
 			',' ',' ',' ',0);
 
 
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+1) from
+			INSERT INTO SecGroupRights SELECT (select (SeqNo+1)
+			from
 			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
 			RightID from SecRights WHERE
 			RightName='menuCat_ApplicationMasterEnquiry'),1,0,1000,CURRENT_TIMESTAMP,'Approved','
 			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+2) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			RightID from SecRights WHERE
+			INSERT INTO
+			SecGroupRights SELECT (select (SeqNo+2) from
+			SeqSecGroupRights),
+			(select (SeqNo+2) from SeqSecGroups), (select
+			RightID from SecRights
+			WHERE
 			RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,'
 			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+3) from
-			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
-			RightID from SecRights WHERE
+			INSERT INTO
+			SecGroupRights SELECT (select (SeqNo+3) from
+			SeqSecGroupRights),
+			(select (SeqNo+3) from SeqSecGroups), (select
+			RightID from SecRights
+			WHERE
 			RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,'
 			',' ',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+4) from
-			SeqSecGroupRights), (select (SeqNo+1) from SeqSecGroups), (select
-			(SeqNo+1) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+5) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+6) from
-			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
-			(SeqNo+2) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+7) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+4) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+8) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
-			(SeqNo+5) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+9) from
-			SeqSecGroupRights), (select (SeqNo+3) from SeqSecGroups), (select
-			(SeqNo+5) from SeqSecRights),1,0,10000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+9+1) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			INSERT INTO
+			SecGroupRights SELECT (select (SeqNo+4) from
+			SeqSecGroupRights),
+			(select (SeqNo+1) from SeqSecGroups), (select
+			(SeqNo+1) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+5) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
+			(SeqNo+2) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+6) from
+			SeqSecGroupRights), (select (SeqNo+3)
+			from SeqSecGroups), (select
+			(SeqNo+2) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+7) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
+			(SeqNo+4) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+8) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
+			(SeqNo+5) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+9) from
+			SeqSecGroupRights), (select (SeqNo+3)
+			from SeqSecGroups), (select
+			(SeqNo+5) from
+			SeqSecRights),1,0,10000,current_timestamp,'Approved','
+			',' ',' ',' ','
+			',0 FROM SeqSecGroupRights WHERE 0=0;
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+9+1) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
 			(SeqNo+5+1) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+9+2) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+9+2) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
 			(SeqNo+5+2) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+9+3) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+9+3) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
 			(SeqNo+5+3) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
-			INSERT INTO SecGroupRights SELECT (select (SeqNo+9+4) from
-			SeqSecGroupRights), (select (SeqNo+2) from SeqSecGroups), (select
+			INSERT INTO SecGroupRights
+			SELECT (select (SeqNo+9+4) from
+			SeqSecGroupRights), (select (SeqNo+2)
+			from SeqSecGroups), (select
 			(SeqNo+5+4) from
 			SeqSecRights),1,0,10000,current_timestamp,'Approved',' ',' ',' ','
 			',' ',0 FROM SeqSecGroupRights WHERE 0=0;
 
-			update SeqSecGroupRights set SeqNo = (SeqNo+9+4) ;
-			INSERT INTO SecRoleGroups SELECT (select (SeqNo+1) from SeqSecRoleGroups),
-			(select (SeqNo+2) from SeqSecGroups), (select roleid from SecRoles
-			where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved','
-			',' ',' ',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
-			INSERT INTO SecRoleGroups SELECT (select (SeqNo+2) from SeqSecRoleGroups),
-			(select (SeqNo+3) from SeqSecGroups), (select roleid from SecRoles
-			where RoleCd='MSTGRP1_APPROVER'),
-			0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 FROM
+			update SeqSecGroupRights set
+			SeqNo = (SeqNo+9+4) ;
+			INSERT INTO SecRoleGroups SELECT (select
+			(SeqNo+1) from SeqSecRoleGroups),
+			(select (SeqNo+2) from
+			SeqSecGroups), (select roleid from SecRoles
+			where
+			RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved','
+			',' ','
+			',' ',' ',0 FROM SeqSecRoleGroups WHERE 0=0;
+			INSERT INTO SecRoleGroups
+			SELECT (select (SeqNo+2) from SeqSecRoleGroups),
+			(select (SeqNo+3)
+			from SeqSecGroups), (select roleid from SecRoles
+			where
+			RoleCd='MSTGRP1_APPROVER'),
+			0,1000,current_timestamp,'Approved',' ','
+			',' ',' ',' ',0 FROM
 			SeqSecRoleGroups WHERE 0=0;
 
-			update SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
+			update
+			SeqSecRoleGroups set SeqNo = (SeqNo+2) ;
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="69" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -3553,7 +3619,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="70" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -3562,20 +3628,20 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="71" author="meena.a">
 		<sql>
 		<![CDATA[
-			INSERT INTO 
-			REPORTFILTERFIELDS 
-			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport'),2,'Prepayment Perc%','TXT','Prepayment Perc%','appPercentage',null,null,null,null,0,20,0,0,2,1,null,null,null,null,250,1,null,4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+		    delete from REPORTFILTERFIELDS where reportid=(select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport') and fieldid='2';
+		
+			INSERT INTO REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport'),2,'Prepayment Perc%','TXT','Prepayment Perc%','appPercentage',null,null,null,null,0,20,0,0,2,1,null,null,null,null,250,1,null,4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
         ]]>
 		</sql>
 	</changeSet>
 
-	
+
 	<changeSet id="71" author="Saikiran.V">
-		 <sql>
+		<sql>
 		 <![CDATA[
 			delete from SecRoleGroups   where grpid =(Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT');
 			delete from SECGROUPRIGHTS   where grpid =(Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT');
@@ -3589,9 +3655,9 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
             INSERT INTO SECGROUPRIGHTS VALUES ((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE = 'REPORTS_EXCESSAMOUNTRPT') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_ExcessAmountReport'), 1, 1, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
 	        INSERT INTO SecRoleGroups values ((SELECT MAX(RoleGrpID) + 1 from SecRoleGroups), (Select GrpId from SecGroups WHERE GrpCode = 'REPORTS_EXCESSAMOUNTRPT'), (Select MAX(RoleID) from SecRoles WHERE RoleCd = 'MSTGRP1_MAKER'), 0, 1000, CURRENT_TIMESTAMP, NULL, NULL, NULL, NULL, NULL, NULL, 0); 
 	       ]]>
-	    </sql>		
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="72" author="Saikiran.V">
 		<sql>
 		 <![CDATA[
@@ -3605,15 +3671,15 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport'),2,'CustCIF','LOVSEARCH','Customer Number','T6.custcif',null,'Customer','getCustCIF','getCustShrtName',0,0,0,0,2,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 			Insert into REPORTFILTERFIELDS values ((select reportid from REPORTCONFIGURATION where menuitemcode='menu_Item_ExcessAmountReport'),3,'FinReference','LOVSEARCH','Loan Reference','T1.finreference',null,'FinanceMain','getFinReference','getFinReference',0,0,0,0,3,0,' ',' ',' ',' ',250,0,'=',1,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
 		 ]]>
-		</sql>		
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="73" author="meena.a">
 		<sql>
 		 <![CDATA[
 			UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='COMMITE_ADDTNAL_FIELDS_REQ';
 		 ]]>
-		</sql>		
+		</sql>
 	</changeSet>
 
 
