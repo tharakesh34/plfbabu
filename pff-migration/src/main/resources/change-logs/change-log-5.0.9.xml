@@ -12375,5 +12375,12 @@ UNION ALL
          (select cast(customerId as number(19,0)) from  LimitHeader_view)
 		</createView>
 	</changeSet>
-
+	<changeSet id="205" author="Saikiran.V">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='ALLOW_INTERNAL_SETTLEMENTS';
+					INSERT INTO SMTparameters  VALUES ('ALLOW_INTERNAL_SETTLEMENTS', 'To Allow Internal Settlement in Disbursements', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Internal Settlement in Disbursements', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+</changeSet>
 </databaseChangeLog>

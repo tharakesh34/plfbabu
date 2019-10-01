@@ -3553,4 +3553,11 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="70" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_INTERNAL_SETTLEMENTS';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

@@ -846,8 +846,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		} else {
 			this.llDate.setValue(aFinAdvnancePayments.getLlDate());
 		}
+		String excludeField = "";
+		if (!SysParamUtil.isAllowed("ALLOW_INTERNAL_SETTLEMENTS")) {
+			excludeField = "," + DisbursementConstants.PAYMENT_TYPE_IST + ",";
+		}
 		fillComboBox(this.paymentType, aFinAdvnancePayments.getPaymentType(),
-				PennantStaticListUtil.getPaymentTypesWithIST(), "");
+				PennantStaticListUtil.getPaymentTypesWithIST(), excludeField);
 		this.remarks.setValue(aFinAdvnancePayments.getRemarks());
 		//banking
 		if (aFinAdvnancePayments.getBankBranchID() != Long.MIN_VALUE && aFinAdvnancePayments.getBankBranchID() != 0) {
