@@ -3561,6 +3561,18 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+
+	
+	<changeSet id="71" author="meena.a">
+		<sql>
+		<![CDATA[
+			INSERT INTO 
+			REPORTFILTERFIELDS 
+			values ((select reportid from reportconfiguration where menuitemcode='menu_Item_ForeclosureTerminationReport'),2,'Prepayment Perc%','TXT','Prepayment Perc%','appPercentage',null,null,null,null,0,20,0,0,2,1,null,null,null,null,250,1,null,4,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+        ]]>
+		</sql>
+	</changeSet>
+
 	
 	<changeSet id="71" author="Saikiran.V">
 		 <sql>
@@ -3603,5 +3615,6 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		 ]]>
 		</sql>		
 	</changeSet>
+
 
 </databaseChangeLog>
