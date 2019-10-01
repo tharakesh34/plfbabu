@@ -2947,23 +2947,7 @@
 			<column name="TOUSRID" type="varchar(50)" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="41" author="naga.g" dbms="oracle">
-		<sql>
-			<![CDATA[
-			Insert into data_engine_config (ID,NAME,DESCRIPTION,PARSER,WORKSHEET,TEXTQUALIFIER,ROWDELIMITER,COLUMNDELIMITER,STARTINGROW,SKIPHEADERROW,FIELDNAMES,HEADER,TRAILER,UPLOADLOCATION,UPLOADPATH,FILEPREFIXNAME,FILEEXTENSION,FILESEQUENCENO,LASTPROCESSEDON,FILENAMEFORMAT,CRONEXPRESSION,NOTIFICATIONSTATUSEMAIL,POSTEVENT,BACKUPFILE,ACTIVE) values ((select max(id)+1 from data_engine_config),'ME_SCHEMEDEALERGROUP','SchemeDealerGroup extract',3,null,'"',null,'~',0,0, EMPTY_CLOB(),'ROW:{SCHEME_ID,DEALERGROUPCODE,STATUS}', null,'A','/opt/PFF/master_extract','SDM','.xlsx',4,to_date(sysdate,'DD-MON-RR'),'_${yyyyMMddHHmmss}',null,'0',null,0,1);
-
-            Insert into data_engine_table (ID,CONFIGID,NAME,OPERATION,KEYFIELDS,FILTER,STATUSUPDATE,SKIPROWS,IDENTIFIER,DESCRIPTION,STARTINDEX,ENDINDEX,RECORDLENGTH,MULTIROW,HEADERTABLE) values ((select max(id)+1 from data_engine_table),(select max(id) from data_engine_config) ,'CD_SCHEME_DEALERGROUP',0,'PROMOTIONID',null,null,null,null,null,null,null,0,0,0);
-
-            Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select max(id) from data_engine_table ),'promotionId',0,'N',null,null,null,null,'0',null,null,null,null,'O');
-
-            Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select max(id) from data_engine_table ) ,'DEALERGROUPCODE',0,'N',null,null,null,null,'0',null,null,null,null,'O');
-
-            Insert into data_engine_column (ID,TABLEID,NAME,SKIP,SEQTYPE,SEQOBJECT,DEFAULTVALUE,DERIVEDFROM,REFERENCECOLUMN,STARTINDEX,ENDINDEX,RULEFORVALUE,QUERYFORVALUE,FORMAT,CONSTRAINTTYPE) values ((select max(id)+1 from data_engine_column),( select max(id) from data_engine_table ),'ACTIVE',0,'N',null,null,null,null,'0',null,null,null,null,'O');
-
-			
-			]]>
-		</sql>
-	</changeSet>
+	
 	<changeSet id="42" author="naga.g" dbms="oracle">
 		<sql>
 		<![CDATA[
