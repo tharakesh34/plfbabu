@@ -856,11 +856,6 @@ public class PennantConstants {
 	public static final String ORIGINAL = "O";
 	public static final String PHOTOSTAT = "P";
 
-	// Template Notification constants
-	public static final String PRESENTMENT_BOUNCE_MAIL_NOTIFICATION = "PRESENTMENT_BOUNCE_MAIL_NOTIFICATION";
-	public static final String ADD_RATE_CHANGE_NOTIFICATION = "ADD_RATE_CHANGE_NOTIFICATION";
-	public static final String CREATE_LOAN_API_MAIL_NOTIFICATION = "CREATE_LOAN_NSTP_API_TEMP";
-
 	public static final String ACCESSTYPE_ENTITY = "ENTITY";
 	public static final String ACCESSTYPE_CLUSTER = "CLUSTER";
 	public static final String ACCESSTYPE_BRANCH = "BRANCH";
@@ -887,6 +882,8 @@ public class PennantConstants {
 	// Sorting
 	public static final String SortOrder_ASC = "ASC";
 	public static final String SortOrder_DESC = "DESC";
+
+	public static final int PRETTY_PRINT_INDENT_FACTOR = 4;
 	// External Service
 	public static final String TYPE_FILE = "FILE";
 	public static final String TYPE_DB = "DB";
