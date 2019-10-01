@@ -12375,6 +12375,7 @@ UNION ALL
          (select cast(customerId as number(19,0)) from  LimitHeader_view)
 		</createView>
 	</changeSet>
+
 	<changeSet id="205" author="Saikiran.V">
 		<sql>
 				<![CDATA[
@@ -12382,5 +12383,21 @@ UNION ALL
 					INSERT INTO SMTparameters  VALUES ('ALLOW_INTERNAL_SETTLEMENTS', 'To Allow Internal Settlement in Disbursements', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Internal Settlement in Disbursements', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 				]]>
 		</sql>
-</changeSet>
+	</changeSet>
+
+	<changeSet id="206" author="meena.a">
+		<sql>
+			<![CDATA[
+				UPDATE Commitments Set tenor = 0 where tenor is null;
+				UPDATE Commitments_Temp Set tenor = 0 where tenor is null;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="207" author="meena.a">
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="COMMITMENTS" />
+		<addDefaultValue columnDataType="int" columnName="TENOR"
+			defaultValueNumeric="0" tableName="COMMITMENTS_TEMP" />
+	</changeSet>
 </databaseChangeLog>
