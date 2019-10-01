@@ -3608,7 +3608,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>		
 	</changeSet>
 	
-	<changeSet id="73" author="Saikiran.V">
+	<changeSet id="73" author="meena.a">
 		<sql>
 		 <![CDATA[
 			UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='COMMITE_ADDTNAL_FIELDS_REQ';
