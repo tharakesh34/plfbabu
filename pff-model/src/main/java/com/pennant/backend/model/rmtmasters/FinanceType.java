@@ -274,6 +274,7 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean alwSanctionAmt;
 	private boolean alwSanctionAmtOverride;
 	private boolean finIsRateRvwAtGrcEnd;
+	private boolean schdOnPMTCal;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -2517,6 +2518,14 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setFinIsRateRvwAtGrcEnd(boolean finIsRateRvwAtGrcEnd) {
 		this.finIsRateRvwAtGrcEnd = finIsRateRvwAtGrcEnd;
+	}
+
+	public boolean isSchdOnPMTCal() {
+		return schdOnPMTCal;
+	}
+
+	public void setSchdOnPMTCal(boolean schdOnPMTCal) {
+		this.schdOnPMTCal = schdOnPMTCal;
 	}
 
 }

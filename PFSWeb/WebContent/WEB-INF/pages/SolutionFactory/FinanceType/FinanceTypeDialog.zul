@@ -586,12 +586,6 @@
 													<space id="space_cbfinRateType" spacing="2px" sclass="mandatory" />
 													<combobox id="cbfinRateType" width="275px" readonly="true" />
 												</hbox>
-												<label id="label_FinanceTypeDialog_EqualRepayment" value="${c:l('label_FinanceTypeDialog_EqualRepayment.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="equalRepayment" checked="true" />
-												</hbox>
-
 											</row>
 											<row visible="false">
 												<label id="label_FinanceTypeDialog_ZeroIntAcc" value="${c:l('label_FinanceTypeDialog_ZeroIntAcc.value')}" />
@@ -659,6 +653,21 @@
 													<checkbox id="sanBsdSchdle" checked="false" />
 												</hbox>
 											</row>
+											
+											<row id="row_equalRepayment">
+												<label id="label_FinanceTypeDialog_EqualRepayment" value="${c:l('label_FinanceTypeDialog_EqualRepayment.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="equalRepayment" checked="true" />
+												</hbox>
+												<label id="label_FinanceTypeDialog_SchdOnPMTCal" value="${c:l('label_FinanceTypeDialog_SchdOnPMTCal.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="schdOnPMTCal" checked="true" />
+												</hbox>
+											</row>
+											
+											
 											<row id="row_ApplyPricingPolicy">
 												<label id="label_ApplyRpyPricing" value="${c:l('label_FinanceTypeDialog_ApplyRpyPricing.value')}" />
 												<hbox>

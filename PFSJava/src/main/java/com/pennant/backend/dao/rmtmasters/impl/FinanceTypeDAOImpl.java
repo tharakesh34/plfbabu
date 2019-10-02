@@ -95,7 +95,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				"SELECT FinType, Product,FinCategory, FinTypeDesc, FinCcy, FinDaysCalType,");
 		sql.append(" FinAcType, FinContingentAcType, FinBankContingentAcType, FinProvisionAcType,FinSuspAcType,");
 		sql.append(" FinIsGenRef, FinMaxAmount, FinMinAmount,FinIsOpenNewFinAc, FinDftStmtFrq,FinIsAlwMD, ");
-		sql.append(" FinSchdMthd, FInIsAlwGrace,FinHistRetension, EqualRepayment,FinRateType, ");
+		sql.append(" FinSchdMthd, FInIsAlwGrace,FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType, ");
 		sql.append(" FinBaseRate,FinSplRate,FinIntRate, FInMinRate, FinMaxRate, FinDftIntFrq,  FinIsIntCpz,");
 		sql.append(" FinCpzFrq,  FinIsRvwAlw, FinRvwFrq,  FinGrcRateType, FinGrcBaseRate,");
 		sql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate,FinGrcDftIntFrq,");
@@ -185,7 +185,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" Select FinType, FinCategory, FinTypeDesc, FinCcy, FinDaysCalType, FinAcType, FinContingentAcType, ");
 		sql.append(
 				" FinIsGenRef, FinMaxAmount, FinMinAmount, FinIsOpenNewFinAc, FinIsAlwMD, FinSchdMthd, FInIsAlwGrace, ");
-		sql.append(" EqualRepayment, FinRateType, FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, ");
+		sql.append(" EqualRepayment, SchdOnPMTCal, FinRateType, FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate, ");
 		sql.append(" FinDftIntFrq, FinIsIntCpz, FinCpzFrq, FinIsRvwAlw, FinRvwFrq, FinGrcRateType, FinGrcBaseRate, ");
 		sql.append(" FinGrcSplRate, FinGrcIntRate, FInGrcMinRate, FinGrcMaxRate, FinGrcDftIntFrq, FinGrcIsIntCpz, ");
 		sql.append(" FinGrcCpzFrq, FinGrcIsRvwAlw, FinGrcRvwFrq, FinMinTerm, FinMaxTerm, FinDftTerms, FinRpyFrq, ");
@@ -366,7 +366,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				"(FinType, Product, FinCategory,FinTypeDesc, FinCcy,  FinDaysCalType, FinAcType, FinContingentAcType,");
 		sql.append(" FinBankContingentAcType, FinProvisionAcType,FinSuspAcType, FinIsGenRef,");
 		sql.append(" FinMaxAmount, FinMinAmount,  FinIsOpenNewFinAc, FinDftStmtFrq,  FinIsAlwMD,");
-		sql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, FinRateType,");
+		sql.append(" FinSchdMthd, FInIsAlwGrace, FinHistRetension, EqualRepayment, SchdOnPMTCal, FinRateType,");
 		sql.append(
 				" FinBaseRate, FinSplRate, FinIntRate, FInMinRate, FinMaxRate,FinDftIntFrq,  FinIsIntCpz, FinCpzFrq,");
 		sql.append(
@@ -416,7 +416,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				" Values(:FinType, :Product, :FinCategory,:FinTypeDesc, :FinCcy,  :FinDaysCalType, :FinAcType, :FinContingentAcType,");
 		sql.append(" :FinBankContingentAcType, :FinProvisionAcType,:FinSuspAcType, :FinIsGenRef,");
 		sql.append(" :FinMaxAmount, :FinMinAmount,  :FinIsOpenNewFinAc, :FinDftStmtFrq,  :FinIsAlwMD,");
-		sql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :FinRateType,");
+		sql.append(" :FinSchdMthd, :FInIsAlwGrace, :FinHistRetension, :EqualRepayment, :SchdOnPMTCal, :FinRateType,");
 		sql.append(
 				" :FinBaseRate, :FinSplRate, :FinIntRate, :FInMinRate, :FinMaxRate,:FinDftIntFrq,  :FinIsIntCpz, :FinCpzFrq,");
 		sql.append(
@@ -501,7 +501,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinIsOpenNewFinAc = :FinIsOpenNewFinAc, FinDftStmtFrq = :FinDftStmtFrq,FinIsAlwMD = :FinIsAlwMD,");
 		sql.append(
 				" FinSchdMthd = :FinSchdMthd, FInIsAlwGrace = :FInIsAlwGrace, FinHistRetension = :FinHistRetension,");
-		sql.append(" EqualRepayment = :EqualRepayment,");
+		sql.append(" EqualRepayment = :EqualRepayment, SchdOnPMTCal = :SchdOnPMTCal,");
 		sql.append(" FinRateType = :FinRateType, FinBaseRate = :FinBaseRate, FinSplRate = :FinSplRate,");
 		sql.append(
 				" FinIntRate = :FinIntRate,FInMinRate = :FInMinRate, FinMaxRate = :FinMaxRate, FinDftIntFrq = :FinDftIntFrq,");

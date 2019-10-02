@@ -1136,6 +1136,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			BigDecimal marginRate = finServiceInstruction.getMargin();
+			getFinScheduleData().getFinanceMain().setSkipRateReset(false);
 			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) != 0) {
 				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
 						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
@@ -1851,7 +1852,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	}
 
 	//Calculating the old base rate if margin exists
-	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction,
+	private void calcRates(FinScheduleData finScheduleData, FinServiceInstruction finServiceInst,
 			BaseRateCode baseRateCode) {
 		logger.debug(Literal.ENTERING);
 
@@ -1859,12 +1860,14 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
 		if (CollectionUtils.isEmpty(financeScheduleDetails)) {
-			financeMain.setBaseRateReq(false);
+			financeMain.setSkipRateReset(false);
 			return;
 		}
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
+	
 		Date evtFromDate = finMain.getEventFromDate();
+		Date evtToDate = finMain.getEventToDate();
 
 		FinanceScheduleDetail prevScheduleDetail = null;
 
@@ -1878,15 +1881,32 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		if (prevScheduleDetail == null) {
-			financeMain.setBaseRateReq(false);
+			financeMain.setSkipRateReset(false);
 			return;
 		}
-
+		
+		String baseRate = prevScheduleDetail.getBaseRate();
 		BigDecimal calculatedRate = prevScheduleDetail.getCalculatedRate();
 		BigDecimal marginRate = prevScheduleDetail.getMrgRate();
 		BigDecimal oldBaseRate = calculatedRate.subtract(marginRate);
-		finServiceInstruction.setActualRate(oldBaseRate.add(finServiceInstruction.getMargin()));
-		financeMain.setBaseRateReq(true);
+		finServiceInst.setActualRate(oldBaseRate.add(finServiceInst.getMargin()));
+		financeMain.setSkipRateReset(true);
+		
+		int sdSize = financeScheduleDetails.size();
+		for (int i = 0; i < sdSize; i++) {
+			FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
+			Date schdDate = curSchd.getSchDate();
+
+			if ((DateUtility.compare(schdDate, evtFromDate) >= 0 && DateUtility.compare(schdDate, evtToDate) < 0)
+					|| (i == (sdSize - 1))) {
+				curSchd.setBaseRate(baseRate);
+				curSchd.setSplRate(finServiceInst.getSplRate());
+				curSchd.setMrgRate(finServiceInst.getMargin());
+				curSchd.setCalculatedRate(finServiceInst.getActualRate());
+				curSchd.setActRate(finServiceInst.getActualRate());
+			}
+
+		}
 		logger.debug(Literal.LEAVING);
 		return;
 	}

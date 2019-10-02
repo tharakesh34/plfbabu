@@ -300,6 +300,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Row row_FinIsRvwAlw;
 	protected RateBox financeBaserate;
 	protected Checkbox equalRepayment; // autoWired
+	protected Checkbox schdOnPMTCal; // autoWired
 	protected Label label_FinanceTypeDialog_EqualRepayment; // autoWired
 	protected FrequencyBox finDftIntFrq; // autoWired
 	protected Checkbox finRepayPftOnFrq; // autoWired
@@ -1359,6 +1360,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		this.equalRepayment.setChecked(aFinanceType.isEqualRepayment());
+		this.schdOnPMTCal.setChecked(aFinanceType.isSchdOnPMTCal());
 
 		String pftFrq = aFinanceType.getFinDftIntFrq();
 		this.finDftIntFrq.setValue(pftFrq);
@@ -2824,6 +2826,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setEqualRepayment(this.equalRepayment.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceType.setSchdOnPMTCal(this.schdOnPMTCal.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4641,6 +4648,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cbfinSchdMthd.setDisabled(isTrue);
 		this.cbfinSchCalCodeOnRvw.setDisabled(isTrue);
 		this.equalRepayment.setDisabled(isTrue);
+		this.schdOnPMTCal.setDisabled(isTrue);
 		this.finIntRate.setReadonly(isTrue);
 		this.fInMinRate.setReadonly(isTrue);
 		this.finMaxRate.setReadonly(isTrue);
@@ -5705,6 +5713,23 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug(Literal.LEAVING);
 	}
+	
+	public void onCheck$schdOnPMTCal(Event event) {
+		logger.debug(Literal.LEAVING);
+		if (this.schdOnPMTCal.isChecked()) {
+			this.equalRepayment.setChecked(false);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	public void onCheck$equalRepayment(Event event) {
+		logger.debug(Literal.LEAVING);
+		if (this.equalRepayment.isChecked()) {
+			this.schdOnPMTCal.setChecked(false);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+ 
 
 	public void onCheck$sanctionAmount(Event event) {
 		checkSanctionAmountChecked();
