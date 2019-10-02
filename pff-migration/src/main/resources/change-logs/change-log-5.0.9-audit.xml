@@ -243,4 +243,19 @@
 	</addColumn>
 </changeSet>
 
+	<changeSet id="29" author="Durgaprasad G">
+		<addColumn tableName="ADTRMTFinanceTypes">
+			<column name="SchdOnPMTCal" type="boolean" defaultValue="0"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="30" author="Durgaprasad G">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTFinanceTypes Set SchdOnPMTCal = 0;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
