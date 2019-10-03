@@ -5141,7 +5141,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				bal = bal.subtract(taxSplit.gettGST());
 			}
 
-			if (bal.compareTo(BigDecimal.ZERO) > 0) {
+			if (bal.compareTo(BigDecimal.ZERO) > 0 && allocate.isEditable()) {
 				isDueAdjusted = false;
 			}
 		}
