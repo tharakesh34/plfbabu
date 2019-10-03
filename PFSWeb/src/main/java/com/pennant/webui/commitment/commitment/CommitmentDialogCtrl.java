@@ -2026,8 +2026,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 			
 		//Additional fields added
-		aCommitment.setBankingArrangement(this.bnkAggrmt.getValue());
-		aCommitment.setLimitCondition(this.lmtCondition.getValue());
+		aCommitment.setBankingArrangement(this.bnkAggrmt.getSelectedItem().getValue());
+		aCommitment.setLimitCondition(this.lmtCondition.getSelectedItem().getValue());
 		aCommitment.setExternalRef(this.reference.getValue());
 		aCommitment.setExternalRef1(this.reference1.getValue());
 		aCommitment.setTenor(this.tenor.getValue());
