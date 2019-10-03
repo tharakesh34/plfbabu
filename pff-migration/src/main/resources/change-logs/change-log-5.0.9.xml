@@ -13392,7 +13392,16 @@ UNION ALL
 		  </createView>
 	</changeSet>
 
-	<changeSet id="217" author="prabhakar.g">
+	<changeSet id="217" author="meena.a">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='COMMITE_ADDTNAL_FIELDS_REQ';
+			   	INSERT INTO SMTPARAMETERS VALUES ('COMMITE_ADDTNAL_FIELDS_REQ','commite additional fields required or not','String',1,'N',1,0,null,null,'commite fields req only for kotak' ,3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="218" author="prabhakar.g">
 		<sql>
 			<![CDATA[
 			ALTER TABLE Sys_Notifications ADD TemplateCode VARCHAR (50);
