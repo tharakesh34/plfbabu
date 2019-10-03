@@ -12400,20 +12400,20 @@ UNION ALL
 		<addDefaultValue columnDataType="int" columnName="TENOR"
 			defaultValueNumeric="0" tableName="COMMITMENTS_TEMP" />
 	</changeSet>
-	
-	
+
+
 	<changeSet id="208" author="Durgaprasad G">
 		<addColumn tableName="RMTFinanceTypes">
-			<column name="SchdOnPMTCal" type="boolean" defaultValue="0"/>
+			<column name="SchdOnPMTCal" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
 
 	<changeSet id="209" author="Durgaprasad G">
 		<addColumn tableName="RMTFinanceTypes_temp">
-			<column name="SchdOnPMTCal" type="boolean" defaultValue="0"/>
+			<column name="SchdOnPMTCal" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="210" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -12423,20 +12423,11 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="211" author="Durgaprasad G" dbms="mssql">
-		<sql>
-			<![CDATA[
-				ALTER TABLE RMTFINANCETYPES ADD CONSTRAINT DF_RMTFINANCETYPES_FINRTRVGRSE DEFAULT 0 FOR FINISRATERVWATGRCEND;
-				ALTER TABLE RMTFINANCETYPES_TEMP ADD CONSTRAINT DF_RMTFINANCETYPES_TEMP_FINRTRVGRSE DEFAULT 0 FOR FINISRATERVWATGRCEND;
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="212" author="Durgaprasad G" dbms="postgresql, oracle">
-		<addDefaultValue columnName="SchdOnPMTCal"
-			tableName="RMTFinanceTypes" defaultValue="0" />
-		<addDefaultValue columnName="SchdOnPMTCal"
-			tableName="RMTFinanceTypes_Temp" defaultValue="0" />
+		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes"
+			defaultValue="0" />
+		<addDefaultValue columnName="SchdOnPMTCal" tableName="RMTFinanceTypes_Temp"
+			defaultValue="0" />
 	</changeSet>
 
 	<changeSet id="213_pre" author="Durgaprasad G" dbms="postgresql">
@@ -12448,7 +12439,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="214" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
+		<createView viewName="RMTFINANCETYPES_AVIEW"
+			replaceIfExists="true">
 			 SELECT T1.FINTYPE,
 					  T1.FINCATEGORY,
 					  T1.FINTYPEDESC,
@@ -12693,10 +12685,18 @@ UNION ALL
 					LEFT JOIN PROFITCENTERS T69 ON T69.PROFITCENTERID = T1.PROFITCENTERID
 		</createView>
 	</changeSet>
- 
+
+	<changeSet id="213_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');	
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="215" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">	 
+		<createView viewName="RMTFINANCETYPES_ORGVIEW"
+			replaceIfExists="true">	 
 			 	SELECT T1.FINTYPE,
 				  T1.FINCATEGORY,
 				  T1.FINTYPEDESC,
@@ -12901,7 +12901,8 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="216" author="Durgaprasad G">
-		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">	 	 
+		<createView viewName="RMTFINANCETYPES_VIEW"
+			replaceIfExists="true">	 	 
 			 		  SELECT T1.FINTYPE,
 				    T1.FINCATEGORY,
 				    T1.FINTYPEDESC,
@@ -13390,7 +13391,7 @@ UNION ALL
 				  WHERE NOT (EXISTS ( SELECT 1 AS EXPR1  FROM RMTFINANCETYPES_TEMP WHERE RMTFINANCETYPES_TEMP.FINTYPE = T1.FINTYPE)) 
 		  </createView>
 	</changeSet>
-	 
+
 	<changeSet id="217" author="prabhakar.g">
 		<sql>
 			<![CDATA[
