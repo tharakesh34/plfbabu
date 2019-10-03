@@ -13401,18 +13401,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="218" author="prabhakar.g">
-		<addColumn tableName="Sys_Notifications">
-			<column name="TemplateCode" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
-	<changeSet id="219" author="prabhakar.g">
-		<addColumn tableName="Sys_Notification_Attributes">
-			<column name="TemplateCode" type="varchar(50)" />
-		</addColumn>
-	</changeSet>
-
 	<changeSet id="220" author="prabhakar.g">
 		<sql>
 			<![CDATA[			
