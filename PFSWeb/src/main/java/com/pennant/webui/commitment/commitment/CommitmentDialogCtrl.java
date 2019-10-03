@@ -1508,13 +1508,13 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 		
 		//Additional fields added
-		fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(),
+		this.fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(),
 				PennantStaticListUtil.getBankingArrangement(), "");
-		this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
+		//this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
 		
-		fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(),
+		this.fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(),
 				"");
-		this.lmtCondition.setValue(aCommitment.getLimitCondition());
+		//this.lmtCondition.setValue(aCommitment.getLimitCondition());
 		this.reference.setValue(aCommitment.getExternalRef());
 		this.reference1.setValue(aCommitment.getExternalRef1());
 		this.tenor.setValue(aCommitment.getTenor());
@@ -2026,11 +2026,32 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 			
 		//Additional fields added
+		try{
 		aCommitment.setBankingArrangement(this.bnkAggrmt.getSelectedItem().getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try{
 		aCommitment.setLimitCondition(this.lmtCondition.getSelectedItem().getValue());
+		
+	   } catch (WrongValueException we) {
+		wve.add(we);
+	   }
+		try{
 		aCommitment.setExternalRef(this.reference.getValue());
+		 } catch (WrongValueException we) {
+				wve.add(we);
+		}
+		try{
 		aCommitment.setExternalRef1(this.reference1.getValue());
+		 } catch (WrongValueException we) {
+				wve.add(we);
+			   }
+		try{
 		aCommitment.setTenor(this.tenor.getValue());
+		 } catch (WrongValueException we) {
+				wve.add(we);
+			   }
 		//Commitment Rates
 		Cloner cloner = new Cloner();
 		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));
