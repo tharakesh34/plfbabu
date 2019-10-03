@@ -13401,7 +13401,7 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="220" author="prabhakar.g">
+	<changeSet id="219" author="prabhakar.g">
 		<sql>
 			<![CDATA[			
 			INSERT INTO SMTparameters  VALUES ('ALLOW_LIMIT_NOTIFICATION', 'Allow Limit Notification', 'String', '1', 'N', 1, 0,
