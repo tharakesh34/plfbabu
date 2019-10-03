@@ -3,6 +3,7 @@ package com.pennanttech.pff.notifications.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,10 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.Notifications.SystemNotificationExecutionDetails;
 import com.pennant.backend.model.Notifications.SystemNotifications;
@@ -128,7 +133,6 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		try {
 			if (type.equalsIgnoreCase("SMS")) {
 				content = parseData(new String(template.getSmsContent()), document);
-				// content = content ;
 			} else if (type.equalsIgnoreCase("EML")) {
 				subject = parseData(template.getEmailSubject(), document);
 				content = parseData(new String(template.getEmailContent(), "UTF-16"), document);
@@ -211,15 +215,48 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		try {
 			header = getTemplateContent(detail, "SMS");
 			notification.setMessage(header);
-			// parseSMS(detail, notification);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 		notification.setKeyReference(detail.getKeyReference());
 		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
 		notification.setSubModule(detail.getNotificationCode());
-
+		notification.setNotificationData(settingNotificationData(detail));
+		
 		smsEngine.sendSms(notification);
+
+	}
+
+	private String settingNotificationData(SystemNotificationExecutionDetails detail) {
+		String str = null;
+		String json = "";
+		
+		try {
+			if (detail.getNotificationData() != null) {
+				str = new String(detail.getNotificationData(), "UTF-8");
+				str = str.replace("</SYS_NOTIFICATION>",
+						"<CONTENTCODE>" + detail.getTemplateCode() + "</CONTENTCODE></SYS_NOTIFICATION>");
+			}
+
+		} catch (UnsupportedEncodingException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		if (str != null && str != "") {
+			try {
+				XmlMapper xmlMapper = new XmlMapper();
+				JsonNode node = xmlMapper.readTree(str.getBytes());
+				ObjectMapper jsonMapper = new ObjectMapper();
+				json = jsonMapper.writeValueAsString(node);
+			} catch (JsonProcessingException e) {
+				logger.error(Literal.EXCEPTION, e);
+			} catch (IOException e) {
+				logger.error(Literal.EXCEPTION, e);
+			}
+
+		}
+
+		return json;
 
 	}
 

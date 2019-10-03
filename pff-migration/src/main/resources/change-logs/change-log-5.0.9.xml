@@ -13391,4 +13391,16 @@ UNION ALL
 		  </createView>
 	</changeSet>
 	 
+	<changeSet id="217" author="prabhakar.g">
+		<sql>
+			<![CDATA[
+			ALTER TABLE Sys_Notifications ADD TemplateCode VARCHAR (50);
+			
+			ALTER TABLE Sys_Notification_Attributes MODIFY NAME VARCHAR (200);
+
+			INSERT INTO SMTparameters  VALUES ('ALLOW_LIMIT_NOTIFICATION', 'Allow Limit Notification', 'String', '1', 'N', 1, 0,
+			NULL, NULL, 'Allow Limit Notification.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
