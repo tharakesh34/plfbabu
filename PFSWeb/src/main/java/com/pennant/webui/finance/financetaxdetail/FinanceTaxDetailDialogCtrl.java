@@ -1550,6 +1550,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			try {
 				GSTINInfo gstinInfo = new GSTINInfo();
 				gstinInfo.setgSTNNumber(gSTNNumber);
+				gstinInfo.setCif(aFinanceTaxDetail.getCustCIF());
+				gstinInfo.setUsrID(getUserWorkspace().getLoggedInUser().getUserId());
+				gstinInfo.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
 				gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
 
 				if (null != gstinInfo) {

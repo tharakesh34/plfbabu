@@ -454,7 +454,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		if (bankInfoList != null && !bankInfoList.isEmpty()) {
 			for (Listitem detail : bankInfoList) {
 				BankInfoDetail bankInfo = (BankInfoDetail) detail.getAttribute("data");
-				if (bankInfo.getKeyValue() > keyValue) {
+				if (bankInfo != null && bankInfo.getKeyValue() > keyValue) {
 					keyValue = bankInfo.getKeyValue();
 				}
 			}
@@ -462,6 +462,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		bankInfoDetail.setKeyValue(keyValue + 1);
 
 		renderItem(bankInfoDetail);
+		renderSummary();
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -478,6 +479,404 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				renderItem(getBankInfoDetails().get(i));
 			}
 		}
+		renderSummary();
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void renderSummary() {
+
+		logger.debug(Literal.ENTERING);
+		
+		try {
+			// Monthly Balance Amount
+			BigDecimal balanceSum = BigDecimal.ZERO;
+			BigDecimal balanceAvg = BigDecimal.ZERO;
+			
+			int dataItems = 0;
+			
+			int count = 0;
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+			
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					dataItems++;
+					
+					List<Listcell> listcels = listItem.getChildren();
+
+					for (Listcell listcell : listcels) {
+						String id = StringUtils.trimToNull(listcell.getId());
+
+						if (id == null) {
+							continue;
+						}
+
+						id = id.replaceAll("\\d", "");
+						if (StringUtils.equals(id, "balance")) {
+							
+							String[] array = configDay.split(",");
+							
+							for (int i = 1; i <= array.length; i++) {
+								CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny(
+										"balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
+												.concat(String.valueOf(i)));
+								Clients.clearWrongValue(balanceValue);
+								if (balanceValue.getValidateValue() != null) {
+									balanceSum = balanceSum.add(balanceValue.getValidateValue());
+									count++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (balanceSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(count, 0);
+				balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// Debit Transaction Count
+			BigDecimal dbtTransactionCountSum = BigDecimal.ZERO;
+			BigDecimal debitTransactionCountAvg = BigDecimal.ZERO;
+
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "debitNo");
+					Intbox dbtTransactionCountAmount = (Intbox) hbox.getLastChild();
+					Clients.clearWrongValue(dbtTransactionCountAmount);
+					if (dbtTransactionCountAmount.getValue() != null) {
+						dbtTransactionCountSum = dbtTransactionCountSum
+								.add(new BigDecimal(dbtTransactionCountAmount.getValue()));
+					}
+				}
+			}
+
+			if (dbtTransactionCountSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				debitTransactionCountAvg = PennantApplicationUtil.unFormateAmount(dbtTransactionCountSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
+			}
+
+			// Debit Amount
+			BigDecimal debitAmtSum = BigDecimal.ZERO;
+			BigDecimal debitAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "debitAmt");
+					CurrencyBox debitAmount = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(debitAmount);
+					if (debitAmount.getValidateValue() != null) {
+						debitAmtSum = debitAmtSum.add(debitAmount.getValidateValue());
+					}
+				}
+			}
+
+			if (debitAmtSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				debitAvg = PennantApplicationUtil.unFormateAmount(debitAmtSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// credit Transaction Count
+			BigDecimal creditTransactionCountSum = BigDecimal.ZERO;
+			BigDecimal creditTransactionCountAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "creditNo");
+					Intbox creditTransactionCountAmount = (Intbox) hbox.getLastChild();
+					Clients.clearWrongValue(creditTransactionCountAmount);
+					if (creditTransactionCountAmount.getValue() != null) {
+						creditTransactionCountSum = creditTransactionCountSum
+								.add(new BigDecimal(creditTransactionCountAmount.getValue()));
+					}
+				}
+			}
+
+			if (creditTransactionCountSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				creditTransactionCountAvg = PennantApplicationUtil.unFormateAmount(creditTransactionCountSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
+			}
+
+			// Credit Amount
+			BigDecimal creditAmtSum = BigDecimal.ZERO;
+			BigDecimal creditAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "creditAmt");
+					CurrencyBox creditAmount = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(creditAmount);
+					if (creditAmount.getValidateValue() != null) {
+						creditAmtSum = creditAmtSum.add(creditAmount.getValidateValue());
+					}
+				}
+			}
+
+			if (creditAmtSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				creditAvg = PennantApplicationUtil.unFormateAmount(creditAmtSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// Inward Amount
+			BigDecimal bounceInwardSum = BigDecimal.ZERO;
+			BigDecimal inwardAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "bounceInWard");
+					CurrencyBox bounceInwardAmount = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(bounceInwardAmount);
+					if (bounceInwardAmount.getValidateValue() != null) {
+						bounceInwardSum = bounceInwardSum.add(bounceInwardAmount.getValidateValue());
+					}
+				}
+			}
+
+			if (bounceInwardSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				inwardAvg = PennantApplicationUtil.unFormateAmount(bounceInwardSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// Outward Amount
+			BigDecimal bounceOutwardSum = BigDecimal.ZERO;
+			BigDecimal outwardAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "bounceOutWard");
+					CurrencyBox bounceOutwardAmount = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(bounceOutwardAmount);
+					if (bounceOutwardAmount.getValidateValue() != null) {
+						bounceOutwardSum = bounceOutwardSum.add(bounceOutwardAmount.getValidateValue());
+					}
+				}
+			}
+
+			if (bounceOutwardSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
+				outwardAvg = PennantApplicationUtil.unFormateAmount(bounceOutwardSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// Closing Balance
+			BigDecimal clsBalSum = BigDecimal.ZERO;
+			BigDecimal clsBalAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "closingBal");
+					CurrencyBox clsBal = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(clsBal);
+					if (clsBal.getValidateValue() != null) {
+						clsBalSum = clsBalSum.add(clsBal.getValidateValue());
+					}
+				}
+			}
+
+			if (dataItems > 0) {
+				BigDecimal clsBalDivider = BigDecimal.valueOf(dataItems, 0);
+				clsBalAvg = PennantApplicationUtil.unFormateAmount(clsBalSum, PennantConstants.defaultCCYDecPos).divide(clsBalDivider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+
+			// add summary list item
+			BigDecimal odCCSum = BigDecimal.ZERO;
+			BigDecimal odCCAvg = BigDecimal.ZERO;
+			
+			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
+				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
+					
+					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
+
+					if (bankInfoDetail == null) {
+						continue;
+					}
+					
+					Hbox hbox = (Hbox) getComponent(listItem, "odCCLimit");
+					CurrencyBox odccValue = (CurrencyBox) hbox.getLastChild();
+					Clients.clearWrongValue(odccValue);
+					if (odccValue.getValidateValue() != null) {
+						odCCSum = odCCSum.add(odccValue.getValidateValue());
+					}
+				}
+			}
+
+			if (odCCSum.compareTo(BigDecimal.ZERO) > 0) {
+				BigDecimal odCCSumDivider = BigDecimal.valueOf(dataItems, 0);
+				odCCAvg = PennantApplicationUtil.unFormateAmount(odCCSum, PennantConstants.defaultCCYDecPos).divide(odCCSumDivider, 0,
+						RoundingMode.HALF_DOWN);
+			}
+			
+			if (this.listBoxAccBehaviour.getFellowIfAny("item_Sum") != null) {
+				Listitem item = (Listitem) this.listBoxAccBehaviour.getFellow("item_Sum");
+				listBoxAccBehaviour.removeItemAt(item.getIndex());
+			}
+			if (this.listBoxAccBehaviour.getFellowIfAny("item_Avg") != null) {
+				Listitem item = (Listitem) this.listBoxAccBehaviour.getFellow("item_Avg");
+				listBoxAccBehaviour.removeItemAt(item.getIndex());
+			}
+			
+			Listcell listcell;
+			Listitem item;
+
+			// Sum
+			item = new Listitem();
+			item.setId("item_Sum");
+			listcell = new Listcell(Labels.getLabel("label_CustomerBankInfoDialog_Sum.value"));
+			listcell.setStyle("font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(String.valueOf(balanceSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(dbtTransactionCountSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(debitAmtSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(creditTransactionCountSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(creditAmtSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(String.valueOf(bounceInwardSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(String.valueOf(bounceOutwardSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(clsBalSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(String.valueOf(odCCSum));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell("");
+			listcell.setParent(item);
+			
+			this.listBoxAccBehaviour.appendChild(item);
+			
+			//Average
+			item = new Listitem();
+			item.setId("item_Avg");
+			listcell = new Listcell(Labels.getLabel("label_CustomerBankInfoDialog_Average.value"));
+			listcell.setStyle("font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(balanceAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(debitTransactionCountAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(debitAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(creditTransactionCountAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(creditAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(inwardAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(outwardAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(clsBalAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(odCCAvg, PennantConstants.defaultCCYDecPos));
+			listcell.setStyle("text-align:right;font-weight:bold");
+			listcell.setParent(item);
+			
+			listcell = new Listcell("");
+			listcell.setParent(item);
+			
+			this.listBoxAccBehaviour.appendChild(item);
+			
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -771,8 +1170,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 
 			Hbox hbox1 = (Hbox) getComponent(listItem, "odCCLimit");
-			CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
-			db.setValue(balanceSum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP));
+			if (hbox1 != null) {
+				CurrencyBox db = (CurrencyBox) hbox1.getLastChild();
+				db.setValue(balanceSum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP));
+			}
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1165,136 +1566,138 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			BankInfoDetail bankInfoDetail = (BankInfoDetail) listitem.getAttribute("data");
 
-			try {
-				getCompValuetoBean(listitem, "monthYear");
+			if (bankInfoDetail != null) {
+				try {
+					getCompValuetoBean(listitem, "monthYear");
 
-				if (bankInfoDetail != null) {
-					Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
-					Datebox monthYear = (Datebox) hbox1.getLastChild();
+					if (bankInfoDetail != null) {
+						Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
+						Datebox monthYear = (Datebox) hbox1.getLastChild();
 
-					if (dateValidatioinSet.contains(bankInfoDetail.getMonthYear())) {
-						if (!PennantConstants.RECORD_TYPE_DEL.equals(bankInfoDetail.getRecordType())
-								&& !PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())) {
-							throw new WrongValueException(monthYear,
-									Labels.getLabel("listheader_MonthYear.label") + " combination already exist.");
-						}
-					} else {
-						dateValidatioinSet.add(bankInfoDetail.getMonthYear());
-					}
-				}
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-			try {
-				getCompValuetoBean(listitem, "balance");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "debitNo");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "debitAmt");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "creditNo");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "creditAmt");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "bounceInWard");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "bounceOutWard");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "closingBal");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			try {
-				getCompValuetoBean(listitem, "odCCLimit");
-			} catch (WrongValueException we) {
-				wve.add(we);
-			}
-
-			showErrorDetails(wve);
-
-			boolean isNew = false;
-			isNew = bankInfoDetail.isNew();
-			String tranType = "";
-
-			if (bankInfoDetail.isNewRecord()) {
-				bankInfoDetail.setVersion(1);
-				bankInfoDetail.setRecordType(PennantConstants.RCD_ADD);
-			} else {
-				tranType = PennantConstants.TRAN_UPD;
-			}
-
-			if (StringUtils.isBlank(bankInfoDetail.getRecordType())) {
-				bankInfoDetail.setVersion(bankInfoDetail.getVersion() + 1);
-				if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
-					for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
-						if (isFinanceProcess) {
-							bankInfoSubDetail.setVersion(bankInfoSubDetail.getVersion() + 1);
+						if (dateValidatioinSet.contains(bankInfoDetail.getMonthYear())) {
+							if (!PennantConstants.RECORD_TYPE_DEL.equals(bankInfoDetail.getRecordType())
+									&& !PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())) {
+								throw new WrongValueException(monthYear,
+										Labels.getLabel("listheader_MonthYear.label") + " combination already exist.");
+							}
+						} else {
+							dateValidatioinSet.add(bankInfoDetail.getMonthYear());
 						}
 					}
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
-				bankInfoDetail.setRecordType(PennantConstants.RCD_UPD);
-				if (!isFinanceProcess && getCustomerDialogCtrl() != null
-						&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
-					bankInfoDetail.setNewRecord(true);
+				try {
+					getCompValuetoBean(listitem, "balance");
+				} catch (WrongValueException we) {
+					wve.add(we);
 				}
-			}
 
-			if (bankInfoDetail.getRecordType().equals(PennantConstants.RCD_ADD) && bankInfoDetail.isNewRecord()) {
-				tranType = PennantConstants.TRAN_ADD;
-			} else if (bankInfoDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-				tranType = PennantConstants.TRAN_UPD;
-			} else {
-				if (isNew) {
-					tranType = PennantConstants.TRAN_ADD;
+				try {
+					getCompValuetoBean(listitem, "debitNo");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "debitAmt");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "creditNo");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "creditAmt");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "bounceInWard");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "bounceOutWard");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "closingBal");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				try {
+					getCompValuetoBean(listitem, "odCCLimit");
+				} catch (WrongValueException we) {
+					wve.add(we);
+				}
+
+				showErrorDetails(wve);
+
+				boolean isNew = false;
+				isNew = bankInfoDetail.isNew();
+				String tranType = "";
+
+				if (bankInfoDetail.isNewRecord()) {
+					bankInfoDetail.setVersion(1);
+					bankInfoDetail.setRecordType(PennantConstants.RCD_ADD);
 				} else {
 					tranType = PennantConstants.TRAN_UPD;
 				}
-			}
-			try {
-				AuditHeader auditHeader = newBankInfoDetailProcess(bankInfoDetail, infoList, tranType);
-				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
-					auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBankInfoDialog, auditHeader);
-					setBankInfoDetails(customerBankInfo.getBankInfoDetails());
-					return false;
+
+				if (StringUtils.isBlank(bankInfoDetail.getRecordType())) {
+					bankInfoDetail.setVersion(bankInfoDetail.getVersion() + 1);
+					if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
+						for (BankInfoSubDetail bankInfoSubDetail : bankInfoDetail.getBankInfoSubDetails()) {
+							if (isFinanceProcess) {
+								bankInfoSubDetail.setVersion(bankInfoSubDetail.getVersion() + 1);
+							}
+						}
+					}
+					bankInfoDetail.setRecordType(PennantConstants.RCD_UPD);
+					if (!isFinanceProcess && getCustomerDialogCtrl() != null
+							&& getCustomerDialogCtrl().getCustomerDetails().getCustomer().isWorkflow()) {
+						bankInfoDetail.setNewRecord(true);
+					}
 				}
-				int retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-					infoList = bankInfoDetails;
+
+				if (bankInfoDetail.getRecordType().equals(PennantConstants.RCD_ADD) && bankInfoDetail.isNewRecord()) {
+					tranType = PennantConstants.TRAN_ADD;
+				} else if (bankInfoDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					tranType = PennantConstants.TRAN_UPD;
+				} else {
+					if (isNew) {
+						tranType = PennantConstants.TRAN_ADD;
+					} else {
+						tranType = PennantConstants.TRAN_UPD;
+					}
 				}
-			} catch (final DataAccessException e) {
-				logger.error(Literal.EXCEPTION, e);
-				showMessage(e);
+				try {
+					AuditHeader auditHeader = newBankInfoDetailProcess(bankInfoDetail, infoList, tranType);
+					if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
+						auditHeader = ErrorControl.showErrorDetails(this.window_CustomerBankInfoDialog, auditHeader);
+						setBankInfoDetails(customerBankInfo.getBankInfoDetails());
+						return false;
+					}
+					int retValue = auditHeader.getProcessStatus();
+					if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+						infoList = bankInfoDetails;
+					}
+				} catch (final DataAccessException e) {
+					logger.error(Literal.EXCEPTION, e);
+					showMessage(e);
+				}
+				hashMap.put(bankInfoDetail.getMonthYear(), bankInfoDetail);
 			}
-			hashMap.put(bankInfoDetail.getMonthYear(), bankInfoDetail);
 		}
 
 		//
@@ -1411,23 +1814,25 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		switch (comonentId) {
 		case "monthYear":
 			Hbox hbox1 = (Hbox) getComponent(listitem, "monthYear");
-			Datebox monthYear = (Datebox) hbox1.getLastChild();
-			Clients.clearWrongValue(monthYear);
-			Date monthYearValue = monthYear.getValue();
-			if (!monthYear.isDisabled()) {
-				if (monthYearValue == null) {
-					throw new WrongValueException(monthYear,
-							Labels.getLabel("FIELD_IS_MAND", new String[] { "Month Year" }));
-				} else {
-					monthYearValue.setDate(1);
-					if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
+			if (hbox1 != null) {
+				Datebox monthYear = (Datebox) hbox1.getLastChild();
+				Clients.clearWrongValue(monthYear);
+				Date monthYearValue = monthYear.getValue();
+				if (!monthYear.isDisabled()) {
+					if (monthYearValue == null) {
 						throw new WrongValueException(monthYear,
-								Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
+								Labels.getLabel("FIELD_IS_MAND", new String[] { "Month Year" }));
+					} else {
+						monthYearValue.setDate(1);
+						if (DateUtility.compare(monthYearValue, DateUtility.getAppDate()) == 1) {
+							throw new WrongValueException(monthYear,
+									Labels.getLabel("DATE_NO_FUTURE", new String[] { "Month Year" }));
+						}
 					}
 				}
+				monthYearValue.setDate(1);
+				bankInfoDetail.setMonthYear(monthYearValue);
 			}
-			monthYearValue.setDate(1);
-			bankInfoDetail.setMonthYear(monthYearValue);
 			break;
 
 		case "balance":
@@ -1436,110 +1841,126 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 		case "debitNo":
 			Hbox hbox3 = (Hbox) getComponent(listitem, "debitNo");
-			Intbox debitNo = (Intbox) hbox3.getLastChild();
-			Clients.clearWrongValue(debitNo);
-			if (!debitNo.isReadonly() && debitNo.getValue() == null) {
-				throw new WrongValueException(debitNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
-			} else if (!debitNo.isReadonly() && debitNo.getValue() <= 0) {
-				throw new WrongValueException(debitNo,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
+			if (hbox3 != null) {
+				Intbox debitNo = (Intbox) hbox3.getLastChild();
+				Clients.clearWrongValue(debitNo);
+				if (!debitNo.isReadonly() && debitNo.getValue() == null) {
+					throw new WrongValueException(debitNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
+				} else if (!debitNo.isReadonly() && debitNo.getValue() <= 0) {
+					throw new WrongValueException(debitNo,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
+				}
+				bankInfoDetail.setDebitNo(debitNo.getValue());
 			}
-			bankInfoDetail.setDebitNo(debitNo.getValue());
 			break;
 
 		case "debitAmt":
 			BigDecimal debitAmt = BigDecimal.ZERO;
 			Hbox hbox4 = (Hbox) getComponent(listitem, "debitAmt");
-			CurrencyBox debitAmtValue = (CurrencyBox) hbox4.getLastChild();
-			Clients.clearWrongValue(debitAmtValue);
-			if (debitAmtValue.getValidateValue() != null) {
-				debitAmt = debitAmtValue.getValidateValue();
+			if (hbox4 != null) {
+				CurrencyBox debitAmtValue = (CurrencyBox) hbox4.getLastChild();
+				Clients.clearWrongValue(debitAmtValue);
+				if (debitAmtValue.getValidateValue() != null) {
+					debitAmt = debitAmtValue.getValidateValue();
+				}
+				if (!(debitAmtValue.isReadonly()) && (debitAmt.intValue() <= 0)) {
+					throw new WrongValueException(debitAmtValue,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit Amount" }));
+				}
+				bankInfoDetail.setDebitAmt(PennantAppUtil.unFormateAmount(debitAmt, 2));
 			}
-			if (!(debitAmtValue.isReadonly()) && (debitAmt.intValue() <= 0)) {
-				throw new WrongValueException(debitAmtValue,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit Amount" }));
-			}
-			bankInfoDetail.setDebitAmt(PennantAppUtil.unFormateAmount(debitAmt, 2));
 			break;
 
 		case "creditNo":
 			Hbox hbox5 = (Hbox) getComponent(listitem, "creditNo");
-			Intbox creditNo = (Intbox) hbox5.getLastChild();
-			Clients.clearWrongValue(creditNo);
-			if (!creditNo.isReadonly() && creditNo.getValue() == null) {
-				throw new WrongValueException(creditNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
-			} else if (!creditNo.isReadonly() && creditNo.getValue() <= 0) {
-				throw new WrongValueException(creditNo,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
+			if (hbox5 != null) {
+				Intbox creditNo = (Intbox) hbox5.getLastChild();
+				Clients.clearWrongValue(creditNo);
+				if (!creditNo.isReadonly() && creditNo.getValue() == null) {
+					throw new WrongValueException(creditNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
+				} else if (!creditNo.isReadonly() && creditNo.getValue() <= 0) {
+					throw new WrongValueException(creditNo,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
+				}
+				bankInfoDetail.setCreditNo(creditNo.getValue());
 			}
-			bankInfoDetail.setCreditNo(creditNo.getValue());
 			break;
 
 		case "creditAmt":
 			BigDecimal creditAmt = BigDecimal.ZERO;
 			Hbox hbox6 = (Hbox) getComponent(listitem, "creditAmt");
-			CurrencyBox creditAmtValue = (CurrencyBox) hbox6.getLastChild();
-			Clients.clearWrongValue(creditAmtValue);
-			if (creditAmtValue.getValidateValue() != null) {
-				creditAmt = creditAmtValue.getValidateValue();
+			if (hbox6 != null) {
+				CurrencyBox creditAmtValue = (CurrencyBox) hbox6.getLastChild();
+				Clients.clearWrongValue(creditAmtValue);
+				if (creditAmtValue.getValidateValue() != null) {
+					creditAmt = creditAmtValue.getValidateValue();
+				}
+				if (!(creditAmtValue.isReadonly()) && (creditAmt.intValue() <= 0)) {
+					throw new WrongValueException(creditAmtValue,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit Amount" }));
+				}
+				bankInfoDetail.setCreditAmt(PennantAppUtil.unFormateAmount(creditAmt, 2));
 			}
-			if (!(creditAmtValue.isReadonly()) && (creditAmt.intValue() <= 0)) {
-				throw new WrongValueException(creditAmtValue,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit Amount" }));
-			}
-			bankInfoDetail.setCreditAmt(PennantAppUtil.unFormateAmount(creditAmt, 2));
 			break;
 
 		case "bounceInWard":
 			BigDecimal bounceInWard = BigDecimal.ZERO;
 			Hbox hbox7 = (Hbox) getComponent(listitem, "bounceInWard");
-			CurrencyBox bounceIn = (CurrencyBox) hbox7.getLastChild();
-			Clients.clearWrongValue(bounceIn);
-			if (bounceIn.getValidateValue() != null) {
-				bounceInWard = bounceIn.getValidateValue();
+			if (hbox7 != null) {
+				CurrencyBox bounceIn = (CurrencyBox) hbox7.getLastChild();
+				Clients.clearWrongValue(bounceIn);
+				if (bounceIn.getValidateValue() != null) {
+					bounceInWard = bounceIn.getValidateValue();
+				}
+				if (!(bounceIn.isReadonly()) && (bounceInWard.intValue() < 0)) {
+					throw new WrongValueException(bounceIn,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce In Ward" }));
+				}
+				bankInfoDetail.setBounceIn(PennantAppUtil.unFormateAmount(bounceInWard, 2));
 			}
-			if (!(bounceIn.isReadonly()) && (bounceInWard.intValue() < 0)) {
-				throw new WrongValueException(bounceIn,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce In Ward" }));
-			}
-			bankInfoDetail.setBounceIn(PennantAppUtil.unFormateAmount(bounceInWard, 2));
 			break;
 
 		case "bounceOutWard":
 			BigDecimal bounceInOut = BigDecimal.ZERO;
 			Hbox hbox8 = (Hbox) getComponent(listitem, "bounceOutWard");
-			CurrencyBox bounceOut = (CurrencyBox) hbox8.getLastChild();
-			Clients.clearWrongValue(bounceOut);
-			if (bounceOut.getValidateValue() != null) {
-				bounceInOut = bounceOut.getValidateValue();
+			if (hbox8 != null) {
+				CurrencyBox bounceOut = (CurrencyBox) hbox8.getLastChild();
+				Clients.clearWrongValue(bounceOut);
+				if (bounceOut.getValidateValue() != null) {
+					bounceInOut = bounceOut.getValidateValue();
+				}
+				if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() < 0)) {
+					throw new WrongValueException(bounceOut,
+							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce Out Ward" }));
+				}
+				bankInfoDetail.setBounceOut(PennantAppUtil.unFormateAmount(bounceInOut, 2));
 			}
-			if (!(bounceOut.isReadonly()) && (bounceInOut.intValue() < 0)) {
-				throw new WrongValueException(bounceOut,
-						Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Bounce Out Ward" }));
-			}
-			bankInfoDetail.setBounceOut(PennantAppUtil.unFormateAmount(bounceInOut, 2));
 			break;
 
 		case "closingBal":
 			BigDecimal closingBal = BigDecimal.ZERO;
 			Hbox hbox9 = (Hbox) getComponent(listitem, "closingBal");
-			CurrencyBox closingBalValue = (CurrencyBox) hbox9.getLastChild();
-			Clients.clearWrongValue(closingBalValue);
-			if (closingBalValue.getValidateValue() != null) {
-				closingBal = closingBalValue.getValidateValue();
+			if (hbox9 != null) {
+				CurrencyBox closingBalValue = (CurrencyBox) hbox9.getLastChild();
+				Clients.clearWrongValue(closingBalValue);
+				if (closingBalValue.getValidateValue() != null) {
+					closingBal = closingBalValue.getValidateValue();
+				}
+				bankInfoDetail.setClosingBal(PennantAppUtil.unFormateAmount(closingBal, 2));
 			}
-			bankInfoDetail.setClosingBal(PennantAppUtil.unFormateAmount(closingBal, 2));
 			break;
 
 		case "odCCLimit":
 			BigDecimal odCCLimit = BigDecimal.ZERO;
 			Hbox hbox10 = (Hbox) getComponent(listitem, "odCCLimit");
-			CurrencyBox odCCLimitValue = (CurrencyBox) hbox10.getLastChild();
-			Clients.clearWrongValue(odCCLimitValue);
-			if (odCCLimitValue.getValidateValue() != null) {
-				odCCLimit = odCCLimitValue.getValidateValue();
+			if (hbox10 != null) {
+				CurrencyBox odCCLimitValue = (CurrencyBox) hbox10.getLastChild();
+				Clients.clearWrongValue(odCCLimitValue);
+				if (odCCLimitValue.getValidateValue() != null) {
+					odCCLimit = odCCLimitValue.getValidateValue();
+				}
+				bankInfoDetail.setoDCCLimit(PennantAppUtil.unFormateAmount(odCCLimit, 2));
 			}
-			bankInfoDetail.setoDCCLimit(PennantAppUtil.unFormateAmount(odCCLimit, 2));
 			break;
 
 		default:
@@ -1566,61 +1987,65 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	}
 
 	private BankInfoDetail getDayBalanceList(Listitem listitem, String listcellId, BankInfoDetail bankInfoDetail) {
-		List<Listcell> listcels = listitem.getChildren();
-		BigDecimal balance = BigDecimal.ZERO;
-		List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
-		for (Listcell listcell : listcels) {
-			String id = StringUtils.trimToNull(listcell.getId());
-
-			if (id == null) {
-				continue;
-			}
-
-			id = id.replaceAll("\\d", "");
-			if (StringUtils.equals(id, listcellId)) {
-
-				int i = 0;
-				for (String day : configDay.split(",")) {
-
-					try {
-						Integer.parseInt(StringUtils.trim(day));
-					} catch (NumberFormatException e) {
-						logger.error(Literal.EXCEPTION, e);
-						continue;
-					}
-					i++;
-					//Label day = (Label) listcell.getFellowIfAny("day"+i);
-					CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
-							.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
-					Clients.clearWrongValue(balanceValue);
-					if (balanceValue.getValidateValue() != null) {
-						balance = balanceValue.getValidateValue();
-					}
-					if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
-						throw new WrongValueException(balanceValue,
-								Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
-					}
-
-					BankInfoSubDetail subDetail = null;
-					if (list != null && !list.isEmpty()) {
-						for (BankInfoSubDetail subDtl : list) {
-							if (subDtl.getDay() == i) {
-								subDetail = subDtl;
+		
+		if (bankInfoDetail != null) {
+			List<Listcell> listcels = listitem.getChildren();
+			BigDecimal balance = BigDecimal.ZERO;
+			List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
+			for (Listcell listcell : listcels) {
+				String id = StringUtils.trimToNull(listcell.getId());
+				
+				if (id == null) {
+					continue;
+				}
+				
+				id = id.replaceAll("\\d", "");
+				if (StringUtils.equals(id, listcellId)) {
+					
+					int i = 0;
+					for (String day : configDay.split(",")) {
+						
+						try {
+							Integer.parseInt(StringUtils.trim(day));
+						} catch (NumberFormatException e) {
+							logger.error(Literal.EXCEPTION, e);
+							continue;
+						}
+						i++;
+						//Label day = (Label) listcell.getFellowIfAny("day"+i);
+						CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny("balance_currency"
+								.concat(String.valueOf(bankInfoDetail.getKeyValue())).concat(String.valueOf(i)));
+						Clients.clearWrongValue(balanceValue);
+						if (balanceValue.getValidateValue() != null) {
+							balance = balanceValue.getValidateValue();
+						}
+						if (!(balanceValue.isReadonly()) && (balance.intValue() < 0)) {
+							throw new WrongValueException(balanceValue,
+									Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
+						}
+						
+						BankInfoSubDetail subDetail = null;
+						if (list != null && !list.isEmpty()) {
+							for (BankInfoSubDetail subDtl : list) {
+								if (subDtl.getDay() == i) {
+									subDetail = subDtl;
+								}
 							}
 						}
+						
+						if (subDetail == null) {
+							subDetail = new BankInfoSubDetail();
+							subDetail.setMonthYear(bankInfoDetail.getMonthYear());
+							subDetail.setDay(i);
+							list.add(subDetail);
+						}
+						subDetail.setBalance(balance);
 					}
-
-					if (subDetail == null) {
-						subDetail = new BankInfoSubDetail();
-						subDetail.setMonthYear(bankInfoDetail.getMonthYear());
-						subDetail.setDay(i);
-						list.add(subDetail);
-					}
-					subDetail.setBalance(balance);
 				}
 			}
+			bankInfoDetail.setBankInfoSubDetails(list);
 		}
-		bankInfoDetail.setBankInfoSubDetails(list);
+		
 		return bankInfoDetail;
 	}
 
