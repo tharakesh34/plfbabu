@@ -1693,6 +1693,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		reportArgumentsMap.put("appccyEditField", SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT));
 		reportArgumentsMap.put("unitParam", unitName);
 
+		
 		if (whereCond != null) {
 			reportArgumentsMap.put("whereCondition", whereCond);
 		}
@@ -1702,6 +1703,10 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		}
 
 		if (whereCond1 != null) {
+			if (StringUtils.contains(whereCond1, "appPercentage") && (StringUtils.equals(reportMenuCode, "menu_Item_ForeclosureTerminationReport"))) {
+				String[] args = StringUtils.split(whereCond1, "=");
+				reportArgumentsMap.put("appPercentage", "" + StringUtils.remove(args[1], "}"));
+			}
 			reportArgumentsMap.put("whereCondition2", whereCond1);
 		}
 
@@ -2302,6 +2307,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		searchClick = true;
 
 		// ++ create the searchObject and initialize sorting ++//
+		HashMap<String, Object> argMap = null;
 		if (StringUtils.equals(reportMenuCode, "menu_Item_AccountStmt")) {
 			String fromDate = null;
 			String toDate = null;
@@ -2375,6 +2381,33 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					"where".equals(whereCond2.toString().trim()) ? "" : whereCond2.toString(), null, null,
 					"where".equals(whereCond1.toString().trim()) ? "" : whereCond1.toString());
 
+		}else if (StringUtils.equals(reportMenuCode, "menu_Item_ForeclosureTerminationReport")) {
+			String finReference = null;
+			String appPercentage = null;
+			List<ReportSearchTemplate> filters = (List<ReportSearchTemplate>) doPrepareWhereConditionOrTemplate(false,
+					false);
+			if (filters != null && filters.size() >= 2) {
+				finReference = ((ReportSearchTemplate) filters.get(0)).getFieldValue();
+				appPercentage = ((ReportSearchTemplate) filters.get(1)).getFieldValue();
+			}
+
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, true);
+			String whereCond = whereCondition.toString();
+
+			// Removing appPercentage in where condition
+			if ((finReference != null && !finReference.isEmpty()) && whereCond.contains("and")) {
+				whereCond = whereCond.substring(0, whereCond.lastIndexOf("and"));
+			} else {
+				whereCond = "";
+			}
+			
+			argMap = new HashMap<String, Object>(1);
+			if (appPercentage != null) {
+				argMap.put("appPercentage", "" + appPercentage);
+			}
+			
+			doShowReport("where".equals(whereCond.trim()) ? "" : whereCond, null, null, null, argMap.toString());
+			
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
 			String custCif = null;
 			String finReference = null;
