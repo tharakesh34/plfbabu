@@ -364,6 +364,14 @@
 														style="text-align:right" />
 												</hbox>
 											</row>
+											<row id="row_equalRepayment" visible="false">
+				
+												<label id="label_FinanceTypeDialog_SchdOnPMTCal" value="${c:l('label_FinanceTypeDialog_SchdOnPMTCal.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<checkbox id="schdOnPMTCal" checked="true" />
+												</hbox>
+											</row>
 											<row
 												id="row_ApplyPricingPolicy" visible="false">
 												<label
