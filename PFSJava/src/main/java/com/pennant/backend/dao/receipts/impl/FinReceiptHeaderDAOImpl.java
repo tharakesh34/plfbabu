@@ -1121,8 +1121,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		StringBuilder selectSql = new StringBuilder("Select count(*) from finreceiptdetail" + type);
 		selectSql.append(
-				"  where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and TRANSACTIONREF= :TRANSACTIONREF  ");
-		selectSql.append(" STATUS NOT IN ('B','C')  ");
+				"  where REFERENCE= :REFERENCE and PAYMENTTYPE= :RECEIPTMODE and TRANSACTIONREF= :TRANSACTIONREF");
+		selectSql.append(" And STATUS NOT IN ('B','C')  ");
 		logger.debug("selectSql: " + selectSql.toString());
 
 		source = new MapSqlParameterSource();
