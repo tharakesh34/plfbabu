@@ -74,6 +74,7 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -482,6 +483,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 					aBeneficiary.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
 					
 					aBeneficiary = accountValidationService.validateAccount(aBeneficiary);
+				}
+			} catch (InterfaceException e) {
+				logger.error(Literal.EXCEPTION, e);
+				if (e != null) {
+					throw new WrongValueException(this.accNumber, e.getErrorCode() + " : " + e.getErrorMessage());
 				}
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
