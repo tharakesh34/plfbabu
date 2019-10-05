@@ -1108,6 +1108,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
+			btMap.put("DSCR_PBDIT", custWiseDataMap.get("Y2_DSCR_PBDIT"));
+			btMap.put("EMI_ALL_LOANS", custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"));
+			btMap.put("DSCR_GF", custWiseDataMap.get("Y2_DSCR_GF"));
+			btMap.put("CRNTRATIO", custWiseDataMap.get("Y2_CRNT_RATIO"));
+			btMap.put("DEBTEQUITY", custWiseDataMap.get("Y2_DEBT_EQUITY"));
+			
 			if (i == 0) {
 				break;
 			}

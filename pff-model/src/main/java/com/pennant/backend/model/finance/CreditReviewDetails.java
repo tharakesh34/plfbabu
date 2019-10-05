@@ -52,6 +52,11 @@ public class CreditReviewDetails {
 	private BigDecimal outStandingLoanAmt = BigDecimal.ZERO;
 	private BigDecimal accountLimit = BigDecimal.ZERO;
 	private BigDecimal loanAmount = BigDecimal.ZERO;
+	private BigDecimal  addToEMI = BigDecimal.ZERO;
+	private BigDecimal chequeBncOthEmi =BigDecimal.ZERO;
+	private BigDecimal maxEmi =BigDecimal.ZERO;
+	private BigDecimal debitEqutiRatio =BigDecimal.ZERO;
+	private BigDecimal dsrcValue =BigDecimal.ZERO;
 
 	public long getId() {
 		return id;
@@ -394,5 +399,45 @@ public class CreditReviewDetails {
 
 	public void setLoanAmout(BigDecimal loanAmount) {
 		this.loanAmount = loanAmount;
+	}
+
+	public BigDecimal getAddToEMI() {
+		return addToEMI;
+	}
+
+	public void setAddToEMI(BigDecimal addToEMI) {
+		this.addToEMI = addToEMI;
+	}
+
+	public BigDecimal getChequeBncOthEmi() {
+		return chequeBncOthEmi;
+	}
+
+	public void setChequeBncOthEmi(BigDecimal chequeBncOthEmi) {
+		this.chequeBncOthEmi = chequeBncOthEmi;
+	}
+
+	public BigDecimal getMaxEmi() {
+		return maxEmi;
+	}
+
+	public void setMaxEmi(BigDecimal maxEmi) {
+		this.maxEmi = maxEmi;
+	}
+
+	public BigDecimal getDebitEqutiRatio() {
+		return debitEqutiRatio;
+	}
+
+	public void setDebitEqutiRatio(BigDecimal debitEqutiRatio) {
+		this.debitEqutiRatio = debitEqutiRatio;
+	}
+
+	public BigDecimal getDsrcValue() {
+		return dsrcValue;
+	}
+
+	public void setDsrcValue(BigDecimal dsrcValue) {
+		this.dsrcValue = dsrcValue;
 	}
 }

@@ -250,6 +250,14 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("TENOR", creditReviewDetails.getTenor());
 			dataMap.put("ROI", creditReviewDetails.getRoi());
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
+			dataMap.put("DSCR_PBDIT",btMap.get("DSCR_PBDIT"));
+			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
+			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
+			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
+			dataMap.put("DSCR", btMap.get("DSCR_GF"));
+			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
+			
+			
 		} else {
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
 
@@ -258,7 +266,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("TENOR", creditReviewDetails.getTenor());
 			dataMap.put("ROI", creditReviewDetails.getRoi());
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
-			dataMap.put("COMPOUNDING", 12); // As per IIFL requirement it is defaulted to 12
+			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
+			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
+			dataMap.put("DSCR_GF", dataMap.get("DSCR_GF"));
+			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
+			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
+			dataMap.put("DSCR", btMap.get("DSCR_GF"));
+			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
 		}
 
 		String fields = creditReviewDetails.getFields();
