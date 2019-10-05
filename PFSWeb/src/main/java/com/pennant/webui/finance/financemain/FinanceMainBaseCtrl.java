@@ -21417,7 +21417,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				dataMap.put("TENOR", tenor);
 			}
 			finAmt = this.finAmount.getActualValue();
-			abbEmiValue = creditReviewDetails.getAvgBankBal().divide(finAmt);
+			abbEmiValue = creditReviewDetails.getAvgBankBal().divide(finAmt,1,RoundingMode.HALF_DOWN);
 			
 			
 			if (abbEmiValue.compareTo(creditReviewDetails.getAddToEMI()) != 0) {
