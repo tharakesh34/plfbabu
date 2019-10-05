@@ -1112,7 +1112,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("EMI_ALL_LOANS", custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"));
 			btMap.put("DSCR_GF", custWiseDataMap.get("Y2_DSCR_GF"));
 			btMap.put("CRNTRATIO", custWiseDataMap.get("Y2_CRNT_RATIO"));
-			btMap.put("DEBTEQUITY", custWiseDataMap.get("Y2_DEBT_EQUITY"));
+			btMap.put("DEBTEQUITY", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
 			
 			if (i == 0) {
 				break;
@@ -1245,7 +1245,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						break;
 					}
 				}
-				String value = "0";
+				String value = "0"; 
 				if (noOfYears == 3) {
 					value = this.dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode);
 				} else {

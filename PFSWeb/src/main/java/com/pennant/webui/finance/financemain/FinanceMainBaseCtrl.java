@@ -4590,15 +4590,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						if (this.repayProfitRate.getValue() != null) {
 							roi = this.repayProfitRate.getValue();
 						}
-						creditReviewDetail.setRoi(roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
-						// creditReviewDetail.setRoi(roi);
+						//creditReviewDetail.setRoi(roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
+						creditReviewDetail.setRoi(roi);
 					} else if (this.repayRate.getEffRateValue() != null) {
-						if (this.repayRate.getEffRateValue() != null) {
-							roi = this.repayProfitRate.getValue();
-						}
-						creditReviewDetail.setRoi(this.repayRate.getEffRateValue().divide(new BigDecimal(100), 9,
-								RoundingMode.HALF_DOWN));
-						// creditReviewDetail.setRoi(this.repayRate.getEffRateValue());
+						roi = this.repayRate.getEffRateValue();
+						//creditReviewDetail.setRoi(this.repayRate.getEffRateValue().divide(new BigDecimal(100), 9,
+							//	RoundingMode.HALF_DOWN));
+						creditReviewDetail.setRoi(roi);
 					}
 					creditReviewDetail.setTenor(this.numberOfTerms_two.intValue());
 
@@ -21398,17 +21396,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		StringBuilder fields = new StringBuilder();
 		Map<String, Object> dataMap = new HashMap<>();
 		List<CustomerExtLiability> extLiabilities = new ArrayList<>();
-		dataMap.putAll(getFinanceDetail().getDataMap());
 		
-		String[] dataFields = creditReviewDetails.getFields().split(",");
-		for (String fieldName : dataFields) {
-			fields.append(fieldName+",");
-			System.out.println(getFinanceDetail().getDataMap().get(fieldName));
-			dataMap.put(fieldName, getFinanceDetail().getDataMap().get(fieldName));
-		}
-
-		//if ("BS".equals(this.eligibilityMethod.getValue())) {
-			//ROI, TENOR
 			if (financeDetail.getFinScheduleData().getFinanceType().getFinRateType()
 					.equals(CalculationConstants.RATE_BASIS_F)) {
 				if (this.repayProfitRate.getValue() != null) {
@@ -21421,8 +21409,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			
 			if (roi.compareTo(creditReviewDetails.getRoi()) != 0) {
 				fields.append("ROI,");
-				dataMap.put("ROI", roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
-				//dataMap.put("ROI", roi);
+				//dataMap.put("ROI", roi.divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN));
+				dataMap.put("ROI", roi);
 			}	
 			if (tenor != creditReviewDetails.getTenor()) {
 				fields.append("TENOR,");
@@ -21435,13 +21423,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (abbEmiValue.compareTo(creditReviewDetails.getAddToEMI()) != 0) {
 				fields.append("ABB_EMI,");
 				dataMap.put("ABB_EMI", abbEmiValue);
-				//dataMap.put("ROI", roi);
 			}
 			
 			if (!isFromLoan) {
 				creditReviewDetails.setRoi(roi);
 				creditReviewDetails.setTenor(tenor);
-				//creditReviewDetails.setAddToEMI(abbEmiValue);
+				creditReviewDetails.setAddToEMI(abbEmiValue);
 			}
 			
 			BigDecimal accBal = BigDecimal.ZERO;
@@ -21506,7 +21493,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					creditReviewDetails.setAddToEMI(abbEmiValue);
 				}
 			}
-			
 		crRevDetails.setFields(fields.toString());
 		if (isLiabilitiesChanged) {
 			if (!isFromLoan) {

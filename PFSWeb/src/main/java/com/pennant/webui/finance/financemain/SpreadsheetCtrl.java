@@ -268,7 +268,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
 			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
 			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
-			dataMap.put("DSCR_GF", dataMap.get("DSCR_GF"));
+			dataMap.put("DSCR_GF", btMap.get("DSCR_GF"));
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
