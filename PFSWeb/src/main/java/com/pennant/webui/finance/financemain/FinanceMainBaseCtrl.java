@@ -4648,7 +4648,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					BigDecimal finAmt = this.finAmount.getActualValue();
 					BigDecimal compreValue=BigDecimal.ZERO;
 					if(finAmt.compareTo(compreValue)!=0){
-					BigDecimal abbEmiValue = creditReviewDetail.getAvgBankBal().divide(finAmt);
+					BigDecimal abbEmiValue = creditReviewDetail.getAvgBankBal().divide(finAmt,1,RoundingMode.HALF_DOWN);
 					creditReviewDetail.setAddToEMI(abbEmiValue);
 					
 				}
