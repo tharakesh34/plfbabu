@@ -13411,44 +13411,67 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="219" author="vijaya.a">
-	<comment>This script already executed in Clix, Please dont execute this script in clix and mark it as executed in clix</comment>
-		<sql>
-        	<![CDATA[
-           		Alter table PRESENTMENT_FILEIMPORT alter column reasoncode type varchar(100);
-           		Alter table PRESENTMENT_FILEIMPORT alter column batchid Type varchar(50);
-        	]]>
-		</sql>
+	<comment>This script alrdy excutd in Clix,Plsdont execute this script in clix and mark it as executed in clix</comment>
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="reasoncode"
+			newDataType="varchar(100)" />
 	</changeSet>
-	
-	<changeSet id="219_Post" author="vijaya.a">
-	<comment>This script already executed in Clix, Please dont execute this script in clix and mark it as executed in clix</comment>
+		
+	<changeSet id="220" author="vijaya.a">
+	<comment>This script alrdy excutd in Clix,Plsdont execute this script in clix and mark it as executed in clix</comment>
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="batchid"
+			newDataType="varchar(50)" />
+	</changeSet>
+		
+	<changeSet id="221" author="vijaya.a">
+	<comment>This script alrdy excutd in Clix,Plsdont execute this script in clix and mark it as executed in clix</comment>
 		<addColumn tableName="PRESENTMENT_FILEIMPORT" >
 			<column name="debit_credit_flag" type="char(1)" ></column>
 		</addColumn>
 	</changeSet>
 	
-	<changeSet id="220" author="vijaya.a">
+	<changeSet id="222" author="vijaya.a">
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="OLD_MANDATE_REG_NO" type="varchar(25)" ></column>
 		</addColumn>
+		</changeSet>
+		
+	<changeSet id="223" author="vijaya.a">	
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="RE_LODGE_REJECT_REASON" type="varchar(1000)" ></column>
 		</addColumn>
+		</changeSet>
+		
+	<changeSet id="224" author="vijaya.a">	
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="AMOUNT_TYPE" type="char(1)" ></column>
 		</addColumn>
+		</changeSet>
+		
+	<changeSet id="225" author="vijaya.a">
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="PRESEMENT_MODE" type="varchar(20)" ></column>
 		</addColumn>
+		</changeSet>
+		
+	<changeSet id="226" author="vijaya.a">
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="HOST_BATCH_ID" type="bigint" ></column>
 		</addColumn>
+	</changeSet>	
+		
+	<changeSet id="227" author="vijaya.a">
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="HOST_REFERENCE" type="bigint" ></column>
 		</addColumn>
+	</changeSet>	
+		
+	<changeSet id="228" author="vijaya.a">	
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="RE_LODGE_DATE" type="datetime" ></column>
 		</addColumn>
+	</changeSet>	
+		
+	<changeSet id="229" author="vijaya.a">	
 		<addColumn tableName="MANDATE_RESPONSE" >
 			<column name="REGISTERED_BY" type="varchar(20)" ></column>
 		</addColumn>
