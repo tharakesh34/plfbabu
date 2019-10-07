@@ -3681,6 +3681,14 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="74" author="Durga Prasad G">
+		<sql>
+		 <![CDATA[
+			Update Secrights set  RIGHTNAME = 'menuItem_CustomerTemplates_ForeclosureTerminationReport_Kotak' Where RIGHTNAME = 'menuItem_CustomerTemplates_ForeclosureTerminationReport';
+		 ]]>
+		</sql>
+	</changeSet>
 
 
 </databaseChangeLog>
