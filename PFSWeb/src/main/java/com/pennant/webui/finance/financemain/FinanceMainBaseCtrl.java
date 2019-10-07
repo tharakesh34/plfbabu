@@ -6754,7 +6754,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (this.allowGrace.isChecked()) {
 			BaseRateCode baseRateCode = baseRateCodeService.getBaseRateCodeById(this.graceRate.getBaseValue(), "");
-			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
+			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 				setGrcRvwFrq(baseRateCode);
 			}
 		}
