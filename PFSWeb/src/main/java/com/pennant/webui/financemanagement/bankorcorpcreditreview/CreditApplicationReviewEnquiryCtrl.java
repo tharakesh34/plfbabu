@@ -1066,12 +1066,11 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		tabPanel.setId("tabPanel_" + 5);
 		tabPanel.setParent(this.tabpanelsBoxIndexCenter);
 		appendCreditReviewDetailTab(false, tabPanel);
-		logger.debug("Leaving");
+		
 		logger.debug("Leaving");
 	}
 
 	public void appendCreditReviewDetailTab(boolean onLoad, Tabpanel tabPanel) {
-
 		logger.debug(Literal.ENTERING);
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -1112,11 +1111,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("EMI_ALL_LOANS", custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"));
 			btMap.put("DSCR_GF", custWiseDataMap.get("Y2_DSCR_GF"));
 			btMap.put("CRNTRATIO", custWiseDataMap.get("Y2_CRNT_RATIO"));
-			btMap.put("DEBTEQUITY", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
+			
+			if (custWiseDataMap.get("Y2_DEBT_EQUITY") != null) {
+				btMap.put("DEBTEQUITY", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
+			} else {
+				btMap.put("DEBTEQUITY", 0);
+			}
 			
 			if (i == 0) {
 				break;
 			}
+			
 			i = i - 1;
 		}
 		custIds.remove(this.custID.getValue());
@@ -1125,6 +1130,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		map.put("userRole", getRole());
 		map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul", tabPanel, map);
+		
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
