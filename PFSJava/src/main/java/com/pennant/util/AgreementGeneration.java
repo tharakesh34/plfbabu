@@ -506,10 +506,28 @@ public class AgreementGeneration implements Serializable {
 		agreement.setUserName(StringUtils.trimToEmpty(usrName));
 		agreement.setUserDeptName(StringUtils.trimToEmpty(usrDeptName));
 		agreement.setUsrEmailId(StringUtils.trimToEmpty(usrEmail));
-		String finRef = detail.getFinScheduleData().getFinanceMain().getFinReference();
-		int formatter = CurrencyUtil.getFormat(detail.getFinScheduleData().getFinanceMain().getFinCcy());
-		String mMAReference = detail.getFinScheduleData().getFinanceMain().getLovDescMMAReference();
+		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
+		
+		String finRef = financeMain.getFinReference();
+		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		String mMAReference = financeMain.getLovDescMMAReference();
 		agreement.setLpoDate(appDate);
+		agreement.setLovDescEligibilityMethod(financeMain.getLovDescEligibilityMethod());
+		
+		if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
+			for (JointAccountDetail jointAccount : detail.getJountAccountDetailList()) {
+				agreement.setPrimaryCoApplicant(jointAccount.getLovDescCIFName());
+				break;
+			}
+		}
+		
+		if (CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
+			for (GuarantorDetail guarantorDetail : detail.getGurantorsDetailList()) {
+				agreement.setPrimaryGuarantor(guarantorDetail.getGuarantorCIFName());
+				break;
+			}
+		}
+		
 		totalIncome = BigDecimal.ZERO;
 		totalExpense = BigDecimal.ZERO;
 		totalDeduction = BigDecimal.ZERO;
@@ -1009,10 +1027,10 @@ public class AgreementGeneration implements Serializable {
 			if (CollectionUtils.isEmpty(agreement.getActivityDetails())) {
 				agreement.setActivityDetails(new ArrayList<>());
 			}
-			if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()
-					&& null != detail.getFinScheduleData().getFinanceMain().getFinReference()) {
+			if (null != detail.getFinScheduleData() && null != financeMain
+					&& null != financeMain.getFinReference()) {
 
-				String loanRef = detail.getFinScheduleData().getFinanceMain().getFinReference();
+				String loanRef = financeMain.getFinReference();
 				List<Activity> activities = getActivityLogService().getActivities("FinanceMain", loanRef);
 				if (aggModuleDetails.contains(PennantConstants.AGG_ACTIVIT) && CollectionUtils.isNotEmpty(activities)) {
 					for (Activity activity : activities) {
@@ -1185,9 +1203,9 @@ public class AgreementGeneration implements Serializable {
 				if (CollectionUtils.isEmpty(agreement.getSourcingDetails())) {
 					agreement.setSourcingDetails(new ArrayList<>());
 				}
-				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
+				if (null != detail.getFinScheduleData() && null != financeMain) {
 					SourcingDetail sourcingDetail = agreement.new SourcingDetail();
-					FinanceMain financeMain2 = detail.getFinScheduleData().getFinanceMain();
+					FinanceMain financeMain2 = financeMain;
 					sourcingDetail.setDsaName(StringUtils.trimToEmpty(financeMain2.getDsaName()));
 					sourcingDetail.setDsaCode(StringUtils.trimToEmpty(financeMain2.getDsaCode()));
 					sourcingDetail.setDsaNameDesc((StringUtils.trimToEmpty(financeMain2.getDsaCodeDesc())));
@@ -1225,18 +1243,18 @@ public class AgreementGeneration implements Serializable {
 				agreement.setGraceAvailable(graceAvailable);
 			}
 
-			if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
+			if (null != detail.getFinScheduleData() && null != financeMain) {
 				agreement.setNumOfPayGrace(
-						Integer.toString(detail.getFinScheduleData().getFinanceMain().getGraceTerms()));
+						Integer.toString(financeMain.getGraceTerms()));
 				agreement.setFirstDisbursementAmt(PennantApplicationUtil
-						.amountFormate(detail.getFinScheduleData().getFinanceMain().getFinAmount(), formatter));
-				if (null != detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()) {
+						.amountFormate(financeMain.getFinAmount(), formatter));
+				if (null != financeMain.getRepaySpecialRate()) {
 					agreement.setRepaySplRate(StringUtils
-							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getRepaySpecialRate()));
+							.trimToEmpty(financeMain.getRepaySpecialRate()));
 				}
-				if (null != detail.getFinScheduleData().getFinanceMain().getRepayMargin()) {
+				if (null != financeMain.getRepayMargin()) {
 					agreement.setRepayMargin(PennantApplicationUtil.formatRate(
-							detail.getFinScheduleData().getFinanceMain().getRepayMargin().doubleValue(), 2));
+							financeMain.getRepayMargin().doubleValue(), 2));
 				}
 			}
 
@@ -1362,9 +1380,9 @@ public class AgreementGeneration implements Serializable {
 			}
 
 			if (null != detail && null != detail.getFinScheduleData()
-					&& null != detail.getFinScheduleData().getFinanceMain()) {
+					&& null != financeMain) {
 				agreement.setConnectorCode(
-						StringUtils.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getConnectorCode()));
+						StringUtils.trimToEmpty(financeMain.getConnectorCode()));
 			}
 
 			//Director Details
@@ -1395,9 +1413,9 @@ public class AgreementGeneration implements Serializable {
 			}
 
 			if (aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW)) {
-				if (null != detail.getFinScheduleData() && null != detail.getFinScheduleData().getFinanceMain()) {
+				if (null != detail.getFinScheduleData() && null != financeMain) {
 					agreement.setLovElgMtdDesc(StringUtils
-							.trimToEmpty(detail.getFinScheduleData().getFinanceMain().getLovDescEligibilityMethod()));
+							.trimToEmpty(financeMain.getLovDescEligibilityMethod()));
 				}
 				if (null != detail.getCustomerDetails()) {
 					String maxAuditYear = creditApplicationReviewService
@@ -1570,7 +1588,7 @@ public class AgreementGeneration implements Serializable {
 			// --------------------Asset Evalution Details 
 			if (detail.getFinAssetEvaluation() != null) {
 				agreement = getFinAssetEvaluationDetails(agreement, detail.getFinAssetEvaluation(), formatter,
-						detail.getFinScheduleData().getFinanceMain().getFinCcy());
+						financeMain.getFinCcy());
 			}
 			// Co-applicant details
 			setCoapplicantDetails(detail, agreement, aggModuleDetails);
@@ -1798,8 +1816,8 @@ public class AgreementGeneration implements Serializable {
 			BigDecimal totalDeductionWithBPI = totalDeduction.add(BPIAmount);
 			BigDecimal firstDisbursementAmt = BigDecimal.ZERO;
 			if (detail != null && detail.getFinScheduleData() != null
-					&& detail.getFinScheduleData().getFinanceMain() != null) {
-				firstDisbursementAmt = detail.getFinScheduleData().getFinanceMain().getFinAmount();
+					&& financeMain != null) {
+				firstDisbursementAmt = financeMain.getFinAmount();
 			}
 			agreement.setTotalDeductionwithoutBPI(PennantApplicationUtil.amountFormate(totalDeduction, formatter));
 			agreement.setTotalDeductionwithBPI(PennantApplicationUtil.amountFormate(totalDeductionWithBPI, formatter));

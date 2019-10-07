@@ -333,7 +333,22 @@ public class AgreementDetail {
 	private String totalDisbursementAmt = "0.00";
 
 	private String vasPremium = "0.00";
-
+	
+	/**
+	 * Provides Eligibility Method Description
+	 */
+	private String lovDescEligibilityMethod = "";
+	
+	/**
+	 * Provides Primary Co-Applicant
+	 */
+	private String primaryCoApplicant = "";
+	
+	/**
+	 * Provides Primary Guarantor
+	 */
+	private String primaryGuarantor = "";
+	
 	public String getVasPremium() {
 		return vasPremium;
 	}
@@ -9473,6 +9488,30 @@ public class AgreementDetail {
 	public void setVanCode(String vanCode) {
 		this.vanCode = vanCode;
 	}
+	
+	public String getLovDescEligibilityMethod() {
+		return lovDescEligibilityMethod;
+	}
+	
+	public void setLovDescEligibilityMethod(String lovDescEligibilityMethod) {
+		this.lovDescEligibilityMethod = lovDescEligibilityMethod;
+	}
+
+	public String getPrimaryCoApplicant() {
+		return primaryCoApplicant;
+	}
+
+	public void setPrimaryCoApplicant(String primaryCoApplicant) {
+		this.primaryCoApplicant = primaryCoApplicant;
+	}
+
+	public String getPrimaryGuarantor() {
+		return primaryGuarantor;
+	}
+
+	public void setPrimaryGuarantor(String primaryGuarantor) {
+		this.primaryGuarantor = primaryGuarantor;
+	}
 
 	public class KycDetail {
 		/**
@@ -9508,7 +9547,7 @@ public class AgreementDetail {
 		 * Provides Customer Id provided ID Proof Expiry Date
 		 */
 		private String expiryDate = "";
-
+		
 		public String getApplicantType() {
 			return applicantType;
 		}
@@ -9572,5 +9611,7 @@ public class AgreementDetail {
 		public void setExpiryDate(String expiryDate) {
 			this.expiryDate = expiryDate;
 		}
+
 	}
+	
 }
