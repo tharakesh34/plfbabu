@@ -1068,6 +1068,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			 */
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGFRQ)) {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' ");
+			whereClause.append(" AND RepayPftFrq <> '"+"D0000"+"'");
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_RESCHD)) {
 			whereClause.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' ");
