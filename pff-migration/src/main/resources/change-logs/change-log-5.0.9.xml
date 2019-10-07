@@ -13618,4 +13618,25 @@ UNION ALL
 		          WHERE financemain_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
+	
+	
+	<changeSet id="230" author="Durgaprasad G">
+		<sql>
+			<![CDATA[			
+			 	Update FINANCEMAIN set SanBsdSchdle = 0 Where SanBsdSchdle is null;
+			 	Update FINANCEMAIN set PromotionSeqID = 0 Where PromotionSeqID is null;
+			 	
+			 	Update FINANCEMAIN_PA set SanBsdSchdle = 0 Where SanBsdSchdle is null;
+			 	Update FINANCEMAIN_PA set PromotionSeqID = 0 Where PromotionSeqID is null;
+			 	
+			 	Update FINANCEMAIN_TEMP set SanBsdSchdle = 0 Where SanBsdSchdle is null;
+			 	Update FINANCEMAIN_TEMP set PromotionSeqID = 0 Where PromotionSeqID is null;
+			 	
+			 	Update REJECTFINANCEMAIN set SanBsdSchdle = 0 Where SanBsdSchdle is null;
+			 	Update REJECTFINANCEMAIN set PromotionSeqID = 0 Where PromotionSeqID is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 </databaseChangeLog>
