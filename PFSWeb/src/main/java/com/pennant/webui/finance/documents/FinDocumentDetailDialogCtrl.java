@@ -79,6 +79,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -88,6 +89,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -1313,6 +1315,20 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 
 		Media media = event.getMedia();
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DOCUMENTTYPE_XLS_REQ)) {
+			if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+			if (media.getName().endsWith(".csv") || media.getName().endsWith(".CSV")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+			if (media.getName().endsWith(".XLS") || media.getName().endsWith(".XLSX")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+		}
 		browseDoc(media, this.documnetName);
 		doSetDownLoadVisible();
 		logger.debug("Leaving");

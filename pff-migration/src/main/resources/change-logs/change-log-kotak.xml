@@ -3813,5 +3813,11 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 					from PaymentTransaction PT Inner Join PaymentHeader PH on PT.PAYMENTID= PH.PAYMENTID and PT.TranModule='PYMT';
 			</createView>	
 	</changeSet>
-
+	<changeSet id="81" author="Saikiran.v">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_DOCUMENTTYPE_XLS_REQ';
+			 ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

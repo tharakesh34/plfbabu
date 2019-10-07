@@ -13808,5 +13808,12 @@ UNION ALL
 			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_TEMP" defaultValue="0" />	
 	</changeSet>
-
+	<changeSet id="234" author="Saikiran.V">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE='ALLOW_DOCUMENTTYPE_XLS_REQ';
+				INSERT INTO SMTPARAMETERS VALUES ('ALLOW_DOCUMENTTYPE_XLS_REQ','IS Document Type CSV,Xls,xlsx Allowed Or Not','String',1,'N',1,0,null,null,'IS Document Type CSV Xls xlsx Allowed Or Not' ,3,1000,current_Timestamp,'Approved',null,null,null,null,null,0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
