@@ -13783,4 +13783,30 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="232" author="Durgaprasad G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+			 	ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FINANCEMAIN_SNBSDSCHD DEFAULT 0 FOR SANBSDSCHDLE;
+				ALTER TABLE FINANCEMAIN ADD CONSTRAINT DF_FINANCEMAIN_PRMTNSQID DEFAULT 0 FOR PROMOTIONSEQID;
+							
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_P_SNBSDSCHD DEFAULT 0 FOR SANBSDSCHDLE;
+				ALTER TABLE FINANCEMAIN_PA ADD CONSTRAINT DF_FINANCEMAIN_P_PRMTNSQID DEFAULT 0 FOR PROMOTIONSEQID;			
+							
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FINANCEMAIN_T_SNBSDSCHD DEFAULT 0 FOR SANBSDSCHDLE;
+				ALTER TABLE FINANCEMAIN_TEMP ADD CONSTRAINT DF_FINANCEMAIN_T_PRMTNSQID DEFAULT 0 FOR PROMOTIONSEQID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="233" author="Durgaprasad G" dbms="postgresql, oracle">
+			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN" defaultValue="0" />
+			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN" defaultValue="0" />		 
+			
+			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_PA" defaultValue="0" />
+			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_PA" defaultValue="0" />	
+			
+			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
+			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_TEMP" defaultValue="0" />	
+	</changeSet>
+	
 </databaseChangeLog>
