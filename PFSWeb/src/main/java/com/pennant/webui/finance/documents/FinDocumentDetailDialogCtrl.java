@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1092,18 +1093,14 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		valueParm[0] = aDocumentDetails.getDocCategory();
 		errParm[0] = PennantJavaUtil.getLabel("label_DocumnetCategory") + ":" + valueParm[0];
 
-		if (getDocumentDetailDialogCtrl().getDocumentDetailsList() != null
-				&& getDocumentDetailDialogCtrl().getDocumentDetailsList().size() > 0) {
+		if (CollectionUtils.isNotEmpty(getDocumentDetailDialogCtrl().getDocumentDetailsList())) {
+			
 			for (int i = 0; i < getDocumentDetailDialogCtrl().getDocumentDetailsList().size(); i++) {
+				
 				DocumentDetails documentDetails = getDocumentDetailDialogCtrl().getDocumentDetailsList().get(i);
 
-				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) { // Both
-																										// Current
-																									// and
-																									// Existing
-																									// list
-																									// rating
-																									// same
+				 // Both Current and Existing list rating same
+				if (documentDetails.getDocCategory().equals(aDocumentDetails.getDocCategory())) {
 
 					if (isNewRecord()) {
 						if (!StringUtils.equals(documentDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
@@ -1112,7 +1109,6 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 									getUserWorkspace().getUserLanguage()));
 							return auditHeader;
 						}
-
 					}
 
 					if (PennantConstants.TRAN_DEL.equals(tranType)) {
