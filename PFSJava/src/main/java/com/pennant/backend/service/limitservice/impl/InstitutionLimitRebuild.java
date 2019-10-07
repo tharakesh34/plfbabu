@@ -46,9 +46,11 @@ package com.pennant.backend.service.limitservice.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -61,7 +63,6 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.limit.LimitDetailDAO;
 import com.pennant.backend.dao.limit.LimitGroupLinesDAO;
@@ -84,7 +85,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
-import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.pff.core.TableType;
 
 public class InstitutionLimitRebuild {
@@ -99,8 +99,6 @@ public class InstitutionLimitRebuild {
 	private LimitHeaderDAO limitHeaderDAO;
 	@Autowired
 	private LimitRuleDAO limitRuleDAO;
-	@Autowired
-	private FinanceMainDAO financeMainDAO;
 	@Autowired
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	@Autowired
@@ -125,6 +123,8 @@ public class InstitutionLimitRebuild {
 
 		// Fetch LimitHeader Details
 		List<LimitHeader> limitHeaderList = limitHeaderDAO.getLimitHeaders(TableType.MAIN_TAB.getSuffix());
+		
+		Map<String, Set<String>> fieldMap = getLimitFieldMap();
 
 		for (LimitHeader limitHeader : limitHeaderList) {
 
@@ -141,29 +141,26 @@ public class InstitutionLimitRebuild {
 
 			// Finance List Based on SQL Rule
 			String sqlQuery = limitFilterQuery.getSQLQuery();
-			// Approved Finances
-			List<FinanceMain> financeMainList = financeMainDAO.getFinMainListBySQLQueryRule(sqlQuery, "_LCFView");
-			// Origination Finances
-			List<FinanceMain> finTempList = financeMainDAO.getFinMainListBySQLQueryRule(sqlQuery, "_LCFTView");
-			financeMainList.addAll(finTempList);
+						
+			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
+			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
+			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
 
-			if (financeMainList != null && !financeMainList.isEmpty()) {
-				Map<Long, List<FinanceMain>> custmains = new HashMap<Long, List<FinanceMain>>();
+			Map<Long, List<FinanceMain>> custmains = new HashMap<Long, List<FinanceMain>>();
 
-				for (FinanceMain financeMain : financeMainList) {
-
-					List<FinanceMain> list = custmains.get(financeMain.getCustID());
-					if (list == null) {
-						list = new ArrayList<FinanceMain>();
-						custmains.put(financeMain.getCustID(), list);
-					}
-					list.add(financeMain);
+			for (FinanceMain financeMain : financeMains) {
+				List<FinanceMain> list = custmains.get(financeMain.getCustID());
+				if (list == null) {
+					list = new ArrayList<FinanceMain>();
+					custmains.put(financeMain.getCustID(), list);
 				}
-
-				for (Entry<Long, List<FinanceMain>> entry : custmains.entrySet()) {
-					processInstutionalLimit(limitHeader, limitDetailsList, entry.getValue());
-				}
+				list.add(financeMain);
 			}
+
+			for (Entry<Long, List<FinanceMain>> entry : custmains.entrySet()) {
+				processInstutionalLimit(limitHeader, limitDetailsList, entry.getValue(), fieldMap);
+			}
+		
 			// Update Limit Details
 			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
 		}
@@ -178,17 +175,20 @@ public class InstitutionLimitRebuild {
 	 * @param finMains
 	 */
 	private void processInstutionalLimit(LimitHeader limitHeader, List<LimitDetails> limitDetailsList,
-			List<FinanceMain> finMains) {
+			List<FinanceMain> finMains, Map<String, Set<String>> fieldMap) {
 		logger.debug(" Entering ");
 
 		if (finMains == null || finMains.isEmpty()) {
 			return;
 		}
-
+		
+		Map<String, FinanceType> finTypeMap = new HashMap<>();
+		FinanceType financeType = null;
+		
 		for (FinanceMain finMain : finMains) {
 
-			//Finance Type Details
-			FinanceType financeType = FinanceConfigCache.getFinanceType(finMain.getFinType());
+			String finType = finMain.getFinType();
+			financeType = finTypeMap.computeIfAbsent(finType, ft -> getFinanceTye(finType, fieldMap.get("ft_")));
 
 			// Customer Details	
 			Customer customer = customerDAO.getCustomerByID(finMain.getCustID(), "");
@@ -524,4 +524,37 @@ public class InstitutionLimitRebuild {
 		logger.debug(" Leaving ");
 		return list;
 	}
+	
+	private FinanceType getFinanceTye(String finType, Set<String> fields) {
+		return limitHeaderDAO.getLimitFieldsByFinTpe(finType, fields);
+	}
+	
+	private Map<String, Set<String>> getLimitFieldMap() {
+		Map<String, Set<String>> limitFieldMap = new HashMap<>();
+
+		List<String> limitFields = limitHeaderDAO.getLimitRuleFields();
+
+		Set<String> fm = new HashSet<>();
+		Set<String> ct = new HashSet<>();
+		Set<String> ft = new HashSet<>();
+
+		for (String field : limitFields) {
+			if (StringUtils.startsWithIgnoreCase(field, "fm_")) {
+				fm.add(StringUtils.substring(field, 3));
+			} else if (StringUtils.startsWithIgnoreCase(field, "ct_")) {
+				ct.add(StringUtils.substring(field, 3));
+			} else if (StringUtils.startsWithIgnoreCase(field, "ft_")) {
+				ft.add(StringUtils.substring(field, 3));
+			}
+		}
+
+		fm.add("finReference");
+
+		limitFieldMap.put("fm_", fm);
+		limitFieldMap.put("ct_", ct);
+		limitFieldMap.put("ft_", ft);
+
+		return limitFieldMap;
+	}
+
 }

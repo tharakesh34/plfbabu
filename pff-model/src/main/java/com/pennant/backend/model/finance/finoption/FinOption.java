@@ -39,6 +39,7 @@ public class FinOption extends AbstractWorkflowEntity {
 	private String lovValue;
 	private FinOption befImage;
 	private LoggedInUser userDetails;
+	private String remarks;
 
 	private BigDecimal pftAmz = BigDecimal.ZERO;
 	private BigDecimal tdSchdPftBal = BigDecimal.ZERO;// Interest receivable
@@ -47,7 +48,7 @@ public class FinOption extends AbstractWorkflowEntity {
 	private BigDecimal interestInclAccrued = BigDecimal.ZERO;
 	private BigDecimal penaltyWaived = BigDecimal.ZERO;
 	private BigDecimal otherChargers = BigDecimal.ZERO;
-	
+
 	public FinOption() {
 		super();
 	}
@@ -295,6 +296,13 @@ public class FinOption extends AbstractWorkflowEntity {
 		this.customerTemplateCode = customerTemplateCode;
 	}
 
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
 	public BigDecimal getTotPenal() {
 		return totPenal;

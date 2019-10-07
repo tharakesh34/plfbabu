@@ -801,7 +801,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			wve.add(we);
 		}
 
-		if (!this.mandRole.isButtonDisabled()) {
+		if (mandRole.isVisible() && !this.mandRole.isButtonDisabled()) {
 			try {
 				this.mandRole.getValidatedValue();
 				Object obj = this.mandRole.getObject();
@@ -1986,7 +1986,12 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			}
 
 			lc.setParent(item);
-			lc = new Listcell(covenantDocument.getDocCategory() + "-" + covenantDocument.getDocName());
+			if (covenantDocument.getDocumentDetail() != null) {
+				lc = new Listcell(covenantDocument.getDocumentDetail().getDocCategory() + "-"
+						+ covenantDocument.getDocumentDetail().getDocName());
+			} else {
+				lc = new Listcell();
+			}
 			lc.setParent(item);
 
 			lc = new Listcell(covenantDocument.getDoctype());

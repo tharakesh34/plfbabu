@@ -80,6 +80,8 @@ public class StatementOfAccount {
 	private BigDecimal prevInstAmtPft = BigDecimal.ZERO;
 	private String intRateType;
 	private Date lastDisbursalDate;
+	private Date firstDisbDate;
+	private BigDecimal repayRateType;
 	private Date firstDueDate;
 	private Date endInstallmentDate;
 	private String advInstAmt;
@@ -1099,4 +1101,19 @@ public class StatementOfAccount {
 	public void setRepayFrq(String repayFrq) {
 		this.repayFrq = repayFrq;
 	}
-}
+	public Date getFirstDisbDate() {
+		return firstDisbDate;
+	}
+
+	public void setFirstDisbDate(Date firstDisbDate) {
+		this.firstDisbDate = firstDisbDate;
+	}
+	public BigDecimal getRepayRateType() {
+		return repayRateType;
+	}
+
+	public void setRepayRateType(BigDecimal repayRateType) {
+		this.repayRateType = repayRateType;
+	}
+	
+	}

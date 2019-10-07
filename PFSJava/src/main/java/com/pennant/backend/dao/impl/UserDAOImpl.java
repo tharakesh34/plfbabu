@@ -44,9 +44,7 @@ package com.pennant.backend.dao.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
@@ -61,7 +59,6 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -100,59 +97,84 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		return null;
 	}
 
-	/**
-	 * This method updates UsrInvldLoginTries,UsrEnabled columns of SecUsers table
-	 * 
-	 * @param userName
-	 *            (String)
-	 * @param authPass
-	 *            (int)
-	 */
-
-	public void updateLoginStatus(String userName, int authPass) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder updateSql = new StringBuilder("Update SecUsers  set ");
+	public void updateLoginStatus(long userId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update SecUsers set LastLoginOn = :LastLoginOn");
+		sql.append(", LastFailLoginOn = :LastFailLoginOn");
+		sql.append(", UsrInvldLoginTries = :UsrInvldLoginTries");
+		sql.append(" Where UsrId =:UsrId");
 
 		Timestamp loginTime = new Timestamp(System.currentTimeMillis());
-		Map<String, Object> namedParameters = new HashMap<String, Object>();
-		namedParameters.put("UsrLogin", userName);
-		if (authPass == 1) {
-			namedParameters.put("LastLoginOn", loginTime);
-			namedParameters.put("LastFailLoginOn", null);
-			namedParameters.put("UsrInvldLoginTries", 0);
 
-			updateSql.append(
-					"LastLoginOn =:LastLoginOn,LastFailLoginOn=:LastFailLoginOn,UsrInvldLoginTries=:UsrInvldLoginTries");
-			updateSql.append(" Where UsrLogin =:UsrLogin");
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UsrId", userId);
+		parameterSource.addValue("LastLoginOn", loginTime);
+		parameterSource.addValue("LastFailLoginOn", null);
+		parameterSource.addValue("UsrInvldLoginTries", 0);
 
-			logger.trace(Literal.SQL + updateSql.toString());
-			this.jdbcTemplate.update(updateSql.toString(), namedParameters);
-		} else {
-			//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
-			int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
-			namedParameters.put("UsrEnabled", 0);
-			namedParameters.put("LastFailLoginOn", null);
-			namedParameters.put("invalidLogins", invalidLogins);
+		this.jdbcTemplate.update(sql.toString(), parameterSource);
+	}
 
-			updateSql.append(
-					" UsrInvldLoginTries=(UsrInvldLoginTries+1), UsrEnabled=:UsrEnabled,LastFailLoginOn =:LastFailLoginOn  Where UsrLogin = :UsrLogin");
-			updateSql.append(" and UsrInvldLoginTries >= :invalidLogins");
+	public void updateInvalidTries(String userName) {
+		logger.debug(Literal.ENTERING);
 
-			logger.trace(Literal.SQL + updateSql.toString());
-			int count = this.jdbcTemplate.update(updateSql.toString(), namedParameters);
-			if (count == 0) {
-				namedParameters.put("LastFailLoginOn", loginTime);
-				updateSql = new StringBuilder("Update SecUsers  set ");
-				updateSql.append("LastFailLoginOn =:LastFailLoginOn");
-				updateSql.append(",UsrInvldLoginTries=(UsrInvldLoginTries+1) Where UsrLogin = :UsrLogin");
+		//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
+		int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
 
-				logger.trace(Literal.SQL + updateSql.toString());
-				this.jdbcTemplate.update(updateSql.toString(), namedParameters);
-			}
+		Timestamp loginTime = new Timestamp(System.currentTimeMillis());
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UsrLogin", userName);
+		parameterSource.addValue("UsrEnabled", 0);
+		parameterSource.addValue("LastFailLoginOn", null);
+		parameterSource.addValue("UsrInvldLoginTries", invalidLogins);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("Update SecUsers set UsrInvldLoginTries = UsrInvldLoginTries+1");
+		sql.append(", UsrEnabled = :UsrEnabled");
+		sql.append(", LastFailLoginOn = :LastFailLoginOn");
+		sql.append(" Where UsrLogin = :UsrLogin");
+		sql.append(" and UsrInvldLoginTries >= :UsrInvldLoginTries");
+
+		logger.trace(Literal.SQL + sql.toString());
+		int count = this.jdbcTemplate.update(sql.toString(), parameterSource);
+
+		if (count == 0) {
+			parameterSource.addValue("LastFailLoginOn", loginTime);
+			sql = new StringBuilder("Update SecUsers set");
+			sql.append(" LastFailLoginOn = :LastFailLoginOn");
+			sql.append(", UsrInvldLoginTries = UsrInvldLoginTries+1");
+			sql.append(" Where UsrLogin = :UsrLogin");
+
+			logger.trace(Literal.SQL + sql.toString());
+			this.jdbcTemplate.update(sql.toString(), parameterSource);
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public SecurityUser getSecurityUserByLogin(final String usrLogin) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT SU.USRID");
+		sql.append(", SU.USRLOGIN");
+		sql.append(", SU.USRPWD");
+		sql.append(", SU.AUTHTYPE");
+		sql.append(", SU.USERTYPE");
+		sql.append(" FROM SECUSERS SU");
+		sql.append(" WHERE USRLOGIN = :USRLOGIN");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("USRLOGIN", usrLogin);
+
+		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 	/**
@@ -164,41 +186,92 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	 */
 	@Override
 	public SecurityUser getUserByLogin(final String usrLogin) {
-		logger.debug("Entering");
+		StringBuilder sql = getSecurityUser();
+		sql.append(" WHERE USRLOGIN = :USRLOGIN");
 
-		SecurityUser secUser = new SecurityUser();
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("USRLOGIN", usrLogin);
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT T1.UsrID, T1.UsrLogin, T1.UsrPwd, T1.AuthType, T1.UserType, T1.UsrLName, T1.UsrMName,T1.UsrFName,");
-		selectSql.append(
-				" T1.UsrMobile,T1.UsrEmail,T1.UsrEnabled,T1.UsrCanSignonFrom,T1.UsrCanSignonTo,T1.UsrCanOverrideLimits,");
-		selectSql.append(
-				" T1.UsrAcExp, T1.UserStaffID, T1.UsrAcLocked,T1.UsrLanguage,T1.UsrDftAppCode,T1.UsrBranchCode,T1.UsrDeptCode,T1.PwdExpDt,");
-		selectSql.append(
-				" T1.UsrToken, T1.UsrIsMultiBranch,T1.UsrInvldLoginTries,T1.UsrAcExpDt,T1.LastMntOn, T1.LastMntBy,T1.NextRoleCode,T1.TaskId,T1.NextTaskId,T1.LastLoginOn,T1.LastFailLoginOn,");
-		selectSql.append(" T2.branchdesc AS lovdescusrbranchcodename,");
-		selectSql.append(" T1.businessVertical, "); // tasks #1152 Business Vertical Tagged with Loan
-		selectSql.append(" T3.code businessVerticalCode, ");
-		selectSql.append(" T3.description businessVerticalDesc");
-		selectSql.append(" FROM SecUsers T1");
-		selectSql.append(" LEFT JOIN rmtbranches T2 ON T1.usrbranchcode = T2.branchcode");
-		selectSql.append(" LEFT JOIN business_vertical T3 ON T1.businessVertical = T3.id ");
-		selectSql.append(" where UsrLogin = :usrLogin");
-		//FIXME Satish : Password should not retrieved to avoid this we have commented out the log printing. 
-		//		logger.debug("selectSql: " + selectSql.toString());
-		secUser.setUsrLogin(usrLogin);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(secUser);
 		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
 
 		try {
-			secUser = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//			logger.warn("Exception: ", e);
-			secUser = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return secUser;
+		return null;
+	}
+
+	/**
+	 * This method fetches records from SecUsers table by UsrLogin
+	 * 
+	 * @param usrLogin
+	 *            (String)
+	 * @return secUser (SecUser)
+	 */
+	@Override
+	public SecurityUser getUserByLogin(long userId) {
+		StringBuilder sql = getSecurityUser();
+		sql.append(" WHERE SU.USRID = :USRID");
+
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("USRID", userId);
+
+		RowMapper<SecurityUser> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityUser.class);
+
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	private StringBuilder getSecurityUser() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT SU.USRID");
+		sql.append(", SU.USRLOGIN");
+		sql.append(", SU.USRPWD");
+		sql.append(", SU.AUTHTYPE");
+		sql.append(", SU.USERTYPE");
+		sql.append(", SU.USRLNAME");
+		sql.append(", SU.USRMNAME");
+		sql.append(", SU.USRFNAME");
+		sql.append(", SU.USRMOBILE");
+		sql.append(", SU.USREMAIL");
+		sql.append(", SU.USRENABLED");
+		sql.append(", SU.USRCANSIGNONFROM");
+		sql.append(", SU.USRCANSIGNONTO");
+		sql.append(", SU.USRCANOVERRIDELIMITS");
+		sql.append(", SU.USRACEXP");
+		sql.append(", SU.USERSTAFFID");
+		sql.append(", SU.USRACLOCKED");
+		sql.append(", SU.USRLANGUAGE");
+		sql.append(", SU.USRDFTAPPCODE");
+		sql.append(", SU.USRBRANCHCODE");
+		sql.append(", SU.USRDEPTCODE");
+		sql.append(", SU.PWDEXPDT");
+		sql.append(", SU.USRTOKEN");
+		sql.append(", SU.USRISMULTIBRANCH");
+		sql.append(", SU.USRINVLDLOGINTRIES");
+		sql.append(", SU.USRACEXPDT");
+		sql.append(", SU.LASTMNTON");
+		sql.append(", SU.LASTMNTBY");
+		sql.append(", SU.NEXTROLECODE");
+		sql.append(", SU.TASKID");
+		sql.append(", SU.NEXTTASKID");
+		sql.append(", SU.LASTLOGINON");
+		sql.append(", SU.LASTFAILLOGINON");
+		sql.append(", B.BRANCHDESC LOVDESCUSRBRANCHCODENAME");
+		sql.append(", SU.BUSINESSVERTICAL");
+		sql.append(", BV.CODE BUSINESSVERTICALCODE");
+		sql.append(", BV.DESCRIPTION BUSINESSVERTICALDESC");
+		sql.append(" FROM SECUSERS SU");
+		sql.append(" LEFT JOIN RMTBRANCHES B ON B.BRANCHCODE = SU.USRBRANCHCODE");
+		sql.append(" LEFT JOIN BUSINESS_VERTICAL BV ON  BV.ID = SU.BUSINESSVERTICAL");
+		return sql;
 	}
 
 	public List<SecurityUser> getUserLikeLastname(String value) {
@@ -230,13 +303,12 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("UsrID", userID);
-		paramSource.addValue("RoleApp", App.ID);
 
-		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc,RoleCategory ");
-		sql.append(" from SecUserOperations UO  ");
-		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID ");
-		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID ");
-		sql.append("  where UO.UsrID = :UsrID and R.RoleApp = :RoleApp ");
+		StringBuilder sql = new StringBuilder("select RoleCd, RoleDesc, RoleCategory");
+		sql.append(" from SecUserOperations uo");
+		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
+		sql.append(" inner join SecRoles r on r.RoleID = opr.RoleID");
+		sql.append(" where uo.UsrID = :UsrID");
 		logger.trace(Literal.SQL + sql.toString());
 
 		RowMapper<SecurityRole> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRole.class);
@@ -282,5 +354,4 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 		logger.debug("Leaving ");
 
 	}
-
 }

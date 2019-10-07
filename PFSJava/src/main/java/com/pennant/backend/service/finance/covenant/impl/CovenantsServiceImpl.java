@@ -55,6 +55,7 @@ import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
@@ -110,17 +111,18 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		}
 
 		for (Covenant covenant : covenants) {
-			covenant.getCovenantDocuments().addAll(covenantsDAO.getCovenantDocuments(covenant.getId(), tableType));
+			List<CovenantDocument> covenantDocuments = covenantsDAO.getCovenantDocuments(covenant.getId(), tableType);
 
-			if (CollectionUtils.isEmpty(covenant.getCovenantDocuments())) {
+			if (CollectionUtils.isEmpty(covenantDocuments)) {
 				continue;
 			}
 
-			for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
-				covenant.getDocumentDetails().add(
+			for (CovenantDocument covenantDocument : covenantDocuments) {
+				covenantDocument.setDocumentDetail(
 						documentDetailsDAO.getDocumentDetails(covenantDocument.getDocumentId(), tableType.getSuffix()));
 			}
-
+			
+			covenant.setCovenantDocuments(covenantDocuments);
 		}
 
 		return covenants;
@@ -844,7 +846,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 	@Override
 	public List<ErrorDetail> validatePDDDocuments(String finReference, List<ErrorDetail> errorDetails) {
-		Date appDate = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		List<Covenant> list = covenantsDAO.getCovenants(finReference);
 
 		for (Covenant covenant : list) {

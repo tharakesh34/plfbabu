@@ -38,13 +38,13 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		sql.append(tableType.getSuffix());
 		sql.append("(Id, FinReference, OptionType, currentOptionDate, Frequency, NoticePeriodDays");
 		sql.append(", AlertDays, OptionExercise, NextOptionDate, AlertType, AlertToRoles");
-		sql.append(", UserTemplate, CustomerTemplate");
+		sql.append(", UserTemplate, CustomerTemplate, Remarks");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values");
 		sql.append("(:Id, :FinReference, :OptionType, :currentOptionDate, :Frequency, :NoticePeriodDays");
 		sql.append(", :AlertDays, :OptionExercise, :NextOptionDate, :AlertType ");
-		sql.append(", :AlertToRoles, :UserTemplate, :CustomerTemplate");
+		sql.append(", :AlertToRoles, :UserTemplate, :CustomerTemplate, :Remarks");
 		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
 		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -77,7 +77,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		sql.append(", Frequency = :Frequency, NoticePeriodDays = :NoticePeriodDays, AlertDays = :AlertDays");
 		sql.append(", OptionExercise = :OptionExercise, NextOptionDate = :NextOptionDate, AlertType = :AlertType");
 		sql.append(", AlertToRoles =:AlertToRoles, UserTemplate =:UserTemplate, CustomerTemplate =:CustomerTemplate");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(", Remarks = :Remarks, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where Id = :Id ");
@@ -210,7 +210,7 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select Id, FinReference, OptionType, CurrentOptionDate, Frequency, NoticePeriodDays");
 		sql.append(", AlertDays, OptionExercise, NextOptionDate, AlertType ");
-		sql.append(", AlertToRoles,  UserTemplate, CustomerTemplate");
+		sql.append(", AlertToRoles,  UserTemplate, CustomerTemplate, Remarks");
 		if (tableType.getSuffix().contains("View")) {
 			sql.append(", CustomerTemplateCode, UserTemplateCode ");
 		}

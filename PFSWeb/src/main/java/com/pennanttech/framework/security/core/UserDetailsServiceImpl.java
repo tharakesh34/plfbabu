@@ -68,51 +68,26 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class UserDetailsServiceImpl implements UserDetailsService {
 	private static final Logger logger = Logger.getLogger(UserDetailsServiceImpl.class);
 
-	@Autowired
-	private transient UserService userService;
+	private UserService userService;
 
 	public UserDetailsServiceImpl() {
-
+		super();
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		logger.debug(Literal.ENTERING);
 
-		SecurityUser user;
-		Collection<GrantedAuthority> grantedAuthorities;
-		List<SecurityRole> securityRole;
+		SecurityUser user = userService.getUserByLogin(username);
 
-		user = getUserByLogin(username.toUpperCase());
+		List<SecurityRole> securityRole = userService.getUserRolesByUserID(user.getId());
+		Collection<GrantedAuthority> grantedAuthorities = getGrantedAuthority(user);
 
-		if (user == null) {
-			throw new UsernameNotFoundException("User not found.");
-		}
-
-		if (!user.isUsrEnabled()) {
-			throw new UsernameNotFoundException("User account disabled.");
-		}
-
-		securityRole = userService.getUserRolesByUserID(user.getId());
-		grantedAuthorities = getGrantedAuthority(user);
-
-		// Create the UserDetails object for a specified user with their granted Authorities.
 		final UserDetails userDetails = new User(user, grantedAuthorities, securityRole);
 
 		logger.debug(Literal.LEAVING);
 		return userDetails;
 
-	}
-
-	/**
-	 * Gets the User object by his stored userName.<br>
-	 * 
-	 * @param userName
-	 * @return
-	 */
-	public SecurityUser getUserByLogin(final String userName) {
-		logger.trace(Literal.ENTERING);
-		return userService.getUserByLogin(userName);
 	}
 
 	/**
@@ -130,7 +105,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		// get the list of rights for a specified user.
 		final Collection<SecurityRight> rights = userService.getMenuRightsByUser(user);
 
-		final ArrayList<GrantedAuthority> rechteGrantedAuthorities = new ArrayList<GrantedAuthority>(rights.size());
+		final ArrayList<GrantedAuthority> rechteGrantedAuthorities = new ArrayList<>(rights.size());
 
 		// now create for all rights a GrantedAuthority
 		// and fill the GrantedAuthority List with these authorities.
@@ -142,6 +117,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return rechteGrantedAuthorities;
 	}
 
+	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}

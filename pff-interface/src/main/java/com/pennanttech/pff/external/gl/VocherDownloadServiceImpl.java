@@ -20,31 +20,35 @@ public class VocherDownloadServiceImpl implements VocherDownloadService {
 	private DataSource dataSource;
 
 	@Override
-	public void downloadVocher(long userId, String userName, Date postDate) {
+	public void downloadVocher(long userId, String userName, Date postDate, Date toDate) {
 		DataEngineExport dataEngine = null;
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		DataEngineStatus status = genetare(dataEngine, userName, postDate);
+		DataEngineStatus status = genetare(dataEngine, userName, postDate, toDate);
 
 		if ("F".equals(status.getStatus())) {
 			if (status.getTotalRecords() == 0) {
-				throw new AppException("Postings not avilable for the vocher date ",
-						DateUtil.format(postDate, DateFormat.LONG_DATE));
+				throw new AppException(String.format("Postings not avilable for the vocher dates between %s and %s",
+						DateUtil.format(postDate, DateFormat.SHORT_DATE), DateUtil.format(toDate, DateFormat.SHORT_DATE)));
 			} else {
 				throw new AppException(status.getRemarks());
 			}
 		}
 	}
 
-	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Date postDate) {
+	protected DataEngineStatus genetare(DataEngineExport dataEngine, String userName, Date postDate, Date toDate) {
 		Map<String, Object> parameterMap = new HashMap<>();
 		Map<String, Object> filterMap = new HashMap<>();
 
-		parameterMap.put("VOCHER_DATE", DateUtil.format(postDate, "YYYYMMdd"));
+		parameterMap.put("FROM_DATE", DateUtil.format(postDate, "YYYYMMdd"));
+		parameterMap.put("TO_DATE", DateUtil.format(toDate, "YYYYMMdd"));
+		parameterMap.put("VOCHER_DATE", DateUtil.format(postDate, "YYYYMMdd")+"_"+DateUtil.format(toDate, "YYYYMMdd"));
 		parameterMap.put("ORDER_BY_CLAUSE", "order by PostDate, LinkedTranId, TransOrder");
 
 		filterMap.put("POSTDATE", postDate);
+		filterMap.put("FROM_DATE", postDate);
+		filterMap.put("TO_DATE", toDate);
 		dataEngine.setParameterMap(parameterMap);
 		dataEngine.setFilterMap(filterMap);
 		dataEngine.setUserName(userName);

@@ -190,10 +190,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 		} else if ((expiredDate != null && expiredDate.before(DateUtil.getSysDate()))) {
 			Executions.sendRedirect("/csrfLogout.zul");
 		} else if ((pwdExpDate != null && pwdExpDate.before(DateUtil.getSysDate()))) {
-			Window win = (Window) Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
-			win.setWidth("98%");
-			win.setHeight("98%");
-			win.doModal();
+			Executions.createComponents("/WEB-INF/pages/PasswordReset/changePwd.zul", null, null);
 		} else {
 			ComponentUtil.openMenuItem("menu_Item_Home", "/WEB-INF/pages/welcome.zul", false,
 					new MenuItemOnCloseListener());

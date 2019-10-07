@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,18 +30,19 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
-import com.pennanttech.dataengine.util.DateUtil;
-import com.pennanttech.dataengine.util.DateUtil.DateFormat;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.gl.VocherDownloadService;
 import com.pennanttech.service.AmazonS3Bucket;
@@ -55,7 +57,8 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	protected Listbox listBoxVocherDownload;
 	protected Button btnRefresh;
 	protected Button btnexecute;
-	protected Datebox vocherDate;
+	protected Datebox fromDate;
+	protected Datebox toDate;
 	private Button downlaod;
 
 	protected DataEngineConfig dataEngineConfig;
@@ -104,8 +107,9 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		registerField("endTime");
 		registerField("ValueDate", SortOrder.DESC);
 		registerField("startDate");
-		
-		vocherDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+
+		fromDate.setFormat(DateFormat.SHORT_DATE.getPattern());
+		toDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
 		doRenderPage();
 		search();
@@ -136,8 +140,15 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	public void onClick$btnexecute(Event event) throws Exception {
 		doSetValidations();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
+
 		try {
-			this.vocherDate.getValue();
+			this.fromDate.getValue();
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			this.toDate.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -153,7 +164,8 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		}
 		try {
 			vocherDownloadService.downloadVocher(getUserWorkspace().getLoggedInUser().getUserId(),
-					getUserWorkspace().getLoggedInUser().getUserName(), this.vocherDate.getValue());
+					getUserWorkspace().getLoggedInUser().getUserName(), this.fromDate.getValue(),
+					this.toDate.getValue());
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -166,10 +178,32 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
 	private void doSetValidations() throws Exception {
-		if (!this.vocherDate.isReadonly()) {
-			this.vocherDate
-					.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_VocherDate.value"), true));
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (this.fromDate.getValue() != null && this.fromDate.getValue().compareTo(SysParamUtil.getAppDate()) > 0) {
+			throw new WrongValueException(this.fromDate,
+					Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
+							new String[] { Labels.getLabel("label_VocherDownload_FromDate.value"),
+									DateUtil.format(appDate, DateFormat.SHORT_DATE) }));
 		}
+
+		if (this.toDate.getValue() != null && this.toDate.getValue().compareTo(SysParamUtil.getAppDate()) > 0) {
+			throw new WrongValueException(this.fromDate,
+					Labels.getLabel("DATE_ALLOWED_ON_BEFORE",
+							new String[] { Labels.getLabel("label_VocherDownload_ToDate.value"),
+									DateUtil.format(appDate, DateFormat.SHORT_DATE) }));
+		}
+
+		if ((this.fromDate.getValue() != null && this.toDate.getValue() != null)
+				&& this.fromDate.getValue().compareTo(toDate.getValue()) > 0) {
+			throw new WrongValueException(this.toDate,
+					Labels.getLabel("DATE_ALLOWED_ON_AFTER",
+							new String[] { Labels.getLabel("label_VocherDownload_ToDate.value"),
+									DateUtil.format(this.fromDate.getValue(), DateFormat.SHORT_DATE) }));
+		}
+		
+		this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_FromDate.value"), true));
+		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_ToDate.value"), true));
 	}
 
 	/**
@@ -177,7 +211,8 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	 */
 	private void doRemoveValidation() {
 		logger.debug(Literal.ENTERING);
-		this.vocherDate.setConstraint("");
+		this.fromDate.setConstraint("");
+		this.toDate.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -203,7 +238,6 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 
 	private String loadS3Bucket(long configId) {
-
 		EventProperties eventproperties = dataEngineConfig.getEventProperties(configId, "S3");
 
 		bucket = new AmazonS3Bucket(eventproperties.getRegionName(), eventproperties.getBucketName(),
@@ -250,7 +284,8 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	}
 
 	private void doClearData() {
-		this.vocherDate.setText("");
+		this.fromDate.setText("");
+		this.toDate.setText("");
 	}
 
 	private class VocherDownloadListModelItemRenderer implements ListitemRenderer<FileDownlaod>, Serializable {
@@ -269,9 +304,6 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), DateFormat.LONG_DATE));
 			lc.setParent(item);
 
-			lc = new Listcell(DateUtil.format(fileDownlaod.getValueDate(), DateFormat.LONG_DATE));
-			lc.setParent(item);
-
 			lc = new Listcell(ExecutionStatus.getStatus(fileDownlaod.getStatus()).getValue());
 			lc.setParent(item);
 
@@ -281,6 +313,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
 			downlaod.setTooltiptext("Download");
+			downlaod.setAutodisable("btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, fromDate, toDate");
 
 			downlaod.setAttribute("object", fileDownlaod);
 			StringBuilder builder = new StringBuilder();

@@ -14,13 +14,13 @@
 					<label value="" />
 					<toolbar align="center" sclass="toolbar-center">
 						<button id="btnexecute" label="Execute" sclass="z-toolbarbutton"
-							autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help" />
+							autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, fromDate, toDate" />
 					</toolbar>
 
 					<!-- CRUD BUTTONS -->
 					<toolbar align="end" sclass="toolbar-end">
 						<button id="btnRefresh" label="${c:l('label_Refresh')}"
-							autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help"
+							autodisable="btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, fromDate, toDate"
 							tooltiptext="${c:l('btnRefresh.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>
 				</hbox>
@@ -40,10 +40,15 @@
 							</columns>
 							<rows>
 								<row id="row_VocherDateSelection">
-									<label value="${c:l('label_VocherDownload_VocherDate.value')}" />
+									<label value="${c:l('label_VocherDownload_FromDate.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" />
-										<datebox id="vocherDate" width="130px" />
+										<datebox id="fromDate" width="130px" />
+									</hbox>
+									<label value="${c:l('label_VocherDownload_ToDate.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<datebox id="toDate" width="130px" />
 									</hbox>
 								</row>
 							</rows>
@@ -54,7 +59,6 @@
 							<listhead sizable="true">
 								<listheader label="${c:l('listheader_VocherDownload_FileName.label')}" hflex="min" />
 								<listheader label="${c:l('listheader_VocherDownload_UserName.label')}" hflex="min" />
-								<listheader label="${c:l('listheader_VocherDownload_VocherDate.label')}" hflex="min" />
 								<listheader label="${c:l('listheader_VocherDownload_ExtractionDate.label')}"
 									hflex="min" />
 								<listheader label="${c:l('listheader_Status.label')}" hflex="min" />

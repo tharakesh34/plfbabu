@@ -42,6 +42,7 @@
 package com.pennant.webui.finance.covenant;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +65,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Div;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -72,6 +74,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -79,6 +82,7 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
@@ -410,10 +414,14 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		this.convDocType.setValue(aCovenantDocument.getCovenantType());
 
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
-
-		this.documentName.setValue(aCovenantDocument.getDocName());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
-
+		
+		if (aCovenantDocument.getDocumentDetail() != null && aCovenantDocument.getDocumentDetail().getDocName() != null) {
+			this.documentName.setValue(aCovenantDocument.getDocumentDetail().getDocName());
+		} else {
+			this.documentName.setValue(aCovenantDocument.getDocName());
+		}
+		
 		Date frequencyDate = aCovenantDocument.getFrequencyDate();
 		if (frequncy.equals("M")) {
 			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 1), frequencyDate);
@@ -449,7 +457,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		}
 
 		if (aCovenantDocument.isNewRecord()) {
-			this.docReceivedDate.setValue(DateUtility.getAppDate());
+			this.docReceivedDate.setValue(SysParamUtil.getAppDate());
 		}
 		this.recordStatus.setValue(aCovenantDocument.getRecordStatus());
 
@@ -1020,6 +1028,60 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		} else {
 			frequencyBox.setDisabled(true);
 		}
+	}
+
+	public void onClick$btnDownload(Event event) {
+		doDownload();
+	}
+
+	/**
+	 * To Download the upload Document
+	 */
+	private void doDownload() {
+		AMedia amedia = null;
+		byte[] docImage = null;
+
+		DocumentDetails documentDetails = (DocumentDetails) this.documentName.getAttribute("data");
+
+		if (documentDetails == null) {
+			return;
+		}
+
+		if (documentDetails.getDocImage() == null) {
+			docImage = PennantApplicationUtil.getDocumentImage(documentDetails.getDocRefId());
+		}
+
+		if (docImage == null) {
+			return;
+		}
+
+		try (InputStream data = new ByteArrayInputStream(docImage)) {
+			String docName = documentName.getValue();
+			String doctype = documentDetails.getDoctype();
+			if (doctype.equals(PennantConstants.DOC_TYPE_PDF)) {
+				amedia = new AMedia(docName, "pdf", "application/pdf", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_IMAGE)
+					|| doctype.equals(PennantConstants.DOC_TYPE_JPG)) {
+				amedia = new AMedia(docName, "jpeg", "image/jpeg", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_WORD)
+					|| doctype.equals(PennantConstants.DOC_TYPE_MSG)) {
+				amedia = new AMedia(docName, "docx",
+						"application/vnd.openxmlformats-officedocument.wordprocessingml.document", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_EXCEL)) {
+				amedia = new AMedia(docName, "xlsx",
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_ZIP)) {
+				amedia = new AMedia(docName, "x-zip-compressed", "application/x-zip-compressed", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_7Z)) {
+				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
+			} else if (doctype.equals(PennantConstants.DOC_TYPE_RAR)) {
+				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
+			}
+			Filedownload.save(amedia);
+		} catch (Exception e) {
+			//
+		}
+
 	}
 
 }

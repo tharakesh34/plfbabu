@@ -79,6 +79,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.framework.security.core.User;
 import com.pennanttech.framework.security.core.service.UserService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -92,15 +93,20 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends WindowBaseCtrl'.
 	 */
-	protected Window window_ChangePasswordDialog; // autoWired
-	protected Textbox userName; // autoWired
-	protected Textbox password; // autoWired
-	protected Textbox newPassword; // autoWired
-	protected Textbox retypeNewPassword; // autoWired
-	protected Button btnSave; // autoWired
-	protected Button btnHelp; // autoWired
-	protected Label label_PwdStatus; // autoWired
-	protected Div div_PwdStatusMeter; // autoWired
+	protected Window window_ChangePasswordDialog;
+	protected Textbox userName;
+	protected Textbox password;
+	protected Textbox password1;
+	protected Textbox newPassword;
+	protected Textbox newPassword1;
+	protected Textbox retypeNewPassword;
+	protected Textbox retypeNewPassword1;
+	protected Button btnSave;
+	protected Button btnHelp;
+	protected Label label_PwdStatus;
+	protected Div div_PwdStatusMeter;
+	protected Textbox txtbox_randomKey;
+
 	private ChangePasswordModel changePasswordModel = new ChangePasswordModel();
 	private transient SecurityUserService securityUserService;
 	// ServiceDAOs / Domain Classes
@@ -178,13 +184,14 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		logger.debug("Entering ");
 		AuditHeader auditHeader = null;
 		try {
-			getSecurityUser().setUsrPwd(this.newPassword.getValue());
+			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
+			getSecurityUser().setUsrPwd(pwdEncoder
+					.encode(AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue())));
+
 			getSecurityUser().setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			getSecurityUser().setLastMntBy(securityUser.getUsrID());
 			getSecurityUser().setVersion(securityUser.getVersion() + 1);
 			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
-			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-			getSecurityUser().setUsrPwd(pwdEncoder.encode(getSecurityUser().getUsrPwd()));
 			int expDays = SysParamUtil.getValueAsInt("USR_EXPIRY_DAYS");
 			getSecurityUser().setPwdExpDt(DateUtility.addDays(new Date(System.currentTimeMillis()), expDays));
 
@@ -205,12 +212,11 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 * This method Validates all fields if any condition goes wrong throws WrongValueException
 	 */
 	public void doValidations() {
-
 		logger.debug("Entering ");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (StringUtils.isBlank(this.password.getValue())) {
+			if (StringUtils.isBlank(this.password1.getValue())) {
 				throw new WrongValueException(this.password,
 						Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_Password.value") }));
 			}
@@ -219,7 +225,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		try {
-			if (StringUtils.isBlank(this.newPassword.getValue())) {
+			if (StringUtils.isBlank(this.newPassword1.getValue())) {
 				throw new WrongValueException(this.newPassword,
 						Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_NewPassword.value") }));
 			}
@@ -228,7 +234,7 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		try {
-			if (StringUtils.isBlank(this.retypeNewPassword.getValue())) {
+			if (StringUtils.isBlank(this.retypeNewPassword1.getValue())) {
 				throw new WrongValueException(this.retypeNewPassword, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_RetypePassword.value") }));
 			}
@@ -238,10 +244,12 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 
 		try {
 			//checking for newPassword following defined password criteria by calling changePasswordModel's validate() method
-			if (StringUtils.isNotBlank(this.newPassword.getValue())) {
+			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
 				if ((changePasswordModel.checkPasswordCriteria(getSecurityUser().getUsrLogin(),
-						StringUtils.trimToEmpty(this.newPassword.getValue())))
-						&& StringUtils.isNotBlank(this.newPassword.getValue())) {
+						StringUtils.trimToEmpty(
+								AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue())))
+						&& StringUtils.isNotBlank(
+								AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue())))) {
 					throw new WrongValueException(this.newPassword, Labels.getLabel("label_Invalid_Password"));
 				}
 			}
@@ -251,9 +259,9 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		try {
 			//checking new password and retype password are same 
 
-			if (StringUtils.isNotBlank(this.newPassword.getValue())
-					&& StringUtils.isNotBlank(this.retypeNewPassword.getValue())) {
-				if (!StringUtils.equals(this.newPassword.getValue(), this.retypeNewPassword.getValue())) {
+			if (StringUtils.isNotBlank(this.newPassword1.getValue())
+					&& StringUtils.isNotBlank(this.retypeNewPassword1.getValue())) {
+				if (!StringUtils.equals(this.newPassword1.getValue(), this.retypeNewPassword1.getValue())) {
 					throw new WrongValueException(this.retypeNewPassword,
 							Labels.getLabel("FIELD_NOT_MATCHED",
 									new String[] { Labels.getLabel("label_NewPassword.value"),
@@ -265,9 +273,10 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		}
 
 		try {
-			if (StringUtils.isNotBlank(this.newPassword.getValue())) {
+			if (StringUtils.isNotBlank(this.newPassword1.getValue())) {
 				//checking for is new password and old passwords are same by calling changePasswordModel's checkWithLastPasswords() method
-				if (changePasswordModel.checkWithPreviousPasswords(getSecurityUser(), this.newPassword.getValue())) {
+				if (changePasswordModel.checkWithPreviousPasswords(getSecurityUser(),
+						AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.newPassword, Labels.getLabel("label_Oldpwd_Newpwd_Same",
 							new String[] { SysParamUtil.getValueAsString("USR_MAX_PRE_PWDS_CHECK") }));
 				}
@@ -276,9 +285,10 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 			wve.add(we);
 		}
 		try {
-			if (StringUtils.isNotBlank(this.password.getValue())) {
+			if (StringUtils.isNotBlank(this.password1.getValue())) {
 				//checking  for old password entered by user is Correct Old password by calling changePasswordModel's IsPaswordsSame() method 
-				if (!changePasswordModel.isPaswordsSame(getSecurityUser().getUsrPwd(), this.password.getValue())) {
+				if (!changePasswordModel.isPaswordsSame(getSecurityUser().getUsrPwd(),
+						AESCipherUtil.decrypt(this.password1.getValue(), txtbox_randomKey.getValue()))) {
 					throw new WrongValueException(this.password, Labels.getLabel("label_Incorrect_Oldpassword"));
 				}
 			}
@@ -305,6 +315,9 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.password.setValue("");
 		this.newPassword.setValue("");
 		this.retypeNewPassword.setValue("");
+		this.password1.setValue("");
+		this.newPassword1.setValue("");
+		this.retypeNewPassword1.setValue("");
 		this.password.setFocus(true);
 		this.div_PwdStatusMeter.setStyle("background-color:white");
 		this.label_PwdStatus.setValue("");

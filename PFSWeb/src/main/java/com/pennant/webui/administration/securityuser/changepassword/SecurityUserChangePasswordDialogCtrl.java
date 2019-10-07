@@ -70,6 +70,8 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -84,13 +86,16 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autoWired by our 'extends WindowBaseCtrl'.
 	 */
-	protected Window win_SecurityUserChangePasswordDialog; // autoWired
-	protected Textbox userName; // autoWired
-	protected Textbox newPassword; // autoWired
-	protected Textbox retypeNewPassword; // autoWired
-	protected Label label_PwdStatus; // autoWired
-	protected Div div_PwdStatusMeter; // autoWired
-	// autoWired
+	protected Window win_SecurityUserChangePasswordDialog;
+	protected Textbox userName;
+	protected Textbox newPassword;
+	protected Textbox newPassword1;
+	protected Textbox retypeNewPassword;
+	protected Textbox retypeNewPassword1;
+	protected Label label_PwdStatus;
+	protected Div div_PwdStatusMeter;
+	protected Textbox txtbox_randomKey;
+
 	private transient SecurityUserService securityUserService;
 	private transient ChangePasswordModel changePasswordModel = new ChangePasswordModel();
 	private SecurityUser securityUser;
@@ -150,9 +155,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * @throws Exception
 	 */
 	public void onClick$btnCancel(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
 		doCancel();
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -162,10 +165,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * @throws Exception
 	 */
 	public void onClick$btnSave(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
 		doValidations();
 		doSave();//update password
-		logger.debug("Leaving " + event.toString());
 
 	}
 
@@ -176,9 +177,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * @throws Exception
 	 */
 	public void onClick$btnClose(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
 		closeDialog();
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -188,9 +187,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, win_SecurityUserChangePasswordDialog);
-		logger.debug("Leaving" + event.toString());
 	}
 
 	// GUI operations
@@ -199,39 +196,35 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * This method resets all fields and sets focus on newPassword field
 	 */
 	public void doResetAllFields() {
-		logger.debug("Entering ");
 		this.newPassword.setValue("");
 		this.retypeNewPassword.setValue("");
+		this.newPassword1.setValue("");
+		this.retypeNewPassword1.setValue("");
 		this.newPassword.setFocus(true);
 		this.div_PwdStatusMeter.setStyle("background-color:white");
 		this.label_PwdStatus.setValue("");
-		logger.debug("Leaving ");
 	}
 
 	/**
 	 * This method sets the field properties
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering ");
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
 		this.userName.setReadonly(true);
 		this.newPassword.setMaxlength(pwdMaxLenght);
 		this.newPassword.addEventListener("onChanging", new OnChanging());
 		this.newPassword.setFocus(true);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
-		logger.debug("Leaving ");
 	}
 
 	/**
 	 * This method performs the validations for fields and if any condition goes wrong throws WrongValueException
 	 */
 	private void doValidations() {
-		logger.debug("Entering ");
-
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
-			if (StringUtils.isBlank(this.newPassword.getValue())) {
+			if (StringUtils.isBlank(this.newPassword1.getValue())) {
 				throw new WrongValueException(this.newPassword,
 						Labels.getLabel("FIELD_NO_EMPTY", new String[] { Labels.getLabel("label_NewPassword.value") }));
 			}
@@ -241,7 +234,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 
 		}
 		try {
-			if (StringUtils.isBlank(this.retypeNewPassword.getValue())) {
+			if (StringUtils.isBlank(this.retypeNewPassword1.getValue())) {
 				throw new WrongValueException(this.retypeNewPassword, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_RetypePassword.value") }));
 			}
@@ -251,7 +244,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		try {
 			//checking for is password following defined criteria by calling changePasswordModel's validate() method
 			if ((changePasswordModel.checkPasswordCriteria(this.securityUser.getUsrLogin(),
-					this.newPassword.getValue())) && StringUtils.isNotBlank(this.newPassword.getValue())) {
+					AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue()))
+					&& StringUtils.isNotBlank(
+							AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue())))) {
 
 				throw new WrongValueException(this.newPassword, Labels.getLabel("label_Invalid_Password"));
 			}
@@ -260,10 +255,10 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 
 		}
 		try {
-			if (StringUtils.isNotBlank(this.newPassword.getValue())
-					&& StringUtils.isNotBlank(this.retypeNewPassword.getValue())) {
+			if (StringUtils.isNotBlank(this.newPassword1.getValue())
+					&& StringUtils.isNotBlank(this.retypeNewPassword1.getValue())) {
 				//checking for is newPassword and retype password are same 
-				if (!this.newPassword.getValue().equals(this.retypeNewPassword.getValue())) {
+				if (!this.newPassword1.getValue().equals(this.retypeNewPassword1.getValue())) {
 
 					throw new WrongValueException(this.retypeNewPassword,
 							Labels.getLabel("FIELD_NOT_MATCHED",
@@ -283,8 +278,6 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 			}
 			throw new WrongValuesException(wvea);
 		}
-
-		logger.debug("Leaving ");
 	}
 
 	// CRUD operations
@@ -298,25 +291,25 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		doValidations();
 		AuditHeader auditHeader = null;
 		try {
-			logger.debug("Entering ");
-			/* setSecurityUser(getSecurityUserService().getSecurityUserById(this.securityUser.getUsrID())); */
-			getSecurityUser().setUsrPwd(this.newPassword.getValue().trim());
-			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			getSecurityUser().setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			getSecurityUser().setVersion(this.securityUser.getVersion() + 1);
-			getSecurityUser().setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			getSecurityUser().setUserDetails(getUserWorkspace().getLoggedInUser());
 			/* Encrypt the password and get token */
 			PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-			getSecurityUser().setUsrPwd(pwdEncoder.encode(getSecurityUser().getUsrPwd()));
 
-			auditHeader = getAuditHeader(getSecurityUser(), PennantConstants.TRAN_UPD);
+			/* setSecurityUser(getSecurityUserService().getSecurityUserById(this.securityUser.getUsrID())); */
+			securityUser.setUsrPwd(pwdEncoder
+					.encode(AESCipherUtil.decrypt(this.newPassword1.getValue(), txtbox_randomKey.getValue())));
+			securityUser.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			securityUser.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			securityUser.setVersion(this.securityUser.getVersion() + 1);
+			securityUser.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			securityUser.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+			auditHeader = getAuditHeader(securityUser, PennantConstants.TRAN_UPD);
 			if (doSaveProcess(auditHeader)) {
 				closeDialog();
 			}
 
 		} catch (DataAccessException e) {
-			logger.debug("Exception: ", e);
+			logger.debug(Literal.EXCEPTION, e);
 			showMessage(e);
 		}
 		logger.debug("Leaving ");
@@ -335,7 +328,6 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader) {
-		logger.debug("Entering ");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 
@@ -356,9 +348,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 			}
 			setOverideMap(auditHeader.getOverideMap());
 		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving ");
 		return processCompleted;
 	}
 
@@ -370,15 +361,13 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * @param error
 	 */
 	private void showMessage(Exception e) {
-		logger.debug("Entering ");
 		AuditHeader auditHeader = new AuditHeader();
 		try {
 			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
 			ErrorControl.showErrorControl(this.win_SecurityUserChangePasswordDialog, auditHeader);
-		} catch (Exception exp) {
-			logger.error("Exception: ", exp);
+		} catch (Exception e1) {
+			logger.error(Literal.EXCEPTION, e1);
 		}
-		logger.debug("Leaving ");
 	}
 
 	private void doCancel() throws InterruptedException {

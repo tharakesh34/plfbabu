@@ -62,13 +62,16 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Checkbox;
@@ -138,6 +141,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.core.security.user.UserSearch;
+import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -160,9 +164,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Window window_SecurityUserDialog;
 	protected Textbox usrLogin;
 	protected Combobox authType;
-	protected Textbox usrPwd;
+	protected Textbox txtbox_Password;
+	protected Textbox txtbox_Password1;
 	protected Textbox usrnewPwd;
-	protected Textbox usrConfirmPwd;
+	protected Textbox txtbox_confirm_Password;
+	protected Textbox txtbox_confirm_Password1;
 	protected Textbox userStaffID;
 	protected Textbox usrFName;
 	protected Textbox usrMName;
@@ -197,6 +203,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Label licenceMessage;
 	protected Columns divisionColumns;
 	protected Button btnNewReportingManagerList;
+	protected Textbox txtbox_randomKey;
 
 	/* not auto wired variables */
 	private SecurityUser securityUser;
@@ -244,6 +251,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	@Override
 	protected void doSetProperties() {
 		super.pageRightName = "SecurityUserDialog";
+	}
+
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
 	}
 
 	/**
@@ -294,6 +305,16 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			this.rowSecurityUserDialogUsrPwd.setVisible(false);
 			doShowDialog(getSecurityUser());
 			doSetAuthType(securityUser.getUserType());
+
+			String randomKey = "";
+			try {
+				randomKey = (String) Sessions.getCurrent().getAttribute("SATTR_RANDOM_KEY");
+			} catch (Exception ex) {
+				logger.warn("Unable to get session attribute 'SATTR_RANDOM_KEY':", ex);
+			}
+
+			txtbox_randomKey.setValue(randomKey);
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 			this.window_SecurityUserDialog.onClose();
@@ -314,9 +335,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		// Empty sent any required attributes
 		int pwdMaxLenght = Integer.parseInt(SysParamUtil.getValueAsString("USR_PWD_MAX_LEN"));
 		this.usrLogin.setMaxlength(50);
-		this.usrPwd.setMaxlength(pwdMaxLenght);
-		this.usrPwd.addEventListener("onChanging", new OnChanging());
-		this.usrConfirmPwd.setMaxlength(pwdMaxLenght);
+		this.txtbox_Password.setMaxlength(pwdMaxLenght);
+		this.txtbox_Password.addEventListener("onChanging", new OnChanging());
+		this.txtbox_confirm_Password.setMaxlength(pwdMaxLenght);
 		this.userStaffID.setMaxlength(9);
 		this.usrFName.setMaxlength(50);
 		this.usrMName.setMaxlength(50);
@@ -619,6 +640,22 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.panelPasswordInstructions.setVisible(isDAO);
 	}
 
+	public void onChange$txtbox_Password(InputEvent event) {
+		txtbox_Password.setValue(event.getValue());
+	}
+
+	public void onChange$txtbox_Password1(InputEvent event) {
+		txtbox_Password1.setValue(event.getValue());
+	}
+
+	public void onChange$txtbox_confirm_Password(InputEvent event) {
+		txtbox_confirm_Password.setValue(event.getValue());
+	}
+
+	public void onChange$txtbox_confirm_Password1(InputEvent event) {
+		txtbox_confirm_Password1.setValue(event.getValue());
+	}
+
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
@@ -644,11 +681,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			if (AuthenticationType.DAO.name().equals(aSecurityUser.getAuthType())) {
 				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
 					try {
-						if (StringUtils.isBlank(this.usrPwd.getValue())) {
-							throw new WrongValueException(this.usrPwd, Labels.getLabel("FIELD_NO_EMPTY",
+						if (StringUtils.isBlank(this.txtbox_Password1.getValue())) {
+							throw new WrongValueException(this.txtbox_Password1, Labels.getLabel("FIELD_NO_EMPTY",
 									new String[] { Labels.getLabel("label_SecurityUserDialog_UsrPwd.value") }));
 						}
-						aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.usrPwd.getValue()));
+						aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.txtbox_Password1.getValue()));
 					} catch (WrongValueException we) {
 						tab1.add(we);
 					}
@@ -656,8 +693,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 				try {
 					if (this.rowSecurityUserDialogUsrPwd.isVisible()
-							&& StringUtils.isBlank(this.usrConfirmPwd.getValue())) {
-						throw new WrongValueException(this.usrConfirmPwd, Labels.getLabel("FIELD_NO_EMPTY",
+							&& StringUtils.isBlank(this.txtbox_confirm_Password1.getValue())) {
+						throw new WrongValueException(this.txtbox_confirm_Password, Labels.getLabel("FIELD_NO_EMPTY",
 								new String[] { Labels.getLabel("label_SecurityUserDialog_UsrconfirmPwd.value") }));
 					}
 				} catch (WrongValueException we) {
@@ -667,11 +704,11 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				try {
 					/* Check Password and confirm password are same or not */
 					if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
-						if (StringUtils.isNotBlank(this.usrPwd.getValue())
-								&& StringUtils.isNotBlank(this.usrConfirmPwd.getValue())) {
-							if (!(StringUtils.trimToEmpty(this.usrPwd.getValue())
-									.equals(StringUtils.trimToEmpty(this.usrConfirmPwd.getValue())))) {
-								throw new WrongValueException(usrConfirmPwd,
+						if (StringUtils.isNotBlank(this.txtbox_Password1.getValue())
+								&& StringUtils.isNotBlank(this.txtbox_confirm_Password1.getValue())) {
+							if (!(StringUtils.trimToEmpty(this.txtbox_Password1.getValue())
+									.equals(StringUtils.trimToEmpty(this.txtbox_confirm_Password1.getValue())))) {
+								throw new WrongValueException(txtbox_confirm_Password,
 										Labels.getLabel("label_SecurityUserDialog_Pwd_not_match.value"));
 							}
 						}
@@ -682,8 +719,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 				try {
 					if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
-						if (StringUtils.isNotBlank(this.usrPwd.getValue())) {
-							this.validate(this.usrPwd, StringUtils.trimToEmpty(this.usrPwd.getValue()));
+						if (StringUtils.isNotBlank(this.txtbox_Password1.getValue())) {
+							this.validate(this.txtbox_Password,
+									StringUtils.trimToEmpty(this.txtbox_Password1.getValue()));
 						}
 					}
 				} catch (WrongValueException we) {
@@ -691,9 +729,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				}
 
 				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
-					if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
+					if (StringUtils.isNotEmpty(this.txtbox_Password1.getValue())) {
 						PasswordEncoder pwdEncoder = (PasswordEncoder) SpringUtil.getBean("passwordEncoder");
-						aSecurityUser.setUsrPwd(pwdEncoder.encode(aSecurityUser.getUsrPwd()));
+						aSecurityUser.setUsrPwd(pwdEncoder
+								.encode(AESCipherUtil.decrypt(aSecurityUser.getUsrPwd(), txtbox_randomKey.getValue())));
 					}
 				}
 			} else {
@@ -905,8 +944,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			WrongValueException[] wvea = new WrongValueException[size];
 
 			/* if any Exception Occurs make password and new password Fields empty */
-			this.usrPwd.setValue("");
-			this.usrConfirmPwd.setValue("");
+			this.txtbox_Password.setValue("");
+			this.txtbox_confirm_Password.setValue("");
 			this.div_PwdStatusMeter.setStyle("background-color:white");
 			this.label_PwdStatus.setValue("");
 
@@ -1080,8 +1119,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		setValidationOn(false);
 		this.usrLogin.setConstraint("");
 		this.authType.setConstraint("");
-		this.usrConfirmPwd.setConstraint("");
-		this.usrPwd.setConstraint("");
+		this.txtbox_confirm_Password.setConstraint("");
+		this.txtbox_Password.setConstraint("");
 		this.userStaffID.setConstraint("");
 		this.usrFName.setConstraint("");
 		this.usrMName.setConstraint("");
@@ -1133,8 +1172,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setErrorMessage("");
 		this.authType.setErrorMessage("");
-		this.usrConfirmPwd.setErrorMessage("");
-		this.usrPwd.setErrorMessage("");
+		this.txtbox_confirm_Password.setErrorMessage("");
+		this.txtbox_Password.setErrorMessage("");
 		this.userStaffID.setErrorMessage("");
 		this.usrFName.setErrorMessage("");
 		this.usrMName.setErrorMessage("");
@@ -1162,9 +1201,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	@Override
 	public void validate(Component comp, Object value) {
 		logger.debug(Literal.ENTERING);
-		if (StringUtils.isNotEmpty(this.usrPwd.getValue())) {
-			if (changePasswordModel.checkPasswordCriteria(this.usrLogin.getValue(), this.usrPwd.getValue())) {
-				throw new WrongValueException(usrPwd, Labels.getLabel("label_Invalid_Password"));
+		if (StringUtils.isNotEmpty(this.txtbox_Password.getValue())) {
+			if (changePasswordModel.checkPasswordCriteria(this.usrLogin.getValue(), this.txtbox_Password.getValue())) {
+				throw new WrongValueException(txtbox_Password, Labels.getLabel("label_Invalid_Password"));
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -1250,7 +1289,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		}
 
 		this.authType.setDisabled(isReadOnly("SecurityUserDialog_usrLogin"));
-		this.usrPwd.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
+		this.txtbox_Password.setReadonly(isReadOnly("SecurityUserDialog_usrPwd"));
 		this.userStaffID.setReadonly(isReadOnly("SecurityUserDialog_userStaffID"));
 		this.usrFName.setReadonly(isReadOnly("SecurityUserDialog_usrFName"));
 		this.usrMName.setReadonly(isReadOnly("SecurityUserDialog_usrMName"));
@@ -1268,7 +1307,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.usrBranchCode.setReadonly(isReadOnly("SecurityUserDialog_usrBranchCode"));
 		this.usrDeptCode.setReadonly(isReadOnly("SecurityUserDialog_usrDeptCode"));
 		this.usrIsMultiBranch.setDisabled(isReadOnly("SecurityUserDialog_usrIsMultiBranch"));
-		this.usrConfirmPwd.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
+		this.txtbox_confirm_Password.setReadonly(isReadOnly("SecurityUserDialog_usrConfirmPwd"));
 		this.usrDesg.setReadonly(isReadOnly("SecurityUserDialog_usrDesg"));
 		this.usrAcExpDt.setDisabled(isReadOnly("SecurityUserDialog_UsrAcExpDt"));
 		this.btnNewReportingManagerList.setDisabled(isReadOnly("button_SecurityUserDialog_RM_btnNew"));
@@ -1309,8 +1348,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setReadonly(true);
 		this.authType.setDisabled(true);
-		this.usrPwd.setReadonly(true);
-		this.usrConfirmPwd.setReadonly(true);
+		this.txtbox_Password.setReadonly(true);
+		this.txtbox_confirm_Password.setReadonly(true);
 		this.userStaffID.setReadonly(true);
 		this.usrFName.setReadonly(true);
 		this.usrMName.setReadonly(true);
@@ -1353,7 +1392,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	public void doClear() {
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setValue("");
-		this.usrPwd.setValue("");
+		this.txtbox_Password.setValue("");
 		this.userStaffID.setValue("");
 		this.usrFName.setValue("");
 		this.usrMName.setValue("");
@@ -1442,9 +1481,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			}
 
 		} catch (Exception e) {
-			this.usrPwd.setValue("");
-			this.usrConfirmPwd.setValue("");
-			this.usrPwd.setFocus(true);
+			this.txtbox_Password.setValue("");
+			this.txtbox_confirm_Password.setValue("");
+			this.txtbox_Password.setFocus(true);
 			MessageUtil.showError(e);
 		}
 

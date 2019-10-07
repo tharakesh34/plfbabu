@@ -36,6 +36,7 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -440,6 +441,15 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		frequency.addForward("onChange", finOptionListWindow, "onChangeFrequency", listitem);
 
+		// Remarks
+		Textbox remarks = new Textbox();
+		remarks.setWidth("200px");
+		remarks.setMaxlength(250);
+		remarks.setValue(option.getRemarks());
+		listcell = new Cell();
+		listcell.appendChild(remarks);
+		listcell.setParent(listitem);
+
 		listcell = new Cell();
 		if (option.isNew()) {
 			Button deleteButton = new Button();
@@ -815,6 +825,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 					option.setCustomerTemplateCode(null);
 					option.setCustomerTemplateName(null);
 				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+
+			try {
+				Textbox remarks = (Textbox) getComponent(listitem, 12);
+				option.setRemarks(remarks.getText());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}

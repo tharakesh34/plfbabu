@@ -589,8 +589,11 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		parameterSource.addValue("RBModule", "LMTLINE");
 
-		return jdbcTemplate.queryForList("select distinct RBFldName from RBFieldDetails where RBModule = :RBModule",
-				parameterSource, String.class);
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct RBFldName from RBFieldDetails");
+		sql.append(" where RBModule = :RBModule");
+
+		return jdbcTemplate.queryForList(sql.toString(), parameterSource, String.class);
 	}
 
 	@Override
@@ -665,6 +668,41 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 			logger.warn(Literal.EXCEPTION, e);
 		}
 
+		return new ArrayList<FinanceMain>();
+	}
+	
+	@Override
+	public List<FinanceMain> getInstitutionLimitFields(Set<String> ruleFields, String whereClause, boolean orgination) {
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(ruleFields.toString().replace("[","").replace("]",""));
+		
+		if (orgination) {
+			sql.append(", 1 LimitValid");
+		}
+		sql.append(" from FinanceMain");
+		if (orgination) {
+			sql.append(TableType.TEMP_TAB.getSuffix());
+		}
+		sql.append(" ");
+		sql.append(whereClause);
+		if (orgination) {
+			if (App.DATABASE == Database.ORACLE) {
+				sql.append(" and RcdMaintainSts IS NULL ");
+			} else {
+				sql.append(" and RcdMaintainSts = '' ");
+			}
+		}
+		
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		
+		RowMapper<FinanceMain> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceMain.class);
+		
+		try {
+			return this.jdbcTemplate.query(sql.toString(), parameterSource, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+		}
+		
 		return new ArrayList<FinanceMain>();
 	}
 }

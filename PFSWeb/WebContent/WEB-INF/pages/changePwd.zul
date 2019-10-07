@@ -2,15 +2,20 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+	xmlns:w="http://www.zkoss.org/2005/zk/client">
+	<script type="text/javascript" src="aes.js" />
+	<script type="text/javascript" src="encrypt.js" />
+
 	<window id="window_pwdDialog" border="none" width="100%" height="500px" apply="${passwordDialogCtrl}">
 		<div sclass="z-toolbar" style="padding:0">
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 
 				<!-- COMMON BUTTONS -->
-				<toolbar align="start" style="float:left; border-style: none;">
-				</toolbar>
+				<toolbar align="start" style="float:left; border-style: none;"></toolbar>
 
 				<!-- SEARCH AREA -->
 				<toolbar align="center" style="float:left; border-style: none;">
@@ -21,8 +26,10 @@
 				<toolbar align="end" style="float:right; border-style: none;">
 					`
 					<hbox>
-						<button id="btnSubmit" tabindex="5" image="/images/icons/btn_save2_16x16.gif" tooltiptext="${c:l('btnSubmit.tooltiptext')}" />
-						<button id="btnReset" tabindex="6" image="/images/icons/update.gif" tooltiptext="${c:l('btnReset.tooltiptext')}" />
+						<button id="btnSubmit" tabindex="5" image="/images/icons/btn_save2_16x16.gif"
+							tooltiptext="${c:l('btnSubmit.tooltiptext')}" w:onClick="encryptSecUserPasswordRest()" />
+						<button id="btnReset" tabindex="6" image="/images/icons/update.gif"
+							tooltiptext="${c:l('btnReset.tooltiptext')}" />
 
 					</hbox>
 				</toolbar>
@@ -35,7 +42,8 @@
 						<panel border="none">
 							<panelchildren>
 								<groupbox id="changepwd" mold="3d">
-									<caption style="color: #000000; font-weight:bold;" image="/images/icons/male_16x16.gif" label="Change User Login Password " />
+									<caption style="color: #000000; font-weight:bold;"
+										image="/images/icons/male_16x16.gif" label="Change User Login Password " />
 									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
 										<columns>
 											<column width="150px" />
@@ -48,15 +56,45 @@
 											</row>
 											<row>
 												<label id="label_password" value="${c:l('label_password.value')}" />
-												<textbox id="password" type="password" width="150px" tabindex="2" />
+												<textbox type="password" sclass="z-textbox-loginPassword" id="password"
+													style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" maxlength="50" width="180px"
+													height="24px" tabindex="2">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
+
+												<textbox id="password1" type="password" width="150px" visible="false">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
 											</row>
 											<row>
 												<label id="label_newPassword" value="${c:l('label_newPassword.value')}" />
-												<textbox id="newPassword" type="password" width="150px" tabindex="3" />
+
+												<textbox type="password" sclass="z-textbox-loginPassword"
+													id="newPassword" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" maxlength="50"
+													width="180px" height="24px" tabindex="3">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
+
+												<textbox id="newPassword1" type="password" width="150px"
+													visible="false">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
+
 											</row>
 											<row>
-												<label id="label_retypePassword" value="${c:l('label_retypePassword.value')}" />
-												<textbox id="retypeNewPassword" type="password" width="150px" tabindex="4" />
+												<label id="label_retypePassword"
+													value="${c:l('label_retypePassword.value')}" />
+
+												<textbox type="password" sclass="z-textbox-loginPassword"
+													id="retypeNewPassword" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();"
+													maxlength="50" width="180px" height="24px" tabindex="4">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
+
+												<textbox id="retypeNewPassword1" type="password" width="150px"
+													visible="false">
+													<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
+												</textbox>
 											</row>
 											<row>
 												<separator />
@@ -70,7 +108,8 @@
 						<panel border="none">
 							<panelchildren>
 								<groupbox mold="3d">
-									<caption style="color: #000000; font-weight:bold;" image="/images/icons/home_blue16x16.gif" label="Instructions to Change Password." />
+									<caption style="color: #000000; font-weight:bold;"
+										image="/images/icons/home_blue16x16.gif" label="Instructions to Change Password." />
 									<textbox rows="8" multiline="true" width="99.5%" readonly="true"
 										style="font-family: verdana; border: none; background-color: white;"
 										value="* The password cannot consist of all the characters as are in your Username.
@@ -85,11 +124,10 @@
 							</panelchildren>
 						</panel>
 					</columnchildren>
-					<columnchildren width="50%" style="padding: 5px">
-					</columnchildren>
+					<columnchildren width="50%" style="padding: 5px"></columnchildren>
 				</columnlayout>
 			</center>
 		</borderlayout>
-
+		<textbox id="txtbox_randomKey" visible="false" />
 	</window>
 </zk>

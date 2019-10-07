@@ -64,6 +64,7 @@
 							<column label="${c:l('listheader_FinOption_AlertRoles.label')}" width="250px" />
 							<column label="${c:l('listheader_FinOption_CustomerTemplate.label')}" width="250px" />
 							<column label="${c:l('listheader_FinOption_UserTemplate.label')}" width="250px" />
+							<column label="${c:l('listheader_FinOption_Remarks.label')}" width="250px" />
 							<column label="${c:l('listheader_FinOption_Delete.label')}" width="120px" />
 						</columns>
 						<rows id="finOptionRows" />

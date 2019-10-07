@@ -55,7 +55,11 @@ public interface UserService {
 
 	int getCountAllSecUser();
 
+	SecurityUser getSecurityUserByLogin(String username);
+
 	SecurityUser getUserByLogin(final String userName);
+
+	SecurityUser getUserByLogin(long usrId);
 
 	List<SecurityUser> getUserLikeLoginname(String value);
 
@@ -74,4 +78,8 @@ public interface UserService {
 	long logLoginAttempt(SecLoginlog logingLog);
 
 	void logLogOut(long loginId);
+
+	void updateLoginStatus(long userId);
+
+	void updateInvalidTries(String userLogin);
 }

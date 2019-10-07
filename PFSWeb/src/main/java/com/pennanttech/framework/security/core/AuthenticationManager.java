@@ -123,12 +123,11 @@ public class AuthenticationManager implements AuthenticationProvider {
 	public Authentication authenticate(Authentication authentication) {
 		Authentication result = null;
 
+		SecurityUser securityUser = null;
 		try {
-			// Get the user details.
-			User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
-			String authType = user.getSecurityUser().getAuthType();
+			securityUser = userService.getSecurityUserByLogin(authentication.getName());
 
-			if ("DAO".equals(authType)) {
+			if ("DAO".equals(StringUtils.trim(securityUser.getAuthType()))) {
 				// DAO.
 				result = daoAuthenticationProvider.authenticate(authentication);
 			} else {
@@ -146,6 +145,8 @@ public class AuthenticationManager implements AuthenticationProvider {
 				}
 
 				if (result != null) {
+					// Get the user details.
+					User user = (User) userDetailsService.loadUserByUsername(authentication.getName());
 					AbstractAuthenticationToken token = null;
 					token = new UsernamePasswordAuthenticationToken(user, result.getCredentials(),
 							user.getAuthorities());
@@ -159,7 +160,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 		}
 
 		if (result != null) {
-			logAttempt(result, null);
+			logAttempt(result, securityUser.getUsrID());
 		}
 
 		SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -173,22 +174,19 @@ public class AuthenticationManager implements AuthenticationProvider {
 		return true;
 	}
 
-	/**
-	 * Save the login attempt details to the database.
-	 * 
-	 * @param authentication
-	 * @param error
-	 */
 	private void logAttempt(Authentication authentication, String error) {
-		logger.trace(Literal.ENTERING);
+		userService.logLoginAttempt(getLoginLog(authentication, error));
+		userService.updateInvalidTries(authentication.getName());
+	}
 
-		long logId = userService.logLoginAttempt(getLoginLog(authentication, error));
+	private void logAttempt(Authentication authentication, long userId) {
+		SecLoginlog secLoginlog = getLoginLog(authentication);
 
-		if (error == null) {
-			((User) authentication.getPrincipal()).setLoginId(logId);
-		}
+		long logId = userService.logLoginAttempt(secLoginlog);
 
-		logger.trace(Literal.LEAVING);
+		userService.updateLoginStatus(userId);
+
+		((User) authentication.getPrincipal()).setLoginId(logId);
 	}
 
 	/**
@@ -316,14 +314,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	}
 
 	private SecLoginlog getLoginLog(Authentication authentication, String loginError) {
-		SecLoginlog secLoginlog = new SecLoginlog();
-
-		secLoginlog.setLoginLogID(Long.MIN_VALUE);
-		secLoginlog.setLoginUsrLogin(authentication.getName());
-		secLoginlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
-		secLoginlog.setLoginIP(getRemoteAddress());
-		secLoginlog.setLoginBrowserType(getBrowser());
-		secLoginlog.setLoginSessionID(getSessionId());
+		SecLoginlog secLoginlog = getLoginLog(authentication);
 
 		if (StringUtils.length(loginError) <= 500) {
 			secLoginlog.setLoginError(loginError);
@@ -338,6 +329,18 @@ public class AuthenticationManager implements AuthenticationProvider {
 		} else {
 			secLoginlog.setLoginStsID(0);
 		}
+
+		return secLoginlog;
+	}
+
+	private SecLoginlog getLoginLog(Authentication authentication) {
+		SecLoginlog secLoginlog = new SecLoginlog();
+		secLoginlog.setLoginLogID(Long.MIN_VALUE);
+		secLoginlog.setLoginUsrLogin(authentication.getName());
+		secLoginlog.setLoginTime(new Timestamp(System.currentTimeMillis()));
+		secLoginlog.setLoginIP(getRemoteAddress());
+		secLoginlog.setLoginBrowserType(getBrowser());
+		secLoginlog.setLoginSessionID(getSessionId());
 
 		return secLoginlog;
 	}

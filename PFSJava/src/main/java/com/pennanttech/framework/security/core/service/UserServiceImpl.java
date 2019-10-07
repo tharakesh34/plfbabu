@@ -47,11 +47,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.pennant.backend.dao.SecLoginlogDAO;
 import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.dao.administration.SecurityRightDAO;
-import com.pennant.backend.dao.staticparms.LanguageDAO;
 import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
@@ -60,82 +60,69 @@ import com.pennant.backend.model.administration.SecurityUser;
 public class UserServiceImpl implements UserService {
 	private static final Logger logger = Logger.getLogger(UserServiceImpl.class);
 
-	@Autowired
 	private UserDAO userDAO;
-	@Autowired
-	private LanguageDAO languageDAO;
-	@Autowired
 	private SecurityRightDAO securityRightDAO;
-	@Autowired
 	private SecLoginlogDAO secLoginlogDAO;
 
 	public UserServiceImpl() {
 		super();
 	}
 
-	public LanguageDAO getLanguageDAO() {
-		return languageDAO;
-	}
-
-	public void setLanguageDAO(LanguageDAO languageDAO) {
-		this.languageDAO = languageDAO;
-	}
-
-	public UserDAO getUserDAO() {
-		return userDAO;
-	}
-
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
-	}
-
 	public SecurityUser getNewUser() {
-		return getUserDAO().getNewSecUser();
+		return userDAO.getNewSecUser();
 	}
 
 	public SecurityUser getUserByLogin(final String userName) {
-		return getUserDAO().getUserByLogin(userName);
+		return userDAO.getUserByLogin(userName);
+	}
+
+	@Override
+	public SecurityUser getSecurityUserByLogin(String username) {
+		SecurityUser user = userDAO.getSecurityUserByLogin(username.toUpperCase());
+
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found.");
+		} else if (!user.isUsrEnabled()) {
+			throw new UsernameNotFoundException("User account disabled.");
+		}
+		return user;
+	}
+
+	public SecurityUser getUserByLogin(long userId) {
+		return userDAO.getUserByLogin(userId);
 	}
 
 	public List<SecurityUser> getUserLikeLastname(String value) {
-		return getUserDAO().getUserLikeLastname(value);
+		return userDAO.getUserLikeLastname(value);
 	}
 
 	public List<SecurityUser> getUserLikeLoginname(String value) {
-		return getUserDAO().getUserLikeLogin(value);
+		return userDAO.getUserLikeLogin(value);
 	}
 
 	public List<SecurityUser> getUserLikeEmail(String value) {
-		return getUserDAO().getUserLikeEmail(value);
+		return userDAO.getUserLikeEmail(value);
 	}
 
 	public List<SecurityUser> getUserListByLogin(String userName) {
-		return getUserDAO().getUserListByLogin(userName);
-	}
-
-	public SecurityRightDAO getSecurityRightDAO() {
-		return securityRightDAO;
-	}
-
-	public void setSecurityRightDAO(SecurityRightDAO securityRightDAO) {
-		this.securityRightDAO = securityRightDAO;
+		return userDAO.getUserListByLogin(userName);
 	}
 
 	public int getCountAllSecUser() {
-		return getUserDAO().getCountAllSecUser();
+		return userDAO.getCountAllSecUser();
 	}
 
 	public Collection<SecurityRight> getMenuRightsByUser(SecurityUser user) {
-		return getSecurityRightDAO().getMenuRightsByUser(user);
+		return securityRightDAO.getMenuRightsByUser(user);
 
 	}
 
 	public Collection<SecurityRight> getPageRights(SecurityRight secRight) {
-		return getSecurityRightDAO().getPageRights(secRight);
+		return securityRightDAO.getPageRights(secRight);
 	}
 
 	public List<SecurityRole> getUserRolesByUserID(long userID) {
-		return getUserDAO().getUserRolesByUserID(userID);
+		return userDAO.getUserRolesByUserID(userID);
 	}
 
 	@Override
@@ -143,14 +130,37 @@ public class UserServiceImpl implements UserService {
 		logger.info("Saving the login attempt details for: " + logingLog.getLoginUsrLogin() + " Host:"
 				+ logingLog.getLoginIP() + " SessionId: " + logingLog.getLoginSessionID());
 
-		long loginAttemptId = this.secLoginlogDAO.saveLog(logingLog);
-		userDAO.updateLoginStatus(logingLog.getLoginUsrLogin(), logingLog.getLoginStsID());
+		return this.secLoginlogDAO.saveLog(logingLog);
+	}
 
-		return loginAttemptId;
+	@Override
+	public void updateLoginStatus(long userId) {
+		userDAO.updateLoginStatus(userId);
+	}
+
+	@Override
+	public void updateInvalidTries(String userLogin) {
+		userDAO.updateInvalidTries(userLogin);
 	}
 
 	@Override
 	public void logLogOut(long loginId) {
 		secLoginlogDAO.logLogOut(loginId);
 	}
+
+	@Autowired
+	public void setUserDAO(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
+
+	@Autowired
+	public void setSecurityRightDAO(SecurityRightDAO securityRightDAO) {
+		this.securityRightDAO = securityRightDAO;
+	}
+
+	@Autowired
+	public void setSecLoginlogDAO(SecLoginlogDAO secLoginlogDAO) {
+		this.secLoginlogDAO = secLoginlogDAO;
+	}
+
 }

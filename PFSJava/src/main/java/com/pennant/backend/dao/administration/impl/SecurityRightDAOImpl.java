@@ -72,21 +72,24 @@ public class SecurityRightDAOImpl extends SequenceDao<SecurityRight> implements 
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("select distinct RT.RightName");
-		sql.append(" from SecUserOperations UO");
-		sql.append(" inner join SecOperationRoles OPR on OPR.OprID = UO.OprID");
-		sql.append(" inner join SecRoles R on R.RoleID = OPR.RoleID");
-		sql.append(" inner join SecRoleGroups RG on RG.RoleID = R.RoleID");
-		sql.append(" inner join SecGroupRights GR on GR.GrpID = RG.GrpID");
-		sql.append(" inner join SecRights RT on RT.RightID = GR.RightID ");
-		sql.append(" where UO.UsrID = :UsrID and R.RoleApp = :LoginAppId and RT.RightType = 0 ");
+		sql.append(" from SecUserOperations uo");
+		sql.append(" inner join SecOperationRoles opr on opr.OprID = uo.OprID");
+		sql.append(" inner join SecRoles r on r.RoleID = opr.RoleID");
+		sql.append(" inner join SecRoleGroups rg on rg.RoleID = r.RoleID");
+		sql.append(" inner join SecGroupRights gr on gr.GrpID = rg.GrpID");
+		sql.append(" inner join SecRights rt on rt.RightID = gr.RightID and rt.RightType = :RightType");
+		sql.append(" where uo.UsrID = :UsrID");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(user);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		parameterSource.addValue("UsrID", user.getUsrID());
+		parameterSource.addValue("RightType", 0);
+
 		RowMapper<SecurityRight> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(SecurityRight.class);
 
 		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
+		return jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
 	}
 
 	@Override

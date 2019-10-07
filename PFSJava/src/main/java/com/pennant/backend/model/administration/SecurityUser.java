@@ -44,6 +44,7 @@ package com.pennant.backend.model.administration;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -115,6 +116,8 @@ public class SecurityUser extends AbstractWorkflowEntity {
 	private Date accountUnLockedOn;
 
 	private boolean accessToAllBranches;
+	private Collection<SecurityRight> menuRights = new ArrayList<>();
+	private List<SecurityRole> roles = new ArrayList<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -126,6 +129,8 @@ public class SecurityUser extends AbstractWorkflowEntity {
 		excludeFields.add("businessVerticalCode");
 		excludeFields.add("businessVerticalDesc");
 		excludeFields.add("lovDescFirstName");
+		excludeFields.add("menuRights");
+		excludeFields.add("roles");
 		return excludeFields;
 	}
 
@@ -584,6 +589,22 @@ public class SecurityUser extends AbstractWorkflowEntity {
 
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
+	}
+
+	public Collection<SecurityRight> getMenuRights() {
+		return menuRights;
+	}
+
+	public void setMenuRights(Collection<SecurityRight> menuRights) {
+		this.menuRights = menuRights;
+	}
+
+	public List<SecurityRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<SecurityRole> roles) {
+		this.roles = roles;
 	}
 
 }

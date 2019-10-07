@@ -390,7 +390,6 @@ public class LimitRuleDAOImpl extends SequenceDao<LimitFilterQuery> implements L
 
 	@Override
 	public LimitFilterQuery getLimitRuleByQueryCode(String queryCode, String queryModule, String type) {
-
 		LimitFilterQuery dedupParm = new LimitFilterQuery();
 		dedupParm.setQueryCode(queryCode);
 		dedupParm.setQueryModule(queryModule);
