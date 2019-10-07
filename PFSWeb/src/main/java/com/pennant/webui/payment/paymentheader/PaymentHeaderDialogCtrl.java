@@ -63,19 +63,24 @@ import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Longbox;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -94,18 +99,21 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.payment.PaymentTaxDetail;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -113,6 +121,7 @@ import com.pennant.core.EventManager;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDecimalValidator;
+import com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsListCtrl;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -151,6 +160,16 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
+	
+	protected Textbox tranModule;
+	protected Textbox tranReference;
+	protected Textbox tranBatch;
+	protected Longbox paymentId;
+	protected Textbox statusCode;
+	protected Textbox statusDesc;
+	protected Combobox tranStatus;
+	protected Row row_tranStatus;
+	protected Groupbox gb_TransactionDetails;
 
 	protected Listheader listheader_PaymentHeaderDialog_AvailableAmount;
 	protected Listheader listheader_PaymentHeaderDialog_Balance;
@@ -159,6 +178,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private FinanceMain financeMain;
 
 	private transient PaymentHeaderListCtrl paymentHeaderListCtrl;
+	private transient CustomerPaymentTxnsListCtrl customerPaymentTxnsListCtrl;
 	private transient PaymentHeaderService paymentHeaderService;
 	private transient ReceiptCalculator receiptCalculator;
 	private transient PostingsPreparationUtil postingsPreparationUtil;
@@ -176,6 +196,11 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private Listheader listheader_PaymentHeaderDialog_button;
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
+	private boolean isFromCustomerPaymentMenu = false;
+	private PaymentTransaction paymentTransaction ;
+	private transient FinAdvancePaymentsService finAdvancePaymentsService;
+	private Button btnSave_payment;
+
 
 	/**
 	 * default constructor.<br>
@@ -216,7 +241,16 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 			this.paymentHeaderListCtrl = (PaymentHeaderListCtrl) arguments.get("paymentHeaderListCtrl");
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
-
+			
+			if (arguments.containsKey("customerPaymentTxnsListCtrl")) {
+				customerPaymentTxnsListCtrl = (CustomerPaymentTxnsListCtrl) arguments
+						.get("customerPaymentTxnsListCtrl");
+			}
+			if (arguments.containsKey("isFromCustomerPaymentMenu")) {
+				this.isFromCustomerPaymentMenu = (boolean) arguments.get("isFromCustomerPaymentMenu");
+				this.paymentTransaction = (PaymentTransaction) arguments.get("paymentTransaction");
+			}
+			
 			if (this.paymentHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -243,12 +277,85 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			doShowDialog(this.paymentHeader);
 			this.listBoxPaymentTypeInstructions
 					.setHeight(getListBoxHeight(this.grid_basicDetails.getRows().getVisibleItemCount() + 3));
-
+			
+			processPaymentInstructionDetails();
 		} catch (Exception e) {
 			closeDialog();
 			if (getDisbursementInstructionsDialogCtrl() != null) {
 				getDisbursementInstructionsDialogCtrl().closeDialog();
 			}
+			MessageUtil.showError(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	private void processPaymentInstructionDetails() {
+		logger.debug(Literal.ENTERING);
+		if (isFromCustomerPaymentMenu) {
+			this.row_tranStatus.setVisible(isFromCustomerPaymentMenu);
+			this.tranStatus.setDisabled(enqiryModule);
+			this.listBoxPaymentTypeInstructions.setHeight("250px");
+			this.btnSave_payment.setVisible(!enqiryModule);
+			this.gb_TransactionDetails.setVisible(true);
+
+			String tranModule = "";
+			if ("DISB".equals(this.paymentTransaction.getTranModule())) {
+				tranModule = "Disbursement";
+			} else if ("PYMT".equals(this.paymentTransaction.getTranModule())) {
+				tranModule = "Payments";
+			}
+			this.tranModule.setValue(tranModule);
+
+			this.tranReference.setValue(this.paymentTransaction.getTranReference());
+			this.tranBatch.setValue(this.paymentTransaction.getTranBatch());
+			this.paymentId.setValue(this.paymentTransaction.getPaymentId());
+			this.statusCode.setValue(this.paymentTransaction.getStatusCode());
+			this.statusDesc.setValue(this.paymentTransaction.getStatusDesc());
+			String tranStatus="";
+			if("P".equals(this.paymentTransaction.getTranStatus())){
+				tranStatus=DisbursementConstants.STATUS_PAID;
+			}else if("R".equals(this.paymentTransaction.getTranStatus())){
+				tranStatus=DisbursementConstants.STATUS_REJECTED;
+			}
+			fillComboBox(this.tranStatus,tranStatus, PennantStaticListUtil.getDisbursementStatus(), "");
+
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClick$btnSave_payment(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		doSavebtnSave_payment();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+	
+	public void doSavebtnSave_payment() throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+
+		final PaymentTransaction paymentTransaction = new PaymentTransaction();
+		BeanUtils.copyProperties(getPaymentTransaction(), paymentTransaction);
+
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+
+		if (PennantConstants.List_Select.equals(this.tranStatus.getSelectedItem().getValue())) {
+			throw new WrongValueException(this.tranStatus, "Status Update is mandatory.");
+		}
+		paymentTransaction.setTranStatus(this.tranStatus.getSelectedItem().getValue());
+		doRemoveValidation();
+
+		if (wve.size() > 0) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = (WrongValueException) wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		try {
+			this.finAdvancePaymentsService.processPayments(paymentTransaction);
+			refreshList();
+			closeDialog();
+		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
 		logger.debug(Literal.LEAVING);
@@ -368,7 +475,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	 */
 	private void refreshList() {
 		logger.debug(Literal.ENTERING);
-		paymentHeaderListCtrl.search();
+		if (paymentHeaderListCtrl != null) {
+			paymentHeaderListCtrl.search();
+		}
+		if (customerPaymentTxnsListCtrl != null) {
+			customerPaymentTxnsListCtrl.search();
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -418,7 +530,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		this.recordStatus.setValue(aPaymentHeader.getRecordStatus());
 
 		// Accounting Details Tab Addition
-		if (!StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
+		if (getWorkFlow() != null && !StringUtils.equals(getWorkFlow().firstTaskOwner(), getRole())) {
 			appendAccountingDetailTab(aPaymentHeader, true);
 		}
 
@@ -2088,6 +2200,22 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 	public void setTaxPercMap(Map<String, BigDecimal> taxPercMap) {
 		this.taxPercMap = taxPercMap;
+	}
+
+	public PaymentTransaction getPaymentTransaction() {
+		return paymentTransaction;
+	}
+
+	public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
+		this.paymentTransaction = paymentTransaction;
+	}
+
+	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
+		return finAdvancePaymentsService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }

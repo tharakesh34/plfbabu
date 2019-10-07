@@ -797,6 +797,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	public PaymentInstruction getPaymentInstruction(long paymentId, String type) {
 		return getPaymentInstructionDAO().getPaymentInstruction(paymentId, type);
 	}
+	
+	@Override
+	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
+		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+	}
 
 	public PaymentTaxDetailDAO getPaymentTaxDetailDAO() {
 		return paymentTaxDetailDAO;

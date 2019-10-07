@@ -745,6 +745,12 @@
 			<menuItem id="menu_Item_ChangeTDS"
 				zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceSelect.zul"
 				rightName="menuItem_FinanceManagement_ChangeTDSApplicable" />
+			<menuItem id="menu_Item_CustomerPaymentDisbTransactions"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?"
+				rightName="menuItem_payment_CustPaymentDisbTransaction" />
+			<menuItem id="menu_Item_CustomerPaymentTransactions"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=PYMT"
+				rightName="menuItem_payment_CustPaymentTransaction" />
 		</menu>
 		<menu id="menu_Category_LmsReceipts">
 			<menuItem id="menu_Item_InitMaker" zulNavigation="/WEB-INF/pages/FinanceManagement/PaymentMode/ReceiptList.zul?module=RECEIPT_MAKER" rightName="menuItem_Receipts_InitMaker"/>
@@ -1200,9 +1206,15 @@
 			<menuItem id="menu_Item_PaymentInstructionsEnquiry"
 				zulNavigation="/WEB-INF/pages/Payment/PaymentHeaderList.zul?enqiryModule=Y"
 				rightName="menuItem_payment_PaymentInstructionsEnquiry" />
+				
+			<menuItem id="menu_Item_CustomerPaymentDisbTransactionsEnquiry"
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?enqiryModule=E"
+				rightName="menuItem_payment_CustPaymentDisbTransactionEnq" />
+			
 			<menuItem id="menu_Item_CustomerPaymentTransactionsEnquiry"
-				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=E"
-				rightName="menuItem_CustomerPaymentTransactionsEnquiry" />
+				zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul?module=PYMT;enqiryModule=E"
+				rightName="menuItem_payment_CustPaymentTransactionEnq" />
+				
 			<menuItem id="menu_Item_DMSEnquiry"
 				zulNavigation="/WEB-INF/pages/DmsDocumentDetails/DmsDocumentDetailsList.zul?enqiryModule=Y"
 				rightName="menuItem_DmsDocumentDetails" />
@@ -2011,9 +2023,6 @@
 		rightName="menuItem_ApplicationMaster_ReasonCodeEnquiry" />
 	<!-- <menuItem id="menuItem_FinOptionTypeEnquiry" zulNavigation="/WEB-INF/pages/ApplicationMaster/FinoptionTypes/FinOptionTypeEnquiryList.zul?enqiryModule=Y" 
 		rightName="menuItem_FinOptionTypeEnquiry" /> -->
-	<menuItem id="menu_Item_CustomerPaymentTransactions"
-		zulNavigation="/WEB-INF/pages/ApplicationMaster/CustomerPaymentTransactions/CustomerPaymentTxnsList.zul"
-		rightName="menuItem_CustomerPaymentTransactions" />
 
 	<!-- Customers -->
 	<!-- <menuItem id="menu_Item_ProspectCustomer" zulNavigation="/WEB-INF/pages/CustomerMasters/ProspectCustomer/ProspectCustomerDialog.zul" 

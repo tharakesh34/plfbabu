@@ -151,7 +151,11 @@ public class PaymentProcessImpl implements PaymentProcess {
 		instruction.setPaymentInstructionId(paymentId);
 
 		instruction = this.paymentDetailService.getPaymentInstruction(paymentId, "");
-
+		
+		if (instruction == null) {
+			instruction = this.paymentDetailService.getPaymentInstructionDetails(paymentId, "");
+		}
+		
 		if (DisbursementConstants.STATUS_PAID.equals(status)) {
 			instruction.setStatus("E");
 		} else {

@@ -82,4 +82,6 @@ public interface PaymentDetailService {
 	void updatePaymentStatus(PaymentInstruction paymentInstruction);
 
 	PaymentInstruction getPaymentInstruction(long paymentId, String type);
+
+	PaymentInstruction getPaymentInstructionDetails(long paymentId, String type);
 }

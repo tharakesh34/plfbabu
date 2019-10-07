@@ -21,6 +21,8 @@
 								sclass="z-toolbarbutton" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
+							<button id="btnSave_payment"  label="Save" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
+								sclass="z-toolbarbutton" visible="false"/>
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
@@ -117,6 +119,76 @@
 											</listhead>
 										</listbox>
 									</groupbox>
+								<groupbox  id="gb_TransactionDetails" visible="false">
+								<caption label="Transaction Details"></caption>
+									<grid fixedLayout="true" sclass="GridLayoutNoBorder" style="border:0px;">
+										<columns>
+											<column width="225px" />
+											<column />
+											<column width="225px" />
+											<column />
+										</columns>
+										<rows>
+											<row>
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranModule.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="tranModule"  width="250px" readonly="true"/>
+												</hbox>
+												
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranReference.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="tranReference"  width="250px" readonly="true"/>
+												</hbox>
+											</row>
+											
+											<row>
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranBatch.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="tranBatch"  width="250px" readonly="true"/>
+												</hbox>
+												
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_PaymentId.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<longbox id="paymentId"  width="250px" readonly="true"/>
+												</hbox>
+											</row>
+											
+											<row>
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusCode.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="statusCode"  width="250px" readonly="true"/>
+												</hbox>
+												
+												<label
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_StatusDesc.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<textbox id="statusDesc"  width="250px" readonly="true"/>
+												</hbox>
+											</row>
+								
+											<row id="row_tranStatus" visible="false">
+												<label 
+													value="${c:l('label_CustomerPaymentTxnsUpdateDialog_TranStatus.value')}" />
+												<hbox>
+													<space spacing="2px" />
+													<combobox id="tranStatus" width="250px"/>
+												</hbox>
+											</row>
+											
+										</rows>
+									</grid>
+								</groupbox>
 								</tabpanel>
 								<!-- Disbursement Instructions -->
 								<tabpanel id="tabDisbInstructionsTabPanel" style="overflow:auto" />

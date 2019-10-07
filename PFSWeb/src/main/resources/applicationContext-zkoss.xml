@@ -4279,6 +4279,7 @@
 		<property name="eventManager" ref="eventManager" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->
@@ -5422,6 +5423,7 @@
 		<property name="financeMainService" ref="financeMainService" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="customerDAO" ref="customerDAO" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
 	</bean>
 
 	<bean id="customerPaymentTxnsDialogCtrl" class="com.pennant.webui.applicationmaster.customerPaymentTransactions.CustomerPaymentTxnsDialogCtrl"

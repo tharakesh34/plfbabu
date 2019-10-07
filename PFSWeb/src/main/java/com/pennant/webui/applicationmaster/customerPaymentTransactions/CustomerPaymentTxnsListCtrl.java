@@ -65,7 +65,9 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.PaymentTransaction;
+import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.service.finance.FinanceMainService;
+import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.webui.applicationmaster.customerPaymentTransactions.model.CustomerPaymentTxnsListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
@@ -106,8 +108,11 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	private transient FinanceMainService financeMainService;
 	private transient FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private transient CustomerDAO customerDAO;
-	
+	private transient PaymentHeaderService paymentHeaderService;
+
 	private boolean enqiryModule= false;
+	String module = "";
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -122,10 +127,20 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		super.tableName = "PaymentTransaction_View";
 		super.queueTableName = "PaymentTransaction_View";
 		super.enquiryTableName = "PaymentTransaction_View";
-		
-		String module = getArgument("module");
-		if("E".equals(module)){
-			enqiryModule = true;
+
+		module = getArgument("module");
+		String enqiryModule = getArgument("enqiryModule");
+		if ("E".equals(enqiryModule)) {
+			this.enqiryModule = true;
+		}
+		if ("PYMT".equals(module)) {
+			super.moduleCode = "PaymentTransaction";
+			super.pageRightName = "PaymentTransactionList";
+			super.tableName = "PaymentTransaction_PView";
+			super.queueTableName = "PaymentTransaction_PView";
+			super.enquiryTableName = "PaymentTransaction_PView";
+		} else {
+			module = "DISB";
 		}
 	}
  
@@ -135,6 +150,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		if (!enqiryModule) {
 			searchObject.addFilterEqual("tranStatus", "T");
 		}
+		searchObject.addFilterEqual("tranmodule", module);
 	}
 		
 	public void onCreate$window_CustomerPaymentTxnsList(Event event) {
@@ -212,21 +228,53 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 			return;
 		}
 
-		FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(paymentTransaction.getFinReference());
-		Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
-		financeMain.setLovDescCustCIF(customer.getCustCIF());
-		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
-		finAdvancePayments.setPaymentId(paymentTransaction.getPaymentId());
-		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments,
-				"_View");
-		finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "_View");
-		
-		paymentTransaction.setFinAdvancePayments(finAdvancePayments);
-		
-		doShowDialogPage(paymentTransaction, financeMain);
+		if ("PYMT".equals(module)) {
+			PaymentHeader paymentheader = paymentHeaderService.getPaymentHeader(paymentTransaction.getPaymentId());
+
+			StringBuffer whereCond = new StringBuffer();
+			whereCond.append("  AND  PaymentId = ");
+			whereCond.append(paymentTransaction.getPaymentId());
+			whereCond.append(" AND  version=");
+			whereCond.append(paymentheader.getVersion());
+
+			doShowDialogPage(paymentheader,paymentTransaction);
+		} else {
+			FinanceMain financeMain = this.financeMainService
+					.getFinanceMainByFinRef(paymentTransaction.getFinReference());
+			Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
+			financeMain.setLovDescCustCIF(customer.getCustCIF());
+			FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+			finAdvancePayments.setPaymentId(paymentTransaction.getPaymentId());
+			finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "_View");
+			finAdvancePayments = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "_View");
+
+			paymentTransaction.setFinAdvancePayments(finAdvancePayments);
+
+			doShowDialogPage(paymentTransaction, financeMain);
+		}
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void doShowDialogPage(PaymentHeader paymentheader, PaymentTransaction paymentTransaction) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(paymentheader.getFinReference());
+		Map<String, Object> arg = getDefaultArguments();
+		arg.put("paymentHeader", paymentheader);
+		arg.put("paymentTransaction", paymentTransaction);
+		arg.put("financeMain", financeMain);
+		arg.put("customerPaymentTxnsListCtrl", this);
+		arg.put("enqiryModule", enqiryModule);
+		arg.put("isFromCustomerPaymentMenu", true);
+		try {
+			Executions.createComponents("/WEB-INF/pages/Payment/PaymentHeaderDialog.zul", null, arg);
+		} catch (Exception e) {
+			logger.error("Exception:", e);
+			MessageUtil.showError(e);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
 	private void doShowDialogPage(PaymentTransaction paymentTransaction, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
@@ -305,6 +353,14 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	public PaymentHeaderService getPaymentHeaderService() {
+		return paymentHeaderService;
+	}
+
+	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
+		this.paymentHeaderService = paymentHeaderService;
 	}
 
 }
