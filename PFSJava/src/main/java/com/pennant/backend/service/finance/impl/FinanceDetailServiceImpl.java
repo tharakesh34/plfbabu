@@ -298,7 +298,9 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CreditInformation;
 import com.pennanttech.pff.external.Crm;
+import com.pennanttech.pff.external.DomainCheckService;
 import com.pennanttech.pff.external.HunterService;
+import com.pennanttech.pff.external.InitiateHunterService;
 import com.pennanttech.pff.external.ProfectusHunterBreService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
@@ -409,6 +411,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 	@Autowired(required = false)
 	private HunterService hunterService;
+	@Autowired(required = false)
+	private InitiateHunterService initiateHunterService;
+	@Autowired(required = false)
+	private DomainCheckService domainCheckService;
 
 	private InsuranceDetailService insuranceDetailService;
 	private transient BaseRateCodeDAO baseRateCodeDAO;
@@ -5235,6 +5241,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					hunterService.getHunterStatus(auditHeader);
 				}
 			}
+			break;
+		case PennantConstants.METHOD_INTIATEHUNTERSERVICE:
+			if(null != initiateHunterService) {
+				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
+				if (hunterReq) {
+					initiateHunterService.getHunterResponse(financeDetail.getCustomerDetails());
+				}
+			}
+			break;
+		case PennantConstants.METHOD_DOMAINCHECKSERVICE:
+			if(null != domainCheckService) {
+				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
+				if (hunterReq) {
+					domainCheckService.validateDomain(financeDetail);
+				}
+			}	
 			break;
 		default:
 			// Execute any other custom service tasks
