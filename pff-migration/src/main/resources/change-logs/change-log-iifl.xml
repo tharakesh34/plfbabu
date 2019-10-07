@@ -124,4 +124,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="2" author="Kesav">
+		<sql>
+			<![CDATA[
+				Update SMTParameters set SysParmValue = 'IIFL' where SysParmCode = 'LOAN_REF_PREFIX';
+				Update SMTParameters set SysParmValue = 'PP_SSSSSSS' where SysParmCode = 'LOAN_REF_FORMAT';
+			 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
