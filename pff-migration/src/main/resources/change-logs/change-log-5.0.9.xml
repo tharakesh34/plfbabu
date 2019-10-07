@@ -13620,7 +13620,7 @@ UNION ALL
 	</changeSet>
 	
 	
-	<changeSet id="230" author="Durgaprasad G">
+	<changeSet id="231" author="Durgaprasad G">
 		<sql>
 			<![CDATA[			
 			 	Update FINANCEMAIN set SanBsdSchdle = 0 Where SanBsdSchdle is null;
