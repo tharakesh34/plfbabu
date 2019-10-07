@@ -6846,7 +6846,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw new WrongValueException(this.eidNumber, "Invalid PAN");
+			throw new WrongValueException(this.eidNumber, StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
 		} finally {
 			logger.debug(Literal.LEAVING);
 		}
