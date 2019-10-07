@@ -3652,7 +3652,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="93" author="Varaprasad.K">
 		<sql>
 	    	<![CDATA[
@@ -3928,8 +3928,8 @@ UNION ALL
 			INSERT INTO SMTparameters  VALUES ('QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES', 'Query assign to loan and legal loans', 'String', '1', 'Y', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
 		]]>
 		</sql>
-    </changeSet>
-    <changeSet id="100" author="Varaprasad.K">
+	</changeSet>
+	<changeSet id="100" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
 			 Delete from ErrorDetails where code='Q001';
@@ -3940,8 +3940,8 @@ UNION ALL
 			 INSERT INTO ErrorDetails VALUES('Q003','EN','E','Please close the queries that were assigned at this stage to proceed further','','Approved','','','','','',0,current_timestamp,1000,0);
 			]]>
 		</sql>
-      </changeSet>
-      <changeSet id="101" author="Varaprasad.K">
+	</changeSet>
+	<changeSet id="101" author="Varaprasad.K">
 		<sql>
 	    	<![CDATA[
 	    	    update plf.errordetails set severity = 'W' where code = '65032'
@@ -3955,24 +3955,26 @@ UNION ALL
 			INSERT INTO SMTparameters  VALUES ('LATE_PAYMENT_INTEREST_CLIX', 'Late Payment Interest in SOA Report for Clix', 'String', '1', 'Y', 30, 0, NULL, NULL,NULL, 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL,0);
 		]]>
 		</sql>
-</changeSet>
+	</changeSet>
 
 
-<changeSet id="178" author="Manoj.P">
+	<changeSet id="178" author="Manoj.P">
 		<dropColumn tableName="loan_business_org_ed" columnName="creditmanager" />
-		<dropColumn tableName="loan_business_org_ed_temp" columnName="creditmanager" />
+		<dropColumn tableName="loan_business_org_ed_temp"
+			columnName="creditmanager" />
 		<dropColumn tableName="loan_business_org_ed" columnName="requestedloan" />
-		<dropColumn tableName="loan_business_org_ed_temp" columnName="requestedloan" />
-		
+		<dropColumn tableName="loan_business_org_ed_temp"
+			columnName="requestedloan" />
+
 		<dropColumn tableName="loan_laep_org_ed" columnName="creditmanager" />
 		<dropColumn tableName="loan_laep_org_ed_temp" columnName="creditmanager" />
 		<dropColumn tableName="loan_laep_org_ed" columnName="requestedloan" />
 		<dropColumn tableName="loan_laep_org_ed_temp" columnName="requestedloan" />
 	</changeSet>
-	
-	
+
+
 	<changeSet id="179" author="Manoj.P">
-	<sql>
+		<sql>
 		<![CDATA[
 				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='LAEP') and fieldname = 'CREDITMANAGER'
 				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='LAEP') and fieldname = 'REQUESTEDLOAN'
@@ -3981,9 +3983,9 @@ UNION ALL
 				delete  from plf.extendedfielddetail where moduleid = (select moduleid from plf.extendedfieldheader where modulename = 'LOAN' and submodulename='BUSINESS') and fieldname = 'REQUESTEDLOAN'
 
 			 ]]>
-	</sql>
-</changeSet>
-<changeSet id="202" author="Varaprasad.K">
+		</sql>
+	</changeSet>
+	<changeSet id="202" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
 				  	DELETE from SMTparameters WHERE SYSPARMCODE='MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE';
@@ -3991,13 +3993,30 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
-<changeSet id="180" author="Manoj.P">
-	<sql>
+
+	<changeSet id="180" author="Manoj.P">
+		<sql>
 		<![CDATA[
 			DELETE from SMTparameters WHERE SYSPARMCODE='DEVIATION_APPROVAL_FOR_SAMEROLE';
 		    INSERT INTO SMTparameters  VALUES ('DEVIATION_APPROVAL_FOR_SAMEROLE', 'To Approve deviations if user is having 2 roles', 'String', '1', 'Y', 1, 0, NULL, NULL,'To Approve deviations if user is having 2 roles', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
+
+	<changeSet id="103" author="Dheerendra">
+		<comment>Hunter Service- for PL</comment>
+		<sql>
+		<![CDATA[
+			    INSERT INTO plf.hunter_rule values( 'NH_NC_PAN', 'Same PAN Number as PAN Number on a Non Clear Submission','Reject');
+			    INSERT INTO plf.hunter_rule values('NH_NC_PER_ADD','Same Personal Address as Address on a Non Clear Submission','Reject');
+			    INSERT INTO plf.hunter_rule values('NH_NC_APP','Same Applicant as Applicant on a Non Clear Submission','Reject');
+			    INSERT INTO plf.hunter_rule values('NH_NC_MOB','Same Mobile Telephone as Telephone on a Non Clear Submission','Refer');
+			    INSERT INTO plf.hunter_rule values('NH_INC_PAN_PER','Same PAN, Different Person','Reject');
+			    INSERT INTO plf.hunter_rule values('NH_INC_MTEL_PER','Same Applicant Mobile Telephone - Different Main Applicant or PAN','Refer');
+			    INSERT INTO plf.hunter_rule values('NH_NC_DOC','Same Document as Document on a Non Clear Submission','Refer');
+			    INSERT INTO plf.hunter_rule values('NH_NC_EMA','Same Email as Email on a Non Clear Submission','Refer');
+
+		]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
