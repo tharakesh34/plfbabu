@@ -258,4 +258,13 @@
 	</changeSet>
 	
 	
+	<changeSet id="31" author="Durgaprasad G">
+		<sql>
+			<![CDATA[			
+			 	Update ADTFINANCEMAIN set SanBsdSchdle = 0 Where SanBsdSchdle is null;
+			 	Update ADTFINANCEMAIN set PromotionSeqID = 0 Where PromotionSeqID is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
