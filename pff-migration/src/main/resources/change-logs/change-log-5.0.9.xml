@@ -13830,6 +13830,7 @@ UNION ALL
 		<addDefaultValue columnName="PROMOTIONSEQID"
 			tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
+	
 	<changeSet id="234" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -13838,6 +13839,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="235" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -13862,6 +13864,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="236" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -13974,6 +13977,7 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
+	
 	<changeSet id="241" author="Varaprasad.K">
 		<addPrimaryKey constraintName="PK_AdviseId" tableName="AdviseUploads"
 			columnNames="AdviseId" />
@@ -13981,10 +13985,10 @@ UNION ALL
 			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
 	</changeSet>
 
-	<changeSet id="242 author=" Varaprasad.K ">
-		<createSequence sequenceName="SeqAdviseUploads"
-			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
-	</changeSet>
+	<changeSet id="242" author="Varaprasad.K">
+		<createSequence sequenceName="SeqAdviseUploads" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>	
+
 	<changeSet id="243" author="Varaprasad">
 		<createView viewName="AdviseUploads_AView" replaceIfExists="true">
 			SELECT
