@@ -14346,7 +14346,7 @@ UNION ALL
 	</createView>
 	</changeSet>
 
-	<changeSet id="257" author="Varaprasad">
+	<changeSet id="257" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_VIEW" replaceIfExists="true">
 	SELECT t1.uploadid,
     t1.filelocation,
@@ -14411,7 +14411,7 @@ UNION ALL
 	</createView>
 	</changeSet>
 
-	<changeSet id="258" author="Varaprasad">
+	<changeSet id="258" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_MAUVIEW"
 			replaceIfExists="true">
 		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader_Temp Where Module = 'ManualAdvise'
@@ -14419,5 +14419,13 @@ UNION ALL
   		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader 
   		Where 	Module = 'ManualAdvise' And NOT EXISTS ( SELECT 1  FROM UploadHeader_Temp WHERE UploadId = UploadHeader.UploadId )
 		</createView>
+	</changeSet>
+	<changeSet id="259" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOWED_BACKDATED_RECEIPT';
+				INSERT INTO SMTparameters  VALUES ('ALLOWED_BACKDATED_RECEIPT', 'Allow back dated Receipt or not', 'String', '1', 'Y', 1, 0, NULL, NULL, 'Allow back dated Receipt or not.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>

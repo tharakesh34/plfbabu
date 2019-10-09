@@ -4019,4 +4019,12 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	<changeSet id="104" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOWED_BACKDATED_RECEIPT';
+				INSERT INTO SMTparameters  VALUES ('ALLOWED_BACKDATED_RECEIPT', 'Allow back dated Receipt or not', 'String', '1', 'N', 1, 0, NULL, NULL, 'Allow back dated Receipt or not.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
