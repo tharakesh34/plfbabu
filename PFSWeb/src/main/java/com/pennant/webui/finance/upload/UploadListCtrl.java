@@ -241,6 +241,7 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		registerField("UserName");
 
 		setDefaultData();
+		doSetFieldProperties();
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -251,6 +252,18 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		search();
 
+	}
+
+	public void doSetFieldProperties() {
+		logger.debug("Entering");
+		this.entity.setMaxlength(8);
+		this.entity.setTextBoxWidth(135);
+		this.entity.setModuleName("Entity");
+		this.entity.setValueColumn("EntityCode");
+		this.entity.setDescColumn("EntityDesc");
+		this.entity.setValidateColumns(new String[] { "EntityCode" });
+
+		logger.debug("Leaving");
 	}
 
 	private void setDefaultData() {
