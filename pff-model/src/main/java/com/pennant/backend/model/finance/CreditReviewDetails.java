@@ -57,6 +57,7 @@ public class CreditReviewDetails {
 	private BigDecimal maxEmi =BigDecimal.ZERO;
 	private BigDecimal debitEqutiRatio =BigDecimal.ZERO;
 	private BigDecimal dsrcValue =BigDecimal.ZERO;
+	private BigDecimal grossRecipt =BigDecimal.ZERO;
 
 	public long getId() {
 		return id;
@@ -439,5 +440,13 @@ public class CreditReviewDetails {
 
 	public void setDsrcValue(BigDecimal dsrcValue) {
 		this.dsrcValue = dsrcValue;
+	}
+
+	public BigDecimal getGrossRecipt() {
+		return grossRecipt;
+	}
+
+	public void setGrossRecipt(BigDecimal grossRecipt) {
+		this.grossRecipt = grossRecipt;
 	}
 }

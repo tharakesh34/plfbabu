@@ -256,6 +256,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
 			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
+			dataMap.put("MARGINI", btMap.get("MARGINI"));
+			dataMap.put("Annual_Turnover", btMap.get("Annual_Turnover"));
 			
 			
 		} else {
@@ -273,6 +275,8 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
 			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
+			dataMap.put("MARGINI", btMap.get("MARGINI"));
+			dataMap.put("Annual_Turnover", btMap.get("Annual_Turnover"));
 		}
 
 		String fields = creditReviewDetails.getFields();

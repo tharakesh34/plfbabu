@@ -4691,6 +4691,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 								creditReviewDetail.setLoanAmout(PennantApplicationUtil.formateAmount(btLoanAmtTrack,
 										PennantConstants.defaultCCYDecPos));
 							}
+							if (mapValues.containsKey("CAS_GROSSRECEIPT")) {
+								BigDecimal btLoanAmtTrack = BigDecimal.ZERO;
+								if (mapValues.get("CAS_GROSSRECEIPT") != null) {
+									btLoanAmtTrack = (BigDecimal) mapValues.get("CAS_GROSSRECEIPT");
+								}
+								creditReviewDetail.setGrossRecipt(PennantApplicationUtil.formateAmount(btLoanAmtTrack,
+										PennantConstants.defaultCCYDecPos));
+							}
 						}
 					}
 
@@ -21430,7 +21438,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				creditReviewDetails.setTenor(tenor);
 				creditReviewDetails.setAddToEMI(abbEmiValue);
 			}
-			
+			setExtendedFieldsForCreditReview( fields, dataMap, creditReviewDetails, isFromLoan);
 			BigDecimal accBal = BigDecimal.ZERO;
 			BigDecimal bounceIn = BigDecimal.ZERO;
 			int debitNo =0;
@@ -21600,44 +21608,23 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							creditReviewDetails.setLoanAmout(btLoanAmtTrack);
 						}
 					}
-				} 
-				
-				/*else if ("SENP".equals(elgMethodValue)) { // If Eligibility
-					// Transfer)
-					BigDecimal abbEmi = BigDecimal.ZERO;
-					BigDecimal maxEmiValue = BigDecimal.ZERO;					
+				} else if ("CACS".contentEquals(elgMethodValue)) {
+					BigDecimal grossReceiptAmt = BigDecimal.ZERO;
 
-					if (window.getFellow("ad_SP_ABBTOEMI") instanceof CurrencyBox) {
-						abbEmi = ((CurrencyBox) window.getFellow("ad_SP_ABBTOEMI")).getActualValue();
-						if (abbEmi == null) {
-							abbEmi = BigDecimal.ZERO;
+					if (window.getFellow("ad_CAS_GROSSRECEIPT") instanceof CurrencyBox) {
+						grossReceiptAmt = ((CurrencyBox) window.getFellow("ad_CAS_GROSSRECEIPT")).getActualValue();
+						if (grossReceiptAmt == null) {
+							grossReceiptAmt = BigDecimal.ZERO;
+						}
+						if (!(creditReviewDetails.getGrossRecipt().compareTo(grossReceiptAmt) == 0)) {
+							fields.append("GrossRecipt,");
+							dataMap.put("GrossRecipt", String.valueOf(grossReceiptAmt));
+							if (!isFromLoan) {
+								creditReviewDetails.setGrossRecipt(grossReceiptAmt);
+							}
 						}
 					}
-
-					if (!(creditReviewDetails.getAddToEMI().compareTo(abbEmi) == 0)) {
-						fields.append("SP_ABBEMI,");
-						abbEmi=creditReviewDetails.getAvgBankBal().divide(finAmount);
-						dataMap.put("SP_ABBEMI", String.valueOf(abbEmi));
-						if (!isFromLoan) {
-							creditReviewDetails.setAddToEMI(abbEmi);
-						}
-					}
-
-					if (window.getFellow("ad_SP_MAXEMI") instanceof CurrencyBox) {
-						maxEmiValue = ((CurrencyBox) window.getFellow("ad_SP_MAXEMI")).getActualValue();
-						if (maxEmiValue == null) {
-							maxEmiValue = BigDecimal.ZERO;
-						}
-					}
-
-					if (!(creditReviewDetails.getMaxEmi().compareTo(maxEmiValue) == 0)) {
-						fields.append("SP_MAXEMI,");
-						dataMap.put("SP_MAXEMI", String.valueOf(maxEmiValue));
-						if (!isFromLoan) {
-							creditReviewDetails.setMaxEmi(new BigDecimal(123));
-						}
-					}
-				}*/
+				}
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}

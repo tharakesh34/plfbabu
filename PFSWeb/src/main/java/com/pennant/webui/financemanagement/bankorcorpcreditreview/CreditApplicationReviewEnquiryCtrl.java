@@ -1107,21 +1107,49 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
-			btMap.put("DSCR_PBDIT", custWiseDataMap.get("Y2_DSCR_PBDIT"));
-			btMap.put("EMI_ALL_LOANS", custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"));
 			btMap.put("DSCR_GF", custWiseDataMap.get("Y2_DSCR_GF"));
 			btMap.put("CRNTRATIO", custWiseDataMap.get("Y2_CRNT_RATIO"));
-			
+			btMap.put("MARGINI", custWiseDataMap.get("Y2_SM_MARGIN"));
+
+			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
+				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
+						this.currFormatter));
+			} else {
+				btMap.put("DSCR_GF", 0);
+			}
+
+			if (custWiseDataMap.get("Y2_DSCR_PBDIT") != null) {
+				btMap.put("DSCR_PBDIT", PennantAppUtil
+						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_PBDIT")), this.currFormatter));
+			} else {
+				btMap.put("DSCR_PBDIT", 0);
+			}
+
+			if (custWiseDataMap.get("Y2_EMI_12_ALL_LOANS") != null) {
+				btMap.put("EMI_ALL_LOANS", PennantAppUtil
+						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS")), this.currFormatter));
+			} else {
+				btMap.put("EMI_ALL_LOANS", 0);
+			}
+
+			if (custWiseDataMap.get("Y2_SALES_OTHER_INCOME") != null) {
+				btMap.put("Annual_Turnover", PennantAppUtil.formateAmount(
+						new BigDecimal(custWiseDataMap.get("Y2_SALES_OTHER_INCOME")), this.currFormatter));
+			} else {
+				btMap.put("Annual_Turnover", 0);
+			}
+
 			if (custWiseDataMap.get("Y2_DEBT_EQUITY") != null) {
-				btMap.put("DEBTEQUITY", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
+				btMap.put("DEBTEQUITY", PennantAppUtil
+						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
 			} else {
 				btMap.put("DEBTEQUITY", 0);
 			}
-			
+
 			if (i == 0) {
 				break;
 			}
-			
+
 			i = i - 1;
 		}
 		custIds.remove(this.custID.getValue());
@@ -1130,7 +1158,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		map.put("userRole", getRole());
 		map.put("isEditable", isReadOnly("FinanceMainDialog_EligibilitySal"));
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul", tabPanel, map);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
