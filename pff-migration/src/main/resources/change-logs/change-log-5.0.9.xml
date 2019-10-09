@@ -13782,6 +13782,22 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="232_pre" author="Durgaprasad G" dbms="mssql">
+		<sql>
+			<![CDATA[
+
+				alter table FINANCEMAIN drop constraint DF_FINANCEMAIN_SanBsdSchdle;
+				alter table FINANCEMAIN drop constraint DF_FINANCEMAIN_PromotionSeqID;
+				
+				alter table FINANCEMAIN_PA drop constraint DF_FINANCEMAIN_PA_SanBsdSchdle;
+				alter table FINANCEMAIN_PA drop constraint DF_FINANCEMAIN_PA_PromotionSeqID;
+				
+				alter table FINANCEMAIN_TEMP drop constraint DF_FINANCEMAIN_TEMP_SanBsdSchdle;
+				alter table FINANCEMAIN_TEMP drop constraint DF_FINANCEMAIN_TEMP_PromotionSeqID;
+			]]>
+		</sql>
+	</changeSet> 
 
 	<changeSet id="232" author="Durgaprasad G" dbms="mssql">
 		<sql>
