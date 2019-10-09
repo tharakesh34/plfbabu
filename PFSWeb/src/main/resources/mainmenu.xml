@@ -1047,6 +1047,11 @@
 		<menuItem id="menu_Item_LenderUpload"
 			zulNavigation="/WEB-INF/pages/LenderUpload/LenderDataUpload.zul"
 			rightName="menuItem_LenderUpload" />
+		<!-- Manual Advise Upload -->
+	   	<menu id="menu_Category_AdviseUpload" rightName="menuItem_AdviseUpload">
+		    <menuItem id="menu_Item_AdviseUpload_Maker" zulNavigation="/WEB-INF/pages/Finance/UploadManualAdvise/UploadAdviseDialog.zul"  rightName="menuItem_AdviseUpload"/>
+		    <menuItem id="menu_Item_AdviseUpload_Approver" zulNavigation="/WEB-INF/pages/Finance/Uploads/UploadList.zul?module=AdviseApprover"  rightName="menuItem_AdviseUpload"/>
+	   	</menu>
 	</menu>
 	<!-- Insurance Module -->
 	<menu id="menu_Category_Insurance">

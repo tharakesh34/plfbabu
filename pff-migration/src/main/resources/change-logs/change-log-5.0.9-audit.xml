@@ -266,5 +266,66 @@
 			]]>
 		</sql>
 	</changeSet>
+	 <changeSet id="32" author="Varaprasad.K">
+		<createTable tableName="AdtAdviseUploads">
+		    <column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+		    <column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)"/>
+			<column name="AdviseType" type="char(1)"/>
+			<column name="FeeTypeCode" type="varchar(8)"/>
+			<column name="ValueDate" type="datetime" />
+			<column name="AdviseAmount" type="decimal(18,2)" defaultValue="0"/>
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="manualadviseid" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="33" author="Varaprasad.K">
+		<addColumn tableName="AdtManualAdvise">
+			<column name="FinSource" type="varchar(8)" defaultValue="PFF">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="34" author="Varaprasad.K">
+	<addColumn tableName="AdtUploadHeader">
+	    <column name="FILEDOWNLOAD" type="Boolean" />
+		<column name="ApprovedDate" type="datetime" />
+		<column name="MakerId" type="bigint" defaultValue="0" />
+		<column name="ApproverId" type="bigint" defaultValue="0" />
+	</addColumn>
+    </changeSet> 
 	
 </databaseChangeLog>

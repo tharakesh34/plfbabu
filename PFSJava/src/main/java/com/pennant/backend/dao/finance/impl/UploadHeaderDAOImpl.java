@@ -39,9 +39,11 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
+
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -54,7 +56,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.UploadHeaderDAO;
+import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.expenses.UploadHeader;
+import com.pennant.backend.model.receiptupload.UploadReceipt;
+import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -79,10 +84,10 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		UploadHeader uploadHeader = new UploadHeader();
 		uploadHeader.setUploadId(uploadId);
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module,");
-		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql
+				.append(" SELECT UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module, FileDownload,");
+		selectSql
+				.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ApprovedDate, MakerId, ApproverId");
 		selectSql.append(" From UploadHeader");
 		selectSql.append(" WHERE  UploadId = :UploadId ");
 
@@ -154,14 +159,10 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		}
 
 		sql.append(" Insert Into UploadHeader");
-		sql.append(
-				" (UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module,");
-		sql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(
-				" Values (:UploadId, :FileLocation, :FileName, :TransactionDate, :TotalRecords, :SuccessCount, :FailedCount, :Module,");
-		sql.append(
-				" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount, Module,");
+		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values (:UploadId, :FileLocation, :FileName, :TransactionDate, :TotalRecords, :SuccessCount, :FailedCount, :Module,");
+		sql.append(" :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("sql: " + sql.toString());
 
@@ -178,12 +179,12 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		logger.debug("Entering");
 
 		StringBuilder updateSql = new StringBuilder("Update UploadHeader");
-		updateSql.append(
-				" Set SuccessCount = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where Status = 'SUCCESS' And UploadId = :UploadId)");
-		updateSql.append(
-				" , FailedCount = (Select Count(UploadId) As FailedCount from UploadFinExpenses where Status = 'FAILED' And UploadId = :UploadId)");
-		updateSql.append(
-				" , TotalRecords = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where UploadId = :UploadId)");
+		updateSql
+				.append(" Set SuccessCount = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where Status = 'SUCCESS' And UploadId = :UploadId)");
+		updateSql
+				.append(" , FailedCount = (Select Count(UploadId) As FailedCount from UploadFinExpenses where Status = 'FAILED' And UploadId = :UploadId)");
+		updateSql
+				.append(" , TotalRecords = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where UploadId = :UploadId)");
 		updateSql.append(" Where UploadId = :UploadId");
 
 		logger.debug("updateSql: " + updateSql.toString());
@@ -218,8 +219,8 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		uploadHeader.setUploadId(uploadId);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount");
-		sql.append(", FailedCount, Module, entityCode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", FailedCount, Module, entityCode, FileDownload,Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId , ApprovedDate, MakerId, ApproverId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", UserName");
 		}
@@ -281,11 +282,11 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		sql.append(" Insert Into UploadHeader");
 		sql.append(tableType.getSuffix());
 		sql.append(" (UploadId, FileLocation, FileName, TransactionDate, TotalRecords, SuccessCount, FailedCount");
-		sql.append(", Module, entityCode, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(", Module, entityCode, FileDownload, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId, ApprovedDate, MakerId, ApproverId)");
 		sql.append(" Values (:UploadId, :FileLocation, :FileName, :TransactionDate, :TotalRecords, :SuccessCount");
-		sql.append(", :FailedCount, :Module, :entityCode, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
-		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(", :FailedCount, :Module, :entityCode, :FileDownload, :Version, :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode");
+		sql.append(", :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ApprovedDate, :MakerId, :ApproverId)");
 
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -306,11 +307,11 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		sql.append(tableType.getSuffix());
 		sql.append(" set FileLocation = :FileLocation, FileName = :FileName, TransactionDate = :TransactionDate,");
 		sql.append(" TotalRecords = :TotalRecords, SuccessCount = :SuccessCount, FailedCount = :FailedCount,");
-		sql.append(" Module = :Module,  entityCode =:entityCode,");
+		sql.append(" Module = :Module,  entityCode =:entityCode, FileDownload = :FileDownload,");
 		sql.append(" Version = :Version, LastMntBy = :LastMntBy,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId ,ApprovedDate = :ApprovedDate, MakerId = :MakerId, ApproverId= :ApproverId");
 		sql.append(" where UploadId = :UploadId");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
@@ -333,9 +334,11 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		StringBuilder updateSql = new StringBuilder("Update UploadHeader");
 		updateSql.append(" Set SuccessCount = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where");
-		updateSql.append(" Status = 'SUCCESS' And UploadId = :UploadId), FailedCount = (Select Count(UploadId) As FailedCount");
+		updateSql
+				.append(" Status = 'SUCCESS' And UploadId = :UploadId), FailedCount = (Select Count(UploadId) As FailedCount");
 		updateSql.append(" from UploadFinExpenses where Status = 'FAILED' And UploadId = :UploadId)");
-		updateSql.append(", TotalRecords = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where UploadId = :UploadId)");
+		updateSql
+				.append(", TotalRecords = (Select Count(UploadId) As SuccessCount from UploadFinExpenses where UploadId = :UploadId)");
 		updateSql.append(" Where UploadId = :UploadId");
 
 		logger.debug(Literal.SQL + updateSql.toString());
@@ -410,5 +413,81 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 
 		logger.debug(Literal.LEAVING);
 		return exists;
+	}
+
+	/**
+	 * This method set the Work Flow id based on the module name and return the new FinanceMain
+	 * 
+	 * @return FinanceMain
+	 */
+	@Override
+	public UploadHeader getUploadHeader() {
+		logger.debug("Entering");
+
+		String moduleName = "UploadHeader";
+
+		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails(moduleName);
+		UploadHeader uploadHeader = new UploadHeader();
+		if (workFlowDetails != null) {
+			uploadHeader.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+		logger.debug("Leaving");
+		return uploadHeader;
+	}
+
+	@Override
+	public boolean isFileDownload(long uploadID, String tableType) {
+		logger.debug("Entering");
+
+		boolean isFileDownload = false;
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT Filedownload From UploadHeader");
+		selectSql.append(tableType);
+		selectSql.append(" WHERE  uploadID = :UploadID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("UploadID", uploadID);
+
+		try {
+			isFileDownload = jdbcTemplate.queryForObject(selectSql.toString(), source, Boolean.class);
+		} catch (EmptyResultDataAccessException e) {
+			isFileDownload = false;
+		}
+
+		logger.debug("Leaving");
+		return isFileDownload;
+	}
+
+	@Override
+	public List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId) {
+		logger.debug("Entering");
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+		mapSqlParameterSource.addValue("UploadId", uploadId);
+		StringBuilder selectSql = new StringBuilder("Select Count(UploadId) Count, Status ");
+		selectSql.append(" from UploadReceipt  ");
+		selectSql.append(" Where UploadId = :UploadId Group By STATUS");
+
+		logger.debug("selectListSql: " + selectSql.toString());
+		RowMapper<UploadReceipt> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(UploadReceipt.class);
+		logger.debug("Leaving");
+
+		return jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
+
+	@Override
+	public void updateFRRHeaderRecord(UploadHeader uploadHeader) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder updateSql = new StringBuilder("Update UploadHeader");
+		updateSql
+				.append(" Set SuccessCount = :SuccessCount,  FailedCount = FailedCount + :FailedCount, TotalRecords = TotalRecords + :TotalRecords");
+		updateSql.append(" Where UploadId =:UploadId");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadHeader);
+		jdbcTemplate.update(updateSql.toString(), beanParameters);
+
+		logger.debug(Literal.LEAVING);
 	}
 }

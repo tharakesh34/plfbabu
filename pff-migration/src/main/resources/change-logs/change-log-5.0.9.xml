@@ -13832,4 +13832,592 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="235" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+		
+				delete FROM SecRights where RightName='menuItem_AdviseUpload';
+				delete FROM SecRights where RightName='button_UploadList_NewAdviseUpload';
+				delete FROM SecRights where RightName='button_AdviseUploadDialog_btnDelete';
+				delete FROM SecRights where RightName='button_AdviseUploadDialog_btnSave';
+				delete FROM SecRights where RightName='button_AdviseUploadDialog_btnBrowse';
+				delete FROM SecRights where RightName='AdviseUploadDialog_txtFileName';
+				delete FROM SecRights where RightName='AdviseUploadDialog_uploadEntity';
+		
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 0, 'menuItem_AdviseUpload','MENU',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_UploadList_NewAdviseUpload','UploadList',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AdviseUploadDialog_btnDelete','AdviseUploadDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AdviseUploadDialog_btnSave','AdviseUploadDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 2, 'button_AdviseUploadDialog_btnBrowse','AdviseUploadDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AdviseUploadDialog_txtFileName','AdviseUploadDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0			FROM SEQSECRIGHTS WHERE 0=0;
+				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3, 'AdviseUploadDialog_uploadEntity','AdviseUploadDialog',0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECRIGHTS WHERE 0=0;
+				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="236" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'UPLOAD_MANUALADVISE_MAKER', 'Manual advise upload maker', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECGROUPS WHERE 0=0;
+				INSERT INTO SECGROUPS SELECT (SELECT MAX(GRPID)+1 FROM SECGROUPS), 'UPLOAD_MANUALADVISE_APPROVER', 'Manual advise upload approver', 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0 FROM SEQSECGROUPS WHERE 0=0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="237" author="Varaprasad.K">
+		<sql>
+		    <![CDATA[
+					UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_UploadList_NewAdviseUpload');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_AdviseUpload');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnSave');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnBrowse');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AdviseUploadDialog_txtFileName');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AdviseUploadDialog_uploadEntity');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_APPROVER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnSave');
+					DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_APPROVER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_AdviseUpload');
+					
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_UploadList_NewAdviseUpload'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_AdviseUpload'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnBrowse'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AdviseUploadDialog_txtFileName'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_MAKER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='AdviseUploadDialog_uploadEntity'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_AdviseUploadDialog_btnSave'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='UPLOAD_MANUALADVISE_APPROVER') ,(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='menuItem_AdviseUpload'), 1, 0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					
+					UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="238" author="Varaprasad.K">
+		<sql>
+		    <![CDATA[
+					INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where GrpCode='UPLOAD_MANUALADVISE_MAKER'), (Select RoleID From SecRoles Where RoleCd='MSTGRP1_MAKER'),0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+					INSERT INTO SecRoleGroups values((Select MAX(RoleGrpID)+1 From SecRoleGroups),(Select GrpId From SecGroups Where GrpCode='UPLOAD_MANUALADVISE_APPROVER'), (Select RoleID From SecRoles Where RoleCd='MSTGRP1_APPROVER'),0,1000,CURRENT_TIMESTAMP,NULL,NULL,NULL,NULL,NULL,NULL,0);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="239" author="Varaprasad.K">
+		<createTable tableName="AdviseUploads">
+			<column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="AdviseType" type="char(1)" />
+			<column name="FeeTypeCode" type="varchar(8)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="AdviseAmount" type="decimal(18,0)" defaultValue="0" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="manualadviseid" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="240" author="Varaprasad.K">
+		<createTable tableName="AdviseUploads_Temp">
+			<column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="AdviseType" type="char(1)" />
+			<column name="FeeTypeCode" type="varchar(8)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="AdviseAmount" type="decimal(18, 0)"
+				defaultValue="0" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint" defaultValue="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="manualadviseid" type="bigint" />
+		</createTable>
+	</changeSet>
+	<changeSet id="241" author="Varaprasad.K">
+		<addPrimaryKey constraintName="PK_AdviseId" tableName="AdviseUploads"
+			columnNames="AdviseId" />
+		<addPrimaryKey constraintName="PK_AdviseId_Temp_ID"
+			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
+	</changeSet>
+
+	<changeSet id="242 author="Varaprasad.K">
+		<createSequence sequenceName="SeqAdviseUploads"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="243" author="Varaprasad">
+		<createView viewName="AdviseUploads_AView" replaceIfExists="true">
+			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, COALESCE(T1.AdviseAmount, 0) AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
+			FROM 		AdviseUploads T1
+            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+		</createView>
+	</changeSet>
+
+	<changeSet id="244" author="Varaprasad.K">
+		<createView viewName="AdviseUploads_TView" replaceIfExists="true">
+			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+                        COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
+			FROM 		AdviseUploads_temp T1
+            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+		</createView>
+	</changeSet>
+
+	<changeSet id="245" author="Varaprasad.K">
+		<createView viewName="AdviseUploads_View" replaceIfExists="true">
+			 SELECT 	T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
+			FROM 		AdviseUploads_temp T1
+            Left Join FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+			UNION ALL
+			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
+						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
+            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
+			FROM 		AdviseUploads T1
+            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+			WHERE       NOT EXISTS(SELECT 1 FROM AdviseUploads_temp WHERE FinReference = T1.FinReference)
+			</createView>
+	</changeSet>
+
+
+	<changeSet id="246" author="Varaprasad.K">
+		<addColumn tableName="ManualAdvise">
+			<column name="FinSource" type="varchar(8)" defaultValue="PFF">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="247" author="Varaprasad.K">
+		<addColumn tableName="ManualAdvise_Temp">
+			<column name="FinSource" type="varchar(8)" defaultValue="PFF">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="248_pre" author="Durgaprasad G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'manualadvise_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="248" author="Varaprasad.K">
+		<comment>FinSource column added</comment>
+		<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
+     SELECT t1.adviseid,
+    t1.advisetype,
+    t1.finreference,
+    t1.feetypeid,
+    t1.sequence,
+    t1.adviseamount,
+    t1.paidamount,
+    t1.waivedamount,
+    t1.remarks,
+    t1.valuedate,
+    t1.postdate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypedesc,
+    t2.feetypecode,
+    t1.bounceid,
+    t1.receiptid,
+    t3.bouncecode,
+    t1.reservedamt,
+    t1.balanceamt,
+    t3.reason AS bouncecodedesc,
+    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+    t2.taxcomponent,
+    t1.paidcgst,
+    t1.paidsgst,
+    t1.paidigst,
+    t1.paidugst,
+    t1.waivedcgst,
+    t1.waivedsgst,
+    t1.waivedugst,
+    t1.waivedigst,
+    t1.waivedcess,
+    t1.paidcess,
+	t1.finSource
+   FROM plf.manualadvise t1
+     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+	</createView>
+	</changeSet>
+	<changeSet id="248_post" author="Varaprasad.K" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'manualadvise_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="249" author="Varaprasad.K">
+		<comment>FinSource column added</comment>
+		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
+	    SELECT t1.adviseid,
+    t1.advisetype,
+    t1.finreference,
+    t1.feetypeid,
+    t1.sequence,
+    t1.adviseamount,
+    t1.paidamount,
+    t1.waivedamount,
+    t1.remarks,
+    t1.valuedate,
+    t1.postdate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypedesc,
+    t2.feetypecode,
+    t1.bounceid,
+    t1.receiptid,
+    t3.bouncecode,
+    t1.reservedamt,
+    t1.balanceamt,
+    t3.reason AS bouncecodedesc,
+    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+    t2.taxcomponent,
+    t1.paidcgst,
+    t1.paidsgst,
+    t1.paidigst,
+    t1.paidugst,
+    t1.waivedcgst,
+    t1.waivedsgst,
+    t1.waivedugst,
+    t1.waivedigst,
+	t1.finSource
+   FROM plf.manualadvise t1
+     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+	</createView>
+	</changeSet>
+
+	<changeSet id="250" author="Varaprasad.K">
+		<comment>FinSource column added</comment>
+		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
+	    SELECT t1.adviseid,
+    t1.advisetype,
+    t1.finreference,
+    t1.feetypeid,
+    t1.sequence,
+    t1.adviseamount,
+    t1.paidamount,
+    t1.waivedamount,
+    t1.remarks,
+    t1.valuedate,
+    t1.postdate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypedesc,
+    t2.feetypecode,
+    t1.bounceid,
+    t1.receiptid,
+    t3.bouncecode,
+    t1.reservedamt,
+    t1.balanceamt,
+    t3.reason AS bouncecodedesc,
+    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+    t2.taxcomponent,
+    t1.paidcgst,
+    t1.paidsgst,
+    t1.paidigst,
+    t1.paidugst,
+    t1.waivedcgst,
+    t1.waivedsgst,
+    t1.waivedugst,
+    t1.waivedigst,
+    t1.waivedcess,
+    t1.paidcess,
+	T1.FinSource
+   FROM plf.manualadvise_temp t1
+     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+	</createView>
+	</changeSet>
+
+	<changeSet id="251" author="Varaprasad.K">
+		<comment>FinSource column added</comment>
+		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
+	    SELECT t1.adviseid,
+    t1.advisetype,
+    t1.finreference,
+    t1.feetypeid,
+    t1.sequence,
+    t1.adviseamount,
+    t1.paidamount,
+    t1.waivedamount,
+    t1.remarks,
+    t1.valuedate,
+    t1.postdate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypedesc,
+    t2.feetypecode,
+    t1.bounceid,
+    t1.receiptid,
+    t3.bouncecode,
+    t1.reservedamt,
+    t1.balanceamt,
+    t3.reason AS bouncecodedesc,
+    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+    t2.taxcomponent,
+    t1.paidcgst,
+    t1.paidsgst,
+    t1.paidigst,
+    t1.paidugst,
+    t1.waivedcgst,
+    t1.waivedsgst,
+    t1.waivedugst,
+    t1.waivedigst,
+    t1.waivedcess,
+    t1.paidcess,
+	T1.FinSource
+   FROM plf.manualadvise_temp t1
+     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+UNION ALL
+ SELECT t1.adviseid,
+    t1.advisetype,
+    t1.finreference,
+    t1.feetypeid,
+    t1.sequence,
+    t1.adviseamount,
+    t1.paidamount,
+    t1.waivedamount,
+    t1.remarks,
+    t1.valuedate,
+    t1.postdate,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    t2.feetypedesc,
+    t2.feetypecode,
+    t1.bounceid,
+    t1.receiptid,
+    t3.bouncecode,
+    t1.reservedamt,
+    t1.balanceamt,
+    t3.reason AS bouncecodedesc,
+    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+    t2.taxcomponent,
+    t1.paidcgst,
+    t1.paidsgst,
+    t1.paidigst,
+    t1.paidugst,
+    t1.waivedcgst,
+    t1.waivedsgst,
+    t1.waivedugst,
+    t1.waivedigst,
+    t1.waivedcess,
+    t1.paidcess,
+	T1.FinSource
+   FROM plf.manualadvise t1
+     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM plf.manualadvise_temp
+          WHERE manualadvise_temp.adviseid = t1.adviseid))
+	</createView>
+	</changeSet>
+
+	<changeSet id="252" author="Varaprasad.K">
+		<sql>
+			update reportlist set Reportheading='Upload Details' where
+			code='UploadHeader';
+		</sql>
+	</changeSet>
+
+	<changeSet id="253" author="Varaprasad.K">
+		<addColumn tableName="UploadHeader">
+			<column name="FILEDOWNLOAD" type="Boolean" />
+			<column name="ApprovedDate" type="datetime" />
+			<column name="MakerId" type="bigint" defaultValue="0" />
+			<column name="ApproverId" type="bigint" defaultValue="0" />
+
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="254" author="Varaprasad.K">
+		<addColumn tableName="UploadHeader_temp">
+			<column name="FILEDOWNLOAD" type="Boolean" />
+			<column name="ApprovedDate" type="datetime" />
+			<column name="MakerId" type="bigint" defaultValue="0" />
+			<column name="ApproverId" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="255" author="Varaprasad.K">
+		<createView viewName="UPLOADHEADER_AVIEW" replaceIfExists="true">
+	  SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module, T1.FileDownload,
+				    T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ApprovedDate, T1.MakerId, T1.ApproverId, 
+                    T1.EntityCODE, T2.EntityDesc, T3.UsrLogIn USERNAME
+	  FROM 	        UploadHeader T1 LEFT JOIN	
+	                Entity T2 ON T1.EntityCode = T2.EntityCode LEFT JOIN 
+	                SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+	</createView>
+	</changeSet>
+
+	<changeSet id="256" author="Varaprasad.K">
+		<createView viewName="UPLOADHEADER_TVIEW" replaceIfExists="true">
+	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module,  
+				T1.FileDownload,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ApprovedDate, T1.MakerId, T1.ApproverId,
+				T1.EntityCODE, T2.EntityDesc, T3.UsrLogIn USERNAME
+	FROM 		UploadHeader_Temp T1 LEFT JOIN	
+	            Entity T2 ON T1.EntityCode = T2.EntityCode LEFT JOIN 
+				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+	</createView>
+	</changeSet>
+
+	<changeSet id="257" author="Varaprasad">
+		<createView viewName="UPLOADHEADER_VIEW" replaceIfExists="true">
+	SELECT t1.uploadid,
+    t1.filelocation,
+    t1.filename,
+    t1.transactiondate,
+    t1.totalrecords,
+    t1.successcount,
+    t1.failedcount,
+    t1.module,
+	t1.filedownload,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    T1.ApprovedDate, 
+    T1.MakerId, 
+    T1.ApproverId, 
+    t1.entitycode,
+    t2.entitydesc,
+    t3.usrlogin AS username
+   FROM plf.uploadheader_temp t1
+     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
+     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+UNION ALL
+ SELECT t1.uploadid,
+    t1.filelocation,
+    t1.filename,
+    t1.transactiondate,
+    t1.totalrecords,
+    t1.successcount,
+    t1.failedcount,
+    t1.module,
+	t1.filedownload,
+    t1.version,
+    t1.lastmntby,
+    t1.lastmnton,
+    t1.recordstatus,
+    t1.rolecode,
+    t1.nextrolecode,
+    t1.taskid,
+    t1.nexttaskid,
+    t1.recordtype,
+    t1.workflowid,
+    T1.ApprovedDate, 
+    T1.MakerId, 
+    T1.ApproverId,
+    t1.entitycode,
+    t2.entitydesc,
+    t3.usrlogin AS username
+   FROM plf.uploadheader t1
+     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
+     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+  WHERE NOT (EXISTS ( SELECT 1
+           FROM plf.uploadheader_temp
+          WHERE uploadheader_temp.uploadid = t1.uploadid))
+	</createView>
+	</changeSet>
+
+	<changeSet id="258" author="Varaprasad">
+		<createView viewName="UPLOADHEADER_MAUVIEW"
+			replaceIfExists="true">
+		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader_Temp Where Module = 'ManualAdvise'
+ 		Union All 
+  		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader 
+  		Where 	Module = 'ManualAdvise' And NOT EXISTS ( SELECT 1  FROM UploadHeader_Temp WHERE UploadId = UploadHeader.UploadId )
+		</createView>
+	</changeSet>
 </databaseChangeLog>

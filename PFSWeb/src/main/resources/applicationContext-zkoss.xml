@@ -5496,7 +5496,12 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="extInterfaceConfigurationService" ref="extInterfaceConfigurationService" />
 	</bean>
-	
+	<!-- Manual Advise Upload -->
+	<bean id="uploadAdviseDialogCtrl" class="com.pennant.webui.finance.upload.UploadAdviseDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="uploadHeaderService" ref="uploadHeaderService" />
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
+		<property name="financeMainService" ref="financeMainService" />
+	</bean>
 	
 	
 </beans>

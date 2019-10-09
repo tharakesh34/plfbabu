@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.finance;
 
@@ -54,8 +54,11 @@ import com.pennant.backend.model.expenses.UploadFinExpenses;
 import com.pennant.backend.model.expenses.UploadFinTypeExpense;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
+import com.pennant.backend.model.receiptupload.UploadReceipt;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 
 public interface UploadHeaderService {
@@ -127,4 +130,17 @@ public interface UploadHeaderService {
 	void updateFileDownload(long uploadId, boolean fileDownload, String type);
 
 	List<MiscPostingUpload> getMiscPostingUploadListByUploadId(long uploadId);
+
+	UploadHeader getUploadHeader();
+
+	FeeType getApprovedFeeTypeByFeeCode(String finTypeCode);
+
+	List<String> getFinEventByFinRef(String finReference, String type);
+
+	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId);
+
+	boolean isFileDownload(long uploadID, String tableType);
+
+	List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId);
+
 }

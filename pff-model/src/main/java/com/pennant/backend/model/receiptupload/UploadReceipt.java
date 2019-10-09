@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  UploadHeaderDAO.java                                                 * 	  
+ * FileName    		:  UploadFinExpenses.java                                               * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
  * Creation Date    :  17-12-2017    														*
  *                                                                  						*
- * Modified Date    :  17-12-2017    														*
+ * Modified Date    :  17-12-2017     														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 17-12-2017       Pennant	                 0.1                                            * 
+ * 27-05-2011       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,47 +40,61 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.dao.finance;
+package com.pennant.backend.model.receiptupload;
 
-import java.util.List;
+public class UploadReceipt {
 
-import com.pennant.backend.model.expenses.UploadHeader;
-import com.pennant.backend.model.receiptupload.UploadReceipt;
-import com.pennanttech.pff.core.TableType;
+	private long		uploadId		= 0;
+	private String		finReference	= null;
+	
+	private String		status;
+	private String		reason;
+	private int			count			= 0;
 
-public interface UploadHeaderDAO {
+	public UploadReceipt() {
+		super();
+	}
 
-	UploadHeader getUploadHeader(long uploadId);
+	public long getUploadId() {
+		return uploadId;
+	}
 
-	UploadHeader getUploadHeaderById(long uploadId, String type);
+	public void setUploadId(long uploadId) {
+		this.uploadId = uploadId;
+	}
 
-	boolean isFileNameExist(String fileName);
 
-	long save(UploadHeader uploadHeader);
+	public String getFinReference() {
+		return finReference;
+	}
 
-	void updateRecordCounts(UploadHeader uploadHeader);
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
 
-	void updateRecord(UploadHeader uploadHeader);
 
-	// ManualJVPosting CR
-	void updateFileDownload(long uploadId, boolean fileDownload, String type);
+	public String getStatus() {
+		return status;
+	}
 
-	public long save(UploadHeader uploadHeader, TableType tableType);
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-	void update(UploadHeader uploadHeader, TableType tableType);
+	public String getReason() {
+		return reason;
+	}
 
-	void updateRecordCounts(UploadHeader uploadHeader, TableType tableType);
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
-	void delete(UploadHeader uploadHeader, TableType tableType);
+	public int getCount() {
+		return count;
+	}
 
-	boolean isDuplicateKey(long uploadId, String fileName, TableType tableType);
-
-	UploadHeader getUploadHeader();
-
-	boolean isFileDownload(long uploadID, String tableType);
-
-	List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId);
-
-	void updateFRRHeaderRecord(UploadHeader uploadHeader);
-
+	public void setCount(int count) {
+		this.count = count;
+	}
+	
 }

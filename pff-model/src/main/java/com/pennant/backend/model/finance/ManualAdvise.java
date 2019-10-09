@@ -62,7 +62,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>ManualAdvise table</b>.<br>
  *
  */
-@XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode", "adviseAmount", "valueDate", "remarks" })
+@XmlType(propOrder = { "finReference", "adviseType", "feeTypeCode",
+		"adviseAmount", "valueDate", "remarks" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -118,14 +119,23 @@ public class ManualAdvise extends AbstractWorkflowEntity implements Entity {
 	private String bounceCodeDesc;
 	private long receiptID = 0;
 
-	//GST fields
+	// GST fields
 	private boolean taxApplicable;
 	private String taxComponent;
 
-	//API fields
+	// API fields
 	@XmlElement
 	private boolean stp;
 	private String finSourceId;
+	private String finSource = "PFF";
+
+	public String getFinSource() {
+		return finSource;
+	}
+
+	public void setFinSource(String finSource) {
+		this.finSource = finSource;
+	}
 
 	public boolean isNew() {
 		return isNewRecord();

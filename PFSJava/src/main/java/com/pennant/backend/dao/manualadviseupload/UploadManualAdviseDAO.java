@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  UploadHeaderDAO.java                                                 * 	  
+ * FileName    		:  RefundUploadDAO.java                                                 * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  17-12-2017    														*
+ * Creation Date    :  08-10-2018    														*
  *                                                                  						*
- * Modified Date    :  17-12-2017    														*
+ * Modified Date    :  08-10-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 17-12-2017       Pennant	                 0.1                                            * 
+ * 08-10-2018       Pennant	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,47 +40,30 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-package com.pennant.backend.dao.finance;
+
+package com.pennant.backend.dao.manualadviseupload;
 
 import java.util.List;
 
-import com.pennant.backend.model.expenses.UploadHeader;
-import com.pennant.backend.model.receiptupload.UploadReceipt;
-import com.pennanttech.pff.core.TableType;
+import com.pennant.backend.model.finance.UploadManualAdvise;
 
-public interface UploadHeaderDAO {
 
-	UploadHeader getUploadHeader(long uploadId);
+/**
+ * DAO methods declaration for the <b>ManualAdviseUpload model</b> class.<br>
+ * 
+ */
+public interface UploadManualAdviseDAO {
 
-	UploadHeader getUploadHeaderById(long uploadId, String type);
+	List<UploadManualAdvise> getAdviseUploadsByUploadId(long uploadId, String type);
 
-	boolean isFileNameExist(String fileName);
+	void update(UploadManualAdvise adviseupload, String type);
 
-	long save(UploadHeader uploadHeader);
+	String save(UploadManualAdvise adviseupload, String type);
 
-	void updateRecordCounts(UploadHeader uploadHeader);
+	void deleteByUploadId(long uploadId, String type);
 
-	void updateRecord(UploadHeader uploadHeader);
-
-	// ManualJVPosting CR
-	void updateFileDownload(long uploadId, boolean fileDownload, String type);
-
-	public long save(UploadHeader uploadHeader, TableType tableType);
-
-	void update(UploadHeader uploadHeader, TableType tableType);
-
-	void updateRecordCounts(UploadHeader uploadHeader, TableType tableType);
-
-	void delete(UploadHeader uploadHeader, TableType tableType);
-
-	boolean isDuplicateKey(long uploadId, String fileName, TableType tableType);
-
-	UploadHeader getUploadHeader();
-
-	boolean isFileDownload(long uploadID, String tableType);
-
-	List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId);
-
-	void updateFRRHeaderRecord(UploadHeader uploadHeader);
+	boolean getAdviseUploadsByFinReference(String finReference, long uploadId, String type);
+	
+	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type);
 
 }

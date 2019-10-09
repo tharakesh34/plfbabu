@@ -68,4 +68,16 @@ public class UploadConstants {
 
 	public static final String MISC_POSTING_UPLOAD = "MiscPostingUpload";
 
+	// Module Name
+	public static final String MODULE_MANUAL_ADVISE = "ManualAdvise";
+	// Advise Stages
+	public static final String MANUAL_ADVISE_MAKER = "AdviseMaker";
+	public static final String MANUAL_ADVISE_APPROVER = "AdviseApprover";
+	// Advise Details
+	public static final String UPLOAD_PAYABLE_ADVISE = "P";
+	public static final String UPLOAD_RECEIVABLE_ADVISE = "R";
+
+	public static final String UPLOAD_MAKER_STAGE = "MAKER";
+	public static final String UPLOAD_APPROVER_STAGE = "TRANS_CHECKER";
+
 }

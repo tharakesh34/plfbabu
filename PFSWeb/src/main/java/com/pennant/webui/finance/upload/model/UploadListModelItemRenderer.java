@@ -46,6 +46,7 @@ package com.pennant.webui.finance.upload.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
@@ -53,6 +54,7 @@ import org.zkoss.zul.ListitemRenderer;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 
 /**
  * Item renderer for list items in the list box.
@@ -69,30 +71,37 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 	@Override
 	public void render(Listitem item, UploadHeader uploadHeader, int count) throws Exception {
 
+		((Listbox)item.getParent()).setMultiple(true);
 		Listcell lc;
-		//File Name
+		lc = new Listcell(String.valueOf(uploadHeader.getUploadId()));
+		lc.setParent(item);
+		// File Name
 		lc = new Listcell(uploadHeader.getFileName());
 		lc.setParent(item);
-		// Transaction Date
-		lc = new Listcell(DateUtility.formatToLongDate(uploadHeader.getTransactionDate()));
+		lc= new Listcell(DateUtility.format(uploadHeader.getTransactionDate(),DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
-		//Success count
-		//lc = new Listcell(String.valueOf(uploadHeader.getSuccessCount()));
-		//lc.setParent(item);
-		//failed count
-		//lc = new Listcell(String.valueOf(uploadHeader.getFailedCount()));
-		//lc.setParent(item);
+		lc = new Listcell(uploadHeader.getUserName());
+		lc.setParent(item);
+		// Transaction Date
+		lc = new Listcell(uploadHeader.getEntityCode());
+		lc.setParent(item);
+		// Success count
+		lc = new Listcell(String.valueOf(uploadHeader.getSuccessCount()));
+		lc.setParent(item);
+		// failed count
+		lc = new Listcell(String.valueOf(uploadHeader.getFailedCount()));
+		lc.setParent(item);
 		// Total count
 		lc = new Listcell(String.valueOf(uploadHeader.getTotalRecords()));
 		lc.setParent(item);
-		//record status
+		// record status
 		lc = new Listcell(uploadHeader.getRecordStatus());
 		lc.setParent(item);
-		//record type
+		// record type
 		lc = new Listcell(PennantJavaUtil.getLabel(uploadHeader.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("id", uploadHeader.getUploadId());
+		item.setAttribute("data", uploadHeader);
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onUploadItemDoubleClicked");
 	}

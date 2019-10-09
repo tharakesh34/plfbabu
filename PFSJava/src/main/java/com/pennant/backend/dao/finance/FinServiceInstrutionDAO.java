@@ -38,4 +38,6 @@ public interface FinServiceInstrutionDAO {
 
 	BigDecimal getNewRate(String finReference, Date schdate);
 
+	List<String> getFinEventByFinRef(String finReference, String type);
+
 }

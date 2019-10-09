@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.pennant.backend.model.Entity;
 import com.pennant.backend.model.assignmentupload.AssignmentUpload;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
 import com.pennant.backend.model.refundupload.RefundUpload;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -83,6 +84,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	private long assignmentPartnerId;
 	private String assignmentPartnerCode;
 	private String assignmentPartnerDesc;
+	private String userName;
 
 	@XmlTransient
 	private LoggedInUser userDetails;
@@ -90,9 +92,16 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	private List<RefundUpload> refundUploads = new ArrayList<RefundUpload>();
 	private List<AssignmentUpload> assignmentUploads = new ArrayList<AssignmentUpload>();
 	private List<MiscPostingUpload> miscPostingUploads = new ArrayList<MiscPostingUpload>();
+	private List<UploadManualAdvise> uploadManualAdvises = new ArrayList<UploadManualAdvise>();
 
 	@XmlTransient
 	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private long makerId;
+	private long approverId;
+	private Date approvedDate = null;
+	
+	
+	
 
 	public UploadHeader() {
 		super();
@@ -116,6 +125,7 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("assignmentPartnerId");
 		excludeFields.add("assignmentUploads");
 		excludeFields.add("auditDetailMap");
+		excludeFields.add("uploadManualAdvises");
 		return excludeFields;
 	}
 
@@ -313,5 +323,46 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	public void setMiscPostingUploads(List<MiscPostingUpload> miscPostingUpload) {
 		this.miscPostingUploads = miscPostingUpload;
 	}
+
+	public long getMakerId() {
+		return makerId;
+	}
+
+	public void setMakerId(long makerId) {
+		this.makerId = makerId;
+	}
+
+	public List<UploadManualAdvise> getUploadManualAdvises() {
+		return uploadManualAdvises;
+	}
+
+	public void setUploadManualAdvises(List<UploadManualAdvise> uploadManualAdvises) {
+		this.uploadManualAdvises = uploadManualAdvises;
+	}
+
+	public long getApproverId() {
+		return approverId;
+	}
+
+	public void setApproverId(long approverId) {
+		this.approverId = approverId;
+	}
+
+	public Date getApprovedDate() {
+		return approvedDate;
+	}
+
+	public void setApprovedDate(Date approvedDate) {
+		this.approvedDate = approvedDate;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 
 }

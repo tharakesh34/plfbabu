@@ -9118,7 +9118,9 @@
 				<prop key="delete*">PROPAGATION_REQUIRED</prop>
 				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
 				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="updateFileDownload">PROPAGATION_REQUIRED</prop>
 				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+				
 			</props>
 		</property>
 	</bean>
@@ -9138,6 +9140,9 @@
 		<property name="uploadFinTypeExpenseDAO" ref="uploadFinTypeExpenseDAO" />
 		<property name="miscPostingUploadService" ref="miscPostingUploadService"/>
 		<property name="auditHeaderDAO" ref="auditHeaderDAO"/>
+		<property name="uploadManualAdviseService" ref="uploadManualAdviseService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<bean id="uploadHeaderDAO" class="com.pennant.backend.dao.finance.impl.UploadHeaderDAOImpl" parent="sequenceDao" />
@@ -11338,6 +11343,32 @@
 		class="com.pennant.backend.service.externalinterface.impl.ExtInterfaceConfigurationServiceImpl">
 		<property name="extInterfaceConfigurationDAO" ref="extInterfaceConfigurationDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+	
+	<!--============ Advise Upload Details ============== -->
+	<bean id="uploadManualAdviseDAO" class="com.pennant.backend.dao.manualadviseupload.impl.UploadManualAdviseDAOImpl" parent="sequenceDao" />
+	<bean id="uploadManualAdviseService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="uploadManualAdviseServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean name="uploadManualAdviseServiceTarget" class="com.pennant.backend.service.finance.impl.UploadManualAdviseServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="uploadManualAdviseDAO" ref="uploadManualAdviseDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="manualAdviseService" ref="manualAdviseService" />
 	</bean>
 	
 	

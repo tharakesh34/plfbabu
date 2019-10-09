@@ -84,4 +84,7 @@ public interface FinanceMainService {
 	ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate);
 
 	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
+
+	FinanceMain getFinanceMain(String finReference, String[] columns);
+
 }

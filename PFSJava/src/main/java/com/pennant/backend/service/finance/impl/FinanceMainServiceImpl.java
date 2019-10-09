@@ -213,4 +213,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.getLoanWorkFlowIdByFinRef(loanReference, type);
 	}
 
+	@Override
+	public FinanceMain getFinanceMain(String finReference, String[] columns) {
+		return financeMainDAO.getFinanceMain(finReference, columns);
+	}
 }

@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2011 - Pennant Technologies
  * 
@@ -46,16 +45,20 @@ package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.dao.finance.FinExpenseMovementsDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.UploadFinExpensesDAO;
 import com.pennant.backend.dao.finance.UploadFinTypeExpenseDAO;
@@ -71,8 +74,11 @@ import com.pennant.backend.model.expenses.UploadFinExpenses;
 import com.pennant.backend.model.expenses.UploadFinTypeExpense;
 import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
+import com.pennant.backend.model.feetype.FeeType;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.UploadManualAdvise;
 import com.pennant.backend.model.miscPostingUpload.MiscPostingUpload;
+import com.pennant.backend.model.receiptupload.UploadReceipt;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.amtmasters.ExpenseTypeService;
@@ -80,6 +86,7 @@ import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.MiscPostingUploadService;
 import com.pennant.backend.service.finance.UploadHeaderService;
+import com.pennant.backend.service.finance.UploadManualAdviseService;
 import com.pennant.backend.service.rmtmasters.FinTypeExpenseService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -108,6 +115,17 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	private UploadFinTypeExpenseDAO uploadFinTypeExpenseDAO;
 	private MiscPostingUploadService miscPostingUploadService;
 	private AuditHeaderDAO auditHeaderDAO;
+	private FeeTypeDAO feeTypeDAO;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
+	private UploadManualAdviseService uploadManualAdviseService;
+
+	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
+		return finServiceInstructionDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
 
 	public UploadHeaderServiceImpl() {
 		super();
@@ -143,8 +161,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate,
-			Date finApprovalEndDate) {
+	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate) {
 		return this.financeMainDAO.getFinancesByExpenseType(finType, finApprovalStartDate, finApprovalEndDate);
 	}
 
@@ -367,13 +384,17 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		}
 
 		UploadHeader uploadHeader = new UploadHeader();
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
 		BeanUtils.copyProperties((UploadHeader) auditHeader.getAuditDetail().getModelData(), uploadHeader);
 
-		this.uploadHeaderDAO.delete(uploadHeader, TableType.TEMP_TAB);
+		if (uploadHeader.getTotalRecords() != uploadHeader.getFailedCount()) {
+			this.uploadHeaderDAO.delete(uploadHeader, TableType.TEMP_TAB);
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(this.uploadHeaderDAO.getUploadHeaderById(uploadHeader.getUploadId(), ""));
+			auditHeader.getAuditDetail().setBefImage(
+					this.uploadHeaderDAO.getUploadHeaderById(uploadHeader.getUploadId(), ""));
 		}
 
 		if (uploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -389,6 +410,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 			uploadHeader.setTaskId("");
 			uploadHeader.setNextTaskId("");
 			uploadHeader.setWorkflowId(0);
+			uploadHeader.setApprovedDate(DateUtility.getAppDate());
+			uploadHeader.setApproverId(auditHeader.getAuditUsrId());
 
 			if (PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
@@ -398,6 +421,14 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 				tranType = PennantConstants.TRAN_UPD;
 				uploadHeader.setRecordType("");
 				this.uploadHeaderDAO.update(uploadHeader, TableType.MAIN_TAB);
+			}
+			// Manual Advise Upload
+			if (CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
+				List<AuditDetail> adviseUpload = uploadHeader.getAuditDetailMap().get("AdviseUploads");
+				adviseUpload = this.uploadManualAdviseService.processAdviseUploadsDetails(adviseUpload,
+						uploadHeader.getUploadId(), TableType.MAIN_TAB.getSuffix());
+				this.uploadHeaderDAO.delete(uploadHeader, TableType.TEMP_TAB);
+				auditDetails.addAll(adviseUpload);
 			}
 
 			// updating
@@ -423,6 +454,12 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		// List
 		getAuditHeaderDAO().addAudit(auditHeader);
 
+		// List
+		auditHeader = prepareChildsAudit(auditHeader, "doApprove");
+		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		getAuditHeaderDAO().addAudit(auditHeader);
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -432,7 +469,6 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		// TODO Auto-generated method stub
 
 	}
-
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -485,8 +521,15 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		} else {
 			this.uploadHeaderDAO.update(uploadHeader, tableType1);
 			if (CollectionUtils.isNotEmpty(uploadHeader.getMiscPostingUploads())) {
-			this.miscPostingUploadService.updateList(uploadHeader.getMiscPostingUploads());
+				this.miscPostingUploadService.updateList(uploadHeader.getMiscPostingUploads());
 			}
+		}
+		// Manual Advise Upload
+		if (CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
+			List<AuditDetail> adviseUpload = uploadHeader.getAuditDetailMap().get("AdviseUploads");
+			adviseUpload = this.uploadManualAdviseService.processAdviseUploadsDetails(adviseUpload,
+					uploadHeader.getUploadId(), TableType.MAIN_TAB.getSuffix());
+			auditDetails.addAll(adviseUpload);
 		}
 
 		auditHeader.setAuditDetails(auditDetails);
@@ -498,10 +541,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) get the details from
-	 * the auditHeader. 2) fetch the details from the tables 3) Validate the
-	 * Record based on the record details. 4) Validate for any business
-	 * validation.
+	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
+	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
 	 *            (auditHeader)
@@ -517,6 +558,10 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
+		// List
+		auditHeader = prepareChildsAudit(auditHeader, method);
+		auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
+
 		for (int i = 0; i < auditDetails.size(); i++) {
 			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
@@ -529,10 +574,9 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getUploadHeaderDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getUploadHeaderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
+	 * assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -545,8 +589,9 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		UploadHeader uploadHeader = (UploadHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (uploadHeader.isNew() && this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(),
-				uploadHeader.getFileName(), uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (uploadHeader.isNew()
+				&& this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(), uploadHeader.getFileName(),
+						uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_MiscPostingUploadDialog_Filename.value") + ": "
 					+ uploadHeader.getFileName();
@@ -597,9 +642,76 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 			// this.miscPostingUploadService.deleteByUploadId(uploadHeader.getUploadId());
 		}
 
+		// Manual Advise Uploads
+		if (CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
+			auditDetails.addAll(this.uploadManualAdviseService.delete(uploadHeader.getUploadManualAdvises(), tableType,
+					auditTranType, uploadHeader.getUploadId()));
+		}
+
 		logger.debug(Literal.LEAVING);
 
 		return auditDetails;
+	}
+
+	//=================================== List maintain
+	private AuditHeader prepareChildsAudit(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+
+		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (uploadHeader.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		// Manual Advise Upload
+		if (CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
+			for (UploadManualAdvise adviseUpload : uploadHeader.getUploadManualAdvises()) {
+				adviseUpload.setWorkflowId(uploadHeader.getWorkflowId());
+				adviseUpload.setRecordStatus(uploadHeader.getRecordStatus());
+				adviseUpload.setUserDetails(uploadHeader.getUserDetails());
+				adviseUpload.setLastMntOn(uploadHeader.getLastMntOn());
+				adviseUpload.setLastMntBy(uploadHeader.getLastMntBy());
+				adviseUpload.setRoleCode(uploadHeader.getRoleCode());
+				adviseUpload.setNextRoleCode(uploadHeader.getNextRoleCode());
+				adviseUpload.setTaskId(uploadHeader.getTaskId());
+				adviseUpload.setNextTaskId(uploadHeader.getNextTaskId());
+			}
+
+			auditDetailMap.put("AdviseUploads", this.uploadManualAdviseService.setAdviseUploadsAuditData(
+					uploadHeader.getUploadManualAdvises(), auditTranType, method));
+			auditDetails.addAll(auditDetailMap.get("AdviseUploads"));
+		}
+
+		uploadHeader.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(uploadHeader);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug("Leaving");
+
+		return auditHeader;
+	}
+
+	private List<ErrorDetail> validateChilds(AuditHeader auditHeader, String usrLanguage, String method) {
+		logger.debug("Entering");
+
+		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
+
+		// Manual Advise Uploads
+		List<ErrorDetail> adviseErrorDetails = this.uploadManualAdviseService.validateAdviseUploads(auditHeader,
+				usrLanguage, method);
+		if (CollectionUtils.isNotEmpty(adviseErrorDetails)) {
+			errorDetails.addAll(adviseErrorDetails);
+		}
+
+		// If we want any other child you have to add here
+
+		return errorDetails;
 	}
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
@@ -628,4 +740,51 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public UploadHeader getUploadHeader() {
+		return uploadHeaderDAO.getUploadHeader();
+	}
+
+	@Override
+	public FeeType getApprovedFeeTypeByFeeCode(String finTypeCode) {
+		return this.feeTypeDAO.getApprovedFeeTypeByFeeCode(finTypeCode);
+	}
+
+	@Override
+	public List<String> getFinEventByFinRef(String finReference, String type) {
+		return finServiceInstructionDAO.getFinEventByFinRef(finReference, type);
+	}
+
+	public FeeTypeDAO getFeeTypeDAO() {
+		return feeTypeDAO;
+	}
+
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
+	}
+
+	public UploadManualAdviseService getUploadManualAdviseService() {
+		return uploadManualAdviseService;
+	}
+
+	public void setUploadManualAdviseService(UploadManualAdviseService uploadManualAdviseService) {
+		this.uploadManualAdviseService = uploadManualAdviseService;
+	}
+
+	@Override
+	public List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId) {
+		return uploadManualAdviseService.getManualAdviseListByUploadId(uploadId);
+	}
+
+	@Override
+	public boolean isFileDownload(long uploadID, String tableType) {
+		return uploadHeaderDAO.isFileDownload(uploadID, tableType);
+	}
+
+	@Override
+	public List<UploadReceipt> getSuccesFailedReceiptCount(long uploadId) {
+		return uploadHeaderDAO.getSuccesFailedReceiptCount(uploadId);
+	}
+
 }

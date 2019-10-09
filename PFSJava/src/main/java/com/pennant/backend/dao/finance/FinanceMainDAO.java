@@ -314,14 +314,14 @@ public interface FinanceMainDAO {
 	long getPartnerBankIdByReference(String finReference, String paymentMode, String depositAc, String type,
 			String purpose, boolean wif);//### 18-07-2018 Ticket ID : 124998,receipt upload
 
-	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);//### 12-07-2018 Ticket ID : 12499
+	boolean isFinReferenceExitsWithEntity(String finReference, String type, String entity);// ### 12-07-2018 Ticket ID : 12499
 
-	//### 10-09-2018,Ticket id:124998
+	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(String finRefence, String type, boolean wif);
 
 	FinanceType getFinTypeDetailsByFinreferene(String finReference, String string, boolean b);
 
-	//### 10-10-2018,Ticket id:124998
+	// ### 10-10-2018,Ticket id:124998
 	String getClosingStatus(String finReference, TableType tempTab, boolean wif);
 
 	boolean isDeveloperFinance(String finReference, String type, boolean wif);
@@ -348,7 +348,7 @@ public interface FinanceMainDAO {
 
 	FinanceMain isFlexiLoan(String finReference);
 
-	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);//### 17-07-2018 Ticket ID : 127950
+	boolean isFinReferenceExitsinLQ(String finReference, TableType tempTab, boolean wif);// ### 17-07-2018 Ticket ID : 127950
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(long custId);
 
@@ -412,4 +412,6 @@ public interface FinanceMainDAO {
 	boolean isGrcRepayFrqExists(String brType);
 
 	Date getFinStartDate(String finReference);
+
+	FinanceMain getFinanceMain(String finReference, String[] columns);
 }
