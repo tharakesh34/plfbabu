@@ -65,7 +65,7 @@ public class UploadManualAdvise extends AbstractWorkflowEntity implements Entity
 	private long uploadId = 0;	
 	private String finReference;
 	private String adviseType;
-	private long feeTypeID;
+	private Long feeTypeID;
 	private String feeTypeCode;
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private Date valueDate;
@@ -127,7 +127,7 @@ public class UploadManualAdvise extends AbstractWorkflowEntity implements Entity
 		this.finReference = finReference;
 	}
 
-	public long getFeeTypeID() {
+	public Long getFeeTypeID() {
 		return feeTypeID;
 	}
 

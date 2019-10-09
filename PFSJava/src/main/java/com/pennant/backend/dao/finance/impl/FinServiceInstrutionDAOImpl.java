@@ -424,20 +424,22 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	@Override
 	public List<String> getFinEventByFinRef(String finReference, String type) {
 
-		logger.debug("Entering");
-
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("FinReference", finReference);
 
-		StringBuilder selectSql = new StringBuilder("Select FinEvent ");
-		selectSql.append(" From FinServiceInstruction");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference ");
+		StringBuilder sql = new StringBuilder("Select FinEvent");
+		sql.append(" From FinServiceInstruction");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference =:FinReference ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcTemplate.queryForList(sql.toString(), paramSource, String.class);
+		} catch (Exception e) {
+			//
+		}
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), paramSource, String.class);
+		return new ArrayList<>();
 
 	}
 }

@@ -13782,7 +13782,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="232_pre" author="Durgaprasad G" dbms="mssql">
 		<sql>
 			<![CDATA[
@@ -13797,7 +13797,7 @@ UNION ALL
 				alter table FINANCEMAIN_TEMP drop constraint DF_FINANCEMAIN_TEMP_PromotionSeqID;
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="232" author="Durgaprasad G" dbms="mssql">
 		<sql>
@@ -13815,14 +13815,20 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="233" author="Durgaprasad G" dbms="postgresql, oracle">
-			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN" defaultValue="0" />
-			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN" defaultValue="0" />		 
-			
-			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_PA" defaultValue="0" />
-			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_PA" defaultValue="0" />	
-			
-			<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
-			<addDefaultValue columnName="PROMOTIONSEQID" tableName="FINANCEMAIN_TEMP" defaultValue="0" />	
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN" defaultValue="0" />
+
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_PA"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN_PA" defaultValue="0" />
+
+		<addDefaultValue columnName="SANBSDSCHDLE" tableName="FINANCEMAIN_TEMP"
+			defaultValue="0" />
+		<addDefaultValue columnName="PROMOTIONSEQID"
+			tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
 	<changeSet id="234" author="Saikiran.V">
 		<sql>
@@ -13918,20 +13924,20 @@ UNION ALL
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
 			<column name="Reason" type="varchar(500)" />
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" defaultValue="0">
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="ManualAdviseId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="RejectStage" type="varchar(50)" />
-			<column name="manualadviseid" type="bigint" />
 		</createTable>
 	</changeSet>
 
@@ -13952,20 +13958,20 @@ UNION ALL
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
 			<column name="Reason" type="varchar(500)" />
-			<column name="version" type="int" />
-			<column name="lastmntby" type="bigint" />
-			<column name="lastmnton" type="datetime" />
-			<column name="recordstatus" type="varchar(50)" />
-			<column name="rolecode" type="varchar(100)" />
-			<column name="nextrolecode" type="varchar(200)" />
-			<column name="taskid" type="varchar(50)" />
-			<column name="nexttaskid" type="varchar(200)" />
-			<column name="recordtype" type="varchar(50)" />
-			<column name="workflowid" type="bigint" defaultValue="0">
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="ManualAdviseId" type="bigint" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint" defaultValue="0">
 				<constraints nullable="false" />
 			</column>
-			<column name="RejectStage" type="varchar(50)" />
-			<column name="manualadviseid" type="bigint" />
 		</createTable>
 	</changeSet>
 	<changeSet id="241" author="Varaprasad.K">
@@ -13975,44 +13981,129 @@ UNION ALL
 			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
 	</changeSet>
 
-	<changeSet id="242 author="Varaprasad.K">
+	<changeSet id="242 author=" Varaprasad.K ">
 		<createSequence sequenceName="SeqAdviseUploads"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	<changeSet id="243" author="Varaprasad">
 		<createView viewName="AdviseUploads_AView" replaceIfExists="true">
-			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, COALESCE(T1.AdviseAmount, 0) AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
-						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
-			FROM 		AdviseUploads T1
-            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+			SELECT
+			  T1.AdviseId,
+			  T1.UploadId,
+			  T1.FinReference,
+			  T1.AdviseType,
+			  T1.FeeTypeCode,
+			  T1.ValueDate,
+			  T1.AdviseAmount,
+			  AdviseAmount,
+			  T1.Remarks,
+			  T1.Status,
+			  T1.Reason,
+			  T1.Version,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId,
+			  T2.FEETYPEID FEETYPEID,
+			  T1.RejectStage
+			FROM
+			  AdviseUploads T1
+			LEFT JOIN FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
 		</createView>
 	</changeSet>
 
 	<changeSet id="244" author="Varaprasad.K">
 		<createView viewName="AdviseUploads_TView" replaceIfExists="true">
-			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
-						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-                        COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
-			FROM 		AdviseUploads_temp T1
-            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+			SELECT
+			  T1.AdviseId,
+			  T1.UploadId,
+			  T1.FinReference,
+			  T1.AdviseType,
+			  T1.FeeTypeCode,
+			  T1.ValueDate,
+			  T1.AdviseAmount,
+			  T1.Remarks,
+			  T1.Status,
+			  T1.Reason,
+			  T1.Version,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId,
+			  T2.FEETYPEID FEETYPEID,
+			  T1.RejectStage
+			FROM
+			  AdviseUploads_temp T1
+			LEFT JOIN FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
 		</createView>
 	</changeSet>
 
 	<changeSet id="245" author="Varaprasad.K">
 		<createView viewName="AdviseUploads_View" replaceIfExists="true">
-			 SELECT 	T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
-						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
-			FROM 		AdviseUploads_temp T1
-            Left Join FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
-			UNION ALL
-			SELECT 		T1.AdviseId, T1.UploadId, T1.FinReference, T1.AdviseType, T1.FeeTypeCode, T1.ValueDate, T1.AdviseAmount, T1.Remarks, T1.Status, T1.Reason,
-						T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId,
-            			COALESCE(T2.FEETYPEID, 0) FEETYPEID, T1.RejectStage
-			FROM 		AdviseUploads T1
-            Left Join 	FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
-			WHERE       NOT EXISTS(SELECT 1 FROM AdviseUploads_temp WHERE FinReference = T1.FinReference)
+			SELECT
+				  T1.AdviseId,
+				  T1.UploadId,
+				  T1.FinReference,
+				  T1.AdviseType,
+				  T1.FeeTypeCode,
+				  T1.ValueDate,
+				  T1.AdviseAmount,
+				  T1.Remarks,
+				  T1.Status,
+				  T1.Reason,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId,
+				  T2.FEETYPEID FEETYPEID,
+				  T1.RejectStage
+				FROM
+				  AdviseUploads_temp T1 
+				  LEFT JOIN FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+				UNION ALL
+				SELECT
+				  T1.AdviseId,
+				  T1.UploadId,
+				  T1.FinReference,
+				  T1.AdviseType,
+				  T1.FeeTypeCode,
+				  T1.ValueDate,
+				  T1.AdviseAmount,
+				  T1.Remarks,
+				  T1.Status,
+				  T1.Reason,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId,
+				  T2.FEETYPEID FEETYPEID,
+				  T1.RejectStage
+				FROM
+				  AdviseUploads T1
+				LEFT JOIN FeeTypes T2 ON T2.FeetypeCode = T1.FEETYPECODE
+				WHERE NOT EXISTS ( SELECT 1 FROM AdviseUploads_temp WHERE FinReference = T1.FinReference)
 			</createView>
 	</changeSet>
 
@@ -14043,51 +14134,51 @@ UNION ALL
 	<changeSet id="248" author="Varaprasad.K">
 		<comment>FinSource column added</comment>
 		<createView viewName="MANUALADVISE_AVIEW" replaceIfExists="true">
-     SELECT t1.adviseid,
-    t1.advisetype,
-    t1.finreference,
-    t1.feetypeid,
-    t1.sequence,
-    t1.adviseamount,
-    t1.paidamount,
-    t1.waivedamount,
-    t1.remarks,
-    t1.valuedate,
-    t1.postdate,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.feetypedesc,
-    t2.feetypecode,
-    t1.bounceid,
-    t1.receiptid,
-    t3.bouncecode,
-    t1.reservedamt,
-    t1.balanceamt,
-    t3.reason AS bouncecodedesc,
-    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
-    t2.taxcomponent,
-    t1.paidcgst,
-    t1.paidsgst,
-    t1.paidigst,
-    t1.paidugst,
-    t1.waivedcgst,
-    t1.waivedsgst,
-    t1.waivedugst,
-    t1.waivedigst,
-    t1.waivedcess,
-    t1.paidcess,
-	t1.finSource
-   FROM plf.manualadvise t1
-     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		 SELECT t1.adviseid,
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+		    t2.taxcomponent,
+		    t1.paidcgst,
+		    t1.paidsgst,
+		    t1.paidigst,
+		    t1.paidugst,
+		    t1.waivedcgst,
+		    t1.waivedsgst,
+		    t1.waivedugst,
+		    t1.waivedigst,
+		    t1.waivedcess,
+		    t1.paidcess,
+			t1.finSource
+		   FROM plf.manualadvise t1
+		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 	<changeSet id="248_post" author="Varaprasad.K" dbms="postgresql">
@@ -14102,48 +14193,48 @@ UNION ALL
 		<comment>FinSource column added</comment>
 		<createView viewName="MANUALADVISE_LVIEW" replaceIfExists="true">
 	    SELECT t1.adviseid,
-    t1.advisetype,
-    t1.finreference,
-    t1.feetypeid,
-    t1.sequence,
-    t1.adviseamount,
-    t1.paidamount,
-    t1.waivedamount,
-    t1.remarks,
-    t1.valuedate,
-    t1.postdate,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.feetypedesc,
-    t2.feetypecode,
-    t1.bounceid,
-    t1.receiptid,
-    t3.bouncecode,
-    t1.reservedamt,
-    t1.balanceamt,
-    t3.reason AS bouncecodedesc,
-    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
-    t2.taxcomponent,
-    t1.paidcgst,
-    t1.paidsgst,
-    t1.paidigst,
-    t1.paidugst,
-    t1.waivedcgst,
-    t1.waivedsgst,
-    t1.waivedugst,
-    t1.waivedigst,
-	t1.finSource
-   FROM plf.manualadvise t1
-     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+		    t2.taxcomponent,
+		    t1.paidcgst,
+		    t1.paidsgst,
+		    t1.paidigst,
+		    t1.paidugst,
+		    t1.waivedcgst,
+		    t1.waivedsgst,
+		    t1.waivedugst,
+		    t1.waivedigst,
+			t1.finSource
+		   FROM plf.manualadvise t1
+		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 
@@ -14151,50 +14242,50 @@ UNION ALL
 		<comment>FinSource column added</comment>
 		<createView viewName="MANUALADVISE_TVIEW" replaceIfExists="true">
 	    SELECT t1.adviseid,
-    t1.advisetype,
-    t1.finreference,
-    t1.feetypeid,
-    t1.sequence,
-    t1.adviseamount,
-    t1.paidamount,
-    t1.waivedamount,
-    t1.remarks,
-    t1.valuedate,
-    t1.postdate,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.feetypedesc,
-    t2.feetypecode,
-    t1.bounceid,
-    t1.receiptid,
-    t3.bouncecode,
-    t1.reservedamt,
-    t1.balanceamt,
-    t3.reason AS bouncecodedesc,
-    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
-    t2.taxcomponent,
-    t1.paidcgst,
-    t1.paidsgst,
-    t1.paidigst,
-    t1.paidugst,
-    t1.waivedcgst,
-    t1.waivedsgst,
-    t1.waivedugst,
-    t1.waivedigst,
-    t1.waivedcess,
-    t1.paidcess,
-	T1.FinSource
-   FROM plf.manualadvise_temp t1
-     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+		    t2.taxcomponent,
+		    t1.paidcgst,
+		    t1.paidsgst,
+		    t1.paidigst,
+		    t1.paidugst,
+		    t1.waivedcgst,
+		    t1.waivedsgst,
+		    t1.waivedugst,
+		    t1.waivedigst,
+		    t1.waivedcess,
+		    t1.paidcess,
+			T1.FinSource
+		   FROM plf.manualadvise_temp t1
+		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 
@@ -14202,99 +14293,99 @@ UNION ALL
 		<comment>FinSource column added</comment>
 		<createView viewName="MANUALADVISE_VIEW" replaceIfExists="true">
 	    SELECT t1.adviseid,
-    t1.advisetype,
-    t1.finreference,
-    t1.feetypeid,
-    t1.sequence,
-    t1.adviseamount,
-    t1.paidamount,
-    t1.waivedamount,
-    t1.remarks,
-    t1.valuedate,
-    t1.postdate,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.feetypedesc,
-    t2.feetypecode,
-    t1.bounceid,
-    t1.receiptid,
-    t3.bouncecode,
-    t1.reservedamt,
-    t1.balanceamt,
-    t3.reason AS bouncecodedesc,
-    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
-    t2.taxcomponent,
-    t1.paidcgst,
-    t1.paidsgst,
-    t1.paidigst,
-    t1.paidugst,
-    t1.waivedcgst,
-    t1.waivedsgst,
-    t1.waivedugst,
-    t1.waivedigst,
-    t1.waivedcess,
-    t1.paidcess,
-	T1.FinSource
-   FROM plf.manualadvise_temp t1
-     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
-UNION ALL
- SELECT t1.adviseid,
-    t1.advisetype,
-    t1.finreference,
-    t1.feetypeid,
-    t1.sequence,
-    t1.adviseamount,
-    t1.paidamount,
-    t1.waivedamount,
-    t1.remarks,
-    t1.valuedate,
-    t1.postdate,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    t2.feetypedesc,
-    t2.feetypecode,
-    t1.bounceid,
-    t1.receiptid,
-    t3.bouncecode,
-    t1.reservedamt,
-    t1.balanceamt,
-    t3.reason AS bouncecodedesc,
-    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
-    t2.taxcomponent,
-    t1.paidcgst,
-    t1.paidsgst,
-    t1.paidigst,
-    t1.paidugst,
-    t1.waivedcgst,
-    t1.waivedsgst,
-    t1.waivedugst,
-    t1.waivedigst,
-    t1.waivedcess,
-    t1.paidcess,
-	T1.FinSource
-   FROM plf.manualadvise t1
-     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
-  WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.manualadvise_temp
-          WHERE manualadvise_temp.adviseid = t1.adviseid))
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+		    t2.taxcomponent,
+		    t1.paidcgst,
+		    t1.paidsgst,
+		    t1.paidigst,
+		    t1.paidugst,
+		    t1.waivedcgst,
+		    t1.waivedsgst,
+		    t1.waivedugst,
+		    t1.waivedigst,
+		    t1.waivedcess,
+		    t1.paidcess,
+			T1.FinSource
+		   FROM plf.manualadvise_temp t1
+		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		UNION ALL
+		 SELECT t1.adviseid,
+		    t1.advisetype,
+		    t1.finreference,
+		    t1.feetypeid,
+		    t1.sequence,
+		    t1.adviseamount,
+		    t1.paidamount,
+		    t1.waivedamount,
+		    t1.remarks,
+		    t1.valuedate,
+		    t1.postdate,
+		    t1.version,
+		    t1.lastmntby,
+		    t1.lastmnton,
+		    t1.recordstatus,
+		    t1.rolecode,
+		    t1.nextrolecode,
+		    t1.taskid,
+		    t1.nexttaskid,
+		    t1.recordtype,
+		    t1.workflowid,
+		    t2.feetypedesc,
+		    t2.feetypecode,
+		    t1.bounceid,
+		    t1.receiptid,
+		    t3.bouncecode,
+		    t1.reservedamt,
+		    t1.balanceamt,
+		    t3.reason AS bouncecodedesc,
+		    COALESCE(t2.taxapplicable, 0) AS taxapplicable,
+		    t2.taxcomponent,
+		    t1.paidcgst,
+		    t1.paidsgst,
+		    t1.paidigst,
+		    t1.paidugst,
+		    t1.waivedcgst,
+		    t1.waivedsgst,
+		    t1.waivedugst,
+		    t1.waivedigst,
+		    t1.waivedcess,
+		    t1.paidcess,
+			T1.FinSource
+		   FROM plf.manualadvise t1
+		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		  WHERE NOT (EXISTS ( SELECT 1
+		           FROM plf.manualadvise_temp
+		          WHERE manualadvise_temp.adviseid = t1.adviseid))
 	</createView>
 	</changeSet>
 
@@ -14326,98 +14417,167 @@ UNION ALL
 
 	<changeSet id="255" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_AVIEW" replaceIfExists="true">
-	  SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module, T1.FileDownload,
-				    T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ApprovedDate, T1.MakerId, T1.ApproverId, 
-                    T1.EntityCODE, T2.EntityDesc, T3.UsrLogIn USERNAME
-	  FROM 	        UploadHeader T1 LEFT JOIN	
-	                Entity T2 ON T1.EntityCode = T2.EntityCode LEFT JOIN 
-	                SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+		 SELECT T1.UploadId,
+			  T1.FileLocation,
+			  T1.FileName,
+			  T1.TransactionDate,
+			  T1.TotalRecords,
+			  T1.SuccessCount,
+			  T1.FailedCount,
+			  T1.Module,
+			  T1.FileDownload,
+			  T1.Version,
+			  T1.LastMntBy,
+			  T1.LastMntOn,
+			  T1.RecordStatus,
+			  T1.RoleCode,
+			  T1.NextRoleCode,
+			  T1.TaskId,
+			  T1.NextTaskId,
+			  T1.RecordType,
+			  T1.WorkflowId,
+			  T1.ApprovedDate,
+			  T1.MakerId,
+			  T1.ApproverId,
+			  T1.EntityCODE,
+			  T2.EntityDesc,
+			  T3.UsrLogIn USERNAME
+			FROM
+			  UploadHeader T1
+			LEFT JOIN Entity T2
+			ON
+			  T1.EntityCode = T2.EntityCode
+			LEFT JOIN SecUsers T3 ON T3.USRID = T1.LASTMNTBY
 	</createView>
 	</changeSet>
 
 	<changeSet id="256" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_TVIEW" replaceIfExists="true">
-	SELECT 		T1.UploadId, T1.FileLocation, T1.FileName, T1.TransactionDate, T1.TotalRecords, T1.SuccessCount, T1.FailedCount, T1.Module,  
-				T1.FileDownload,T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId, T1.ApprovedDate, T1.MakerId, T1.ApproverId,
-				T1.EntityCODE, T2.EntityDesc, T3.UsrLogIn USERNAME
-	FROM 		UploadHeader_Temp T1 LEFT JOIN	
-	            Entity T2 ON T1.EntityCode = T2.EntityCode LEFT JOIN 
-				SecUsers T3 ON T3.USRID = T1.LASTMNTBY
-	</createView>
+				SELECT
+				  T1.UploadId,
+				  T1.FileLocation,
+				  T1.FileName,
+				  T1.TransactionDate,
+				  T1.TotalRecords,
+				  T1.SuccessCount,
+				  T1.FailedCount,
+				  T1.Module,
+				  T1.FileDownload,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId,
+				  T1.ApprovedDate,
+				  T1.MakerId,
+				  T1.ApproverId,
+				  T1.EntityCODE,
+				  T2.EntityDesc,
+				  T3.UsrLogIn USERNAME
+				FROM
+				  UploadHeader_Temp T1
+				LEFT JOIN Entity T2
+				ON
+				  T1.EntityCode = T2.EntityCode
+				LEFT JOIN SecUsers T3 ON T3.USRID = T1.LASTMNTBY
+	   </createView>
 	</changeSet>
 
 	<changeSet id="257" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_VIEW" replaceIfExists="true">
-	SELECT t1.uploadid,
-    t1.filelocation,
-    t1.filename,
-    t1.transactiondate,
-    t1.totalrecords,
-    t1.successcount,
-    t1.failedcount,
-    t1.module,
-	t1.filedownload,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    T1.ApprovedDate, 
-    T1.MakerId, 
-    T1.ApproverId, 
-    t1.entitycode,
-    t2.entitydesc,
-    t3.usrlogin AS username
-   FROM plf.uploadheader_temp t1
-     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
-     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
-UNION ALL
- SELECT t1.uploadid,
-    t1.filelocation,
-    t1.filename,
-    t1.transactiondate,
-    t1.totalrecords,
-    t1.successcount,
-    t1.failedcount,
-    t1.module,
-	t1.filedownload,
-    t1.version,
-    t1.lastmntby,
-    t1.lastmnton,
-    t1.recordstatus,
-    t1.rolecode,
-    t1.nextrolecode,
-    t1.taskid,
-    t1.nexttaskid,
-    t1.recordtype,
-    t1.workflowid,
-    T1.ApprovedDate, 
-    T1.MakerId, 
-    T1.ApproverId,
-    t1.entitycode,
-    t2.entitydesc,
-    t3.usrlogin AS username
-   FROM plf.uploadheader t1
-     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
-     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
-  WHERE NOT (EXISTS ( SELECT 1
-           FROM plf.uploadheader_temp
-          WHERE uploadheader_temp.uploadid = t1.uploadid))
+			SELECT t1.uploadid,
+				    t1.filelocation,
+				    t1.filename,
+				    t1.transactiondate,
+				    t1.totalrecords,
+				    t1.successcount,
+				    t1.failedcount,
+				    t1.module,
+					t1.filedownload,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    T1.ApprovedDate, 
+				    T1.MakerId, 
+				    T1.ApproverId, 
+				    t1.entitycode,
+				    t2.entitydesc,
+				    t3.usrlogin AS username
+				   FROM plf.uploadheader_temp t1
+				     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+				UNION ALL
+				 SELECT t1.uploadid,
+				    t1.filelocation,
+				    t1.filename,
+				    t1.transactiondate,
+				    t1.totalrecords,
+				    t1.successcount,
+				    t1.failedcount,
+				    t1.module,
+					t1.filedownload,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    T1.ApprovedDate, 
+				    T1.MakerId, 
+				    T1.ApproverId,
+				    t1.entitycode,
+				    t2.entitydesc,
+				    t3.usrlogin AS username
+				   FROM plf.uploadheader t1
+				     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM plf.uploadheader_temp
+				          WHERE uploadheader_temp.uploadid = t1.uploadid))
 	</createView>
 	</changeSet>
 
 	<changeSet id="258" author="Varaprasad.K">
 		<createView viewName="UPLOADHEADER_MAUVIEW"
 			replaceIfExists="true">
-		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader_Temp Where Module = 'ManualAdvise'
- 		Union All 
-  		SELECT 	UploadId, FileName, Module, Entitycode, TransactionDate  From UploadHeader 
-  		Where 	Module = 'ManualAdvise' And NOT EXISTS ( SELECT 1  FROM UploadHeader_Temp WHERE UploadId = UploadHeader.UploadId )
+				SELECT
+				  UploadId,
+				  FileName,
+				  Module,
+				  Entitycode,
+				  TransactionDate
+				FROM
+				  UploadHeader_Temp
+				WHERE
+				  Module = 'ManualAdvise'
+				UNION ALL
+				SELECT
+				  UploadId,
+				  FileName,
+				  Module,
+				  Entitycode,
+				  TransactionDate
+				FROM
+				  UploadHeader
+				WHERE
+				  Module = 'ManualAdvise'
+				AND NOT EXISTS(SELECT 1 FROM UploadHeader_Temp WHERE UploadId = UploadHeader.UploadId)
 		</createView>
 	</changeSet>
 	<changeSet id="259" author="Varaprasad.K">
