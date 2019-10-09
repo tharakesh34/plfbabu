@@ -673,7 +673,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		try {
-			if (this.modeDisbursment.getValue() != null) {
+			if (this.modeDisbursment.getValue() != null && StringUtils.isNotBlank(this.modeDisbursment.getValue())) {
 				preparePaymentModes(this.modeDisbursment.getValue(), AccountConstants.PARTNERSBANK_DISB,
 						partneBankModesList);
 			}
@@ -682,7 +682,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		try {
-			if (this.modeReceipts.getValue() != null) {
+			if (this.modeReceipts.getValue() != null && StringUtils.isNotBlank(this.modeReceipts.getValue())) {
 				preparePaymentModes(this.modeReceipts.getValue(), AccountConstants.PARTNERSBANK_RECEIPTS,
 						partneBankModesList);
 			}
@@ -691,7 +691,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		}
 
 		try {
-			if (this.modePayments.getValue() != null) {
+			if (this.modePayments.getValue() != null && StringUtils.isNotBlank(this.modePayments.getValue())) {
 				preparePaymentModes(this.modePayments.getValue(), AccountConstants.PARTNERSBANK_PAYMENT,
 						partneBankModesList);
 			}
@@ -702,7 +702,7 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		aPartnerBank.setPartnerBankModesList(partneBankModesList);
 
 		try {
-			if (this.alwBankBranchCode.getValue() != null) {
+			if (this.alwBankBranchCode.getValue() != null && StringUtils.isNotBlank(this.alwBankBranchCode.getValue())) {
 				prepareCashModes(this.alwBankBranchCode.getValue(), DisbursementConstants.PAYMENT_TYPE_CASH,
 						partnerBranchModesList);
 			}
