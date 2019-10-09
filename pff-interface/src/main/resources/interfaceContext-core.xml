@@ -63,7 +63,7 @@
     <!--  PAN Validation Service-->
     <bean id="primaryAccountService" class="com.pennanttech.pff.external.pan.service.PrimaryAccountServiceImpl" />
 	
-	<bean name="externalServiceStatus" class="com.pennanttech.external.services.sExternalServiceStatus">
+	<bean name="externalServiceStatus" class="com.pennanttech.external.services.ExternalServiceStatus">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 </beans>
