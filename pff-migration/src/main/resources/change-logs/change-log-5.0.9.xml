@@ -13938,7 +13938,7 @@ UNION ALL
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint" defaultValue="0">
+			<column name="WorkFlowId" type="bigint" >
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -13956,8 +13956,7 @@ UNION ALL
 			<column name="AdviseType" type="char(1)" />
 			<column name="FeeTypeCode" type="varchar(8)" />
 			<column name="ValueDate" type="datetime" />
-			<column name="AdviseAmount" type="decimal(18, 0)"
-				defaultValue="0" />
+			<column name="AdviseAmount" type="decimal(18, 0)"/>
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
 			<column name="Reason" type="varchar(500)" />
@@ -13972,7 +13971,7 @@ UNION ALL
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint" defaultValue="0">
+			<column name="WorkFlowId" type="bigint" >
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -13984,7 +13983,27 @@ UNION ALL
 		<addPrimaryKey constraintName="PK_AdviseId_Temp_ID"
 			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
 	</changeSet>
+	
+		<changeSet id="242_pre" author="Durgaprasad G" dbms="mssql">
+		<sql>
+			<![CDATA[	
+			    ALTER TABLE AdviseUploads_Temp ADD CONSTRAINT DF_AdviseUploads_T_AdviseAmnt DEFAULT 0 FOR AdviseAmount;
+			 	ALTER TABLE AdviseUploads ADD CONSTRAINT DF_AdviseUploads_WorkFlowId DEFAULT 0 FOR WorkFlowId;
+				ALTER TABLE AdviseUploads_Temp ADD CONSTRAINT DF_AdviseUploads_T_WorkFlowId DEFAULT 0 FOR WorkFlowId;
+			
+			]]>
+		</sql>
+	</changeSet>
 
+	 <changeSet id="242_pre" author="Durgaprasad G" dbms="postgresql, oracle">
+	 	<addDefaultValue columnName="AdviseAmount" tableName="AdviseUploads_Temp"
+			defaultValue="0" />
+		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads"
+			defaultValue="0" />
+		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads_Temp"
+			defaultValue="0" />
+		</changeSet> 
+	
 	<changeSet id="242" author="Varaprasad.K">
 		<createSequence sequenceName="SeqAdviseUploads" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>	
@@ -14180,9 +14199,9 @@ UNION ALL
 		    t1.waivedcess,
 		    t1.paidcess,
 			t1.finSource
-		   FROM plf.manualadvise t1
-		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		   FROM manualadvise t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 	<changeSet id="248_post" author="Varaprasad.K" dbms="postgresql">
@@ -14236,9 +14255,9 @@ UNION ALL
 		    t1.waivedugst,
 		    t1.waivedigst,
 			t1.finSource
-		   FROM plf.manualadvise t1
-		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		   FROM manualadvise t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 
@@ -14287,9 +14306,9 @@ UNION ALL
 		    t1.waivedcess,
 		    t1.paidcess,
 			T1.FinSource
-		   FROM plf.manualadvise_temp t1
-		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		   FROM manualadvise_temp t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
 	</createView>
 	</changeSet>
 
@@ -14338,9 +14357,9 @@ UNION ALL
 		    t1.waivedcess,
 		    t1.paidcess,
 			T1.FinSource
-		   FROM plf.manualadvise_temp t1
-		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		   FROM manualadvise_temp t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
 		UNION ALL
 		 SELECT t1.adviseid,
 		    t1.advisetype,
@@ -14384,11 +14403,11 @@ UNION ALL
 		    t1.waivedcess,
 		    t1.paidcess,
 			T1.FinSource
-		   FROM plf.manualadvise t1
-		     LEFT JOIN plf.feetypes t2 ON t1.feetypeid = t2.feetypeid
-		     LEFT JOIN plf.bouncereasons t3 ON t1.bounceid = t3.bounceid
+		   FROM manualadvise t1
+		     LEFT JOIN feetypes t2 ON t1.feetypeid = t2.feetypeid
+		     LEFT JOIN bouncereasons t3 ON t1.bounceid = t3.bounceid
 		  WHERE NOT (EXISTS ( SELECT 1
-		           FROM plf.manualadvise_temp
+		           FROM manualadvise_temp
 		          WHERE manualadvise_temp.adviseid = t1.adviseid))
 	</createView>
 	</changeSet>
@@ -14519,9 +14538,9 @@ UNION ALL
 				    t1.entitycode,
 				    t2.entitydesc,
 				    t3.usrlogin AS username
-				   FROM plf.uploadheader_temp t1
-				     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
-				     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+				   FROM uploadheader_temp t1
+				     LEFT JOIN entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN secusers t3 ON t3.usrid = t1.lastmntby
 				UNION ALL
 				 SELECT t1.uploadid,
 				    t1.filelocation,
@@ -14548,11 +14567,11 @@ UNION ALL
 				    t1.entitycode,
 				    t2.entitydesc,
 				    t3.usrlogin AS username
-				   FROM plf.uploadheader t1
-				     LEFT JOIN plf.entity t2 ON t1.entitycode=t2.entitycode
-				     LEFT JOIN plf.secusers t3 ON t3.usrid = t1.lastmntby
+				   FROM uploadheader t1
+				     LEFT JOIN entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN secusers t3 ON t3.usrid = t1.lastmntby
 				  WHERE NOT (EXISTS ( SELECT 1
-				           FROM plf.uploadheader_temp
+				           FROM uploadheader_temp
 				          WHERE uploadheader_temp.uploadid = t1.uploadid))
 	</createView>
 	</changeSet>
