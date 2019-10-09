@@ -13830,7 +13830,7 @@ UNION ALL
 		<addDefaultValue columnName="PROMOTIONSEQID"
 			tableName="FINANCEMAIN_TEMP" defaultValue="0" />
 	</changeSet>
-	
+
 	<changeSet id="234" author="Saikiran.V">
 		<sql>
 			<![CDATA[
@@ -13839,7 +13839,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="235" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -13864,7 +13864,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="236" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -13938,7 +13938,7 @@ UNION ALL
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint" >
+			<column name="WorkFlowId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
@@ -13956,7 +13956,7 @@ UNION ALL
 			<column name="AdviseType" type="char(1)" />
 			<column name="FeeTypeCode" type="varchar(8)" />
 			<column name="ValueDate" type="datetime" />
-			<column name="AdviseAmount" type="decimal(18, 0)"/>
+			<column name="AdviseAmount" type="decimal(18, 0)" />
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
 			<column name="Reason" type="varchar(500)" />
@@ -13971,20 +13971,20 @@ UNION ALL
 			<column name="TaskId" type="varchar(50)" />
 			<column name="NextTaskId" type="varchar(200)" />
 			<column name="RecordType" type="varchar(50)" />
-			<column name="WorkFlowId" type="bigint" >
+			<column name="WorkFlowId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="241" author="Varaprasad.K">
 		<addPrimaryKey constraintName="PK_AdviseId" tableName="AdviseUploads"
 			columnNames="AdviseId" />
 		<addPrimaryKey constraintName="PK_AdviseId_Temp_ID"
 			tableName="AdviseUploads_Temp" columnNames="AdviseId" />
 	</changeSet>
-	
-		<changeSet id="242_pre" author="Durgaprasad G" dbms="mssql">
+
+	<changeSet id="242_pre" author="Durgaprasad G" dbms="mssql">
 		<sql>
 			<![CDATA[	
 			    ALTER TABLE AdviseUploads_Temp ADD CONSTRAINT DF_AdviseUploads_T_AdviseAmnt DEFAULT 0 FOR AdviseAmount;
@@ -13995,18 +13995,19 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	 <changeSet id="242_pre" author="Durgaprasad G" dbms="postgresql, oracle">
-	 	<addDefaultValue columnName="AdviseAmount" tableName="AdviseUploads_Temp"
+	<changeSet id="242_pre" author="Durgaprasad G" dbms="postgresql, oracle">
+		<addDefaultValue columnName="AdviseAmount" tableName="AdviseUploads_Temp"
 			defaultValue="0" />
 		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads"
 			defaultValue="0" />
 		<addDefaultValue columnName="WorkFlowId" tableName="AdviseUploads_Temp"
 			defaultValue="0" />
-		</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="242" author="Varaprasad.K">
-		<createSequence sequenceName="SeqAdviseUploads" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
-	</changeSet>	
+		<createSequence sequenceName="SeqAdviseUploads"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
 
 	<changeSet id="243" author="Varaprasad">
 		<createView viewName="AdviseUploads_AView" replaceIfExists="true">
@@ -14511,7 +14512,7 @@ UNION ALL
 	   </createView>
 	</changeSet>
 
-	<changeSet id="257" author="Varaprasad.K">
+	<changeSet id="257" author="Varaprasad.K" dbms="postgresql,mssql">
 		<createView viewName="UPLOADHEADER_VIEW" replaceIfExists="true">
 			SELECT t1.uploadid,
 				    t1.filelocation,
@@ -14560,6 +14561,71 @@ UNION ALL
 				    t1.taskid,
 				    t1.nexttaskid,
 				    t1.recordtype,
+				    t1.workflowid,
+				    T1.ApprovedDate, 
+				    T1.MakerId, 
+				    T1.ApproverId,
+				    t1.entitycode,
+				    t2.entitydesc,
+				    t3.usrlogin AS username
+				   FROM uploadheader t1
+				     LEFT JOIN entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN secusers t3 ON t3.usrid = t1.lastmntby
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM uploadheader_temp
+				          WHERE uploadheader_temp.uploadid = t1.uploadid))
+	</createView>
+	</changeSet>
+
+	<changeSet id="257" author="Varaprasad.K" dbms="oracle">
+		<createView viewName="UPLOADHEADER_VIEW" replaceIfExists="true">
+				SELECT t1.uploadid,
+				    t1.filelocation,
+				    t1.filename,
+				    t1.transactiondate,
+				    t1.totalrecords,
+				    t1.successcount,
+				    t1.failedcount,
+				    t1.module,
+					t1.filedownload,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    T1.ApprovedDate, 
+				    T1.MakerId, 
+				    T1.ApproverId, 
+				    t1.entitycode,
+				    t2.entitydesc,
+				    t3.usrlogin AS username
+				   FROM uploadheader_temp t1
+				     LEFT JOIN entity t2 ON t1.entitycode=t2.entitycode
+				     LEFT JOIN secusers t3 ON t3.usrid = t1.lastmntby
+				UNION ALL
+				 SELECT t1.uploadid,
+				    t1.filelocation,
+				    t1.filename,
+				    t1.transactiondate,
+				    t1.totalrecords,
+				    t1.successcount,
+				    t1.failedcount,
+				    t1.module,
+					t1.filedownload,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+					cast (t1.recordstatus as VARCHAR2(50)) ,
+				    cast (t1.rolecode as VARCHAR2(50)),
+				    cast (t1.nextrolecode as VARCHAR2(200)),
+				    cast (t1.taskid as VARCHAR2(50)),
+					cast (t1.nexttaskid as VARCHAR2(200)),
+					cast (t1.recordtype as VARCHAR2(50)),
 				    t1.workflowid,
 				    T1.ApprovedDate, 
 				    T1.MakerId, 
