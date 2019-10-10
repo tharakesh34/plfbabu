@@ -5547,10 +5547,8 @@
 		</sql>
 	</changeSet>
 
-	<!-- <changeSet id="189" author="murthy.y">
-		<dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS"
-			constraintName="FK_COVENANT_DOCUMENTS_CID" />
-	</changeSet> -->
+	<!-- <changeSet id="189" author="murthy.y"> <dropForeignKeyConstraint baseTableName="COVENANT_DOCUMENTS" 
+		constraintName="FK_COVENANT_DOCUMENTS_CID" /> </changeSet> -->
 
 	<changeSet id="190" author="murthy">
 		<comment>New RBFields Added for Limit Rule</comment>
@@ -6085,4 +6083,13 @@
               ]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="212" author="murthy" dbms="oracle,mssql">
+		<sql>
+            <![CDATA[	
+				INSERT INTO RBFieldDetails values  ('FEES','EARLYSTL','finAgetilldate','months between loan start data and app date','int',9,1,1,'','static','')
+	  		 ]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
