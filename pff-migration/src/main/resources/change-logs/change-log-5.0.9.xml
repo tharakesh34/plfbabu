@@ -14019,7 +14019,6 @@ UNION ALL
 			  T1.FeeTypeCode,
 			  T1.ValueDate,
 			  T1.AdviseAmount,
-			  AdviseAmount,
 			  T1.Remarks,
 			  T1.Status,
 			  T1.Reason,
