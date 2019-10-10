@@ -132,6 +132,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1144,6 +1145,11 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						boolean prepareInvoice = false;
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
+							if(boucneFeeType==null){
+								throw new AppException(String.format("Fee Type code %s not found, please conatact system admin to configure.", PennantConstants.FEETYPE_BOUNCE));
+							}
+							
+							
 							movement.setFeeTypeCode(boucneFeeType.getFeeTypeCode());
 							movement.setFeeTypeDesc(boucneFeeType.getFeeTypeDesc());
 							movement.setTaxApplicable(boucneFeeType.isTaxApplicable());

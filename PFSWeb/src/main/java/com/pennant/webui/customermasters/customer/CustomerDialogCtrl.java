@@ -6505,9 +6505,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		String result = null;
 		String response = null;
-		if (getCustomerDetails().getExtendedFieldRender().getMapValues() != null
-				&& getCustomerDetails().getExtendedFieldRender().getMapValues().get("JsonResponse") != null) {
-			response = (String) getCustomerDetails().getExtendedFieldRender().getMapValues().get("JsonResponse");
+		Map<String, Object> mapValues = getCustomerDetails().getExtendedFieldRender().getMapValues();
+		if (mapValues != null && mapValues.get("JsonResponse") != null) {
+			response = (String) mapValues.get("JsonResponse");
 		}
 		JSONObject json = null;
 
@@ -6824,13 +6824,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				
 				//Verifying/Validating the PAN Number
 				primaryAccountService.retrivePanDetails(primaryAccount);
-				
-				if (isRetailCustomer) {
-					customer.setCustFName(primaryAccount.getCustFName());
-					customer.setCustMName(primaryAccount.getCustMName());
-				} 
-				
-				customer.setCustLName(primaryAccount.getCustLName());
 			} catch (Exception e) {
 				throw new WrongValueException(this.eidNumber,
 						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
