@@ -6084,7 +6084,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="212" author="murthy" dbms="oracle,mssql">
+	<changeSet id="212" author="murthy">
 		<sql>
             <![CDATA[	
 				INSERT INTO RBFieldDetails values  ('FEES','EARLYSTL','finAgetilldate','months between loan start data and app date','int',9,1,1,'','static','')
