@@ -367,6 +367,20 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_DOCUMENTTYPE_XLS_REQ)) {
+			if (media.getName().endsWith(".xls") || media.getName().endsWith(".xlsx")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+			if (media.getName().endsWith(".csv") || media.getName().endsWith(".CSV")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+			if (media.getName().endsWith(".XLS") || media.getName().endsWith(".XLSX")) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return;
+			}
+		}
 		browseDoc(media, this.documnetName);
 		logger.debug("Leaving" + event.toString());
 	}
