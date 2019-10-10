@@ -257,7 +257,6 @@
 		</sql>
 	</changeSet>
 	
-	
 	<changeSet id="31" author="Durgaprasad G">
 		<sql>
 			<![CDATA[			
@@ -266,6 +265,7 @@
 			]]>
 		</sql>
 	</changeSet>
+	
 	 <changeSet id="32" author="Varaprasad.K">
 		<createTable tableName="AdtAdviseUploads">
 		    <column name="AuditId" type="bigint">
