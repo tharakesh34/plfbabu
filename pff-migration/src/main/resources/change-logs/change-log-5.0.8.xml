@@ -9082,4 +9082,8 @@ UNION ALL
            ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="186" author="vijaya.a">
+		<dropColumn tableName="MandatesStatus" columnName="ID"/>
+	</changeSet>
 </databaseChangeLog>
