@@ -279,6 +279,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private Date appDate = null;
 	private CreditReviewData creditReviewData;
 	private AdvancePaymentDetail advancePaymentDetail;
+	private Map<String, Object> creditRevDataMap = new HashMap<>();
 	
 	// used for Interfaces
 	private Long usrID;
@@ -1424,5 +1425,13 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setUsrLogin(String usrLogin) {
 		this.usrLogin = usrLogin;
+	}
+
+	public Map<String,Object> getCreditRevDataMap() {
+		return creditRevDataMap;
+	}
+
+	public void setCreditRevDataMap(Map<String,Object> creditRevDataMap) {
+		this.creditRevDataMap = creditRevDataMap;
 	}
 }

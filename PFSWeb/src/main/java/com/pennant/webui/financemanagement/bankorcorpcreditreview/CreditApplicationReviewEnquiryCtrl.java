@@ -1107,10 +1107,23 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
-			btMap.put("DSCR_GF", custWiseDataMap.get("Y2_DSCR_GF"));
-			btMap.put("CRNTRATIO", custWiseDataMap.get("Y2_CRNT_RATIO"));
 			btMap.put("MARGINI", custWiseDataMap.get("Y2_SM_MARGIN"));
-
+			
+			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
+				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
+						this.currFormatter));
+			} else {
+				btMap.put("DSCR_GF", 0);
+			}
+			
+			if (custWiseDataMap.get("Y2_CRNT_RATIO") != null) {
+				btMap.put("CRNTRATIO", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_CRNT_RATIO")),
+						this.currFormatter));
+			} else {
+				btMap.put("CRNTRATIO", 0);
+			}
+			
+			
 			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
 				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
 						this.currFormatter));
@@ -1133,10 +1146,10 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			}
 
 			if (custWiseDataMap.get("Y2_SALES_OTHER_INCOME") != null) {
-				btMap.put("Annual_Turnover", PennantAppUtil.formateAmount(
+				btMap.put("ANNUAL_TURNOVER", PennantAppUtil.formateAmount(
 						new BigDecimal(custWiseDataMap.get("Y2_SALES_OTHER_INCOME")), this.currFormatter));
 			} else {
-				btMap.put("Annual_Turnover", 0);
+				btMap.put("ANNUAL_TURNOVER", 0);
 			}
 
 			if (custWiseDataMap.get("Y2_DEBT_EQUITY") != null) {
