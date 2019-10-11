@@ -1903,9 +1903,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			//PD Approval Tab
 			appendPDApprovalTab(onLoad);
-
-			//Financial Summary Tab
-			appendFinancialSummaryTab(onLoad);
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
 
@@ -21168,22 +21165,28 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Method for Rendering PDV Approval Data in finance
 	 */
-	protected void appendFinancialSummaryTab(boolean onLoadProcess) {
+	protected void appendPDApprovalTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
-		boolean createTab = true;
-
+		boolean createTab = false;
+		if (!getFinanceDetail().isPdApprovalTab()) {
+			createTab = false;
+		} else if (onLoadProcess) {
+			createTab = true;
+		} else if (getTab(AssetConstants.UNIQUE_ID_PDAPPROVAL) == null) {
+			createTab = true;
+		}
 		if (createTab) {
-			createTab(AssetConstants.UNIQUE_ID_CETDETAILS, true);
+			createTab(AssetConstants.UNIQUE_ID_PDAPPROVAL, true);
 		} else {
-			clearTabpanelChildren(AssetConstants.UNIQUE_ID_CETDETAILS);
+			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDAPPROVAL);
 		}
 		if (getFinanceDetail().isPdApprovalTab() && !onLoadProcess) {
 			final HashMap<String, Object> map = getDefaultArguments();
 			map.put("financeMainBaseCtrl", this);
 			map.put("finHeaderList", getFinBasicDetails());
 			map.put("financeDetail", financeDetail);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/CetDetailsDialog.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_CETDETAILS), map);
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/PDApproval.zul",
+					getTabpanel(AssetConstants.UNIQUE_ID_PDAPPROVAL), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -21625,35 +21628,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	/**
-	 * Method for Rendering PDV Approval Data in finance
-	 */
-	protected void appendPDApprovalTab(boolean onLoadProcess) {
-		logger.debug(Literal.ENTERING);
-		boolean createTab = false;
-		if (!getFinanceDetail().isPdApprovalTab()) {
-			createTab = false;
-		} else if (onLoadProcess) {
-			createTab = true;
-		} else if (getTab(AssetConstants.UNIQUE_ID_PDAPPROVAL) == null) {
-			createTab = true;
-		}
-		if (createTab) {
-			createTab(AssetConstants.UNIQUE_ID_PDAPPROVAL, true);
-		} else {
-			clearTabpanelChildren(AssetConstants.UNIQUE_ID_PDAPPROVAL);
-		}
-		if (getFinanceDetail().isPdApprovalTab() && !onLoadProcess) {
-			final HashMap<String, Object> map = getDefaultArguments();
-			map.put("financeMainBaseCtrl", this);
-			map.put("finHeaderList", getFinBasicDetails());
-			map.put("financeDetail", financeDetail);
-			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/PDApproval.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_PDAPPROVAL), map);
 		}
 		logger.debug(Literal.LEAVING);
 	}
