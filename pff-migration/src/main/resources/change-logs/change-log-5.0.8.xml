@@ -9085,6 +9085,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
+	<changeSet id="186_pre" author="naga.g" dbms="mssql">
+		<sql>
+           <![CDATA[
+				alter table MandatesStatus drop constraint DF_MandatesStatus_Id;
+			]]>
+		</sql>
+	</changeSet>
+		
 	<changeSet id="186" author="vijaya.a">
 		<dropColumn tableName="MandatesStatus" columnName="ID"/>
 	</changeSet>
