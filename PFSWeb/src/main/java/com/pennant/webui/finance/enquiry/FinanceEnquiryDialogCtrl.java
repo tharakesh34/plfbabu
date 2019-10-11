@@ -1199,13 +1199,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			if (PennantConstants.WORFLOW_MODULE_CD.equals(aFinanceMain.getLovDescProductCodeName())) {
 				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
+				this.totalDownPayment.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayment(), formatter));
 			} else {
 				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), formatter));
+				this.totalDownPayment.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(), formatter));
 			}
 					this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
 					aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
-			this.totalDownPayment
-					.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(), formatter));
 			this.totalCapitalize.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCpz(), formatter));
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(), formatter));
 			this.totalSchdProfit.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPftSchd(), formatter));
