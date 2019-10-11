@@ -131,7 +131,7 @@ public class UploadManualAdvise extends AbstractWorkflowEntity implements Entity
 		return feeTypeID;
 	}
 
-	public void setFeeTypeID(long feeTypeID) {
+	public void setFeeTypeID(Long feeTypeID) {
 		this.feeTypeID = feeTypeID;
 	}
 
