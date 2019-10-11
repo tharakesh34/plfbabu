@@ -8404,7 +8404,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-
 	<changeSet id="170.0" author="srihari.m">
 		<createTable tableName="PaymentTransaction">
 			<column name="TRANSACTIONID" type="NUMBER" autoIncrement="true" />
@@ -8771,6 +8770,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="179" author="Varaprasad.K">
 		<sql>
 	    <![CDATA[
@@ -8779,6 +8779,7 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="180" author="naga.g">
 		<sql>
 			 <![CDATA[
