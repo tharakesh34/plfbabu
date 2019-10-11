@@ -1,5 +1,8 @@
 package com.pennant.backend.dao.dms.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -7,6 +10,7 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -19,159 +23,319 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.backend.dao.dms.DMSIdentificationDAO;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.util.DmsDocumentConstants;
-import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class DMSIdentificationDAOImpl extends SequenceDao<DMSDocumentDetails> implements DMSIdentificationDAO {
+public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> implements DMSIdentificationDAO {
 	private static Logger logger = Logger.getLogger(DMSIdentificationDAOImpl.class);
+	
+	private static String insertQuery = insertQuery("dmsdocprocess");
+	private static String insertLogQuery = insertQuery("dmsdocprocesslog");
+	private static String updateCustDocQuery = updateCustDocQuery();
+	private static String updateDocDetailQuery = updateDocDetailsQuery();
+	private static String updateDmsProcessLogQuery = updateDmsProcessLogQuery();
+	private static String dmsProcessUpdateSql = dmsProcessUpdateSql();
+	
 	private DataSourceTransactionManager transManager;
 	private DefaultTransactionDefinition transDef;
+	
 
-	@Override
-	public void saveDMSDocumentReferences(List<DMSDocumentDetails> dmsDocumentDetailList) {
-		logger.debug("Entering");
-		if (CollectionUtils.isNotEmpty(dmsDocumentDetailList)) {
-			try {
-				String sql = "insert into dmsdocprocess "
-						+ "(id,finreference,docmodule,docrefid,state,status,lastMntOn,createdOn,referenceid,customercif,docid,docCategory,docDesc,docExt) "
-						+ "values (:id,:finReference,:docModule,:docRefId,:state,:status,:lastMntOn,:createdOn,:referenceId,:customerCif,:docId,:docCategory,:docDesc,:docExt)";
+	private enum Field {
+		Id(1),
+		FinReference(2),
+		DocModule(3),
+		DocRefId(4),
+		State(5),
+		Status(6),
+		ReferenceId(7),
+		RetryCount(8),
+		CustomerCif(9),
+		DocId(10),
+		DocCategory(11),
+		DocDesc(12),
+		DocExt(13),
+		LastMntOn(14),
+		CreatedOn(15),
+		ErrorDesc(16);
 
-				dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("seqdmsidentification")));
+		private int index;
 
-				SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(dmsDocumentDetailList.toArray());
-				jdbcTemplate.batchUpdate(sql, params);
-			} catch (Exception e) {
-				logger.error("Exception", e);
-			}
+		private Field(int index) {
+			this.index = index;
 		}
-		logger.debug("Leaving");
+
 	}
 
 	@Override
-	public List<DMSDocumentDetails> retrieveDMSDocumentReference() {
-		logger.debug("Entering");
-		List<DMSDocumentDetails> dmsDocumentDetails = null;
+	public void saveDMSDocumentReferences(List<DocumentDetails> dmsDocumentDetailList) {
+		logger.debug(Literal.ENTERING);
+
+		if (CollectionUtils.isEmpty(dmsDocumentDetailList)) {
+			return;
+		}
+
 		try {
-			String sql = "select * from dmsdocprocess";
-			RowMapper<DMSDocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(DMSDocumentDetails.class);
-			logger.debug(Literal.LEAVING);
-			dmsDocumentDetails = this.jdbcTemplate.query(sql, typeRowMapper);
+			dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("SeqDmsIdentification")));
+
+			SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(dmsDocumentDetailList.toArray());
+			jdbcTemplate.batchUpdate(insertQuery, params);
+
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
-		return dmsDocumentDetails;
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private static String dmsProcessUpdateSql() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update DmsDocProcess set");
+		sql.append(" RetryCount = :RetryCount");
+		sql.append(", State = :State");
+		sql.append(" where Id = :Id");
+
+		return sql.toString();
+	}
+
+	private static String updateDmsProcessLogQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update DmsDocProcessLog set");
+		sql.append(" RetryCount=:RetryCount");
+		sql.append(", Status = '" + DmsDocumentConstants.DMS_DOCUMENT_STATUS_NONPROCESSABLE + "'");
+		sql.append(" where Id=:Id");
+
+		return sql.toString();
+	}
+
+	private static String updateDocDetailsQuery() {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("update DocumentDetails set");
+		sql.append(" DocRefId = :DocRefId");
+		sql.append(", DocUri = :DocUri");
+		sql.append(" where DocId = :DocId");
+		sql.append(" and DocCategory=:DocCategory");
+
+		return sql.toString();
+	}
+
+	private static String updateCustDocQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update CustomerDocuments set");
+		sql.append(" DocRefId = :DocRefId");
+		sql.append(", DocUri= :DocUri");
+		sql.append(" where CustId=:DocId");//FIXME
+		sql.append(" and CustDocCategory=:DocCategory");
+
+		return sql.toString();
+	}
+
+
+	private static String insertQuery(String tableName) {
+		StringBuilder sql = new StringBuilder();
+		StringBuilder columns = new StringBuilder();
+
+		sql.append("insert into ");
+		sql.append(tableName);
+		sql.append("(");
+
+		for (Field field : Field.values()) {
+
+			if (tableName.equals("dmsdocprocess") && field == Field.ErrorDesc) {
+				continue;
+			}
+
+			if (columns.length() > 0) {
+				columns.append(",");
+			}
+
+			columns.append(field);
+		}
+
+		sql.append(columns.toString());
+		sql.append(")");
+		sql.append(" values (");
+		columns = new StringBuilder();
+		for (Field field : Field.values()) {
+			if (columns.length() > 0) {
+				columns.append(",");
+			}
+
+			columns.append(":");
+			columns.append(field);
+		}
+		sql.append(columns.toString());
+		sql.append(")");
+
+
+		insertQuery = sql.toString();
+
+		return insertQuery;
 	}
 
 	@Override
-	public void processSuccessResponse(DMSDocumentDetails dmsDocumentDetails,
-			DMSDocumentDetails responseDmsDocumentDetails) {
-		logger.debug("Entering");
-		TransactionStatus txnStatus = null;
+	public List<DocumentDetails> retrieveDMSDocumentReference() {
 		try {
-			txnStatus = transManager.getTransaction(transDef);
-			if (StringUtils.equals(responseDmsDocumentDetails.getDocModule(), "CUSTOMER")) {
-				String customerSql = "update customerdocuments set docrefid = :docRefId, docuri= :docUri"
-						+ " where custid=:docId and custdoccategory=:docCategory";
-				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(responseDmsDocumentDetails);
-				jdbcTemplate.update(customerSql, beanParameters);
+			return this.jdbcTemplate.query("select * from DmsDocProcess", new RowMapper<DocumentDetails>() {
+				@Override
+				public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+					DocumentDetails documentDetail = new DocumentDetails();
+
+					documentDetail.setId(rs.getLong(Field.Id.index));
+					documentDetail.setFinReference(rs.getString(Field.FinReference.index));
+					documentDetail.setDocModule(rs.getString(Field.DocModule.index));
+					documentDetail.setDocRefId(rs.getLong(Field.DocRefId.index));
+					documentDetail.setState(rs.getString(Field.State.index));
+					documentDetail.setStatus(rs.getString(Field.Status.index));
+					//	documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
+					//	documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
+					documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
+					documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
+					documentDetail.setDocId(rs.getLong(Field.DocId.index));
+					documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
+					documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
+					documentDetail.setDocExt(rs.getString(Field.DocExt.index));
+
+					return documentDetail;
+				}
+			});
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+		return new ArrayList<>();
+	}
+
+	@Override
+	public void processSuccessResponse(DocumentDetails docDetails) {
+		TransactionStatus txnStatus = transManager.getTransaction(transDef);
+		docDetails.setDocRefId(null);//FIXME REMOVE THE NOT NULL CONSTRAINT IF EXIST
+
+		try {
+			if (StringUtils.equals(docDetails.getDocModule(), "CUSTOMER")) {
+				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+				jdbcTemplate.update(updateCustDocQuery, beanParameters);
 			} else {
-				String customerSql = "update documentdetails set docrefid = :docRefId, docuri= :docUri"
-						+ " where docId=:docId and docCategory=:docCategory";
-				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(responseDmsDocumentDetails);
-				jdbcTemplate.update(customerSql, beanParameters);
+				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+				jdbcTemplate.update(updateDocDetailQuery, beanParameters);
 			}
 
-			String documentManagerSql = "delete from documentmanager where id = :docRefId";
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-			jdbcTemplate.update(documentManagerSql, beanParameters);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+			jdbcTemplate.update("delete from DocumentManager where id = :DocRefId", beanParameters);
 
-			String dmsErrorDelete = "delete from dmsdocprocesslog where id=:id";
-			beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-			jdbcTemplate.update(dmsErrorDelete, beanParameters);
+			beanParameters = new BeanPropertySqlParameterSource(docDetails);
+			jdbcTemplate.update("delete from DmsDocProcessLog where Id = :Id", beanParameters);
 
-			dmsDocumentDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS);
+			docDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS);
 
-			String sql = "insert into dmsdocprocesslog "
-					+ "(id,finreference,docmodule,docrefid,state,status,lastMntOn,createdOn,referenceid,customercif,docid,docCategory,retrycount) "
-					+ "values (:id,:finReference,:docModule,:docRefId,:state,:status,:lastMntOn,:createdOn,:referenceId,:customerCif,:docId,:docCategory,:retryCount)";
-			beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-			jdbcTemplate.update(sql, beanParameters);
+			beanParameters = new BeanPropertySqlParameterSource(docDetails);
+			jdbcTemplate.update(insertLogQuery, beanParameters);
 
-			String dmsDelete = "delete from dmsdocprocess where id = :id";
-			beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-			jdbcTemplate.update(dmsDelete, beanParameters);
+			beanParameters = new BeanPropertySqlParameterSource(docDetails);
+			jdbcTemplate.update("delete from DmsDocProcess where id = :id", beanParameters);
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
 			transManager.rollback(txnStatus);
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug("Leaving");
 	}
 
 	@Override
-	public void processFailure(DMSDocumentDetails dmsDocumentDetails, int configRetryCount) {
-		logger.debug("Entering");
+	public void processFailure(DocumentDetails dmsDocumentDetails, int configRetryCount) {
 		TransactionStatus txnStatus = null;
 		try {
 			txnStatus = transManager.getTransaction(transDef);
 			if (dmsDocumentDetails.getRetryCount() >= configRetryCount) {
-				String dmsDelete = "delete from dmsdocprocess where id = :id";
 				BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-				jdbcTemplate.update(dmsDelete, beanParameters);
+				jdbcTemplate.update("delete from DmsDocProcess where Id = :Id", beanParameters);
 
-				String sql = "insert into dmsdocprocesslog "
-						+ "(id,finreference,docmodule,docrefid,state,status,lastMntOn,createdOn,referenceid,customercif,docid,docCategory,retrycount,errordesc) "
-						+ "values (:id,:finReference,:docModule,:docRefId,:state,:status,:lastMntOn,:createdOn,:referenceId,:customerCif,:docId,:docCategory,:retryCount,:errorDesc)";
-				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-				jdbcTemplate.update(sql, beanParameters);
 
-				String customerSql = "update dmsdocprocesslog set retrycount=:retryCount,status = '"
-						+ DmsDocumentConstants.DMS_DOCUMENT_STATUS_NONPROCESSABLE + "' where id=:id";
 				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-				jdbcTemplate.update(customerSql, beanParameters);
-				logger.info("DMSDocument " + dmsDocumentDetails.getId() + " reference "
-						+ dmsDocumentDetails.getReferenceId() + " have reached maximum retry count "
-						+ dmsDocumentDetails.getRetryCount() + " for loan " + dmsDocumentDetails.getFinReference());
+				jdbcTemplate.update(insertLogQuery, beanParameters);
+
+
+				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
+				jdbcTemplate.update(updateDmsProcessLogQuery, beanParameters);
 			} else {
-				String sql = "insert into dmsdocprocesslog "
-						+ "(id,finreference,docmodule,docrefid,state,status,lastMntOn,createdOn,referenceid,customercif,docid,docCategory,retrycount,errordesc) "
-						+ "values (:id,:finReference,:docModule,:docRefId,:state,:status,:lastMntOn,:createdOn,:referenceId,:customerCif,:docId,:docCategory,:retryCount,:errorDesc)";
-				BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-				jdbcTemplate.update(sql, beanParameters);
 
-				String dmsProcessUpdateSql = "update dmsdocprocess set retrycount=:retryCount,state=:state,status=:status where id=:id";
+				BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
+				jdbcTemplate.update(insertLogQuery, beanParameters);
+
 				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
 				jdbcTemplate.update(dmsProcessUpdateSql, beanParameters);
 			}
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
 			transManager.rollback(txnStatus);
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public List<DMSDocumentDetails> retrieveDMSDocumentLogs(long dmsId) {
-		logger.debug("Entering");
-		List<DMSDocumentDetails> dmsDocumentDetails = null;
+	public List<DocumentDetails> retrieveDMSDocumentLogs(long dmsId) {
+		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		paramMap.addValue("dmsId", dmsId);
 		try {
-			String sql = "select * from dmsdocprocesslog where id = :dmsId";
-			RowMapper<DMSDocumentDetails> typeRowMapper = ParameterizedBeanPropertyRowMapper
-					.newInstance(DMSDocumentDetails.class);
-			MapSqlParameterSource paramMap = new MapSqlParameterSource();
-			paramMap.addValue("dmsId", dmsId);
-			dmsDocumentDetails = this.jdbcTemplate.query(sql, paramMap, typeRowMapper);
+			return this.jdbcTemplate.query("select * from DmsDocProcessLog  where id = :dmsId", paramMap,
+					new RowMapper<DocumentDetails>() {
+						@Override
+						public DocumentDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+							DocumentDetails documentDetail = new DocumentDetails();
+
+							documentDetail.setId(rs.getLong(Field.Id.index));
+							documentDetail.setFinReference(rs.getString(Field.FinReference.index));
+							documentDetail.setDocModule(rs.getString(Field.DocModule.index));
+							documentDetail.setDocRefId(rs.getLong(rs.getString(Field.DocRefId.index)));
+							documentDetail.setState(rs.getString(Field.State.index));
+							documentDetail.setStatus(rs.getString(Field.Status.index));
+							//documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
+							//documentDetail.setCreatedOn(rs.getTimestamp(Field.CreatedOn.index));
+							documentDetail.setCustomerCif(rs.getString(Field.CustomerCif.index));
+							documentDetail.setReferenceId(rs.getString(Field.ReferenceId.index));
+							documentDetail.setDocId(rs.getLong(rs.getString(Field.DocId.index)));
+							documentDetail.setDocCategory(rs.getString(Field.DocCategory.index));
+							documentDetail.setDocDesc(rs.getString(Field.DocDesc.index));
+							documentDetail.setDocExt(rs.getString(Field.DocExt.index));
+							documentDetail.setRetryCount(rs.getInt(Field.RetryCount.index));
+							documentDetail.setErrorDesc(rs.getString(Field.ErrorDesc.index));
+
+							return documentDetail;
+						}
+					});
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 		}
-		logger.debug(Literal.LEAVING);
-		return dmsDocumentDetails;
+		return new ArrayList<>();
+
 	}
+
+	public DocumentManager retrieveDocumentManagerDocImage(long docRefId) {
+		logger.debug("Entering");
+		DocumentManager documentManager = new DocumentManager();
+		documentManager.setId(docRefId);
+
+		StringBuilder selectSql = new StringBuilder("Select Id, DocImage From DocumentManager Where Id =:Id");
+		logger.debug("selectSql: " + selectSql.toString());
+
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(documentManager);
+		RowMapper<DocumentManager> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(DocumentManager.class);
+
+		try {
+			documentManager = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			documentManager = null;
+		}
+
+		logger.debug("Leaving");
+		return documentManager;
+	}
+
+
 
 	@Override
 	public void setDataSource(DataSource dataSource) {

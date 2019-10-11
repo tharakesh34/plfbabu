@@ -12,12 +12,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.dms.DMSIdentificationDAO;
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.util.DmsDocumentConstants;
-import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.creditInformation.AbstractDMSIntegrationService;
+import com.pennanttech.pff.external.DocumentManagementService;
 
 public class DMSAddDocJobProcess {
 	private static final Logger logger = Logger.getLogger(DMSAddDocJobProcess.class);
@@ -29,20 +27,18 @@ public class DMSAddDocJobProcess {
 		super();
 	}
 
-	@Autowired
+
 	private DMSIdentificationDAO identificationDAO;
-	@Autowired(required = false)
-	private AbstractDMSIntegrationService abstractDMSIntegrationService;
+	private DocumentManagementService documentManagementService;
 
 	public void process() {
 		logger.debug(Literal.ENTERING);
-		List<DMSDocumentDetails> dmsDocRefList = identificationDAO.retrieveDMSDocumentReference();
+		List<DocumentDetails> dmsDocRefList = identificationDAO.retrieveDMSDocumentReference();
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 		if (CollectionUtils.isNotEmpty(dmsDocRefList)) {
-			for (DMSDocumentDetails dmsDocumentDetails : dmsDocRefList) {
+			for (DocumentDetails dmsDocumentDetails : dmsDocRefList) {
 				if (null != dmsDocumentDetails) {
-					Runnable dmsRunnable = new DmsRunnable(identificationDAO, abstractDMSIntegrationService,
-							dmsDocumentDetails);
+					Runnable dmsRunnable = new DmsRunnable(dmsDocumentDetails);
 					executor.execute(dmsRunnable);
 				}
 			}
@@ -58,14 +54,9 @@ public class DMSAddDocJobProcess {
 	}
 
 	private class DmsRunnable implements Runnable {
-		private DMSIdentificationDAO identificationDAO;
-		private AbstractDMSIntegrationService abstractDMSIntegrationService;
-		private DMSDocumentDetails dmsDocumentDetails;
+		private DocumentDetails dmsDocumentDetails;
 
-		public DmsRunnable(DMSIdentificationDAO identificationDAO,
-				AbstractDMSIntegrationService abstractDMSIntegrationService, DMSDocumentDetails dmsDocumentDetails) {
-			this.identificationDAO = identificationDAO;
-			this.abstractDMSIntegrationService = abstractDMSIntegrationService;
+		public DmsRunnable(DocumentDetails dmsDocumentDetails) {
 			this.dmsDocumentDetails = dmsDocumentDetails;
 		}
 
@@ -75,14 +66,12 @@ public class DMSAddDocJobProcess {
 			dmsDocumentDetails.setLastMntOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 			dmsDocumentDetails.setState("Initated");
 			dmsDocumentDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_PROCESSING);
+
 			boolean success = true;
 			String errorMsg = null;
-			AuditHeader auditHeader = new AuditHeader();
-			auditHeader.setAuditDetail(new AuditDetail());
-			auditHeader.getAuditDetail().setModelData(dmsDocumentDetails);
-			AuditHeader responseAuditHeader = null;
+			String docUri = null;
 			try {
-				responseAuditHeader = abstractDMSIntegrationService.insertExternalDocument(auditHeader);
+				docUri = documentManagementService.insertExternalDocument(dmsDocumentDetails);
 			} catch (Exception exception) {
 				success = false;
 				if (null != exception.getMessage()) {
@@ -95,16 +84,10 @@ public class DMSAddDocJobProcess {
 			}
 
 			if (success) {
-				if (null != responseAuditHeader && null != responseAuditHeader.getAuditDetail()
-						&& null != responseAuditHeader.getAuditDetail().getModelData()) {
-					Object object = responseAuditHeader.getAuditDetail().getModelData();
-					DMSDocumentDetails responseDmsDocumentDetails = null;
-					if (object instanceof DMSDocumentDetails) {
-						responseDmsDocumentDetails = (DMSDocumentDetails) object;
-					}
-					if (null != responseDmsDocumentDetails) {
-						identificationDAO.processSuccessResponse(dmsDocumentDetails, responseDmsDocumentDetails);
-					}
+				if (null != docUri) {
+					dmsDocumentDetails.setDocRefId(null);
+					dmsDocumentDetails.setDocUri(docUri);
+					identificationDAO.processSuccessResponse(dmsDocumentDetails);
 				}
 			} else {
 				dmsDocumentDetails.setState("Error");
@@ -124,5 +107,15 @@ public class DMSAddDocJobProcess {
 
 	public void setThreadAwaitPeroid(int threadAwaitPeroid) {
 		this.threadAwaitPeroid = threadAwaitPeroid;
+	}
+
+	@Autowired
+	public void setIdentificationDAO(DMSIdentificationDAO identificationDAO) {
+		this.identificationDAO = identificationDAO;
+	}
+
+	@Autowired
+	public void setDocumentManagementService(DocumentManagementService documentManagementService) {
+		this.documentManagementService = documentManagementService;
 	}
 }

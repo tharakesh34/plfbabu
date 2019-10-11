@@ -75,11 +75,20 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	@XmlElement
 	private WSReturnStatus returnStatus;
 	// New proeprty added for holding the DocumentManager table's ID
-	private long docRefId = Long.MIN_VALUE;
+	private Long docRefId;
 
 	// Verification Fields
 	private int doumentType;
 	private long instructionUID = Long.MIN_VALUE;
+	private String customerCif;
+	private String finReference;
+	private String state;
+	private String status;
+	private String docDesc;
+	private String docExt;
+	private Timestamp createdOn;
+	private int retryCount;
+	private String errorDesc;
 
 	public DocumentDetails() {
 		super();
@@ -117,6 +126,16 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("docImage");
 		excludeFields.add("doumentType");
 		excludeFields.add("returnStatus");
+		excludeFields.add("customerCif");
+		excludeFields.add("finReference");
+		excludeFields.add("state");
+		excludeFields.add("status");
+		excludeFields.add("docDesc");
+		excludeFields.add("docExt");
+		excludeFields.add("createdOn");
+		excludeFields.add("retryCount");
+		excludeFields.add("errorDesc");
+
 		return excludeFields;
 	}
 
@@ -349,11 +368,11 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 	}
 
 	// Getter settters added for docRefId property.
-	public long getDocRefId() {
+	public Long getDocRefId() {
 		return docRefId;
 	}
 
-	public void setDocRefId(long docRefId) {
+	public void setDocRefId(Long docRefId) {
 		this.docRefId = docRefId;
 	}
 
@@ -451,6 +470,78 @@ public class DocumentDetails extends AbstractWorkflowEntity implements Entity {
 
 	public void setReturnStatus(WSReturnStatus returnStatus) {
 		this.returnStatus = returnStatus;
+	}
+
+	public String getCustomerCif() {
+		return customerCif;
+	}
+
+	public void setCustomerCif(String customerCif) {
+		this.customerCif = customerCif;
+	}
+
+	public String getFinReference() {
+		return finReference;
+	}
+
+	public void setFinReference(String finReference) {
+		this.finReference = finReference;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getDocDesc() {
+		return docDesc;
+	}
+
+	public void setDocDesc(String docDesc) {
+		this.docDesc = docDesc;
+	}
+
+	public String getDocExt() {
+		return docExt;
+	}
+
+	public void setDocExt(String docExt) {
+		this.docExt = docExt;
+	}
+
+	public Timestamp getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Timestamp createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+
+	public String getErrorDesc() {
+		return errorDesc;
+	}
+
+	public void setErrorDesc(String errorDesc) {
+		this.errorDesc = errorDesc;
 	}
 
 }

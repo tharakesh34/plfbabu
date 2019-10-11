@@ -20,15 +20,15 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerDocument;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.dms.DMSIdentificationService;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.JdbcSearchObject;
-import com.pennanttech.model.dms.DMSDocumentDetails;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
@@ -53,11 +53,13 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 	private CustomerDetailsService customerDetailsService;
 	@Autowired
 	private SearchProcessor searchProcessor;
+	
+
 
 	@Override
 	public void identifyExternalDocument(AuditHeader auditHeader) {
 		logger.debug("Entering");
-		List<DMSDocumentDetails> dmsDocumentDetailList = new ArrayList<>();
+		List<DocumentDetails> dmsDocumentDetailList = new ArrayList<>();
 		List<DocumentDetails> totDocumentDetailsList = new ArrayList<>();
 
 		try {
@@ -66,14 +68,16 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 				if (modelObj instanceof FinanceDetail) {
 					FinanceDetail financeDetail = (FinanceDetail) modelObj;
 
-					JdbcSearchObject<DocumentType> searchObject = new JdbcSearchObject<DocumentType>(
-							DocumentType.class);
-					searchObject.addTabelName("BMTDocumentTypes");
+					Search search = new Search(DocumentType.class);
+					search.addTabelName("BMTDocumentTypes");
 
-					List<DocumentType> documentTypeList = searchProcessor.getResults(searchObject);
+					List<DocumentType> documentTypeList = searchProcessor.getResults(search);
 
-					if (null != financeDetail && null != financeDetail.getFinScheduleData()) {
-						long custId = financeDetail.getFinScheduleData().getFinanceMain().getCustID();
+					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+					String finReference = finScheduleData.getFinReference();
+					
+					if (null != financeDetail && null != finScheduleData) {
+						long custId = finScheduleData.getFinanceMain().getCustID();
 
 						if (null != customerDetailsService) {
 							CustomerDetails customerDetails = customerDetailsService
@@ -83,8 +87,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								for (CustomerDocument customer : customerDetails.getCustomerDocumentsList()) {
 									if (null != customer && customer.getDocRefId() != Long.MIN_VALUE
 											&& StringUtils.isEmpty(customer.getDocUri())) {
-										DMSDocumentDetails details = new DMSDocumentDetails();
-										details.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+										DocumentDetails details = new DocumentDetails();
+										details.setFinReference(finReference);
 										details.setDocModule("CUSTOMER");
 										details.setDocRefId(customer.getDocRefId());
 										details.setState("Identified");
@@ -109,7 +113,7 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						}
 
 						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
-								financeDetail.getFinScheduleData().getFinReference(), FinanceConstants.MODULE_NAME,
+								finReference, FinanceConstants.MODULE_NAME,
 								FinanceConstants.FINSER_EVENT_ORG, "_View");
 
 						if (CollectionUtils.isNotEmpty(documentDetailsList)) {
@@ -119,7 +123,7 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						List<CollateralAssignment> collateralAssignmentByFinRef = null;
 						if (null != collateralAssignmentDAO) {
 							collateralAssignmentByFinRef = collateralAssignmentDAO.getCollateralAssignmentByFinRef(
-									financeDetail.getFinScheduleData().getFinReference(), FinanceConstants.MODULE_NAME,
+									finReference, FinanceConstants.MODULE_NAME,
 									"_View");
 						}
 						List<CollateralSetup> collateralSetupList = null;
@@ -144,7 +148,7 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 
 						if (null != verificationService) {
 							List<Verification> verifications = verificationService
-									.getVerificationsForAggrement(financeDetail.getFinScheduleData().getFinReference());
+									.getVerificationsForAggrement(finReference);
 							if (CollectionUtils.isNotEmpty(verifications)) {
 								for (Verification verification : verifications) {
 									if (null != verification) {
@@ -179,8 +183,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						for (DocumentDetails documentDetails : totDocumentDetailsList) {
 							if (null != documentDetails && documentDetails.getDocRefId() != Long.MIN_VALUE
 									&& StringUtils.isEmpty(documentDetails.getDocUri())) {
-								DMSDocumentDetails details = new DMSDocumentDetails();
-								details.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+								DocumentDetails details = new DocumentDetails();
+								details.setFinReference(finReference);
 								details.setDocModule(documentDetails.getDocModule());
 								details.setDocRefId(documentDetails.getDocRefId());
 								details.setState("Identified");
@@ -224,9 +228,9 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 	}
 
 	@Override
-	public List<DMSDocumentDetails> getDmsDocumentDetails(long dmsId) {
+	public List<DocumentDetails> getDmsDocumentDetails(long dmsId) {
 		logger.debug("Entering");
-		List<DMSDocumentDetails> dmsDocumentLogs = null;
+		List<DocumentDetails> dmsDocumentLogs = null;
 		try {
 			dmsDocumentLogs = dmsIdentificationDao.retrieveDMSDocumentLogs(dmsId);
 		} catch (Exception e) {

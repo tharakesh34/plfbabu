@@ -2,17 +2,19 @@ package com.pennant.backend.dao.dms;
 
 import java.util.List;
 
-import com.pennanttech.model.dms.DMSDocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 
 public interface DMSIdentificationDAO {
-	public void saveDMSDocumentReferences(List<DMSDocumentDetails> dmsDocumentDetailList);
+	public void saveDMSDocumentReferences(List<DocumentDetails> dmsDocumentDetailList);
 
-	public List<DMSDocumentDetails> retrieveDMSDocumentReference();
+	public List<DocumentDetails> retrieveDMSDocumentReference();
 
-	public void processSuccessResponse(DMSDocumentDetails dmsDocumentDetails,
-			DMSDocumentDetails responseDmsDocumentDetails);
+	public void processSuccessResponse(DocumentDetails dmsDocumentDetails);
 
-	public void processFailure(DMSDocumentDetails dmsDocumentDetails, int configRetryCount);
+	public void processFailure(DocumentDetails dmsDocumentDetails, int configRetryCount);
 
-	public List<DMSDocumentDetails> retrieveDMSDocumentLogs(long dmsId);
+	public List<DocumentDetails> retrieveDMSDocumentLogs(long dmsId);
+
+	public DocumentManager retrieveDocumentManagerDocImage(long docRefId);
 }

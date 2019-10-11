@@ -15,6 +15,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.scheduler.AbstractJobScheduler;
 import com.pennanttech.pennapps.core.scheduler.Job;
+import com.pennanttech.pff.schedule.jobs.DMSAddDocJob;
 
 public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final Logger logger = LogManager.getLogger(DefaultJobSchedular.class);
@@ -31,6 +32,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 	private static final String AUTO_RECPT_RESPONSE_JOB = "AUTO_RECPT_RES_JOB";
 	private static final String AUTO_RECPT_RESPONSE_JOB_TRIGGER = "AUTO_RECPT_RES_JOB_TRIGGER";
 	private static final String LMS_SERVICE_LOG_ALERTS_JOB = "LMS_SERVICE_LOG_ALERTS_JOB";
+	private static final String DMS_INVOKE_TIME = App.getProperty("dms.invoke.cronExpression");
 
 	@Override
 	protected void registerJobs() throws Exception {
@@ -42,6 +44,7 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		registerPutCallAlertsJob();
 		registerLMSServiceAlertsJob();
 		registerUserAccountLockingJob();
+		registerDmsServiceInvokeJob();
 	}
 
 	/**
@@ -266,6 +269,27 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 				.withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build());
 		jobs.put(jobKey, job);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void registerDmsServiceInvokeJob() {
+
+		try {
+			CronExpression.validateExpression(DMS_INVOKE_TIME);
+		} catch (Exception e) {
+			return;
+		}
+
+		Job job = new Job();
+		job.setJobDetail(JobBuilder.newJob(DMSAddDocJob.class)
+.withIdentity(DMS_INVOKE_TIME, DMS_INVOKE_TIME)
+				.withDescription("Invoking Dms Serivce").build());
+		job.setTrigger(TriggerBuilder.newTrigger()
+				.withIdentity("SYS_DMS_SERVICE_INVOKE_TIME", "SYS_DMS_SERVICE_INVOKE_TIME")
+				.withDescription("Dms Service Invoke Job Trigger")
+				.withSchedule(CronScheduleBuilder.cronSchedule(DMS_INVOKE_TIME)).build());
+
+		jobs.put(DMS_INVOKE_TIME, job);
+
 	}
 
 }
