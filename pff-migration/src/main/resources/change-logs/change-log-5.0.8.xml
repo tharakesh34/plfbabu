@@ -9074,6 +9074,7 @@ UNION ALL
 		]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="185" author="naga.g">
 		<sql>
            <![CDATA[
