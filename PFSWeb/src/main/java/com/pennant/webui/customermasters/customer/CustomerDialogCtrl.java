@@ -6824,6 +6824,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				
 				//Verifying/Validating the PAN Number
 				primaryAccountService.retrivePanDetails(primaryAccount);
+	            MessageUtil.showMessage("PAN Validation Successfull");
 			} catch (Exception e) {
 				throw new WrongValueException(this.eidNumber,
 						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
@@ -6836,7 +6837,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				this.custShrtName.setValue(StringUtils.trimToEmpty(customer.getCustLName()));
 			}
-
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw new WrongValueException(this.eidNumber, StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
