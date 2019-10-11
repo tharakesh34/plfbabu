@@ -387,7 +387,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 						.equals(finScheduleData.getFinanceMain().getLovDescProductCodeName())) {
 					assetDetails = getFinanceDetailService().getContractorAssetDetailList(finReference);
 				}
-
+				finScheduleData.getFinanceMain().setLovDescProductCodeName(enquiry.getLovDescProductCodeName());
 				map.put("assetDetailList", assetDetails);
 				map.put("finScheduleData", finScheduleData);
 				map.put("financeDetail", financeDetail);

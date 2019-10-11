@@ -592,7 +592,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.fromApproved = (Boolean) arguments.get("fromApproved");
 			}
 
-			// set Field Properties
+				// set Field Properties
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
@@ -1197,8 +1197,12 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.finOverDueDays.setValue(financeSummary.getFinCurODDays());
 
-			this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), formatter));
-			this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
+			if (PennantConstants.WORFLOW_MODULE_CD.equals(aFinanceMain.getLovDescProductCodeName())) {
+				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
+			} else {
+				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), formatter));
+			}
+					this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
 					aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
 			this.totalDownPayment
 					.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(), formatter));
