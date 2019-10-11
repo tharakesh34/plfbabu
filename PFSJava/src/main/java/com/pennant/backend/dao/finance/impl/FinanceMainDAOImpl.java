@@ -5166,6 +5166,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fields.append(column);
 		}
 		sql.append(fields.toString());
+		sql.append(" From");
 		sql.append(" FinanceMain");
 		sql.append(" where FinReference = :FinReference");
 
