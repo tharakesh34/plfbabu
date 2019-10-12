@@ -16,6 +16,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.service.dms.DMSIdentificationService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.webui.dms.model.DmsDocumentDetailListModelItemRenderer;
@@ -155,7 +156,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	private void doShowDialogPage(long dmsId, DMSDocumentDetails dmsDocumentDetails) {
 		logger.debug(Literal.ENTERING);
 
-		List<DMSDocumentDetails> dmsDocumentDetaillog = dmsIdentificationService.getDmsDocumentDetails(dmsId);
+		List<DocumentDetails> dmsDocumentDetaillog = dmsIdentificationService.getDmsDocumentDetails(dmsId);
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("dmsDocumentDetailListCtrl", this);
 		arg.put("dmsDocumentDetaillog", dmsDocumentDetaillog);
