@@ -109,12 +109,12 @@ public class DMSAddDocJobProcess {
 		this.threadAwaitPeroid = threadAwaitPeroid;
 	}
 
-	@Autowired
+	@Autowired(required=false)
 	public void setIdentificationDAO(DMSIdentificationDAO identificationDAO) {
 		this.identificationDAO = identificationDAO;
 	}
 
-	@Autowired
+	@Autowired(required=false)
 	public void setDocumentManagementService(DocumentManagementService documentManagementService) {
 		this.documentManagementService = documentManagementService;
 	}
