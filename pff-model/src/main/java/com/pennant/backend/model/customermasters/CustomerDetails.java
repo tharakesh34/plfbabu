@@ -196,6 +196,7 @@ public class CustomerDetails implements java.io.Serializable {
 	//used for Interfaces
 	private Long usrID; 
 	private String usrLogin;
+	private String matches; 	//used for Interfaces(Hunter)
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -656,5 +657,12 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setUsrLogin(String usrLogin) {
 		this.usrLogin = usrLogin;
 	}
+	
+	public String getMatches() {
+		return matches;
+	}
 
+	public void setMatches(String matches) {
+		this.matches = matches;
+	}
 }
