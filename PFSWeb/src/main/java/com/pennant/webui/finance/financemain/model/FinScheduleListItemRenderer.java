@@ -70,6 +70,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FrequencyUtil;
@@ -917,7 +918,14 @@ public class FinScheduleListItemRenderer implements Serializable {
 				showZeroEndBal = false;
 				isGrcBaseRate = false;
 
-				String label = Labels.getLabel("label_listcell_capital.label");
+				String label = null;
+				
+				if (ImplementationConstants.CPZ_POS_INTACT) {
+					label = Labels.getLabel("label_listcell_compounded.label");
+				} else {
+					label = Labels.getLabel("label_listcell_capital.label");
+				}
+				
 				if (StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
 				} else if (StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),
@@ -2612,7 +2620,15 @@ public class FinScheduleListItemRenderer implements Serializable {
 			if (curSchd.isCpzOnSchDate() && curSchd.getCpzAmount().compareTo(BigDecimal.ZERO) != 0) {
 
 				data = new FinanceScheduleReportData();
-				String label = Labels.getLabel("label_listcell_capital.label");
+				String label = null;
+				
+				if (ImplementationConstants.CPZ_POS_INTACT) {
+					label = Labels.getLabel("label_listcell_compounded.label");
+				} else {
+					label = Labels.getLabel("label_listcell_capital.label");
+				}
+				
+				
 				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
 				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {

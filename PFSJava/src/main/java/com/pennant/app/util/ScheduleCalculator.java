@@ -65,6 +65,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.databind.cfg.ContextAttributes.Impl;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -736,13 +737,6 @@ public class ScheduleCalculator {
 	private FinScheduleData procGetCalSchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		/*
-		 * Down payment support program is allowed only with Rate Basis "Flat converting to reducing" Planned Deferment
-		 * is allowed only with Rate Basis "Flat converting to reducing" Step Finance is allowed in below scenarios Rate
-		 * Basis Flat OR Rate Basis is "Flat converting to reducing" OR Rate Basis "Reducing" If (Schedule Method =
-		 * "EQUAL" AND "Profit Rate basis" == 30/360 (Both European and US) OR If (Schedule Method = "PRI_PFT"
-		 */
-
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		// For FLEXI Loans (only origination)
@@ -764,8 +758,7 @@ public class ScheduleCalculator {
 				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
 			finMain.setBpiResetReq(false);
 		}
-		//START BPI
-
+		
 		// BPI then add BPI record to the schedule
 		if (finMain.isAlwBPI()) {
 			finScheduleData.getFinanceMain().setModifyBpi(true);
@@ -4034,10 +4027,14 @@ public class ScheduleCalculator {
 			curSchd = schdDetails.get(i);
 			if (curSchd.getSchDate().compareTo(evtFromDate) < 0) {
 
-				if (isPftCpzFromReset && curSchd.isCpzOnSchDate() && curSchd.isRepayOnSchDate()) {
+				if (ImplementationConstants.CPZ_POS_INTACT) {
 					finMain.setPftCpzFromReset(BigDecimal.ZERO);
 				} else {
-					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
+					if (isPftCpzFromReset && curSchd.isCpzOnSchDate() && curSchd.isRepayOnSchDate()) {
+						finMain.setPftCpzFromReset(BigDecimal.ZERO);
+					} else {
+						finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
+					}
 				}
 
 				continue;
@@ -4158,8 +4155,14 @@ public class ScheduleCalculator {
 		}
 
 		if (!finMain.getGrcRateBasis().equals(CalculationConstants.RATE_BASIS_F)) {
-			curSchd.setBalanceForPftCal(prvSchd.getClosingBalance());
+			if (ImplementationConstants.CPZ_POS_INTACT) {
+				curSchd.setBalanceForPftCal(prvSchd.getClosingBalance().add(prvSchd.getCpzBalance()));	
+			} else {
+				curSchd.setBalanceForPftCal(prvSchd.getClosingBalance());
+			}
+			
 		} else {
+			//PV 11OCT19: Compounding development not considered for Flat rate
 			curSchd.setBalanceForPftCal(prvSchd.getBalanceForPftCal().add(prvSchd.getDisbAmount())
 					.subtract(prvSchd.getDownPaymentAmount()).add(prvSchd.getFeeChargeAmt()).add(prvSchd.getCpzAmount())
 					.subtract(prvSchd.getPrincipalSchd()));
@@ -4342,15 +4345,21 @@ public class ScheduleCalculator {
 			Date prvSchDate = prvSchd.getSchDate();
 
 			curSchd.setBalanceForPftCal(BigDecimal.ZERO);
-
+			
 			if (!isRepayComplete) {
 				if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_F)
 						|| (repayRateBasis.equals(CalculationConstants.RATE_BASIS_C) && isCalFlat)) {
+					//PV 11OCT19: Compounding development not considered for Flat rate
 					curSchd.setBalanceForPftCal(prvBalanceForPftCal.add(prvDisbAmount).subtract(prvDownPaymentAmount)
 							.add(prvCpzAmount).add(prvFeeChargeAmt));
 
 				} else {
-					curSchd.setBalanceForPftCal(prvClosingBalance);
+					
+					if (ImplementationConstants.CPZ_POS_INTACT) {
+						curSchd.setBalanceForPftCal(prvSchd.getClosingBalance().add(prvSchd.getCpzBalance()));	
+					} else {
+						curSchd.setBalanceForPftCal(prvSchd.getClosingBalance());
+					}
 				}
 			}
 
@@ -4577,21 +4586,13 @@ public class ScheduleCalculator {
 				}
 
 				curSchd.setProfitBalance(getProfitBalance(curSchd, prvSchd, finMain.getScheduleMethod()));
+				
+				setCpzBalance(prvSchd, curSchd);
 
-				// Capitalize OR not
-				if (curSchd.isCpzOnSchDate()) {
-					if (!ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK) {
-						if (!curSchd.isRecalLock()) {
-							curSchd.setCpzAmount(curSchd.getProfitBalance());
-						}
-					} else {
-						curSchd.setCpzAmount(curSchd.getProfitBalance());
-					}
-				} else {
-					curSchd.setCpzAmount(BigDecimal.ZERO);
+				if (!ImplementationConstants.CPZ_POS_INTACT) {
+					finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));	
 				}
-
-				finMain.setPftCpzFromReset(finMain.getPftCpzFromReset().add(curSchd.getCpzAmount()));
+				
 				curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, repayRateBasis));
 
 				// 08-JAN-2018 : When Rounding Effect creates new Record with
@@ -4824,8 +4825,10 @@ public class ScheduleCalculator {
 
 			BigDecimal cpzDue = BigDecimal.ZERO;
 			if (curSchd.isRepayOnSchDate() && curSchd.isCpzOnSchDate()) {
-				cpzDue = finMain.getPftCpzFromReset();
-				finMain.setPftCpzFromReset(BigDecimal.ZERO);
+				if (!ImplementationConstants.CPZ_POS_INTACT) {
+					cpzDue = finMain.getPftCpzFromReset();
+					finMain.setPftCpzFromReset(BigDecimal.ZERO);	
+				}
 			}
 
 			if (curSchd.getPresentmentId() <= 0) {
@@ -4974,7 +4977,6 @@ public class ScheduleCalculator {
 						curSchd.setProfitSchd(BigDecimal.ZERO);
 					}
 				} else {
-					curSchd.setProfitSchd(schdInterest);
 				}
 
 				curSchd.setProfitSchd(schdInterest);
@@ -5030,15 +5032,17 @@ public class ScheduleCalculator {
 
 	private BigDecimal getProfitBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
 			String schdMethod) {
-		if (!(schdMethod.equals(CalculationConstants.SCHMTHD_PRI))) {
-
-			return prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount()).subtract(curSchd.getProfitSchd())
-					.add(curSchd.getProfitCalc());
+		
+		BigDecimal profitBalance = BigDecimal.ZERO;
+		
+		if (ImplementationConstants.CPZ_POS_INTACT) {
+			profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
 		} else {
-
-			return prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount()).add(curSchd.getProfitCalc())
+			profitBalance = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount())
 					.subtract(curSchd.getProfitSchd());
 		}
+		
+		return profitBalance;
 	}
 
 	/*
@@ -5049,17 +5053,19 @@ public class ScheduleCalculator {
 	private BigDecimal getClosingBalance(FinanceScheduleDetail curSchd, FinanceScheduleDetail prvSchd,
 			String repayRateBasis) {
 
-		BigDecimal closingBal = BigDecimal.ZERO;
+		BigDecimal closingBal = prvSchd.getClosingBalance().add(curSchd.getDisbAmount()).add(curSchd.getFeeChargeAmt())
+				.subtract(curSchd.getDownPaymentAmount());
 
 		if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
-			closingBal = prvSchd.getClosingBalance().add(curSchd.getDisbAmount()).add(curSchd.getFeeChargeAmt())
-					.subtract(curSchd.getDownPaymentAmount()).subtract(curSchd.getRepayAmount())
-					.add(curSchd.getCpzAmount());
+			closingBal = closingBal.subtract(curSchd.getRepayAmount());
 		} else {
-			closingBal = prvSchd.getClosingBalance().add(curSchd.getDisbAmount()).add(curSchd.getFeeChargeAmt())
-					.subtract(curSchd.getDownPaymentAmount()).subtract(curSchd.getPrincipalSchd())
-					.add(curSchd.getCpzAmount());
+			closingBal = closingBal.subtract(curSchd.getPrincipalSchd());
 		}
+		
+		if (!ImplementationConstants.CPZ_POS_INTACT) {
+			closingBal = closingBal.add(curSchd.getCpzAmount());
+		}
+		
 
 		return closingBal;
 	}
@@ -5076,7 +5082,11 @@ public class ScheduleCalculator {
 		if (curSchd.isSchPftPaid()) {
 			newProfit = curSchd.getSchdPftPaid();
 		} else if (curSchd.getPresentmentId() > 0) {
-			newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount());
+			newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
+			
+			if (!ImplementationConstants.CPZ_POS_INTACT) {
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+			}
 
 			if (curSchd.getProfitSchd().compareTo(newProfit) > 0) {
 				curSchd.setPrincipalSchd(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd().subtract(newProfit)));
@@ -5085,7 +5095,11 @@ public class ScheduleCalculator {
 			}
 
 		} else {
-			return prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount());
+			newProfit = prvSchd.getProfitBalance().add(curSchd.getProfitCalc());
+
+			if (!ImplementationConstants.CPZ_POS_INTACT) {
+				newProfit = newProfit.subtract(prvSchd.getCpzAmount());
+			}
 		}
 
 		return newProfit;
@@ -5746,6 +5760,7 @@ public class ScheduleCalculator {
 		sd.setDisbAmount(BigDecimal.ZERO);
 		sd.setDownPaymentAmount(BigDecimal.ZERO);
 		sd.setCpzAmount(BigDecimal.ZERO);
+		sd.setCpzBalance(BigDecimal.ZERO);
 		sd.setClosingBalance(BigDecimal.ZERO);
 		sd.setProfitFraction(BigDecimal.ZERO);
 		sd.setBaseRate(openSchd.getBaseRate());
@@ -8352,11 +8367,7 @@ public class ScheduleCalculator {
 				}
 			}
 
-			if (curSchd.isCpzOnSchDate()) {
-				curSchd.setCpzAmount(curSchd.getProfitBalance());
-			} else {
-				curSchd.setCpzAmount(BigDecimal.ZERO);
-			}
+			setCpzBalance(prvSchd, curSchd);
 
 			// ClosingBalance or Utilization
 			curSchd.setClosingBalance(getClosingBalance(curSchd, prvSchd, finMain.getRepayRateBasis()));
@@ -8626,6 +8637,38 @@ public class ScheduleCalculator {
 
 		logger.debug("leaving");
 		return finScheduleData;
+	}
+	
+	private void setCpzBalance(FinanceScheduleDetail prvSchd, FinanceScheduleDetail curSchd) {
+		if (curSchd.isCpzOnSchDate()) {
+			// If Capitalized amount cannot be changed OR schedule cannot be
+			// recalculated, do nothing.
+			if (ImplementationConstants.DFT_CPZ_RESET_ON_RECAL_LOCK || curSchd.isRecalLock()) {
+				// Do Nothing
+			} else {
+				curSchd.setCpzAmount(curSchd.getProfitBalance());
+				curSchd.setCpzBalance(curSchd.getProfitBalance());
+			}
+			
+		} else {
+			BigDecimal newCpzBalance = BigDecimal.ZERO;
+
+			if (curSchd.getProfitSchd().compareTo(curSchd.getProfitCalc()) > 0) {
+				newCpzBalance = prvSchd.getCpzBalance().add(curSchd.getProfitCalc()).subtract(curSchd.getProfitSchd());
+			} else {
+				newCpzBalance = prvSchd.getCpzBalance();
+			}
+
+			if (newCpzBalance.compareTo(BigDecimal.ZERO) < 0) {
+				curSchd.setCpzBalance(BigDecimal.ZERO);
+			} else {
+				curSchd.setCpzBalance(newCpzBalance);
+			}
+		}
+
+		if (curSchd.getCpzBalance().compareTo(BigDecimal.ZERO) < 0) {
+			curSchd.setCpzBalance(BigDecimal.ZERO);
+		}
 	}
 
 	// ******************************************************//

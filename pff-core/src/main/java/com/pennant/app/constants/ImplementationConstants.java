@@ -132,8 +132,14 @@ public class ImplementationConstants {
 	// Capitalizing on Lock Period of Schedule Profit Balance
 	// 1. TRUE : Default Capitalize Balance amount when Applicable Capitalization
 	// 2. FALSE : Check Schedule is on Lock Period or not, if not Capitalize amount will reset
-	public static final boolean DFT_CPZ_RESET_ON_RECAL_LOCK = true;
-
+	public static final boolean DFT_CPZ_RESET_ON_RECAL_LOCK = false;
+	
+	
+	// If TRUE Capitalize amount will not be capitalized to POS amount. It will
+	// be used only for interest calculation
+	public static final boolean CPZ_POS_INTACT = true;
+	
+	
 	// Collateral Assignment Percentage calculation based on parameter
 	// 1. NO_ADJ : No Adjustment
 	// 2. FULL_ADJ : Full Adjustment(100%)
