@@ -11371,6 +11371,29 @@
 		<property name="manualAdviseService" ref="manualAdviseService" />
 	</bean>
 	
+	<bean id="pennyDropDAO" class="com.pennant.backend.dao.pennydrop.PennyDropDAOImpl" parent="sequenceDao" />
+
+	<bean id="pennyDropService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="pennyDropServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean name="pennyDropServiceTarget" class="com.pennant.backend.service.pennydrop.PennyDropServiceImpl">
+		<property name="pennyDropDAO" ref="pennyDropDAO" />
+	</bean>
 	
 	
 	

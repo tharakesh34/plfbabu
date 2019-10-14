@@ -14676,4 +14676,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="260" author="vijaya.a">
+		<createTable tableName="PENNY_DROP_STATUS">
+			<column name="ID" type=bigint autoIncrement="true">
+			<column name="ACCTNUM" type="varchar(50)" />
+			<column name="IFSC" type="varchar(20)" />
+			<column name="INITIATETYPE" type="char(1)" />
+			<column name="STATUS" type="boolean" />
+			<column name="REASON" type="varchar(500)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>

@@ -51,6 +51,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.resource.Labels;
@@ -81,6 +82,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -90,10 +92,12 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.pennydrop.PennyDropStatus;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.partnerbank.PartnerBankService;
+import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -115,10 +119,12 @@ import com.pennant.webui.finance.payorderissue.PayOrderIssueListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/FinAdvancePaymentsDialog.zul file.
@@ -236,6 +242,14 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	@Autowired
 	private ExternalDocumentManager externalDocumentManager = null;
 
+	protected Textbox pennyDropResult;
+	protected Textbox txnDetails;
+	protected Button btnPennyDropResult;
+	
+	BankAccountValidationService bankAccountValidationService;
+	private transient PennyDropService pennyDropService;
+	private PennyDropDAO pennyDropDAO;
+	private PennyDropStatus pennyDropStatus;
 	/**
 	 * default constructor.<br>
 	 */
@@ -538,6 +552,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		try {
 			// fill the components with the data
+			if (aFinAdvancePayments != null) {
+				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(
+						aFinAdvancePayments.getBeneficiaryAccNo(), aFinAdvancePayments.getiFSC());
+			}
 			doWriteBeanToComponents(aFinAdvancePayments);
 			if (poIssued) {
 				doReadOnly();
@@ -587,6 +605,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.custContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_custContribution"));
 		this.sellerContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_sellerContribution"));
 		this.partnerBankID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
+		this.pennyDropResult.setReadonly(isReadOnly("MasterDialog_PennyDropResult"));
+		this.txnDetails.setReadonly(isReadOnly("MasterDialog_TxnDetails"));
 
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
@@ -977,7 +997,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		checkPaymentType(aFinAdvnancePayments.getPaymentType());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
-
+		
+		if (pennyDropStatus != null) {
+			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
+		} else {
+			this.pennyDropResult.setValue("");
+		}
+		
 		//eastDocument
 
 		AMedia media = externalDocumentManager.getAMedia(documentDetails);
@@ -2134,6 +2160,61 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	}
 
+	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING);
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		// Interface Calling
+		doSetValidation();
+		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		try {
+			if (this.beneficiaryAccNo.getValue() != null) {
+				pennyDropStatus
+						.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.beneficiaryAccNo.getValue()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.bankBranchID.getValue() != null) {
+				pennyDropStatus.setiFSC(this.bankBranchID.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+		
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		if (count > 0) {
+			MessageUtil.showMessage("Penny Drop Verified for this AccountNumber");
+			return;
+		} else {
+			try {
+				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				if (status) {
+					this.pennyDropResult.setValue("Sucess");
+				} else {
+					this.pennyDropResult.setValue("Fail");
+				}
+				pennyDropStatus.setStatus(status);
+				pennyDropStatus.setInitiateType("D");
+				getPennyDropService().savePennyDropSts(pennyDropStatus);
+			} catch (Exception e) {
+				MessageUtil.showMessage(e.getMessage());
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -2240,6 +2321,30 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	public void setCustomerPaymentTxnsDialogCtrl(CustomerPaymentTxnsDialogCtrl customerPaymentTxnsDialogCtrl) {
 		this.customerPaymentTxnsDialogCtrl = customerPaymentTxnsDialogCtrl;
+	}
+	
+	public PennyDropService getPennyDropService() {
+		return pennyDropService;
+	}
+
+
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
+	}
+
+
+	public PennyDropDAO getPennyDropDAO() {
+		return pennyDropDAO;
+	}
+
+	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
+		this.pennyDropDAO = pennyDropDAO;
+	}
+	
+	@Autowired(required = false)
+	@Qualifier(value = "bankAccountValidationService")
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
 	}
 
 }

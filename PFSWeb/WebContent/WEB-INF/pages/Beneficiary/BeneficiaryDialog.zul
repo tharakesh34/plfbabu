@@ -53,7 +53,10 @@
 									<label id="label_CustID" value="${c:l('label_BeneficiaryDialog_CustID.value')}" />
 									<extendedcombobox id="custID" />
 									<label id="label_BankBranchID" value="${c:l('label_BeneficiaryDialog_BankBranchID.value')}" />
+									<hbox>
 									<extendedcombobox id="bankBranchID" />
+									<button id="btnPennyDropResult" label="${c:l('label_PennyDropResult')}" sclass="z-toolbarbutton"  hflex="1"/>
+									</hbox>
 								</row>
 								<row>
 									<label id="label_Bank" value="${c:l('label_BeneficiaryDialog_Bank.value')}" />
@@ -110,6 +113,22 @@
 									<hbox>
 										<space spacing="2px" />
 										<checkbox id="defaultBeneficiary" />
+									</hbox>
+								</row>
+								<row>
+									<label id="label_pennyDropResult"
+										value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="pennyDropResult"
+											maxlength="50" />
+									</hbox>
+									<label id="label_TransactionDetails"
+										value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="txnDetails"
+											maxlength="50" />
 									</hbox>
 								</row>
 							</rows>

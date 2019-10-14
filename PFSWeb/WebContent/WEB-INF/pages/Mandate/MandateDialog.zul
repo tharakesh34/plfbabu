@@ -57,7 +57,10 @@
 								</row>
 								<row visible="true">
 									<label id="label_MandateRef" value="${c:l('label_MandateDialog_MandateRef.value')}" />
+									<hbox>
 									<extendedcombobox id="mandateRef" />
+									<button id="btnPennyDropResult" label="${c:l('label_PennyDropResult')}" sclass="z-toolbarbutton"  hflex="1"/>
+									</hbox>
 									<label id="label_MandateDialog_MandateDoc" value="${c:l('label_MandateDialog_MandateDoc.value')}" />
 									<hbox>
 										<space spacing="2px" />
@@ -272,6 +275,24 @@
 									<hbox>
 										<space spacing="2px" />
 										<textbox id="approvalID" maxlength="50" width="200px" readonly="true" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_pennyDropResult"
+										value="${c:l('label_MandateDialog_PennyDropResult.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="pennyDropResult"
+											maxlength="50" />
+									</hbox>
+								</row>
+								<row visible="true">
+									<label id="label_TransactionDetails"
+										value="${c:l('label_MandateDialog_TransactionDetails.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="txnDetails"
+											maxlength="50" />
 									</hbox>
 								</row>
 							</rows>

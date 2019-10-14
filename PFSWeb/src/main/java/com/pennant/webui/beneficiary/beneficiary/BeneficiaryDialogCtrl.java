@@ -49,24 +49,30 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.pennydrop.PennyDropStatus;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
+import com.pennant.backend.service.pennydrop.PennyDropService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
@@ -79,6 +85,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.AccountValidationService;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/com.pennant.beneficiary/Beneficiary/beneficiaryDialog.zul file.
@@ -110,6 +117,16 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 
 	private Checkbox beneficiaryActive;
 	private Checkbox defaultBeneficiary;
+
+	protected Textbox pennyDropResult;
+	protected Textbox txnDetails;
+	protected Button btnPennyDropResult;
+
+	BankAccountValidationService bankAccountValidationService;
+	private transient PennyDropService pennyDropService;
+	private PennyDropDAO pennyDropDAO;
+
+	private PennyDropStatus pennyDropstatus;
 
 	/**
 	 * default constructor.<br>
@@ -402,6 +419,12 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.beneficiaryActive.setChecked(beneficiary.isBeneficiaryActive());
 		this.defaultBeneficiary.setChecked(beneficiary.isDefaultBeneficiary());
 
+		if (pennyDropstatus != null) {
+			this.pennyDropResult.setValue(pennyDropstatus.isStatus() ? "Success" : "Fail");
+		} else {
+			this.pennyDropResult.setValue("");
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -545,8 +568,13 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			readOnlyComponent(true, this.accHolderName);
 			readOnlyComponent(true, this.phoneNumber);
 			readOnlyComponent(true, this.email);
+			readOnlyComponent(true, this.pennyDropResult);
+			readOnlyComponent(true, this.txnDetails);
 		}
 
+		if(beneficiary != null) {
+			pennyDropstatus = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(), beneficiary.getiFSC());
+		}
 		doWriteBeanToComponents(beneficiary);
 		setDialog(DialogType.EMBEDDED);
 
@@ -700,6 +728,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Email"), this.email);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Active"), this.beneficiaryActive);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_DefaultBeneficiary"), this.defaultBeneficiary);
+		readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), this.pennyDropResult);
+		readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), this.txnDetails);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -729,6 +759,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(true, this.email);
 		readOnlyComponent(true, this.beneficiaryActive);
 		readOnlyComponent(true, this.defaultBeneficiary);
+		readOnlyComponent(true, this.pennyDropResult);
+		readOnlyComponent(true, this.txnDetails);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -984,6 +1016,60 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				getOverideMap());
 	}
 
+	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		// Interface Calling
+		doSetValidation();
+		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		try {
+			if (this.accNumber.getValue() != null) {
+				pennyDropStatus.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (this.bankBranchID.getValue() != null) {
+				pennyDropStatus.setiFSC(this.bankBranchID.getValue());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		doRemoveValidation();
+		
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+
+		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		if (count > 0) {
+			MessageUtil.showMessage("This Account number with IFSC code already validated.");
+			return;
+		} else {
+			try {
+				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				if (status) {
+					this.pennyDropResult.setValue("Sucess");
+				} else {
+					this.pennyDropResult.setValue("Fail");
+				}
+				pennyDropStatus.setStatus(status);
+				pennyDropStatus.setInitiateType("B");
+				getPennyDropService().savePennyDropSts(pennyDropStatus);
+			} catch (Exception e) {
+				MessageUtil.showMessage(e.getMessage());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	public void setBeneficiaryService(BeneficiaryService beneficiaryService) {
 		this.beneficiaryService = beneficiaryService;
 	}
@@ -995,4 +1081,27 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	public void setBankDetailService(BankDetailService bankDetailService) {
 		this.bankDetailService = bankDetailService;
 	}
+
+	@Autowired(required = false)
+	@Qualifier(value = "bankAccountValidationService")
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
+	}
+
+	public PennyDropService getPennyDropService() {
+		return pennyDropService;
+	}
+
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
+	}
+
+	public PennyDropDAO getPennyDropDAO() {
+		return pennyDropDAO;
+	}
+
+	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
+		this.pennyDropDAO = pennyDropDAO;
+	}
+
 }

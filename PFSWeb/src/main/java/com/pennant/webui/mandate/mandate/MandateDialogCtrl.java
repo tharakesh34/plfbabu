@@ -54,6 +54,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.text.MessageFormats;
 import org.zkoss.util.media.AMedia;
@@ -91,6 +93,8 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.NumberToEnglishWords;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.dao.pennydrop.PennyDropDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -100,9 +104,11 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.pennydrop.PennyDropStatus;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
+import com.pennant.backend.service.pennydrop.PennyDropService;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -128,6 +134,7 @@ import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.document.external.ExternalDocumentManager;
+import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
  * ************************************************************<br>
@@ -194,6 +201,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox documentName;
 	protected Iframe mandatedoc;
 	private byte[] imagebyte;
+	
+	protected Textbox pennyDropResult;
+	protected Textbox txnDetails;
+	protected Button btnPennyDropResult;
 
 	// not auto wired vars
 	private Mandate mandate;
@@ -237,7 +248,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected ExtendedCombobox partnerBank;
 	protected Row rowPartnerBank;
+	BankAccountValidationService bankAccountValidationService;
+	private MandateDAO mandateDAO;
 
+	private transient PennyDropService pennyDropService;
+	private PennyDropDAO pennyDropDAO;
+	private PennyDropStatus pennyDropStatus;
+		
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -623,6 +641,67 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 
 	}
+	
+	/**
+	 * when the "PennyDropResult" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
+		logger.debug("Entering" + event.toString());
+		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		// Interface Calling
+		doSetValidation(true);
+		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		try {
+			if(this.accNumber.getValue() != null) {
+				pennyDropStatus.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+			}
+		} catch(WrongValueException we){
+			wve.add(we);
+		}
+		
+		try {
+			if(this.bankBranchID.getValue() != null) {
+				pennyDropStatus.setiFSC(this.ifsc.getValue());
+			}
+		} catch(WrongValueException we){
+			wve.add(we);
+		}
+		
+		doRemoveValidation();
+		
+		if (!wve.isEmpty()) {
+			WrongValueException[] wvea = new WrongValueException[wve.size()];
+			for (int i = 0; i < wve.size(); i++) {
+				wvea[i] = wve.get(i);
+			}
+			throw new WrongValuesException(wvea);
+		}
+		
+		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		if (count > 0) {
+			MessageUtil.showMessage("This Account number with IFSC code already validated.");
+			return;
+		} else {
+			try {
+				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				if (status) {
+					this.pennyDropResult.setValue("Sucess");
+				} else {
+					this.pennyDropResult.setValue("Fail");
+				}
+				pennyDropStatus.setStatus(status);
+				pennyDropStatus.setInitiateType("M");
+				getPennyDropService().savePennyDropSts(pennyDropStatus);
+			} catch (Exception e) {
+				MessageUtil.showMessage(e.getMessage());
+			}
+			
+		}
+		logger.debug("Leaving" + event.toString());
+	}
 
 	public void onCheck$useExisting(Event event) throws WrongValueException, Exception {
 		logger.debug("Entering" + event.toString());
@@ -684,6 +763,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, swapIsActive);
 			readOnlyComponent(true, this.entityCode);
+			readOnlyComponent(true, this.pennyDropResult);
+			readOnlyComponent(true, this.txnDetails);
 			if (this.rowPartnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -706,6 +787,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.maxLimit.setMandatory(true);
 			readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 			readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), swapIsActive);
+			readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), pennyDropResult);
+			readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), txnDetails);
 			if (this.rowPartnerBank.isVisible()) {
 				readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 			}
@@ -741,6 +824,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.regStatus.setValue("");
 		this.amountInWords.setValue("");
 		this.swapIsActive.setChecked(false);
+		this.pennyDropResult.setValue("");
+		this.txnDetails.setValue("");
 		if (this.rowPartnerBank.isVisible()) {
 			this.partnerBank.setValue("");
 		}
@@ -828,6 +913,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		try {
 			// fill the components with the data
+			if(aMandate != null) {
+				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(), aMandate.getIFSC());
+			}
 			doWriteBeanToComponents(aMandate);
 			doDesignByStatus(aMandate);
 			doDesignByMode();
@@ -901,6 +989,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			readOnlyComponent(true, this.barCodeNumber);
 			readOnlyComponent(true, this.swapIsActive);
 			readOnlyComponent(true, this.entityCode);
+			readOnlyComponent(true, this.pennyDropResult);
+			readOnlyComponent(true, this.txnDetails);
 			if (this.rowPartnerBank.isVisible()) {
 				readOnlyComponent(true, this.partnerBank);
 			}
@@ -991,6 +1081,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.umrNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
+		readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), this.pennyDropResult);
+		readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), this.txnDetails);
 		if (this.rowPartnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 		}
@@ -1076,6 +1168,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.barCodeNumber);
 		readOnlyComponent(true, this.swapIsActive);
 		readOnlyComponent(true, this.entityCode);
+		readOnlyComponent(true, this.pennyDropResult);
+		readOnlyComponent(true, this.txnDetails);
 		if (this.rowPartnerBank.isVisible()) {
 			readOnlyComponent(true, this.partnerBank);
 		}
@@ -1221,7 +1315,14 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.entityCode.setValue(StringUtils.trimToEmpty(aMandate.getEntityCode()),
 					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
 		}
-
+		
+		if(pennyDropStatus != null) {
+			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
+		} else {
+			this.pennyDropResult.setValue("");
+		}
+		
+		
 		if (this.rowPartnerBank.isVisible()) {
 			if (aMandate.getPartnerBankId() != 0 && aMandate.getPartnerBankId() != Long.MIN_VALUE) {
 				this.partnerBank.setValue(aMandate.getPartnerBankCode());
@@ -1481,7 +1582,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		
 		try {
 			if (this.rowPartnerBank.isVisible()) {
 				PartnerBank partBank = (PartnerBank) this.partnerBank.getObject();
@@ -2405,6 +2506,40 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
+	}
+	
+	@Autowired(required = false)
+	@Qualifier(value = "bankAccountValidationService")
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
+	}
+	
+	public MandateDAO getMandateDAO() {
+		return mandateDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+
+	public PennyDropService getPennyDropService() {
+		return pennyDropService;
+	}
+
+
+	public void setPennyDropService(PennyDropService pennyDropService) {
+		this.pennyDropService = pennyDropService;
+	}
+
+
+	public PennyDropDAO getPennyDropDAO() {
+		return pennyDropDAO;
+	}
+
+
+	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
+		this.pennyDropDAO = pennyDropDAO;
 	}
 
 }
