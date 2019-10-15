@@ -45,17 +45,25 @@ package com.pennant.webui.externalinterface.InterfaceConfiguration;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
+import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -69,6 +77,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -100,19 +109,20 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	protected Combobox type;
 	protected Space space_NotificationType;
 	protected Combobox notificationType;
-
 	protected Checkbox active;
 	private InterfaceConfiguration interfaceConfiguration; // overhanded
-															// per param
-
 	private transient ExtInterfaceConfigurationListCtrl ExtInterfaceConfigurationListCtrl; // overhanded
-																							// per
-																							// param
+	protected Textbox errorCodes;
+	private Textbox emails;
+	// param
 	private transient ExtInterfaceConfigurationService ExtInterfaceConfigurationService;
-
+	private Row emailRow;
 	private List<ValueLabel> listType = PennantStaticListUtil.getAcademicList();
 	private List<ValueLabel> listNotificationType = PennantStaticListUtil.getNotificationTypeList();
 	private List<ValueLabel> listInterfaceType = PennantStaticListUtil.getInterfaceTypeList();
+	private int emailCount = 0;
+	private static Pattern pattern;
+	private Matcher matcher;
 
 	/**
 	 * default constructor.<br>
@@ -194,7 +204,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 
 		this.code.setMaxlength(8);
 		this.description.setMaxlength(50);
-
+		this.errorCodes.setMaxlength(300);
+		this.emails.setMaxlength(1000);
 		setStatusDetails();
 
 		logger.debug(Literal.LEAVING);
@@ -341,8 +352,12 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 				listNotificationType, "");
 
 		this.active.setChecked(aExtInterfaceConfiguration.isActive());
-
 		this.recordStatus.setValue(aExtInterfaceConfiguration.getRecordStatus());
+		this.errorCodes.setValue(aExtInterfaceConfiguration.getErrorCodes());
+		if (2 == aExtInterfaceConfiguration.getNotificationType()) {
+			emailRow.setVisible(true);
+			this.emails.setValue(aExtInterfaceConfiguration.getContactsDetail());
+		}
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -368,6 +383,11 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		// Service Name
 		try {
 			aExtInterfaceConfiguration.setDescription(this.description.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aExtInterfaceConfiguration.setContactsDetail(this.emails.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -401,7 +421,12 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-
+		// error Codes
+		try {
+			aExtInterfaceConfiguration.setErrorCodes(this.errorCodes.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		// active
 		try {
 			aExtInterfaceConfiguration.setActive(this.active.isChecked());
@@ -470,6 +495,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	private void doSetValidation() {
 		logger.debug(Literal.LEAVING);
 
+		boolean wrongMail = false;
 		if (!this.code.isReadonly()) {
 			this.code.setConstraint(
 					new PTStringValidator(Labels.getLabel("label_ExtInterfaceConfigurationDialog_Code.value"),
@@ -487,8 +513,40 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 			this.notificationType.setConstraint(new StaticListValidator(listNotificationType,
 					Labels.getLabel("label_ExtInterfaceConfigurationDialog_NotificationType.value")));
 		}
+		if (!this.errorCodes.isReadonly()) {
+			this.errorCodes.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_ExtInterfaceConfigurationDialog_errorCodes.value"),
+					PennantRegularExpressions.REGEX_NAME, true));
+		}
+		if (!this.emails.isReadonly()) {
+			if (emails != null && StringUtils.isNotBlank(emails.getValue())) {
+				String[] emailIds = emails.getValue().split(",");
+				if (emailIds != null) {
+					for (String mail : emailIds) {
+						if (!validateEmail(mail)) {
+							wrongMail = true;
+							break;
+						}
+					}
+
+				}
+			}
+			if (wrongMail) {
+				this.emails.setConstraint(
+						new PTEmailValidator(Labels.getLabel("label_CustomerEMailDialog_CustEMail.value"), true));
+			}
+
+		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	public boolean validateEmail(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z"
+				+ "A-Z]{2,7}$";
+		pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
+		matcher = pattern.matcher(email);
+		return matcher.matches();
 	}
 
 	/**
@@ -501,7 +559,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.description.setConstraint("");
 		this.type.setConstraint("");
 		this.notificationType.setConstraint("");
-
+		this.errorCodes.setConstraint("");	this.emails.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -599,7 +657,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.type.setReadonly(isReadOnly("ExtInterfaceConfigurationDialog_Type"));
 		this.notificationType.setReadonly(isReadOnly("ExtInterfaceConfigurationDialog_NotificationType"));
 		this.active.setDisabled(isReadOnly("ExtInterfaceConfigurationDialog_active"));
-
+	/*	this.errorCodes.(isReadOnly("ExternalInterfaceConfigurationDialog_errorCodes"));
+	*/	
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -627,7 +686,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		readOnlyComponent(true, this.description);
 		readOnlyComponent(true, this.type);
 		readOnlyComponent(true, this.notificationType);
-
+		readOnlyComponent(true, this.errorCodes);
 		readOnlyComponent(true, this.active);
 
 		if (isWorkFlowEnabled()) {
@@ -650,8 +709,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.code.setValue("");
 		this.description.setValue("");
 		this.type.setSelectedIndex(0);
-		this.notificationType.setSelectedIndex(0);
-
+		this.errorCodes.setValue("");	this.notificationType.setSelectedIndex(0);
+		this.emails.setValue("");
 		this.active.setChecked(false);
 
 		logger.debug("Leaving");
@@ -875,6 +934,17 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 
 		logger.debug("Leaving");
 		return processCompleted;
+	}
+
+	public void onSelect$notificationType(Event event) {
+		logger.debug(Literal.ENTERING);
+		String emailCode = notificationType.getSelectedItem().getValue();
+		if (StringUtils.equalsIgnoreCase("2", emailCode)) {
+			emailRow.setVisible(true);
+		} else {
+			emailRow.setVisible(false);
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

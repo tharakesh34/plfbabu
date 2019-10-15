@@ -115,10 +115,32 @@
 								</hbox>
 							</row>
 							<row id="row2">
+								<label id="label_errorCodes"
+									value="${c:l('label_ExtInterfaceConfigurationDialog_errorCodes.value')}" />
+								<hbox>
+									<space id="space_errorCodes"
+										spacing="2px" sclass="mandatory" />
+									<textbox id="errorCodes"
+										maxlength="300" multiline="true" rows="4" width="100%" />
+								</hbox>
+
+
 								<label id="label_active"
 									value="${c:l('label_InterfaceConfigurationDialog_active.value')}" />
 
 								<checkbox id="active" checked="false" />
+							</row>
+
+							<row style="vertical-align: top;"
+								id="emailRow" visible="false">
+								<label id="label_Email"
+									value="${c:l('label_ExtInterfaceConfigurationDialog_CustomerEmail.value')}" />
+
+								<hbox>
+									<space id="space_Emails"
+										spacing="2px" />
+									<textbox id="emails" width="500px" />
+								</hbox>
 							</row>
 						</rows>
 					</grid>

@@ -78,7 +78,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, code, description, type, notificationType, errorCodes, ");
-		sql.append(" active, ");
+		sql.append(" active, contactsDetail, ");
 		
 		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
 		sql.append(" From EXTINTERFACECONF");
@@ -150,11 +150,11 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		StringBuilder sql =new StringBuilder(" Insert into EXTINTERFACECONF");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, code, description, type, notificationType, errorCodes, ");
-		sql.append(" active, ");
+		sql.append(" active, contactsDetail, ");
 		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, :type, :notificationType, :errorCodes, ");
-		sql.append(" :active, ");
+		sql.append(" :active, :contactsDetail, ");
 		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		if (interfaceConfiguration.getId()==Long.MIN_VALUE){
@@ -186,7 +186,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		StringBuilder	sql =new StringBuilder("update EXTINTERFACECONF" );
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, type = :type, ");
-		sql.append(" notificationType = :notificationType, errorCodes = :errorCodes, active = :active, ");
+		sql.append(" notificationType = :notificationType, errorCodes = :errorCodes, active = :active, contactsDetail = :contactsDetail, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");

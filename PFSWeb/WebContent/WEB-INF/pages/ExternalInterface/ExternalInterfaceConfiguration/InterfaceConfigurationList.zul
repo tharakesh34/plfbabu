@@ -145,10 +145,10 @@
 								<listheader id="listheader_InterfaceConfigurationList_Type"
 									label="${c:l('listheader_InterfaceConfigurationList_Type.label')}" sort="auto"
 									hflex="min" />
-								<listheader
+								<!-- <listheader
 									id="listheader_InterfaceConfigurationList_NotificationType"
 									label="${c:l('listheader_InterfaceConfigurationList_NotificationType.label')}" sort="auto"
-									hflex="min" />
+									hflex="min" /> -->
 								<listheader id="listheader_InterfaceConfigurationList_active"
 									label="${c:l('listheader_InterfaceConfigurationList_active.label')}" sort="auto"
 									hflex="min" />

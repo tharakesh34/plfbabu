@@ -62,7 +62,7 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	private String code;
 	private String description;
 	private String type;
-	
+	private String contactsDetail;
 	private int notificationType = 0;
 	private String errorCodes;
 	private boolean active = false;
@@ -181,5 +181,16 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	public Timestamp getPrevMntOn() {
 		return befImage == null ? null : befImage.getLastMntOn();
 	}
+
+	public String getContactsDetail() {
+		return contactsDetail;
+	}
+
+	public void setContactsDetail(String contactsDetail) {
+		this.contactsDetail = contactsDetail;
+	}
+
+
+	
 
 }
