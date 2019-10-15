@@ -328,4 +328,9 @@
 	</addColumn>
     </changeSet> 
 	
+	<changeSet id="35" author="Pradeep Varma">
+		<addColumn tableName="adtfinscheduledetails">
+			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
