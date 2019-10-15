@@ -44,12 +44,12 @@
 package com.pennant.backend.model.externalinterface;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.pennant.backend.model.Entity;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+
+
 
 /**
  * Model class for the <b>InterfaceConfiguration table</b>.<br>
@@ -62,7 +62,7 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	private String code;
 	private String description;
 	private String type;
-	private String contactsDetail;
+	
 	private int notificationType = 0;
 	private String errorCodes;
 	private boolean active = false;
@@ -70,6 +70,7 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 	private String lovValue;
 	private InterfaceConfiguration befImage;
 	private LoggedInUser userDetails;
+	private String contactsDetail;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -190,7 +191,5 @@ public class InterfaceConfiguration extends AbstractWorkflowEntity implements En
 		this.contactsDetail = contactsDetail;
 	}
 
-
 	
-
 }
