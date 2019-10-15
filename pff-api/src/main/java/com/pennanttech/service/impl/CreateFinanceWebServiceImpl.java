@@ -43,6 +43,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.CreateFinanceRestService;
 import com.pennanttech.pffws.CreateFinanceSoapService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.customer.AgreementRequest;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -1157,5 +1159,62 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		return listResponse;
 	}
+	
+	@Override
+	public AgreementData getAgreements(AgreementRequest aggReq) throws ServiceException {
+		logger.debug("Enetring");
+		AgreementData agrData = null;
+		try {
+			// Mandatory validation
+			if (StringUtils.isBlank(aggReq.getFinReference())) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[1];
+				valueParm[0] = "FinReference";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return agrData;
+			}
+
+			if (StringUtils.isBlank(aggReq.getAgreementType())) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[1];
+				valueParm[0] = "AgreementType";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return agrData;
+			}
+			// for logging purpose
+			APIErrorHandlerService.logReference(aggReq.getFinReference());
+			if (!StringUtils.equals(aggReq.getAgreementType(), APIConstants.FIN_WEL_LETTER)
+					&& !StringUtils.equals(aggReq.getAgreementType(), APIConstants.FIN_SANC_LETTER)) {
+				agrData = new AgreementData();
+				String[] valueParm = new String[2];
+				valueParm[0] = APIConstants.FIN_WEL_LETTER + APIConstants.FIN_SANC_LETTER;
+				valueParm[1] = "AgreementType";
+				agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90298", valueParm));
+				return agrData;
+			}
+			// validate Customer with given CustCIF
+			WSReturnStatus returnStatus = validateFinReference(aggReq.getFinReference());
+
+			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+				AgreementData aggData = new AgreementData();
+				aggData.setReturnStatus(returnStatus);
+				return aggData;
+			}
+
+			FinanceDetail finDetail = createFinanceController.getFinanceDetails(aggReq.getFinReference());
+			agrData = createFinanceController.getAgreements(finDetail,aggReq);
+
+		} catch (Exception e) {
+			APIErrorHandlerService.logUnhandledException(e);
+			agrData = new AgreementData();
+			agrData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug("Leaving");
+
+		return agrData;
+
+	}
+
+
 
 }

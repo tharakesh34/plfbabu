@@ -38,6 +38,7 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -147,6 +148,8 @@ import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.service.impl.RemarksWebServiceImpl;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.customer.AgreementRequest;
+import com.pennanttech.ws.model.eligibility.AgreementData;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
 import com.pennanttech.ws.model.financetype.FinInquiryDetail;
 import com.pennanttech.ws.model.financetype.FinanceInquiry;
@@ -196,7 +199,9 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RemarksWebServiceImpl remarksWebServiceImpl;
 	private RemarksController remarksController;
 	private PartnerBankService partnerBankService;
+	private AgreementDefinitionDAO agreementDefinitionDAO;
 
+	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -3581,6 +3586,85 @@ public class CreateFinanceController extends SummaryDetailService {
 		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()));
 	}
 
+	
+	
+	public AgreementData getAgreements(FinanceDetail financeDetail, AgreementRequest agrReq) {
+
+		Set<String> allagrDataset = new HashSet<>();
+		AgreementData details = new AgreementData();
+
+		AgreementDefinition agreementDefinition = getAgreementDefinitionDAO()
+				.getAgreementDefinitionByCode(agrReq.getAgreementType(), "");
+		allagrDataset.add(agreementDefinition.getAggImage());
+		try {
+			AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail, allagrDataset.toString(),
+					SessionUserDetails.getLogiedInUser());
+			
+			getAgreementGeneration().setNetFinanceAmount(agrData, financeDetail);
+			
+			if (financeDetail != null && financeDetail.getFinScheduleData() != null
+					&& financeDetail.getFinScheduleData().getFinanceMain() != null) {
+				FinanceMain lmain = financeDetail.getFinScheduleData().getFinanceMain();
+				String finReference = lmain.getFinReference();
+				String aggName = StringUtils.trimToEmpty(agreementDefinition.getAggReportName());
+				String reportName = "";
+				String aggPath = "", templateName = "";
+
+				templateName = agreementDefinition.getAggReportName();
+				AgreementEngine engine = new AgreementEngine(aggPath);
+				engine.setTemplate(templateName);
+				engine.loadTemplate();
+				engine.mergeFields(agrData);
+				getAgreementGeneration().setExtendedMasterDescription(financeDetail, engine);
+				getAgreementGeneration().setFeeDetails(financeDetail, engine);
+
+				// if (agreementDefinition.isAutoDownload()) {
+				if (StringUtils.equals(agreementDefinition.getAggtype(), PennantConstants.DOC_TYPE_PDF)) {
+					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_PDF_EXT;
+					// engine.showDocument(this.window_documentDetailDialog,
+					// reportName, SaveFormat.PDF);
+				} else {
+					reportName = finReference + "_" + aggName + PennantConstants.DOC_TYPE_WORD_EXT;
+					// engine.showDocument(this.window_documentDetailDialog,
+					// reportName, SaveFormat.DOCX);
+				}
+				// }
+
+				if (PennantConstants.DOC_TYPE_PDF.equals(agreementDefinition.getAggtype())) {
+					details.setDocContent(engine.getDocumentInByteArray(
+							templateName.concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF));
+					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				} else {
+					details.setDocContent(engine.getDocumentInByteArray(
+							templateName.concat(PennantConstants.DOC_TYPE_DOCX), SaveFormat.DOCX));
+					details.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+				}
+
+				engine.close();
+				engine = null;
+
+			}
+		} catch (Exception e) {
+			if (e instanceof IllegalArgumentException && (e.getMessage().equals("Document site does not exist.")
+					|| e.getMessage().equals("Template site does not exist.")
+					|| e.getMessage().equals("Template does not exist."))) {
+
+				String[] valueParm = new String[1];
+				valueParm[0] = "Loan Aggrement template ";
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
+				return details;
+
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Loan Aggrement template ";
+				details.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
+				return details;
+			}
+		}
+		return details;
+	}
+	
+	
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}
@@ -3796,6 +3880,14 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setPartnerBankService(PartnerBankService partnerBankService) {
 		this.partnerBankService = partnerBankService;
+	}
+
+	public AgreementDefinitionDAO getAgreementDefinitionDAO() {
+		return agreementDefinitionDAO;
+	}
+
+	public void setAgreementDefinitionDAO(AgreementDefinitionDAO agreementDefinitionDAO) {
+		this.agreementDefinitionDAO = agreementDefinitionDAO;
 	}
 
 }

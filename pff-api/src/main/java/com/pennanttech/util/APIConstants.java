@@ -43,5 +43,8 @@ public class APIConstants {
 	public static final String REPORT_TEMPLATE_APPLICATION = "Format1";
 	public static final String REPORT_TEMPLATE_API = "Format2";
 	public static final String CUST_AGR_NAME = "SANCTIONAGREEMENT";
+	
+	public static final String FIN_WEL_LETTER = "WELCOMELETR";
+	public static final String FIN_SANC_LETTER = "SNCTNLTR";
 
 }
