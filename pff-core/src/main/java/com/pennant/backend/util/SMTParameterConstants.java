@@ -267,5 +267,6 @@ public class SMTParameterConstants {
 	public static final String ALLOW_INTERNAL_SETTLEMENTS ="ALLOW_INTERNAL_SETTLEMENTS";
 	public static final String ALLOW_DOCUMENTTYPE_XLS_REQ ="ALLOW_DOCUMENTTYPE_XLS_REQ";
 	public static final String ALLOWED_BACKDATED_RECEIPT = "ALLOWED_BACKDATED_RECEIPT";
+	public static final String ALLOW_PUSH_NOTIFICATION = "ALLOW_PUSH_NOTIFICATION";
 
 }

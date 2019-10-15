@@ -2909,7 +2909,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.LEAVING);
 		
 		// Push Notification API
-		if (pushNotificationsService != null) {
+		if (pushNotificationsService != null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PUSH_NOTIFICATION)) {
 			pushNotificationsService.sendPushNotification(auditHeader);
 		}
 		return auditHeader;
