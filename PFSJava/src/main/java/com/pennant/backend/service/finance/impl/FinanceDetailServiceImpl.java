@@ -5145,7 +5145,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 
 		case PennantConstants.method_doDms:
-			if (null != dmsIdentificationService) {
+			if (null != dmsIdentificationService && SysParamUtil.isAllowed(SMTParameterConstants.DMS_REQ)) {
 				dmsIdentificationService.identifyExternalDocument(auditHeader);
 			}
 			break;
