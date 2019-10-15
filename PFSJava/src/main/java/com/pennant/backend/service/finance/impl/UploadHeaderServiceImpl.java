@@ -528,7 +528,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		if (CollectionUtils.isNotEmpty(uploadHeader.getUploadManualAdvises())) {
 			List<AuditDetail> adviseUpload = uploadHeader.getAuditDetailMap().get("AdviseUploads");
 			adviseUpload = this.uploadManualAdviseService.processAdviseUploadsDetails(adviseUpload,
-					uploadHeader.getUploadId(), TableType.MAIN_TAB.getSuffix());
+					uploadHeader.getUploadId(), TableType.TEMP_TAB.getSuffix());
 			auditDetails.addAll(adviseUpload);
 		}
 
