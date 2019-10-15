@@ -14668,6 +14668,7 @@ UNION ALL
 				AND NOT EXISTS(SELECT 1 FROM UploadHeader_Temp WHERE UploadId = UploadHeader.UploadId)
 		</createView>
 	</changeSet>
+
 	<changeSet id="259" author="Varaprasad.K">
 		<sql>
 			<![CDATA[
@@ -14676,10 +14677,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="260" author="vijaya.a">
 		<createTable tableName="PENNY_DROP_STATUS">
-			<column name="ID" type=bigint autoIncrement="true">
+			<column name="ID" type="bigint" autoIncrement="true" />
 			<column name="ACCTNUM" type="varchar(50)" />
 			<column name="IFSC" type="varchar(20)" />
 			<column name="INITIATETYPE" type="char(1)" />
@@ -14687,7 +14688,7 @@ UNION ALL
 			<column name="REASON" type="varchar(500)" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="261" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -14716,5 +14717,40 @@ UNION ALL
 			    UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS);
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="262" author="Varaprasad.K">
+		<dropSequence sequenceName="seqdmsidentification" />
+	</changeSet>
+
+	<changeSet id="263" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+			      Drop table dmsdocprocess;
+				]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="264" author="Varaprasad.K">
+		<createTable tableName="dmsdocprocess">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="pk_dmsidentification" />
+			</column>
+			<column name="finreference" type="varchar(100)" />
+			<column name="docmodule" type="varchar(100)" />
+			<column name="docrefid" type="bigint" defaultValue="0" />
+			<column name="state" type="varchar(100)" />
+			<column name="status" type="varchar(100)" />
+			<column name="referenceid" type="varchar(100)" />
+			<column name="retryCount" type="int" defaultValue="0" />
+			<column name="customerCif" type="varchar(100)" />
+			<column name="docid" type="bigint" defaultValue="0" />
+			<column name="docCategory" type="varchar(100)" />
+			<column name="docDesc" type="varchar(100)" />
+			<column name="docExt" type="varchar(100)" />
+			<column name="lastMntOn" type="datetime" />
+			<column name="createdOn" type="datetime" />
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
