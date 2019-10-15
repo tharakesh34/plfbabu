@@ -149,7 +149,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 		registerField("code", listheader_InterfaceConfigurationList_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
 		registerField("description", listheader_InterfaceConfigurationList_Description, SortOrder.NONE, description, sortOperator_Description,
 				Operators.STRING);
-		registerField("type", listheader_InterfaceConfigurationList_NotificationType, SortOrder.NONE, sortOperator_Type, Operators.STRING);
+		registerField("type", listheader_InterfaceConfigurationList_Type, SortOrder.NONE, sortOperator_Type, Operators.STRING);
 		/*registerField("notificationType", listheader_InterfaceConfigurationList_NotificationType, SortOrder.NONE, sortOperator_NotificationType,
 				Operators.STRING);
 		*/
