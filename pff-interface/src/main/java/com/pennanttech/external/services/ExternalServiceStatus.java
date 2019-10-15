@@ -18,7 +18,7 @@ public class ExternalServiceStatus {
 		} catch (Exception e) {
 			
 		}
-		return false;
+		return true;
 	}
 
 	public static void setDataSource(DataSource dataSource) {
