@@ -4,6 +4,6 @@ import com.pennant.backend.model.audit.AuditHeader;
 
 public interface PushNotificationsService {
 
-	void getPushNotifications(AuditHeader auditHeader);
+	void sendPushNotification(AuditHeader auditHeader);
 
 }

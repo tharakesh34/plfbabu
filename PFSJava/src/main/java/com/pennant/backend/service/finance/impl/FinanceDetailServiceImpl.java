@@ -302,6 +302,7 @@ import com.pennanttech.pff.external.DomainCheckService;
 import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.InitiateHunterService;
 import com.pennanttech.pff.external.ProfectusHunterBreService;
+import com.pennanttech.pff.external.PushNotificationsService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.rits.cloning.Cloner;
@@ -422,6 +423,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	private CreditFinancialService creditFinancialService;
 	private CreditReviewDetailDAO creditReviewDetailDAO;
+	
+	@Autowired(required = false)
+	private PushNotificationsService pushNotificationsService;
 
 	private long tempWorkflowId;
 
@@ -2903,6 +2907,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug(Literal.LEAVING);
+		
+		// Push Notification API
+		if (pushNotificationsService != null) {
+			pushNotificationsService.sendPushNotification(auditHeader);
+		}
 		return auditHeader;
 
 	}
@@ -8318,6 +8327,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinScheduleData finSchData = new FinScheduleData();
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
+		setDasAndDmaData(financeMain);
 		if (financeMain == null) {
 			return finSchData;
 		}
