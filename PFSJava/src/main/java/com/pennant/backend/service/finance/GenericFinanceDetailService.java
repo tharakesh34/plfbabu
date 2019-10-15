@@ -976,7 +976,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				if (updateRecord) {
 					// When a document is updated, insert another file into the DocumentManager table's.
 					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocRefId() != null && documentDetails.getDocRefId() <= 0) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));

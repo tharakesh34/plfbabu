@@ -457,7 +457,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				amedia = new AMedia(docName, "octet-stream", "application/octet-stream", data);
 			} else if (getDocumentDetails().getDoctype().equals(PennantConstants.DOC_TYPE_RAR)) {
 				amedia = new AMedia(docName, "x-rar-compressed", "application/x-rar-compressed", data);
-			}
+			} 
 			Filedownload.save(amedia);
 		}
 		logger.debug("Leaving");

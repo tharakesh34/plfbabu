@@ -430,6 +430,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 			boolean deleteRecord = false;
 			boolean approveRec = false;
 			String rcdType = "";
+
 			String recordStatus = "";
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;

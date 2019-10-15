@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.systemmasters;
 
@@ -69,5 +69,7 @@ public interface DocumentTypeDAO extends BasicCrudDao<DocumentType> {
 	boolean isDuplicateKey(String docTypeCode, TableType tableType);
 
 	List<DocumentType> getApprovedPdfExternalList(String type);
+
+	List<DocumentType> getDocumentTypes();
 
 }

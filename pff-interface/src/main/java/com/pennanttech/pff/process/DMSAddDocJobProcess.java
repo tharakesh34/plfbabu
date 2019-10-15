@@ -27,7 +27,6 @@ public class DMSAddDocJobProcess {
 		super();
 	}
 
-
 	private DMSIdentificationDAO identificationDAO;
 	private DocumentManagementService documentManagementService;
 
@@ -87,6 +86,7 @@ public class DMSAddDocJobProcess {
 				if (null != docUri) {
 					dmsDocumentDetails.setDocRefId(null);
 					dmsDocumentDetails.setDocUri(docUri);
+					dmsDocumentDetails.setDocImage(null);
 					identificationDAO.processSuccessResponse(dmsDocumentDetails);
 				}
 			} else {
@@ -109,12 +109,12 @@ public class DMSAddDocJobProcess {
 		this.threadAwaitPeroid = threadAwaitPeroid;
 	}
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	public void setIdentificationDAO(DMSIdentificationDAO identificationDAO) {
 		this.identificationDAO = identificationDAO;
 	}
 
-	@Autowired(required=false)
+	@Autowired(required = false)
 	public void setDocumentManagementService(DocumentManagementService documentManagementService) {
 		this.documentManagementService = documentManagementService;
 	}

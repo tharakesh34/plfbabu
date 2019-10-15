@@ -31,17 +31,18 @@ import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> implements DMSIdentificationDAO {
 	private static Logger logger = Logger.getLogger(DMSIdentificationDAOImpl.class);
-	
+
 	private static String insertQuery = insertQuery("dmsdocprocess");
-	private static String insertLogQuery = insertQuery("dmsdocprocesslog");
+	private static String insertLogQuery = insertLogQuery("dmsdocprocesslog");
 	private static String updateCustDocQuery = updateCustDocQuery();
+	private static String updateCustDocTempQuery = updateCustDocTempQuery();
 	private static String updateDocDetailQuery = updateDocDetailsQuery();
+	private static String updateDocTempDetailQuery = updateDocTempDetailsQuery();
 	private static String updateDmsProcessLogQuery = updateDmsProcessLogQuery();
 	private static String dmsProcessUpdateSql = dmsProcessUpdateSql();
-	
+
 	private DataSourceTransactionManager transManager;
 	private DefaultTransactionDefinition transDef;
-	
 
 	private enum Field {
 		Id(1),
@@ -78,7 +79,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		}
 
 		try {
-			dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("SeqDmsIdentification")));
+			//dmsDocumentDetailList.stream().forEach(details -> details.setId(getNextValue("SeqDmsIdentification")));
 
 			SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(dmsDocumentDetailList.toArray());
 			jdbcTemplate.batchUpdate(insertQuery, params);
@@ -111,9 +112,21 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 	}
 
 	private static String updateDocDetailsQuery() {
-		
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("update DocumentDetails set");
+		sql.append(" DocRefId = :DocRefId");
+		sql.append(", DocUri = :DocUri");
+		sql.append(" where DocId = :DocId");
+		sql.append(" and DocCategory=:DocCategory");
+
+		return sql.toString();
+	}
+
+	private static String updateDocTempDetailsQuery() {
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("update DocumentDetails_temp set");
 		sql.append(" DocRefId = :DocRefId");
 		sql.append(", DocUri = :DocUri");
 		sql.append(" where DocId = :DocId");
@@ -133,8 +146,63 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		return sql.toString();
 	}
 
+	private static String updateCustDocTempQuery() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("update CustomerDocuments_Temp set");
+		sql.append(" DocRefId = :DocRefId");
+		sql.append(", DocUri= :DocUri");
+		sql.append(" where CustId=:DocId");//FIXME
+		sql.append(" and CustDocCategory=:DocCategory");
+
+		return sql.toString();
+	}
 
 	private static String insertQuery(String tableName) {
+		StringBuilder sql = new StringBuilder();
+		StringBuilder columns = new StringBuilder();
+
+		sql.append("insert into ");
+		sql.append(tableName);
+		sql.append("(");
+
+		for (Field field : Field.values()) {
+
+			if (tableName.equals("dmsdocprocess") && field == Field.ErrorDesc) {
+				continue;
+			}
+
+			if (columns.length() > 0) {
+				columns.append(",");
+			}
+
+			columns.append(field);
+		}
+
+		sql.append(columns.toString());
+		sql.append(")");
+		sql.append(" values (");
+		columns = new StringBuilder();
+		for (Field field : Field.values()) {
+
+			if (tableName.equals("dmsdocprocess") && field == Field.ErrorDesc) {
+				continue;
+			}
+			if (columns.length() > 0) {
+				columns.append(",");
+			}
+
+			columns.append(":");
+			columns.append(field);
+		}
+		sql.append(columns.toString());
+		sql.append(")");
+
+		insertQuery = sql.toString();
+
+		return insertQuery;
+	}
+
+	private static String insertLogQuery(String tableName) {
 		StringBuilder sql = new StringBuilder();
 		StringBuilder columns = new StringBuilder();
 
@@ -170,10 +238,9 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		sql.append(columns.toString());
 		sql.append(")");
 
+		insertLogQuery = sql.toString();
 
-		insertQuery = sql.toString();
-
-		return insertQuery;
+		return insertLogQuery;
 	}
 
 	@Override
@@ -217,16 +284,19 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 			if (StringUtils.equals(docDetails.getDocModule(), "CUSTOMER")) {
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
 				jdbcTemplate.update(updateCustDocQuery, beanParameters);
+				jdbcTemplate.update(updateCustDocTempQuery, beanParameters);
+
 			} else {
 				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
 				jdbcTemplate.update(updateDocDetailQuery, beanParameters);
+				jdbcTemplate.update(updateDocTempDetailQuery, beanParameters);
 			}
 
 			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DocumentManager where id = :DocRefId", beanParameters);
+			jdbcTemplate.update("delete from DocumentManager where id = :DocId", beanParameters);
 
 			beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DmsDocProcessLog where Id = :Id", beanParameters);
+			jdbcTemplate.update("delete from DmsDocProcessLog where Id = :DocId", beanParameters);
 
 			docDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS);
 
@@ -234,7 +304,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 			jdbcTemplate.update(insertLogQuery, beanParameters);
 
 			beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DmsDocProcess where id = :id", beanParameters);
+			jdbcTemplate.update("delete from DmsDocProcess where id = :DocId", beanParameters);
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
 			transManager.rollback(txnStatus);
@@ -252,10 +322,8 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 				BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
 				jdbcTemplate.update("delete from DmsDocProcess where Id = :Id", beanParameters);
 
-
 				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
 				jdbcTemplate.update(insertLogQuery, beanParameters);
-
 
 				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
 				jdbcTemplate.update(updateDmsProcessLogQuery, beanParameters);
@@ -334,8 +402,6 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		logger.debug("Leaving");
 		return documentManager;
 	}
-
-
 
 	@Override
 	public void setDataSource(DataSource dataSource) {

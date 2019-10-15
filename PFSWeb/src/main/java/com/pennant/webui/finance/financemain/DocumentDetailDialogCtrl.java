@@ -272,8 +272,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 					|| VerificationType.LV.getValue().equals(moduleName)
 					|| VerificationType.RCU.getValue().equals(moduleName)
 					|| CollateralConstants.SAMPLING_MODULE.equals(moduleName)
-					|| VerificationType.PD.getValue().equals(moduleName)
-					|| VASConsatnts.MODULE_NAME.equals(moduleName)) {
+					|| VerificationType.PD.getValue().equals(moduleName) || VASConsatnts.MODULE_NAME.equals(moduleName)) {
 				this.btnNew_DocumentDetails.setVisible(isEditable);
 			}
 
@@ -327,9 +326,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void createNewDocument(CheckListDetail checkListDetail, boolean isCheckList)
-			throws InterruptedException, SecurityException, IllegalArgumentException, NoSuchMethodException,
-			IllegalAccessException, InvocationTargetException {
+	public void createNewDocument(CheckListDetail checkListDetail, boolean isCheckList) throws InterruptedException,
+			SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException {
 		logger.debug("Entering");
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
@@ -347,8 +346,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		List<Object> list = getCustomerBasicDetails();
-		if (checkListDetail != null
-				&& (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
+		if (checkListDetail != null && (DocumentCategories.CUSTOMER.getKey().equals(checkListDetail.getCategoryCode()))) {
 			CustomerDocument customerDocument = new CustomerDocument();
 			customerDocument.setNewRecord(true);
 			customerDocument.setCustDocCategory(checkListDetail.getDocType());
@@ -362,9 +360,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setCustDocIssuedCountry(defaultCountry.getCountryCode());
 			customerDocument.setLovDescCustDocIssuedCountry(defaultCountry.getCountryDesc());
 
-			if ((PennantConstants.CPRCODE.equals(checkListDetail.getDocType())
-					|| PennantConstants.PASSPORT.equals(checkListDetail.getDocType()))
-					&& getFinanceMainDialogCtrl() != null) {
+			if ((PennantConstants.CPRCODE.equals(checkListDetail.getDocType()) || PennantConstants.PASSPORT
+					.equals(checkListDetail.getDocType())) && getFinanceMainDialogCtrl() != null) {
 				if (getFinanceMainDialogCtrl().getClass().getMethod("getCustomerIDNumber", String.class) != null) {
 					String idNumber = (String) getFinanceMainDialogCtrl().getClass()
 							.getMethod("getCustomerIDNumber", String.class)
@@ -434,8 +431,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			Listcell listcell;
 			String docdesc = getlabelDesc(documentDetail.getDocCategory(), documentTypes);
 			documentDetail.setLovDescDocCategoryName(docdesc);
-			listcell = new Listcell(
-					documentDetail.getDocCategory() + " - " + documentDetail.getLovDescDocCategoryName());
+			listcell = new Listcell(documentDetail.getDocCategory() + " - "
+					+ documentDetail.getLovDescDocCategoryName());
 			listitem.appendChild(listcell);
 			listcell = new Listcell(documentDetail.getDocName());
 			listitem.appendChild(listcell);
@@ -498,8 +495,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			DocumentDetails finDocumentDetail = (DocumentDetails) item.getAttribute("data");
-			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType())
-					.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.trimToEmpty(finDocumentDetail.getRecordType()).equalsIgnoreCase(
+					PennantConstants.RECORD_TYPE_CAN)) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				updateExistingDocument(finDocumentDetail, 0, false);
@@ -512,8 +509,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		logger.debug("Entering");
 		List<FinanceReferenceDetail> list = getFinanceDetail().getCheckList();
 		if (list != null && !list.isEmpty()) {
-			String roleCode = StringUtils
-					.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode());
+			String roleCode = StringUtils.trimToEmpty(getFinanceDetail().getFinScheduleData().getFinanceMain()
+					.getNextRoleCode());
 
 			for (FinanceReferenceDetail financeReferenceDetail : list) {
 
@@ -540,8 +537,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 									return isExist;
 								}
 							}
-							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage())
-									.contains(roleCode);
+							return StringUtils.trimToEmpty(financeReferenceDetail.getAllowInputInStage()).contains(
+									roleCode);
 						}
 
 					}
@@ -563,8 +560,9 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		map.put("roleCode", getRole());
 		map.put("moduleType", "");
 		map.put("enqiryModule", enqiryModule);
-		map.put("isCheckList", (DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true
-				: (checklistID > 0 ? true : false));
+		map.put("isCheckList",
+				(DocumentCategories.CUSTOMER.getKey().equals(finDocumentDetail.getCategoryCode())) ? true
+						: (checklistID > 0 ? true : false));
 		map.put("customerDialogCtrl", this);
 		map.put("moduleName", moduleName);
 		map.put("isEditable", isEditable);
@@ -669,7 +667,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 		}
 
 		if (finDocumentDetail.getDocImage() == null) {
-			if (finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
+			if (finDocumentDetail.getDocRefId() != null && finDocumentDetail.getDocRefId() != Long.MIN_VALUE) {
 				finDocumentDetail.setDocImage(PennantApplicationUtil.getDocumentImage(finDocumentDetail.getDocRefId()));
 			} else if (StringUtils.isNotBlank(finDocumentDetail.getDocUri())) {
 				// Fetch document from interface

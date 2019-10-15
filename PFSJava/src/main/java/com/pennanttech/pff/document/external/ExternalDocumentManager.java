@@ -94,7 +94,7 @@ public class ExternalDocumentManager {
 			DocumentDetails documentDet = documentDetailList.get(0);
 			if (documentDetailList.size() == 1) {
 				documentDet.setDocName(fileName);
-				documentDet.setDocImage(PennantApplicationUtil.decode(documentDet.getDocImage()));
+				documentDet.setDocImage(documentDet.getDocImage());
 				returndetails = documentDet;
 			} else {
 				try {
@@ -163,8 +163,8 @@ public class ExternalDocumentManager {
 		return outsream;
 	}
 
-	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList)
-			throws IOException, DocumentException {
+	public ByteArrayOutputStream mergePDF(List<DocumentDetails> documentDetailList) throws IOException,
+			DocumentException {
 
 		ByteArrayOutputStream outsream = new ByteArrayOutputStream();
 		Document document = new Document();

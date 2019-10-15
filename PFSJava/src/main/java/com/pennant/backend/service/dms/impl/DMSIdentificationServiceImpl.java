@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.pennant.backend.dao.collateral.CollateralAssignmentDAO;
 import com.pennant.backend.dao.dms.DMSIdentificationDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
+import com.pennant.backend.dao.systemmasters.DocumentTypeDAO;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -28,8 +29,6 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.dms.DMSIdentificationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Search;
-import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
 import com.pennanttech.pennapps.pff.verification.model.LegalVerification;
 import com.pennanttech.pennapps.pff.verification.model.RiskContainmentUnit;
@@ -39,22 +38,13 @@ import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 	private static Logger logger = Logger.getLogger(DMSIdentificationServiceImpl.class);
 
-	@Autowired
 	private DMSIdentificationDAO dmsIdentificationDao;
-	@Autowired
 	private CollateralAssignmentDAO collateralAssignmentDAO;
-	@Autowired
 	private CollateralSetupService collateralSetupService;
-	@Autowired
 	private VerificationService verificationService;
-	@Autowired
 	private DocumentDetailsDAO documentDetailsDAO;
-	@Autowired
 	private CustomerDetailsService customerDetailsService;
-	@Autowired
-	private SearchProcessor searchProcessor;
-	
-
+	private DocumentTypeDAO documentTypeDAO;
 
 	@Override
 	public void identifyExternalDocument(AuditHeader auditHeader) {
@@ -68,53 +58,50 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 				if (modelObj instanceof FinanceDetail) {
 					FinanceDetail financeDetail = (FinanceDetail) modelObj;
 
-					Search search = new Search(DocumentType.class);
-					search.addTabelName("BMTDocumentTypes");
+					/*
+					 * Search search = new Search(DocumentType.class); search.addTabelName("BMTDocumentTypes");
+					 */
 
-					List<DocumentType> documentTypeList = searchProcessor.getResults(search);
+					List<DocumentType> documentTypeList = documentTypeDAO.getDocumentTypes();
 
 					FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 					String finReference = finScheduleData.getFinReference();
-					
+
 					if (null != financeDetail && null != finScheduleData) {
 						long custId = finScheduleData.getFinanceMain().getCustID();
 
-						if (null != customerDetailsService) {
-							CustomerDetails customerDetails = customerDetailsService
-									.getCustomerAndCustomerDocsById(custId, "_AView");
-							if (null != customerDetails
-									&& CollectionUtils.isNotEmpty(customerDetails.getCustomerDocumentsList())) {
-								for (CustomerDocument customer : customerDetails.getCustomerDocumentsList()) {
-									if (null != customer && customer.getDocRefId() != Long.MIN_VALUE
-											&& StringUtils.isEmpty(customer.getDocUri())) {
-										DocumentDetails details = new DocumentDetails();
-										details.setFinReference(finReference);
-										details.setDocModule("CUSTOMER");
-										details.setDocRefId(customer.getDocRefId());
-										details.setState("Identified");
-										details.setStatus("");
-										details.setDocId(customer.getCustID());
-										details.setDocDesc(customer.getLovDescCustDocCategory());
-										details.setDocCategory(customer.getCustDocCategory());
-										details.setDocExt(customer.getCustDocType());
-										details.setLastMntOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-										details.setCreatedOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-										details.setReferenceId(
-												financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-										if (null != financeDetail && null != financeDetail.getCustomerDetails()
-												&& null != financeDetail.getCustomerDetails().getCustomer()) {
-											details.setCustomerCif(
-													financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-										}
-										dmsDocumentDetailList.add(details);
+						CustomerDetails customerDetails = customerDetailsService.getCustomerAndCustomerDocsById(custId,
+								"_AView");
+						if (null != customerDetails
+								&& CollectionUtils.isNotEmpty(customerDetails.getCustomerDocumentsList())) {
+							for (CustomerDocument customer : customerDetails.getCustomerDocumentsList()) {
+								if (docUriNotExist(customer)) {
+									DocumentDetails details = new DocumentDetails();
+									details.setFinReference(finReference);
+									details.setDocModule("CUSTOMER");
+									details.setDocRefId(customer.getDocRefId());
+									details.setState("Identified");
+									details.setStatus("");
+									details.setDocId(customer.getCustID());
+									details.setDocDesc(customer.getLovDescCustDocCategory());
+									details.setDocCategory(customer.getCustDocCategory());
+									details.setDocExt(customer.getCustDocType());
+									details.setLastMntOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+									details.setCreatedOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+									details.setReferenceId(financeDetail.getCustomerDetails().getCustomer()
+											.getCustCIF());
+									if (null != financeDetail && null != financeDetail.getCustomerDetails()
+											&& null != financeDetail.getCustomerDetails().getCustomer()) {
+										details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer()
+												.getCustCIF());
 									}
+									dmsDocumentDetailList.add(details);
 								}
 							}
 						}
 
 						List<DocumentDetails> documentDetailsList = documentDetailsDAO.getDocumentDetailsByRef(
-								finReference, FinanceConstants.MODULE_NAME,
-								FinanceConstants.FINSER_EVENT_ORG, "_View");
+								finReference, FinanceConstants.MODULE_NAME, FinanceConstants.FINSER_EVENT_ORG, "_View");
 
 						if (CollectionUtils.isNotEmpty(documentDetailsList)) {
 							totDocumentDetailsList.addAll(documentDetailsList);
@@ -123,19 +110,19 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 						List<CollateralAssignment> collateralAssignmentByFinRef = null;
 						if (null != collateralAssignmentDAO) {
 							collateralAssignmentByFinRef = collateralAssignmentDAO.getCollateralAssignmentByFinRef(
-									finReference, FinanceConstants.MODULE_NAME,
-									"_View");
+									finReference, FinanceConstants.MODULE_NAME, "_View");
 						}
 						List<CollateralSetup> collateralSetupList = null;
-						if (null != collateralSetupService
-								&& CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
-							collateralSetupList = collateralAssignmentByFinRef.stream().map(colAssign -> {
-								if (null != colAssign) {
-									return collateralSetupService.getCollateralSetupByRef(colAssign.getCollateralRef(),
-											"", false);
-								}
-								return null;
-							}).filter(details -> null != details).collect(Collectors.toList());
+						if (null != collateralSetupService && CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
+							collateralSetupList = collateralAssignmentByFinRef
+									.stream()
+									.map(colAssign -> {
+										if (null != colAssign) {
+											return collateralSetupService.getCollateralSetupByRef(
+													colAssign.getCollateralRef(), "", false);
+										}
+										return null;
+									}).filter(details -> null != details).collect(Collectors.toList());
 							if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 								for (CollateralSetup collateralSetup : collateralSetupList) {
 									if (null != collateralSetup
@@ -152,8 +139,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 							if (CollectionUtils.isNotEmpty(verifications)) {
 								for (Verification verification : verifications) {
 									if (null != verification) {
-										VerificationType type = VerificationType
-												.getVerificationType(verification.getVerificationType());
+										VerificationType type = VerificationType.getVerificationType(verification
+												.getVerificationType());
 
 										switch (type) {
 										case LV:
@@ -181,7 +168,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 
 					if (CollectionUtils.isNotEmpty(totDocumentDetailsList)) {
 						for (DocumentDetails documentDetails : totDocumentDetailsList) {
-							if (null != documentDetails && documentDetails.getDocRefId() != Long.MIN_VALUE
+							if (null != documentDetails && documentDetails.getDocRefId() != null
+									&& documentDetails.getDocRefId() != Long.MIN_VALUE
 									&& StringUtils.isEmpty(documentDetails.getDocUri())) {
 								DocumentDetails details = new DocumentDetails();
 								details.setFinReference(finReference);
@@ -193,9 +181,11 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								details.setDocCategory(documentDetails.getDocCategory());
 								if (null != documentTypeList) {
 									for (DocumentType documentType : documentTypeList) {
-										if (null != documentType && null != documentType.getDocTypeCode()
-												&& null != documentDetails.getDocCategory() && documentType
-														.getDocTypeCode().equals(documentDetails.getDocCategory())) {
+										if (null != documentType
+												&& null != documentType.getDocTypeCode()
+												&& null != documentDetails.getDocCategory()
+												&& documentType.getDocTypeCode().equals(
+														documentDetails.getDocCategory())) {
 											details.setDocDesc(documentType.getDocTypeDesc());
 											break;
 										}
@@ -207,8 +197,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								details.setReferenceId(documentDetails.getReferenceId());
 								if (null != financeDetail && null != financeDetail.getCustomerDetails()
 										&& null != financeDetail.getCustomerDetails().getCustomer()) {
-									details.setCustomerCif(
-											financeDetail.getCustomerDetails().getCustomer().getCustCIF());
+									details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer()
+											.getCustCIF());
 								}
 								dmsDocumentDetailList.add(details);
 							}
@@ -221,10 +211,16 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 				dmsIdentificationDao.saveDMSDocumentReferences(dmsDocumentDetailList);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.debug(Literal.EXCEPTION, e);
 		}
 
 		logger.debug("Leaving");
+	}
+
+	private boolean docUriNotExist(CustomerDocument customer) {
+		return null != customer && customer.getDocRefId() != null && customer.getDocRefId() != Long.MIN_VALUE
+				&& StringUtils.isEmpty(customer.getDocUri());
 	}
 
 	@Override
@@ -238,6 +234,41 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 		}
 		logger.debug("Leaving");
 		return dmsDocumentLogs;
+	}
+
+	@Autowired
+	public void setDmsIdentificationDao(DMSIdentificationDAO dmsIdentificationDao) {
+		this.dmsIdentificationDao = dmsIdentificationDao;
+	}
+
+	@Autowired
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
+	}
+
+	@Autowired
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+
+	@Autowired
+	public void setVerificationService(VerificationService verificationService) {
+		this.verificationService = verificationService;
+	}
+
+	@Autowired
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	@Autowired
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
 	}
 
 }
