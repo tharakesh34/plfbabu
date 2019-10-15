@@ -14722,13 +14722,13 @@ UNION ALL
 	<changeSet id="262" author="Varaprasad.K" dbms="postgresql,oracle">
 		<dropSequence sequenceName="seqdmsidentification" />
 	</changeSet>
-	
+
 	<changeSet id="262" author="Varaprasad.K" dbms="mssql">
-			<dropTable tableName="seqdmsidentification" />
+		<dropTable tableName="seqdmsidentification" />
 	</changeSet>
 
 	<changeSet id="263" author="Varaprasad.K">
-			<dropTable tableName="dmsdocprocess" />
+		<dropTable tableName="dmsdocprocess" />
 	</changeSet>
 
 	<changeSet id="264" author="Varaprasad.K">
@@ -14753,33 +14753,33 @@ UNION ALL
 			<column name="createdOn" type="datetime" />
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="265" author="Pradeep Varma">
 		<addColumn tableName="finscheduledetails">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="266" author="Pradeep Varma">
 		<addColumn tableName="finscheduledetails_temp">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="267" author="Pradeep Varma">
 		<addColumn tableName="wiffinscheduledetails">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
-		<changeSet id="268" author="Pradeep Varma">
+
+	<changeSet id="268" author="Pradeep Varma">
 		<addColumn tableName="wiffinscheduledetails_temp">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
 
-	
+
+
 	<changeSet id="269_pre" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -14787,9 +14787,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="269" author="Pradeep Varma">
-		<createView viewName="finscheduledetails_aview" replaceIfExists="true">
+
+	<changeSet id="269" author="Pradeep Varma">
+		<createView viewName="finscheduledetails_aview"
+			replaceIfExists="true">
  					 SELECT t1.finreference,
 							t1.schseq,
 							t1.schdate,
@@ -14875,7 +14876,7 @@ UNION ALL
 						FROM finscheduledetails t1
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="269_post" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -14883,7 +14884,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="270_pre" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -14891,9 +14892,10 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="270" author="Pradeep Varma">
-		<createView viewName="finscheduledetails_tview" replaceIfExists="true">
+
+	<changeSet id="270" author="Pradeep Varma">
+		<createView viewName="finscheduledetails_tview"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -14979,7 +14981,7 @@ UNION ALL
 						FROM finscheduledetails_temp t1		
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="270_post" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -14987,17 +14989,18 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="271_pre" author="Pradeep Varma" dbms="postgresql">
+
+	<changeSet id="271_pre" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_view');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="271" author="Varaprasad.K">
-		<createView viewName="finscheduledetails_view" replaceIfExists="true">
+		<createView viewName="finscheduledetails_view"
+			replaceIfExists="true">
 				 SELECT t1.finreference,
 					t1.schseq,
 					t1.schdate,
@@ -15170,7 +15173,7 @@ UNION ALL
 						WHERE finscheduledetails_temp.finreference = t1.finreference))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="271_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15178,17 +15181,18 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="272_pre" author="Pradeep Varma" dbms="postgresql">
+
+	<changeSet id="272_pre" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_tview');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="272" author="Pradeep Varma">
-		<createView viewName="wiffinscheduledetails_tview" replaceIfExists="true">
+		<createView viewName="wiffinscheduledetails_tview"
+			replaceIfExists="true">
 						SELECT t1.finreference,
 					t1.schseq,
 					t1.schdate,
@@ -15261,7 +15265,7 @@ UNION ALL
 					
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="272_post" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15269,17 +15273,18 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="273_pre" author="Pradeep Varma" dbms="postgresql">
+
+	<changeSet id="273_pre" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_view');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="273" author="Pradeep Varma">
-		<createView viewName="wiffinscheduledetails_view" replaceIfExists="true">
+		<createView viewName="wiffinscheduledetails_view"
+			replaceIfExists="true">
 					SELECT t1.finreference,
 						t1.schseq,
 						t1.schdate,
@@ -15422,7 +15427,7 @@ UNION ALL
 							WHERE wiffinscheduledetails_temp.finreference = t1.finreference))
 		  	</createView>
 	</changeSet>
-	
+
 	<changeSet id="273_post" author="Pradeep Varma" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15430,5 +15435,5 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
