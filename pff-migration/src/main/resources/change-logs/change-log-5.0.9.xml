@@ -14689,7 +14689,7 @@ UNION ALL
 		</createTable>
 	</changeSet>
 
-	<changeSet id="261" author="satyanarayana.g">
+	<changeSet id="261.1" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
@@ -14698,15 +14698,17 @@ UNION ALL
 			 	 
 			 	DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PENNYDROP_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MasterDialog_PennyDropResult');
 			 	DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PENNYDROP_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MasterDialog_TxnDetails');
+			 	DELETE FROM SECGROUPRIGHTS Where GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PENNYDROP_MAKER') AND RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='button_MasterDialog_btnPennyDropResult');
 			 	DELETE FROM SECRIGHTS Where RightName = 'MasterDialog_PennyDropResult';
 			 	DELETE FROM SECRIGHTS Where RightName = 'MasterDialog_TxnDetails';
+			 	DELETE FROM SECRIGHTS Where RightName = 'button_MasterDialog_btnPennyDropResult';
 			 	
 				INSERT INTO SecGroups Values ((Select MAX(GrpID)+1 From SecGroups), 'PENNYDROP_MAKER', 'Group for penny drop maker', 1, 1000, CURRENT_TIMESTAMP, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			 	 
 				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'MasterDialog_PennyDropResult','MandateDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
 				INSERT INTO SECRIGHTS SELECT (SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,'MasterDialog_TxnDetails','MandateDialog', 0, 1000,CURRENT_TIMESTAMP,'',' ',' ',' ',' ',' ',0 FROM SEQSECRIGHTS WHERE 0=0; 
 				
-				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MandateDialog_btnPennyDropResult','MandateDialog', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+				INSERT INTO SecRights Values ((select max(RightId)+1 from SecRights),2, 'button_MasterDialog_btnPennyDropResult','MandateDialog', 0, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 				
  				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PENNYDROP_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MasterDialog_PennyDropResult'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
  				INSERT INTO SECGROUPRIGHTS VALUES((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS),(SELECT GRPID FROM SECGROUPS WHERE GRPCODE='PENNYDROP_MAKER'),(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='MasterDialog_TxnDetails'), 1, 0, 1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0); 
