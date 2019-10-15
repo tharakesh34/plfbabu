@@ -5305,7 +5305,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 				if (customerDocument.getCustDocImage() == null) {
-					if (customerDocument.getDocRefId() != Long.MIN_VALUE) {
+					if (customerDocument.getDocRefId() != null && customerDocument.getDocRefId() != Long.MIN_VALUE) {
 						customerDocument.setCustDocImage(
 								PennantApplicationUtil.getDocumentImage(customerDocument.getDocRefId()));
 					} else if (StringUtils.isNotBlank(customerDocument.getDocUri())) {

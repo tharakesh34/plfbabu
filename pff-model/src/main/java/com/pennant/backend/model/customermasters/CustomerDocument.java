@@ -95,7 +95,7 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 	private boolean custDocIsAcrive;
 	@XmlElement(name = "docContent")
 	private byte[] custDocImage;
-	private long docRefId = Long.MIN_VALUE;
+	private Long docRefId = Long.MIN_VALUE;
 	private boolean newRecord = false;
 	private String lovValue;
 	private CustomerDocument befImage;
@@ -320,11 +320,11 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		this.custDocImage = custDocImage;
 	}
 
-	public long getDocRefId() {
+	public Long getDocRefId() {
 		return docRefId;
 	}
 
-	public void setDocRefId(long docRefId) {
+	public void setDocRefId(Long docRefId) {
 		this.docRefId = docRefId;
 	}
 
