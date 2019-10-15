@@ -121,7 +121,7 @@
 									<space id="space_errorCodes"
 										spacing="2px" sclass="mandatory" />
 									<textbox id="errorCodes"
-										maxlength="300" multiline="true" rows="4" width="100%" />
+										maxlength="300" multiline="true" rows="4" width="80%" />
 								</hbox>
 
 

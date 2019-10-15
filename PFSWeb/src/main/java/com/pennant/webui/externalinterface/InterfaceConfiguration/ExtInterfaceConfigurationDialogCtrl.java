@@ -513,11 +513,11 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 			this.notificationType.setConstraint(new StaticListValidator(listNotificationType,
 					Labels.getLabel("label_ExtInterfaceConfigurationDialog_NotificationType.value")));
 		}
-		if (!this.errorCodes.isReadonly()) {
+	/*	if (!this.errorCodes.isReadonly()) {
 			this.errorCodes.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_ExtInterfaceConfigurationDialog_errorCodes.value"),
 					PennantRegularExpressions.REGEX_NAME, true));
-		}
+		}*/
 		if (!this.emails.isReadonly()) {
 			if (emails != null && StringUtils.isNotBlank(emails.getValue())) {
 				String[] emailIds = emails.getValue().split(",");
