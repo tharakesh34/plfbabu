@@ -207,6 +207,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	}
 
 	private void prepareSMSMsg(SystemNotificationExecutionDetails detail) {
+		logger.debug(Literal.ENTERING);
 		Notification notification = new Notification();
 		notification.getMobileNumbers().add(detail.getMobileNumber());
 		notification.setMobileNumber(detail.getMobileNumber());
@@ -224,6 +225,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		notification.setNotificationData(settingNotificationData(detail));
 		
 		smsEngine.sendSms(notification);
+		logger.debug(Literal.LEAVING);
 
 	}
 

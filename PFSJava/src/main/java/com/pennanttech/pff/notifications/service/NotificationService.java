@@ -1165,7 +1165,13 @@ public class NotificationService {
 
 		if (receiptHeader != null) {
 			declaredFieldValues.put("recordStatus", receiptHeader.getRecordStatus());
-			declaredFieldValues.put("receiptPurpose", receiptHeader.getReceiptPurpose());
+			declaredFieldValues.put("rh_receiptPurpose", receiptHeader.getReceiptPurpose());
+			declaredFieldValues.put("rh_receiptAmount", receiptHeader.getReceiptAmount());
+			declaredFieldValues.put("rh_receiptDate", DateUtility.formatToLongDate(receiptHeader.getReceiptDate()));
+			declaredFieldValues.put("rh_balAmount", receiptHeader.getBalAmount());
+		}
+		if (aFinanceDetail.getPromotion() != null) {
+			declaredFieldValues.put("rh_actualInterestRate", aFinanceDetail.getPromotion().getActualInterestRate());
 		}
 		// put call email template datamap added
 		FinOption finOption = aFinanceDetail.getFinOption();
