@@ -2622,6 +2622,8 @@ public class AgreementGeneration implements Serializable {
 				disbursement.setAccountHolderName(StringUtils.trimToEmpty(advancePayment.getBeneficiaryName()));
 				disbursement.setDisbursementDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
 				disbursement.setBankName(StringUtils.trimToEmpty(advancePayment.getBranchBankName()));
+				//FIX ME: Temporary fix to populate Disbursement Date
+				agreement.setLlDate(DateUtility.formatToLongDate(advancePayment.getLlDate()));
 				disbursement.setDisbursementAcct(StringUtils.trimToEmpty(advancePayment.getBeneficiaryAccNo()));
 				disbursement.setIfscCode(StringUtils.trimToEmpty(advancePayment.getiFSC()));
 				disbursement.setPaymentMode(StringUtils.trimToEmpty(advancePayment.getPaymentType()));
