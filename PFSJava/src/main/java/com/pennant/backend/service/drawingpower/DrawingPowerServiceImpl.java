@@ -148,6 +148,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
 				if (StringUtils.isEmpty(moduleDefiner)) {
+					checkingAmt = financeMain.getFinCurrAssetValue();
 					if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
 						msg.append("Sanction Amount : ");
 						msg.append(PennantApplicationUtil.amountFormate(checkingAmt, finFormatter));
