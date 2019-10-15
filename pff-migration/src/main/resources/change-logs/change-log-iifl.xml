@@ -389,4 +389,11 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet>
+		<sql>
+			<![CDATA[
+				update data_engine_table set Filter = 'ID IN (:PROCESS_ID)' where configid IN (select Id from data_engine_config where name = 'MANDATES_EXPORT');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
