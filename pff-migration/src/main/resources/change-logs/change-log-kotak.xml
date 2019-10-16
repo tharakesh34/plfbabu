@@ -3681,7 +3681,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="74" author="Durga Prasad G">
 		<sql>
 		 <![CDATA[
@@ -3808,10 +3808,10 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		</sql>
 	</changeSet>
 	<changeSet id="80" author="Saikiran.V">
-			<createView viewName="PAYMENTTRANSACTION_PVIEW">
+		<createView viewName="PAYMENTTRANSACTION_PVIEW">
 				select PH.FinReference, PT.TranModule, PH.PaymentId ,PT.TranStatus, PT.TransactionId, PT.TranReference, PT.TranBatch, PT.StatusCode, PT.StatusDesc
 					from PaymentTransaction PT Inner Join PaymentHeader PH on PT.PAYMENTID= PH.PAYMENTID and PT.TranModule='PYMT';
-			</createView>	
+			</createView>
 	</changeSet>
 	<changeSet id="81" author="Saikiran.v">
 		<sql>
@@ -3819,5 +3819,75 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				UPDATE SMTPARAMETERS SET SYSPARMVALUE='Y' WHERE SYSPARMCODE='ALLOW_DOCUMENTTYPE_XLS_REQ';
 			 ]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="82" author="dheerendra.d">
+		<createView viewName="EXTINTERFACECONF_VIEW"
+			replaceIfExists="true">
+              SELECT	T1.Id, 
+			          T1.Code, 
+			          T1.Description, 
+			          T1.Type, 
+			          T1.NotificationType,
+					  T1.errorCodes, 
+					  T1.active, 
+			          T1.CONTACTSDETAIL,	
+					  T1.Version , 
+					  T1.LastMntBy, 
+					  T1.LastMntOn,
+					  T1.RecordStatus, 
+					  T1.RoleCode, 
+					  T1.NextRoleCode, 
+					  T1.TaskId, 
+					  T1.NextTaskId, 
+					  T1.RecordType, 
+					  T1.WorkflowId
+				FROM    EXTINTERFACECONF_TEMP T1 
+             UNION ALL
+          	  SELECT	T1.Id, T1.Code, 
+			            T1.Description, 
+			            T1.Type, 
+			            T1.NotificationType,
+			            T1.errorCodes, 
+			            T1.active	, 
+			            T1.CONTACTSDETAIL,
+						T1.Version , 
+						T1.LastMntBy, 
+						T1.LastMntOn,
+						T1.RecordStatus, 
+						T1.RoleCode, 
+						T1.NextRoleCode, 
+						T1.TaskId, 
+						T1.NextTaskId, 
+						T1.RecordType, 
+						T1.WorkflowId
+			FROM    	ExtInterfaceConf T1 
+			WHERE    NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id)
+        </createView>
+	</changeSet>
+
+	<changeSet id="83" author="dheerendra.d">
+		<createView viewName="EXTINTERFACECONF_AVIEW"
+			replaceIfExists="true">
+    		 SELECT		 T1.Id, 
+			    		 T1.Code, 
+			    		 T1.Description, 
+			    		 T1.Type, 
+			    		 T1.NotificationType, 
+			    		 T1.errorCodes, 
+			    		 T1.active,  
+			    		 T1.CONTACTSDETAIL,		
+						 T1.Version , 
+						 T1.LastMntBy, 
+						 T1.LastMntOn,
+						 T1.RecordStatus, 
+						 T1.RoleCode, 
+						 T1.NextRoleCode, 
+						 T1.TaskId, 
+						 T1.NextTaskId, 
+						 T1.RecordType, 
+						 T1.WorkflowId
+			FROM    	ExtInterfaceConf T1
+		</createView>
 	</changeSet>
 </databaseChangeLog>
