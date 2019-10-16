@@ -15449,4 +15449,10 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="274" author="Pradeep Varma">
+		<addColumn tableName="finscheduledetails_log">
+			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
