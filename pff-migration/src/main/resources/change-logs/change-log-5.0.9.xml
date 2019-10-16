@@ -15438,21 +15438,23 @@ UNION ALL
 		</sql>
 	</changeSet>
 	
-	<changeSet id="274" author="manoj.p">
-		<sql>
-			<![CDATA[
-				DELETE from plf.SMTparameters WHERE SYSPARMCODE='DMS_REQ';
-				INSERT INTO plf.SMTparameters  VALUES ('DMS_REQ', 'DMS Required or not', 'String', '1', 'N', 1, 0, NULL, NULL,'DMS Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
- 				DELETE from plf.SMTparameters WHERE SYSPARMCODE='ALLOW_PUSH_NOTIFICATION';
-				INSERT INTO plf.SMTparameters  VALUES ('DMS_REQ', 'Allow Push Notification', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Push Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
-			]]>
-		</sql>
-	</changeSet>
-
+	
 	<changeSet id="274" author="Pradeep Varma">
 		<addColumn tableName="finscheduledetails_log">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="275" author="manoj.p">
+		<sql>
+			<![CDATA[
+				DELETE from SMTparameters WHERE SYSPARMCODE='DMS_REQ';
+				INSERT INTO SMTparameters  VALUES ('DMS_REQ', 'DMS Required or not', 'String', '1', 'N', 1, 0, NULL, NULL,'DMS Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+ 				DELETE from SMTparameters WHERE SYSPARMCODE='ALLOW_PUSH_NOTIFICATION';
+				INSERT INTO SMTparameters  VALUES ('DMS_REQ', 'Allow Push Notification', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Push Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+			]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>
