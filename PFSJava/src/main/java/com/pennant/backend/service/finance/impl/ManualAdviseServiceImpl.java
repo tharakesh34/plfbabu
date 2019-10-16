@@ -58,6 +58,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -235,7 +236,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdvise manualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties((ManualAdvise) auditHeader.getAuditDetail().getModelData(), manualAdvise);
 
-		if (!StringUtils.equals(manualAdvise.getFinSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+		if (StringUtils.equals(manualAdvise.getFinSource(), UploadConstants.FINSOURCE_ID_PFF)) {
 			getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
 		}
 
