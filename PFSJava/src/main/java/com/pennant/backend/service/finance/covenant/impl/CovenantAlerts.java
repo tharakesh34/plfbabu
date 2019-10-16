@@ -89,7 +89,7 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			notification.setKeyReference(covenant.getKeyReference());
 			notification.setModule("LOAN");
 			notification.setSubModule(FinanceConstants.FINSER_EVENT_COVENANTS);
-			notification.setTemplateCode(covenant.getUserTemplateCode());
+			notification.setTemplateCode(covenant.getCustomerTemplateCode());
 
 			List<String> emails = new ArrayList<>();
 
@@ -102,7 +102,10 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			}
 
 			notification.setEmails(emails);
-			sendNotification(financeDetail, notification);
+			long notificationId = sendNotification(financeDetail, notification);
+			if (notificationId > 0) {
+				updateAlertStatus(notificationId, covenant);
+			}
 
 		} else if (covenant.getUserTemplateCode() != null && covenant.getAlertToRoles() != null) {
 			Notification notification = new Notification();
