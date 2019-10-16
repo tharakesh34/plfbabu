@@ -4027,4 +4027,27 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="105" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete From ErrorDetails where Code = 'WFEE11'
+				INSERT INTO ErrorDetails VALUES ('WFEE11','EN','W','Eligibility Method change from {0} to {1}. Do you want to proceed. ','test','Approved','','','','','',0,null,1000,3);
+				Delete from ErrorDetails where Code = 'WFEE12'
+				INSERT INTO ErrorDetails VALUES ('WFEE12','EN','W','CoApplicants details has changed, Do you want to proceed.','test','Approved','','','','','',0,null,1000,3);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="106" author="manoj.p">
+		<sql>
+			<![CDATA[
+				DELETE from plf.SMTparameters WHERE SYSPARMCODE='DMS_REQ';
+				INSERT INTO plf.SMTparameters  VALUES ('DMS_REQ', 'DMS Required or not', 'String', '1', 'Y', 1, 0, NULL, NULL,'DMS Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+ 				DELETE from plf.SMTparameters WHERE SYSPARMCODE='ALLOW_PUSH_NOTIFICATION';
+				INSERT INTO plf.SMTparameters  VALUES ('DMS_REQ', 'Allow Push Notification', 'String', '1', 'Y', 1, 0, NULL, NULL,'To Allow Push Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
