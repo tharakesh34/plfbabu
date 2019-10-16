@@ -210,6 +210,14 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="277" author="prabhakar.g">
+		<sql>
+			<![CDATA[
+				update CIBIL_MEMBER_DETAILS  set FILE_FORMATE = 'XLSX' where SEGMENT_TYPE = 'RETAIL';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
 	
 	
