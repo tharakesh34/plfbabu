@@ -15864,7 +15864,7 @@ UNION ALL
 	<changeSet id="289" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
-				DELATE FROM ERRORDETAILS WHERE CODE='MD0001';
+				DELETE FROM ERRORDETAILS WHERE CODE='MD0001';
 				INSERT INTO ERRORDETAILS  VALUES ('MD0001','EN','E','Parent Branch is Mandatory.',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 			]]>
 		</sql>
