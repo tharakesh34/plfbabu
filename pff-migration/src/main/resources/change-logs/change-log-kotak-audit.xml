@@ -49,7 +49,7 @@
 	</changeSet>
 
 
-	<changeSet id="1" author="dheerendra.d">
+		<changeSet id="1" author="dheerendra.d">
 		<createTable tableName="AdtInterfaceConfiguration">
 			<column name="AuditId" type="bigint">
 				<constraints nullable="false" />
@@ -64,11 +64,11 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="Id" type="bigint"/>
-			<column name="Code" type="varchar"/>
-			<column name="Description" type="varchar"/>
-			<column name="Type" type="varchar"/>
+			<column name="Code" type="varchar(10)"/>
+			<column name="Description" type="varchar(20)"/>
+			<column name="Type" type="varchar(20)"/>
 			<column name="NotificationType" type="int"/>
-			<column name="errorCodes" type="varchar"/>
+			<column name="errorCodes" type="varchar(20)"/>
 			<column name="active" type="bit"/>
 			<column name="version" type="int" />
 			<column name="lastmntby" type="bigint" />
