@@ -33,7 +33,7 @@
 	<changeSet id="1" author="murthy.y">
 		<sql>
 			<![CDATA[
-				update SMTparameters set SysParmValue = 'GS'  SysParmCode = 'LOAN_REF_PREFIX'
+				update SMTparameters set SysParmValue = 'GS'  where SysParmCode = 'LOAN_REF_PREFIX';
 			]]>
 		</sql>
 	</changeSet>
