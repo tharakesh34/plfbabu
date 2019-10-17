@@ -15438,7 +15438,7 @@ UNION ALL
 				DELETE from SMTparameters WHERE SYSPARMCODE='DMS_REQ';
 				INSERT INTO SMTparameters  VALUES ('DMS_REQ', 'DMS Required or not', 'String', '1', 'N', 1, 0, NULL, NULL,'DMS Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
  				DELETE from SMTparameters WHERE SYSPARMCODE='ALLOW_PUSH_NOTIFICATION';
-				INSERT INTO SMTparameters  VALUES ('DMS_REQ', 'Allow Push Notification', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Push Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				INSERT INTO SMTparameters  VALUES ('ALLOW_PUSH_NOTIFICATION', 'Allow Push Notification', 'String', '1', 'N', 1, 0, NULL, NULL,'To Allow Push Notification', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 			]]>
 		</sql>
 	</changeSet>
