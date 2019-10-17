@@ -65,7 +65,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.cfg.ContextAttributes.Impl;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
@@ -1498,6 +1497,16 @@ public class ScheduleCalculator {
 			prvIndex = prvIndex + 1;
 			finSchdDetails.get(prvIndex).setRvwOnSchDate(true);
 			sdSize = finSchdDetails.size();
+			
+			if(finMain.isSkipRateReset()){
+				BigDecimal oldCalRate = finSchdDetails.get(prvIndex).getCalculatedRate();
+				BigDecimal oldMrgRate = finSchdDetails.get(prvIndex).getMrgRate();
+				BigDecimal newCalRate = oldCalRate.subtract(oldMrgRate).add(mrgRate);
+				finSchdDetails.get(prvIndex).setCalculatedRate(newCalRate);
+				
+				finSchdDetails.get(prvIndex).setBaseRate(baseRate);
+				finSchdDetails.get(prvIndex).setMrgRate(mrgRate);
+			}
 		}
 
 		// Find EVENT TO Date in the schedule. If not found add.
@@ -3696,6 +3705,10 @@ public class ScheduleCalculator {
 
 			finScheduleData = calEqualPayment(finScheduleData);
 			// equalRepayCal(finScheduleData);
+		} else {
+			if(!isFirstRun){ 
+				finScheduleData = pmtCalc(finScheduleData);
+			}
 		}
 
 		finScheduleData = adjustBPISchd(finScheduleData);
@@ -7175,8 +7188,10 @@ public class ScheduleCalculator {
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
 		finMain.setCalculateRepay(true);
-		if (finScheduleData.getFinanceType() != null) {
-			finMain.setEqualRepay(finScheduleData.getFinanceType().isEqualRepayment());
+		if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isSchdOnPMTCal() &&
+				StringUtils.equals(finMain.getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL) &&
+				StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+			finMain.setEqualRepay(false);
 		} else {
 			finMain.setEqualRepay(true);
 		}
@@ -7253,50 +7268,78 @@ public class ScheduleCalculator {
 		// Reason for not setting zero is to avoid deleting future zero
 		// instructions
 		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT) && resetRpyInstruction) {
-
-			BigDecimal rpyAmt = BigDecimal.ONE;
-			if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isSchdOnPMTCal()) {
-				finMain.setEqualRepay(false);
-				int calTerms = 0;
-				BigDecimal startBalance = null;
-				BigDecimal endBalance = null;
-				BigDecimal rate = null;
-
-				for (int j = 0; j < sdSize; j++) {
-					FinanceScheduleDetail curSchd = finSchdDetails.get(j);
-
-					if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) < 0) {
-						startBalance = curSchd.getClosingBalance();
-						continue;
-					}
-					if (DateUtility.compare(curSchd.getSchDate(), recalToDate) > 0) {
-						break;
-					}
-					if (!curSchd.isRepayOnSchDate()) {
-						continue;
-					}
-					if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) == 0) {
-						rate = curSchd.getCalculatedRate();
-					}
-					endBalance = curSchd.getClosingBalance();
-					calTerms = calTerms + 1;
-				}
-
-				if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-					rpyAmt = approxPMT(finMain, rate, calTerms, startBalance, endBalance, 0);
-				} else if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI_PFT)
-						|| StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PRI)) {
-					rpyAmt = rpyAmt.divide(BigDecimal.valueOf(calTerms), 0, RoundingMode.HALF_DOWN);
-				}
-			}
-
-			finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, rpyAmt, schdMethod);
+			finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, BigDecimal.ONE, schdMethod);
 		} else if (!resetRpyInstruction) {
 			finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 			finMain.setCalculateRepay(false);
 		}
 
 		finScheduleData.setFinanceMain(finMain);
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+
+	private FinScheduleData pmtCalc(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+		
+		BigDecimal rpyAmt = BigDecimal.ZERO;
+		if (finScheduleData.getFinanceType() != null && !finScheduleData.getFinanceType().isSchdOnPMTCal()) {
+			logger.debug("Leaving");
+			return finScheduleData;
+		}
+		
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+		if (!StringUtils.equals(finMain.getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+			logger.debug("Leaving");
+			return finScheduleData;
+		}
+		
+		if (!StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+			logger.debug("Leaving");
+			return finScheduleData;
+		}
+
+		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		Date recalFromDate = finMain.getRecalFromDate();
+		Date recalToDate = finMain.getRecalToDate();
+		String schdMethod = finMain.getScheduleMethod();
+		int sdSize = finSchdDetails.size();
+
+		finMain.setEqualRepay(false);
+		int calTerms = 0;
+		BigDecimal startBalance = null;
+		BigDecimal endBalance = null;
+		BigDecimal rate = null;
+
+		for (int j = 0; j < sdSize; j++) {
+			FinanceScheduleDetail curSchd = finSchdDetails.get(j);
+
+			if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) < 0) {
+				startBalance = curSchd.getClosingBalance();
+				continue;
+			}
+			if (DateUtility.compare(curSchd.getSchDate(), recalToDate) > 0) {
+				break;
+			}
+			if (!curSchd.isRepayOnSchDate()) {
+				continue;
+			}
+			if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) == 0) {
+				rate = curSchd.getCalculatedRate();
+			}
+			endBalance = curSchd.getClosingBalance();
+			calTerms = calTerms + 1;
+		}
+
+		if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
+			rpyAmt = approxPMT(finMain, rate, calTerms, startBalance, endBalance, 0);
+		} 
+
+		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, rpyAmt, schdMethod);
+		finScheduleData = getRpyInstructDetails(finScheduleData);
+		finScheduleData = graceSchdCal(finScheduleData);
+		finScheduleData = repaySchdCal(finScheduleData, false);
+
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
