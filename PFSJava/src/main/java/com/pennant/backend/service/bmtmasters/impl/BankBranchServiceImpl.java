@@ -43,10 +43,13 @@
 package com.pennant.backend.service.bmtmasters.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -62,6 +65,7 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 
 /**
  * Service implementation for methods that depends on <b>BankBranch</b>.<br>
@@ -75,6 +79,10 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	private MandateDAO mandateDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private BeneficiaryDAO beneficiaryDAO;
+	
+	@Autowired(required = false)
+	@Qualifier("bankBranchPostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	/**
 	 * @return the auditHeaderDAO
@@ -329,11 +337,23 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		doPostHookValidation(auditHeader);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+	
+	private void doPostHookValidation(AuditHeader auditHeader) {
+		if (postValidationHook != null) {
+			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
+
+			if (errorDetails != null) {
+				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
 	}
 
 	/**

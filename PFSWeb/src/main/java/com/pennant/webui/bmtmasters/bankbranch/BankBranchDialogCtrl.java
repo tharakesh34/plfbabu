@@ -60,6 +60,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -71,6 +72,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.DataType;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -85,6 +87,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 	protected Window window_BankBranchDialog;
 
 	protected ExtendedCombobox bankCode;
+	protected ExtendedCombobox parentBranch;
 	protected Textbox branchCode;
 	protected Textbox branchDesc;
 	protected ExtendedCombobox city;
@@ -196,6 +199,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.bankCode.setMaxlength(8);
+		this.parentBranch.setMaxlength(8);
 		this.branchCode.setMaxlength(PennantConstants.branchCode_maxValue);
 		this.branchDesc.setMaxlength(200);
 		this.city.setMaxlength(8);
@@ -208,6 +212,12 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.bankCode.setDescColumn("BankName");
 		this.bankCode.setDisplayStyle(2);
 		this.bankCode.setValidateColumns(new String[] { "BankCode", "BankName" });
+
+		this.parentBranch.setModuleName("BankBranch");
+		this.parentBranch.setValueColumn("BranchCode");
+		this.parentBranch.setDescColumn("BranchDesc");
+	    this.parentBranch.setDisplayStyle(2);
+		this.parentBranch.setValidateColumns(new String[] { "BranchCode" });
 
 		this.city.setModuleName("City");
 
@@ -349,6 +359,8 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.bankCode.setDescription(aBankBranch.getBankName());
 		this.branchCode.setValue(aBankBranch.getBranchCode());
 		this.branchDesc.setValue(aBankBranch.getBranchDesc());
+		this.parentBranch.setValue(aBankBranch.getParentBranch());
+		this.parentBranch.setDescription(aBankBranch.getParentBranchDesc());
 		this.city.setValue(aBankBranch.getCity());
 		this.city.setDescription(aBankBranch.getPCCityName());
 		this.mICR.setValue(aBankBranch.getMICR());
@@ -379,6 +391,16 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		// Bank Code
 		try {
 			aBankBranch.setBankCode(this.bankCode.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aBankBranch.setParentBranch(this.parentBranch.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aBankBranch.setParentBranchDesc(this.parentBranch.getDescription());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -587,6 +609,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.mICR.setConstraint("");
 		this.iFSC.setConstraint("");
 		this.addOfBranch.setConstraint("");
+		this.parentBranch.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -677,10 +700,12 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 			this.branchCode.setReadonly(false);
 			this.bankCode.setReadonly(false);
 			this.btnCancel.setVisible(false);
+			this.parentBranch.setReadonly(false);
 		} else {
 			this.branchCode.setReadonly(true);
 			this.bankCode.setReadonly(true);
 			this.btnCancel.setVisible(true);
+			// this.parentBranch.setReadonly(true);
 		}
 
 		readOnlyComponent(isReadOnly("BankBranchDialog_BranchDesc"), this.branchDesc);
@@ -729,6 +754,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.cheque.setDisabled(true);
 		this.ecs.setDisabled(true);
 		this.active.setDisabled(true);
+		this.parentBranch.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -763,6 +789,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.dda.setChecked(false);
 		this.cheque.setChecked(false);
 		this.active.setChecked(false);
+		this.parentBranch.setValue("");
 
 		logger.debug("Leaving");
 	}
@@ -1003,6 +1030,41 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;
+	}
+
+	public void onFulfill$bankCode(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = bankCode.getObject();
+		if (dataObject instanceof String) {
+			this.bankCode.setValue("");
+		} else {
+			BankDetail details = (BankDetail) dataObject;
+			if (details != null) {
+				this.bankCode.setValue(details.getBankCode());
+				Filter[] filters = new Filter[1];
+				filters[0] = new Filter("bankCode", details.getBankCode(), Filter.OP_EQUAL);
+				parentBranch.setFilters(filters);
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onFulfill$parentBranch(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = parentBranch.getObject();
+
+		if (dataObject instanceof String) {
+			this.parentBranch.setValue("");
+			this.parentBranch.setDescription("");
+		} else {
+			BankBranch details = (BankBranch) dataObject;
+			if (details != null) {
+				this.parentBranch.setValue(details.getBranchCode());
+				this.parentBranch.setDescription(details.getBranchDesc());
+			}
+		}
+		logger.debug("Leaving" + event.toString());
 	}
 
 	// ******************************************************//

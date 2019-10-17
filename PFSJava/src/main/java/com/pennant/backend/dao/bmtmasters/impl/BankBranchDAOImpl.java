@@ -123,7 +123,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setId(id);
 
 		StringBuilder selectSql = new StringBuilder(
-				"Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+				"Select BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 		selectSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -238,11 +238,11 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		StringBuilder insertSql = new StringBuilder("Insert Into BankBranches");
 		insertSql.append(StringUtils.trimToEmpty(type));
 		insertSql.append(
-				" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+				" (BankBranchID, BankCode, BranchCode, BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 		insertSql.append(
 				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		insertSql.append(
-				" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active");
+				" Values(:BankBranchID, :BankCode, :BranchCode, :BranchDesc, :City, :MICR, :IFSC, :AddOfBranch, :Nach, :Dd, :Dda, :Ecs, :Cheque, :Active, :ParentBranch, :ParentBranchDesc");
 		insertSql.append(
 				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -277,7 +277,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		updateSql.append(
 				" Set BankCode = :BankCode, BranchCode = :BranchCode, BranchDesc = :BranchDesc, City = :City, MICR = :MICR, IFSC = :IFSC");
 		updateSql.append(
-				",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active");
+				",AddOfBranch = :AddOfBranch, Nach = :Nach, Dd = :Dd, Dda = :Dda, Ecs = :Ecs, Cheque = :Cheque, Active = :Active, ParentBranch = :ParentBranch, ParentBranchDesc =:ParentBranchDesc");
 		updateSql.append(
 				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where BankBranchID =:BankBranchID");
@@ -311,7 +311,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setIFSC(ifsc);
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName");
@@ -344,7 +344,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setBranchCode(branchCode);
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName,PcCityName");
@@ -452,7 +452,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setMICR(micr);
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active");
+		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName");

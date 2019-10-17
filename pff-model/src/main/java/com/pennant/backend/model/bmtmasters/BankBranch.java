@@ -78,6 +78,8 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 	private BankBranch befImage;
 	private LoggedInUser userDetails;
 	private int accNoLength;
+	private String parentBranch;
+	private String parentBranchDesc;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -274,6 +276,22 @@ public class BankBranch extends AbstractWorkflowEntity implements Entity {
 
 	public void setAccNoLength(int accNoLength) {
 		this.accNoLength = accNoLength;
+	}
+
+	public String getParentBranch() {
+		return parentBranch;
+	}
+
+	public void setParentBranch(String parentBranch) {
+		this.parentBranch = parentBranch;
+	}
+
+	public String getParentBranchDesc() {
+		return parentBranchDesc;
+	}
+
+	public void setParentBranchDesc(String parentBranchDesc) {
+		this.parentBranchDesc = parentBranchDesc;
 	}
 
 }
