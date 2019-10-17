@@ -3448,7 +3448,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="63" author="Manoj.P">
+	<!-- <changeSet id="63" author="Manoj.P">
 		<addColumn tableName="Email_messages">
 			<column name="NotificationData" type="clob" />
 		</addColumn>
@@ -3458,7 +3458,7 @@
 		<addColumn tableName="sms_messages">
 			<column name="NotificationData" type="clob" />
 		</addColumn>
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="65.1" author="Varaprasad">
 		<sql>
 		  	<![CDATA[

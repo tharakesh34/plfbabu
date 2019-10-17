@@ -5599,7 +5599,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="194" author="Prabhakar">
+	<!-- <changeSet id="194" author="Prabhakar">
 		<addColumn tableName="Sys_Notifications">
 			<column name="TemplateCode" type="varchar(50)" />
 		</addColumn>
@@ -5608,7 +5608,7 @@
 	<changeSet id="195" author="Prabhakar">
 		<modifyDataType tableName="Sys_Notification_Attributes"
 			columnName="NAME" newDataType="varchar(200)" />
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="196" author="SRINIVAS VARMA">
 		<addColumn tableName="INTERFACELOGDETAILS">

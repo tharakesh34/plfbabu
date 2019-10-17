@@ -426,4 +426,33 @@
 			alter table SYS_NOTIFICATION_EXEC_LOG add constraint df_S_N_E_L_ProFlag DEFAULT 0 for ProcessingFlag;
 		</sql>
 	</changeSet>
+	
+	<!-- 
+	This should be executed if not executed from chang-log-5.0.6 and chang-log-5.0.7
+	
+	<changeSet id="63" author="Manoj.P">
+		<addColumn tableName="Email_messages">
+			<column name="NotificationData" type="clob" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="64" author="Manoj.P">
+		<addColumn tableName="sms_messages">
+			<column name="NotificationData" type="clob" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="194" author="Prabhakar">
+		<addColumn tableName="Sys_Notifications">
+			<column name="TemplateCode" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="195" author="Prabhakar">
+		<modifyDataType tableName="Sys_Notification_Attributes"
+			columnName="NAME" newDataType="varchar(200)" />
+	</changeSet> -->
+	
+	
+	
 </databaseChangeLog>
