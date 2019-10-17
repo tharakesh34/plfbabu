@@ -15462,13 +15462,13 @@ UNION ALL
 			<column name="PARENTBRANCH" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="279" author="satyanarayana.g">
 		<addColumn tableName="BANKBRANCHES_TEMP">
 			<column name="PARENTBRANCH" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="280_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15520,7 +15520,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="281_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15570,7 +15570,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="282_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15656,19 +15656,19 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="284" author="satyanarayana.g">
 		<addColumn tableName="BANKBRANCHES">
 			<column name="PARENTBRANCHDESC" type="varchar(200)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="285" author="satyanarayana.g">
 		<addColumn tableName="BANKBRANCHES_TEMP">
 			<column name="PARENTBRANCHDESC" type="varchar(200)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="286_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15721,7 +15721,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="287_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15772,7 +15772,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="288_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15860,7 +15860,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="289" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -15869,5 +15869,77 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="290" author="murthy.y">
+		<createView viewName="FinODPenaltyRates_AView" replaceIfExists="true">
+			SELECT finreference,
+			  fineffectdate,
+			  applyodpenalty,
+			  odincgrcdays,
+			  odchargetype,
+			  odgracedays,
+			  odchargecalon,
+			  odchargeamtorperc,
+			  odallowwaiver,
+			  odmaxwaiverperc,
+			  odrulecode,
+			  ODMinCapAmount
+			FROM finodpenaltyrates
+		</createView>
+	</changeSet>
+
+	<changeSet id="291" author="murthy.y">
+		<createView viewName="FinODPenaltyRates_TView" replaceIfExists="true">
+			SELECT finreference,
+			  fineffectdate,
+			  applyodpenalty,
+			  odincgrcdays,
+			  odchargetype,
+			  odgracedays,
+			  odchargecalon,
+			  odchargeamtorperc,
+			  odallowwaiver,
+			  odmaxwaiverperc,
+			  odrulecode,
+			  ODMinCapAmount
+			FROM finodpenaltyrates_temp
+		</createView>
+	</changeSet>
+
+	<changeSet id="292" author="murthy.y">
+		<createView viewName="FinODPenaltyRates_View" replaceIfExists="true">
+			SELECT finreference,
+			    fineffectdate,
+			    applyodpenalty,
+			    odincgrcdays,
+			    odchargetype,
+			    odgracedays,
+			    odchargecalon,
+			    odchargeamtorperc,
+			    odallowwaiver,
+			    odmaxwaiverperc,
+			    odrulecode,
+			    ODMinCapAmount
+			  FROM finodpenaltyrates_temp
+			  UNION
+			  SELECT finreference,
+			    fineffectdate,
+			    applyodpenalty,
+			    odincgrcdays,
+			    odchargetype,
+			    odgracedays,
+			    odchargecalon,
+			    odchargeamtorperc,
+			    odallowwaiver,
+			    odmaxwaiverperc,
+			    odrulecode,
+			    ODMinCapAmount
+			  FROM finodpenaltyrates
+			  WHERE NOT (EXISTS
+			    ( SELECT 1 FROM finodpenaltyrates_temp WHERE finreference = finreference
+			    ))
+		</createView>
+	</changeSet>
+
+
 </databaseChangeLog>
