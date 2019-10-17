@@ -5191,8 +5191,8 @@ public class PennantStaticListUtil {
 			notificationTypeList = new ArrayList<ValueLabel>();
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NotificationTYPE_None, Labels.getLabel("label_Type_NONE")));
-			notificationTypeList.add(
-					new ValueLabel(PennantConstants.NotificationTYPE_Mobile, Labels.getLabel("label_Type_MOBILE")));
+			/*notificationTypeList.add(
+					new ValueLabel(PennantConstants.NotificationTYPE_Mobile, Labels.getLabel("label_Type_MOBILE")));*/
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NotificationTYPE_Email, Labels.getLabel("label_Type_EMAIL")));
 		}
