@@ -333,4 +333,16 @@
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="36" author="satyanarayana.g">
+		<addColumn tableName="ADTBANKBRANCHES">
+			<column name="PARENTBRANCH" type="varchar(8)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="37" author="satyanarayana.g">
+		<addColumn tableName="ADTBANKBRANCHES">
+			<column name="PARENTBRANCHDESC" type="varchar(200)"/>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>
