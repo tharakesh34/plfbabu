@@ -84,5 +84,11 @@
 			</column>
 		</createTable>
 	</changeSet>
+	
+	<changeSet id="2" author="dheerendra.d">
+		<addColumn tableName="AdtInterfaceConfiguration">
+			<column name="contactsDetail" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
 
 </databaseChangeLog>
