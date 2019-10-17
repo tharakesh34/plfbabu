@@ -1035,6 +1035,7 @@
 		<property name="relationshipOfficerService" ref="relationshipOfficerService" />
 		<property name="branchService" ref="branchService" />
 		<property name="customerTypeService" ref="customerTypeService" />
+		<property name="primaryAccountService" ref="primaryAccountService" />
 	</bean>
 
 	<bean id="customerQDEDialogCtrl" class="com.pennant.webui.customermasters.customer.CustomerQDEDialogCtrl" parent="basisCtrl"
@@ -1415,6 +1416,7 @@
 		<property name="customerTypeService" ref="customerTypeService" />
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="promotionService" ref="promotionService" />
+		<property name="primaryAccountService" ref="primaryAccountService" />
 	</bean>
 	
 	<bean id="selectCDFinanceSchemeDialogCtrl" class="com.pennant.webui.finance.financemain.SelectCDFinanceSchemeDialogCtrl"

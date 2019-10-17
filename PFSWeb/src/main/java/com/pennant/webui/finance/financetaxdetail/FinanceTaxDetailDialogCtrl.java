@@ -388,6 +388,40 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onChange$taxNumber(Event event) {
+		// GSTIN Validation
+		String gSTNNumber = this.financeTaxDetail.getTaxNumber();
+
+		if (StringUtils.trimToNull(gSTNNumber) == null || this.taxNumber.isReadonly()
+				|| StringUtils.equals(gSTNNumber, this.financeTaxDetail.getBefImage().getTaxNumber())) {
+			return;
+		}
+
+		parenttab.setSelected(true);
+		try {
+			GSTINInfo gstinInfo = new GSTINInfo();
+			gstinInfo.setgSTNNumber(gSTNNumber);
+			gstinInfo.setUsrID(getUserWorkspace().getUserId());
+
+			gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
+
+			if (gstinInfo != null) {
+				StringBuilder msg = new StringBuilder();
+				msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
+				msg.append("\n").append(" GSTIN :").append(gstinInfo.getgSTNNumber());
+				msg.append("\n").append(" GSTIN Date :").append(gstinInfo.getRegisterDateStr());
+				msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
+				msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
+				if (MessageUtil.confirm(msg.toString(), MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
+					return;
+				}
+			}
+		} catch (InterfaceException e) {
+			MessageUtil.showError(e.getErrorCode() + " - " + e.getErrorMessage());
+			this.taxNumber.setValue("");
+		}
+	}
+
 	public void onFulfill$finReference(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -1038,7 +1072,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			setCustCIFFilter(false);
 		}
 		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
-		if(this.applicableFor.getSelectedIndex() == 0) {
+		if (this.applicableFor.getSelectedIndex() == 0) {
 			this.applicableFor.setSelectedIndex(1);
 			setCustCIFFilter(true);
 		}
@@ -1164,7 +1198,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		//SEZ Certificate No
+		// SEZ Certificate No
 		try {
 			aFinanceTaxDetail.setSezCertificateNo(this.sezCertificateNo.getValue());
 		} catch (WrongValueException we) {
@@ -1649,36 +1683,6 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
-		} else {
-			// GSTIN Validation
-			String gSTNNumber = this.financeTaxDetail.getTaxNumber();
-			if ((StringUtils.trimToNull(gSTNNumber) != null) && !this.taxNumber.isReadonly()
-					&& (!StringUtils.equals(gSTNNumber, this.financeTaxDetail.getBefImage().getTaxNumber()))) {
-				try {
-					parenttab.setSelected(true);
-					GSTINInfo gstinInfo = new GSTINInfo();
-					gstinInfo.setgSTNNumber(gSTNNumber);
-					gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
-
-					if (null != gstinInfo) {
-						StringBuilder msg = new StringBuilder();
-						msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
-						msg.append("\n").append(" GSTIN :").append(gstinInfo.getgSTNNumber());
-						msg.append("\n").append(" GSTIN Date :").append(gstinInfo.getRegisterDateStr());
-						msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
-						msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
-						if (MessageUtil.confirm(msg.toString(),
-								MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
-							return;
-						}
-					}
-				} catch (InterfaceException e) {
-					if (MessageUtil.confirm(e.getErrorCode() + " - " + e.getErrorMessage(),
-							MessageUtil.CANCEL | MessageUtil.OVERIDE) == MessageUtil.CANCEL) {
-						return;
-					}
-				}
-			}
 		}
 
 		showErrorDetails(wve);

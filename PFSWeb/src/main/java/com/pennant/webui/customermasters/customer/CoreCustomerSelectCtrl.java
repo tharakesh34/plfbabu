@@ -73,6 +73,7 @@ import org.zkoss.zul.Window;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.CustomerStatusCode;
 import com.pennant.backend.model.applicationmaster.RelationshipOfficer;
@@ -101,6 +102,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
+import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/CustomerMasters/Customer/CustomerList.zul file.
@@ -151,6 +153,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private CustomerInterfaceService customerExternalInterfaceService;
 	@Autowired(required = false)
 	private CustomerDedupCheckService customerDedupService;
+	private PrimaryAccountService primaryAccountService;
 
 	/**
 	 * default constructor.<br>
@@ -388,6 +391,22 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				try {
 					primaryIdNumber = primaryID.getValue();
+					// Verifying/Validating the PAN Number
+					if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
+						try {
+							PrimaryAccount primaryAccount = new PrimaryAccount();
+							primaryAccount.setPanNumber(primaryID.getValue());
+							primaryAccountService.retrivePanDetails(primaryAccount);
+							MessageUtil.showMessage("PAN Validation Successfull." + primaryAccount.getCustFName()
+									+ primaryAccount.getCustMName());
+						} catch (Exception e) {
+							if (MessageUtil.YES == MessageUtil
+									.confirm("InValid PAN Number. Are you sure you want to continue ?")) {
+							} else {
+								return;
+							}
+						}
+					}
 				} catch (WrongValueException e) {
 					wve.add(e);
 				}
@@ -727,5 +746,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setCustomerInterfaceService(
 			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
+	}
+	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
+		this.primaryAccountService = primaryAccountService;
 	}
 }

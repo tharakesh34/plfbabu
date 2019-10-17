@@ -1469,8 +1469,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				if (unRealizeLpp.compareTo(BigDecimal.ZERO) > 0) {
 
 					// prepare GST Invoice Report for Penalty reversal
+					penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 					if (penalityFeeType == null) {
-						penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
+						throw new AppException(String.format("Fee Type code %s not found, please conatact system admin to configure.", PennantConstants.FEETYPE_ODC));
 					}
 
 					ManualAdviseMovements incMovement = new ManualAdviseMovements();

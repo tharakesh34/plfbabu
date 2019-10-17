@@ -76,6 +76,7 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.PrimaryAccount;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.applicationmaster.Branch;
@@ -138,6 +139,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerDedupService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
+import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -219,6 +221,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	private String primaryIdRegex;
 	private boolean primaryIdMandatory;
 	boolean proceedFurther = false;
+	private PrimaryAccountService primaryAccountService;
 
 	/**
 	 * default constructor.<br>
@@ -827,7 +830,21 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				return;
 			}
 		}
-
+		// Verifying/Validating the PAN Number
+		if (isRetailCustomer && primaryAccountService.panValidationRequired()) {
+			try {
+				PrimaryAccount primaryAccount = new PrimaryAccount();
+				primaryAccount.setPanNumber(this.eidNumber.getValue());
+				primaryAccountService.retrivePanDetails(primaryAccount);
+				MessageUtil.showMessage("PAN Validation Successfull::: " + primaryAccount.getCustFName()
+						+ primaryAccount.getCustMName() + primaryAccount.getCustLName());
+			} catch (Exception e) {
+				if (MessageUtil.YES == MessageUtil.confirm("InValid PAN Number. Are you sure you want to continue?")) {
+				} else {
+					return;
+				}
+			}
+		}
 		processCustomer(false, isNewCustomer);
 
 		logger.debug(Literal.LEAVING);
@@ -2023,5 +2040,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	public void setCustDedupService(CustomerDedupService custDedupService) {
 		this.custDedupService = custDedupService;
+	}
+
+	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
+		this.primaryAccountService = primaryAccountService;
 	}
 }

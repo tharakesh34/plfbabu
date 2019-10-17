@@ -386,7 +386,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listheader listheader_CustInc_RecordType;
 	private List<CustomerIncome> incomeList = new ArrayList<CustomerIncome>();
 
-	//Customer Gst Details List
+	// Customer Gst Details List
 	protected Button btnNew_CustomerGSTDetails;
 	protected Listbox listBoxCustomerGst;
 	private List<CustomerGST> customerGstList = new ArrayList<CustomerGST>();
@@ -460,6 +460,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean isFinanceProcess = false;
 	private boolean isNotFinanceProcess = false;
 	private boolean isEnqProcess = false;
+	private boolean isFirstTask = false;
 	private boolean isPromotionPickProcess = false;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
@@ -481,7 +482,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox religion;
 	protected ExtendedCombobox caste;
 
-	//customerGST Detaisl;
+	// customerGST Detaisl;
 	protected Textbox custId;
 	protected Textbox gstNumber;
 	protected Combobox frequencyType;
@@ -510,7 +511,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl;
 	private boolean dedupCheckReq = false;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	
+
 	private PrimaryAccountService primaryAccountService;
 
 	/**
@@ -573,6 +574,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			if (arguments.containsKey("isEnqProcess")) {
 				isEnqProcess = (Boolean) arguments.get("isEnqProcess");
 				this.moduleType = PennantConstants.MODULETYPE_ENQ;
+			}
+			if (arguments.containsKey("isFirstTask")) {
+				isFirstTask = (Boolean) arguments.get("isFirstTask");
 			}
 			if (arguments.containsKey("isNotFinanceProcess")) {
 				isNotFinanceProcess = (Boolean) arguments.get("isNotFinanceProcess");
@@ -1366,7 +1370,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doFillCustFinanceExposureDetails(aCustomerDetails.getCustFinanceExposureList());
 		doFillCustomerCardSalesInfoDetails(aCustomerDetails.getCustCardSales());
 
-		//customer gst details
+		// customer gst details
 		doFillCustomerGstDetails(aCustomerDetails.getCustomerGstList());
 		// Extended Field Details
 		appendExtendedFieldDetails(aCustomerDetails);
@@ -1663,14 +1667,15 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			if (isRetailCustomer) {
 				aCustomer.setCustCRCPR(PennantApplicationUtil.unFormatEIDNumber(this.eidNumber.getValue()));
+				aCustomer.setCustFName(this.custFirstName.getValue());
+				aCustomer.setCustLName(this.custLastName.getValue());
+				aCustomer.setCustMName(this.custMiddleName.getValue());
 			} else if (this.eidNumber.getValue().isEmpty()) {
 				aCustomer.setCustCRCPR(null);
 			} else {
 				aCustomer.setCustCRCPR(this.eidNumber.getValue());
 			}
-			if (primaryAccountService.panValidationRequired()) {
-				setPrimaryAccountDetails(aCustomerDetails);
-			}
+
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1940,7 +1945,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		aCustomerDetails.setCustomerChequeInfoList(cloner.deepClone(this.customerChequeInfoDetailList));
 		aCustomerDetails.setCustomerExtLiabilityList(cloner.deepClone(this.customerExtLiabilityDetailList));
 		aCustomerDetails.setCustCardSales(cloner.deepClone(this.customerCardSales));
-		//Custome Gst Details list
+		// Custome Gst Details list
 		aCustomerDetails.setCustomerGstList(cloner.deepClone(this.customerGstList));
 		if (this.directorDetails.isVisible()) {
 			aCustomerDetails.setCustomerDirectorList(this.directorList);
@@ -2139,15 +2144,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private void doCheckCibil() {
 		logger.debug(Literal.ENTERING);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_CIBIL_REQUEST)) {
-			if (getCustomerDetails().getCustomer().isNewRecord()
-					|| (getFinancedetail() != null && getFinancedetail().isNewRecord())) {
-				this.btn_GenerateCibil.setVisible(false);
-			} else {
-				if (isRetailCustomer) {
-					this.btn_GenerateCibil.setVisible(true);
-				}
-			}
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_CIBIL_REQUEST) && (isFirstTask() || this.isFirstTask)
+				&& isRetailCustomer) {
+			this.btn_GenerateCibil.setVisible(true);
 		} else {
 			this.btn_GenerateCibil.setVisible(false);
 		}
@@ -2183,7 +2182,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.directorDetails.setVisible(false);
 			this.gb_rating.setVisible(false);
 			this.label_ArabicName.setVisible(true);
-			//this.space_CustArabicName.setSclass("");
+			// this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
 			this.row_party_segment.setVisible(true);
@@ -4935,7 +4934,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	// ********************************************************************//
-	// *** New Button for Customer GST Details                           **//
+	// *** New Button for Customer GST Details **//
 	// ********************************************************************//
 
 	public void onClick$btnNew_CustomerGSTDetails(Event event) throws Exception {
@@ -6797,21 +6796,25 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		processDateDiff(this.empFrom.getValue(), this.exp);
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	public void onChange$eidNumber(Event event) {
 		if (primaryAccountService.panValidationRequired()) {
 			CustomerDetails aCustomerDetails = getCustomerDetails();
 			aCustomerDetails.getCustomer().setCustCRCPR(this.eidNumber.getValue());
-			setPrimaryAccountDetails(aCustomerDetails);
+			String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_PAN_VALIDATION_RULE);
+			roles = StringUtils.trimToEmpty(roles);
+			if (roles.contains(getRole()) || getCustomerDetails().getCustomer().isNewRecord() || isFirstTask) {
+				setPrimaryAccountDetails(aCustomerDetails);
+			}
 		}
 	}
-	
+
 	private void setPrimaryAccountDetails(CustomerDetails aCustomerDetails) {
 		logger.debug(Literal.ENTERING);
 
 		Customer customer = aCustomerDetails.getCustomer();
 		String panNumber = customer.getCustCRCPR();
-		
+
 		if (StringUtils.isBlank(panNumber)) {
 			logger.debug(Literal.LEAVING);
 			return;
@@ -6821,10 +6824,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			try {
 				PrimaryAccount primaryAccount = new PrimaryAccount();
 				primaryAccount.setPanNumber(panNumber);
-				
-				//Verifying/Validating the PAN Number
+				// Verifying/Validating the PAN Number
 				primaryAccountService.retrivePanDetails(primaryAccount);
-	            MessageUtil.showMessage("PAN Validation Successfull");
+				MessageUtil.showMessage("PAN Validation Successfull:::" + primaryAccount.getCustFName()
+						+ primaryAccount.getCustMName() + primaryAccount.getCustLName());
 			} catch (Exception e) {
 				throw new WrongValueException(this.eidNumber,
 						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
@@ -6839,7 +6842,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw new WrongValueException(this.eidNumber, StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
+			throw new WrongValueException(this.eidNumber,
+					StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
 		} finally {
 			logger.debug(Literal.LEAVING);
 		}
@@ -7067,8 +7071,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}	
-	
+	}
+
 	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
 		this.primaryAccountService = primaryAccountService;
 	}

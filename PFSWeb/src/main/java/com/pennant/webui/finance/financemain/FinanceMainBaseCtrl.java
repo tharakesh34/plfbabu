@@ -203,6 +203,7 @@ import com.pennant.backend.model.customermasters.BankInfoDetail;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.customermasters.CustomerDedup;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
@@ -365,6 +366,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pff.external.InitiateHunterService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
@@ -1096,6 +1098,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
 	protected CurrencyBox appliedLoanAmt;
+	
+	@Autowired(required = false)
+	private InitiateHunterService initiateHunterService;
 
 	/**
 	 * default constructor.<br>
@@ -2681,6 +2686,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					map.put("isEnqProcess", isEnquiry);
 				}
 				map.put("rcuVerificationDialogCtrl", rcuVerificationDialogCtrl);
+				map.put("isFirstTask", isFirstTask());
 				customerWindow = Executions.createComponents(
 						"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
@@ -21638,6 +21644,55 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	public void onClickExtbtnBUTTON() {
+		logger.debug(Literal.ENTERING);
+		try {
+			String matches = "";
+			if (initiateHunterService != null) {
+				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
+				if (hunterReq) {
+					
+					CustomerDetails customerDetails = initiateHunterService
+							.getHunterResponse(financeDetail.getCustomerDetails());
+					matches = customerDetails.getMatches();
+				}
+				if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+					return;
+				} else {
+					Window window = extendedFieldCtrl.getWindow();
+					Textbox hunterResult = null;
+					Groupbox hunterGrpBox = null;
+					try {
+						if (window.getFellow("HUNTER") instanceof Groupbox) {
+							hunterGrpBox = (Groupbox) window.getFellow("HUNTER");
+						}
+						if (window.getFellow("ad_TEXT") instanceof Textbox) {
+							hunterResult = (Textbox) window.getFellow("ad_TEXT");
+						}
+						if (hunterResult != null && hunterGrpBox != null) {
+							if (StringUtils.isNotEmpty(StringUtils.trim(StringUtils.trim(matches)))) {
+								hunterResult.setValue((matches) + "matches found.");
+								hunterResult.setDisabled(true);
+							} else {
+								hunterResult.setValue("NO Matches Found.");
+								hunterResult.setDisabled(true);
+							}
+						}
+					} catch (Exception e) {
+						logger.error(Literal.EXCEPTION, e);
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (e.getMessage() != null) {
+				MessageUtil.showError(e.getMessage());
+			} else {
+				MessageUtil.showError("Hunter Service Problem");
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}
