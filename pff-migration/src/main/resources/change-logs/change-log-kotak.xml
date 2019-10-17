@@ -3820,13 +3820,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="82" author="dheerendra.d">
 		<addColumn tableName="extinterfaceconf">
 			<column name="contactsDetail" type="varchar(1000)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="83" author="dheerendra.d">
 		<addColumn tableName="extinterfaceconf_TEMP">
 			<column name="contactsDetail" type="varchar(1000)" />
@@ -3901,5 +3901,13 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 						 T1.WorkflowId
 			FROM    	ExtInterfaceConf T1
 		</createView>
+	</changeSet>
+
+	<changeSet id="86" author="santhoshi.k" dbms="oracle">
+		<sql>
+			 <![CDATA[
+			Insert into SMTPARAMETERS values('Interface_Notification','InterfaceNotification','String',1,'2019-10-15 20:45:00',30,0,null ,null,'Interface Notification Last Processed DateTime',1,1000,'07-09-19','Approved',null ,null,null,null,null,0);
+			 ]]>
+		</sql>
 	</changeSet>
 </databaseChangeLog>
