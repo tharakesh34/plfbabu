@@ -23,12 +23,13 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="amanullah.m" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
-			Set search_path = plf, public, pg_catalog;
+			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="1" author="shinde.b">
 		<addColumn tableName="RMTFINANCETYPES">
 			<column name="putCallRequired" type="boolean" />
