@@ -168,7 +168,7 @@ public abstract class JsonService<T> {
 			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
 			if (logDetail != null) {
 				if(StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))){
-					logDetail.setRequest(serviceDetail.getResponseString());
+					logDetail.setResponse(serviceDetail.getResponseString());
 				}else{
 					logDetail.setResponse(StringUtils.left(serviceDetail.getResponseString(), 1000));
 				}
