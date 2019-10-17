@@ -3820,8 +3820,20 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="82" author="dheerendra.d">
+		<addColumn tableName="extinterfaceconf">
+			<column name="contactsDetail" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="83" author="dheerendra.d">
+		<addColumn tableName="extinterfaceconf_TEMP">
+			<column name="contactsDetail" type="varchar(1000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="84" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_VIEW"
 			replaceIfExists="true">
               SELECT	T1.Id, 
@@ -3866,7 +3878,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
         </createView>
 	</changeSet>
 
-	<changeSet id="83" author="dheerendra.d">
+	<changeSet id="85" author="dheerendra.d">
 		<createView viewName="EXTINTERFACECONF_AVIEW"
 			replaceIfExists="true">
     		 SELECT		 T1.Id, 
