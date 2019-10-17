@@ -8918,7 +8918,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (baseRateCode != null && StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 				day = StringUtils.substring(baseRateCode.getbRRepayRvwFrq(), 3, 5);
 			} else {
-				day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
+				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+				if (financeMain!=null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE) && !financeMain.isNew()) {
+					String repayRvwFrq2 = financeMain.getRepayRvwFrq();
+					day=repayRvwFrq2.substring(3);
+				}else{
+					day = DateUtility.format(this.finStartDate.getValue(), PennantConstants.DBDateFormat).split("-")[2];
+				}
 			}
 
 			if (FrequencyCodeTypes.FRQ_DAILY.equals(frqCode)) {
@@ -9186,7 +9192,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	
 	
 	private int getMtrTerms() {
-		return DateUtility.getMonthsBetween(this.maturityDate.getValue(), this.finStartDate.getValue());
+		return DateUtility.getMonthsBetween(this.maturityDate.getValue(), this.finStartDate.getValue(),true);
 	}
 	
 	
