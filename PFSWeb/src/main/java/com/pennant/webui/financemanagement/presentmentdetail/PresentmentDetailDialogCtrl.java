@@ -106,6 +106,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected Listbox listBox_ManualExclude;
 	protected Listbox listBox_AutoExclude;
 	protected ExtendedCombobox partnerBank;
+	protected ExtendedCombobox loanReference;
 	protected Label window_title;
 
 	protected Label label_PresentmentReference;
@@ -203,6 +204,14 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
 		this.partnerBank.setMandatoryStyle(true);
+		
+		this.loanReference.setDisplayStyle(3);
+		this.loanReference.setModuleName("PresentmentDetailDef");
+		this.loanReference.setValueColumn("PresentmentId");
+		this.loanReference.setValueType(DataType.LONG);
+		this.loanReference.setDescColumn("FinReference");
+		this.loanReference.setValidateColumns(new String[] { "FinReference" });
+		this.loanReference.setMandatoryStyle(false);
 
 		Filter[] filters = null;
 		if (StringUtils.isNotEmpty(presentmentHeader.getEntityCode())) {
@@ -408,6 +417,24 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
+	
+	public void onFulfill$loanReference(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object presentmentDetail = loanReference.getObject();
+
+		if (presentmentDetail instanceof PresentmentDetail) {
+			PresentmentDetail PresentmentDts = (PresentmentDetail) presentmentDetail;
+			ArrayList<PresentmentDetail> presentmentDtsList = new ArrayList<PresentmentDetail>();
+			presentmentDtsList.add(PresentmentDts);
+			doFillList(presentmentDtsList, listBox_Include, false);
+		} else {
+			doFillList(this.includeList, listBox_Include, false);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	
 	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 

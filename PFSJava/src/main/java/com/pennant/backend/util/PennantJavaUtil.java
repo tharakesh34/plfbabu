@@ -2313,6 +2313,14 @@ public class PennantJavaUtil {
 				new String[] { "PresentmentDetails", "PresentmentDetails_AView" }, null, new String[] { "FinReference",
 						"SchDate", "SchSeq", "MandateID", "ExcludeReason" }, null, 600));
 
+
+		ModuleUtil.register("PresentmentDetailDef",
+				new ModuleMapping("PresentmentDetail", PresentmentDetail.class,
+						new String[] { "PresentmentDetails", "PresentmentDetails_AView" }, null,
+						new String[] { "FinReference", "PresentmentRef" }, null, 400));
+
+
+
 		/* PresentmentHeader */
 		ModuleUtil.register("PresentmentHeader", new ModuleMapping("PresentmentHeader", PresentmentHeader.class,
 				new String[] { "PresentmentHeader", "PresentmentHeader_AView" }, PRESENTMENT_BATCH, new String[] {

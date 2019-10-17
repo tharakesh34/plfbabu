@@ -64,6 +64,10 @@
 									<label value="${c:l('label_PresentmentDetailList_PresentmentStatus.value')}" />
 									<label id="label_PresentmentStatus" style="font-weight:bold;padding-right:12px;" />
 								</row>
+									<row>
+									<label value="${c:l('label_PresentmentDetailList_PresentmentLoanReference.value')}" />
+									<extendedcombobox id="loanReference"/>
+								</row>
 							</rows>
 						</grid>
 						<space height="10px"></space>
