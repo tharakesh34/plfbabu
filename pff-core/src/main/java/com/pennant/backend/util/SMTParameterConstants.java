@@ -270,5 +270,6 @@ public class SMTParameterConstants {
 	public static final String ALLOW_PUSH_NOTIFICATION = "ALLOW_PUSH_NOTIFICATION";
 
 	public static final String DMS_REQ = "DMS_REQ";
+	public static final String ALLOW_PAN_VALIDATION_RULE = "ALLOW_PAN_VALIDATION_RULE";
 
 }
