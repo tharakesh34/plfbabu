@@ -108,23 +108,19 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	protected Textbox branch;
 	protected int accNoLength;
 	private Beneficiary beneficiary;
-
-	private transient BeneficiaryListCtrl beneficiaryListCtrl;
-	private transient BeneficiaryService beneficiaryService;
-	private transient BankDetailService bankDetailService;
-	@Autowired(required = false)
-	private transient AccountValidationService accountValidationService;
-
 	private Checkbox beneficiaryActive;
 	private Checkbox defaultBeneficiary;
-
 	protected Textbox pennyDropResult;
 	protected Textbox txnDetails;
 	protected Button btnPennyDropResult;
 
-	BankAccountValidationService bankAccountValidationService;
+	private transient BeneficiaryListCtrl beneficiaryListCtrl;
+	private transient BeneficiaryService beneficiaryService;
+	private transient BankDetailService bankDetailService;
+	private transient AccountValidationService accountValidationService;
+	private transient BankAccountValidationService bankAccountValidationService;
 	private transient PennyDropService pennyDropService;
-	private PennyDropDAO pennyDropDAO;
+	private transient PennyDropDAO pennyDropDAO;
 
 	private PennyDropStatus pennyDropstatus;
 
@@ -497,14 +493,14 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		// Validate Account Number
 		if (wve.isEmpty()) {
 			try {
 				if (accountValidationService != null) {
 					aBeneficiary.setUsrID(getUserWorkspace().getLoggedInUser().getUserId());
 					aBeneficiary.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
-					
+
 					aBeneficiary = accountValidationService.validateAccount(aBeneficiary);
 				}
 			} catch (InterfaceException e) {
@@ -517,7 +513,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 				throw new WrongValueException(this.accNumber, "Invalid Account Number.");
 			}
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -572,8 +568,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			readOnlyComponent(true, this.txnDetails);
 		}
 
-		if(beneficiary != null) {
-			pennyDropstatus = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(), beneficiary.getiFSC());
+		if (beneficiary != null) {
+			pennyDropstatus = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(),
+					beneficiary.getiFSC());
 		}
 		doWriteBeanToComponents(beneficiary);
 		setDialog(DialogType.EMBEDDED);
@@ -728,8 +725,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Email"), this.email);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_Active"), this.beneficiaryActive);
 		readOnlyComponent(isReadOnly("BeneficiaryDialog_DefaultBeneficiary"), this.defaultBeneficiary);
-		readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), this.pennyDropResult);
-		readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), this.txnDetails);
+		readOnlyComponent(isReadOnly("BeneficiaryDialog_PennyDropResult"), this.pennyDropResult);
+		readOnlyComponent(isReadOnly("BeneficiaryDialog_TxnDetails"), this.txnDetails);
+		this.btnPennyDropResult.setVisible(!isReadOnly("button_BeneficiaryDialog_btnPennyDropResult"));
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -744,6 +742,14 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
+
+		if (bankAccountValidationService != null && !enqiryModule) {
+			btnPennyDropResult.setVisible(true);
+		} else {
+			btnPennyDropResult.setVisible(false);
+
+		}
+
 		logger.debug("Leaving ");
 	}
 
@@ -1017,7 +1023,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	}
 
 	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		if (bankAccountValidationService == null) {
+			return;
+		}
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation();
@@ -1039,7 +1048,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 
 		doRemoveValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -1086,6 +1095,11 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
+	}
+
+	@Autowired(required = false)
+	public void setAccountValidationService(AccountValidationService accountValidationService) {
+		this.accountValidationService = accountValidationService;
 	}
 
 	public PennyDropService getPennyDropService() {

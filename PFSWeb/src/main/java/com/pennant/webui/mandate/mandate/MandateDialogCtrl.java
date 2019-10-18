@@ -248,14 +248,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected ExtendedCombobox partnerBank;
 	protected Row rowPartnerBank;
-	BankAccountValidationService bankAccountValidationService;
-	private MandateDAO mandateDAO;
 
+	private transient BankAccountValidationService bankAccountValidationService;
+	private transient MandateDAO mandateDAO;
 	private transient PennyDropService pennyDropService;
-	private PennyDropDAO pennyDropDAO;
-	private PennyDropStatus pennyDropStatus;
-		
-	
+	private transient PennyDropDAO pennyDropDAO;
+	private transient PennyDropStatus pennyDropStatus;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -649,7 +648,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
+		if(bankAccountValidationService ==  null) {
+			return;
+		}
+		
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation(true);
@@ -686,7 +688,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			return;
 		} else {
 			try {
-				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				boolean status = false;
+				if (bankAccountValidationService != null) {
+					status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				}
+
 				if (status) {
 					this.pennyDropResult.setValue("Sucess");
 				} else {
@@ -694,7 +700,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 				pennyDropStatus.setStatus(status);
 				pennyDropStatus.setInitiateType("M");
-				getPennyDropService().savePennyDropSts(pennyDropStatus);
+
+				pennyDropService.savePennyDropSts(pennyDropStatus);
 			} catch (Exception e) {
 				MessageUtil.showMessage(e.getMessage());
 			}
@@ -1081,8 +1088,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		readOnlyComponent(true, this.umrNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_BarCodeNumber"), this.barCodeNumber);
 		readOnlyComponent(isReadOnly("MandateDialog_SwapIsActive"), this.swapIsActive);
-		readOnlyComponent(isReadOnly("MasterDialog_PennyDropResult"), this.pennyDropResult);
-		readOnlyComponent(isReadOnly("MasterDialog_TxnDetails"), this.txnDetails);
+		readOnlyComponent(isReadOnly("MandateDialog_PennyDropResult"), this.pennyDropResult);
+		readOnlyComponent(isReadOnly("MandateDialog_TxnDetails"), this.txnDetails);
+		this.btnPennyDropResult.setVisible(!isReadOnly("button_MandateDialog_btnPennyDropResult"));
 		if (this.rowPartnerBank.isVisible()) {
 			readOnlyComponent(isReadOnly("MandateDialog_PartnerBankId"), this.partnerBank);
 		}
@@ -1110,6 +1118,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} else {
 			this.btnCtrl.setBtnStatus_Edit();
 		}
+
+		if (bankAccountValidationService != null && !enqiryModule) {
+			btnPennyDropResult.setVisible(true);
+		} else {
+			btnPennyDropResult.setVisible(false);
+		}
+
 		logger.debug("Leaving ");
 	}
 

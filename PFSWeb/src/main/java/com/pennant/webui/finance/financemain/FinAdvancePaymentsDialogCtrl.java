@@ -245,11 +245,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	protected Textbox pennyDropResult;
 	protected Textbox txnDetails;
 	protected Button btnPennyDropResult;
-	
+
 	BankAccountValidationService bankAccountValidationService;
 	private transient PennyDropService pennyDropService;
 	private PennyDropDAO pennyDropDAO;
 	private PennyDropStatus pennyDropStatus;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -605,8 +606,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.custContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_custContribution"));
 		this.sellerContribution.setDisabled(isReadOnly("FinAdvancePaymentsDialog_sellerContribution"));
 		this.partnerBankID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_partnerBankID"));
-		this.pennyDropResult.setReadonly(isReadOnly("MasterDialog_PennyDropResult"));
-		this.txnDetails.setReadonly(isReadOnly("MasterDialog_TxnDetails"));
+		this.pennyDropResult.setReadonly(isReadOnly("FinAdvancePaymentsDialog_PennyDropResult"));
+		this.txnDetails.setReadonly(isReadOnly("FinAdvancePaymentsDialog_TxnDetails"));
+		this.btnPennyDropResult.setVisible(!isReadOnly("button_FinAdvancePaymentsDialog_btnPennyDropResult"));
 
 		//Added Masking for  ReEnter Account Number field in Disbursement at Loan Approval stage
 		if (SysParamUtil.isAllowed(SMTParameterConstants.DISB_ACCNO_MASKING)
@@ -2327,11 +2329,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		return pennyDropService;
 	}
 
-
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
 	}
-
 
 	public PennyDropDAO getPennyDropDAO() {
 		return pennyDropDAO;
@@ -2340,7 +2340,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
 		this.pennyDropDAO = pennyDropDAO;
 	}
-	
+
 	@Autowired(required = false)
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {

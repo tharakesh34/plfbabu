@@ -345,4 +345,13 @@
 			<column name="PARENTBRANCHDESC" type="varchar(200)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="38" author="satyanarayana.g">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINANCEMAIN Set SvAmount = 0  where SvAmount is null;
+				UPDATE ADTFINANCEMAIN Set CBAmount = 0  where CBAmount is null;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
