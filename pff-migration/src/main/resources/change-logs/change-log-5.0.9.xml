@@ -15944,7 +15944,7 @@ UNION ALL
 	<changeSet id="293" author="vijaya.a">
 		<sql>
 			<![CDATA[
-					Delete from SMTparameters where SysParmCode = 'PRESENTMENT_RESPONSE_DDI';
+					Delete from SMTparameters where SysParmCode = 'PRESENTMENT_RESPONSE_NACH';
 					INSERT INTO SMTparameters  VALUES ('PRESENTMENT_RESPONSE_NACH', 'Presentment Response NACH.', 'String', '1', '', 30, 0, '', '','Presentment Response NACH.', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 			]]>
 		</sql>
