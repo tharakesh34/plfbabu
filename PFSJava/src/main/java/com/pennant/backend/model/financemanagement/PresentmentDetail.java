@@ -80,7 +80,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 	private int schSeq;
 	private long bounceID;
 	private String bounceReason;
-	private long manualAdviseId;
+	private Long manualAdviseId;
 	private String status;
 	private boolean newRecord = false;
 	private String customerName;
@@ -451,11 +451,11 @@ public class PresentmentDetail extends AbstractWorkflowEntity implements Entity 
 		this.errorDesc = errorDesc;
 	}
 
-	public long getManualAdviseId() {
+	public Long getManualAdviseId() {
 		return manualAdviseId;
 	}
 
-	public void setManualAdviseId(long manualAdviseId) {
+	public void setManualAdviseId(Long manualAdviseId) {
 		this.manualAdviseId = manualAdviseId;
 	}
 
