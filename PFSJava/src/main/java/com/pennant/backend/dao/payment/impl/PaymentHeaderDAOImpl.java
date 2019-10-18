@@ -329,4 +329,36 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 		logger.debug(Literal.LEAVING);
 		return null;
 	}
+	
+	@Override
+	public List<ManualAdvise> getManualAdviseForEnquiry(String finReference) {
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = null;
+		MapSqlParameterSource source = null;
+		
+		sql = new StringBuilder();
+		sql.append(
+				" select MA.adviseID, MA.finReference, MA.balanceAmt, MA.adviseType, MA.adviseAmount, MA.reservedAmt, ");
+		sql.append(
+				"ft.feetypecode,ft.FEETYPEDESC, FT.TaxApplicable, FT.TaxComponent from MANUALADVISE MA inner join FEETYPES ft on MA.FEETYPEID=ft.FEETYPEID ");
+		sql.append("Where FinReference = :FinReference AND MA.AdviseType = :AdviseType And MA.PaidAmount > 0 order by MA.VALUEDATE  ");
+		logger.trace(Literal.SQL + sql.toString());
+		
+		source = new MapSqlParameterSource();
+		source.addValue("FinReference", finReference);
+		source.addValue("AdviseType", 2);
+		
+		RowMapper<ManualAdvise> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ManualAdvise.class);
+		try {
+			return jdbcTemplate.query(sql.toString(), source, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error("Exception: ", e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+		logger.debug(Literal.LEAVING);
+		return null;
+	}
 }

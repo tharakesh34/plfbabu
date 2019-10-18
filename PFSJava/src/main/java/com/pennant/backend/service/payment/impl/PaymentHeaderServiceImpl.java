@@ -307,6 +307,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	public List<ManualAdvise> getManualAdvise(String finReference) {
 		return getPaymentHeaderDAO().getManualAdvise(finReference);
 	}
+	
+	@Override
+	public List<ManualAdvise> getManualAdviseForEnquiry(String finReference) {
+		return getPaymentHeaderDAO().getManualAdviseForEnquiry(finReference);
+	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)

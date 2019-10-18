@@ -71,4 +71,6 @@ public interface PaymentHeaderService {
 	List<ManualAdvise> getManualAdvise(String finReference);
 
 	boolean getPaymentHeadersByFinReference(String finReference, String type);
+
+	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
 }

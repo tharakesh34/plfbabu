@@ -71,4 +71,6 @@ public interface PaymentHeaderDAO extends BasicCrudDao<PaymentHeader> {
 	List<FinExcessAmount> getfinExcessAmount(String finReference);
 
 	List<ManualAdvise> getManualAdvise(String finReference);
+
+	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
 }

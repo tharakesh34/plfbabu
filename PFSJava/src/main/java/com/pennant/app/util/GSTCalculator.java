@@ -139,7 +139,7 @@ public class GSTCalculator {
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST())
 				.add(taxSplit.getiGST().add(taxSplit.getCess())));
 
-		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST())); //FeeFactor + GST Factor
+		taxSplit.setNetAmount(taxableAmount); //FeeFactor + GST Factor
 
 		return taxSplit;
 	}
