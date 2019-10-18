@@ -3314,4 +3314,21 @@
 			 ]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="15" author="vijaya.a">
+		<sql>
+			<![CDATA[
+					Update SMTparameters set SysParmValue = 'PRESENTMENT_RESPONSE_NACH' Where SysParmCode = 'PRESENTMENT_RESPONSE_NACH';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="16" author="vijaya.a">
+		<sql>
+			<![CDATA[
+					Update SMTparameters set SysParmValue = 'PRESENTMENT_RESPONSE_NACH' Where SysParmCode = 'PRESENTMENT_RESPONSE_NACH';
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
