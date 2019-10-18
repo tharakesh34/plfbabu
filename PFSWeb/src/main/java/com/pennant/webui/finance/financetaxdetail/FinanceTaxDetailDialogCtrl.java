@@ -389,8 +389,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	}
 
 	public void onChange$taxNumber(Event event) {
+		logger.debug(Literal.ENTERING);
 		// GSTIN Validation
-		String gSTNNumber = this.financeTaxDetail.getTaxNumber();
+		String gSTNNumber = this.taxNumber.getValue();
 
 		if (StringUtils.trimToNull(gSTNNumber) == null || this.taxNumber.isReadonly()
 				|| StringUtils.equals(gSTNNumber, this.financeTaxDetail.getBefImage().getTaxNumber())) {
@@ -417,9 +418,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				}
 			}
 		} catch (InterfaceException e) {
-			MessageUtil.showError(e.getErrorCode() + " - " + e.getErrorMessage());
+			MessageUtil.showMessage(e.getErrorCode() + " - " + e.getErrorMessage());
 			this.taxNumber.setValue("");
 		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onFulfill$finReference(Event event) {

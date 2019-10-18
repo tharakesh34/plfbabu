@@ -21666,16 +21666,19 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						if (window.getFellow("HUNTER") instanceof Groupbox) {
 							hunterGrpBox = (Groupbox) window.getFellow("HUNTER");
 						}
-						if (window.getFellow("ad_TEXT") instanceof Textbox) {
-							hunterResult = (Textbox) window.getFellow("ad_TEXT");
+						if (window.getFellow("ad_Text") instanceof Textbox) {
+							hunterResult = (Textbox) window.getFellow("ad_Text");
 						}
 						if (hunterResult != null && hunterGrpBox != null) {
+							hunterResult.setDisabled(true);
 							if (StringUtils.isNotEmpty(StringUtils.trim(StringUtils.trim(matches)))) {
-								hunterResult.setValue((matches) + "matches found.");
-								hunterResult.setDisabled(true);
-							} else {
-								hunterResult.setValue("NO Matches Found.");
-								hunterResult.setDisabled(true);
+								if (Integer.parseInt(matches) > 0) {
+									hunterResult.setValue((matches) + "Matches Found.");
+									hunterResult.setDisabled(true);
+								} else {
+									hunterResult.setValue("NO Matches Found.");
+									hunterResult.setDisabled(true);
+								}
 							}
 						}
 					} catch (Exception e) {
@@ -21685,9 +21688,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
-				MessageUtil.showError(e.getMessage());
+				MessageUtil.showMessage(e.getMessage());
 			} else {
-				MessageUtil.showError("Hunter Service Problem");
+				MessageUtil.showMessage("Hunter Service Problem");
 			}
 		}
 		logger.debug(Literal.LEAVING);
