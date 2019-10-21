@@ -130,6 +130,7 @@ public class ScheduleCalculator {
 	public static final String PROC_INSURANCESCHEDULE = "insuranceSchedule";
 	public static final String PROC_CHANGETDS = "changeTDS";
 	public static final String PROC_REBUILDSCHD = "reBuildSchd";
+	public static final String PROC_ADDDATEDSCHEDULE	= "procAddDatedSchedule";
 
 	public ScheduleCalculator() {
 		super();
@@ -256,6 +257,10 @@ public class ScheduleCalculator {
 	public static FinScheduleData procReCalTDSAmount(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(finScheduleData, PROC_CHANGETDS).getFinScheduleData();
 	}
+	
+	public static FinScheduleData addDatedSchedule(FinScheduleData finScheduleData) {
+		return new ScheduleCalculator(PROC_ADDDATEDSCHEDULE, finScheduleData, BigDecimal.ZERO).getFinScheduleData();
+	}
 
 	// Constructors
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData) {
@@ -340,6 +345,10 @@ public class ScheduleCalculator {
 			setFinScheduleData(procChangeProfit(finScheduleData, desiredPftAmount));
 		}
 
+		if (StringUtils.equals(method, PROC_ADDDATEDSCHEDULE)) {
+			setFinScheduleData(procAddDatedSchedule(finScheduleData));
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -1568,6 +1577,13 @@ public class ScheduleCalculator {
 						setRvwOnSchDate(finMain, curSchd, frqCode, schdCount);
 					}
 
+					//If Refresh Rate Consider whatever rates available in Schedule
+					if (isRefreshRates) {
+						baseRate = curSchd.getBaseRate();
+						splRate = curSchd.getSplRate();
+						mrgRate = curSchd.getMrgRate();
+					}
+
 					if (curSchd.isRvwOnSchDate()) {
 						if (StringUtils.isNotBlank(baseRate)) {
 							if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
@@ -1577,48 +1593,27 @@ public class ScheduleCalculator {
 								recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate,
 										schdDate, finMain.getRpyMinRate(), finMain.getRpyMaxRate()).getNetRefRateLoan();
 							}
-							//If Refresh Rate Consider whatever rates available in Schedule
-							if (isRefreshRates) {
-								baseRate = curSchd.getBaseRate();
-								splRate = curSchd.getSplRate();
-								mrgRate = curSchd.getMrgRate();
-							}
-
-							if (curSchd.isRvwOnSchDate()) {
-								if (StringUtils.isNotBlank(baseRate)) {
-									if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
-										recalculateRate = RateUtil
-												.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
-														finMain.getGrcMinRate(), finMain.getGrcMaxRate())
-												.getNetRefRateLoan();
-									} else {
-										recalculateRate = RateUtil
-												.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
-														finMain.getRpyMinRate(), finMain.getRpyMaxRate())
-												.getNetRefRateLoan();
-									}
-								}
-							}
-
-							curSchd.setBaseRate(baseRate);
-							curSchd.setSplRate(splRate);
-							curSchd.setMrgRate(mrgRate);
-							curSchd.setCalculatedRate(recalculateRate);
-
-							if (curSchd.getCalculatedRate().compareTo(recalculateRate) != 0) {
-								isRateChgReq = true;
-							}
-
-							if (StringUtils.isBlank(baseRate)) {
-								curSchd.setActRate(recalculateRate);
-							}
-							schdCount++;
-						}
-
-						if (DateUtility.compare(schdDate, evtToDate) >= 0) {
-							break;
 						}
 					}
+
+					if (curSchd.getCalculatedRate().compareTo(recalculateRate)!=0) {
+						isRateChgReq = true;
+					}
+
+					curSchd.setBaseRate(baseRate);
+					curSchd.setSplRate(splRate);
+					curSchd.setMrgRate(mrgRate);
+					curSchd.setCalculatedRate(recalculateRate);
+
+					if (StringUtils.isBlank(baseRate)) {
+						curSchd.setActRate(recalculateRate);
+					}
+
+					schdCount++;
+				}
+
+				if (DateUtility.compare(schdDate, evtToDate) >= 0) {
+					break;
 				}
 			}
 		}
@@ -1929,6 +1924,133 @@ public class ScheduleCalculator {
 
 		// Advised Profit Rate Calculation Process
 		finScheduleData = advPftRateCalculation(finScheduleData, finMain.getEventFromDate(), finMain.getMaturityDate());
+
+		logger.debug("Leaving");
+		return finScheduleData;
+	}
+	
+	/*
+	 * ==========================================================================
+	 * Method : procAddDatedSchedule
+	 * Description : Insert dated ScheduleTerm & Re Calculate schedule from a
+	 * given date to end date Process : Should Add the New Scheduled term and
+	 * recalculate repay amounts From Scheduled Term
+	 * ==========================================================================
+	 */
+	private FinScheduleData procAddDatedSchedule(FinScheduleData finScheduleData) {
+		logger.debug("Entering");
+
+		FinanceMain finMain = finScheduleData.getFinanceMain();
+
+		// TODO: Added for Bajaj Demo on 10 APR16
+		// finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		finMain.setEventToDate(finMain.getEventFromDate());
+		finMain.setRecalFromDate(finMain.getEventFromDate());
+		finMain.setRecalToDate(finMain.getEventFromDate());
+
+		Date newScheduleDate = finMain.getEventFromDate();
+
+		// insert new Schedule Dated term
+		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		FinanceScheduleDetail prvSchd = null;
+		for (int i = 1; i < sdSize; i++) {
+			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+
+			if (curSchd.getSchDate().compareTo(newScheduleDate) <= 0) {
+
+				if (curSchd.getSchDate().compareTo(newScheduleDate) == 0) {
+					finScheduleData.setErrorDetail(new ErrorDetail("SCH37",
+							"Schedule Term with Mentioned Date is Already Exist", new String[] { " " }));
+					return finScheduleData;
+				}
+
+				prvSchd = curSchd;
+				continue;
+			}
+
+			// boolean isAfterFirstTerm = false; Commented as the flag is not
+			// used anywhere
+			if (prvSchd == null) {
+				prvSchd = finScheduleData.getFinanceScheduleDetails().get(0);
+				// isAfterFirstTerm = true;
+			}
+
+			FinanceScheduleDetail sd = new FinanceScheduleDetail();
+
+			sd.setSchDate(newScheduleDate);
+			sd.setDefSchdDate(newScheduleDate);
+			sd.setBalanceForPftCal(BigDecimal.ZERO);
+			sd.setNoOfDays(0);
+			sd.setDayFactor(BigDecimal.ZERO);
+			sd.setProfitCalc(BigDecimal.ZERO);
+			sd.setProfitSchd(BigDecimal.ZERO);
+			sd.setPrincipalSchd(BigDecimal.ZERO);
+			sd.setRepayAmount(BigDecimal.ZERO);
+			sd.setProfitBalance(BigDecimal.ZERO);
+			sd.setDisbAmount(BigDecimal.ZERO);
+			sd.setDownPaymentAmount(BigDecimal.ZERO);
+			sd.setCpzAmount(BigDecimal.ZERO);
+			sd.setClosingBalance(BigDecimal.ZERO);
+			sd.setProfitFraction(BigDecimal.ZERO);
+			sd.setBaseRate(prvSchd.getBaseRate());
+			sd.setSplRate(prvSchd.getSplRate());
+			sd.setMrgRate(prvSchd.getMrgRate());
+			sd.setActRate(prvSchd.getActRate());
+			sd.setCalculatedRate(prvSchd.getCalculatedRate());
+			sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+			sd.setAdvBaseRate(prvSchd.getAdvBaseRate());
+			sd.setAdvMargin(prvSchd.getAdvMargin());
+			sd.setAdvPftRate(prvSchd.getAdvPftRate());
+			sd.setSuplRent(prvSchd.getSuplRent());
+			sd.setIncrCost(prvSchd.getIncrCost());
+
+			if (newScheduleDate.compareTo(finMain.getGrcPeriodEndDate()) > 0) {
+				sd.setSpecifier(CalculationConstants.SCH_SPECIFIER_REPAY);
+				sd.setSchdMethod(finMain.getScheduleMethod());
+			} else {
+				sd.setSpecifier(CalculationConstants.SCH_SPECIFIER_GRACE);
+				sd.setSchdMethod(finMain.getGrcSchdMthd());
+			}
+
+			// Commented to Add Flags to change amount on Change Repay option based on previous schedule flags.
+			//sd = resetCurSchdFlags(sd, finMain);
+			sd.setPftOnSchDate(prvSchd.isPftOnSchDate());
+			sd.setCpzOnSchDate(prvSchd.isCpzOnSchDate());
+			sd.setRvwOnSchDate(prvSchd.isRvwOnSchDate());
+			sd.setRepayOnSchDate(prvSchd.isRepayOnSchDate());
+			
+			// Set new repayments amount for the selected dates
+			finScheduleData = setRpyInstructDetails(finScheduleData, newScheduleDate, 
+					newScheduleDate, BigDecimal.ZERO, sd.getSchdMethod());
+			
+			finScheduleData.getFinanceScheduleDetails().add(sd);
+			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+			
+			if (sd.isRepayOnSchDate()) {
+				finMain.setNumberOfTerms(finMain.getNumberOfTerms() + 1);	
+			}
+			
+			break;
+		}
+
+		// Recalculate Schedule
+		// finScheduleData = procReCalSchd(finScheduleData);
+
+		// START PROCESS
+		finScheduleData = fetchGraceCurRates(finScheduleData);
+		finScheduleData = fetchRepayCurRates(finScheduleData);
+
+		finMain.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+		//finScheduleData = procChangeRepay(finScheduleData, BigDecimal.ZERO, finMain.getScheduleMethod());
+		finScheduleData = getRpyInstructDetails(finScheduleData);
+
+		/* Grace Schedule calculation */
+		finScheduleData = graceSchdCal(finScheduleData);
+		finScheduleData = repaySchdCal(finScheduleData, false);
+		finScheduleData = setFinanceTotals(finScheduleData);
+
+		finMain.setScheduleMaintained(true);
 
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -3139,16 +3261,12 @@ public class ScheduleCalculator {
 			BigDecimal repayAmount, String schdMethod) {
 		logger.debug("Entering");
 
-		// FIXME MUR>> Check with Satish/Siva//Pradeep The below is not avilable
-		// in BHFL
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())
 				|| finMain.isManualSchedule()) {
 			logger.debug("Leaving");
 			return finScheduleData;
 		}
-
-		// <<
 
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 

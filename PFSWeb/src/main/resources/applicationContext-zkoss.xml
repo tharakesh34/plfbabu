@@ -2446,6 +2446,14 @@
 		<property name="addDisbursementService" ref="addDisbursementService" />
 	</bean>
 
+	<!--============ Add Dated Schedule Finance Maintainance Details ============== -->
+
+	<bean id="addDatedScheduleDialogCtrl"
+		class="com.pennant.webui.finance.additional.AddDatedScheduleDialogCtrl"
+		parent="basisCtrl" scope="prototype" >
+		<property name="addDatedScheduleService" ref="addDatedScheduleService" />
+	</bean>
+		
 	<!--============ Add/Remove Term Finance Maintainance Details ============== -->
 
 	<bean id="addRmvTermsDialogCtrl" class="com.pennant.webui.finance.additional.AddRmvTermsDialogCtrl" parent="basisCtrl"

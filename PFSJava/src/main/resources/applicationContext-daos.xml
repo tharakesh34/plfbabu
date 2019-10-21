@@ -7103,6 +7103,22 @@
 		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
+	
+	<bean id="addDatedScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="addDatedScheduleServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="addDatedScheduleServiceTarget" class="com.pennant.backend.financeservice.impl.AddDatedScheduleServiceImpl" />
 
 	<bean id="reScheduleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">

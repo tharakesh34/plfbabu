@@ -207,6 +207,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	protected Button btnAdvPftRateChange; // autoWired
 	protected Button btnChangeRepay; // autoWired
 	protected Button btnAddDisbursement; // autoWired
+	protected Button btnAddDatedSchedule; // autoWired
 	protected Button btnCancelDisbursement;
 	protected Button btnPostponement; // autoWired
 	protected Button btnUnPlanEMIH; // autoWired
@@ -560,6 +561,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				this.btnAddDisbursement.setVisible(false);
 				this.btnCancelDisbursement.setVisible(false);
 				this.btnAddTerms.setVisible(false);
+				this.btnAddDatedSchedule.setVisible(false);
 			} else {
 				this.btnAdvPftRateChange.setVisible(false);
 			}
@@ -594,6 +596,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAdvPftRateChange"));
 		this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 		this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
+		this.btnAddDatedSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
 		this.btnCancelDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
 		this.btnUnPlanEMIH.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnUnPlanEMIH"));
@@ -615,6 +618,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAdvPftRateChange"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 		this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
+		this.btnAddDatedSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
 		this.btnCancelDisbursement
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
@@ -1637,6 +1641,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnAdvPftRateChange.setVisible(false);
 		this.btnChangeRepay.setVisible(false);
 		this.btnAddDisbursement.setVisible(false);
+		this.btnAddDatedSchedule.setVisible(false);
 		this.btnCancelDisbursement.setVisible(false);
 		this.btnPostponement.setVisible(false);
 		this.btnUnPlanEMIH.setVisible(false);
@@ -1655,6 +1660,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		this.btnAdvPftRateChange.setDisabled(true);
 		this.btnChangeRepay.setDisabled(true);
 		this.btnAddDisbursement.setDisabled(true);
+		this.btnAddDatedSchedule.setDisabled(true);
 		this.btnCancelDisbursement.setDisabled(true);
 		this.btnPostponement.setDisabled(true);
 		this.btnUnPlanEMIH.setDisabled(true);
@@ -1690,6 +1696,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 			this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 
+			this.btnAddDatedSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+			this.btnAddDatedSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+			
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
 			this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
@@ -1907,6 +1916,29 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		try {
 			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AdvPftRateChangeDialog.zul",
+					window_ScheduleDetailDialog, map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+	
+	/**
+	 * when the "AddDatedSchedule" button is clicked. <br>
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnAddDatedSchedule(Event event) throws Exception {
+		logger.debug("Entering" + event.toString());
+
+		final HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("finScheduleData", getFinScheduleData());
+		map.put("financeMainDialogCtrl", this);
+		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
+
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/Additional/AddDatedScheduleDialog.zul",
 					window_ScheduleDetailDialog, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
