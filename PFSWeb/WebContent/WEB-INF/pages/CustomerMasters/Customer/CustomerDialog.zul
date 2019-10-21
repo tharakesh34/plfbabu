@@ -455,6 +455,8 @@
 															sort="false" hflex="min" visible="false" />
 														<listheader id="listheader_CustDoc_RecordType" label="${c:l('listheader_RecordType.label')}"
 															sort="false" hflex="min" />
+														<listheader id="listheader_CustDoc_CustDocRefId" label="${c:l('listheader_CustDoc_CustDocRefId.label')}"
+															sort="false" hflex="min" />
 													</listhead>
 												</listbox>
 											</groupbox>

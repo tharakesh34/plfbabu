@@ -448,6 +448,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
+			
+			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getDocUri()));
+			listitem.appendChild(listcell);
+			
 			listitem.setAttribute("data", documentDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinDocumentItemDoubleClicked");
 			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
