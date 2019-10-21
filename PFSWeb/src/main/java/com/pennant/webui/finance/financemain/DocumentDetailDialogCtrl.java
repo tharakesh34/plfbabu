@@ -70,6 +70,7 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.customermasters.CustomerDocument;
@@ -86,6 +87,7 @@ import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.collateral.collateralsetup.CollateralBasicDetailsCtrl;
@@ -448,9 +450,10 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
-			
-			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getDocUri()));
-			listitem.appendChild(listcell);
+			if (SysParamUtil.isAllowed(SMTParameterConstants.DMS_DOCURI_REQ)) {
+				listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getDocUri()));
+				listitem.appendChild(listcell);
+			}
 			
 			listitem.setAttribute("data", documentDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinDocumentItemDoubleClicked");

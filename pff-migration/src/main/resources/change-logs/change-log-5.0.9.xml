@@ -16122,5 +16122,13 @@ UNION ALL
 				LEFT JOIN FINPFTDETAILS T9 ON T1.FINREFERENCE = T9.FINREFERENCE
 		</createView>
 	</changeSet>
+	<changeSet id="299" author="Varaprasad.K">
+		<sql>
+			<![CDATA[
+				DELETE from SMTparameters WHERE SYSPARMCODE='DMS_DOCURI_REQ';
+				INSERT INTO SMTparameters  VALUES ('DMS_DOCURI_REQ', 'DMS DOC URI Required or not', 'String', '1', 'N', 1, 0, NULL, NULL,'DMS DOC URI REQUIRED OR NOT', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

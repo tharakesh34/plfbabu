@@ -5386,9 +5386,10 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc.setParent(item);
 					lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getRecordType()));
 					lc.setParent(item);
-					lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getDocUri()));
-					lc.setParent(item);
-					
+					if (SysParamUtil.isAllowed(SMTParameterConstants.DMS_DOCURI_REQ)) {
+						lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getDocUri()));
+						lc.setParent(item);
+					}
 					
 					item.setAttribute("data", customerDocument);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDocumentItemDoubleClicked");
