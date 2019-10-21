@@ -402,17 +402,15 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		try {
 			GSTINInfo gstinInfo = new GSTINInfo();
 			gstinInfo.setgSTNNumber(gSTNNumber);
+			gstinInfo.setCif(this.custRef.getValue());
 			gstinInfo.setUsrID(getUserWorkspace().getUserId());
 
 			gstinInfo = this.gstnValidationService.validateGSTNNumber(gstinInfo);
 
 			if (gstinInfo != null) {
 				StringBuilder msg = new StringBuilder();
-				msg.append(gstinInfo.getStatusCode()).append("_").append(gstinInfo.getStatusDesc());
 				msg.append("\n").append(" GSTIN :").append(gstinInfo.getgSTNNumber());
-				msg.append("\n").append(" GSTIN Date :").append(gstinInfo.getRegisterDateStr());
 				msg.append("\n").append(" Name :").append(gstinInfo.getLegelName());
-				msg.append("\n").append(" Type Of Ownership :").append(gstinInfo.getCxdt());
 				if (MessageUtil.confirm(msg.toString(), MessageUtil.CANCEL | MessageUtil.OK) == MessageUtil.CANCEL) {
 					return;
 				}
