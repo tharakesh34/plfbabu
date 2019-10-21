@@ -170,6 +170,9 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 			if (tableName.equals("dmsdocprocess") && field == Field.ErrorDesc) {
 				continue;
 			}
+			if (field == Field.Id) {
+				continue;
+			}
 
 			if (columns.length() > 0) {
 				columns.append(",");
@@ -185,6 +188,9 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		for (Field field : Field.values()) {
 
 			if (tableName.equals("dmsdocprocess") && field == Field.ErrorDesc) {
+				continue;
+			}
+			if (field == Field.Id) {
 				continue;
 			}
 			if (columns.length() > 0) {
@@ -278,33 +284,35 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 	@Override
 	public void processSuccessResponse(DocumentDetails docDetails) {
 		TransactionStatus txnStatus = transManager.getTransaction(transDef);
-		docDetails.setDocRefId(null);//FIXME REMOVE THE NOT NULL CONSTRAINT IF EXIST
 
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+		jdbcTemplate.update("delete from DocumentManager where id = :DocRefId", beanParameters);
+		
+		beanParameters = new BeanPropertySqlParameterSource(docDetails);
+		jdbcTemplate.update("delete from DmsDocProcessLog where DocRefId = :DocRefId", beanParameters);
+
+		beanParameters = new BeanPropertySqlParameterSource(docDetails);
+		jdbcTemplate.update("delete from DmsDocProcess where DocRefId = :DocRefId", beanParameters);
 		try {
 			if (StringUtils.equals(docDetails.getDocModule(), "CUSTOMER")) {
-				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+				docDetails.setDocRefId(null);
+				beanParameters = new BeanPropertySqlParameterSource(docDetails);
 				jdbcTemplate.update(updateCustDocQuery, beanParameters);
 				jdbcTemplate.update(updateCustDocTempQuery, beanParameters);
 
 			} else {
-				SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
+				docDetails.setDocRefId(null);
+				beanParameters = new BeanPropertySqlParameterSource(docDetails);
 				jdbcTemplate.update(updateDocDetailQuery, beanParameters);
 				jdbcTemplate.update(updateDocTempDetailQuery, beanParameters);
 			}
-
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DocumentManager where id = :DocId", beanParameters);
-
-			beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DmsDocProcessLog where Id = :DocId", beanParameters);
 
 			docDetails.setStatus(DmsDocumentConstants.DMS_DOCUMENT_STATUS_SUCCESS);
 
 			beanParameters = new BeanPropertySqlParameterSource(docDetails);
 			jdbcTemplate.update(insertLogQuery, beanParameters);
 
-			beanParameters = new BeanPropertySqlParameterSource(docDetails);
-			jdbcTemplate.update("delete from DmsDocProcess where id = :DocId", beanParameters);
+
 			transManager.commit(txnStatus);
 		} catch (Exception e) {
 			transManager.rollback(txnStatus);
@@ -320,7 +328,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 			txnStatus = transManager.getTransaction(transDef);
 			if (dmsDocumentDetails.getRetryCount() >= configRetryCount) {
 				BeanPropertySqlParameterSource beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
-				jdbcTemplate.update("delete from DmsDocProcess where Id = :Id", beanParameters);
+				jdbcTemplate.update("delete from DmsDocProcess where Id = :DocRefId", beanParameters);
 
 				beanParameters = new BeanPropertySqlParameterSource(dmsDocumentDetails);
 				jdbcTemplate.update(insertLogQuery, beanParameters);

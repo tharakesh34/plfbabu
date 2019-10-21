@@ -84,7 +84,7 @@ public class DMSAddDocJobProcess {
 
 			if (success) {
 				if (null != docUri) {
-					dmsDocumentDetails.setDocRefId(null);
+					//dmsDocumentDetails.setDocRefId(null);
 					dmsDocumentDetails.setDocUri(docUri);
 					dmsDocumentDetails.setDocImage(null);
 					identificationDAO.processSuccessResponse(dmsDocumentDetails);
