@@ -576,7 +576,7 @@ public class ScheduleCalculator {
 		}
 
 		// BPI change
-		//finScheduleData.getFinanceMain().setBpiResetReq(true);   
+		// finScheduleData.getFinanceMain().setBpiResetReq(true);
 
 		if (StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, method)) {
 			method = CalculationConstants.RPYCHG_ADJMDT;
@@ -655,7 +655,7 @@ public class ScheduleCalculator {
 			// Schedule ReCalculations afetr Early Repayment Period based upon
 			// Schedule Method
 			finMain.setEventFromDate(earlyPayOnNextSchdl);
-			//	finMain.setRecalFromDate(earlyPayOnNextSchdl);
+			// finMain.setRecalFromDate(earlyPayOnNextSchdl);
 			finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
 			// TODO: PV 19JAN17 schedule method should be sent correctly
@@ -689,7 +689,8 @@ public class ScheduleCalculator {
 			finScheduleData = maintainPOSStep(finScheduleData);
 			finScheduleData.getFinanceMain().setScheduleMaintained(true);
 
-			// PV : Principal Holiday, Removed here and Included in EARLYPAY_RECRPY
+			// PV : Principal Holiday, Removed here and Included in
+			// EARLYPAY_RECRPY
 		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
 
 			/*
@@ -752,7 +753,7 @@ public class ScheduleCalculator {
 			finMain.setGrcProfitDaysBasis(finMain.getProfitDaysBasis());
 		}
 
-		//START BPI
+		// START BPI
 		if (!finMain.isAllowGrcPeriod()
 				&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
 			finMain.setBpiResetReq(false);
@@ -804,9 +805,9 @@ public class ScheduleCalculator {
 		finMain.setEventFromDate(finMain.getFinStartDate());
 		finMain.setEventToDate(finMain.getMaturityDate());
 
-		//START BPI
+		// START BPI
 		finMain.setBpiResetReq(true);
-		//START BPI
+		// START BPI
 
 		// Insurance calculation
 		insuranceCalculation(finScheduleData);
@@ -879,7 +880,8 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			// previous PlannedEmiHolidays setting to "" ,that doesn't effect schedule
+			// previous PlannedEmiHolidays setting to "" ,that doesn't effect
+			// schedule
 			if (maxReached) {
 				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
 					curSchd.setBpiOrHoliday("");
@@ -1501,15 +1503,15 @@ public class ScheduleCalculator {
 			prvIndex = prvIndex + 1;
 			finSchdDetails.get(prvIndex).setRvwOnSchDate(true);
 			sdSize = finSchdDetails.size();
-			
+
 			isRateChgReq = true;
-			
-			if(finMain.isSkipRateReset()){
+
+			if (finMain.isSkipRateReset()) {
 				BigDecimal oldCalRate = finSchdDetails.get(prvIndex).getCalculatedRate();
 				BigDecimal oldMrgRate = finSchdDetails.get(prvIndex).getMrgRate();
 				BigDecimal newCalRate = oldCalRate.subtract(oldMrgRate).add(mrgRate);
 				finSchdDetails.get(prvIndex).setCalculatedRate(newCalRate);
-				
+
 				finSchdDetails.get(prvIndex).setBaseRate(baseRate);
 				finSchdDetails.get(prvIndex).setMrgRate(mrgRate);
 			}
@@ -1575,41 +1577,48 @@ public class ScheduleCalculator {
 								recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate,
 										schdDate, finMain.getRpyMinRate(), finMain.getRpyMaxRate()).getNetRefRateLoan();
 							}
-				//If Refresh Rate Consider whatever rates available in Schedule
-				if (isRefreshRates) {
-					baseRate = curSchd.getBaseRate();
-					splRate = curSchd.getSplRate();
-					mrgRate = curSchd.getMrgRate();
-				}
+							//If Refresh Rate Consider whatever rates available in Schedule
+							if (isRefreshRates) {
+								baseRate = curSchd.getBaseRate();
+								splRate = curSchd.getSplRate();
+								mrgRate = curSchd.getMrgRate();
+							}
 
-				if (curSchd.isRvwOnSchDate()) {
-					if (StringUtils.isNotBlank(baseRate)) {
-						if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
-							recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
-									finMain.getGrcMinRate(), finMain.getGrcMaxRate()).getNetRefRateLoan();
-						} else {
-							recalculateRate = RateUtil.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
-									finMain.getRpyMinRate(), finMain.getRpyMaxRate()).getNetRefRateLoan();
+							if (curSchd.isRvwOnSchDate()) {
+								if (StringUtils.isNotBlank(baseRate)) {
+									if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) < 0) {
+										recalculateRate = RateUtil
+												.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
+														finMain.getGrcMinRate(), finMain.getGrcMaxRate())
+												.getNetRefRateLoan();
+									} else {
+										recalculateRate = RateUtil
+												.rates(baseRate, finMain.getFinCcy(), splRate, mrgRate, schdDate,
+														finMain.getRpyMinRate(), finMain.getRpyMaxRate())
+												.getNetRefRateLoan();
+									}
+								}
+							}
+
+							curSchd.setBaseRate(baseRate);
+							curSchd.setSplRate(splRate);
+							curSchd.setMrgRate(mrgRate);
+							curSchd.setCalculatedRate(recalculateRate);
+
+							if (curSchd.getCalculatedRate().compareTo(recalculateRate) != 0) {
+								isRateChgReq = true;
+							}
+
+							if (StringUtils.isBlank(baseRate)) {
+								curSchd.setActRate(recalculateRate);
+							}
+							schdCount++;
+						}
+
+						if (DateUtility.compare(schdDate, evtToDate) >= 0) {
+							break;
 						}
 					}
-
-					curSchd.setBaseRate(baseRate);
-					curSchd.setSplRate(splRate);
-					curSchd.setMrgRate(mrgRate);
-					curSchd.setCalculatedRate(recalculateRate);
-
-				if (curSchd.getCalculatedRate().compareTo(recalculateRate) != 0) {
-					isRateChgReq = true;
-				}
-
-					if (StringUtils.isBlank(baseRate)) {
-						curSchd.setActRate(recalculateRate);
-					}
-					schdCount++;
-				}
-
-				if (DateUtility.compare(schdDate, evtToDate) >= 0) {
-					break;
 				}
 			}
 		}
@@ -1677,12 +1686,13 @@ public class ScheduleCalculator {
 	 */
 	private void setRvwOnSchDate(FinanceMain finMain, FinanceScheduleDetail curSchd, String frqCode, int schdCount) {
 
-		//If frequency code is blank then return.
+		// If frequency code is blank then return.
 		if (StringUtils.isBlank(frqCode)) {
 			return;
 		}
 
-		//Resetting the Schedule review on dates based on the base rate code frequency.
+		// Resetting the Schedule review on dates based on the base rate code
+		// frequency.
 		switch (frqCode) {
 		case FrequencyCodeTypes.FRQ_MONTHLY:
 			curSchd.setRvwOnSchDate(true);
@@ -3008,7 +3018,8 @@ public class ScheduleCalculator {
 		sd.setMrgRate(lastSchd.getMrgRate());
 		sd.setActRate(lastSchd.getActRate());
 		sd.setCalculatedRate(lastSchd.getCalculatedRate());
-		sd.setTDSApplicable(lastSchd.isTDSApplicable());//124631 TDS applicable flag Added
+		sd.setTDSApplicable(lastSchd.isTDSApplicable());// 124631 TDS applicable
+														// flag Added
 
 		int iRepay = finScheduleData.getRepayInstructions().size();
 		String schdMethod = finScheduleData.getFinanceMain().getScheduleMethod();
@@ -3128,7 +3139,8 @@ public class ScheduleCalculator {
 			BigDecimal repayAmount, String schdMethod) {
 		logger.debug("Entering");
 
-		//  FIXME MUR>> Check with Satish/Siva//Pradeep The below is not avilable in BHFL
+		// FIXME MUR>> Check with Satish/Siva//Pradeep The below is not avilable
+		// in BHFL
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())
 				|| finMain.isManualSchedule()) {
@@ -3136,7 +3148,7 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		}
 
-		//<<
+		// <<
 
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 
@@ -3388,7 +3400,8 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate() && !isFreezeSchd) {
 					if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-						if (firstRepayDate != null && DateUtility.compare(firstRepayDate, curSchdDate) == 0) {// bpi change
+						if (firstRepayDate != null && DateUtility.compare(firstRepayDate, curSchdDate) == 0) {// bpi
+																													// change
 							curSchd.setRepayAmount(instructAmount.add(bpiBalance));
 							bpiBalance = BigDecimal.ZERO;
 						} else {
@@ -3608,12 +3621,12 @@ public class ScheduleCalculator {
 			if (DateUtility.compare(taxDeduction.getEndDate(), schDate) < 0) {
 				continue;
 			}
-			//if End Date Greater than Start Date
+			// if End Date Greater than Start Date
 			if (DateUtility.compare(taxDeduction.getEndDate(), taxDeduction.getStartDate()) <= 0) {
 				continue;
 			}
 
-			//If LTD percentage less than Zero
+			// If LTD percentage less than Zero
 			if (taxDeduction.getPercentage().compareTo(BigDecimal.ZERO) <= 0) {
 				continue;
 			}
@@ -3636,7 +3649,7 @@ public class ScheduleCalculator {
 	 * @param tdsPerc
 	 * @return
 	 */
-	//FIXME Have to disucss with Siva and remove this method
+	// FIXME Have to disucss with Siva and remove this method
 	private BigDecimal calTDSAmount(FinanceMain finMain, FinanceScheduleDetail curSchd, BigDecimal tdsPerc) {
 
 		BigDecimal tdsAmount = BigDecimal.ZERO;
@@ -4198,7 +4211,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(iCur);
 		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(iCur - 1);
 
-		//TODO: TO AVOID RECALCULATION OF SCHEDULES COMPLETED
+		// TODO: TO AVOID RECALCULATION OF SCHEDULES COMPLETED
 		if (finMain.getRecalIdx() < 0) {
 			finScheduleData = setRecalIndex(finScheduleData);
 		}
@@ -4215,7 +4228,7 @@ public class ScheduleCalculator {
 			}
 
 		} else {
-			//PV 11OCT19: Compounding development not considered for Flat rate
+			// PV 11OCT19: Compounding development not considered for Flat rate
 			curSchd.setBalanceForPftCal(prvSchd.getBalanceForPftCal().add(prvSchd.getDisbAmount())
 					.subtract(prvSchd.getDownPaymentAmount()).add(prvSchd.getFeeChargeAmt()).add(prvSchd.getCpzAmount())
 					.subtract(prvSchd.getPrincipalSchd()));
@@ -4290,7 +4303,8 @@ public class ScheduleCalculator {
 		 * capitalize at end of grace is True THEN force it to true
 		 */
 
-		//28-08 Fix for 128478 : Error while capitalize interest into principal OS at the end of grace period
+		// 28-08 Fix for 128478 : Error while capitalize interest into principal
+		// OS at the end of grace period
 		if (DateUtility.compare(curSchd.getSchDate(), finMain.getGrcPeriodEndDate()) == 0
 				&& (finMain.isAllowGrcCpz() || finMain.isCpzAtGraceEnd())) {
 			curSchd.setCpzOnSchDate(true);
@@ -4402,7 +4416,8 @@ public class ScheduleCalculator {
 			if (!isRepayComplete) {
 				if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_F)
 						|| (repayRateBasis.equals(CalculationConstants.RATE_BASIS_C) && isCalFlat)) {
-					//PV 11OCT19: Compounding development not considered for Flat rate
+					// PV 11OCT19: Compounding development not considered for
+					// Flat rate
 					curSchd.setBalanceForPftCal(prvBalanceForPftCal.add(prvDisbAmount).subtract(prvDownPaymentAmount)
 							.add(prvCpzAmount).add(prvFeeChargeAmt));
 
@@ -4756,7 +4771,8 @@ public class ScheduleCalculator {
 			}
 		}
 
-		// If Schedule recalculation has Lock for the particular schedule term, it should not recalculate
+		// If Schedule recalculation has Lock for the particular schedule term,
+		// it should not recalculate
 		if (ImplementationConstants.ALW_SCH_RECAL_LOCK) {
 			if (curSchd.isRecalLock()) {
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -4769,7 +4785,8 @@ public class ScheduleCalculator {
 		if (CalculationConstants.SCHMTHD_NOPAY.equals(curSchd.getSchdMethod())) {
 			if (finMain.isAlwBPI() && StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)
 					&& (StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
-							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE))) {//Bpi changes
+							|| StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE))) {// Bpi
+																																																																							// changes
 				schdInterest = curSchd.getProfitCalc();
 
 				// FIXME: PV 02JUN18 WHY BELOW CODE IS REQUIRED?. Commented for
@@ -4934,7 +4951,8 @@ public class ScheduleCalculator {
 			// IF Scheduled Profit cannot change (Effective Rate Calculation)
 			// Then leave actual scheduled else calculate
 
-			//FIXME: PV. To be tested various scenarios. Once successful deleted related code
+			// FIXME: PV. To be tested various scenarios. Once successful
+			// deleted related code
 			if (curSchd.getPresentmentId() > 0) {
 
 				curSchd.setProfitSchd(
@@ -5698,7 +5716,7 @@ public class ScheduleCalculator {
 		}
 
 		// Interest Rate Per Period
-		//PMT calculation Changes 19-06-2019
+		// PMT calculation Changes 19-06-2019
 		if (finMain.isEqualRepay()
 				&& (idb.equals(CalculationConstants.IDB_ACT_ISDA) || idb.equals(CalculationConstants.IDB_ACT_365FIXED)
 						|| idb.equals(CalculationConstants.IDB_ACT_365LEAPS)
@@ -6430,9 +6448,11 @@ public class ScheduleCalculator {
 			isComapareWithEMI = true;
 		}
 
-		//TODO: PV: 25 MAY 19 CHANGED THE CONDITION finMain.getRecalFromDate()) = 0 TO finMain.getRecalFromDate()) >= 0
-		//IF RECAL SPREADS IN TO GRACE AND REPAY, DATE WILL NOT BE FOUND WITH EQUAL CONDITION 
-		//PENDING THOUROUGH TESTING
+		// TODO: PV: 25 MAY 19 CHANGED THE CONDITION finMain.getRecalFromDate())
+		// = 0 TO finMain.getRecalFromDate()) >= 0
+		// IF RECAL SPREADS IN TO GRACE AND REPAY, DATE WILL NOT BE FOUND WITH
+		// EQUAL CONDITION
+		// PENDING THOUROUGH TESTING
 		// Get Repayment instruction index
 		for (int i = 0; i < riSize; i++) {
 			if (DateUtility.compare(repayInstructions.get(i).getRepayDate(), finMain.getRecalFromDate()) >= 0) {
@@ -7391,7 +7411,7 @@ public class ScheduleCalculator {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		if (StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
-			//setRepayForSanctionBasedDisbADJMDT(finScheduleData);
+			// setRepayForSanctionBasedDisbADJMDT(finScheduleData);
 			return finScheduleData;
 		}
 
@@ -7491,7 +7511,7 @@ public class ScheduleCalculator {
 		finMain.setEventFromDate(maturityDate);
 		finMain.setRecalToDate(maturityDate);
 
-		//Set Original Balances to Closing Balances
+		// Set Original Balances to Closing Balances
 		for (int iFsd = 1; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail curSchd = fsdList.get(iFsd);
 			FinanceScheduleDetail prvSchd = fsdList.get(iFsd - 1);
@@ -7588,7 +7608,8 @@ public class ScheduleCalculator {
 			}
 		}
 
-		//THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE TRUE FOR LOAN TYPE
+		// THIS IS BASED ON ASSUMPTION. MAX DISBURSEMENT CHECK REQUIRED MUST BE
+		// TRUE FOR LOAN TYPE
 		BigDecimal unDisbursedAmount = finMain.getFinAssetValue().subtract(disbursedAmount);
 		recalPosBalance = unDisbursedAmount.add(recalPosBalance);
 
@@ -8329,7 +8350,8 @@ public class ScheduleCalculator {
 			// reset disbursement details
 			setDisbursementDetails(curSchd, finScheduleData.getDisbursementDetails());
 
-			// calculation not required for first record - Finance Start Date Record
+			// calculation not required for first record - Finance Start Date
+			// Record
 			if (DateUtility.compare(curSchd.getSchDate(), finMain.getFinStartDate()) == 0) {
 
 				if (finMain.isChgDropLineSchd()) {
@@ -8394,13 +8416,15 @@ public class ScheduleCalculator {
 			}
 			curSchd.setProfitCalc(calInt);
 
-			// As the Calculation factor is reset to 0 for grace schedule for original Schedule
+			// As the Calculation factor is reset to 0 for grace schedule for
+			// original Schedule
 			if (DateUtility.compare(curSchDate, finMain.getGrcPeriodEndDate()) == 0) {
 				calIntFraction = BigDecimal.ZERO;
 				curSchd.setPftOnSchDate(true);
 			}
 
-			// 1. Principal Schedule :  PrincipalSchd Calculation except for Early Settlement
+			// 1. Principal Schedule : PrincipalSchd Calculation except for
+			// Early Settlement
 			if (!StringUtils.equals(finMain.getReceiptPurpose(), FinanceConstants.FINSER_EVENT_EARLYSETTLE)) {
 
 				BigDecimal calPri = BigDecimal.ZERO;
@@ -8512,10 +8536,11 @@ public class ScheduleCalculator {
 			schdDetail.setPrincipalSchd(schdDetail.getLimitDrop());
 			schdDetail.setClosingBalance(schdDetail.getODLimit());
 
-			// BHFL : FLEXI Schedule plotted on DISBURSED AMOUNT not on FINASSETVALUE
+			// BHFL : FLEXI Schedule plotted on DISBURSED AMOUNT not on
+			// FINASSETVALUE
 			/*
 			 * schdDetail.setDisbAmount(BigDecimal.ZERO); if (i == 0) {
-			 * schdDetail.setDisbAmount(finScheduleData.getFinanceMain().getFinAmount()); }
+			 * schdDetail.setDisbAmount(finScheduleData.getFinanceMain(). getFinAmount()); }
 			 */
 		}
 
