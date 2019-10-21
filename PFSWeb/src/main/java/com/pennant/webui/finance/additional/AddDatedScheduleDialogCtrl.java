@@ -271,7 +271,7 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			if(this.fromDate.getValue().compareTo(validateFromDate) <= 0 ||
 					this.fromDate.getValue().compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) >= 0){
-				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_RANGE", new String[]{
+				throw new WrongValueException(this.fromDate, Labels.getLabel("DATE_ALLOWED_RANGE", new String[]{
 					Labels.getLabel("label_AddDatedScheduleDialog_FromDate.value"), 
 					DateUtility.formatToLongDate(validateFromDate), 
 					DateUtility.formatToLongDate(getFinScheduleData().getFinanceMain().getMaturityDate()) }));
