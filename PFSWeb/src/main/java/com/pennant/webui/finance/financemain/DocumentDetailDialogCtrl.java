@@ -66,6 +66,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
@@ -140,6 +141,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private String moduleName;
 	private boolean isEditable;
 	private String module;
+	protected Listheader listheader_CustDoc_CustDocRefId;
 
 	/**
 	 * default constructor.<br>
@@ -450,7 +452,8 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 
 			listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getRecordType()));
 			listitem.appendChild(listcell);
-			if (SysParamUtil.isAllowed(SMTParameterConstants.DMS_DOCURI_REQ)) {
+			if (SysParamUtil.isAllowed(SMTParameterConstants.DMS_REQ)) {
+				listheader_CustDoc_CustDocRefId.setVisible(true);
 				listcell = new Listcell(PennantJavaUtil.getLabel(documentDetail.getDocUri()));
 				listitem.appendChild(listcell);
 			}
