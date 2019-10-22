@@ -86,6 +86,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
@@ -336,7 +337,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -346,6 +347,10 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 		logger.debug(Literal.ENTERING);
 
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		browseDoc(media, this.documentName);
 		doSetDownLoadVisible();
 		logger.debug(Literal.LEAVING);
@@ -406,7 +411,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinTypeExpense
-	 *            FinTypeExpense
+	 *        FinTypeExpense
 	 */
 	public void doWriteBeanToComponents(CovenantDocument aCovenantDocument) {
 		logger.debug(Literal.ENTERING);
@@ -415,13 +420,14 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		this.docReceivedDate.setValue(aCovenantDocument.getDocumentReceivedDate());
 		this.documentName.setAttribute("data", aCovenantDocument.getDocumentDetail());
-		
-		if (aCovenantDocument.getDocumentDetail() != null && aCovenantDocument.getDocumentDetail().getDocName() != null) {
+
+		if (aCovenantDocument.getDocumentDetail() != null
+				&& aCovenantDocument.getDocumentDetail().getDocName() != null) {
 			this.documentName.setValue(aCovenantDocument.getDocumentDetail().getDocName());
 		} else {
 			this.documentName.setValue(aCovenantDocument.getDocName());
 		}
-		
+
 		Date frequencyDate = aCovenantDocument.getFrequencyDate();
 		if (frequncy.equals("M")) {
 			fillList(this.frequencyBox, getFrequency(loanStartDate, loanMaturityDate, 1), frequencyDate);

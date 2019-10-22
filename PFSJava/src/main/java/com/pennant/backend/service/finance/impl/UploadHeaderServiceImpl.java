@@ -161,7 +161,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate, Date finApprovalEndDate) {
+	public List<FinanceMain> getFinancesByExpenseType(String finType, Date finApprovalStartDate,
+			Date finApprovalEndDate) {
 		return this.financeMainDAO.getFinancesByExpenseType(finType, finApprovalStartDate, finApprovalEndDate);
 	}
 
@@ -393,8 +394,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(uploadHeader.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(
-					this.uploadHeaderDAO.getUploadHeaderById(uploadHeader.getUploadId(), ""));
+			auditHeader.getAuditDetail()
+					.setBefImage(this.uploadHeaderDAO.getUploadHeaderById(uploadHeader.getUploadId(), ""));
 		}
 
 		if (uploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -545,7 +546,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -589,9 +590,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		UploadHeader uploadHeader = (UploadHeader) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (uploadHeader.isNew()
-				&& this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(), uploadHeader.getFileName(),
-						uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (uploadHeader.isNew() && this.uploadHeaderDAO.isDuplicateKey(uploadHeader.getUploadId(),
+				uploadHeader.getFileName(), uploadHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
 			parameters[0] = PennantJavaUtil.getLabel("label_MiscPostingUploadDialog_Filename.value") + ": "
 					+ uploadHeader.getFileName();
@@ -683,8 +683,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 				adviseUpload.setNextTaskId(uploadHeader.getNextTaskId());
 			}
 
-			auditDetailMap.put("AdviseUploads", this.uploadManualAdviseService.setAdviseUploadsAuditData(
-					uploadHeader.getUploadManualAdvises(), auditTranType, method));
+			auditDetailMap.put("AdviseUploads", this.uploadManualAdviseService
+					.setAdviseUploadsAuditData(uploadHeader.getUploadManualAdvises(), auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("AdviseUploads"));
 		}
 

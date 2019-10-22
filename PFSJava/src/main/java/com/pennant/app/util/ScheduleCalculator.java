@@ -130,7 +130,7 @@ public class ScheduleCalculator {
 	public static final String PROC_INSURANCESCHEDULE = "insuranceSchedule";
 	public static final String PROC_CHANGETDS = "changeTDS";
 	public static final String PROC_REBUILDSCHD = "reBuildSchd";
-	public static final String PROC_ADDDATEDSCHEDULE	= "procAddDatedSchedule";
+	public static final String PROC_ADDDATEDSCHEDULE = "procAddDatedSchedule";
 
 	public ScheduleCalculator() {
 		super();
@@ -257,7 +257,7 @@ public class ScheduleCalculator {
 	public static FinScheduleData procReCalTDSAmount(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(finScheduleData, PROC_CHANGETDS).getFinScheduleData();
 	}
-	
+
 	public static FinScheduleData addDatedSchedule(FinScheduleData finScheduleData) {
 		return new ScheduleCalculator(PROC_ADDDATEDSCHEDULE, finScheduleData, BigDecimal.ZERO).getFinScheduleData();
 	}
@@ -348,7 +348,7 @@ public class ScheduleCalculator {
 		if (StringUtils.equals(method, PROC_ADDDATEDSCHEDULE)) {
 			setFinScheduleData(procAddDatedSchedule(finScheduleData));
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1596,7 +1596,7 @@ public class ScheduleCalculator {
 						}
 					}
 
-					if (curSchd.getCalculatedRate().compareTo(recalculateRate)!=0) {
+					if (curSchd.getCalculatedRate().compareTo(recalculateRate) != 0) {
 						isRateChgReq = true;
 					}
 
@@ -1928,13 +1928,11 @@ public class ScheduleCalculator {
 		logger.debug("Leaving");
 		return finScheduleData;
 	}
-	
+
 	/*
-	 * ==========================================================================
-	 * Method : procAddDatedSchedule
-	 * Description : Insert dated ScheduleTerm & Re Calculate schedule from a
-	 * given date to end date Process : Should Add the New Scheduled term and
-	 * recalculate repay amounts From Scheduled Term
+	 * ========================================================================== Method : procAddDatedSchedule
+	 * Description : Insert dated ScheduleTerm & Re Calculate schedule from a given date to end date Process : Should
+	 * Add the New Scheduled term and recalculate repay amounts From Scheduled Term
 	 * ==========================================================================
 	 */
 	private FinScheduleData procAddDatedSchedule(FinScheduleData finScheduleData) {
@@ -2019,18 +2017,18 @@ public class ScheduleCalculator {
 			sd.setCpzOnSchDate(prvSchd.isCpzOnSchDate());
 			sd.setRvwOnSchDate(prvSchd.isRvwOnSchDate());
 			sd.setRepayOnSchDate(prvSchd.isRepayOnSchDate());
-			
+
 			// Set new repayments amount for the selected dates
-			finScheduleData = setRpyInstructDetails(finScheduleData, newScheduleDate, 
-					newScheduleDate, BigDecimal.ZERO, sd.getSchdMethod());
-			
+			finScheduleData = setRpyInstructDetails(finScheduleData, newScheduleDate, newScheduleDate, BigDecimal.ZERO,
+					sd.getSchdMethod());
+
 			finScheduleData.getFinanceScheduleDetails().add(sd);
 			finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
-			
+
 			if (sd.isRepayOnSchDate()) {
-				finMain.setNumberOfTerms(finMain.getNumberOfTerms() + 1);	
+				finMain.setNumberOfTerms(finMain.getNumberOfTerms() + 1);
 			}
-			
+
 			break;
 		}
 

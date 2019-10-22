@@ -70,6 +70,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.batchupload.fileprocessor.BatchUploadProcessor;
 import com.pennant.batchupload.fileprocessor.service.BatchUploadConfigService;
 import com.pennant.batchupload.model.BatchUploadConfig;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -120,7 +121,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ExternalUploadsList(Event event) {
 		setPageComponents(window_ExternalUploadsList);
@@ -221,6 +222,9 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		fileName.setText("");
 		media = event.getMedia();
 
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
 				|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {
 			MessageUtil.showError("The uploaded file could not be recognized. Please upload a valid excel file.");

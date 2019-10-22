@@ -53,16 +53,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zhtml.Messagebox;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Textbox;
@@ -87,8 +82,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExtInterface/InterfaceConfiguration/ExtInterfaceConfigurationDialog.zul
- * file. <br>
+ * /WEB-INF/pages/ExtInterface/InterfaceConfiguration/ExtInterfaceConfigurationDialog.zul file. <br>
  */
 public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceConfiguration> {
 
@@ -96,9 +90,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	private static final Logger logger = Logger.getLogger(ExtInterfaceConfigurationDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding
-	 * component with the same 'id' in the zul-file are getting by our 'extends
-	 * GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the zul-file
+	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_ExtInterfaceConfigurationDialog;
 	protected Space space_Code;
@@ -144,11 +137,10 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 
 	/**
 	 * 
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_ExtInterfaceConfigurationDialog(Event event) throws Exception {
@@ -230,7 +222,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -243,7 +235,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -255,7 +247,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -264,11 +256,10 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the delete
-	 * button.
+	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
@@ -277,11 +268,10 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the cancel
-	 * button.
+	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -293,7 +283,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -305,7 +295,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -452,7 +442,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * Displays the dialog page.
 	 * 
 	 * @param InterfaceConfiguration
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(InterfaceConfiguration interfaceConfiguration) {
 		logger.debug(Literal.LEAVING);
@@ -513,11 +503,11 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 			this.notificationType.setConstraint(new StaticListValidator(listNotificationType,
 					Labels.getLabel("label_ExtInterfaceConfigurationDialog_NotificationType.value")));
 		}
-	/*	if (!this.errorCodes.isReadonly()) {
-			this.errorCodes.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_ExtInterfaceConfigurationDialog_errorCodes.value"),
-					PennantRegularExpressions.REGEX_NAME, true));
-		}*/
+		/*
+		 * if (!this.errorCodes.isReadonly()) { this.errorCodes.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_ExtInterfaceConfigurationDialog_errorCodes.value"),
+		 * PennantRegularExpressions.REGEX_NAME, true)); }
+		 */
 		if (!this.emails.isReadonly()) {
 			if (emails != null && StringUtils.isNotBlank(emails.getValue())) {
 				String[] emailIds = emails.getValue().split(",");
@@ -559,7 +549,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.description.setConstraint("");
 		this.type.setConstraint("");
 		this.notificationType.setConstraint("");
-		this.errorCodes.setConstraint("");	this.emails.setConstraint("");
+		this.errorCodes.setConstraint("");
+		this.emails.setConstraint("");
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -584,8 +575,7 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	}
 
 	/**
-	 * Clears validation error messages from all the fields of the dialog
-	 * controller.
+	 * Clears validation error messages from all the fields of the dialog controller.
 	 */
 	@Override
 	protected void doClearMessage() {
@@ -657,8 +647,9 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.type.setReadonly(isReadOnly("ExtInterfaceConfigurationDialog_Type"));
 		this.notificationType.setReadonly(isReadOnly("ExtInterfaceConfigurationDialog_NotificationType"));
 		this.active.setDisabled(isReadOnly("ExtInterfaceConfigurationDialog_active"));
-	/*	this.errorCodes.(isReadOnly("ExternalInterfaceConfigurationDialog_errorCodes"));
-	*/	
+		/*
+		 * this.errorCodes.(isReadOnly("ExternalInterfaceConfigurationDialog_errorCodes"));
+		 */
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -709,7 +700,8 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 		this.code.setValue("");
 		this.description.setValue("");
 		this.type.setSelectedIndex(0);
-		this.errorCodes.setValue("");	this.notificationType.setSelectedIndex(0);
+		this.errorCodes.setValue("");
+		this.notificationType.setSelectedIndex(0);
 		this.emails.setValue("");
 		this.active.setChecked(false);
 
@@ -768,10 +760,10 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -859,9 +851,9 @@ public class ExtInterfaceConfigurationDialogCtrl extends GFCBaseCtrl<InterfaceCo
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */

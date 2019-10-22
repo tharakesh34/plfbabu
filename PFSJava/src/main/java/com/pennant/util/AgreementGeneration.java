@@ -507,27 +507,27 @@ public class AgreementGeneration implements Serializable {
 		agreement.setUserDeptName(StringUtils.trimToEmpty(usrDeptName));
 		agreement.setUsrEmailId(StringUtils.trimToEmpty(usrEmail));
 		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
-		
+
 		String finRef = financeMain.getFinReference();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		String mMAReference = financeMain.getLovDescMMAReference();
 		agreement.setLpoDate(appDate);
 		agreement.setLovDescEligibilityMethod(financeMain.getLovDescEligibilityMethod());
-		
+
 		if (CollectionUtils.isNotEmpty(detail.getJountAccountDetailList())) {
 			for (JointAccountDetail jointAccount : detail.getJountAccountDetailList()) {
 				agreement.setPrimaryCoApplicant(jointAccount.getLovDescCIFName());
 				break;
 			}
 		}
-		
+
 		if (CollectionUtils.isNotEmpty(detail.getGurantorsDetailList())) {
 			for (GuarantorDetail guarantorDetail : detail.getGurantorsDetailList()) {
 				agreement.setPrimaryGuarantor(guarantorDetail.getGuarantorCIFName());
 				break;
 			}
 		}
-		
+
 		totalIncome = BigDecimal.ZERO;
 		totalExpense = BigDecimal.ZERO;
 		totalDeduction = BigDecimal.ZERO;
@@ -1027,8 +1027,7 @@ public class AgreementGeneration implements Serializable {
 			if (CollectionUtils.isEmpty(agreement.getActivityDetails())) {
 				agreement.setActivityDetails(new ArrayList<>());
 			}
-			if (null != detail.getFinScheduleData() && null != financeMain
-					&& null != financeMain.getFinReference()) {
+			if (null != detail.getFinScheduleData() && null != financeMain && null != financeMain.getFinReference()) {
 
 				String loanRef = financeMain.getFinReference();
 				List<Activity> activities = getActivityLogService().getActivities("FinanceMain", loanRef);
@@ -1244,17 +1243,15 @@ public class AgreementGeneration implements Serializable {
 			}
 
 			if (null != detail.getFinScheduleData() && null != financeMain) {
-				agreement.setNumOfPayGrace(
-						Integer.toString(financeMain.getGraceTerms()));
-				agreement.setFirstDisbursementAmt(PennantApplicationUtil
-						.amountFormate(financeMain.getFinAmount(), formatter));
+				agreement.setNumOfPayGrace(Integer.toString(financeMain.getGraceTerms()));
+				agreement.setFirstDisbursementAmt(
+						PennantApplicationUtil.amountFormate(financeMain.getFinAmount(), formatter));
 				if (null != financeMain.getRepaySpecialRate()) {
-					agreement.setRepaySplRate(StringUtils
-							.trimToEmpty(financeMain.getRepaySpecialRate()));
+					agreement.setRepaySplRate(StringUtils.trimToEmpty(financeMain.getRepaySpecialRate()));
 				}
 				if (null != financeMain.getRepayMargin()) {
-					agreement.setRepayMargin(PennantApplicationUtil.formatRate(
-							financeMain.getRepayMargin().doubleValue(), 2));
+					agreement.setRepayMargin(
+							PennantApplicationUtil.formatRate(financeMain.getRepayMargin().doubleValue(), 2));
 				}
 			}
 
@@ -1379,10 +1376,8 @@ public class AgreementGeneration implements Serializable {
 				agreement.getVasData().add(agreement.new VasDetails());
 			}
 
-			if (null != detail && null != detail.getFinScheduleData()
-					&& null != financeMain) {
-				agreement.setConnectorCode(
-						StringUtils.trimToEmpty(financeMain.getConnectorCode()));
+			if (null != detail && null != detail.getFinScheduleData() && null != financeMain) {
+				agreement.setConnectorCode(StringUtils.trimToEmpty(financeMain.getConnectorCode()));
 			}
 
 			//Director Details
@@ -1414,8 +1409,7 @@ public class AgreementGeneration implements Serializable {
 
 			if (aggModuleDetails.contains(PennantConstants.AGG_CRDTRVW)) {
 				if (null != detail.getFinScheduleData() && null != financeMain) {
-					agreement.setLovElgMtdDesc(StringUtils
-							.trimToEmpty(financeMain.getLovDescEligibilityMethod()));
+					agreement.setLovElgMtdDesc(StringUtils.trimToEmpty(financeMain.getLovDescEligibilityMethod()));
 				}
 				if (null != detail.getCustomerDetails()) {
 					String maxAuditYear = creditApplicationReviewService
@@ -1815,8 +1809,7 @@ public class AgreementGeneration implements Serializable {
 
 			BigDecimal totalDeductionWithBPI = totalDeduction.add(BPIAmount);
 			BigDecimal firstDisbursementAmt = BigDecimal.ZERO;
-			if (detail != null && detail.getFinScheduleData() != null
-					&& financeMain != null) {
+			if (detail != null && detail.getFinScheduleData() != null && financeMain != null) {
 				firstDisbursementAmt = financeMain.getFinAmount();
 			}
 			agreement.setTotalDeductionwithoutBPI(PennantApplicationUtil.amountFormate(totalDeduction, formatter));

@@ -137,7 +137,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to render the list items
 	 * 
 	 * @param FinanceScheduleDetail
-	 *            (financeScheduleDetail)
+	 *        (financeScheduleDetail)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void render(HashMap map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
@@ -919,13 +919,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 				isGrcBaseRate = false;
 
 				String label = null;
-				
+
 				if (ImplementationConstants.CPZ_POS_INTACT) {
 					label = Labels.getLabel("label_listcell_compounded.label");
 				} else {
 					label = Labels.getLabel("label_listcell_capital.label");
 				}
-				
+
 				if (StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
 				} else if (StringUtils.equals(getFinanceScheduleDetail().getBpiOrHoliday(),
@@ -1426,37 +1426,37 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to fill schedule data in listitem
 	 * 
 	 * @param data
-	 *            (FinanceSchdeuleDetail)
+	 *        (FinanceSchdeuleDetail)
 	 * @param count
-	 *            (int)
+	 *        (int)
 	 * @param eventName
-	 *            (String)
+	 *        (String)
 	 * @param pftAmount
-	 *            (BigDecimal)
+	 *        (BigDecimal)
 	 * @param schdlPft
-	 *            (BigDecimal)
+	 *        (BigDecimal)
 	 * @param cpzAmount
-	 *            (BigDecimal)
+	 *        (BigDecimal)
 	 * @param totalAmount
-	 *            (BigDecimal)
+	 *        (BigDecimal)
 	 * @param endBal
-	 *            (BigDecimal)
+	 *        (BigDecimal)
 	 * @param isEditable
-	 *            (boolean)
+	 *        (boolean)
 	 * @param isRate
-	 *            (boolean)
+	 *        (boolean)
 	 * @param showZeroEndBal
-	 *            (boolean)
+	 *        (boolean)
 	 * @param isGrcBaseRate
-	 *            (boolean)
+	 *        (boolean)
 	 * @param isRpyBaseRate
-	 *            (boolean)
+	 *        (boolean)
 	 * @param bgColor
-	 *            (String)
+	 *        (String)
 	 * @param lcColor
-	 *            (String)
+	 *        (String)
 	 * @param fillType
-	 *            (int) 1-Days, 2-Description Line
+	 *        (int) 1-Days, 2-Description Line
 	 */
 	public void doFillListBox(FinanceScheduleDetail data, int count, String eventName, BigDecimal pftAmount,
 			BigDecimal suplRent, BigDecimal incrCost, BigDecimal feeAmount, BigDecimal gstAmount, BigDecimal tdsAmount,
@@ -1996,7 +1996,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to generate schedule report data
 	 * 
 	 * @param FinanceDetail
-	 *            (aFinanceDetail)
+	 *        (aFinanceDetail)
 	 */
 	public List<FinanceScheduleReportData> getPrintScheduleData(FinScheduleData aFinScheduleData,
 			Map<Date, ArrayList<FinanceRepayments>> paymentDetailsMap,
@@ -2621,14 +2621,13 @@ public class FinScheduleListItemRenderer implements Serializable {
 
 				data = new FinanceScheduleReportData();
 				String label = null;
-				
+
 				if (ImplementationConstants.CPZ_POS_INTACT) {
 					label = Labels.getLabel("label_listcell_compounded.label");
 				} else {
 					label = Labels.getLabel("label_listcell_capital.label");
 				}
-				
-				
+
 				if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					label = Labels.getLabel("label_listcell_BPIcapital.label");
 				} else if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_UNPLANNED)) {
@@ -3397,7 +3396,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to generate schedule report data
 	 * 
 	 * @param FinanceDetail
-	 *            (aFinanceDetail)
+	 *        (aFinanceDetail)
 	 */
 	public List<FinanceGraphReportData> getScheduleGraphData(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
@@ -3497,7 +3496,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to set format for rate and amount values
 	 * 
 	 * @param BigDecimal
-	 *            (amount), Boolean (isRate), boolean (showZeroEndbal)
+	 *        (amount), Boolean (isRate), boolean (showZeroEndbal)
 	 * 
 	 * @return String
 	 */
@@ -3527,7 +3526,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	 * Method to Set Installment Number
 	 * 
 	 * @param int
-	 *            (installment Number), int (count)
+	 *        (installment Number), int (count)
 	 * 
 	 * @return String
 	 */

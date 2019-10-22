@@ -145,7 +145,7 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param aAcademic
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug("Entering");
@@ -238,6 +238,9 @@ public class UploadFinTypeExpenseCtrl extends GFCBaseCtrl<UploadHeader> {
 		doResetData();
 		Media media = event.getMedia();
 
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		try {
 			if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
 					|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {

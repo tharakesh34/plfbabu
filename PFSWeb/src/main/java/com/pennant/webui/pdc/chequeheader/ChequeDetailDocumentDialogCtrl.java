@@ -28,6 +28,7 @@ import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.ChequeDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -204,7 +205,7 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomerDocument
-	 *            CustomerDocument
+	 *        CustomerDocument
 	 */
 	public void doWriteBeanToComponents(ChequeDetail chequeDetail) {
 		logger.debug(Literal.ENTERING);
@@ -234,6 +235,10 @@ public class ChequeDetailDocumentDialogCtrl extends GFCBaseCtrl<ChequeDetail> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		browseDoc(media, this.documentName);
 		logger.debug(Literal.LEAVING + event.toString());
 	}

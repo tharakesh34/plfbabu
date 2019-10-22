@@ -30,6 +30,7 @@ import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -190,6 +191,10 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		txtFileName.setText("");
 		errorMsg = null;
 		setMedia(event.getMedia());
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		txtFileName.setText(media.getName());
 
 		if (allowInstrumentType) {

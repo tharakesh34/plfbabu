@@ -266,7 +266,8 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> finLVTCheckList;
 	private static ArrayList<ValueLabel> depositTypesList;
 	private static ArrayList<String> denominations;
-	private static ArrayList<ValueLabel> invoiceTypes; // GST Invoice Types (Cr/Dr/Exempted)
+	private static ArrayList<ValueLabel> invoiceTypes; // GST Invoice Types
+														// (Cr/Dr/Exempted)
 	private static ArrayList<ValueLabel> filtersList;
 
 	private static ArrayList<ValueLabel> advEmiSchMthdList;
@@ -1862,12 +1863,20 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_PartOfDisburse")));
 			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PART_OF_SALE_PRICE,
 					Labels.getLabel("label_PartOfSalePrice")));
-			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT, Labels.getLabel("label_ScheduleToFirstInstallment")));
-			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR, Labels.getLabel("label_ScheduleToEntireTenor")));
-			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS, Labels.getLabel("label_ScheduleToNinstalments")));
+			// remFeeSchdMethodList.add(new
+			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT,
+			// Labels.getLabel("label_ScheduleToFirstInstallment")));
+			// remFeeSchdMethodList.add(new
+			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR,
+			// Labels.getLabel("label_ScheduleToEntireTenor")));
+			// remFeeSchdMethodList.add(new
+			// ValueLabel(CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS,
+			// Labels.getLabel("label_ScheduleToNinstalments")));
 			remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_PAID_BY_CUSTOMER,
 					Labels.getLabel("label_RemFee_PaidByCustomer")));
-			//remFeeSchdMethodList.add(new ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK, Labels.getLabel("label_RemFee_WaivedByBank")));
+			// remFeeSchdMethodList.add(new
+			// ValueLabel(CalculationConstants.REMFEE_WAIVED_BY_BANK,
+			// Labels.getLabel("label_RemFee_WaivedByBank")));
 		}
 		return remFeeSchdMethodList;
 	}
@@ -2822,9 +2831,9 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_ScheduleMethod_NoPayment")));
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFT,
 					Labels.getLabel("label_ScheduleMethod_CalculatedProfit")));
-			 schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
-			 Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));
-			
+			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PFTCPZ,
+					Labels.getLabel("label_ScheduleMethod_CalAndCpzProfit")));
+
 			schMthdList.add(new ValueLabel(CalculationConstants.SCHMTHD_PRI_PFT,
 					Labels.getLabel("label_ScheduleMethod_ConstantPrinCalProfit")));
 			if (SysParamUtil.isAllowed("ALW_CONST_PRINCIPLE_SCHD_METHOD")) {
@@ -3743,7 +3752,8 @@ public class PennantStaticListUtil {
 
 		if (accountMapping == null) {
 			accountMapping = new ArrayList<ValueLabel>(3);
-			//accountMapping.add(new ValueLabel("Select", Labels.getLabel("label_AccountMapping_Select")));
+			// accountMapping.add(new ValueLabel("Select",
+			// Labels.getLabel("label_AccountMapping_Select")));
 			accountMapping.add(new ValueLabel("Normal", Labels.getLabel("label_AccountMapping_Normal")));
 			accountMapping.add(new ValueLabel("Discrepancy", Labels.getLabel("label_AccountMapping_Discrepancy")));
 		}
@@ -4972,7 +4982,9 @@ public class PennantStaticListUtil {
 					new ValueLabel(RepayConstants.RECEIPTTO_FINANCE, Labels.getLabel("label_ReceiptAgainst_Finance")));
 			receiptAgainstList.add(new ValueLabel(RepayConstants.RECEIPTTO_CUSTOMER,
 					Labels.getLabel("label_ReceiptAgainst_Customer")));
-			//receiptAgainstList.add(new ValueLabel(RepayConstants.RECEIPTTO_OTHER, Labels.getLabel("label_ReceiptAgainst_Other")));
+			// receiptAgainstList.add(new
+			// ValueLabel(RepayConstants.RECEIPTTO_OTHER,
+			// Labels.getLabel("label_ReceiptAgainst_Other")));
 		}
 		return receiptAgainstList;
 	}
@@ -5034,7 +5046,7 @@ public class PennantStaticListUtil {
 	public static ArrayList<ValueLabel> getCalcTypeList() {
 		if (calcTypeList == null) {
 			calcTypeList = new ArrayList<ValueLabel>(2);
-			//TODO  CESS Calculated only on Fixed Amount
+			// TODO CESS Calculated only on Fixed Amount
 			/*
 			 * calcTypeList.add(new ValueLabel(RuleConstants.CALCTYPE_FIXED_AMOUNT,
 			 * Labels.getLabel("label_CalcTypeList_FixedAmount")));
@@ -5050,7 +5062,7 @@ public class PennantStaticListUtil {
 			calcOnList = new ArrayList<ValueLabel>(7);
 			calcOnList.add(new ValueLabel(RuleConstants.CALCON_TRANSACTION_AMOUNT,
 					Labels.getLabel("label_CalcOnList_Transaction_Amount")));
-			//TODO To Be Calculate  for CESS on below
+			// TODO To Be Calculate for CESS on below
 			/*
 			 * calcOnList.add(new ValueLabel(RuleConstants.CODE_TOTAL_AMOUNT_INCLUDINGGST,
 			 * Labels.getLabel("label_CalcOnList_TotalAmount_IncludingGST"))); calcOnList.add(new
@@ -5098,7 +5110,7 @@ public class PennantStaticListUtil {
 		return vanAllocationMethods;
 	}
 
-	// GST Customers 
+	// GST Customers
 	public static ArrayList<ValueLabel> getfrequencyType() {
 		if (frequencyType == null) {
 			frequencyType = new ArrayList<ValueLabel>(3);
@@ -5144,7 +5156,7 @@ public class PennantStaticListUtil {
 		}
 		return frequency;
 	}
-	
+
 	public static ArrayList<ValueLabel> getDisbursementStatus() {
 		if (disbursementStatus == null) {
 			disbursementStatus = new ArrayList<ValueLabel>(2);
@@ -5191,8 +5203,10 @@ public class PennantStaticListUtil {
 			notificationTypeList = new ArrayList<ValueLabel>();
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NotificationTYPE_None, Labels.getLabel("label_Type_NONE")));
-			/*notificationTypeList.add(
-					new ValueLabel(PennantConstants.NotificationTYPE_Mobile, Labels.getLabel("label_Type_MOBILE")));*/
+			/*
+			 * notificationTypeList.add( new ValueLabel(PennantConstants.NotificationTYPE_Mobile,
+			 * Labels.getLabel("label_Type_MOBILE")));
+			 */
 			notificationTypeList
 					.add(new ValueLabel(PennantConstants.NotificationTYPE_Email, Labels.getLabel("label_Type_EMAIL")));
 		}

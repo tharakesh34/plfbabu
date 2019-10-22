@@ -72,8 +72,7 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
  * This is the controller class for the
- * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/InterfaceConfigurationList.zul
- * file.
+ * /WEB-INF/pages/ExternalInterface/InterfaceConfiguration/InterfaceConfigurationList.zul file.
  * 
  */
 public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceConfiguration> {
@@ -127,8 +126,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	}
 
 	/**
-	 * The framework calls this event handler when an application requests that
-	 * the window to be created.
+	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -142,19 +140,22 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 
 		// Register buttons and fields.
 		registerButton(button_InterfaceConfigurationList_Search);
-		registerButton(button_InterfaceConfigurationList_New,
-				"button_InterfaceConfigurationList_New", true);
+		registerButton(button_InterfaceConfigurationList_New, "button_InterfaceConfigurationList_New", true);
 
 		registerField("id");
-		registerField("code", listheader_InterfaceConfigurationList_Code, SortOrder.NONE, code, sortOperator_Code, Operators.STRING);
-		registerField("description", listheader_InterfaceConfigurationList_Description, SortOrder.NONE, description, sortOperator_Description,
+		registerField("code", listheader_InterfaceConfigurationList_Code, SortOrder.NONE, code, sortOperator_Code,
 				Operators.STRING);
-		registerField("type", listheader_InterfaceConfigurationList_Type, SortOrder.NONE, sortOperator_Type, Operators.STRING);
-		/*registerField("notificationType", listheader_InterfaceConfigurationList_NotificationType, SortOrder.NONE, sortOperator_NotificationType,
+		registerField("description", listheader_InterfaceConfigurationList_Description, SortOrder.NONE, description,
+				sortOperator_Description, Operators.STRING);
+		registerField("type", listheader_InterfaceConfigurationList_Type, SortOrder.NONE, sortOperator_Type,
 				Operators.STRING);
-		*/
+		/*
+		 * registerField("notificationType", listheader_InterfaceConfigurationList_NotificationType, SortOrder.NONE,
+		 * sortOperator_NotificationType, Operators.STRING);
+		 */
 		registerField("errorCodes");
-		registerField("active", listheader_InterfaceConfigurationList_active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
+		registerField("active", listheader_InterfaceConfigurationList_active, SortOrder.NONE, active,
+				sortOperator_active, Operators.BOOLEAN);
 
 		// Render the page and display the data.
 		doRenderPage();
@@ -162,8 +163,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -173,8 +173,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -185,16 +184,15 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the new button.
-	 * Show the dialog page with a new entity.
+	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
 	 */
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -258,8 +256,7 @@ public class InterfaceConfigurationListCtrl extends GFCBaseListCtrl<InterfaceCon
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

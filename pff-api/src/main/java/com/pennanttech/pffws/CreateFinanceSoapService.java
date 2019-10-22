@@ -60,9 +60,8 @@ public interface CreateFinanceSoapService {
 	@WebResult(name = "finance")
 	List<LoanStatus> getLoansStatus(@WebParam(name = "finance") LoanStatusDetails loanStatusDetails)
 			throws ServiceException;
-	
+
 	@WebResult(name = "finance")
 	AgreementData getAgreements(@WebParam(name = "finance") AgreementRequest agreementRequest) throws ServiceException;
-
 
 }

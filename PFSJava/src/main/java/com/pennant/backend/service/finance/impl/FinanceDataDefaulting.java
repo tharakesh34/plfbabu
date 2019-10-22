@@ -65,11 +65,11 @@ public class FinanceDataDefaulting {
 		finDetail.setCustomerDetails(new CustomerDetails());
 		finDetail.getCustomerDetails().setCustomer(null);
 		Customer customer = null;
-		
+
 		//Get the logged in users one time and set to avoid multiple calls
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		finMain.setUserDetails(userDetails);
-		
+
 		//customer Defaulting
 		if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
 			customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
@@ -87,7 +87,7 @@ public class FinanceDataDefaulting {
 		}
 
 		//Get Customer information
-		if (customer==null) {
+		if (customer == null) {
 			customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
 			if (customer == null) {
 				String[] valueParm = new String[1];
@@ -95,19 +95,19 @@ public class FinanceDataDefaulting {
 				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
 				finScheduleData.setErrorDetails(errorDetails);
 				return finDetail;
-			} 
+			}
 		}
-		
+
 		finMain.setCustID(customer.getCustID());
 		finDetail.getCustomerDetails().setCustomer(customer);
-		
+
 		// Date formats
 		setDefaultDateFormats(finMain);
-		
-		if (finMain.getFinStartDate()==null) {
+
+		if (finMain.getFinStartDate() == null) {
 			finMain.setFinStartDate(SysParamUtil.getAppDate());
 		}
-				
+
 		//Validate Fields data (Excluding Base & Special rates Validations)
 		validateMasterData(vldGroup, finDetail);
 
@@ -197,7 +197,7 @@ public class FinanceDataDefaulting {
 	 */
 	private void validateMasterData(String vldGroup, FinanceDetail finDeail) {
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		
+
 		FinScheduleData finScheduleData = finDeail.getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
@@ -214,6 +214,15 @@ public class FinanceDataDefaulting {
 				finScheduleData.setErrorDetails(errorDetails);
 				return;
 			}
+		}
+
+		if (StringUtils.equals(financeType.getProductCategory(), FinanceConstants.PRODUCT_CD)
+				&& StringUtils.isBlank(finMain.getPromotionCode())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "PromotionCode";
+			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+			finScheduleData.setErrorDetails(errorDetails);
+			return;
 		}
 
 		if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
@@ -264,11 +273,9 @@ public class FinanceDataDefaulting {
 				// FIXME: PV 28AUG19: AS THE SCHEME SCREENS ARE NOT READY,
 				// CONFIGURATION TAKEN FROM LOAN TYPE
 				/*
-				 * financeType.setFinTypeFeesList(promotion.getFinTypeFeesList()
-				 * ); financeType.setFInTypeFromPromotiion(promotion);
-				 * financeType.setFinTypeInsurances(promotion.
-				 * getFinTypeInsurancesList());
-				 * financeType.setFinTypeAccountingList(promotion.
+				 * financeType.setFinTypeFeesList(promotion.getFinTypeFeesList() );
+				 * financeType.setFInTypeFromPromotiion(promotion); financeType.setFinTypeInsurances(promotion.
+				 * getFinTypeInsurancesList()); financeType.setFinTypeAccountingList(promotion.
 				 * getFinTypeAccountingList());
 				 */
 			}
@@ -286,7 +293,7 @@ public class FinanceDataDefaulting {
 		if (StringUtils.isBlank(finMain.getFinBranch())) {
 			finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
 		}
-		
+
 		// validate finance branch
 		if (StringUtils.isNotBlank(finMain.getFinBranch())) {
 			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
@@ -772,7 +779,7 @@ public class FinanceDataDefaulting {
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
 		Promotion promotion = finScheduleData.getPromotion();
-		
+
 		boolean isValidRpyFrq = false;
 		boolean isValidOtherFrq = false;
 
@@ -797,7 +804,7 @@ public class FinanceDataDefaulting {
 		}
 
 		//Repay Rate
-		if (promotion!=null) {
+		if (promotion != null) {
 			finMain.setRepayBaseRate(null);
 			finMain.setRepaySpecialRate(null);
 			finMain.setRepayMargin(BigDecimal.ZERO);
@@ -820,10 +827,9 @@ public class FinanceDataDefaulting {
 			finMain.setScheduleMethod(financeType.getFinSchdMthd());
 		}
 
-		
 		//Default Terms
-		if (promotion!=null) {
-			finMain.setNumberOfTerms(promotion.getTenor()-promotion.getAdvEMITerms());
+		if (promotion != null) {
+			finMain.setNumberOfTerms(promotion.getTenor() - promotion.getAdvEMITerms());
 			finMain.setCalTerms(finMain.getNumberOfTerms());
 		} else {
 			if (finMain.getNumberOfTerms() == 0 && finMain.getMaturityDate() == null) {

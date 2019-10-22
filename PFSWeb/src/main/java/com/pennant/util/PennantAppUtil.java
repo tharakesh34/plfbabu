@@ -58,6 +58,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.zkoss.spring.SpringUtil;
+import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zul.Listbox;
 
@@ -135,6 +136,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class PennantAppUtil {
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
@@ -2317,4 +2319,30 @@ public class PennantAppUtil {
 	public static SearchProcessor getSearchProcessor() {
 		return (SearchProcessor) SpringBeanUtil.getBean("searchProcessor");
 	}
+
+	/**
+	 * This method is to validate the upload document formats like .EXE,.BAT,.SH.
+	 * 
+	 * @param Media
+	 * @return boolean
+	 */
+	public static boolean uploadDocFormatValidation(final Media media) {
+
+		if (media != null) {
+			String filenamesplit[] = media.getName().split("\\.");
+			if (filenamesplit.length > 2) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return false;
+			}
+
+			if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
+					|| filenamesplit[1].contains("sh"))) {
+				MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+				return false;
+			}
+
+		}
+		return true;
+	}
+
 }

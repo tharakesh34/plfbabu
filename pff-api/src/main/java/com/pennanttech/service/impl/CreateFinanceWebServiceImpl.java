@@ -104,7 +104,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			return response;
 		}
 
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
 
@@ -273,7 +273,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// Compare first drop line date greater than start date
 		/*
-		 * if(financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()==null){ String[] valueParm =
+		 * if(financeDetail.getFinScheduleData().getFinanceMain(). getFirstDroplineDate()==null){ String[] valueParm =
 		 * new String[1]; valueParm[0] = "FirstDroplineDate"; WSReturnStatus status =
 		 * APIErrorHandlerService.getFailedStatus("90502", valueParm); response.setReturnStatus(status); return
 		 * response; }
@@ -348,7 +348,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// do Basic mandatory validations using hibernate validator
 		validationUtility.validate(financeDetail, CreateFinancewithWIFGroup.class);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
 
@@ -428,7 +428,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
 				return getErrorMessage(financeDetail.getFinScheduleData());
 			}
-			//validate FinanceDetail Validations
+			// validate FinanceDetail Validations
 			// validate finance data
 			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
 				CustomerDetails customerDetails = new CustomerDetails();
@@ -521,7 +521,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 	@Override
 	public FinanceDetail getFinInquiryDetails(String finReference) throws ServiceException {
 		logger.debug("Enetring");
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		// service level validations
 		WSReturnStatus returnStatus = validateFinReference(finReference);
@@ -553,7 +553,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isBlank(custCif)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(custCif);
 		FinanceInquiry response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(custCif);
@@ -585,7 +585,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isBlank(collateralRef)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(collateralRef);
 
 		FinanceInquiry response = null;
@@ -638,12 +638,12 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		// set default values
 		financeDataDefaulting.doFinanceDetailDefaulting(financeDetail);
-		//for logging purpose
+		// for logging purpose
 		String[] logFields = getLogFields(financeDetail);
 		APIErrorHandlerService.logKeyFields(logFields);
 		APIErrorHandlerService.logReference(financeDetail.getFinReference());
 
-		//validate FinanceDetail Validations
+		// validate FinanceDetail Validations
 		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN,
 				financeDetail, true);
 		if (!finSchData.getErrorDetails().isEmpty()) {
@@ -674,7 +674,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isNotBlank(finReference)) {
 			APIErrorHandlerService.logReference(finReference);
 		}
-		//check reference is in temp table or not
+		// check reference is in temp table or not
 		FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
 
 		if (finMain == null) {
@@ -735,7 +735,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
-		// check records in origination 
+		// check records in origination
 		FinanceMain finMain = financeMainDAO.getFinanceMainParms(finReference);
 		if (finMain == null) {
 			String[] valueParm = new String[1];
@@ -1099,7 +1099,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		if (StringUtils.isBlank(custCif)) {
 			validationUtility.fieldLevelException();
 		}
-		//for logging purpose
+		// for logging purpose
 		APIErrorHandlerService.logReference(custCif);
 		FinanceInquiry response = null;
 		Customer customer = customerDetailsService.getCustomerByCIF(custCif);
@@ -1159,7 +1159,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 
 		return listResponse;
 	}
-	
+
 	@Override
 	public AgreementData getAgreements(AgreementRequest aggReq) throws ServiceException {
 		logger.debug("Enetring");
@@ -1202,7 +1202,7 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 			}
 
 			FinanceDetail finDetail = createFinanceController.getFinanceDetails(aggReq.getFinReference());
-			agrData = createFinanceController.getAgreements(finDetail,aggReq);
+			agrData = createFinanceController.getAgreements(finDetail, aggReq);
 
 		} catch (Exception e) {
 			APIErrorHandlerService.logUnhandledException(e);
@@ -1214,7 +1214,5 @@ public class CreateFinanceWebServiceImpl implements CreateFinanceSoapService, Cr
 		return agrData;
 
 	}
-
-
 
 }

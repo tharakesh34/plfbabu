@@ -313,7 +313,7 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aSysNotification
-	 *            SysNotification
+	 *        SysNotification
 	 */
 	public void doWriteBeanToComponents(SysNotification aSysNotification) {
 		logger.debug("Entering");
@@ -632,6 +632,10 @@ public class SysNotificationDialogCtrl extends GFCBaseCtrl<SysNotification> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		this.documnetName.setValue(media.getName());
 		browseDoc(media);
 		logger.debug("Leaving" + event.toString());

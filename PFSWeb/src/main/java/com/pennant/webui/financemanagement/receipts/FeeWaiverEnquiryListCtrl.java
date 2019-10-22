@@ -1082,11 +1082,11 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		this.searchObject.addTabelName("FeeWaivers_View"); 
-//comminted by meena in clix feewaver enquiry not filtered
+		this.searchObject.addTabelName("FeeWaivers_View");
+		//comminted by meena in clix feewaver enquiry not filtered
 		//Filter[] rcdTypeFilter = new Filter[2];
 		//rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
-	//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
+		//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
 		if (!moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ROLLOVER)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_COVENANTS)
 				&& !moduleDefiner.equals(FinanceConstants.FINSER_EVENT_FEEWAIVERS)) {

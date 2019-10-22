@@ -76,7 +76,7 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/getLoansStatus")
 	List<LoanStatus> getLoansStatus(LoanStatusDetails loanStatusDetails) throws ServiceException;
-	
+
 	@POST
 	@Path("/finance/getAgreements")
 	AgreementData getAgreements(AgreementRequest agreementRequest) throws ServiceException;

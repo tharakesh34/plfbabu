@@ -41,7 +41,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
-
 public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAdvise>
 		implements UploadManualAdviseService {
 	private static final Logger logger = Logger.getLogger(UploadManualAdviseServiceImpl.class);
@@ -49,7 +48,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinanceMainDAO financeMainDAO;
 	private UploadManualAdviseDAO uploadManualAdviseDAO;
-	private ManualAdviseService manualAdviseService; 
+	private ManualAdviseService manualAdviseService;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -64,7 +63,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	/**
 	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 *        the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -87,7 +86,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -131,7 +130,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * getRefundUploadsById fetch the details by using RefundUploadsDAO's getRefundUploadByRef method.
 	 * 
 	 * @param uploadId
-	 *            (long)
+	 *        (long)
 	 * @return RefundUploads
 	 */
 	public List<UploadManualAdvise> getApprovedManualAdviseUploadsByUploadId(long uploadId) {
@@ -139,18 +138,19 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	}
 
 	/**
-	 * doApprove method does the following steps. 1) Does the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getUploadManualAdviseDAO().delete with
-	 * parameters promotionFee,"" b) NEW Add new record in to main table by using getUploadManualAdviseDAO().save with
-	 * parameters promotionFee,"" c) EDIT Update record in the main table by using getUploadManualAdviseDAO().update with
-	 * parameters promotionFee,"" 3) Delete the record from the workFlow table by using getUploadManualAdviseDAO().delete with
-	 * parameters promotionFee,"_Temp" 4) Audit the record in to AuditHeader and AdtAdviseUploads by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAdviseUploads by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method does the following steps. 1) Does the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * based on the Record type do following actions a) DELETE Delete the record from the main table by using
+	 * getUploadManualAdviseDAO().delete with parameters promotionFee,"" b) NEW Add new record in to main table by using
+	 * getUploadManualAdviseDAO().save with parameters promotionFee,"" c) EDIT Update record in the main table by using
+	 * getUploadManualAdviseDAO().update with parameters promotionFee,"" 3) Delete the record from the workFlow table by
+	 * using getUploadManualAdviseDAO().delete with parameters promotionFee,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtAdviseUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record
+	 * in to AuditHeader and AdtAdviseUploads by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
+	 * Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -186,8 +186,8 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 				getUploadManualAdviseDAO().update(uploadManualAdvise, "");
 			}
 		}
-		
-    	getUploadManualAdviseDAO().deleteByUploadId(uploadManualAdvise.getUploadId(), "_TEMP");
+
+		getUploadManualAdviseDAO().deleteByUploadId(uploadManualAdvise.getUploadId(), "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -202,23 +202,20 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		return auditHeader;
 	}
 
-	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise,
-			String tranType) {
-		AuditDetail auditDetail = new AuditDetail(tranType, 1,
-				aManualAdvise.getBefImage(), aManualAdvise);
-		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()),
-				String.valueOf(aManualAdvise.getAdviseID()), null, null, auditDetail, aManualAdvise.getUserDetails(),
-				new HashMap<String, ArrayList<ErrorDetail>>());
+	private AuditHeader getAuditHeader(ManualAdvise aManualAdvise, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, aManualAdvise.getBefImage(), aManualAdvise);
+		return new AuditHeader(String.valueOf(aManualAdvise.getAdviseID()), String.valueOf(aManualAdvise.getAdviseID()),
+				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getUploadManualAdviseDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using getUploadManualAdviseDAO().delete with parameters promotionFee,"_Temp" 3) Audit the
+	 * record in to AuditHeader and AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -247,7 +244,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -263,8 +260,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		return auditHeader;
 	}
 
-	public List<ErrorDetail> validateAdviseUploads(AuditHeader auditHeader,
-			String usrLanguage, String method) {
+	public List<ErrorDetail> validateAdviseUploads(AuditHeader auditHeader, String usrLanguage, String method) {
 		logger.debug("Entering");
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -306,8 +302,8 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getUploadManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * from getUploadManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -320,13 +316,11 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		UploadManualAdvise adviseUpload = (UploadManualAdvise) auditDetail.getModelData();
 
 		// Check the unique keys.
-		/*if (adviseUpload.isNewRecord() && !UploadConstants.UPLOAD_STATUS_SUCCESS.equals(adviseUpload.getStatus())) {
-			validateLengths(adviseUpload);
-			if (!UploadConstants.UPLOAD_STATUS_FAIL.equals(adviseUpload.getStatus())) {
-				validateData(adviseUpload);
-			}
-		}*/
-
+		/*
+		 * if (adviseUpload.isNewRecord() && !UploadConstants.UPLOAD_STATUS_SUCCESS.equals(adviseUpload.getStatus())) {
+		 * validateLengths(adviseUpload); if (!UploadConstants.UPLOAD_STATUS_FAIL.equals(adviseUpload.getStatus())) {
+		 * validateData(adviseUpload); } }
+		 */
 
 		auditDetail.setModelData(adviseUpload);
 
@@ -381,8 +375,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 		return auditDetails;
 	}
-	
-	
+
 	public ManualAdvise prepareDetails(UploadManualAdvise uploadManualAdvise) {
 		logger.debug("Entering");
 
@@ -415,7 +408,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		manualAdvise.setNewRecord(true);
 		manualAdvise.setUserDetails(uploadManualAdvise.getUserDetails());
 		manualAdvise.setFinSource(UploadConstants.FINSOURCE_ID_UPLOAD);
-		
+
 		logger.debug("Leaving");
 		return manualAdvise;
 	}
@@ -485,15 +478,14 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 						ManualAdvise manualAdvise = prepareDetails(uploadAdvise);
 						AuditHeader auditHeader = getAuditHeader(manualAdvise, PennantConstants.TRAN_WF);
 						this.manualAdviseService.doApprove(auditHeader);
-						manualAdvise = (ManualAdvise) auditHeader
-								.getAuditDetail().getModelData();
+						manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
 						long adviseID = manualAdvise.getAdviseID();
 						uploadAdvise.setManualAdviseId(adviseID);
 					}
 				}
 				getUploadManualAdviseDAO().save(uploadAdvise, type);
 			}
-			
+
 			if (updateRecord) {
 				getUploadManualAdviseDAO().update(uploadAdvise, type);
 			}
@@ -540,21 +532,22 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 
 	/**
 	 * @param refundUploadDAO
-	 *            the refundUploadDAO to set
+	 *        the refundUploadDAO to set
 	 */
 	public void setUploadManualAdviseDAO(UploadManualAdviseDAO uploadManualAdviseDAO) {
 		this.uploadManualAdviseDAO = uploadManualAdviseDAO;
 	}
-		public List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId) {
-			return getUploadManualAdviseDAO().getManualAdviseListByUploadId(uploadId, "_View");
-		}
 
-		public ManualAdviseService getManualAdviseService() {
-			return manualAdviseService;
-		}
+	public List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId) {
+		return getUploadManualAdviseDAO().getManualAdviseListByUploadId(uploadId, "_View");
+	}
 
-		public void setManualAdviseService(ManualAdviseService manualAdviseService) {
-			this.manualAdviseService = manualAdviseService;
-		}
+	public ManualAdviseService getManualAdviseService() {
+		return manualAdviseService;
+	}
+
+	public void setManualAdviseService(ManualAdviseService manualAdviseService) {
+		this.manualAdviseService = manualAdviseService;
+	}
 
 }

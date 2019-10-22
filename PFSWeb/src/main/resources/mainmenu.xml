@@ -665,7 +665,7 @@
 			rightName="menuItem_Finance_FinanceMain" />
 		<menuItem id="menu_Item_NewCDFinanceMain"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceMainList.zul?requestSource=Origination&amp;product=CD"
-			rightName="menuItem_Finance_FinanceMain" />
+			rightName="menuItem_Finance_CDFinanceMain" />
 		<menuItem id="menu_Item_FinanceDeviations"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul"
 			rightName="menuItem_Finance_FinanceDeviations" />

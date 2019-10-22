@@ -301,7 +301,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -311,7 +311,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -542,7 +542,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinAdvancePayments
-	 *            FinAdvancePaymentsDetail
+	 *        FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinanceDeviations aFinanceDeviations) {
 		// ### 06-05-2018 - Start - story #361(Tuleap server) Manual Deviations
@@ -603,20 +603,17 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 
 		try {
 			//### 05-05-2018- Start- story #361(tuleap server) Manual Deviations
-			
+
 			if (SysParamUtil.isAllowed(SMTParameterConstants.MANUAL_DEVIATIONS_TRIGGERING_FOR_SAMEROLE)) {
 
 				if (!initDelegationRole.equals(this.delegationRole.getSelectedItem().getValue())
 						&& !PennantConstants.List_Select.equals(this.status.getSelectedItem().getValue())) {
-					throw new WrongValueException(status, "Select either approval status or change approval authority.");
+					throw new WrongValueException(status,
+							"Select either approval status or change approval authority.");
 				}
 			}
 			//### 05-05-2018- End- story #361(tuleap server) Manual Deviations
 
-			
-			
-			
-			
 			aFinanceDeviations.setDelegationRole(this.delegationRole.getSelectedItem().getValue());
 
 		} catch (WrongValueException e) {
@@ -794,7 +791,7 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 			getWorkFlowDetails(userAction.getSelectedItem().getLabel(), aFinanceDeviations.getNextTaskId(),
 					aFinanceDeviations);
 		}
-		if(aFinanceDeviations.isNew()){
+		if (aFinanceDeviations.isNew()) {
 			aFinanceDeviations.setRaisedUser(getUserWorkspace().getLoggedInUser().getFirstName());
 		}
 

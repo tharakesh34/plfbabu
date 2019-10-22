@@ -65,6 +65,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.MandateConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -120,7 +121,7 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_MandateFileUploadList(Event event) {
 
@@ -152,6 +153,10 @@ public class MandateFileUploadListCtrl extends GFCBaseListCtrl<Mandate> implemen
 
 		boolean isSupported = false;
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		if ("txt".equals(media.getFormat()) || "xlsx".equals(media.getFormat())) {
 			isSupported = true;
 		}

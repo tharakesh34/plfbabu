@@ -60,6 +60,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.service.limit.LimitDetailService;
 import com.pennant.externalinput.ExtFinanceData;
 import com.pennant.externalinput.service.ExtFinanceUploadService;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -180,6 +181,10 @@ public class ExtFinanceUploadDialogCtrl extends GFCBaseCtrl<ExtFinanceData> {
 		logger.debug("Entering" + event.toString());
 
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		this.fileNameWithExt = media.getName();
 		this.fileName.setValue("");
 		String status = "";

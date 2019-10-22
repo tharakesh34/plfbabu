@@ -56,6 +56,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.util.DateUtil.DateFormat;
@@ -169,7 +170,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * Displays the dialog page.
 	 * 
 	 * @param uploadHeader
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(ReceiptUploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -258,6 +259,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.errorMsg = null;
 		media = event.getMedia();
 
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		uploadNewList = new ArrayList<>();
 		String fileName = media.getName();
 
@@ -272,8 +276,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 			return;
 		}
-		
-		
+
 		try {
 			if (!(StringUtils.endsWith(fileName.toLowerCase(), ".xls")
 					|| StringUtils.endsWith(fileName.toLowerCase(), ".xlsx"))) {
@@ -664,10 +667,10 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		// Validate Receipt Header Vs Allocations
 		validateRUDvsRAD();
 
-		/*if (uadList != null && !uadList.isEmpty()) {
-			MessageUtil.showError("Allocations not related to Receipts found in allocation sheet");
-			return true;
-		}*/
+		/*
+		 * if (uadList != null && !uadList.isEmpty()) {
+		 * MessageUtil.showError("Allocations not related to Receipts found in allocation sheet"); return true; }
+		 */
 
 		logger.debug(Literal.LEAVING);
 		return false;

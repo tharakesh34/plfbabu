@@ -166,13 +166,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Datebox expiryDate;
 	protected CurrencyBox maxLimit;
 	protected FrequencyBox periodicity;
-	//protected Textbox								phoneCountryCode;
-	//protected Textbox								phoneAreaCode;
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 	protected Textbox phoneNumber;
 	protected Combobox status;
 	protected Textbox approvalID;
 	protected Groupbox gb_basicDetails;
-	//protected Groupbox								gb_enquiry;
+	// protected Groupbox gb_enquiry;
 	protected Checkbox useExisting;
 	protected Checkbox active;
 	protected Textbox reason;
@@ -182,7 +182,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 	protected Row mandateRow;
 
-	//Added BarCode and Reg Status
+	// Added BarCode and Reg Status
 	protected Label label_BarCodeNumber;
 	protected Uppercasebox barCodeNumber;
 	protected Label amountInWords;
@@ -191,7 +191,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Checkbox swapIsActive;
 	protected Label label_RegStatus;
 
-	//Adding Entity reelated to HFC
+	// Adding Entity reelated to HFC
 	private ExtendedCombobox entityCode;
 
 	private boolean enqModule = false;
@@ -201,7 +201,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	protected Textbox documentName;
 	protected Iframe mandatedoc;
 	private byte[] imagebyte;
-	
+
 	protected Textbox pennyDropResult;
 	protected Textbox txnDetails;
 	protected Button btnPennyDropResult;
@@ -239,7 +239,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	FinanceDetail financeDetail;
 	private FinanceMain financemain;
 	Tab parenttab = null;
-	//	long											mandateID				= 0;
+	// long mandateID = 0;
 	protected Row rowStatus;
 	protected Row rowReason;
 	protected int accNoLength;
@@ -340,8 +340,11 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				}
 
 				if (arguments.containsKey("roleCode")) {
-					//getUserWorkspace().allocateRoleAuthorities(arguments.get("roleCode").toString(), this.pageRightName);
-					setRole(arguments.get("roleCode").toString()); //FIXME For Rights Allocation
+					// getUserWorkspace().allocateRoleAuthorities(arguments.get("roleCode").toString(),
+					// this.pageRightName);
+					setRole(arguments.get("roleCode").toString()); // FIXME For
+																	// Rights
+																	// Allocation
 				}
 
 				if (arguments.containsKey("tab")) {
@@ -364,11 +367,15 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 			if (isWorkFlowEnabled() && !enqModule) {
 				this.userAction = setListRecordStatus(this.userAction);
-				//getUserWorkspace().allocateRoleAuthorities(getRole(), "MandateDialog");
+				// getUserWorkspace().allocateRoleAuthorities(getRole(),
+				// "MandateDialog");
 			} else {
 				//getUserWorkspace().allocateAuthorities(super.pageRightName);
 			}
-			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole()); //FIXME For Rights Allocation
+			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole()); // FIXME
+																					// For
+																					// Rights
+																					// Allocation
 
 			/* set components visible dependent of the users rights */
 			doCheckRights();
@@ -451,7 +458,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.umrNumber.setReadonly(true);
 		this.documentName.setMaxlength(150);
 
-		//Finance Main
+		// Finance Main
 		this.finReference.setMaxlength(20);
 		this.finReference.setTextBoxWidth(120);
 		this.finReference.setModuleName("FinanceManagement");
@@ -470,7 +477,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		this.barCodeNumber.setMaxlength(10);
 
-		//Adding Entity 
+		// Adding Entity
 		this.entityCode.setMaxlength(8);
 		this.entityCode.setDisplayStyle(2);
 		this.entityCode.setMandatoryStyle(true);
@@ -623,7 +630,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -640,7 +647,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 
 	}
-	
+
 	/**
 	 * when the "PennyDropResult" button is clicked. <br>
 	 * 
@@ -648,32 +655,32 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnPennyDropResult(Event event) throws InterruptedException {
-		if(bankAccountValidationService ==  null) {
+		if (bankAccountValidationService == null) {
 			return;
 		}
-		
+
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation(true);
 		PennyDropStatus pennyDropStatus = new PennyDropStatus();
 		try {
-			if(this.accNumber.getValue() != null) {
+			if (this.accNumber.getValue() != null) {
 				pennyDropStatus.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
 			}
-		} catch(WrongValueException we){
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
-			if(this.bankBranchID.getValue() != null) {
+			if (this.bankBranchID.getValue() != null) {
 				pennyDropStatus.setiFSC(this.ifsc.getValue());
 			}
-		} catch(WrongValueException we){
+		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		doRemoveValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -681,7 +688,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		
+
 		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("This Account number with IFSC code already validated.");
@@ -705,7 +712,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			} catch (Exception e) {
 				MessageUtil.showMessage(e.getMessage());
 			}
-			
+
 		}
 		logger.debug("Leaving" + event.toString());
 	}
@@ -920,8 +927,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 		try {
 			// fill the components with the data
-			if(aMandate != null) {
-				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(), aMandate.getIFSC());
+			if (aMandate != null) {
+				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(),
+						aMandate.getIFSC());
 			}
 			doWriteBeanToComponents(aMandate);
 			doDesignByStatus(aMandate);
@@ -1204,7 +1212,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aMandate
-	 *            Mandate
+	 *        Mandate
 	 * @param tab
 	 * @throws Exception
 	 * @throws WrongValueException
@@ -1330,14 +1338,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			this.entityCode.setValue(StringUtils.trimToEmpty(aMandate.getEntityCode()),
 					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
 		}
-		
-		if(pennyDropStatus != null) {
+
+		if (pennyDropStatus != null) {
 			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
 		}
-		
-		
+
 		if (this.rowPartnerBank.isVisible()) {
 			if (aMandate.getPartnerBankId() != 0 && aMandate.getPartnerBankId() != Long.MIN_VALUE) {
 				this.partnerBank.setValue(aMandate.getPartnerBankCode());
@@ -1597,7 +1604,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		
+
 		try {
 			if (this.rowPartnerBank.isVisible()) {
 				PartnerBank partBank = (PartnerBank) this.partnerBank.getObject();
@@ -2124,10 +2131,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aAuthorizedSignatoryRepository
-	 *            (AuthorizedSignatoryRepository)
+	 *        (AuthorizedSignatoryRepository)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -2181,9 +2188,9 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param AuditHeader
-	 *            auditHeader
+	 *        auditHeader
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * @return boolean
 	 * 
 	 */
@@ -2385,6 +2392,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void onUpload$btnUploadDoc(UploadEvent event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		browseDoc(media, this.documentName);
 		logger.debug("Leaving" + event.toString());
 	}
@@ -2522,13 +2533,13 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	public void setExternalDocumentManager(ExternalDocumentManager externalDocumentManager) {
 		this.externalDocumentManager = externalDocumentManager;
 	}
-	
+
 	@Autowired(required = false)
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
 	}
-	
+
 	public MandateDAO getMandateDAO() {
 		return mandateDAO;
 	}
@@ -2537,21 +2548,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		this.mandateDAO = mandateDAO;
 	}
 
-
 	public PennyDropService getPennyDropService() {
 		return pennyDropService;
 	}
-
 
 	public void setPennyDropService(PennyDropService pennyDropService) {
 		this.pennyDropService = pennyDropService;
 	}
 
-
 	public PennyDropDAO getPennyDropDAO() {
 		return pennyDropDAO;
 	}
-
 
 	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
 		this.pennyDropDAO = pennyDropDAO;

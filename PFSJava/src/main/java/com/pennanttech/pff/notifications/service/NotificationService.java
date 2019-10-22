@@ -1179,9 +1179,12 @@ public class NotificationService {
 		if (finOption != null) {
 			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("code"), finOption.getOptionType());
 			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("description"), finOption.getOptionType());
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextFrequencyDate"), DateUtility.formatToLongDate(finOption.getNextOptionDate()));
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextOptionDate"), DateUtility.formatToLongDate(finOption.getNextOptionDate()));
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("currentOptionDate"), DateUtility.formatToLongDate(finOption.getCurrentOptionDate()));
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextFrequencyDate"),
+					DateUtility.formatToLongDate(finOption.getNextOptionDate()));
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextOptionDate"),
+					DateUtility.formatToLongDate(finOption.getNextOptionDate()));
+			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("currentOptionDate"),
+					DateUtility.formatToLongDate(finOption.getCurrentOptionDate()));
 		}
 
 		return declaredFieldValues;

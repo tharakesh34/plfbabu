@@ -39,6 +39,7 @@ import com.pennant.backend.model.expenses.UploadHeader;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.service.finance.UploadHeaderService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
@@ -139,7 +140,7 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param aAcademic
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug("Entering");
@@ -230,6 +231,10 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		doRemoveValidation();
 		Media media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		try {
 			if (!(StringUtils.endsWith(media.getName().toLowerCase(), ".xls")
 					|| StringUtils.endsWith(media.getName().toLowerCase(), ".xlsx"))) {

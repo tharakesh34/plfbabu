@@ -490,7 +490,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -500,7 +500,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -830,7 +830,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinAdvancePayments
-	 *            FinAdvancePaymentsDetail
+	 *        FinAdvancePaymentsDetail
 	 */
 	public void doWriteBeanToComponents(FinAdvancePayments aFinAdvnancePayments) {
 		logger.debug("Entering");
@@ -999,13 +999,13 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		checkPaymentType(aFinAdvnancePayments.getPaymentType());
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
-		
+
 		if (pennyDropStatus != null) {
 			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
 		}
-		
+
 		//eastDocument
 
 		AMedia media = externalDocumentManager.getAMedia(documentDetails);
@@ -2186,7 +2186,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		doRemoveValidation();
-		
+
 		if (!wve.isEmpty()) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -2216,7 +2216,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	// ******************************************************//
 	// ****************** getter / setter *******************//
 	// ******************************************************//
@@ -2324,7 +2324,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	public void setCustomerPaymentTxnsDialogCtrl(CustomerPaymentTxnsDialogCtrl customerPaymentTxnsDialogCtrl) {
 		this.customerPaymentTxnsDialogCtrl = customerPaymentTxnsDialogCtrl;
 	}
-	
+
 	public PennyDropService getPennyDropService() {
 		return pennyDropService;
 	}

@@ -140,7 +140,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		sql.append("update CustomerDocuments set");
 		sql.append(" DocRefId = :DocRefId");
 		sql.append(", DocUri= :DocUri");
-		sql.append(" where CustId=:DocId");//FIXME
+		sql.append(" where CustId=:DocId");
 		sql.append(" and CustDocCategory=:DocCategory");
 
 		return sql.toString();
@@ -151,7 +151,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 		sql.append("update CustomerDocuments_Temp set");
 		sql.append(" DocRefId = :DocRefId");
 		sql.append(", DocUri= :DocUri");
-		sql.append(" where CustId=:DocId");//FIXME
+		sql.append(" where CustId=:DocId");
 		sql.append(" and CustDocCategory=:DocCategory");
 
 		return sql.toString();
@@ -287,7 +287,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(docDetails);
 		jdbcTemplate.update("delete from DocumentManager where id = :DocRefId", beanParameters);
-		
+
 		beanParameters = new BeanPropertySqlParameterSource(docDetails);
 		jdbcTemplate.update("delete from DmsDocProcessLog where DocRefId = :DocRefId", beanParameters);
 
@@ -311,7 +311,6 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 
 			beanParameters = new BeanPropertySqlParameterSource(docDetails);
 			jdbcTemplate.update(insertLogQuery, beanParameters);
-
 
 			transManager.commit(txnStatus);
 		} catch (Exception e) {

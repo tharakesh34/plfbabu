@@ -141,6 +141,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	protected long userID;
 	private String userLangauge;
 	private NotificationService notificationService;
+
 	/**
 	 * @return the auditHeaderDAO
 	 */
@@ -150,7 +151,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	/**
 	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 *        the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -181,7 +182,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -198,9 +199,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -246,7 +247,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -274,9 +275,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * getLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method.
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 
@@ -332,7 +333,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * id and type as blank. it fetches the approved records from the LIMIT_DETAILS.
 	 * 
 	 * @param id
-	 *            (int)
+	 *        (int)
 	 * @return LimitDetail
 	 */
 
@@ -405,7 +406,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -483,23 +484,34 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		auditHeader.getAuditDetail().setModelData(limitHeader);
 
 		getAuditHeaderDAO().addAudit(auditHeader);
-		
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LIMIT_NOTIFICATION)) {
-			sendMailNotification(limitHeader);
-		}
 
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_LIMIT_NOTIFICATION)) {
+			sendMailNotification(limitHeader, "Email");
+			sendSMSNotification(limitHeader, "SMS");
+		}
+		sendSMSNotification(limitHeader, "SMS");
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	protected void sendMailNotification(LimitHeader imitHeader) {
+	private void sendSMSNotification(LimitHeader limitHeader, String string) {
+		sendMailNotification(limitHeader, string);
+
+	}
+
+	protected void sendMailNotification(LimitHeader imitHeader, String notifType) {
 		logger.debug(Literal.ENTERING);
 		try {
 			Notification notification = new Notification();
 			notification.setKeyReference(imitHeader.getCustCIF());
 			notification.setModule("LOAN");
-			notification.setSubModule("LIMIHEADER");
-			notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION);
+			notification.setSubModule("ORIGINATION");
+			if (notifType == "Email") {
+				notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION);
+			} else if (notifType == "SMS") {
+				notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION_SMS);
+			}
+
 			CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(imitHeader.getCustomerId(),
 					"_AView");
 			if (customerDetails == null) {
@@ -552,7 +564,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
 
 	/**
 	 * Customer Limit Rebuild process
@@ -704,7 +715,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -733,9 +744,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -1306,9 +1317,9 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -1847,7 +1858,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	/**
 	 * @param limitDetailDAO
-	 *            the limitDetailDAO to set
+	 *        the limitDetailDAO to set
 	 */
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailsDAO) {

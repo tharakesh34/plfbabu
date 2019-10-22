@@ -20,6 +20,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.insurance.InsuranceDetails;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -98,6 +99,10 @@ public class ImportInsuranceDetailCtrl extends GFCBaseCtrl<InsuranceDetails> {
 
 		errorMsg = null;
 		setMedia(event.getMedia());
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		txtFileName.setText(media.getName());
 
 		try {

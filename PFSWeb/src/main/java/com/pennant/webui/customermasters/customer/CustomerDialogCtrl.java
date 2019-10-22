@@ -1146,7 +1146,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		boolean isClosed = doClose(this.btnSave.isVisible());
@@ -1173,7 +1173,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCustomer
-	 *            Customer
+	 *        Customer
 	 */
 
 	public void doWriteBeanToComponents(CustomerDetails aCustomerDetails) {
@@ -5386,7 +5386,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc.setParent(item);
 					lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getRecordType()));
 					lc.setParent(item);
-					
+
 					item.setAttribute("data", customerDocument);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDocumentItemDoubleClicked");
 					this.listBoxCustomerDocuments.appendChild(item);
@@ -6435,7 +6435,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Display Message in Error Box
 	 * 
 	 * @param e
-	 *            (Exception)
+	 *        (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -6454,7 +6454,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event
-	 *            (Event)
+	 *        (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -6827,14 +6827,25 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				primaryAccount.setPanNumber(panNumber);
 				// Verifying/Validating the PAN Number
 				primaryAccountService.retrivePanDetails(primaryAccount);
-				MessageUtil.showMessage("PAN Validation Successfull:"+"\n" + "First Name:" 
-						+ primaryAccount.getCustFName() +"\n" + "Middle Name:" + primaryAccount.getCustMName()
-						+  "\n"+"Last Name:"+ primaryAccount.getCustLName());
+				MessageUtil.showMessage("PAN Validation Successfull:" + "\n" + "First Name:"
+						+ primaryAccount.getCustFName() + "\n" + "Middle Name:" + primaryAccount.getCustMName() + "\n"
+						+ "Last Name:" + primaryAccount.getCustLName());
 			} catch (Exception e) {
 				throw new WrongValueException(this.eidNumber,
 						StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
 			}
 
+			if (isRetailCustomer) {
+				this.custFirstName.setValue(customer.getCustFName());
+				this.custLastName.setValue(customer.getCustLName());
+				this.custMiddleName.setValue(customer.getCustMName());
+			} else {
+				this.custShrtName.setValue(StringUtils.trimToEmpty(customer.getCustLName()));
+			}
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new WrongValueException(this.eidNumber,
+					StringUtils.isEmpty(e.getMessage()) ? "Invalid PAN" : e.getMessage());
 		} finally {
 			logger.debug(Literal.LEAVING);
 		}

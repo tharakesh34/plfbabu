@@ -42,7 +42,6 @@
 */
 package com.pennant.backend.dao.externalinterface.impl;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
@@ -64,27 +63,29 @@ import com.pennanttech.pff.core.util.QueryUtil;
 /**
  * Data access layer implementation for <code>InterfaceConfiguration</code> with set of CRUD operations.
  */
-public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConfiguration> implements ExtInterfaceConfigurationDAO {
+public class ExtInterfaceConfigurationDAOImpl extends SequenceDao<InterfaceConfiguration>
+		implements ExtInterfaceConfigurationDAO {
 	private static Logger logger = Logger.getLogger(ExtInterfaceConfigurationDAOImpl.class);
 
 	public ExtInterfaceConfigurationDAOImpl() {
 		super();
 	}
-	
+
 	@Override
-	public InterfaceConfiguration getExtInterfaceConfiguration(long id,String type) {
+	public InterfaceConfiguration getExtInterfaceConfiguration(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" id, code, description, type, notificationType, errorCodes, ");
 		sql.append(" active, contactsDetail, ");
-		
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId" );
+
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From EXTINTERFACECONF");
 		sql.append(type);
 		sql.append(" Where id = :id");
-		
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
@@ -92,7 +93,8 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		InterfaceConfiguration.setId(id);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(InterfaceConfiguration);
-		RowMapper<InterfaceConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(InterfaceConfiguration.class);
+		RowMapper<InterfaceConfiguration> rowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterfaceConfiguration.class);
 
 		try {
 			InterfaceConfiguration = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -103,10 +105,10 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 
 		logger.debug(Literal.LEAVING);
 		return InterfaceConfiguration;
-	}		
-	
+	}
+
 	@Override
-	public boolean isDuplicateKey(long id,String code, TableType tableType) {
+	public boolean isDuplicateKey(long id, String code, TableType tableType) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the SQL.
@@ -130,7 +132,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
 		paramSource.addValue("id", id);
 		paramSource.addValue("code", code);
-		
+
 		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
 
 		boolean exists = false;
@@ -141,25 +143,27 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
-	
+
 	@Override
-	public String save(InterfaceConfiguration interfaceConfiguration,TableType tableType) {
+	public String save(InterfaceConfiguration interfaceConfiguration, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder sql =new StringBuilder(" Insert into EXTINTERFACECONF");
+		StringBuilder sql = new StringBuilder(" Insert into EXTINTERFACECONF");
 		sql.append(tableType.getSuffix());
 		sql.append("(id, code, description, type, notificationType, errorCodes, ");
 		sql.append(" active, contactsDetail, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)" );
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
 		sql.append(" :id, :code, :description, :type, :notificationType, :errorCodes, ");
 		sql.append(" :active, :contactsDetail, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		if (interfaceConfiguration.getId()==Long.MIN_VALUE){
+		if (interfaceConfiguration.getId() == Long.MIN_VALUE) {
 			interfaceConfiguration.setId(getNextValue("seqExternalInterfaceConfig"));
-			logger.debug("get NextID:"+interfaceConfiguration.getId());
+			logger.debug("get NextID:" + interfaceConfiguration.getId());
 		}
 
 		// Execute the SQL, binding the arguments.
@@ -170,32 +174,33 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
-		}catch (Exception e) {
-		logger.warn(e);
+		} catch (Exception e) {
+			logger.warn(e);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return String.valueOf(interfaceConfiguration.getId());
-	}	
+	}
 
 	@Override
-	public void update(InterfaceConfiguration interfaceConfiguration,TableType tableType) {
+	public void update(InterfaceConfiguration interfaceConfiguration, TableType tableType) {
 		logger.debug(Literal.ENTERING);
-		
+
 		// Prepare the SQL.
-		StringBuilder	sql =new StringBuilder("update EXTINTERFACECONF" );
+		StringBuilder sql = new StringBuilder("update EXTINTERFACECONF");
 		sql.append(tableType.getSuffix());
 		sql.append("  set code = :code, description = :description, type = :type, ");
-		sql.append(" notificationType = :notificationType, errorCodes = :errorCodes, active = :active, contactsDetail = :contactsDetail, ");
+		sql.append(
+				" notificationType = :notificationType, errorCodes = :errorCodes, active = :active, contactsDetail = :contactsDetail, ");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
-	
+
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(interfaceConfiguration);
 		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
 
@@ -203,7 +208,7 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -236,4 +241,4 @@ public class ExtInterfaceConfigurationDAOImpl extends SequenceDao <InterfaceConf
 		logger.debug(Literal.LEAVING);
 	}
 
-}	
+}

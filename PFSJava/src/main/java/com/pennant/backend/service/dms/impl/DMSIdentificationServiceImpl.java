@@ -88,12 +88,12 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 									details.setDocExt(customer.getCustDocType());
 									details.setLastMntOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 									details.setCreatedOn(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-									details.setReferenceId(financeDetail.getCustomerDetails().getCustomer()
-											.getCustCIF());
+									details.setReferenceId(
+											financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 									if (null != financeDetail && null != financeDetail.getCustomerDetails()
 											&& null != financeDetail.getCustomerDetails().getCustomer()) {
-										details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer()
-												.getCustCIF());
+										details.setCustomerCif(
+												financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 									}
 									dmsDocumentDetailList.add(details);
 								}
@@ -113,16 +113,15 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 									finReference, FinanceConstants.MODULE_NAME, "_View");
 						}
 						List<CollateralSetup> collateralSetupList = null;
-						if (null != collateralSetupService && CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
-							collateralSetupList = collateralAssignmentByFinRef
-									.stream()
-									.map(colAssign -> {
-										if (null != colAssign) {
-											return collateralSetupService.getCollateralSetupByRef(
-													colAssign.getCollateralRef(), "", false);
-										}
-										return null;
-									}).filter(details -> null != details).collect(Collectors.toList());
+						if (null != collateralSetupService
+								&& CollectionUtils.isNotEmpty(collateralAssignmentByFinRef)) {
+							collateralSetupList = collateralAssignmentByFinRef.stream().map(colAssign -> {
+								if (null != colAssign) {
+									return collateralSetupService.getCollateralSetupByRef(colAssign.getCollateralRef(),
+											"", false);
+								}
+								return null;
+							}).filter(details -> null != details).collect(Collectors.toList());
 							if (CollectionUtils.isNotEmpty(collateralSetupList)) {
 								for (CollateralSetup collateralSetup : collateralSetupList) {
 									if (null != collateralSetup
@@ -139,8 +138,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 							if (CollectionUtils.isNotEmpty(verifications)) {
 								for (Verification verification : verifications) {
 									if (null != verification) {
-										VerificationType type = VerificationType.getVerificationType(verification
-												.getVerificationType());
+										VerificationType type = VerificationType
+												.getVerificationType(verification.getVerificationType());
 
 										switch (type) {
 										case LV:
@@ -181,11 +180,9 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								details.setDocCategory(documentDetails.getDocCategory());
 								if (null != documentTypeList) {
 									for (DocumentType documentType : documentTypeList) {
-										if (null != documentType
-												&& null != documentType.getDocTypeCode()
-												&& null != documentDetails.getDocCategory()
-												&& documentType.getDocTypeCode().equals(
-														documentDetails.getDocCategory())) {
+										if (null != documentType && null != documentType.getDocTypeCode()
+												&& null != documentDetails.getDocCategory() && documentType
+														.getDocTypeCode().equals(documentDetails.getDocCategory())) {
 											details.setDocDesc(documentType.getDocTypeDesc());
 											break;
 										}
@@ -197,8 +194,8 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 								details.setReferenceId(documentDetails.getReferenceId());
 								if (null != financeDetail && null != financeDetail.getCustomerDetails()
 										&& null != financeDetail.getCustomerDetails().getCustomer()) {
-									details.setCustomerCif(financeDetail.getCustomerDetails().getCustomer()
-											.getCustCIF());
+									details.setCustomerCif(
+											financeDetail.getCustomerDetails().getCustomer().getCustCIF());
 								}
 								dmsDocumentDetailList.add(details);
 							}

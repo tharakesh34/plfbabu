@@ -812,6 +812,7 @@ public class FeeDetailService {
 				} else {
 					if (enquiry) {
 						fee.setActualAmount(calPercentageFee);
+						fee.setActualAmountOriginal(calPercentageFee);
 					}
 					fee.setRemainingFee(
 							fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));

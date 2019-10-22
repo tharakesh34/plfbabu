@@ -36,7 +36,6 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private FinanceMainDAO financeMainDAO;
-	
 
 	@Override
 	public String doRevolvingValidations(FinanceDetail financeDetail) {
@@ -61,9 +60,9 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		if (financeType.isAllowRevolving()) {
 
 			FinanceMain main = financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "", false);
-			
+
 			BigDecimal currAssetVal = BigDecimal.ZERO;
-			if(main != null){
+			if (main != null) {
 				currAssetVal = main.getFinCurrAssetValue();
 			} else {
 				currAssetVal = financeMain.getFinCurrAssetValue();
@@ -130,7 +129,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 																	// Receivable
 				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
-																		// Charges
+																																								// Charges
 				if (CollectionUtils.isNotEmpty(advises)) {
 					for (ManualAdvise manualAdvise : advises) {
 						totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()

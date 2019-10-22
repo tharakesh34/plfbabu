@@ -134,9 +134,13 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 
 		for (int i = 0; i < list.length; i++) {
 			String[] a = list[i].split("=");
+
 			if (!"Cancel".equalsIgnoreCase(a[0]) || !isFirstTask()) {
 				if (!a[0].equalsIgnoreCase(PennantConstants.RCD_STATUS_REJECTAPPROVAL)) {
-					userAction.appendItem(a[0], a[1]);
+					if (a.length > 1) {
+						userAction.appendItem(a[0], a[1]);
+					}
+
 				}
 			}
 		}

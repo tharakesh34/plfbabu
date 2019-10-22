@@ -70,6 +70,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -116,7 +117,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PdfUploadsList(Event event) {
 		logger.debug("Entering");
@@ -171,23 +172,13 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 		Media media = event.getMedia();
 
-		String filenamesplit[] = media.getName().split("\\.");
-		if (filenamesplit.length > 2) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
 			return;
 		}
-
-		if (filenamesplit[1] != null && (filenamesplit[1].contains("exe") || filenamesplit[1].contains("bat")
-				|| filenamesplit[1].contains("sh"))) {
-			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
-			return;
-		}
-		
 		String docType = "";
 		if ("application/pdf".equals(media.getContentType())) {
 			docType = PennantConstants.DOC_TYPE_PDF;
-		} 
-		else {
+		} else {
 			MessageUtil.showError(Labels.getLabel("UnSupported_Document_V2"));
 			return;
 		}
@@ -227,7 +218,7 @@ public class PdfUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * @param event
 	 * @throws Exception
 	 * 
-	 *             /** on click UPLOAD BUTTON
+	 *         /** on click UPLOAD BUTTON
 	 */
 	public void onClick$btnImport(Event event) {
 		logger.debug("Entering");

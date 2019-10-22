@@ -223,7 +223,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		notification.setModule(NotificationConstants.SYSTEM_NOTIFICATION);
 		notification.setSubModule(detail.getNotificationCode());
 		notification.setNotificationData(settingNotificationData(detail));
-		
+
 		smsEngine.sendSms(notification);
 		logger.debug(Literal.LEAVING);
 
@@ -232,7 +232,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	private String settingNotificationData(SystemNotificationExecutionDetails detail) {
 		String str = null;
 		String json = "";
-		
+
 		try {
 			if (detail.getNotificationData() != null) {
 				str = new String(detail.getNotificationData(), "UTF-8");

@@ -201,7 +201,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PartnerBankService partnerBankService;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 
-	
 	/**
 	 * Method for process create finance request
 	 * 
@@ -222,7 +221,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinanceType financeType = finScheduleData.getFinanceType();
 			financeMain.setFinType(financeType.getFinType());
 
-			//FIXME: PV 28AUG19. Seems FinReference already generated in previous methods
+			// FIXME: PV 28AUG19. Seems FinReference already generated in
+			// previous methods
 			if (financeType.isFinIsGenRef()) {
 				financeMain.setFinReference(null);
 			}
@@ -303,14 +303,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			financeMain.setRecordStatus(getRecordStatus(financeMain.isQuickDisb(), stp));
 			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
 
-			//finScheduleData.setFinanceMain(financeMain);
+			// finScheduleData.setFinanceMain(financeMain);
 
 			// set required mandatory values into finance details object
 
 			doSetRequiredDetails(financeDetail, loanWithWIF, financeMain.getUserDetails(), stp, false, false);
-			
-			
-			
+
 			if (stp) {
 				setDisbursements(financeDetail, loanWithWIF, false, false);
 			}
@@ -392,14 +390,14 @@ public class CreateFinanceController extends SummaryDetailService {
 				return financeDetail;
 			}
 
-			//FIXME: PV 28AUG19. Why setting is required like set a = a?
+			// FIXME: PV 28AUG19. Why setting is required like set a = a?
 			/*
-			 * // Reset Data finScheduleData.getFinanceMain().setEqualRepay(financeMain.isEqualRepay());
-			 * finScheduleData.getFinanceMain().setRecalType(financeMain.getRecalType());
-			 * finScheduleData.getFinanceMain().setLastRepayDate(financeMain.getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain.getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain.getFinStartDate());
-			 * finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain.getFinStartDate());
+			 * // Reset Data finScheduleData.getFinanceMain().setEqualRepay(financeMain. isEqualRepay());
+			 * finScheduleData.getFinanceMain().setRecalType(financeMain. getRecalType());
+			 * finScheduleData.getFinanceMain().setLastRepayDate(financeMain. getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain. getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain. getFinStartDate());
+			 * finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain. getFinStartDate());
 			 */
 
 			finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
@@ -1005,12 +1003,16 @@ public class CreateFinanceController extends SummaryDetailService {
 		CustomerDetails customerDetails = null;
 		// setting required values which are not received from API
 		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
-		// line around 1204 with different methods. Only difference found is order and
-		// later method even fetching VAS details.. SO tried to make as one query.
-		//REF: CUST28AUG19
+		// line around 1204 with different methods. Only difference found is
+		// order and
+		// later method even fetching VAS details.. SO tried to make as one
+		// query.
+		// REF: CUST28AUG19
 
 		if (financeMain.getCustID() > 0) {
-			//customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "");
+			// customerDetails =
+			// customerDetailsService.getCustomerDetailsById(financeMain.getCustID(),
+			// true, "");
 			customerDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
 			if (customerDetails != null) {
 				customerDetails.setUserDetails(userDetails);
@@ -1019,7 +1021,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
-		// Durables where default down payment calculated. METHOD. setDisbursements
+		// Durables where default down payment calculated. METHOD.
+		// setDisbursements
 		/*
 		 * // process disbursement details doProcessDisbInstructions(financeDetail, moveLoanStage);
 		 */
@@ -1220,11 +1223,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		// setting required values which are not received from API
 		// FIXME: PV 28AUG19. Same data has been fetched two times. below and
 		// line 1204 with different methods. Only difference found is order and
-		// later method even fetching VAS details.. SO tried to make as one query.
-		//REF: CUST28AUG19
+		// later method even fetching VAS details.. SO tried to make as one
+		// query.
+		// REF: CUST28AUG19
 		/*
 		 * financeDetail.setFinScheduleData(finScheduleData); if (financeMain.getCustID() > 0) { CustomerDetails
-		 * custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
+		 * custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID( ));
 		 * financeDetail.setCustomerDetails(custDetails); }
 		 */
 
@@ -1374,9 +1378,10 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 
 		// FIXME: 28AUG19. Moved to post schedule creation to handle Consumer
-		// Durables where default down payment calculated. METHOD. setDisbursements
-		
-		//FIX ME: this should be removed from SetDisbursements 
+		// Durables where default down payment calculated. METHOD.
+		// setDisbursements
+
+		// FIX ME: this should be removed from SetDisbursements
 		// validate disbursement instructions
 		if (!stp) {
 			if (!loanWithWIF && !financeDetail.getFinScheduleData().getFinanceMain().getProductCategory()
@@ -3334,7 +3339,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.getFinTaxDetails().setFinTaxID(Long.MIN_VALUE);
 			}
 
-			//process Extended field details
+			// process Extended field details
 			// Get the ExtendedFieldHeader for given module and subModule
 			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
 					ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(), FinanceConstants.FINSER_EVENT_ORG,
@@ -3586,8 +3591,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		fap.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(finMain.getDownPayment()));
 	}
 
-	
-	
 	public AgreementData getAgreements(FinanceDetail financeDetail, AgreementRequest agrReq) {
 
 		Set<String> allagrDataset = new HashSet<>();
@@ -3599,9 +3602,9 @@ public class CreateFinanceController extends SummaryDetailService {
 		try {
 			AgreementDetail agrData = getAgreementGeneration().getAggrementData(financeDetail, allagrDataset.toString(),
 					SessionUserDetails.getLogiedInUser());
-			
+
 			getAgreementGeneration().setNetFinanceAmount(agrData, financeDetail);
-			
+
 			if (financeDetail != null && financeDetail.getFinScheduleData() != null
 					&& financeDetail.getFinScheduleData().getFinanceMain() != null) {
 				FinanceMain lmain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -3663,8 +3666,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		}
 		return details;
 	}
-	
-	
+
 	protected String getTaskAssignmentMethod(String taskId) {
 		return workFlow.getUserTask(taskId).getAssignmentLevel();
 	}

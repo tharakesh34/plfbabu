@@ -20,6 +20,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -167,6 +168,10 @@ public class SettlementProcessUploadDialogueCtrl extends GFCBaseCtrl<Configurati
 	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
 		fileName.setText("");
 		media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 
 		String fileExt = media.getName().toUpperCase();
 

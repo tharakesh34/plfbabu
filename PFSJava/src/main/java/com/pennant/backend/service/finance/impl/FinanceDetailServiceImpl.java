@@ -423,7 +423,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Autowired(required = false)
 	private CreditFinancialService creditFinancialService;
 	private CreditReviewDetailDAO creditReviewDetailDAO;
-	
+
 	@Autowired(required = false)
 	private PushNotificationsService pushNotificationsService;
 
@@ -495,11 +495,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsOrg method.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param procEdtEvent
-	 *            (String)
+	 *        (String)
 	 * @param userrole
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -991,13 +991,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsServicing method.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param eventCodeRef
-	 *            (String)
+	 *        (String)
 	 * @param procEdtEvent
-	 *            (String)
+	 *        (String)
 	 * @param userrole
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1139,11 +1139,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailsWIF method.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param reqCustDetail
-	 *            (String)
+	 *        (String)
 	 * @param procEdtEvent
-	 *            (boolean)
+	 *        (boolean)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1242,7 +1242,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1490,7 +1490,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1610,7 +1610,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * parameter id and type as blank. it fetches the approved records from the FinanceMain.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1623,9 +1623,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method to fetch finance details by id from given table type
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -1713,9 +1713,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method to fetch finance details by id from given table type
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String)
+	 *        (String)
 	 * @return FinanceDetail
 	 */
 	@Override
@@ -2137,7 +2137,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -2907,7 +2907,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		auditHeader.getAuditDetail().setModelData(financeDetail);
 
 		logger.debug(Literal.LEAVING);
-		
+
 		// Push Notification API
 		if (pushNotificationsService != null && SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_PUSH_NOTIFICATION)) {
 			pushNotificationsService.sendPushNotification(auditHeader);
@@ -3591,7 +3591,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -3793,7 +3793,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws DatatypeConfigurationException
@@ -5252,7 +5252,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case PennantConstants.METHOD_INTIATEHUNTERSERVICE:
-			if(null != initiateHunterService) {
+			if (null != initiateHunterService) {
 				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
 				if (hunterReq) {
 					initiateHunterService.getHunterResponse(financeDetail.getCustomerDetails());
@@ -5260,12 +5260,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 			break;
 		case PennantConstants.METHOD_DOMAINCHECKSERVICE:
-			if(null != domainCheckService) {
+			if (null != domainCheckService) {
 				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
 				if (hunterReq) {
 					domainCheckService.validateDomain(financeDetail);
 				}
-			}	
+			}
 			break;
 		default:
 			// Execute any other custom service tasks
@@ -5491,7 +5491,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 */
@@ -6124,7 +6124,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * AuditHeader and AdtFinanceMain by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws JaxenException
 	 * @throws InvocationTargetException
@@ -6752,7 +6752,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean isWIF,
@@ -8212,9 +8212,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataByFinRef(String finReference, String type, long logKey) {
 		logger.debug(Literal.ENTERING);
@@ -8318,9 +8318,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	public FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired) {
 		logger.debug(Literal.ENTERING);
@@ -8416,9 +8416,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	@Override
 	public FinScheduleData getFinSchDataForReceipt(String finReference, String type) {
@@ -8649,10 +8649,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	 * 
 	 * @param AuditHeader
 	 * 
-	 *            1. Check limit category exists or not for the account type, if not exists set limitValid = true other
-	 *            wise goto next step. 2. Fetch customer limits from core banking. 3. If the limits not available set
-	 *            the ErrMessage. 4. If available limit is less than finance amount, set warning message if the user
-	 *            have the permission 'override Limits' otherwise set Error message.
+	 *        1. Check limit category exists or not for the account type, if not exists set limitValid = true other wise
+	 *        goto next step. 2. Fetch customer limits from core banking. 3. If the limits not available set the
+	 *        ErrMessage. 4. If available limit is less than finance amount, set warning message if the user have the
+	 *        permission 'override Limits' otherwise set Error message.
 	 * 
 	 */
 	public AuditHeader doCheckLimits(AuditHeader auditHeader) {
@@ -10315,8 +10315,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public List<FinanceDisbursement> getFinanceDisbursements(String finReferecne, String type, boolean isWIF) {
 		return getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReferecne, type, isWIF);
 	}
-	
-	
+
 	@Override
 	public Date getFinStartDate(String finReference) {
 		return getFinanceMainDAO().getFinStartDate(finReference);
@@ -11565,7 +11564,5 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setIrrScheduleDetailDAO(IRRScheduleDetailDAO irrScheduleDetailDAO) {
 		this.irrScheduleDetailDAO = irrScheduleDetailDAO;
 	}
-
-	
 
 }

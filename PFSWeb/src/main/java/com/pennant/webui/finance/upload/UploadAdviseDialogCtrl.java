@@ -60,6 +60,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
@@ -84,30 +85,30 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected Window window_AdviseUploadDialog;
 	protected Groupbox gb_DownloadDetails;
 	protected Groupbox gb_UploadDetails;
-	
+
 	protected Radiogroup radioButtons;
 	protected Radio downLoad;
 	protected Radio upload;
-	
+
 	//Download
 	protected ExtendedCombobox fileName;
 	protected Button btnDownload;
 	protected ExtendedCombobox downloadEntity;
 	protected Datebox dateOfUpload;
-	
+
 	//Upload
 	protected Textbox txtFileName;
 	protected ExtendedCombobox uploadEntity;
 	private UploadHeader uploadHeader;
 	protected Button btnBrowse;
-	protected Space  space_txtFileName;
-	
+	protected Space space_txtFileName;
+
 	private transient UploadListCtrl uploadListCtrl;
 	private transient boolean validationOn;
 	private transient UploadHeaderService uploadHeaderService;
 	private transient ReceiptUploadHeaderService receiptUploadHeaderService;
 	private transient FinanceMainService financeMainService;
-	
+
 	private static final String MODULE_NAME = "ManualAdvise";
 
 	private Workbook workbook = null;
@@ -118,6 +119,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	private String filePath = "";
 	HashSet<String> validations = null;
 	private String module = "";
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -135,7 +137,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_AdviseUploadDialog(Event event) throws Exception {
@@ -188,14 +190,14 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-        
+
 		// Entity selection for Download
 		this.downloadEntity.setModuleName("Entity");
 		this.downloadEntity.setDisplayStyle(2);
 		this.downloadEntity.setValueColumn("EntityCode");
 		this.downloadEntity.setDescColumn("EntityDesc");
-		this.downloadEntity.setValidateColumns(new String[] { "EntityCode" });		
-		
+		this.downloadEntity.setValidateColumns(new String[] { "EntityCode" });
+
 		// Entity selection for Upload
 		this.uploadEntity.setModuleName("Entity");
 		this.uploadEntity.setDisplayStyle(2);
@@ -203,7 +205,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.uploadEntity.setDescColumn("EntityDesc");
 		this.uploadEntity.setValidateColumns(new String[] { "EntityCode" });
 		this.uploadEntity.setMandatoryStyle(true);
-		
+
 		this.fileName.setModuleName("AdviseUpload");
 		this.fileName.setMandatoryStyle(true);
 		this.fileName.setDisplayStyle(2);
@@ -215,10 +217,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.txtFileName.setReadonly(true);
 
 		this.dateOfUpload.setFormat(DateFormat.SHORT_DATE.getPattern());
-		
+
 		setStatusDetails();
 		setFilePath();
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -251,7 +253,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -261,7 +263,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -271,7 +273,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -281,7 +283,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) {
 		doDelete();
@@ -291,7 +293,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -301,18 +303,20 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of a component.
+	 *        An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		closeDialg();
 	}
+
 	/**
 	 * 
 	 */
 	private void closeDialg() {
 		if (doClose(true)) {
-			Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");  
-			Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter").getFellow("tabBoxIndexCenter");
+			Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
+			Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
+					.getFellow("tabBoxIndexCenter");
 			tabbox.getSelectedTab().close();
 		}
 	}
@@ -333,6 +337,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		doRemoveValidation();
 		this.media = event.getMedia();
+
+		if (!PennantAppUtil.uploadDocFormatValidation(media)) {
+			return;
+		}
 		String fileName = this.media.getName();
 
 		try {
@@ -367,7 +375,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 */
 	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		doSetValidation();
 		String fileName = "";
 		String entityCode = "";
@@ -381,8 +389,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		try {
 			if (StringUtils.trimToNull(this.fileName.getValue()) == null) {
-				throw new WrongValueException(this.btnBrowse,
-						Labels.getLabel("empty_file"));
+				throw new WrongValueException(this.btnBrowse, Labels.getLabel("empty_file"));
 			}
 			fileName = this.fileName.getDescription();
 
@@ -395,11 +402,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		condition.append("Where FILENAME in (" + "'" + fileName + "'" + ")");
 		condition.append("and ENTITYCode in (" + "'" + entityCode + "'" + ")");
 		if (this.dateOfUpload.getValue() != null) {
-			String uploadDate = DateUtility
-					.format(this.dateOfUpload.getValue(),
-							PennantConstants.DBDateFormat);
-			condition.append("and UploadedDate in (" + "'"
-					+ DateUtility.getDBDate(uploadDate).toString() + "'" + ")");
+			String uploadDate = DateUtility.format(this.dateOfUpload.getValue(), PennantConstants.DBDateFormat);
+			condition.append("and UploadedDate in (" + "'" + DateUtility.getDBDate(uploadDate).toString() + "'" + ")");
 		}
 
 		String whereCond = new String(condition);
@@ -410,8 +414,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// Excel file downloading automatically using Jasper Report
 		try {
 			ReportGenerationUtil.generateReport(getUserWorkspace().getLoggedInUser().getFullName(),
-					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc,
-					this.window_AdviseUploadDialog, true);
+					"ManualAdviseUploadReport", whereCond, searchCriteriaDesc, this.window_AdviseUploadDialog, true);
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
@@ -498,7 +501,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			MessageUtil.showError(e);
 			return false;
 		}
-		
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -595,7 +598,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					if (count == 0) { //Skip Header row
 						if (CollectionUtils.isEmpty(row) || !("Loan Reference".equalsIgnoreCase(row.get(0))
 								&& "Advise Type".equalsIgnoreCase(row.get(1)) && "Fee Type".equalsIgnoreCase(row.get(2))
-								&& "Value Date".equalsIgnoreCase(row.get(3)) && "Advise amount".equalsIgnoreCase(row.get(4))
+								&& "Value Date".equalsIgnoreCase(row.get(3))
+								&& "Advise amount".equalsIgnoreCase(row.get(4))
 								&& "Remarks".equalsIgnoreCase(row.get(5)))) {
 							throw new InterfaceException("Error",
 									"The uploaded file could not be processed.Please upload a valid xls or xlsx file.");
@@ -634,6 +638,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	/**
 	 * 
 	 * @param row
@@ -641,8 +646,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * @return
 	 * @throws ParseException
 	 */
-	public UploadManualAdvise validateUploadDetails(List<String> row, int formatter)
-			throws ParseException {
+	public UploadManualAdvise validateUploadDetails(List<String> row, int formatter) throws ParseException {
 		logger.debug(Literal.ENTERING);
 
 		boolean error = false;
@@ -665,7 +669,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				finMain = financeMainService.getFinanceMain(finReference, new String[] { "FinIsActive, FinStartDate" });
 				if (finMain == null || !finMain.isFinIsActive()) {
 					reason = reason + "Loan Reference doesn't exist or is inactive.";
-				} 
+				}
 			}
 		}
 		adviseUpload.setFinReference(finReference);
@@ -708,7 +712,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					if (fee.getAdviseType() == FinanceConstants.MANUAL_ADVISE_RECEIVABLE) {
 						adviseType = UploadConstants.UPLOAD_RECEIVABLE_ADVISE;
 					} else if (fee.getAdviseType() == FinanceConstants.MANUAL_ADVISE_PAYABLE) {
-						adviseType = UploadConstants.UPLOAD_PAYABLE_ADVISE ;
+						adviseType = UploadConstants.UPLOAD_PAYABLE_ADVISE;
 					}
 					if (!StringUtils.equals(adviseType, type)) {
 						reason = reason + "Fee Type with the given advise type doesn't exist.";
@@ -781,7 +785,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		if (!error) {
 			String key = finReference + type + feeType;
-			
+
 			if (validations.contains(key)) {
 				reason = "Loan Reference is duplicated in the upload file with the same advise type and fee type.";
 				error = true;
@@ -789,7 +793,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				validations.add(key);
 			}
 			List<String> finEvents = uploadHeaderService.getFinEventByFinRef(finReference, "_Temp");
-			
+
 			if (CollectionUtils.isNotEmpty(finEvents)) {
 				if (finEvents.contains(FinanceConstants.FINSER_EVENT_ADDDISB)
 						|| finEvents.contains(FinanceConstants.FINSER_EVENT_RATECHG)
@@ -801,13 +805,13 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 					error = true;
 				}
 			}
-			/*FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp");
-			if (finMain1 != null && (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1.getRcdMaintainSts())
-					|| FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1.getRcdMaintainSts())
-					|| FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1.getRcdMaintainSts()))) {
-				reason = "Loan Reference is in rescheduling process,upload isn't allowed.";
-				error = true;
-			}*/
+			/*
+			 * FinanceMain finMain1 = financeMainService.getFinanceMainDetails(finReference, "_temp"); if (finMain1 !=
+			 * null && (FinanceConstants.FINSER_EVENT_ADDDISB.equals(finMain1.getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_RATECHG.equals(finMain1.getRcdMaintainSts()) ||
+			 * FinanceConstants.FINSER_EVENT_EARLYRPY.equals(finMain1.getRcdMaintainSts()))) { reason =
+			 * "Loan Reference is in rescheduling process,upload isn't allowed."; error = true; }
+			 */
 		}
 
 		adviseUpload.setNewRecord(true);
@@ -934,7 +938,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				if (CollectionUtils.isNotEmpty(columns)) {
 					//String[] beanValues = rowValue.toArray(new String[0]); //convert list to Array
 					if (columns.size() >= totalColumns) {
-						
+
 						//Success case
 						adviseUploads.add(validateUploadDetails(columns, formatter));
 					} else {
@@ -982,7 +986,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Displays the dialog page.
 	 * 
 	 * @param aUploadHeader
-	 *            The entity that need to be render.
+	 *        The entity that need to be render.
 	 */
 	public void doShowDialog(UploadHeader uploadHeader) {
 		logger.debug(Literal.ENTERING);
@@ -1004,8 +1008,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			}
 		}
 		try {
-			if(uploadListCtrl != null){
-				uploadListCtrl.getClass().getMethod("setUploadAdviseDialogCtrl", this.getClass()).invoke(uploadListCtrl, this);
+			if (uploadListCtrl != null) {
+				uploadListCtrl.getClass().getMethod("setUploadAdviseDialogCtrl", this.getClass()).invoke(uploadListCtrl,
+						this);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
@@ -1053,12 +1058,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 
 		/*
-		 * try { if (!this.fileName.isReadonly()) {
-		 * this.fileName.setConstraint(new PTStringValidator(
-		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null,
-		 * true, true)); } } catch (WrongValueException we) { wve.add(we); }
+		 * try { if (!this.fileName.isReadonly()) { this.fileName.setConstraint(new PTStringValidator(
+		 * Labels.getLabel("label_DownloadAdviseDialog_FileName.value"), null, true, true)); } } catch
+		 * (WrongValueException we) { wve.add(we); }
 		 */
-		
+
 		try {
 			if (StringUtils.trimToNull(this.txtFileName.getValue()) == null) {
 				// throw new WrongValueException(this.btnBrowse,
@@ -1082,10 +1086,9 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			throw new WrongValuesException(wvea);
 		}
 
-
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onFulfill$downloadEntity(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -1094,7 +1097,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doAddFilter() {
 		logger.debug(Literal.ENTERING);
 		String entity = this.downloadEntity.getValue();
@@ -1284,11 +1287,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		logger.debug(Literal.LEAVING);
 	}
-     
+
 	public void doCheckFields() {
 		logger.debug(Literal.ENTERING);
 		boolean isUpload = this.upload.isChecked();
-		
+
 		this.uploadEntity.setReadonly(!isUpload);
 		this.btnBrowse.setDisabled(!isUpload);
 		this.downloadEntity.setMandatoryStyle(!isUpload);
@@ -1300,7 +1303,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		this.fileName.setReadonly(isUpload);
 		this.uploadEntity.setMandatoryStyle(isUpload);
 		this.space_txtFileName.setSclass(isUpload ? PennantConstants.mandateSclass : "");
-		
+
 		// Set focus point
 		if (isUpload) {
 			this.uploadEntity.focus();
@@ -1309,27 +1312,28 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 		logger.debug("Leaving ");
 	}
-	
+
 	public void onCheck$downLoad(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		doClearMessage();
 		doCheckFields();
-		
-		/*this.downloadEntity.setValue(this.uploadEntity.getValue(), this.uploadEntity.getDescription());
-		this.fileName.setValue(this.txtFileName.getValue());
-		this.dateOfUpload.setValue(null);*/
-		
+
+		/*
+		 * this.downloadEntity.setValue(this.uploadEntity.getValue(), this.uploadEntity.getDescription());
+		 * this.fileName.setValue(this.txtFileName.getValue()); this.dateOfUpload.setValue(null);
+		 */
+
 		logger.debug("Leaving ");
 	}
-	
+
 	public void onCheck$upload(Event event) throws Exception {
 		logger.debug(Literal.ENTERING);
-		
+
 		this.downloadEntity.setValue("");
 		this.dateOfUpload.setValue(null);
 		this.fileName.setValue("");
-		
+
 		doClearMessage();
 		doCheckFields();
 		logger.debug(Literal.LEAVING);
@@ -1399,10 +1403,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aUploadHeader
-	 *            (UploadHeader)
+	 *        (UploadHeader)
 	 * 
 	 * @param tranType
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1489,10 +1493,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Get the result after processing DataBase Operations
 	 * 
 	 * @param auditHeader
-	 *            (AuditHeader)
+	 *        (AuditHeader)
 	 * 
 	 * @param method
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return boolean
 	 * 
@@ -1598,7 +1602,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.uploadHeader);
@@ -1608,7 +1612,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	private void refreshList() {
-		if(uploadListCtrl != null){
+		if (uploadListCtrl != null) {
 			uploadListCtrl.search();
 		}
 	}
@@ -1617,7 +1621,6 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected String getReference() {
 		return this.uploadHeader.getFileName();
 	}
-	
 
 	public void setValidationOn(boolean validationOn) {
 		this.validationOn = validationOn;
