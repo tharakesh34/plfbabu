@@ -172,7 +172,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			if (App.DATABASE == Database.POSTGRES) {
 				filtersFin[1] = new Filter("CLOSINGSTATUS", "", Filter.OP_NULL);
 			} else {
-				filtersFin[1] = new Filter("CLOSINGSTATUS", null, Filter.OP_EQUAL);
+				filtersFin[1] = new Filter("CLOSINGSTATUS", null, Filter.OP_NULL);
 
 			}
 
