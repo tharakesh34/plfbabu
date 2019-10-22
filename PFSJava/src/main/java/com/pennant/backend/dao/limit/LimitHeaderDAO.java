@@ -47,11 +47,11 @@ public interface LimitHeaderDAO {
 	int updateBlockLimit(long custId, long headerId, boolean blockLimit);
 
 	List<String> getLimitRuleFields();
-	
+
 	Customer getLimitFieldsByCustId(long custId, Set<String> ruleFields);
-	
+
 	List<FinanceMain> getLimitFieldsByCustId(long custId, Set<String> ruleFields, boolean orgination);
-	
+
 	List<FinanceMain> getInstitutionLimitFields(Set<String> ruleFields, String whereClause, boolean orgination);
 
 	FinanceType getLimitFieldsByFinTpe(String finType, Set<String> fields);

@@ -2955,7 +2955,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		lc.setParent(item);
 
 		ReceiptAllocationDetail xcess = receiptData.getReceiptHeader().getTotalXcess();
-		
+
 		//Issue Fixed 141140
 
 		addAmountCell(item, xcess.getTotalDue(), null, true);
@@ -3555,14 +3555,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// -TDS - Total Waiver)
 				closureReport.setTotalDues(closureReport.getLatePayCharges().add(closureReport.getPendingInsts())
 						.add(closureReport.getCheqBncCharges()).add(closureReport.getOutstandingPri())
-						.add(closureReport.getInstForTheMonth()).add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
+						.add(closureReport.getInstForTheMonth())
+						.add(closureReport.getForeClosFees().add(closureReport.getManualAdviceAmt()))
 						.subtract(closureReport.getTds()).subtract(closureReport.getTotWaiver()));
 				if (noOfIntDays > 0) {
 					closureReport
 							.setIntPerday(closureReport.getInstForTheMonth().divide(new BigDecimal(noOfIntDays), 2));
 				}
 				//Issue Fixed 141142
-				List<ReceiptAllocationDetail>  payableList =new ArrayList<ReceiptAllocationDetail>();
+				List<ReceiptAllocationDetail> payableList = new ArrayList<ReceiptAllocationDetail>();
 				payableList.add(receiptData.getReceiptHeader().getTotalXcess());
 				BigDecimal payableAmt = BigDecimal.ZERO;
 				for (ReceiptAllocationDetail recptAllctDetail : payableList) {
@@ -3588,7 +3589,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				Cloner clone = new Cloner();
 				Map<Date, BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
-				
+
 				int defaultDays = 7;
 				int noOfdays = DateUtility.getDaysBetween(chrgTillDate, financeMain.getMaturityDate());
 				if (defaultDays >= noOfdays) {
@@ -3602,12 +3603,9 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					BigDecimal amount = BigDecimal.ZERO;
 
 					/*
-					 * List<Date> presentmentDates =
-					 * receiptCalculator.getPresentmentDates(localReceiptData,
-					 * valueDate); // get presentment dates localReceiptData =
-					 * receiptCalculator.fetchODPenalties(localReceiptData,
-					 * valueDate,presentmentDates); // calculate late pay
-					 * penalties
+					 * List<Date> presentmentDates = receiptCalculator.getPresentmentDates(localReceiptData, valueDate);
+					 * // get presentment dates localReceiptData = receiptCalculator.fetchODPenalties(localReceiptData,
+					 * valueDate,presentmentDates); // calculate late pay penalties
 					 */ List<ReceiptAllocationDetail> allocationsList = localReceiptData.getReceiptHeader()
 							.getAllocations();
 					for (ReceiptAllocationDetail receiptAllocationDetail : allocationsList) {
@@ -3622,7 +3620,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 					next7DayMap.put(valueDate, amount);
 				}
-				
+
 				if (next7DayMap != null && next7DayMap.size() > 0) {
 					Date[] dates = (Date[]) next7DayMap.keySet().toArray(new Date[0]);
 					// setting next 7 days Dates

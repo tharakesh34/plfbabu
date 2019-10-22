@@ -118,7 +118,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerDAO customerDAO;
 
-	
 	private CreditApplicationReviewService creditApplicationReviewService;
 
 	/**
@@ -1904,6 +1903,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug("Leaving");
 		return response;
 	}
+
 	/**
 	 * Method for create CustomerGstInfoDetail in PLF system.
 	 * 
@@ -1934,17 +1934,15 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		// for logging purpose
 		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.TRAN_WF);
+		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(),
+				PennantConstants.TRAN_WF);
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerCardSalesInfoService.doValidations(customerCardSaleInfoDetails.getCustCardSales(),
-				PennantConstants.RECORD_TYPE_NEW);
-		
+		AuditDetail auditDetail = customerCardSalesInfoService
+				.doValidations(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.RECORD_TYPE_NEW);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
-		
-		
-		
+
 		CustomerCardSaleInfoDetails response = null;
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1962,7 +1960,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 
 	}
-	
+
 	/**
 	 * get CustomerGstInfoDetail by the given customer cif.
 	 * 
@@ -1992,7 +1990,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		return response;
 	}
-	
+
 	/**
 	 * Method for update CustomerGstInfoDetail in PLF system.
 	 * 
@@ -2022,11 +2020,12 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		// for logging purpose
 		APIErrorHandlerService.logReference(customerCardSaleInfoDetails.getCif());
-		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.TRAN_WF);
+		AuditHeader auditHeader = getAuditHeader(customerCardSaleInfoDetails.getCustCardSales(),
+				PennantConstants.TRAN_WF);
 
 		// validate customer details as per the API specification
-		AuditDetail auditDetail = customerCardSalesInfoService.doValidations(customerCardSaleInfoDetails.getCustCardSales(),
-				PennantConstants.RECORD_TYPE_UPD);
+		AuditDetail auditDetail = customerCardSalesInfoService
+				.doValidations(customerCardSaleInfoDetails.getCustCardSales(), PennantConstants.RECORD_TYPE_UPD);
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -2039,13 +2038,13 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getCustCardSales().getId());
-				
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService
+				.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getCustCardSales().getId());
 
 		if (custCardSalesInfo != null) {
 			// call update customer if there is no errors
-			response = customerDetailsController.updateCardSalestInformation(customerCardSaleInfoDetails.getCustCardSales(),
-					customerCardSaleInfoDetails.getCif());
+			response = customerDetailsController.updateCardSalestInformation(
+					customerCardSaleInfoDetails.getCustCardSales(), customerCardSaleInfoDetails.getCif());
 		} else {
 			response = new WSReturnStatus();
 			String[] valueParm = new String[2];
@@ -2058,7 +2057,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 
 	}
-	
+
 	/**
 	 * delete CustomerGstInfoDetail.
 	 * 
@@ -2090,9 +2089,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-		
-		CustCardSales custCardSalesInfo = customerCardSalesInfoService.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getId());
-		
+
+		CustCardSales custCardSalesInfo = customerCardSalesInfoService
+				.getCustomerCardSalesInfoById(customerCardSaleInfoDetails.getId());
 
 		if (custCardSalesInfo != null) {
 			// call delete customer service
@@ -2465,7 +2464,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		}
 		WSReturnStatus response = null;
 		// validate Customer with given CustCIF
-	
+
 		CustomerExtLiability liability = new CustomerExtLiability();
 		liability.setCustId(customerExtLiability.getCustId());
 		liability.setSeqNo(customerExtLiabilityDetail.getLiabilitySeq());
@@ -2918,7 +2917,6 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return response;
 	}
 
-	
 	@Override
 	public CustValidationResponse doCustomerValidation(String coreBankId) throws ServiceException {
 		// Mandatory validation
@@ -3056,8 +3054,9 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	 */
 	private AuditHeader getAuditHeader(CustCardSales aCustCardSales, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aCustCardSales.getBefImage(), aCustCardSales);
-		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()), null,
-				null, auditDetail, aCustCardSales.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+		return new AuditHeader(String.valueOf(aCustCardSales.getCustID()), String.valueOf(aCustCardSales.getCustID()),
+				null, null, auditDetail, aCustCardSales.getUserDetails(),
+				new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	/**
@@ -3072,7 +3071,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		return new AuditHeader(String.valueOf(aCustomerGST.getCustId()), String.valueOf(aCustomerGST.getCustId()), null,
 				null, auditDetail, aCustomerGST.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
-	
+
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -3314,15 +3313,17 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setCustomerGstService(CustomerGstService customerGstService) {
 		this.customerGstService = customerGstService;
 	}
-     
+
 	@Autowired
 	public void setCustomerCardSalesInfoService(CustomerCardSalesInfoService customerCardSalesInfoService) {
 		this.customerCardSalesInfoService = customerCardSalesInfoService;
 	}
+
 	@Autowired
 	public CustomerCardSalesInfoDAO getCustomerCardSalesInfoDAO() {
 		return customerCardSalesInfoDAO;
 	}
+
 	@Autowired
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
@@ -3332,5 +3333,4 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
 
-	
 }

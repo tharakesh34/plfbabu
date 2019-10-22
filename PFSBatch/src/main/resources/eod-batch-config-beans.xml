@@ -44,9 +44,8 @@
 	<!-- Finance Schedule Details -->
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
 		parent="basicDao" />
-		
-	<bean id="irrScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.IRRScheduleDetailDAOImpl"
-		parent="basicDao" />
+
+	<bean id="irrScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.IRRScheduleDetailDAOImpl" parent="basicDao" />
 
 	<!-- Profit Details -->
 	<bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
@@ -849,7 +848,7 @@
 
 	<!-- GSTRate -->
 	<bean id="gstRateDAO" class="com.pennant.backend.dao.rmtmasters.impl.GSTRateDAOImpl" parent="sequenceDao" />
-	
+
 	<bean id="customerGstDetailDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerGstDetailDAOImpl"
 		parent="sequenceDao" />
 

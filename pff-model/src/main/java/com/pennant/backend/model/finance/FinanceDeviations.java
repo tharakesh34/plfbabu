@@ -45,7 +45,7 @@ public class FinanceDeviations extends AbstractWorkflowEntity implements java.io
 	private String severityCode;
 	private String severityName;
 	private boolean markDeleted;
-	private String  raisedUser;
+	private String raisedUser;
 
 	public FinanceDeviations() {
 		super();

@@ -313,6 +313,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return getPaymentHeaderDAO().getManualAdviseForEnquiry(finReference);
 	}
 
+
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do

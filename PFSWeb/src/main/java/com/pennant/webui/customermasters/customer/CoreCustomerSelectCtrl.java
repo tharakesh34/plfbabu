@@ -747,6 +747,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			com.pennant.Interface.service.CustomerInterfaceService customerInterfaceService) {
 		this.customerInterfaceService = customerInterfaceService;
 	}
+
 	public void setPrimaryAccountService(PrimaryAccountService primaryAccountService) {
 		this.primaryAccountService = primaryAccountService;
 	}

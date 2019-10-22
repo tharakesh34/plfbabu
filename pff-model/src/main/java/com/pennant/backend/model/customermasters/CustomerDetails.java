@@ -192,11 +192,11 @@ public class CustomerDetails implements java.io.Serializable {
 
 	private boolean cibilExecuted = false;
 	private boolean cibilALreadyRun = false;
-	
+
 	//used for Interfaces
-	private Long usrID; 
+	private Long usrID;
 	private String usrLogin;
-	private String matches; 	//used for Interfaces(Hunter)
+	private String matches; //used for Interfaces(Hunter)
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -657,7 +657,7 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setUsrLogin(String usrLogin) {
 		this.usrLogin = usrLogin;
 	}
-	
+
 	public String getMatches() {
 		return matches;
 	}

@@ -173,8 +173,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
-			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL), new Filter("NextRoleCode",
-					"%MAKER%", Filter.OP_LIKE));
+			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL),
+					new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE));
 		} else if (JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
 			Filter[] filters = new Filter[2];
 			filters[0] = new Filter("Module", JvPostingConstants.MISCELLANEOUSPOSTING_MODULE, Filter.OP_EQUAL);
@@ -184,8 +184,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 			Filter[] filters = new Filter[1];
 			filters[0] = new Filter("Module", UploadConstants.MODULE_MANUAL_ADVISE, Filter.OP_EQUAL);
 			this.searchObject.addFilters(filters);
-			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL), new Filter("NextRoleCode",
-					"%MAKER%", Filter.OP_LIKE));
+			this.searchObject.addFilterOr(new Filter("NextRoleCode", null, Filter.OP_EQUAL),
+					new Filter("NextRoleCode", "%MAKER%", Filter.OP_LIKE));
 
 		} else if (UploadConstants.MANUAL_ADVISE_APPROVER.equals(this.module)) {
 			Filter[] filters = new Filter[2];
@@ -360,8 +360,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		if (JvPostingConstants.MISCELLANEOUSPOSTING_MAKER.equals(this.module)
 				|| JvPostingConstants.MISCELLANEOUSPOSTING_APPROVER.equals(this.module)) {
-			uploadHeader.setMiscPostingUploads(uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader
-					.getUploadId()));
+			uploadHeader.setMiscPostingUploads(
+					uploadHeaderService.getMiscPostingUploadListByUploadId(uploadHeader.getUploadId()));
 		}
 		// Check whether the user has authority to change/view the record.
 		String whereCond = " UploadId = '" + uploadHeader.getUploadId() + "' AND version=" + uploadHeader.getVersion()
@@ -472,8 +472,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 
 		//if the file is not downloaded at least one time after maker
 		if (CollectionUtils.isNotEmpty(downloadUploadIDList)) {
-			MessageUtil.showError("Upload id's:" + downloadUploadIDList
-					+ " is not download, please download atleast one time");
+			MessageUtil.showError(
+					"Upload id's:" + downloadUploadIDList + " is not download, please download atleast one time");
 			return false;
 		}
 		//Check Authority
@@ -697,8 +697,8 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 				aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
 
 			} else {
-				aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels
-						.getLabel("InvalidWorkFlowMethod"), null));
+				aAuditHeader.setErrorDetails(
+						new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
 				retValue = ErrorControl.showErrorControl(this.window_UploadList, aAuditHeader);
 				return processCompleted;
 			}

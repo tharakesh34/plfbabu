@@ -1495,7 +1495,7 @@ public class CustomerController {
 
 	public WSReturnStatus doAddCreditReviewDetails(FinCreditReviewDetailsData finCreditReviewDetailsData) {
 		logger.debug("ENTERING");
-		WSReturnStatus response=null;
+		WSReturnStatus response = null;
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		Map<String, List<FinCreditReviewSummary>> creditReviewSummaryMap;
 		Map<String, BigDecimal> prv1YearValuesMap = null;
@@ -1776,11 +1776,11 @@ public class CustomerController {
 				auditHeader.setApiHeader(reqHeaderDetails);
 				auditHeader = creditApplicationReviewService.doApprove(auditHeader);
 				response = new WSReturnStatus();
-				response= APIErrorHandlerService.getSuccessStatus();
+				response = APIErrorHandlerService.getSuccessStatus();
 				return response;
 			} catch (Exception e) {
 				logger.error("Exception", e);
-				response= APIErrorHandlerService.getFailedStatus();
+				response = APIErrorHandlerService.getFailedStatus();
 				return response;
 			}
 		}

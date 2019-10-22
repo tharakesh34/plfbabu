@@ -162,7 +162,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	protected Label lbl_Currency;
 	protected Label lbl_startDate;
 	protected Label lbl_MaturityDate;
-	
+
 	protected Textbox tranModule;
 	protected Textbox tranReference;
 	protected Textbox tranBatch;
@@ -199,10 +199,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private Grid grid_basicDetails;
 	private Map<String, BigDecimal> taxPercMap = null;
 	private boolean isFromCustomerPaymentMenu = false;
-	private PaymentTransaction paymentTransaction ;
+	private PaymentTransaction paymentTransaction;
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private Button btnSave_payment;
-
 
 	/**
 	 * default constructor.<br>
@@ -243,7 +242,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			}
 			this.paymentHeaderListCtrl = (PaymentHeaderListCtrl) arguments.get("paymentHeaderListCtrl");
 			this.financeMain = (FinanceMain) arguments.get("financeMain");
-			
+
 			if (arguments.containsKey("customerPaymentTxnsListCtrl")) {
 				customerPaymentTxnsListCtrl = (CustomerPaymentTxnsListCtrl) arguments
 						.get("customerPaymentTxnsListCtrl");
@@ -252,7 +251,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				this.isFromCustomerPaymentMenu = (boolean) arguments.get("isFromCustomerPaymentMenu");
 				this.paymentTransaction = (PaymentTransaction) arguments.get("paymentTransaction");
 			}
-			
+
 			if (this.paymentHeader == null) {
 				throw new Exception(Labels.getLabel("error.unhandled"));
 			}
@@ -279,7 +278,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			doShowDialog(this.paymentHeader);
 			this.listBoxPaymentTypeInstructions
 					.setHeight(getListBoxHeight(this.grid_basicDetails.getRows().getVisibleItemCount() + 3));
-			
+
 			processPaymentInstructionDetails();
 		} catch (Exception e) {
 			closeDialog();
@@ -290,7 +289,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	private void processPaymentInstructionDetails() {
 		logger.debug(Literal.ENTERING);
 		if (isFromCustomerPaymentMenu) {
@@ -313,13 +312,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			this.paymentId.setValue(this.paymentTransaction.getPaymentId());
 			this.statusCode.setValue(this.paymentTransaction.getStatusCode());
 			this.statusDesc.setValue(this.paymentTransaction.getStatusDesc());
-			String tranStatus="";
-			if("P".equals(this.paymentTransaction.getTranStatus())){
-				tranStatus=DisbursementConstants.STATUS_PAID;
-			}else if("R".equals(this.paymentTransaction.getTranStatus())){
-				tranStatus=DisbursementConstants.STATUS_REJECTED;
+			String tranStatus = "";
+			if ("P".equals(this.paymentTransaction.getTranStatus())) {
+				tranStatus = DisbursementConstants.STATUS_PAID;
+			} else if ("R".equals(this.paymentTransaction.getTranStatus())) {
+				tranStatus = DisbursementConstants.STATUS_REJECTED;
 			}
-			fillComboBox(this.tranStatus,tranStatus, PennantStaticListUtil.getDisbursementStatus(), "");
+			fillComboBox(this.tranStatus, tranStatus, PennantStaticListUtil.getDisbursementStatus(), "");
 
 		}
 		logger.debug(Literal.LEAVING);
@@ -330,7 +329,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		doSavebtnSave_payment();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
-	
+
 	public void doSavebtnSave_payment() throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
@@ -1341,14 +1340,14 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detailList.add(paymentDetail);
 			}
 		}
-		
+
 		List<ManualAdvise> manualAdviseList = null;
 		if (enqiryModule) {
 			manualAdviseList = this.paymentHeaderService.getManualAdviseForEnquiry(this.financeMain.getFinReference());
 		} else {
 			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinReference());
 		}
-		
+
 		if (CollectionUtils.isNotEmpty(manualAdviseList)) {
 			for (ManualAdvise manualAdvise : manualAdviseList) {
 				paymentDetail = new PaymentDetail();
@@ -1366,7 +1365,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				detailList.add(paymentDetail);
 			}
 		}
-		
+
 		if (aPaymentHeader.isNewRecord()) {
 			for (PaymentDetail detail : detailList) {
 				if (BigDecimal.ZERO.compareTo(detail.getAvailableAmount()) == -1) {
@@ -1410,7 +1409,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 				String taxType = detail.getTaxComponent();
 				taxDetail.setTaxComponent(taxType);
-				
+
 				if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 
 					if (cgstPerc.compareTo(BigDecimal.ZERO) > 0) {
@@ -1444,7 +1443,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					taxDetail.setDueGST(gstAmount);
 
 				} else if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
-					
+
 					TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(detail.getAvailableAmount(), taxPercMap);
 					taxDetail.setDueCGST(taxSplit.getcGST());
 					taxDetail.setDueSGST(taxSplit.getsGST());
@@ -1628,7 +1627,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 				taxPercMap = getReceiptCalculator().getTaxPercentages(financeDetail);
 			}
-			
+
 			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(detail.getAmount(), taxPercMap);
 			taxDetail.setPaidCGST(taxSplit.getcGST());
 			taxDetail.setPaidSGST(taxSplit.getsGST());
@@ -1657,12 +1656,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		BigDecimal dueGSTExclusive = BigDecimal.ZERO;
 		BigDecimal payAmount = BigDecimal.ZERO;
 		this.listheader_PaymentHeaderDialog_button.setVisible(false);
-		
+
 		// Total Avaliable Amount for ManualAdvise
 		if (CollectionUtils.isNotEmpty(paymentDetaislList)) {
-			
+
 			for (PaymentDetail paymentDetail : paymentDetaislList) {
-				
+
 				if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 					this.listheader_PaymentHeaderDialog_button.setVisible(true);
 					amtType = paymentDetail.getAmountType();

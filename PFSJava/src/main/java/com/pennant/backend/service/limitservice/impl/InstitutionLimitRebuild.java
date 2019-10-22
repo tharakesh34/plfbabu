@@ -123,7 +123,7 @@ public class InstitutionLimitRebuild {
 
 		// Fetch LimitHeader Details
 		List<LimitHeader> limitHeaderList = limitHeaderDAO.getLimitHeaders(TableType.MAIN_TAB.getSuffix());
-		
+
 		Map<String, Set<String>> fieldMap = getLimitFieldMap();
 
 		for (LimitHeader limitHeader : limitHeaderList) {
@@ -141,7 +141,7 @@ public class InstitutionLimitRebuild {
 
 			// Finance List Based on SQL Rule
 			String sqlQuery = limitFilterQuery.getSQLQuery();
-						
+
 			List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
 			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
 			financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
@@ -160,7 +160,7 @@ public class InstitutionLimitRebuild {
 			for (Entry<Long, List<FinanceMain>> entry : custmains.entrySet()) {
 				processInstutionalLimit(limitHeader, limitDetailsList, entry.getValue(), fieldMap);
 			}
-		
+
 			// Update Limit Details
 			limitDetailDAO.updateReserveUtiliseList(limitDetailsList, "");
 		}
@@ -181,10 +181,10 @@ public class InstitutionLimitRebuild {
 		if (finMains == null || finMains.isEmpty()) {
 			return;
 		}
-		
+
 		Map<String, FinanceType> finTypeMap = new HashMap<>();
 		FinanceType financeType = null;
-		
+
 		for (FinanceMain finMain : finMains) {
 
 			String finType = finMain.getFinType();
@@ -524,11 +524,11 @@ public class InstitutionLimitRebuild {
 		logger.debug(" Leaving ");
 		return list;
 	}
-	
+
 	private FinanceType getFinanceTye(String finType, Set<String> fields) {
 		return limitHeaderDAO.getLimitFieldsByFinTpe(finType, fields);
 	}
-	
+
 	private Map<String, Set<String>> getLimitFieldMap() {
 		Map<String, Set<String>> limitFieldMap = new HashMap<>();
 

@@ -9,7 +9,7 @@ public class GSTINInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String gSTNNumber; // gstin
 	private String legelName; // lgnm
 	private String tradeName; // tradeNam
@@ -30,8 +30,8 @@ public class GSTINInfo implements Serializable {
 	private String cif;
 	private Long usrID;
 	private String usrLogin;
-	
-	public GSTINInfo () {
+
+	public GSTINInfo() {
 		super();
 	}
 

@@ -486,26 +486,26 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	private void renderSummary() {
 
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			// Monthly Balance Amount
 			BigDecimal balanceSum = BigDecimal.ZERO;
 			BigDecimal balanceAvg = BigDecimal.ZERO;
-			
+
 			int dataItems = 0;
-			
+
 			int count = 0;
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
-			
+
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					dataItems++;
-					
+
 					List<Listcell> listcels = listItem.getChildren();
 
 					for (Listcell listcell : listcels) {
@@ -517,9 +517,9 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 						id = id.replaceAll("\\d", "");
 						if (StringUtils.equals(id, "balance")) {
-							
+
 							String[] array = configDay.split(",");
-							
+
 							for (int i = 1; i <= array.length; i++) {
 								CurrencyBox balanceValue = (CurrencyBox) listcell.getFellowIfAny(
 										"balance_currency".concat(String.valueOf(bankInfoDetail.getKeyValue()))
@@ -537,8 +537,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (balanceSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(count, 0);
-				balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
-						RoundingMode.HALF_DOWN);
+				balanceAvg = PennantApplicationUtil.unFormateAmount(balanceSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Debit Transaction Count
@@ -552,7 +552,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "debitNo");
 					Intbox dbtTransactionCountAmount = (Intbox) hbox.getLastChild();
 					Clients.clearWrongValue(dbtTransactionCountAmount);
@@ -565,14 +565,15 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (dbtTransactionCountSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				debitTransactionCountAvg = PennantApplicationUtil.unFormateAmount(dbtTransactionCountSum, PennantConstants.defaultCCYDecPos)
+				debitTransactionCountAvg = PennantApplicationUtil
+						.unFormateAmount(dbtTransactionCountSum, PennantConstants.defaultCCYDecPos)
 						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Debit Amount
 			BigDecimal debitAmtSum = BigDecimal.ZERO;
 			BigDecimal debitAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
@@ -580,7 +581,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "debitAmt");
 					CurrencyBox debitAmount = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(debitAmount);
@@ -592,23 +593,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (debitAmtSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				debitAvg = PennantApplicationUtil.unFormateAmount(debitAmtSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
-						RoundingMode.HALF_DOWN);
+				debitAvg = PennantApplicationUtil.unFormateAmount(debitAmtSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// credit Transaction Count
 			BigDecimal creditTransactionCountSum = BigDecimal.ZERO;
 			BigDecimal creditTransactionCountAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "creditNo");
 					Intbox creditTransactionCountAmount = (Intbox) hbox.getLastChild();
 					Clients.clearWrongValue(creditTransactionCountAmount);
@@ -621,23 +622,24 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (creditTransactionCountSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				creditTransactionCountAvg = PennantApplicationUtil.unFormateAmount(creditTransactionCountSum, PennantConstants.defaultCCYDecPos)
+				creditTransactionCountAvg = PennantApplicationUtil
+						.unFormateAmount(creditTransactionCountSum, PennantConstants.defaultCCYDecPos)
 						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Credit Amount
 			BigDecimal creditAmtSum = BigDecimal.ZERO;
 			BigDecimal creditAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "creditAmt");
 					CurrencyBox creditAmount = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(creditAmount);
@@ -649,23 +651,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (creditAmtSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				creditAvg = PennantApplicationUtil.unFormateAmount(creditAmtSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
-						RoundingMode.HALF_DOWN);
+				creditAvg = PennantApplicationUtil.unFormateAmount(creditAmtSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Inward Amount
 			BigDecimal bounceInwardSum = BigDecimal.ZERO;
 			BigDecimal inwardAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "bounceInWard");
 					CurrencyBox bounceInwardAmount = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(bounceInwardAmount);
@@ -677,23 +679,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (bounceInwardSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				inwardAvg = PennantApplicationUtil.unFormateAmount(bounceInwardSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
-						RoundingMode.HALF_DOWN);
+				inwardAvg = PennantApplicationUtil.unFormateAmount(bounceInwardSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Outward Amount
 			BigDecimal bounceOutwardSum = BigDecimal.ZERO;
 			BigDecimal outwardAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "bounceOutWard");
 					CurrencyBox bounceOutwardAmount = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(bounceOutwardAmount);
@@ -705,23 +707,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (bounceOutwardSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal divider = BigDecimal.valueOf(dataItems, 0);
-				outwardAvg = PennantApplicationUtil.unFormateAmount(bounceOutwardSum, PennantConstants.defaultCCYDecPos).divide(divider, 0,
-						RoundingMode.HALF_DOWN);
+				outwardAvg = PennantApplicationUtil.unFormateAmount(bounceOutwardSum, PennantConstants.defaultCCYDecPos)
+						.divide(divider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// Closing Balance
 			BigDecimal clsBalSum = BigDecimal.ZERO;
 			BigDecimal clsBalAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "closingBal");
 					CurrencyBox clsBal = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(clsBal);
@@ -733,23 +735,23 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (dataItems > 0) {
 				BigDecimal clsBalDivider = BigDecimal.valueOf(dataItems, 0);
-				clsBalAvg = PennantApplicationUtil.unFormateAmount(clsBalSum, PennantConstants.defaultCCYDecPos).divide(clsBalDivider, 0,
-						RoundingMode.HALF_DOWN);
+				clsBalAvg = PennantApplicationUtil.unFormateAmount(clsBalSum, PennantConstants.defaultCCYDecPos)
+						.divide(clsBalDivider, 0, RoundingMode.HALF_DOWN);
 			}
 
 			// add summary list item
 			BigDecimal odCCSum = BigDecimal.ZERO;
 			BigDecimal odCCAvg = BigDecimal.ZERO;
-			
+
 			if (this.listBoxAccBehaviour.getItems() != null && !this.listBoxAccBehaviour.getItems().isEmpty()) {
 				for (Listitem listItem : this.listBoxAccBehaviour.getItems()) {
-					
+
 					BankInfoDetail bankInfoDetail = (BankInfoDetail) listItem.getAttribute("data");
 
 					if (bankInfoDetail == null) {
 						continue;
 					}
-					
+
 					Hbox hbox = (Hbox) getComponent(listItem, "odCCLimit");
 					CurrencyBox odccValue = (CurrencyBox) hbox.getLastChild();
 					Clients.clearWrongValue(odccValue);
@@ -761,10 +763,10 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 
 			if (odCCSum.compareTo(BigDecimal.ZERO) > 0) {
 				BigDecimal odCCSumDivider = BigDecimal.valueOf(dataItems, 0);
-				odCCAvg = PennantApplicationUtil.unFormateAmount(odCCSum, PennantConstants.defaultCCYDecPos).divide(odCCSumDivider, 0,
-						RoundingMode.HALF_DOWN);
+				odCCAvg = PennantApplicationUtil.unFormateAmount(odCCSum, PennantConstants.defaultCCYDecPos)
+						.divide(odCCSumDivider, 0, RoundingMode.HALF_DOWN);
 			}
-			
+
 			if (this.listBoxAccBehaviour.getFellowIfAny("item_Sum") != null) {
 				Listitem item = (Listitem) this.listBoxAccBehaviour.getFellow("item_Sum");
 				listBoxAccBehaviour.removeItemAt(item.getIndex());
@@ -773,7 +775,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				Listitem item = (Listitem) this.listBoxAccBehaviour.getFellow("item_Avg");
 				listBoxAccBehaviour.removeItemAt(item.getIndex());
 			}
-			
+
 			Listcell listcell;
 			Listitem item;
 
@@ -783,7 +785,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(Labels.getLabel("label_CustomerBankInfoDialog_Sum.value"));
 			listcell.setStyle("font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(String.valueOf(balanceSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
@@ -803,11 +805,11 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(String.valueOf(creditAmtSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(String.valueOf(bounceInwardSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(String.valueOf(bounceOutwardSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
@@ -819,12 +821,12 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(String.valueOf(odCCSum));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell("");
 			listcell.setParent(item);
-			
+
 			this.listBoxAccBehaviour.appendChild(item);
-			
+
 			//Average
 			item = new Listitem();
 			item.setId("item_Avg");
@@ -832,31 +834,35 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell.setStyle("font-weight:bold");
 			listcell.setParent(item);
 
-			listcell = new Listcell(PennantApplicationUtil.amountFormate(balanceAvg, PennantConstants.defaultCCYDecPos));
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(balanceAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			listcell = new Listcell(PennantApplicationUtil.amountFormate(debitTransactionCountAvg, PennantConstants.defaultCCYDecPos));
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(debitTransactionCountAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(debitAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			listcell = new Listcell(PennantApplicationUtil.amountFormate(creditTransactionCountAvg, PennantConstants.defaultCCYDecPos));
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(creditTransactionCountAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(creditAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(inwardAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
-			listcell = new Listcell(PennantApplicationUtil.amountFormate(outwardAvg, PennantConstants.defaultCCYDecPos));
+			listcell = new Listcell(
+					PennantApplicationUtil.amountFormate(outwardAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
 
@@ -867,16 +873,16 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			listcell = new Listcell(PennantApplicationUtil.amountFormate(odCCAvg, PennantConstants.defaultCCYDecPos));
 			listcell.setStyle("text-align:right;font-weight:bold");
 			listcell.setParent(item);
-			
+
 			listcell = new Listcell("");
 			listcell.setParent(item);
-			
+
 			this.listBoxAccBehaviour.appendChild(item);
-			
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1133,7 +1139,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 		listItem.setAttribute("data", bankInfoDetail);
 		this.listBoxAccBehaviour.appendChild(listItem);
 	}
-	
+
 	public void onChangeConfigDay(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -1845,7 +1851,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				Intbox debitNo = (Intbox) hbox3.getLastChild();
 				Clients.clearWrongValue(debitNo);
 				if (!debitNo.isReadonly() && debitNo.getValue() == null) {
-					throw new WrongValueException(debitNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
+					throw new WrongValueException(debitNo,
+							Labels.getLabel("FIELD_IS_MAND", new String[] { "Debit No" }));
 				} else if (!debitNo.isReadonly() && debitNo.getValue() <= 0) {
 					throw new WrongValueException(debitNo,
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Debit No" }));
@@ -1877,7 +1884,8 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 				Intbox creditNo = (Intbox) hbox5.getLastChild();
 				Clients.clearWrongValue(creditNo);
 				if (!creditNo.isReadonly() && creditNo.getValue() == null) {
-					throw new WrongValueException(creditNo, Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
+					throw new WrongValueException(creditNo,
+							Labels.getLabel("FIELD_IS_MAND", new String[] { "Credit No" }));
 				} else if (!creditNo.isReadonly() && creditNo.getValue() <= 0) {
 					throw new WrongValueException(creditNo,
 							Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Credit No" }));
@@ -1987,24 +1995,24 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 	}
 
 	private BankInfoDetail getDayBalanceList(Listitem listitem, String listcellId, BankInfoDetail bankInfoDetail) {
-		
+
 		if (bankInfoDetail != null) {
 			List<Listcell> listcels = listitem.getChildren();
 			BigDecimal balance = BigDecimal.ZERO;
 			List<BankInfoSubDetail> list = bankInfoDetail.getBankInfoSubDetails();
 			for (Listcell listcell : listcels) {
 				String id = StringUtils.trimToNull(listcell.getId());
-				
+
 				if (id == null) {
 					continue;
 				}
-				
+
 				id = id.replaceAll("\\d", "");
 				if (StringUtils.equals(id, listcellId)) {
-					
+
 					int i = 0;
 					for (String day : configDay.split(",")) {
-						
+
 						try {
 							Integer.parseInt(StringUtils.trim(day));
 						} catch (NumberFormatException e) {
@@ -2023,7 +2031,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 							throw new WrongValueException(balanceValue,
 									Labels.getLabel("CONST_NO_EMPTY_NEGATIVE_ZERO", new String[] { "Balance" }));
 						}
-						
+
 						BankInfoSubDetail subDetail = null;
 						if (list != null && !list.isEmpty()) {
 							for (BankInfoSubDetail subDtl : list) {
@@ -2032,7 +2040,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 								}
 							}
 						}
-						
+
 						if (subDetail == null) {
 							subDetail = new BankInfoSubDetail();
 							subDetail.setMonthYear(bankInfoDetail.getMonthYear());
@@ -2045,7 +2053,7 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			}
 			bankInfoDetail.setBankInfoSubDetails(list);
 		}
-		
+
 		return bankInfoDetail;
 	}
 

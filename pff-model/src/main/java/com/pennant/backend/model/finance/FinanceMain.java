@@ -4502,7 +4502,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setbRRpyRvwFrq(String bRRpyRvwFrq) {
 		this.bRRpyRvwFrq = bRRpyRvwFrq;
 	}
- 
+
 	public BigDecimal getTotalFinAmount() {
 		return totalFinAmount;
 	}
@@ -4510,6 +4510,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setTotalFinAmount(BigDecimal totalFinAmount) {
 		this.totalFinAmount = totalFinAmount;
 	}
+
 	public BigDecimal getAppliedLoanAmt() {
 		return appliedLoanAmt;
 	}
@@ -4517,7 +4518,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	public void setAppliedLoanAmt(BigDecimal appliedLoanAmt) {
 		this.appliedLoanAmt = appliedLoanAmt;
 	}
-	
+
 	public boolean isFinIsRateRvwAtGrcEnd() {
 		return finIsRateRvwAtGrcEnd;
 	}

@@ -702,7 +702,8 @@ public class PartnerBankDialogCtrl extends GFCBaseCtrl<PartnerBank> {
 		aPartnerBank.setPartnerBankModesList(partneBankModesList);
 
 		try {
-			if (this.alwBankBranchCode.getValue() != null && StringUtils.isNotBlank(this.alwBankBranchCode.getValue())) {
+			if (this.alwBankBranchCode.getValue() != null
+					&& StringUtils.isNotBlank(this.alwBankBranchCode.getValue())) {
 				prepareCashModes(this.alwBankBranchCode.getValue(), DisbursementConstants.PAYMENT_TYPE_CASH,
 						partnerBranchModesList);
 			}

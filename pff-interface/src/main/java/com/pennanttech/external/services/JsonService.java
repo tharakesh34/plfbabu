@@ -75,7 +75,8 @@ public abstract class JsonService<T> {
 
 	protected JsonServiceDetail processMessage(JsonServiceDetail serviceDetail) {
 		logger.debug(Literal.ENTERING);
-		InterfaceLogDetail logDetail =  new InterfaceLogDetail();;
+		InterfaceLogDetail logDetail = new InterfaceLogDetail();
+		;
 
 		if (serviceDetail.isXmlRequest()) {
 			serviceDetail.setRequestString(getObjectToXML(serviceDetail));
@@ -91,7 +92,6 @@ public abstract class JsonService<T> {
 		}
 		logDetail.setEndPoint(url);
 
-		
 		if (StringUtils.isNotEmpty(url)) {
 			UriComponentsBuilder componentsBuilder = UriComponentsBuilder.fromUriString(url);
 			if (MapUtils.isNotEmpty(serviceDetail.getPathParams())) {
@@ -121,7 +121,7 @@ public abstract class JsonService<T> {
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
 				getHttpHeader(serviceDetail.getHeaders(), serviceDetail.isXmlRequest()));
 		ResponseEntity<String> response = null;
-	
+
 		String errorCode = "0000";
 		String errorDesc = null;
 		String status = InterfaceConstants.STATUS_SUCCESS;
@@ -130,16 +130,16 @@ public abstract class JsonService<T> {
 
 			logDetail.setReference(serviceDetail.getReference());
 			logDetail.setServiceName(serviceDetail.getServiceName());
-			if(serviceDetail.getMethod()==HttpMethod.GET){
+			if (serviceDetail.getMethod() == HttpMethod.GET) {
 				logDetail.setRequest(url);
-			}else{
-				if(StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))){
+			} else {
+				if (StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))) {
 					logDetail.setRequest(serviceDetail.getRequestString());
-				}else{
-					logDetail.setRequest(StringUtils.left(serviceDetail.getRequestString(), 1000));	
+				} else {
+					logDetail.setRequest(StringUtils.left(serviceDetail.getRequestString(), 1000));
 				}
 			}
-			
+
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
 			response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
@@ -167,9 +167,9 @@ public abstract class JsonService<T> {
 		} finally {
 			logger.trace(String.format("Response Data %s", serviceDetail.getResponseString()));
 			if (logDetail != null) {
-				if(StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))){
+				if (StringUtils.equalsIgnoreCase("Y", App.getProperty("external.interface.fulllog"))) {
 					logDetail.setResponse(serviceDetail.getResponseString());
-				}else{
+				} else {
 					logDetail.setResponse(StringUtils.left(serviceDetail.getResponseString(), 1000));
 				}
 				logDetail.setRespReceivedOn(new Timestamp(System.currentTimeMillis()));

@@ -71,14 +71,14 @@ public class UploadListModelItemRenderer implements ListitemRenderer<UploadHeade
 	@Override
 	public void render(Listitem item, UploadHeader uploadHeader, int count) throws Exception {
 
-		((Listbox)item.getParent()).setMultiple(true);
+		((Listbox) item.getParent()).setMultiple(true);
 		Listcell lc;
 		lc = new Listcell(String.valueOf(uploadHeader.getUploadId()));
 		lc.setParent(item);
 		// File Name
 		lc = new Listcell(uploadHeader.getFileName());
 		lc.setParent(item);
-		lc= new Listcell(DateUtility.format(uploadHeader.getTransactionDate(),DateFormat.LONG_DATE.getPattern()));
+		lc = new Listcell(DateUtility.format(uploadHeader.getTransactionDate(), DateFormat.LONG_DATE.getPattern()));
 		lc.setParent(item);
 		lc = new Listcell(uploadHeader.getUserName());
 		lc.setParent(item);

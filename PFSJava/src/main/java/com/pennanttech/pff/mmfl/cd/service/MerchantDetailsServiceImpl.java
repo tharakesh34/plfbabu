@@ -179,7 +179,7 @@ public class MerchantDetailsServiceImpl extends GenericService<MerchantDetails> 
 			parameters[0] = PennantJavaUtil.getLabel("label_MerchantDetails_StoreId.value") + ": " + storeId;
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", parameters, null));
 		}
-		
+
 		if (merchantDetails.isNew() && PennantConstants.RECORD_TYPE_NEW.equals(merchantDetails.getRecordType())
 				&& merchantDetailsDAO.isDuplicatePOSIdKey(merchantDetails,
 						merchantDetails.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {

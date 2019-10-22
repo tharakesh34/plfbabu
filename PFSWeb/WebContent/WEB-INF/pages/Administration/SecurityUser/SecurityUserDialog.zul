@@ -124,25 +124,11 @@
 														value="${c:l('label_SecurityUserDialog_UsrPwd.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<textbox type="password" sclass="z-textbox-loginPassword"
-															id="txtbox_Password" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();"
-															maxlength="50" width="180px" height="24px">
-															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
-														</textbox>
+														<h:input type="password" class="z-textbox" id="txtbox_Password"/>
 														<textbox type="password" id="txtbox_Password1"
 															visible="false">
 															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 														</textbox>
-														<vbox>
-															<hbox>
-																<label value="${c:l('label_PasswordCriteria.value')}"
-																	style="text-decoration:underline">
-																</label>
-																<label id="label_PwdStatus"></label>
-															</hbox>
-															<div id="div_PwdStatusMeter" width="200PX" height="5px">
-															</div>
-														</vbox>
 													</hbox>
 												</row>
 												<row id="rowSecurityUserDialogUsrConfirmPwd">
@@ -150,11 +136,7 @@
 														value="${c:l('label_SecurityUserDialog_UsrconfirmPwd.value')}" />
 													<hbox>
 														<space spacing="2px" sclass="mandatory" />
-														<textbox type="password" sclass="z-textbox-loginPassword"
-															id="txtbox_confirm_Password" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();"
-															maxlength="50" width="180px" height="24px">
-															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
-														</textbox>
+														<h:input type="password" class="z-textbox" id="txtbox_confirm_Password"/>
 														<textbox type="password" id="txtbox_confirm_Password1"
 															visible="false">
 															<custom-attributes org.zkoss.zk.ui.updateByClient="true" />

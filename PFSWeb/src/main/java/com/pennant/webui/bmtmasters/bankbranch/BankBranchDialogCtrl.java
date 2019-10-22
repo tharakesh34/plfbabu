@@ -71,7 +71,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -216,7 +215,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		this.parentBranch.setModuleName("BankBranch");
 		this.parentBranch.setValueColumn("BranchCode");
 		this.parentBranch.setDescColumn("BranchDesc");
-	    this.parentBranch.setDisplayStyle(2);
+		this.parentBranch.setDisplayStyle(2);
 		this.parentBranch.setValidateColumns(new String[] { "BranchCode" });
 
 		this.city.setModuleName("City");

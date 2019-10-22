@@ -62,9 +62,9 @@ public interface UserDAO {
 	SecurityUser getUserByNameAndPassword(String userName, String passWord);
 
 	SecurityUser getSecurityUserByLogin(final String userLogin);
-	
+
 	SecurityUser getUserByLogin(final String userLogin);
-	
+
 	SecurityUser getUserByLogin(long userId);
 
 	List<SecurityUser> getUserLikeLastname(String value);
@@ -76,7 +76,7 @@ public interface UserDAO {
 	List<SecurityUser> getUserListByLogin(String login);
 
 	void updateInvalidTries(String usrLogin);
-	
+
 	void updateLoginStatus(long userId);
 
 	List<SecurityRole> getUserRolesByUserID(long userID);

@@ -19,6 +19,7 @@ public class CustomerAgreementDetail {
 	private Map<String, Object> extendedFields = new HashMap<>();
 	private Date appDate;
 	private String dob;
+
 	public String getCustShrtName() {
 		return custShrtName;
 	}

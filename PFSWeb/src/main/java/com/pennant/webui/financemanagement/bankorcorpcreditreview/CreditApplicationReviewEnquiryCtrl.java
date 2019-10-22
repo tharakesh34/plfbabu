@@ -1066,7 +1066,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		tabPanel.setId("tabPanel_" + 5);
 		tabPanel.setParent(this.tabpanelsBoxIndexCenter);
 		appendCreditReviewDetailTab(false, tabPanel);
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -1108,22 +1108,21 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
 			btMap.put("MARGINI", custWiseDataMap.get("Y2_SM_MARGIN"));
-			
+
 			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
 				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
 						this.currFormatter));
 			} else {
 				btMap.put("DSCR_GF", 0);
 			}
-			
+
 			if (custWiseDataMap.get("Y2_CRNT_RATIO") != null) {
-				btMap.put("CRNTRATIO", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_CRNT_RATIO")),
-						this.currFormatter));
+				btMap.put("CRNTRATIO", PennantAppUtil
+						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_CRNT_RATIO")), this.currFormatter));
 			} else {
 				btMap.put("CRNTRATIO", 0);
 			}
-			
-			
+
 			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
 				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
 						this.currFormatter));
@@ -1293,7 +1292,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						break;
 					}
 				}
-				String value = "0"; 
+				String value = "0";
 				if (noOfYears == 3) {
 					value = this.dataMap.get("Y" + (noOfYears - j) + "_" + subCategoryCode);
 				} else {

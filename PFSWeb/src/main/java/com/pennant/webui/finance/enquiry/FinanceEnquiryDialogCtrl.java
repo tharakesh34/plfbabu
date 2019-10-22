@@ -592,7 +592,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.fromApproved = (Boolean) arguments.get("fromApproved");
 			}
 
-				// set Field Properties
+			// set Field Properties
 			doSetFieldProperties();
 			doShowDialog();
 		} catch (Exception e) {
@@ -868,7 +868,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.custCIF.setValue(customer.getCustCIF());
 			this.custShrtName.setValue(customer.getCustShrtName());
 			this.finAmount.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getFinAmount(), formatter));
-			this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), formatter));
+			this.appliedLoanAmt
+					.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), formatter));
 
 			//FXIME: PV. 28AUG19. SOme confusion over deducting DISBDEDUCT amounts from current asset value.
 			BigDecimal curFinAmountValue = BigDecimal.ZERO;
@@ -1202,9 +1203,10 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.totalDownPayment.setValue(PennantAppUtil.formateAmount(aFinanceMain.getDownPayment(), formatter));
 			} else {
 				this.totalDisb.setValue(PennantAppUtil.formateAmount(aFinanceMain.getFinCurrAssetValue(), formatter));
-				this.totalDownPayment.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(), formatter));
+				this.totalDownPayment
+						.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalDownPayment(), formatter));
 			}
-					this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
+			this.finCurrentAssetValue.setValue(PennantAppUtil.formateAmount(
 					aFinanceMain.getFinCurrAssetValue().subtract(aFinanceMain.getFeeChargeAmt()), formatter));
 			this.totalCapitalize.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalCpz(), formatter));
 			this.totalSchdPrincipal.setValue(PennantAppUtil.formateAmount(financeSummary.getTotalPriSchd(), formatter));

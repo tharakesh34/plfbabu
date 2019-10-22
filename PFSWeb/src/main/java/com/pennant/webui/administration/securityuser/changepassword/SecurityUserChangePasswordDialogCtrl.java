@@ -88,9 +88,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 */
 	protected Window win_SecurityUserChangePasswordDialog;
 	protected Textbox userName;
-	protected Textbox newPassword;
+	protected org.zkoss.zhtml.Input newPassword;
 	protected Textbox newPassword1;
-	protected Textbox retypeNewPassword;
+	protected org.zkoss.zhtml.Input retypeNewPassword;
 	protected Textbox retypeNewPassword1;
 	protected Label label_PwdStatus;
 	protected Div div_PwdStatusMeter;
@@ -127,6 +127,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 
 		// Set the page level components.
 		setPageComponents(win_SecurityUserChangePasswordDialog);
+		newPassword = (org.zkoss.zhtml.Input) win_SecurityUserChangePasswordDialog.getFellowIfAny("newPassword");
+		retypeNewPassword = (org.zkoss.zhtml.Input) win_SecurityUserChangePasswordDialog
+				.getFellowIfAny("retypeNewPassword");
 
 		doSetFieldProperties();
 		this.userName.setReadonly(true);
@@ -200,9 +203,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		this.retypeNewPassword.setValue("");
 		this.newPassword1.setValue("");
 		this.retypeNewPassword1.setValue("");
-		this.newPassword.setFocus(true);
-		this.div_PwdStatusMeter.setStyle("background-color:white");
-		this.label_PwdStatus.setValue("");
+		/*
+		 * this.div_PwdStatusMeter.setStyle("background-color:white"); this.label_PwdStatus.setValue("")
+		 */;
 	}
 
 	/**
@@ -212,8 +215,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
 		this.userName.setReadonly(true);
 		this.newPassword.setMaxlength(pwdMaxLenght);
-		this.newPassword.addEventListener("onChanging", new OnChanging());
-		this.newPassword.setFocus(true);
+		//this.newPassword.addEventListener("onChanging", new OnChanging());
+		this.newPassword.setAutofocus(true);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
 	}
 

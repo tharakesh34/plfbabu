@@ -59,10 +59,10 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 	protected Label subModuleDesc;
 	protected Longbox moduleId;
 	protected Textbox tabHeading;
-/*	protected Radiogroup numberOfColumns;
-	protected Radio radio_column1;
-	protected Radio radio_column2;
-	protected Radio radio_column3;*/
+	/*
+	 * protected Radiogroup numberOfColumns; protected Radio radio_column1; protected Radio radio_column2; protected
+	 * Radio radio_column3;
+	 */
 	protected Grid grid_basicDetails;
 
 	private transient boolean validationOn;
@@ -284,13 +284,11 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 					.setValue(Labels.getLabel("label_ExtendedField_" + aExtendedFieldHeader.getSubModuleName()));
 		}
 		this.tabHeading.setValue(aExtendedFieldHeader.getTabHeading());
-		/*for (int i = 0; i < numberOfColumns.getItemCount(); i++) {
-			if (this.numberOfColumns.getItemAtIndex(i).getValue()
-					.equals(aExtendedFieldHeader.getNumberOfColumns() == null ? ""
-							: aExtendedFieldHeader.getNumberOfColumns().trim())) {
-				this.numberOfColumns.setSelectedIndex(i);
-			}
-		}*/
+		/*
+		 * for (int i = 0; i < numberOfColumns.getItemCount(); i++) { if
+		 * (this.numberOfColumns.getItemAtIndex(i).getValue() .equals(aExtendedFieldHeader.getNumberOfColumns() == null
+		 * ? "" : aExtendedFieldHeader.getNumberOfColumns().trim())) { this.numberOfColumns.setSelectedIndex(i); } }
+		 */
 
 		// Extended Fields Rendering
 		doFillFieldsList(aExtendedFieldHeader.getTechnicalValuationDetailList());

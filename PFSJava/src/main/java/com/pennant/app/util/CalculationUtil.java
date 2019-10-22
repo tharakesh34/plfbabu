@@ -419,16 +419,17 @@ public class CalculationUtil implements Serializable {
 			return (int) DateUtility.getDaysBetween(startCalendar, endCalendar);
 		} else if (strDaysBasis.equals(CalculationConstants.IDB_BY_PERIOD)) {
 			double daysInMonth = 30d;
-			
-			int days = calNumberOfDays30E360ISDA(dayOfStart, dayOfEnd, monthOfStart, monthOfEnd, yearOfStart, yearOfEnd);
+
+			int days = calNumberOfDays30E360ISDA(dayOfStart, dayOfEnd, monthOfStart, monthOfEnd, yearOfStart,
+					yearOfEnd);
 			double noOfmonths = days / daysInMonth;
-			
+
 			noOfmonths = Math.ceil(noOfmonths);
 
-			/*if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR)
-					&& startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) {
-				noOfmonths = noOfmonths + 1;
-			}*/
+			/*
+			 * if (startCalendar.get(Calendar.YEAR) == endCalendar.get(Calendar.YEAR) &&
+			 * startCalendar.get(Calendar.MONTH) == endCalendar.get(Calendar.MONTH)) { noOfmonths = noOfmonths + 1; }
+			 */
 
 			int numberOfDays = (int) (noOfmonths * 30);
 

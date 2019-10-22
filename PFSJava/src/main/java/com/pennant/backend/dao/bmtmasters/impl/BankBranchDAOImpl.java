@@ -311,7 +311,8 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setIFSC(ifsc);
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+		selectSql.append(
+				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName");
@@ -344,7 +345,8 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		bankBranch.setBranchCode(branchCode);
 
 		StringBuilder selectSql = new StringBuilder("Select BankBranchID, BankCode, BranchCode,");
-		selectSql.append("BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
+		selectSql.append(
+				"BranchDesc, City, MICR, IFSC, AddOfBranch, Nach, Dd, Dda, Ecs, Cheque, Active, ParentBranch, ParentBranchDesc");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(",BankName,PcCityName");

@@ -218,7 +218,11 @@ public class SMTParameterConstants {
 	 * Parameter code to specify the cron expression for Security user account locking job.
 	 */
 	public static final String USR_ACCT_LOCK_CRON_EXPRESSION = "USR_ACCT_LOCK_CRON_EXPRESSION";
-	public static final String ALLOW_PROFIT_WAIVER = "ALLOW_PROFIT_WAIVER"; //Profit Waiver in Fee Waivers
+	public static final String ALLOW_PROFIT_WAIVER = "ALLOW_PROFIT_WAIVER"; // Profit
+																			// Waiver
+																			// in
+																			// Fee
+																			// Waivers
 
 	public static final String INSURANCE_INST_ON_DISB = "INSURANCE_INST_ON_DISB";
 
@@ -254,9 +258,16 @@ public class SMTParameterConstants {
 
 	public static final String BPI_MONTHWISE_REQ = "BPI_MONTHWISE_REQ";
 
-	public static final String COAPP_CUST_CREATE = "COAPP_CUST_CREATE";//Create Customer in CO-Applicant
+	public static final String COAPP_CUST_CREATE = "COAPP_CUST_CREATE";// Create
+																		// Customer
+																		// in
+																		// CO-Applicant
 
-	public static final String EXCLUDE_SUB_RECEIPT_MODE_VALUE = "EXCLUDE_SUB_RECEIPT_MODE_VALUE"; //To exclude values from List
+	public static final String EXCLUDE_SUB_RECEIPT_MODE_VALUE = "EXCLUDE_SUB_RECEIPT_MODE_VALUE"; // To
+																									// exclude
+																									// values
+																									// from
+																									// List
 	public static final String ALLOW_BACK_DATED_ADD_RATE_CHANGE = "ALLOW_BACK_DATED_ADD_RATE_CHANGE";
 	public static final String ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE = "ALLOW_INCLUDE_FROMDATE_ADD_RATE_CHANGE";
 	public static final String ALLOW_EOD_SNAPSHOT = "ALLOW_EOD_SNAPSHOT";

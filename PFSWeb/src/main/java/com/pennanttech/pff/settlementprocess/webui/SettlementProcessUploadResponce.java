@@ -51,7 +51,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private DisbursementPostings disbursementPostings;
-	private PlatformTransactionManager	transactionManager;
+	private PlatformTransactionManager transactionManager;
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
@@ -160,12 +160,11 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					new BigDecimal((String) record.getValue("MaxValueOfProduct")));
 			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
-
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 			txStatus = this.transactionManager.getTransaction(txDef);
-			
+
 			validate(settlementMapdata);
 
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
@@ -220,7 +219,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
-					throw new AppException("HostReference is not avilable in PLF or inacive");
+				throw new AppException("HostReference is not avilable in PLF or inacive");
 			}
 		}
 
@@ -295,8 +294,8 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		DataEngineStatus status= genetare(dataEngine, userName, filterMap, parameterMap);
-		
+		DataEngineStatus status = genetare(dataEngine, userName, filterMap, parameterMap);
+
 		return status;
 
 	}

@@ -1243,17 +1243,16 @@ public class FinanceDataValidation {
 			 * valueParm[0] = finMain.getSalesDepartment(); errorDetails.add(ErrorUtil.getErrorDetail(new
 			 * ErrorDetail("90501", valueParm))); }
 			 */
-		/*	GeneralDepartment generalDepartment = generalDepartmentService
-					.getApprovedGeneralDepartmentById(finMain.getSalesDepartment());
+			/*
+			 * GeneralDepartment generalDepartment = generalDepartmentService
+			 * .getApprovedGeneralDepartmentById(finMain.getSalesDepartment());
+			 * 
+			 * if (generalDepartment == null) { String[] valueParm = new String[1]; valueParm[0] =
+			 * finMain.getSalesDepartment(); errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501",
+			 * valueParm))); }
+			 */
+			Department department = departmentService.getApprovedDepartmentById(finMain.getSalesDepartment());
 
-			if (generalDepartment == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getSalesDepartment();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
-			}*/
-			Department department = departmentService
-					.getApprovedDepartmentById(finMain.getSalesDepartment());
-			
 			if (department == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getSalesDepartment();
@@ -1415,7 +1414,7 @@ public class FinanceDataValidation {
 						financeDetail.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
 						FinanceConstants.FINSER_EVENT_ORG);
 			}
-	
+
 			// ### 02-05-2018-END
 			if (!errorDetails.isEmpty()) {
 				finScheduleData.setErrorDetails(errorDetails);

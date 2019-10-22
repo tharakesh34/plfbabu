@@ -95,11 +95,11 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 	 */
 	protected Window window_ChangePasswordDialog;
 	protected Textbox userName;
-	protected Textbox password;
+	protected org.zkoss.zhtml.Input password;
 	protected Textbox password1;
-	protected Textbox newPassword;
+	protected org.zkoss.zhtml.Input newPassword;
 	protected Textbox newPassword1;
-	protected Textbox retypeNewPassword;
+	protected org.zkoss.zhtml.Input retypeNewPassword;
 	protected Textbox retypeNewPassword1;
 	protected Button btnSave;
 	protected Button btnHelp;
@@ -138,6 +138,10 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 
 		// Set the page level components.
 		setPageComponents(window_ChangePasswordDialog);
+
+		password = (org.zkoss.zhtml.Input) window_ChangePasswordDialog.getFellowIfAny("password");
+		newPassword = (org.zkoss.zhtml.Input) window_ChangePasswordDialog.getFellowIfAny("newPassword");
+		retypeNewPassword = (org.zkoss.zhtml.Input) window_ChangePasswordDialog.getFellowIfAny("retypeNewPassword");
 
 		doSetFieldProperties();//set field properties
 		//getting security user details
@@ -318,9 +322,9 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.password1.setValue("");
 		this.newPassword1.setValue("");
 		this.retypeNewPassword1.setValue("");
-		this.password.setFocus(true);
-		this.div_PwdStatusMeter.setStyle("background-color:white");
-		this.label_PwdStatus.setValue("");
+		this.password.setAutofocus(true);
+		//this.div_PwdStatusMeter.setStyle("background-color:white");
+		//this.label_PwdStatus.setValue("");
 		logger.debug("Leaving ");
 	}
 
@@ -333,8 +337,8 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		this.userName.setReadonly(true);
 		this.userName.setReadonly(true);
 		this.password.setMaxlength(pwdMaxLenght);
-		this.password.setFocus(true); //set focus
-		this.newPassword.addEventListener("onChanging", new OnChanging());
+		this.password.setAutofocus(true); //set focus
+		//this.newPassword.addEventListener("onChanging", new OnChanging());
 		this.newPassword.setMaxlength(pwdMaxLenght);
 		this.retypeNewPassword.setMaxlength(pwdMaxLenght);
 		logger.debug("Leaving ");
@@ -466,6 +470,16 @@ public class PasswordDialogCtrl extends GFCBaseCtrl<SecurityUser> {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aSecurityUser.getBefImage(), aSecurityUser);
 		return new AuditHeader(String.valueOf(aSecurityUser.getUsrID()), null, null, null, auditDetail,
 				aSecurityUser.getUserDetails(), getOverideMap());
+	}
+
+	/**
+	 * when user clicks "close" method
+	 * 
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onClick$btnClose(Event event) throws Exception {
+		closeDialog();
 	}
 
 	// ******************************************************//

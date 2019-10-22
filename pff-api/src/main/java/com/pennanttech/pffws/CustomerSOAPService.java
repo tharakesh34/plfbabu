@@ -191,6 +191,8 @@ public interface CustomerSOAPService {
 
 	WSReturnStatus deleteCustomerGstInformation(
 			@WebParam(name = "customer") CustomerGstInfoDetail customerGstInfoDetail) throws ServiceException;
+
 	public CustValidationResponse doCustomerValidation(@WebParam(name = "cif") String custCIF) throws ServiceException;
+
 
 }

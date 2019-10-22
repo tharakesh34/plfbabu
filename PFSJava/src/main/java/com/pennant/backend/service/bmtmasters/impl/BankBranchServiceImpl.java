@@ -79,7 +79,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	private MandateDAO mandateDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private BeneficiaryDAO beneficiaryDAO;
-	
+
 	@Autowired(required = false)
 	@Qualifier("bankBranchPostValidationHook")
 	private PostValidationHook postValidationHook;
@@ -355,6 +355,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			}
 		}
 	}
+
 
 	/**
 	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the

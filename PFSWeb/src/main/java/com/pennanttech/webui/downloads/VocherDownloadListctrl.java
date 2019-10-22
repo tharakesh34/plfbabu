@@ -201,7 +201,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 							new String[] { Labels.getLabel("label_VocherDownload_ToDate.value"),
 									DateUtil.format(this.fromDate.getValue(), DateFormat.SHORT_DATE) }));
 		}
-		
+
 		this.fromDate.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_FromDate.value"), true));
 		this.toDate.setConstraint(new PTDateValidator(Labels.getLabel("label_VocherDownload_ToDate.value"), true));
 	}
@@ -313,7 +313,8 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 			lc.appendChild(downlaod);
 			downlaod.setLabel("Download");
 			downlaod.setTooltiptext("Download");
-			downlaod.setAutodisable("btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, fromDate, toDate");
+			downlaod.setAutodisable(
+					"btnexecute, button_FileDownloadList_FileDownloadSearchDialog, btnRefresh, help, fromDate, toDate");
 
 			downlaod.setAttribute("object", fileDownlaod);
 			StringBuilder builder = new StringBuilder();

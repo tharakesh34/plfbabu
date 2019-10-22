@@ -199,7 +199,7 @@ public class DeviationRenderer {
 
 			String lable = "";
 			Button button = new Button();
-			if (approverScreen|| workflow) {
+			if (approverScreen || workflow) {
 				if (!approved) {
 					lable = "add";
 					button.addForward("onClick", "", "onClickAddNotes", deviationDetail);
@@ -295,7 +295,7 @@ public class DeviationRenderer {
 			listcell = getNewListCell(PennantStaticListUtil.getPropertyValue(severities, deviation.getSeverity()),
 					devNotallowed);
 			listitem.appendChild(listcell);
-			
+
 			// Raised User
 			listcell = getNewListCell(deviation.getRaisedUser(), devNotallowed);
 			listitem.appendChild(listcell);
@@ -303,8 +303,6 @@ public class DeviationRenderer {
 			// Raised Role
 			listcell = getNewListCell(deviation.getUserRole(), devNotallowed);
 			listitem.appendChild(listcell);
-			
-			
 
 			// Raised On
 			listcell = getNewListCell(DateUtility.formatToShortDate(deviation.getDeviationDate()), devNotallowed);

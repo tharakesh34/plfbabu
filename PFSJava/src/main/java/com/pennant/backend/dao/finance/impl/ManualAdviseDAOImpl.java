@@ -91,11 +91,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
 		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, ");
-		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
+		sql.append(
+				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
 		if (type.contains("View")) {
 			sql.append(" FeeTypeCode, FeeTypeDesc, taxApplicable, taxComponent, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where adviseID = :adviseID");
@@ -128,11 +130,14 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
 		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt, BalanceAmt,");
-		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS,");
+		sql.append(
+				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS,");
 		if (type.contains("View")) {
-			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, FinSource,");
+			sql.append(
+					" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, FinSource,");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where ReceiptID = :ReceiptID");
@@ -165,14 +170,19 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder(" insert into ManualAdvise");
 		sql.append(tableType.getSuffix());
 		sql.append("(adviseID, adviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST,");
+		sql.append(
+				" paidAmount, waivedAmount, remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt, PaidCGST, PaidSGST, PaidUGST, PaidIGST,");
 		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS, FinSource,");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(
+				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
-		sql.append(" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST,");
+		sql.append(
+				" :adviseID, :adviseType, :finReference, :feeTypeID, :sequence, :adviseAmount, :BounceID, :ReceiptID,");
+		sql.append(
+				" :paidAmount, :waivedAmount, :remarks, :ValueDate, :PostDate, :ReservedAmt, :BalanceAmt,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST,");
 		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :WaivedCESS, :PaidCESS, :FinSource,");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(
+				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		// Get the identity sequence number.
 		if (manualAdvise.getAdviseID() <= 0) {
@@ -204,8 +214,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(" sequence = :sequence, adviseAmount = :adviseAmount, paidAmount = :paidAmount, ");
 		sql.append(" waivedAmount = :waivedAmount, remarks = :remarks,BounceID=:BounceID, ReceiptID=:ReceiptID, ");
 		sql.append(" ValueDate=:ValueDate, PostDate=:PostDate, ReservedAmt=:ReservedAmt, BalanceAmt=:BalanceAmt, ");
-		sql.append(" PaidCGST=:PaidCGST, PaidSGST=:PaidSGST, PaidUGST=:PaidUGST, PaidIGST=:PaidIGST, FinSource=:FinSource,");
-		sql.append(" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST,WaivedCESS =:WaivedCESS, PaidCESS =:PaidCESS,");
+		sql.append(
+				" PaidCGST=:PaidCGST, PaidSGST=:PaidSGST, PaidUGST=:PaidUGST, PaidIGST=:PaidIGST, FinSource=:FinSource,");
+		sql.append(
+				" WaivedCGST = :WaivedCGST, WaivedSGST = :WaivedSGST, WaivedIGST = :WaivedIGST, WaivedUGST = :WaivedUGST,WaivedCESS =:WaivedCESS, PaidCESS =:PaidCESS,");
 		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
@@ -279,7 +291,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(
 				" Select AdviseID, AdviseAmount, PaidAmount, WaivedAmount, ReservedAmt, BalanceAmt, BounceId, ReceiptId,");
-		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST , WaivedCESS , PaidCESS , FinSource");
+		sql.append(
+				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST , WaivedCESS , PaidCESS , FinSource");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(" ,FeeTypeCode, FeeTypeDesc, BounceCode,BounceCodeDesc, taxApplicable, taxComponent ");
 		}
@@ -317,9 +330,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder sql = new StringBuilder("update ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append(" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,");
-		sql.append(" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST,");
-		sql.append(" WaivedCGST = WaivedCGST + :WaivedCGST, WaivedSGST = WaivedSGST + :WaivedSGST, WaivedUGST = WaivedUGST + :WaivedUGST, WaivedIGST = WaivedIGST + :WaivedIGST,");
+		sql.append(
+				" set  PaidAmount = PaidAmount + :PaidAmount, WaivedAmount = WaivedAmount+:WaivedAmount,ReservedAmt = ReservedAmt+:ReservedAmt,");
+		sql.append(
+				" PaidCGST = PaidCGST + :PaidCGST, PaidSGST = PaidSGST + :PaidSGST, PaidUGST = PaidUGST + :PaidUGST, PaidIGST = PaidIGST + :PaidIGST,");
+		sql.append(
+				" WaivedCGST = WaivedCGST + :WaivedCGST, WaivedSGST = WaivedSGST + :WaivedSGST, WaivedUGST = WaivedUGST + :WaivedUGST, WaivedIGST = WaivedIGST + :WaivedIGST,");
 		sql.append(" WaivedCESS = WaivedCESS + :WaivedCESS,  PaidCESS = PaidCESS + :PaidCESS ");
 		sql.append(" WHERE AdviseID = :AdviseID ");
 
@@ -337,9 +353,11 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into ManualAdviseMovements");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaiverID,");
+		sql.append(
+				" ( MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status, ReceiptID, ReceiptSeqID,PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaiverID,");
 		sql.append(" WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, TaxHeaderId)");
-		sql.append(" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, :WaiverID,");
+		sql.append(
+				" VALUES(:MovementID, :AdviseID, :MovementDate, :MovementAmount, :PaidAmount, :WaivedAmount, :Status, :ReceiptID, :ReceiptSeqID,:PaidCGST, :PaidSGST, :PaidUGST, :PaidIGST, :WaiverID,");
 		sql.append(" :WaivedCGST, :WaivedSGST, :WaivedUGST, :WaivedIGST, :TaxHeaderId)");
 
 		// Get the identity sequence number.
@@ -388,8 +406,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder selectSql = new StringBuilder(" Select T1.MovementID ,T1.MovementDate, T1.MovementAmount, ");
 		selectSql.append(" T1.PaidAmount , T1.WaivedAmount, T1.Status, T2.ReceiptMode, T1.TaxHeaderId");
-		selectSql
-				.append(" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID ");
+		selectSql.append(
+				" From ManualAdviseMovements T1 LEFT OUTER JOIN FinReceiptHeader T2 ON T1.ReceiptID = T2.ReceiptID ");
 		selectSql.append(" Where AdviseID = :AdviseID ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -688,12 +706,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("ReceiptId", receiptId);
 
 		StringBuilder selectSql = new StringBuilder("SELECT T5.schDate	FROM MANUALADVISE M ");
-		selectSql
-				.append(" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
-		selectSql
-				.append(" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
-		selectSql
-				.append(" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
+		selectSql.append(
+				" INNER Join PRESENTMENTDETAILS T4 on T4.RECEIPTID = M.RECEIPTID and M.RECEIPTID !=0 and T4.RECEIPTID !=0 ");
+		selectSql.append(
+				" INNER Join FINSCHEDULEDETAILS T5 on T4.FInreference = T5.FInreference and T4.schdate = T5.schdate ");
+		selectSql.append(
+				" where M.AdviseType <> 2 and	m.ADVISEAMOUNT > 0 and FEETYPEID not in (Select FEETYPEID from FEETYPES) ");
 		selectSql.append(" AND M.ReceiptId =:ReceiptId ");
 
 		logger.debug("selectSql: " + selectSql.toString());
@@ -779,10 +797,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		manualAdvise.setFinReference(finRef);
 
 		StringBuilder selectSql = new StringBuilder(" SELECT ");
-		selectSql
-				.append(" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID,");
-		selectSql
-				.append(" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.FinSource,");
+		selectSql.append(
+				" T1.AdviseID, T1.AdviseType, T1.FinReference, T1.FeeTypeID, T1.Sequence, T1.AdviseAmount, T1.BounceID, T1.ReceiptID,");
+		selectSql.append(
+				" T1.PaidAmount, T1.WaivedAmount, T1.ValueDate, T1.PostDate, T1.ReservedAmt, T1.BalanceAmt,T1.PaidCGST, T1.PaidSGST, T1.PaidUGST, T1.PaidIGST, T1.FinSource,");
 		selectSql.append(" T1.WaivedCGST, T1.WaivedSGST, T1.WaivedUGST, T1.WaivedIGST");
 		selectSql.append(" From ManualAdvise T1 ");
 		selectSql.append(" INNER JOIN FeeTypes T2 ON T1.FeeTypeID = T2.FeeTypeID AND T2.AmortzReq = 1");
@@ -854,11 +872,13 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(" AdviseID, AdviseType, FinReference, FeeTypeID, Sequence, AdviseAmount, BounceID, ReceiptID, ");
 		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate, ReservedAmt, BalanceAmt,");
-		sql.append(" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS,");
+		sql.append(
+				" PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST, WaivedCESS, PaidCESS,");
 		if (type.contains("View")) {
 			sql.append(" FeeTypeCode, FeeTypeDesc, BounceCode, BounceCodeDesc, taxApplicable, taxComponent, ");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(type);
 		sql.append(" Where FinReference = :FinReference ");
@@ -891,8 +911,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder selectSql = new StringBuilder(
 				" Select T2.MovementID, T2.AdviseID, T2.MovementDate, T2.MovementAmount, T2.PaidAmount, ");
-		selectSql
-				.append(" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
+		selectSql.append(
+				" T2.WaivedAmount, T2.Status, T2.ReceiptID, T2.ReceiptSeqID, T2.PaidCGST, T2.PaidSGST, T2.PaidUGST, T2.PaidIGST ");
 		selectSql.append(" T2.WaivedCGST, T2.WaivedSGST, T2.WaivedUGST, T2.WaivedIGST, T2.TaxHeaderId");
 		selectSql.append(" From ManualAdvise");
 		selectSql.append(StringUtils.trim(type));
@@ -931,14 +951,18 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		source.addValue("AdviseType", FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 
 		sql = new StringBuilder();
-		sql.append(" Select MA.adviseID, MA.AdviseType, MA.FeeTypeID, MA.Sequence, MA.finReference, (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) balanceAmt,");
-		sql.append(" MA.adviseAmount, MA.PaidAmount, MA.WaivedAmount, MA.ValueDate, MA.PostDate, MA.BounceID, MA.ReceiptID, MA.ReservedAmt,");
-		sql.append(" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
+		sql.append(
+				" Select MA.adviseID, MA.AdviseType, MA.FeeTypeID, MA.Sequence, MA.finReference, (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) balanceAmt,");
+		sql.append(
+				" MA.adviseAmount, MA.PaidAmount, MA.WaivedAmount, MA.ValueDate, MA.PostDate, MA.BounceID, MA.ReceiptID, MA.ReservedAmt,");
+		sql.append(
+				" MA.Version, MA.LastMntOn, MA.LastMntBy,MA.RecordStatus, MA.RoleCode, MA.NextRoleCode, MA.TaskId, MA.NextTaskId, MA.RecordType, MA.WorkflowId,");
 		sql.append(" FT.feetypecode, FT.FeeTypeDesc, coalesce(FT.TaxApplicable, 0) TaxApplicable, FT.TaxComponent,");
 		sql.append(" MA.WaivedCGST, MA.WaivedSGST, MA.WaivedUGST, MA.WaivedIGST");
 		sql.append(" From MANUALADVISE_Aview  MA");
 		sql.append(" Left join FEETYPES FT on MA.FEETYPEID = FT.FEETYPEID");
-		sql.append(" Where (MA.advisetype = :AdviseType And (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) > 0) and FinReference = :FinReference");
+		sql.append(
+				" Where (MA.advisetype = :AdviseType And (MA.AdviseAmount - MA.PaidAmount - MA.WaivedAmount) > 0) and FinReference = :FinReference");
 		sql.append(" ORDER by MA.adviseID");
 
 		logger.trace(Literal.SQL + sql.toString());
@@ -1028,9 +1052,11 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("");
-		sql.append(" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
+		sql.append(
+				" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
 		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise");
 		sql.append(" Where  AdviseType = :AdviseType And FeeTypeID = :FeeTypeID");
 
@@ -1080,9 +1106,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("");
-		sql.append(" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
-		sql.append(" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,  FeeTypeCode, FeeTypeDesc,");
-		sql.append(" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(
+				" Select AdviseID, AdviseType, finReference, feeTypeID, sequence, adviseAmount, BounceID, ReceiptID, ");
+		sql.append(
+				" PaidAmount, WaivedAmount, Remarks, ValueDate, PostDate,ReservedAmt, BalanceAmt,  FeeTypeCode, FeeTypeDesc,");
+		sql.append(
+				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From ManualAdvise_Aview");
 		sql.append(" Where FinReference = :FinReference And AdviseType = :AdviseType And FeeTypeCode = :FeeTypeCode");
 		sql.append(" Order By ValueDate");
@@ -1211,8 +1240,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 		StringBuilder selectSql = new StringBuilder(
 				" Select MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, ");
-		selectSql
-				.append(" WaivedAmount, Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST");
+		selectSql.append(
+				" WaivedAmount, Status, ReceiptID, ReceiptSeqID, PaidCGST, PaidSGST, PaidUGST, PaidIGST, WaivedCGST, WaivedSGST, WaivedUGST, WaivedIGST");
 		if (StringUtils.contains(type, "View")) {
 			selectSql.append(", FeeTypeCode, FeeTypeDesc, TaxApplicable, TaxComponent ");
 		}

@@ -52,12 +52,12 @@ public class CreditReviewDetails {
 	private BigDecimal outStandingLoanAmt = BigDecimal.ZERO;
 	private BigDecimal accountLimit = BigDecimal.ZERO;
 	private BigDecimal loanAmount = BigDecimal.ZERO;
-	private BigDecimal  addToEMI = BigDecimal.ZERO;
-	private BigDecimal chequeBncOthEmi =BigDecimal.ZERO;
-	private BigDecimal maxEmi =BigDecimal.ZERO;
-	private BigDecimal debitEqutiRatio =BigDecimal.ZERO;
-	private BigDecimal dsrcValue =BigDecimal.ZERO;
-	private BigDecimal grossRecipt =BigDecimal.ZERO;
+	private BigDecimal addToEMI = BigDecimal.ZERO;
+	private BigDecimal chequeBncOthEmi = BigDecimal.ZERO;
+	private BigDecimal maxEmi = BigDecimal.ZERO;
+	private BigDecimal debitEqutiRatio = BigDecimal.ZERO;
+	private BigDecimal dsrcValue = BigDecimal.ZERO;
+	private BigDecimal grossRecipt = BigDecimal.ZERO;
 
 	public long getId() {
 		return id;
@@ -386,6 +386,7 @@ public class CreditReviewDetails {
 	public void setOutStandingLoanAmt(BigDecimal outStandingLoanAmt) {
 		this.outStandingLoanAmt = outStandingLoanAmt;
 	}
+
 	public BigDecimal getAccountLimit() {
 		return accountLimit;
 	}

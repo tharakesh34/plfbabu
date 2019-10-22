@@ -90,8 +90,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		BigDecimal penaltyDue = finOption.getPenaltyDue() == null ? BigDecimal.ZERO : finOption.getPenaltyDue();
 		BigDecimal penaltyWaived = finOption.getPenaltyWaived() == null ? BigDecimal.ZERO
 				: finOption.getPenaltyWaived();
-		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO
-				: finOption.getTdSchdPftBal();// Interest receivable
+		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO : finOption.getTdSchdPftBal();// Interest receivable
 		BigDecimal pftAmz = finOption.getPftAmz() == null ? BigDecimal.ZERO : finOption.getPftAmz();
 		BigDecimal otherCharges = BigDecimal.ZERO;
 
@@ -102,8 +101,8 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		if (penaltyPaid == null) {
 			penaltyPaid = BigDecimal.ZERO;
 		}
-		
-		BigDecimal interestIncludingAccrued =totSchdPftBal.add(pftAmz);
+
+		BigDecimal interestIncludingAccrued = totSchdPftBal.add(pftAmz);
 		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finOption.getFinReference(),
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any Charges
 		if (CollectionUtils.isNotEmpty(advises)) {

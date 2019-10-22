@@ -997,7 +997,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void processPayments(PaymentTransaction paymentTransaction) {
 		this.paymentsProcessService.processPayments(paymentTransaction);
 	}
-	
+
 	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
 		return payOrderIssueHeaderDAO;
 	}
@@ -1058,6 +1058,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		finAdvancePaymentsDAO.updatePaymentStatus(finAdvancePayment, type);
 	}
 
+
 	@Override
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
 		return finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, type);
@@ -1098,7 +1099,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
-	 
+
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
 	}

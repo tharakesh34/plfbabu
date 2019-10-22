@@ -1145,11 +1145,12 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 						boolean prepareInvoice = false;
 						if (StringUtils.isBlank(manualAdvise.getFeeTypeCode()) && manualAdvise.getBounceID() > 0) {
-							if(boucneFeeType==null){
-								throw new AppException(String.format("Fee Type code %s not found, please conatact system admin to configure.", PennantConstants.FEETYPE_BOUNCE));
+							if (boucneFeeType == null) {
+								throw new AppException(String.format(
+										"Fee Type code %s not found, please conatact system admin to configure.",
+										PennantConstants.FEETYPE_BOUNCE));
 							}
-							
-							
+
 							movement.setFeeTypeCode(boucneFeeType.getFeeTypeCode());
 							movement.setFeeTypeDesc(boucneFeeType.getFeeTypeDesc());
 							movement.setTaxApplicable(boucneFeeType.isTaxApplicable());
@@ -1471,7 +1472,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					// prepare GST Invoice Report for Penalty reversal
 					penalityFeeType = getFeeTypeDAO().getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_ODC);
 					if (penalityFeeType == null) {
-						throw new AppException(String.format("Fee Type code %s not found, please conatact system admin to configure.", PennantConstants.FEETYPE_ODC));
+						throw new AppException(
+								String.format("Fee Type code %s not found, please conatact system admin to configure.",
+										PennantConstants.FEETYPE_ODC));
 					}
 
 					ManualAdviseMovements incMovement = new ManualAdviseMovements();

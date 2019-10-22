@@ -192,7 +192,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_BACK_DATED_ADD_RATE_CHANGE)) {
 			this.row_BRRepayRvwFrq.setVisible(true);
 		}
-		
+
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -582,7 +582,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 		if (isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq")) {
 			this.bRRepayRvwFrq.setDisabled(true);
 		} else {
-			if(StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) == null){
+			if (StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) == null) {
 				this.bRRepayRvwFrq.setDisabled(isReadOnly("BaseRateCodeDialog_bRRepayRvwFrq"));
 			} else {
 				boolean exists = this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType());
@@ -592,7 +592,7 @@ public class BaseRateCodeDialogCtrl extends GFCBaseCtrl<BaseRateCode> {
 					this.bRRepayRvwFrq.setDisabled(this.baseRateCodeService.isRepayFrqExists(baseRateCode.getBRType()));
 				}
 			}
-			
+
 		}
 
 	}

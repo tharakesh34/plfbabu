@@ -110,7 +110,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	private transient CustomerDAO customerDAO;
 	private transient PaymentHeaderService paymentHeaderService;
 
-	private boolean enqiryModule= false;
+	private boolean enqiryModule = false;
 	String module = "";
 
 	/**
@@ -143,7 +143,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 			module = "DISB";
 		}
 	}
- 
+
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
@@ -152,7 +152,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		}
 		searchObject.addFilterEqual("tranmodule", module);
 	}
-		
+
 	public void onCreate$window_CustomerPaymentTxnsList(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -163,15 +163,15 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		// Register buttons and fields.
 		registerButton(button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch);
 
-		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference,
-				sortOperator_Finreference, Operators.STRING);
-		
+		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_Finreference,
+				Operators.STRING);
+
 		registerField("tranModule", listheader_TransactionModule, SortOrder.NONE, transactionModule,
 				sortOperator_TransactionModule, Operators.STRING);
 
 		registerField("paymentId", listheader_PaymentId, SortOrder.NONE, paymentId, sortOperator_PaymentId,
 				Operators.NUMERIC);
-		
+
 		registerField("transactionId");
 		registerField("tranStatus");
 		registerField("tranReference");
@@ -179,16 +179,16 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		registerField("statusCode");
 		registerField("statusDesc");
 
-		/*registerField("tranStatus", listheader_TransactionStatus, SortOrder.NONE, transactionStatus,
-				sortOperator_TransactionStatus, Operators.STRING);
-*/
+		/*
+		 * registerField("tranStatus", listheader_TransactionStatus, SortOrder.NONE, transactionStatus,
+		 * sortOperator_TransactionStatus, Operators.STRING);
+		 */
 		doRenderPage();
 		search();
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the search
-	 * button.
+	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -198,8 +198,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the refresh
-	 * button.
+	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -210,8 +209,8 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	}
 
 	/**
-	 * The framework calls this event handler when user opens a record to view
-	 * it's details. Show the dialog page with the selected entity.
+	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
+	 * the selected entity.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.
@@ -237,7 +236,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 			whereCond.append(" AND  version=");
 			whereCond.append(paymentheader.getVersion());
 
-			doShowDialogPage(paymentheader,paymentTransaction);
+			doShowDialogPage(paymentheader, paymentTransaction);
 		} else {
 			FinanceMain financeMain = this.financeMainService
 					.getFinanceMainByFinRef(paymentTransaction.getFinReference());
@@ -275,6 +274,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 
 		logger.debug(Literal.LEAVING);
 	}
+
 	private void doShowDialogPage(PaymentTransaction paymentTransaction, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
@@ -297,8 +297,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	}
 
 	/**
-	 * The framework calls this event handler when user clicks the print button
-	 * to print the results.
+	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
 	 *            An event sent to the event handler of the component.

@@ -2542,7 +2542,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
-			
+
 			try {
 				if (!isOverdraft && !consumerDurable) {
 					aFinanceType.setFinIsRateRvwAtGrcEnd(this.finIsRateRvwAtGrcEnd.isChecked());
@@ -5713,7 +5713,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void onCheck$schdOnPMTCal(Event event) {
 		logger.debug(Literal.LEAVING);
 		if (this.schdOnPMTCal.isChecked()) {
@@ -5721,6 +5721,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
+
 	public void onCheck$equalRepayment(Event event) {
 		logger.debug(Literal.LEAVING);
 		if (this.equalRepayment.isChecked()) {
@@ -5728,8 +5729,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
- 
 
 	public void onCheck$sanctionAmount(Event event) {
 		checkSanctionAmountChecked();

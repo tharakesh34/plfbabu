@@ -1063,8 +1063,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 				this.receivableDate.setConstraint(new PTDateValidator(receivableDateLabel, true));
 			} else if (DateUtility.compare(receivableDate, loanStartDt) < 0
 					|| DateUtility.compare(receivableDate, maturityDate) > 0) {
-				this.receivableDate
-						.setConstraint(new PTDateValidator(receivableDateLabel, true, loanStartDt, maturityDate, false));
+				this.receivableDate.setConstraint(
+						new PTDateValidator(receivableDateLabel, true, loanStartDt, maturityDate, false));
 			}
 		}
 

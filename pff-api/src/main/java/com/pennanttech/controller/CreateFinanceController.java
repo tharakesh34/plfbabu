@@ -1852,7 +1852,18 @@ public class CreateFinanceController extends SummaryDetailService {
 		advPayment.setAmtToBeReleased(financeMain.getFinAmount().subtract(financeMain.getDeductFeeDisb())
 				.subtract(financeMain.getDownPayment()));
 		advPayment.setPaymentType(DisbursementConstants.PAYMENT_TYPE_IST);
-		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));//FIXME SIVA 28AUG19 : PartnerBank ID To be decide for IFT Transaction
+		advPayment.setPartnerBankID(Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK")));// FIXME
+																									// SIVA
+																									// 28AUG19
+																									// :
+																									// PartnerBank
+																									// ID
+																									// To
+																									// be
+																									// decide
+																									// for
+																									// IFT
+																									// Transaction
 		advPayment.setLLDate(financeMain.getFinStartDate());
 		// fetch partner bank details
 		PartnerBank partnerBank = partnerBankService.getApprovedPartnerBankById(advPayment.getPartnerBankID());

@@ -99,9 +99,6 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	private long makerId;
 	private long approverId;
 	private Date approvedDate = null;
-	
-	
-	
 
 	public UploadHeader() {
 		super();
@@ -363,6 +360,5 @@ public class UploadHeader extends AbstractWorkflowEntity implements Entity {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
 
 }

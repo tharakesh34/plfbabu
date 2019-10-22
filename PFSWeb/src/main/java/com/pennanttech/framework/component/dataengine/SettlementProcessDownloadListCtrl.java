@@ -141,7 +141,7 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 							getUserWorkspace().getLoggedInUser().getUserName(), settlementData.getRequestBatchId());
 					Configuration config = dataEngineConfig.getConfigurationByName(status.getName());
 					downloadFromServer(status.getFileName(), config.getUploadPath());
-					
+
 				} catch (Exception e) {
 					MessageUtil.showError(e);
 					return;
@@ -175,7 +175,7 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 		Filedownload.save(stream.toByteArray(), "application/octet-stream", fileName);
 		stream.close();
 	}
-	
+
 	/**
 	 * Item renderer for listitems in the listbox.
 	 * 

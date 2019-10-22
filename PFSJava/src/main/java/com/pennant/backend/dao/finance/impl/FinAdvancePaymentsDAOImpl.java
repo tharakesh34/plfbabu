@@ -336,20 +336,22 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 
 		logger.debug("Leaving");
 	}
+
+
 	@Override
 	public void updatePaymentStatus(FinAdvancePayments finAdvancePayments, String type) {
 		logger.debug("Entering");
-		
+
 		StringBuilder updateSql = new StringBuilder("Update FinAdvancePayments");
 		updateSql.append(StringUtils.trimToEmpty(type));
 		updateSql.append("  Set Status = :Status");
 		updateSql.append("  Where FinReference = :FinReference and PaymentId = :PaymentId");
-		
+
 		logger.debug("updateSql: " + updateSql.toString());
-		
+
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finAdvancePayments);
 		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		
+
 		logger.debug("Leaving");
 	}
 

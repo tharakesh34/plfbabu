@@ -101,7 +101,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 
 	protected Button btnPaymentSave;
 	protected Row row_tranStatus;
-	
+
 	protected Label customerPaymentTxn_finType;
 	protected Label customerPaymentTxn_custCIF;
 	protected Checkbox customerPaymentTxn_quickDisb;
@@ -171,9 +171,9 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 			}
 
 			if (arguments.containsKey("enqiryModule")) {
-				this.enqiryModule =  (boolean) arguments.get("enqiryModule");
+				this.enqiryModule = (boolean) arguments.get("enqiryModule");
 			}
-			
+
 			if (arguments.containsKey("financeMain")) {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
 				this.ccyformat = CurrencyUtil.getFormat(this.financeMain.getFinCcy());
@@ -218,10 +218,10 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		} else {
 			this.groupboxWf.setVisible(false);
 		}
-		
+
 		this.btnPaymentSave.setVisible(!this.enqiryModule);
 		this.row_tranStatus.setVisible(!this.enqiryModule);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -307,7 +307,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		if (PennantConstants.List_Select.equals(this.tranStatus.getSelectedItem().getValue())) {
-			throw new WrongValueException(this.tranStatus,"Status Update is mandatory.");
+			throw new WrongValueException(this.tranStatus, "Status Update is mandatory.");
 		}
 		paymentTransaction.setTranStatus(this.tranStatus.getSelectedItem().getValue());
 		doRemoveValidation();
@@ -326,8 +326,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the
-	 * readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param header
 	 * @throws Exception
@@ -503,8 +502,8 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 						}
 
 						Hbox hbox = new Hbox();
-						Label label = new Label(
-								PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(), PennantStaticListUtil.getTranType()));
+						Label label = new Label(PennantApplicationUtil.getLabelDesc(entry.getDrOrCr(),
+								PennantStaticListUtil.getTranType()));
 						label.setStyle(sClassStyle);
 						hbox.appendChild(label);
 						if (StringUtils.isNotBlank(entry.getPostStatus())) {

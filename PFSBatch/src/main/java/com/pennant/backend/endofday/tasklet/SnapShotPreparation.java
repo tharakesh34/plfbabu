@@ -29,7 +29,7 @@ public class SnapShotPreparation implements Tasklet {
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_EOD_SNAPSHOT)) {
 			return RepeatStatus.FINISHED;
 		}
-		
+
 		int count = getSnapshotService().doSnapshotPreparation(valueDate);
 		BatchUtil.setExecution(context, "TOTAL", String.valueOf(count));
 		BatchUtil.setExecution(context, "PROCESSED", String.valueOf(count));

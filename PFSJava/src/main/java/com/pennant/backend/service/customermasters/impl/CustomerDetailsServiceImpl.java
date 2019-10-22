@@ -1459,9 +1459,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					custBankInfo.setRecordType("");
 					custBankInfo.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
-				if (StringUtils.trimToEmpty(custBankInfo.getRecordType()).equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				if (StringUtils.trimToEmpty(custBankInfo.getRecordType())
+						.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					auditTranType = PennantConstants.TRAN_DEL;
-					
+
 					if (CollectionUtils.isNotEmpty(custBankInfo.getBankInfoDetails())) {
 						for (BankInfoDetail bankInfoDetail : custBankInfo.getBankInfoDetails()) {
 							if (CollectionUtils.isNotEmpty(bankInfoDetail.getBankInfoSubDetails())) {
@@ -4778,7 +4779,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 
 			if (deleteRecord) {
-				
+
 				if (StringUtils.isBlank(type)) {
 					if (CollectionUtils.isNotEmpty(customerBankInfo.getBankInfoDetails())) {
 						for (BankInfoDetail bankInfoDetail : customerBankInfo.getBankInfoDetails()) {
@@ -4789,7 +4790,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 				}
-				
+
 				customerBankInfoDAO.delete(customerBankInfo, type);
 			}
 
@@ -4804,7 +4805,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(type) && deleteRecord && approveRec) {
 				bankInfoUpdate = false;
 			}
-			
+
 			if (bankInfoUpdate) {
 				List<AuditDetail> details = customerBankInfo.getAuditDetailMap().get("BankInfoDetail");
 				if (details != null) {

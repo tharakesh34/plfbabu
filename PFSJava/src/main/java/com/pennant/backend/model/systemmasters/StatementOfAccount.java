@@ -1101,6 +1101,7 @@ public class StatementOfAccount {
 	public void setRepayFrq(String repayFrq) {
 		this.repayFrq = repayFrq;
 	}
+
 	public Date getFirstDisbDate() {
 		return firstDisbDate;
 	}
@@ -1108,6 +1109,7 @@ public class StatementOfAccount {
 	public void setFirstDisbDate(Date firstDisbDate) {
 		this.firstDisbDate = firstDisbDate;
 	}
+
 	public BigDecimal getRepayRateType() {
 		return repayRateType;
 	}
@@ -1115,5 +1117,5 @@ public class StatementOfAccount {
 	public void setRepayRateType(BigDecimal repayRateType) {
 		this.repayRateType = repayRateType;
 	}
-	
-	}
+
+}

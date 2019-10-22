@@ -280,13 +280,12 @@ public class DefaultJobSchedular extends AbstractJobScheduler {
 		}
 
 		Job job = new Job();
-		job.setJobDetail(JobBuilder.newJob(DMSAddDocJob.class)
-.withIdentity(DMS_INVOKE_TIME, DMS_INVOKE_TIME)
+		job.setJobDetail(JobBuilder.newJob(DMSAddDocJob.class).withIdentity(DMS_INVOKE_TIME, DMS_INVOKE_TIME)
 				.withDescription("Invoking Dms Serivce").build());
-		job.setTrigger(TriggerBuilder.newTrigger()
-				.withIdentity("SYS_DMS_SERVICE_INVOKE_TIME", "SYS_DMS_SERVICE_INVOKE_TIME")
-				.withDescription("Dms Service Invoke Job Trigger")
-				.withSchedule(CronScheduleBuilder.cronSchedule(DMS_INVOKE_TIME)).build());
+		job.setTrigger(
+				TriggerBuilder.newTrigger().withIdentity("SYS_DMS_SERVICE_INVOKE_TIME", "SYS_DMS_SERVICE_INVOKE_TIME")
+						.withDescription("Dms Service Invoke Job Trigger")
+						.withSchedule(CronScheduleBuilder.cronSchedule(DMS_INVOKE_TIME)).build());
 
 		jobs.put(DMS_INVOKE_TIME, job);
 

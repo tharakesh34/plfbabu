@@ -98,8 +98,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	}
 
 	/**
-	 * getMiscPostingUploadsById fetch the details by using
-	 * MiscPostingUploadsDAO's getMiscPostingUploadByRef method.
+	 * getMiscPostingUploadsById fetch the details by using MiscPostingUploadsDAO's getMiscPostingUploadByRef method.
 	 * 
 	 * @param uploadId
 	 *            (long)
@@ -429,10 +428,9 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	}
 
 	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any
-	 * mismatch conditions Fetch the error details from
-	 * getMiscPostingUploadDAO().getErrorDetail with Error ID and language as
-	 * parameters. if any error/Warnings then assign the to auditDeail Object
+	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
+	 * from getMiscPostingUploadDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
+	 * then assign the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage

@@ -192,21 +192,24 @@ public interface CustomerRESTService {
 	@POST
 	@Path("/customerService/addCardSalesInformation")
 	public CustomerCardSaleInfoDetails addCardSalesInformation(
-			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
-	
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException;
+
 	@POST
 	@Path("/customerService/updatecustCardSalesInformation")
 	public WSReturnStatus updateCardSaleInformation(
-			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
-	
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException;
+
 	@GET
 	@Path("/customerService/getCardSalesInformation/{cif}")
 	public CustomerDetails getCardSalesInformation(@PathParam("cif") String custCIF) throws ServiceException;
-	
+
 	@DELETE
 	@Path("/customerService/deleteCardSaleInformation")
 	public WSReturnStatus deleteCardSaleInformation(
-			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails) throws ServiceException;
+			@WebParam(name = "customer") CustomerCardSaleInfoDetails customerCardSaleInfoDetails)
+			throws ServiceException;
 
 	@POST
 	@Path("/customerService/addCustomerAccountBehaviour")
@@ -281,6 +284,4 @@ public interface CustomerRESTService {
 	@Path("/customerService/doCustomerValidation/{coreBankId}")
 	public CustValidationResponse doCustomerValidation(@PathParam("coreBankId") String custCIF) throws ServiceException;
 
-	
-	
 }

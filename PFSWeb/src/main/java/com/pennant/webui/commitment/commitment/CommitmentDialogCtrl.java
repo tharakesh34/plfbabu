@@ -367,7 +367,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	protected Textbox reference;
 	protected Textbox reference1;
 	protected Intbox tenor;
-	
+
 	protected Component checkListChildWindow;
 	protected Component collateralAssignmentWindow;
 
@@ -1370,9 +1370,9 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		this.cmtEndDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.cmtAvailableMonths.setMaxlength(5);
 
-		
-		this.tab_CommitmentAdditionalDetails.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.COMMITE_ADDTNAL_FIELDS_REQ));
-		
+		this.tab_CommitmentAdditionalDetails
+				.setVisible(SysParamUtil.isAllowed(SMTParameterConstants.COMMITE_ADDTNAL_FIELDS_REQ));
+
 		logger.debug("Leaving");
 	}
 
@@ -1506,14 +1506,13 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			this.cmtUnUtilizedAmount
 					.setValue(PennantApplicationUtil.amountFormate(aCommitment.getCmtAvailable(), defaultCCYDecPos));
 		}
-		
+
 		//Additional fields added
-		this.fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(),
-				PennantStaticListUtil.getBankingArrangement(), "");
-		//this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
-		
-		this.fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(),
+		this.fillComboBox(bnkAggrmt, aCommitment.getBankingArrangement(), PennantStaticListUtil.getBankingArrangement(),
 				"");
+		//this.bnkAggrmt.setValue(aCommitment.getBankingArrangement());
+
+		this.fillComboBox(lmtCondition, aCommitment.getLimitCondition(), PennantStaticListUtil.getLimitCondition(), "");
 		//this.lmtCondition.setValue(aCommitment.getLimitCondition());
 		this.reference.setValue(aCommitment.getExternalRef());
 		this.reference1.setValue(aCommitment.getExternalRef1());
@@ -2024,34 +2023,34 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-			
+
 		//Additional fields added
-		try{
-		aCommitment.setBankingArrangement(this.bnkAggrmt.getSelectedItem().getValue());
+		try {
+			aCommitment.setBankingArrangement(this.bnkAggrmt.getSelectedItem().getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
-		try{
-		aCommitment.setLimitCondition(this.lmtCondition.getSelectedItem().getValue());
-		
-	   } catch (WrongValueException we) {
-		wve.add(we);
-	   }
-		try{
-		aCommitment.setExternalRef(this.reference.getValue());
-		 } catch (WrongValueException we) {
-				wve.add(we);
+		try {
+			aCommitment.setLimitCondition(this.lmtCondition.getSelectedItem().getValue());
+
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
-		try{
-		aCommitment.setExternalRef1(this.reference1.getValue());
-		 } catch (WrongValueException we) {
-				wve.add(we);
-			   }
-		try{
-		aCommitment.setTenor(this.tenor.getValue());
-		 } catch (WrongValueException we) {
-				wve.add(we);
-			   }
+		try {
+			aCommitment.setExternalRef(this.reference.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCommitment.setExternalRef1(this.reference1.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aCommitment.setTenor(this.tenor.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
 		//Commitment Rates
 		Cloner cloner = new Cloner();
 		aCommitment.setCommitmentRateList(cloner.deepClone(this.commitmentRateDetailList));

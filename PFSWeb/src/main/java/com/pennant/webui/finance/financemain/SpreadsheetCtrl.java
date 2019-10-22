@@ -112,10 +112,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_SpreadSheetDialog(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
-		
+
 		// Set the page level components.
 		setPageComponents(window_SpreadSheetDialog);
-		
+
 		try {
 			// READ OVERHANDED parameters !
 			if (arguments.containsKey("creditReviewDetails")) {
@@ -171,7 +171,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			MessageUtil.showError(e);
 			this.window_SpreadSheetDialog.onClose();
 		}
-		
+
 		logger.debug("Leaving");
 	}
 
@@ -182,7 +182,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
-		
+
 		try {
 			if (!("PREA".equals(creditReviewDetails.getEligibilityMethod())
 					&& !(PennantConstants.List_Select.equals(creditReviewDetails.getFinCategory()))
@@ -213,7 +213,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		} catch (Exception e) {
 			MessageUtil.showMessage(e.getMessage());
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -250,7 +250,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("TENOR", creditReviewDetails.getTenor());
 			dataMap.put("ROI", creditReviewDetails.getRoi());
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
-			dataMap.put("DSCR_PBDIT",btMap.get("DSCR_PBDIT"));
+			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
 			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
@@ -258,7 +258,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
-			
+
 		} else {
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
 
@@ -334,13 +334,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				range.setCellStyle(newStyle);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public static Map<String, Object> convertStringToMap(String payload) {
 		logger.debug(Literal.ENTERING);
-		
+
 		ObjectMapper obj = new ObjectMapper();
 		HashMap<String, Object> map = null;
 		try {
@@ -353,15 +353,15 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		} catch (IOException e) {
 			logger.debug(Literal.EXCEPTION, e);
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return map;
 	}
 
 	public void doWriteComponentstoBean() {
 		logger.debug(Literal.ENTERING);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonInString = null;
 
@@ -391,7 +391,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		this.creditReviewData.setTemplateName(this.creditReviewDetails.getTemplateName());
 		this.creditReviewData.setTemplateVersion(this.creditReviewDetails.getTemplateVersion());
 		this.creditReviewData.setTemplateData(jsonInString);
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -430,13 +430,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void setDataToCells(String fields, Map<String, BigDecimal> dataMap) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (StringUtils.isNotBlank(fields)) {
 			String fieldsArray[] = fields.split(",");
 			for (int i = 0; i < fieldsArray.length; i++) {
@@ -447,7 +447,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -574,7 +574,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	public void onClickToBeConsidered(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
-		
+
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 		CustomerExtLiability custLiability = (CustomerExtLiability) checkBox.getAttribute("custExtLiability");
 		if (checkBox.isChecked()) {
@@ -595,13 +595,13 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				logger.error(Literal.EXCEPTION, e);
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public Map<String, Object> saveConsideredObligations(Map<String, Object> dataMap) {
 		logger.debug(Literal.ENTERING);
-		
+
 		if (this.listBoxCustomerExternalLiability.getItems().size() > 0) {
 			for (int i = 0; i < listBoxCustomerExternalLiability.getItems().size(); i++) {
 				Listitem listitem = listBoxCustomerExternalLiability.getItemAtIndex(i);
@@ -615,9 +615,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 				}
 			}
 		}
-		
+
 		logger.debug(Literal.LEAVING);
-		
+
 		return dataMap;
 	}
 

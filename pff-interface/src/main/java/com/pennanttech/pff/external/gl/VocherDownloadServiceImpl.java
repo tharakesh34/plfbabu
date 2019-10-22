@@ -30,7 +30,8 @@ public class VocherDownloadServiceImpl implements VocherDownloadService {
 		if ("F".equals(status.getStatus())) {
 			if (status.getTotalRecords() == 0) {
 				throw new AppException(String.format("Postings not avilable for the vocher dates between %s and %s",
-						DateUtil.format(postDate, DateFormat.SHORT_DATE), DateUtil.format(toDate, DateFormat.SHORT_DATE)));
+						DateUtil.format(postDate, DateFormat.SHORT_DATE),
+						DateUtil.format(toDate, DateFormat.SHORT_DATE)));
 			} else {
 				throw new AppException(status.getRemarks());
 			}
@@ -43,7 +44,8 @@ public class VocherDownloadServiceImpl implements VocherDownloadService {
 
 		parameterMap.put("FROM_DATE", DateUtil.format(postDate, "YYYYMMdd"));
 		parameterMap.put("TO_DATE", DateUtil.format(toDate, "YYYYMMdd"));
-		parameterMap.put("VOCHER_DATE", DateUtil.format(postDate, "YYYYMMdd")+"_"+DateUtil.format(toDate, "YYYYMMdd"));
+		parameterMap.put("VOCHER_DATE",
+				DateUtil.format(postDate, "YYYYMMdd") + "_" + DateUtil.format(toDate, "YYYYMMdd"));
 		parameterMap.put("ORDER_BY_CLAUSE", "order by PostDate, LinkedTranId, TransOrder");
 
 		filterMap.put("POSTDATE", postDate);

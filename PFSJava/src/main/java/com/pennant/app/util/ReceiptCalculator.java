@@ -1616,10 +1616,10 @@ public class ReceiptCalculator implements Serializable {
 		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST())
 				.add(taxSplit.getCess()));
 		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST()));
-		
+
 		if (netAmount.add(taxSplit.gettGST()).compareTo(taxableAmount) != 0) {
 			BigDecimal diff = taxableAmount.subtract(netAmount.add(taxSplit.gettGST()));
-			taxSplit.setNetAmount(taxSplit.getNetAmount().add(diff));			
+			taxSplit.setNetAmount(taxSplit.getNetAmount().add(diff));
 		}
 		return taxSplit;
 	}

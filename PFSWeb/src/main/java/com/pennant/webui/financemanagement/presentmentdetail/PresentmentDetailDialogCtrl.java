@@ -204,7 +204,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.partnerBank.setDescColumn("PartnerBankCode");
 		this.partnerBank.setValidateColumns(new String[] { "PartnerBankId" });
 		this.partnerBank.setMandatoryStyle(true);
-		
+
 		this.loanReference.setDisplayStyle(3);
 		this.loanReference.setModuleName("PresentmentDetailDef");
 		this.loanReference.setValueColumn("PresentmentId");
@@ -417,7 +417,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	
 	public void onFulfill$loanReference(Event event) {
 		logger.debug(Literal.ENTERING);
 
@@ -434,7 +433,6 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		logger.debug(Literal.LEAVING);
 	}
 
-	
 	public void onClick$btn_AddInclude(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING + event.toString());
 

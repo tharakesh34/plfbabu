@@ -106,7 +106,7 @@ public class Beneficiary extends AbstractWorkflowEntity implements Entity {
 	private boolean beneficiaryActive;
 	private boolean defaultBeneficiary;
 	private String micr;
-	
+
 	private Long usrID;
 	private String usrLogin;
 

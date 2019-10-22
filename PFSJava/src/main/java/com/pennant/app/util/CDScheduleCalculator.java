@@ -927,8 +927,8 @@ public class CDScheduleCalculator {
 			subvention = totDuePayment.subtract(presentValue);
 		} else {
 			totPayment = emi.multiply(BigDecimal.valueOf(promotion.getTenor()));
-			if(promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0 &&
-					totPayment.compareTo(fm.getFinAmount()) > 0){
+			if (promotion.getActualInterestRate().compareTo(BigDecimal.ZERO) == 0
+					&& totPayment.compareTo(fm.getFinAmount()) > 0) {
 				totPayment = fm.getFinAmount();
 			}
 			totDuePayment = totPayment.subtract(advanceEMI);
@@ -1474,10 +1474,10 @@ public class CDScheduleCalculator {
 
 		//Different from Normal Loan
 		curSchd.setPrincipalSchd(prvSchd.getClosingBalance());
-		if(fsData.getPromotion().getActualInterestRate().compareTo(BigDecimal.ZERO) > 0){
+		if (fsData.getPromotion().getActualInterestRate().compareTo(BigDecimal.ZERO) > 0) {
 			curSchd.setRepayAmount(fsData.getFinanceMain().getReqRepayAmount());
 			curSchd.setProfitSchd(curSchd.getRepayAmount().subtract(curSchd.getPrincipalSchd()));
-		}else{
+		} else {
 			curSchd.setRepayAmount(prvSchd.getClosingBalance());
 			curSchd.setProfitSchd(BigDecimal.ZERO);
 		}

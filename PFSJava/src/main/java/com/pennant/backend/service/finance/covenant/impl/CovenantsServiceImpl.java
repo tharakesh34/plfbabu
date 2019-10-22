@@ -121,7 +121,7 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 				covenantDocument.setDocumentDetail(
 						documentDetailsDAO.getDocumentDetails(covenantDocument.getDocumentId(), tableType.getSuffix()));
 			}
-			
+
 			covenant.setCovenantDocuments(covenantDocuments);
 		}
 

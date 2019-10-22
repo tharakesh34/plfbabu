@@ -618,7 +618,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAdvPftRateChange"));
 		this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 		this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
-		this.btnAddDatedSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
+		this.btnAddDatedSchedule
+				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
 		this.btnCancelDisbursement
 				.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnCancelDisb"));
 		this.btnPostponement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnPostponement"));
@@ -1696,9 +1697,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 			this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 
-			this.btnAddDatedSchedule.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
-			this.btnAddDatedSchedule.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
-			
+			this.btnAddDatedSchedule
+					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+			this.btnAddDatedSchedule
+					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
 			this.btnAddDisbursement.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
@@ -1922,7 +1925,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 		logger.debug("Leaving" + event.toString());
 	}
-	
+
 	/**
 	 * when the "AddDatedSchedule" button is clicked. <br>
 	 * 

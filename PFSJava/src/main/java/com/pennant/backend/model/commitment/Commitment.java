@@ -718,6 +718,5 @@ public class Commitment extends AbstractWorkflowEntity {
 	public void setTenor(int tenor) {
 		this.tenor = tenor;
 	}
-	
 
 }

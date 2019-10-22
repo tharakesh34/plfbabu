@@ -1180,13 +1180,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	private RepayScheduleDetail prepareRepaySchDetails(BigDecimal profitBal, FinanceScheduleDetail schDetail,
 			FinanceMain financeMain, FeeWaiverHeader waiverHeader) {
-		
+
 		FinRepayHeader finRepayHeader = new FinRepayHeader();
 		finRepayHeader.setFinReference(financeMain.getFinReference());
 		finRepayHeader.setValueDate(DateUtility.getAppDate());
 		finRepayHeader.setFinEvent(AccountEventConstants.ACCEVENT_WAIVER);
 		long id = getFinanceRepaymentsDAO().saveFinRepayHeader(finRepayHeader, TableType.MAIN_TAB);
-		
+
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
 		rsd.setWaiverId(waiverHeader.getWaiverId());
 		rsd.setFinReference(schDetail.getFinReference());
@@ -1207,7 +1207,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		rsd.setPrincipalSchd(schDetail.getPrincipalSchd());
 		rsd.setPrincipalSchdPaid(schDetail.getSchdPriPaid());
 		rsd.setPenaltyPayNow(BigDecimal.ZERO);
-		
+
 		rsd.setRepayID(id);// wAIVERiD
 		rsd.setRepaySchID(1);
 		rsd.setLinkedTranId(0);// pOSTiD
@@ -1810,7 +1810,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
-	
+
 	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
 		return financeRepaymentsDAO;
 	}
@@ -1862,5 +1862,5 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
 	}
-	
+
 }

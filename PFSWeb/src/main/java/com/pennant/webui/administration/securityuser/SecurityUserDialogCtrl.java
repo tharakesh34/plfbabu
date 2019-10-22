@@ -71,7 +71,6 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Checkbox;
@@ -164,10 +163,10 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 	protected Window window_SecurityUserDialog;
 	protected Textbox usrLogin;
 	protected Combobox authType;
-	protected Textbox txtbox_Password;
+	protected org.zkoss.zhtml.Input txtbox_Password;
 	protected Textbox txtbox_Password1;
 	protected Textbox usrnewPwd;
-	protected Textbox txtbox_confirm_Password;
+	protected org.zkoss.zhtml.Input txtbox_confirm_Password;
 	protected Textbox txtbox_confirm_Password1;
 	protected Textbox userStaffID;
 	protected Textbox usrFName;
@@ -269,7 +268,9 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 
 		// Set the page level components.
 		setPageComponents(window_SecurityUserDialog);
-
+		txtbox_Password = (org.zkoss.zhtml.Input) window_SecurityUserDialog.getFellowIfAny("txtbox_Password");
+		txtbox_confirm_Password = (org.zkoss.zhtml.Input) window_SecurityUserDialog
+				.getFellowIfAny("txtbox_confirm_Password");
 		try {
 
 			if (arguments.containsKey("securityUser")) {
@@ -617,6 +618,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		setPasswordRowVisibility(this.authType.getSelectedItem().getValue().toString());
 		setPasswordInstructionsVisibility(this.authType.getSelectedItem().getValue().toString());
 		this.usrLogin.setErrorMessage("");
+		this.txtbox_Password.setValue("");
+		this.txtbox_confirm_Password.setValue("");
 		setUserDetails();
 
 	}
@@ -682,7 +685,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				if (this.rowSecurityUserDialogUsrPwd.isVisible()) {
 					try {
 						if (StringUtils.isBlank(this.txtbox_Password1.getValue())) {
-							throw new WrongValueException(this.txtbox_Password1, Labels.getLabel("FIELD_NO_EMPTY",
+							throw new WrongValueException(this.txtbox_Password, Labels.getLabel("FIELD_NO_EMPTY",
 									new String[] { Labels.getLabel("label_SecurityUserDialog_UsrPwd.value") }));
 						}
 						aSecurityUser.setUsrPwd(StringUtils.trimToEmpty(this.txtbox_Password1.getValue()));
@@ -946,8 +949,8 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 			/* if any Exception Occurs make password and new password Fields empty */
 			this.txtbox_Password.setValue("");
 			this.txtbox_confirm_Password.setValue("");
-			this.div_PwdStatusMeter.setStyle("background-color:white");
-			this.label_PwdStatus.setValue("");
+			/* this.div_PwdStatusMeter.setStyle("background-color:white"); */
+			/* this.label_PwdStatus.setValue(""); */
 
 			for (int i = 0; i < size; i++) {
 				wvea[i] = tab1.get(i);
@@ -1119,8 +1122,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		setValidationOn(false);
 		this.usrLogin.setConstraint("");
 		this.authType.setConstraint("");
-		this.txtbox_confirm_Password.setConstraint("");
-		this.txtbox_Password.setConstraint("");
 		this.userStaffID.setConstraint("");
 		this.usrFName.setConstraint("");
 		this.usrMName.setConstraint("");
@@ -1172,8 +1173,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		logger.debug(Literal.ENTERING);
 		this.usrLogin.setErrorMessage("");
 		this.authType.setErrorMessage("");
-		this.txtbox_confirm_Password.setErrorMessage("");
-		this.txtbox_Password.setErrorMessage("");
 		this.userStaffID.setErrorMessage("");
 		this.usrFName.setErrorMessage("");
 		this.usrMName.setErrorMessage("");
@@ -1483,7 +1482,7 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		} catch (Exception e) {
 			this.txtbox_Password.setValue("");
 			this.txtbox_confirm_Password.setValue("");
-			this.txtbox_Password.setFocus(true);
+			this.txtbox_Password.setAutofocus(true);
 			MessageUtil.showError(e);
 		}
 

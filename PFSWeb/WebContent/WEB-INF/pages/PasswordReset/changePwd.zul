@@ -15,7 +15,7 @@
 			<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">
 				<!-- COMMON BUTTONS -->
 				<toolbar align="start" sclass="toolbar-start">
-					<button id="btnSave" tabindex="5" autodisable="btnSave,btnHelp"
+					<button id="btnSave" tabindex="5" autodisable="btnSave,btnHelp,btnClose"
 						tooltiptext="${c:l('btnSave.tooltiptext')}" label="Save" w:onClick="encryptSecUserPasswordRest()" />
 				</toolbar>
 				<toolbar align="center" sclass="toolbar-center">
@@ -23,8 +23,9 @@
 				</toolbar>
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
-					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" autodisable="btnSave,btnHelp"
+					<button id="btnHelp" visible="false" label="${c:l('label_Help')}" autodisable="btnSave,btnHelp,btnClose"
 						tooltiptext="${c:l('btnHelp.tooltiptext')}" />
+					<button id="btnClose" tooltiptext="${c:l('btnClose.tooltiptext')}" autodisable="btnSave,btnHelp,btnClose" />
 				</toolbar>
 
 			</hbox>
@@ -53,13 +54,7 @@
 										<label id="label_Password" value="${c:l('label_Password.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-
-											<textbox type="password" sclass="z-textbox-loginPassword" id="password"
-												style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" maxlength="50" width="180px"
-												height="24px" tabindex="2">
-												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
-											</textbox>
-
+											<h:input type="password" class="z-textbox" id="password"/>
 											<textbox id="password1" type="password" width="150px" visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 											</textbox>
@@ -69,38 +64,17 @@
 										<label id="label_NewPassword" value="${c:l('label_NewPassword.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-											<textbox type="password" sclass="z-textbox-loginPassword" id="newPassword"
-												style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" maxlength="50" width="180px"
-												height="24px" tabindex="3">
-												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
-											</textbox>
-
+											<h:input type="password" class="z-textbox" id="newPassword"/>
 											<textbox id="newPassword1" type="password" width="150px" visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
 											</textbox>
-
-											<vbox>
-												<hbox>
-													<label value="${c:l('label_PasswordCriteria.value')}"
-														style="text-decoration:underline">
-													</label>
-													<label id="label_PwdStatus"></label>
-												</hbox>
-												<div id="div_PwdStatusMeter" width="200PX" height="5px"></div>
-											</vbox>
 										</hbox>
 									</row>
 									<row>
 										<label id="label_RetypePassword" value="${c:l('label_RetypePassword.value')}" />
 										<hbox>
 											<space spacing="2px" sclass="mandatory" />
-
-											<textbox type="password" sclass="z-textbox-loginPassword"
-												id="retypeNewPassword" style="margin-right:60px" ca:autocomplete="off" w:onOK="onSubmitOK();" maxlength="50"
-												width="180px" height="24px" tabindex="4">
-												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />
-											</textbox>
-
+											<h:input type="password" class="z-textbox" id="retypeNewPassword"/>
 											<textbox id="retypeNewPassword1" type="password" width="150px"
 												visible="false">
 												<custom-attributes org.zkoss.zk.ui.updateByClient="true" />

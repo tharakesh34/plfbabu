@@ -319,7 +319,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		logger.debug(Literal.ENTERING);
 
 		this.merchantName.setText(merchantDetails.getMerchantName());
-		this.storeId.setValue(String.valueOf(merchantDetails.getStoreId()).equals("null") ? "0" : String.valueOf(merchantDetails.getStoreId()));
+		this.storeId.setValue(String.valueOf(merchantDetails.getStoreId()).equals("null") ? "0"
+				: String.valueOf(merchantDetails.getStoreId()));
 		this.storeName.setText(merchantDetails.getStoreName());
 		this.addressLine1.setText(merchantDetails.getStoreAddressLine1());
 		this.addressLine2.setText(merchantDetails.getStoreAddressLine2());
@@ -563,9 +564,8 @@ public class MerchantDetailsDialogueCtrl extends GFCBaseCtrl<MerchantDetails> {
 		}
 
 		if (!this.storeId.isReadonly()) {
-			this.storeId.setConstraint(
-					new PTStringValidator(Labels.getLabel("label_MerchantDetails_StoreId.value"),
-							PennantRegularExpressions.REGEX_NUMERIC, true));
+			this.storeId.setConstraint(new PTStringValidator(Labels.getLabel("label_MerchantDetails_StoreId.value"),
+					PennantRegularExpressions.REGEX_NUMERIC, true));
 		}
 
 		if (!this.storeName.isReadonly()) {

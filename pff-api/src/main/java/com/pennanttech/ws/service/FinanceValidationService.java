@@ -930,15 +930,12 @@ public class FinanceValidationService {
 				}
 
 			}
-			/*if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
-				GeneralDepartment generalDepartment = generalDepartmentService
-						.getApprovedGeneralDepartmentById(financeMain.getSalesDepartment());
-				if (generalDepartment == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getSalesDepartment();
-					return getErrorDetails("90501", valueParm);
-				}
-			}*/
+			/*
+			 * if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) { GeneralDepartment generalDepartment =
+			 * generalDepartmentService .getApprovedGeneralDepartmentById(financeMain.getSalesDepartment()); if
+			 * (generalDepartment == null) { String[] valueParm = new String[1]; valueParm[0] =
+			 * financeMain.getSalesDepartment(); return getErrorDetails("90501", valueParm); } }
+			 */
 			if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) {
 				Department department = departmentService.getApprovedDepartmentById(financeMain.getSalesDepartment());
 				if (department == null) {
