@@ -40,7 +40,6 @@
 								<listheader id="listheader_DocOriginal" label="${c:l('listheader_DocOriginal.label')}" sort="false"
 									hflex="min" />
 								<listheader label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
-								<listheader label="${c:l('listheader_CustDoc_CustDocRefId.label')}" sort="false" hflex="min" />
 							</listhead>
 						</listbox>
 					</groupbox>

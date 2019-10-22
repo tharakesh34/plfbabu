@@ -513,7 +513,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	private PrimaryAccountService primaryAccountService;
-	protected Listheader listheader_CustDoc_CustDocRefId;
 
 	/**
 	 * default constructor.<br>
@@ -5387,11 +5386,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					lc.setParent(item);
 					lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getRecordType()));
 					lc.setParent(item);
-					if (SysParamUtil.isAllowed(SMTParameterConstants.DMS_DOCURI_REQ)) {
-						listheader_CustDoc_CustDocRefId.setVisible(true);
-						lc = new Listcell(PennantJavaUtil.getLabel(customerDocument.getDocUri()));
-						lc.setParent(item);
-					}
 					
 					item.setAttribute("data", customerDocument);
 					ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerDocumentItemDoubleClicked");
