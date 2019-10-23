@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.cxf.message.MessageUtils;
 import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,10 +30,12 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.util.QueryUtil;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.DisbursementRequest;
 import com.pennanttech.pff.model.disbursment.DisbursementData;
+
 
 public class DefaultDisbursementRequest extends AbstractInterface implements DisbursementRequest {
 	protected final Logger logger = Logger.getLogger(getClass());
@@ -87,6 +90,7 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		List<FinAdvancePayments> disbursements = disbursementData.getDisbursements();
 		long userId = disbursementData.getUserId();
 		String fileNamePrefix = disbursementData.getFileNamePrefix();
+		
 		String configName = disbursementData.getDataEngineConfigName();
 
 		for (FinAdvancePayments disbursment : disbursements) {
@@ -171,7 +175,6 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 	private void generateFile(String configName, String paymentType, String finType, long userId,
 			List<FinAdvancePayments> disbusments, String fileNamePrefix) throws Exception {
-
 		if (CollectionUtils.isEmpty(disbusments)) {
 			return;
 		}
@@ -188,8 +191,12 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
 					throw new ConcurrencyException();
 				}
-
-				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+				int configCount = checkConfigName(configName);
+				if (configCount > 0) {
+					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
+				} else {
+					MessageUtil.showMessage("Data engine:" + configName + "not configured");
+				}
 
 			} catch (Exception e) {
 				conclude(null, idList);
@@ -198,6 +205,22 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 		}
 
 	}
+    //config name getting empty show message
+	@SuppressWarnings("deprecation")
+	public int checkConfigName(String configName) {
+		int count = 0;
+		try {
+			String sql = "select * from data_engine_config  where NAME= :NAME";
+			MapSqlParameterSource paramSource = new MapSqlParameterSource();
+			paramSource.addValue("NAME", configName);
+			count = namedJdbcTemplate.queryForInt(sql.toString(), paramSource);
+
+		} catch (Exception e) {
+			return count = 0;
+		}
+		return count;
+	}
+	
 
 	private Map<String, List<FinAdvancePayments>> getOtherBankMap(List<FinAdvancePayments> disbursemens) {
 		Map<String, List<FinAdvancePayments>> map = new HashMap<>();
