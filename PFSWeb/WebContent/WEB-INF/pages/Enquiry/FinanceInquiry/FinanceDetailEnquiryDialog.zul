@@ -525,7 +525,7 @@
 													<space spacing="2px" />
 													<decimalbox id="repayMargin" width="198px" maxlength="15" readonly="true" style="text-align:right" />
 												</hbox>
-												<label />
+												<label id="label_FinanceMainDialog_repayEffectiveRat" value="${c:l('label_FinanceMainDialog_repayEffectiveRate.value')}"/>
 												<hbox>
 													<space spacing="2px" />
 													<decimalbox id="repayEffectiveRate" width="198px" maxlength="15" readonly="true" style="text-align:right" />
