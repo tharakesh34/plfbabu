@@ -10055,6 +10055,12 @@
 
 	<bean id="invokeSysNotifications" class="com.pennanttech.pff.notifications.service.InvokeSysNotifications" parent="basicDao">
 	</bean>
+	<bean id="notificationProcess" class="com.pennanttech.pff.notifications.service.NotificationProcessImpl" parent="basicDao" >
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="paymentHeaderService" ref="paymentHeaderService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+	</bean>
 
 	<bean id="processSystemNotifications" class="com.pennanttech.pff.notifications.service.ProcessSystemNotifications"
 		parent="basicDao">

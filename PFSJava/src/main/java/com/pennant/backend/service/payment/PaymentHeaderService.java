@@ -48,6 +48,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.payment.PaymentHeader;
 
 public interface PaymentHeaderService {
@@ -73,4 +74,6 @@ public interface PaymentHeaderService {
 	boolean getPaymentHeadersByFinReference(String finReference, String type);
 
 	List<ManualAdvise> getManualAdviseForEnquiry(String finReference);
+
+	PaymentInstruction getPaymentInstruction(long paymentId);
 }

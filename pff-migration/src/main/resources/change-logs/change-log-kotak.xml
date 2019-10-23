@@ -3910,4 +3910,405 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 			 ]]>
 		</sql>
 	</changeSet>
+	<changeSet id="87" author="Saikiran.V" dbms="oracle">
+	<comment>Demand Alert </comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT');
+				delete from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT';
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('DEMAND_ALERT','Demand Alert Notification','EMAIL','Customer','Demand Alert – LAN ${SYS_NOTIFICATION.FINREFERENCE}','FTLFiles/EMAIL',
+				'DEMAND_ALERT.ftl',null,null,null,' FROM DEMAND_ALERT_VIEW ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'finReference',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'custId',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'custEmail','EMAIL',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'finAmount','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'principalSchd','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'profitSchd','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'repayAmount','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'schDate','DATE','dd-MM-yyyy',0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'vanCode',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='DEMAND_ALERT'),'tdsAmount','AMOUNT',null,0);		
+			 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="88" author="Saikiran.V" dbms="oracle">
+		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
+				SELECT  FM.FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FM.FINAMOUNT ,
+				FSD.PRINCIPALSCHD,
+				FSD.PROFITSCHD,
+				FSD.REPAYAMOUNT,
+				FSD.SCHDATE,
+				FSD.TDSAMOUNT,
+				(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE 
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+				where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and  (SCHDATE = sysdate+2 OR SCHDATE =sysdate+5)		
+		</createView>
+	</changeSet>
+	<changeSet id="89" author="Saikiran.V" dbms="oracle">
+		<comment>Overdue Alert</comment>
+		<sql>
+			<![CDATA[
+					delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT');
+					delete from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT';
+					
+					Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,					ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+					values ('OVERDUE_ALERT','Overdue Alert Notification','EMAIL','Customer','Overdue Alert – LAN ${SYS_NOTIFICATION.FINREFERENCE}','FTLFiles/EMAIL',
+					'OVERDUE_ALERT.ftl',null,null,null,' FROM OVER_ALERT_VIEW ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);					
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'custId',null,null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'custEmail','EMAIL',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'finReference',null,null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'finAmount','AMOUNT',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'principalSchd','AMOUNT',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'profitSchd','AMOUNT',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'repayAmount','AMOUNT',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'schDate','DATE','dd-MM-yyyy',0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'totPenaltyBal','AMOUNT',null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='OVERDUE_ALERT'),'vanCode',null,null,0);						
+			 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="90" author="Saikiran.V" dbms="oracle">
+		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
+				select
+				CUS.CUSTID ,
+				CEM.CUSTEMAIL,
+				FM.FINREFERENCE,
+				FM.FINAMOUNT ,
+				FSD.PRINCIPALSCHD,
+				FSD.PROFITSCHD,
+				FSD.REPAYAMOUNT,
+				FSD.SCHDATE,
+				FOD.TOTPENALTYBAL,
+				(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE 
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+				INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+				where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5  and SCHDATE >= sysdate+3 AND FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000 AND SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
+		</createView>
+	</changeSet>
+	<changeSet id="91" author="Saikiran.V" dbms="oracle">
+		<comment>Receipt Advice</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT');
+				delete from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT';				
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('RECEIPTADVICE_ALERT','Receipt Advice Alert Notification','EMAIL','Customer','Receipt Advice','FTLFiles/EMAIL',
+				'RECEIPTADVICE_ALERT.ftl',null,null,null,' FROM RECEIPTADVICE_ALERT_VIEW  ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);
+								
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'finReference',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'custId',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'custEmail','EMAIL',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'receiptAmount','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'receiptDate','DATE','dd-MM-yyyy',0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='RECEIPTADVICE_ALERT'),'receiptId',null,null,0);	
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="92" author="Saikiran.V" dbms="oracle">
+		<createView viewName="RECEIPTADVICE_ALERT_VIEW" replaceIfExists="true">
+				SELECT  FM.FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FRH.receiptAmount,
+				FRH.receiptDate,
+				FRH.receiptId
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
+				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+				WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and  FRH.RECEIPTDATE=sysdate
+		</createView>
+	</changeSet>
+	<changeSet id="93" author="Saikiran.V" dbms="oracle">
+		<comment>Maturity Date Alert</comment>
+		<sql>
+			<![CDATA[
+					delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT');
+					delete from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT';	
+					
+					Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,					ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+					values ('MATURITY_DATE_ALERT','Maturity Date Alert','EMAIL','Customer','Maturity Date Alert – ${SYS_NOTIFICATION.CUSTCIF} –${SYS_NOTIFICATION.CUSTSHRTNAME} ','FTLFiles/EMAIL',
+					'MATURITY_DATE_ALERT.ftl',null,null,null,' FROM MATURITY_DATE_ALERT_VIEW  ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);					
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'finReference',null,null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'custId',null,null,0);
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'custEmail','EMAIL',null,0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'finAmount','AMOUNT',null,0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'maturityDate','DATE','dd-MM-yyyy',0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'custCif',null,null,0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'custShrtName',null,null,0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='MATURITY_DATE_ALERT'),'amtPayable','AMOUNT',null,0);
+			]]>
+		</sql>
+	</changeSet>
+		<changeSet id="94" author="Saikiran.V" dbms="oracle">
+		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
+					SELECT  FM.FINREFERENCE,
+					FM.CUSTID,
+					CEM.CUSTEMAIL,
+					CS.CustShrtName,
+					CS.CustCif ,
+					(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE ,
+					FM.MaturityDate,
+					FM.finAmount,
+					MA.amtPayable
+					FROM  FINANCEMAIN FM 
+					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+					INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+					Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+					group by finreference ) MA on MA.finreference=FM.finreference 
+					WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  MATURITYDATE= add_months(sysdate,-1)
+		</createView>
+	</changeSet>
+	<changeSet id="95" author="Saikiran.V" dbms="oracle">
+		<comment>Statement of Account Alert</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT');
+				delete from SYS_NOTIFICATIONS where CODE='SOA_ALERT';
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('SOA_ALERT','SOA Alert Notification','EMAIL','Customer','Statement of Account','FTLFiles/EMAIL',
+				'SOA_ALERT.ftl','/opt/pennant/PFF/BASE/config/FTLFiles/Email/','SOAReport.pdf',null,' FROM SOA_ALERT_VIEW   ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);
+								
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT'),'finReference',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT'),'custId',null,null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT'),'custEmail','EMAIL',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT'),'finStartDate','DATE','dd-MM-yyyy',0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='SOA_ALERT'),'toDate','DATE','dd-MM-yyyy',0);
+			 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="96" author="Saikiran.V" dbms="oracle">
+		<createView viewName="SOA_ALERT_VIEW" replaceIfExists="true">
+				Select FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FINSTARTDATE finStartDate ,
+				sysdate toDate
+				from financemain FM
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+				where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5  and to_char(sysdate)= to_char(ADD_MONTHS((LAST_DAY(SYSDATE)+1),-1),'dd-mm-yy')
+		</createView>
+	</changeSet>
+	<changeSet id="97" author="Saikiran.V" dbms="oracle">
+		<comment>Statement of Account Alert</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATIONS where CODE='DISB_ADVICE_ALERT';
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('DISB_ADVICE_ALERT','TDS Alert Notification','EMAIL','Customer','Disbursement Advice','FTLFiles/EMAIL',
+				'DISBURSEMENT_ADVICE_ALERT.ftl',null,null,null,'',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="98" author="Saikiran.V" dbms="oracle">
+		<comment>TDS Alert</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT');
+				delete from SYS_NOTIFICATIONS where CODE='TDS_ALERT';
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,
+				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+				values ('TDS_ALERT','TDS Alert Notification','EMAIL','Customer','TDS Alert – LAN ${SYS_NOTIFICATION.FINREFERENCE}','FTLFiles/EMAIL',
+				'TDS_ALERT.ftl',null,null,null,' FROM TDS_ALERT_VIEW  ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT'),'finReference',null,'0',0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT'),'custEmail','EMAIL','0',0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT'),'tdsAmount','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT'),'finAssetValue','AMOUNT',null,0);
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='TDS_ALERT'),'tdsMonth',null,null,0);
+			
+			 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="99" author="Saikiran.V" dbms="oracle">
+		<createView viewName="TDS_ALERT_VIEW" replaceIfExists="true">
+				select to_char(FSD.schDate,'MON''YY') tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE  from FINSCHEDULEDETAILS FSD
+				INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				   Where  	     	CUS.dnd= 0  and CEM.CUSTEMAILPRIORITY=5  and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(sysdate+45 ,'dd-mm-yy') OR
+                                    to_char(schDate) = to_char(sysdate+30 ,'dd-mm-yy') OR 
+                                    to_char(schDate) = to_char(sysdate+15 ,'dd-mm-yy') )
+		</createView>
+	</changeSet>
+	<changeSet id="100" author="Saikiran.V" dbms="oracle">
+		<comment>For Welcome Letter Rule</comment>
+		<sql>
+			<![CDATA[
+				delete RBFieldDetails where 	RBModule='FIN' and 		RBEvent='FIN'	and RBFldName='fm_recordStatus'; 
+				INSERT INTO RBFieldDetails (RBModule, RBEvent, RBFldName, RBFldDesc, RBFldType, RBFldLen, RBForCalFlds, RBForBldFlds, RBFldTableName, RBSTFlds, ModuleCode) VALUES ('FIN', 'FIN', 'fm_recordStatus', 'Record Status', 'VARCHAR2', 50, '0', '1', 'Financemain', 'static', 'FinanceMain');
+				delete TEMPLATEFIELDS where 	MODULE='FIN' and 		FIELD='drawingPower'	; 
+				delete TEMPLATEFIELDS where 	MODULE='FIN' and 		FIELD='currentDate'	; 
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','drawingPower','Drawing Power','A','Origination');
+				Insert into TEMPLATEFIELDS (MODULE,FIELD,FIELDDESC,FIELDFORMAT,EVENT) values ('FIN','currentDate','Current Date','A','Origination');		
+			 ]]>
+		</sql>
+	</changeSet>		
+	
+	
+	<changeSet id="101" author="Saikiran.V" dbms="oracle">
+		<comment>RE_KYC CORP</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID in (select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP');
+				delete from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP';
+				
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REKYC_ALERT_CORP','RE-KYC Alert Notification','EMAIL','Customer',' Re – KYC Due','FTLFiles/EMAIL',
+				'REKYC_ALERT.ftl',null,null,null,' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,Sysdate DateVal ,CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 
+				(Select reference, sysdate from CUSTOMER_CORP_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''730''         
+				and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null 
+				union all 
+				Select reference, sysdate from CUSTOMER_CORP_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''2929''
+				and   	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null
+				union all 
+				Select reference, sysdate from CUSTOMER_CORP_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''3650''
+				and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null   )  
+				EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);				
+								
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP'),'custEmail','EMAIL','0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP'),'custCif',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP'),'custShrtName',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_CORP'),'dateVal','DATE','dd-MM-yyyy',0);					
+		
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="102" author="Saikiran.V" dbms="oracle">
+		<comment>RE_KYC RETAIL</comment>
+		<sql>
+			<![CDATA[
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID in (select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL');
+				delete from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL';
+				
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REKYC_ALERT_RETAIL','RE-KYC Alert Notification','EMAIL','Customer',' Re – KYC Due','FTLFiles/EMAIL',
+				'REKYC_ALERT.ftl',null,null,null,' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,Sysdate DateVal ,CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 
+				(Select reference, sysdate from CUSTOMER_RETAIL_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''730''         
+				and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null 
+				union all 
+				Select reference, sysdate from CUSTOMER_RETAIL_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''2929''
+				and   	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null
+				union all 
+				Select reference, sysdate from CUSTOMER_RETAIL_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''3650''
+				and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null   )  
+				EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);				
+								
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL'),'custEmail','EMAIL','0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL'),'custCif',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL'),'custShrtName',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_RETAIL'),'dateVal','DATE','dd-MM-yyyy',0);		
+			 ]]>
+		</sql>
+	</changeSet>
+	
+	<!--<changeSet id="103" author="Saikiran.V" dbms="oracle">
+		<comment>RE_KYC SME</comment>
+		<sql>
+			<![CDATA[				
+				delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID in (select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME');
+				delete from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME';
+				
+				
+				Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,				ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ('REKYC_ALERT_SME','RE-KYC Alert Notification','EMAIL','Customer',' Re – KYC Due','FTLFiles/EMAIL',
+				'REKYC_ALERT.ftl',null,null,null,' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,Sysdate DateVal ,CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 
+				(Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''730''         
+				and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null 
+				union all 
+				Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''2929''
+				and   	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null
+				union all 
+				Select reference, sysdate from CUSTOMER_SME_ED where ROUND(sysdate - LASTKYCREVIEWDATE)=''3650''
+				and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null   )  
+				EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);				
+								
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custEmail','EMAIL','0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custCif',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'custShrtName',null,'0',0);
+				
+				Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REKYC_ALERT_SME'),'dateVal','DATE','dd-MM-yyyy',0);
+						
+			 ]]>
+		</sql>
+	</changeSet>-->
+	
+	<changeSet id="104" author="Saikiran.V" dbms="oracle">
+		<comment>Revised Repayment Schedule</comment>
+		<sql>
+			<![CDATA[				
+					delete from SYS_NOTIFICATION_ATTRIBUTES where NOTIFICATIONID=(select ID from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT');
+					delete from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT';
+									
+					
+					Insert into SYS_NOTIFICATIONS (CODE,DESCRIPTION,NOTIFICATIONTYPE,RECIPIENTTYPE,SUBJECT,CONTENTLOCATION,CONTENTFILENAME,ATTACHMENTLOCATION,					ATTACHMENTFILENAMES,TRIGGERQUERY,CRITERIAQUERY,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) 
+					values ('REPAYMENT_ALERT','Revised Repayment Schedule Alert Notification','EMAIL','Customer','Repayment Schedule','FTLFiles/EMAIL',
+					'REPAYMENT_ALERT.ftl','/opt/pennant/PFF/BASE/config/FTLFiles/Email/','RepaymentSchedule.docx',null,' FROM REPAYMENT_ALERT_VIEW ',1,1,1000,sysdate,'Approved',null,null,null,null,null,0);			
+					
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE) values ((select ID from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT'),'finReference',null,'0',0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT'),'custEmail','EMAIL','0',0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT'),'LogKey',null,null,0);
+					
+					Insert into SYS_NOTIFICATION_ATTRIBUTES  (NOTIFICATIONID,NAME,TYPE,FORMAT,ATTRIBUTE)values ((select ID from SYS_NOTIFICATIONS where CODE='REPAYMENT_ALERT'),'EventAction',null,null,0);
+								
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="105" author="Saikiran.V" dbms="oracle">
+		<createView viewName="REPAYMENT_ALERT_VIEW" replaceIfExists="true">
+				select  T1.FinReference, T1.LogKey, T1.EventAction, T1.SchdlRecal, T1.PostDate, T1.ReversalCompleted , CEM.custEmail
+				from FinLogEntryDetail T1
+				INNER JOIN FINANCEMAIN FM ON FM.FinReference=T1.FinReference 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+				Where CS.dnd=0 and PostDate = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
+		</createView>
+	</changeSet>
 </databaseChangeLog>

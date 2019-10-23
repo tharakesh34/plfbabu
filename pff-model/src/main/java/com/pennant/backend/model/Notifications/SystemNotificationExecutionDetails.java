@@ -14,6 +14,7 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 	private String email;
 	private String mobileNumber;
 	private byte[] notificationData;
+	private String attributes;
 
 	private String notificationType;
 	private String contentLocation;
@@ -22,6 +23,8 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 	private String notificationCode;
 	private String keyReference;
 	private String templateCode;
+	private String attachmentLocation;
+	private String attachmentFileNames;
 
 	@Override
 	public boolean isNew() {
@@ -140,6 +143,30 @@ public class SystemNotificationExecutionDetails extends AbstractWorkflowEntity i
 
 	public void setTemplateCode(String templateCode) {
 		this.templateCode = templateCode;
+	}
+
+	public String getAttachmentLocation() {
+		return attachmentLocation;
+	}
+
+	public void setAttachmentLocation(String attachmentLocation) {
+		this.attachmentLocation = attachmentLocation;
+	}
+
+	public String getAttachmentFileNames() {
+		return attachmentFileNames;
+	}
+
+	public void setAttachmentFileNames(String attachmentFileNames) {
+		this.attachmentFileNames = attachmentFileNames;
+	}
+
+	public String getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(String attributes) {
+		this.attributes = attributes;
 	}
 
 }

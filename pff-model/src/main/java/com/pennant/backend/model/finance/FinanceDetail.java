@@ -274,6 +274,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private boolean validateUpfrontFees;
 	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();
 	private LMSServiceLog lmsServiceLog;
+	private PaymentTransaction paymentTransaction;
 	private boolean pdApprovalTab = false;
 	private boolean pdInitTab = false;
 	private Date appDate = null;
@@ -1433,5 +1434,13 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public void setCreditRevDataMap(Map<String, Object> creditRevDataMap) {
 		this.creditRevDataMap = creditRevDataMap;
+	}
+
+	public PaymentTransaction getPaymentTransaction() {
+		return paymentTransaction;
+	}
+
+	public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
+		this.paymentTransaction = paymentTransaction;
 	}
 }

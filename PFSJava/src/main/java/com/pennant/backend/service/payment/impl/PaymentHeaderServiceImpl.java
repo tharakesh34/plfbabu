@@ -852,6 +852,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug("Leaving");
 		return auditHeader;
 	}
+	
+	@Override
+	public PaymentInstruction getPaymentInstruction(long paymentId) {
+		return this.paymentInstructionService.getPaymentInstruction(paymentId);
+	}
+	
 
 	public PaymentTaxDetailDAO getPaymentTaxDetailDAO() {
 		return paymentTaxDetailDAO;

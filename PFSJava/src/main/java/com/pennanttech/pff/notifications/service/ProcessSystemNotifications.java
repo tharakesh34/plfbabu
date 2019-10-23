@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,22 +28,38 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.aspose.words.SaveFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.ReportCreationUtil;
+import com.pennant.app.util.ScheduleCalculator;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.mail.MailTemplateDAO;
 import com.pennant.backend.model.Notifications.SystemNotificationExecutionDetails;
 import com.pennant.backend.model.Notifications.SystemNotifications;
+import com.pennant.backend.model.finance.FinLogEntryDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mail.MailTemplate;
+import com.pennant.backend.model.systemmasters.StatementOfAccount;
+import com.pennant.backend.service.reports.SOAReportGenerationService;
 import com.pennant.backend.util.NotificationConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
+import com.pennant.util.AgreementEngine;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
+import com.pennanttech.pennapps.notification.email.configuration.AttachmentType;
 import com.pennanttech.pennapps.notification.email.configuration.RecipientType;
 import com.pennanttech.pennapps.notification.email.model.MessageAddress;
+import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
 
 import freemarker.cache.StringTemplateLoader;
@@ -47,6 +67,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import net.sf.jasperreports.engine.JRException;
 
 public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 	private static final Logger logger = Logger.getLogger(ProcessSystemNotifications.class);
@@ -59,6 +80,12 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 	@Autowired
 	private MailTemplateDAO mailTemplateDAO;
+
+	@Autowired
+	private SOAReportGenerationService soaReportGenerationService;
+
+	@Autowired
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
 	public void processNotifications() {
 		logger.info(Literal.ENTERING);
@@ -192,6 +219,9 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
+		// Attachments addition
+		setAttachments(detail, notification);
+
 		MessageAddress address = new MessageAddress();
 		address.setEmailId(detail.getEmail());
 		// notification.setContentType(EmailBodyType.PLAIN.getKey());
@@ -204,6 +234,124 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 		emailEngine.sendEmail(notification);
 
+	}
+
+	private void setAttachments(SystemNotificationExecutionDetails detail, Notification notification) {
+
+		MessageAttachment attachment = new MessageAttachment();
+
+		if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "SOA")
+				&& StringUtils.isNotBlank(detail.getAttributes())) {
+
+			String map[] = detail.getAttributes().split(",");
+			Date startDate = null;
+			for (int i = 0; i < map.length; i++) {
+				if (map[i].contains("FINSTARTDATE")) {
+					startDate = DateUtility.getDate(map[i].substring(map[i].indexOf("=") + 1), "dd-MM-yyyy");
+					break;
+				}
+			}
+
+			Date appDate = DateUtility.addDays(SysParamUtil.getAppDate(), -1);
+			StatementOfAccount account = null;
+			try {
+				account = soaReportGenerationService.getStatmentofAccountDetails(detail.getKeyReference(), startDate,
+						appDate);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				e1.printStackTrace();
+			}
+			if (account != null) {
+				List<Object> list = new ArrayList<Object>();
+				list.add(account.getSoaSummaryReports());
+				list.add(account.getTransactionReports());
+				list.add(account.getApplicantDetails());
+				list.add(account.getOtherFinanceDetails());
+				list.add(account.getInterestRateDetails());
+
+				String reportSrc = PathUtil.getPath(PathUtil.REPORTS_FINANCE) + "/" + "FINENQ_StatementOfAccount"
+						+ ".jasper";
+				byte[] buf = null;
+				try {
+					buf = ReportCreationUtil.reportGeneration("FINENQ_StatementOfAccount", account, list, reportSrc,
+							App.CODE, false);
+
+					attachment.setAttachment(buf);
+					attachment.setAttachmentType(AttachmentType.PDF.getKey());
+					attachment.setFileName(detail.getAttachmentFileNames());
+					notification.getAttachmentList().add(attachment);
+				} catch (JRException e) {
+					logger.debug(Literal.EXCEPTION, e);
+				}
+			}
+		} else if (StringUtils.containsIgnoreCase(detail.getAttachmentFileNames(), "RepaymentSchedule")
+				&& StringUtils.isNotBlank(detail.getAttributes())) {
+
+			FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+
+			String map[] = detail.getAttributes().split(",");
+			String finReference = null;
+			long logKey = 0;
+
+			for (int i = 0; i < map.length; i++) {
+				if (map[i].contains("FINREFERENCE")) {
+					finReference = map[i].substring(map[i].indexOf("=") + 1);
+					if (finReference.endsWith("}")) {
+						finReference = finReference.substring(0, finReference.indexOf("}"));
+					}
+				}
+				if (map[i].contains("LOGKEY")) {
+					logKey = Long.valueOf(map[i].substring(map[i].indexOf("=") + 1));
+				}
+			}
+
+			List<FinanceScheduleDetail> schdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
+					"_Log", false, logKey);
+
+			schdDetails = ScheduleCalculator.sortSchdDetails(schdDetails);
+
+			for (FinanceScheduleDetail financeScheduleDetail : schdDetails) {
+				BigDecimal totAmtDue = financeScheduleDetail.getRepayAmount()
+						.subtract((financeScheduleDetail.getSchdPftPaid().add(financeScheduleDetail.getSchdPriPaid())));
+				financeScheduleDetail.setLovValue(DateUtility.formatToLongDate(financeScheduleDetail.getSchDate()));
+				financeScheduleDetail.setBalanceForPftCal(
+						PennantApplicationUtil.formateAmount(financeScheduleDetail.getBalanceForPftCal(), 2));
+				financeScheduleDetail.setRepayAmount(
+						PennantApplicationUtil.formateAmount(financeScheduleDetail.getRepayAmount(), 2));
+				financeScheduleDetail.setPrincipalSchd(
+						PennantApplicationUtil.formateAmount(financeScheduleDetail.getPrincipalSchd(), 2));
+				financeScheduleDetail
+						.setProfitSchd(PennantApplicationUtil.formateAmount(financeScheduleDetail.getProfitSchd(), 2));
+				financeScheduleDetail.setClosingBalance(
+						PennantApplicationUtil.formateAmount(financeScheduleDetail.getClosingBalance(), 2));
+				financeScheduleDetail.setActRate(financeScheduleDetail.getActRate());
+				financeScheduleDetail.setAvailableLimit(PennantApplicationUtil.formateAmount(totAmtDue, 2));
+			}
+			entryDetail.setFinanceScheduleDetailList(schdDetails);
+			entryDetail.setFinReference(finReference);
+
+			String templateName = "/RepaymentSchedule".concat(PennantConstants.DOC_TYPE_WORD_EXT);
+
+			try {
+				AgreementEngine engine = new AgreementEngine("");
+				engine.setTemplate(templateName);
+				engine.loadTemplate();
+				engine.mergeFields(entryDetail);
+
+				byte[] buf = engine.getDocumentInByteArray(
+						"RepaymentSchedule".concat(PennantConstants.DOC_TYPE_PDF_EXT), SaveFormat.PDF);
+
+				attachment.setAttachment(buf);
+				attachment.setAttachmentType(AttachmentType.PDF.getKey());
+				attachment.setFileName(detail.getAttachmentFileNames());
+				notification.getAttachmentList().add(attachment);
+				engine.close();
+			} catch (Exception e) {
+				logger.debug(Literal.EXCEPTION, e);
+			}
+			logger.debug(Literal.LEAVING);
+		}
 	}
 
 	private void prepareSMSMsg(SystemNotificationExecutionDetails detail) {
@@ -327,7 +475,13 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 		notification.setSubject(subject);
 
-		String path = App.getResourcePath("Config", detail.getContentFileName());
+		String path = "";
+		if (StringUtils.isNotBlank(detail.getContentLocation())) {
+			path = App.getResourcePath("config", detail.getContentLocation(), detail.getContentFileName());
+		} else {
+			path = App.getResourcePath("config", detail.getContentFileName());
+		}
+
 		File ftlFile = new File(path);
 		StringTemplateLoader contentloader = new StringTemplateLoader();
 		byte[] contentData = FileUtils.readFileToByteArray(ftlFile);
@@ -373,9 +527,10 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select snl.id, Executionid, Notificationid, Email, Mobilenumber, Notificationdata, Attributes,");
 		sql.append(" Notificationtype, Contentlocation, Contentfilename, Subject, code as Notificationcode, ");
-		sql.append(" TemplateCode, keyreference from sys_notification_exec_log snl");
+		sql.append(" sn.AttachmentFileNames, ");
+		sql.append(" TemplateCode, keyReference from sys_notification_exec_log snl");
 		sql.append(" inner join sys_notifications sn on sn.id = snl.notificationid");
-		sql.append(" where snl.processingflag = :ProcessingFlag");
+		sql.append(" where snl.processingflag = :ProcessingFlag ");
 		systemNotifications.setProcessingFlag(false);
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(systemNotifications);
@@ -383,6 +538,14 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 				.newInstance(SystemNotificationExecutionDetails.class);
 		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
+	}
+
+	public SOAReportGenerationService getSoaReportGenerationService() {
+		return soaReportGenerationService;
+	}
+
+	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
+		this.soaReportGenerationService = soaReportGenerationService;
 	}
 
 }

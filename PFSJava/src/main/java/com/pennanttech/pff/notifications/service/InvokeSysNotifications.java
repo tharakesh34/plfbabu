@@ -76,7 +76,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 
 				if (StringUtils.isNotEmpty(systemNotification.getTriggerQuery()) && count > 0) {
 					executeCriteriaQuery(systemNotification, executionID, attributes);
-				} else if (StringUtils.isEmpty(systemNotification.getTriggerQuery())) {
+				} else if (StringUtils.isEmpty(systemNotification.getTriggerQuery())
+						&& StringUtils.isNotEmpty(systemNotification.getCriteriaQuery())) {
 					executeCriteriaQuery(systemNotification, executionID, attributes);
 				}
 
@@ -259,20 +260,25 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 
 		SystemNotificationExecutionDetails details = new SystemNotificationExecutionDetails();
 
+		String ref = dataMap.get("FINREFERENCE");
+		if(ref==null){
+			ref=dataMap.get("CUSTCIF");
+		}
 		details.setNotificationData(notificationData);
 		details.setExecutionId(id);
 		details.setEmail(email);
 		details.setMobileNumber(mobileNum);
 		details.setNotificationId(notificationId);
 		details.setProcessingFlag(BooleanUtils.toBoolean(0));
-		details.setKeyReference(dataMap.get("FINREFERENCE"));
+		details.setKeyReference(ref);
+		details.setAttributes(dataMap.toString());
 
 		StringBuilder query = new StringBuilder();
 		query.append(" INSERT INTO SYS_NOTIFICATION_EXEC_LOG ");
 		query.append(" (EXECUTIONID, NOTIFICATIONID, PROCESSINGFLAG, KEYREFERENCE, EMAIL, MOBILENUMBER, ");
-		query.append(" NOTIFICATIONDATA )");
+		query.append(" NOTIFICATIONDATA, Attributes )");
 		query.append(" VALUES(:ExecutionId, :NotificationId, :ProcessingFlag, :KeyReference, :Email, :MobileNumber,");
-		query.append(":NotificationData)");
+		query.append(":NotificationData, :Attributes)");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(details);
 

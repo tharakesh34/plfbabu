@@ -2,6 +2,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.model.Entity;
 
@@ -15,6 +16,8 @@ public class FinLogEntryDetail implements Serializable, Entity {
 	private boolean schdlRecal = false;
 	private Date postDate;
 	private boolean reversalCompleted = false;
+	
+	private List<FinanceScheduleDetail> financeScheduleDetailList;
 
 	public FinLogEntryDetail() {
 
@@ -84,6 +87,14 @@ public class FinLogEntryDetail implements Serializable, Entity {
 
 	@Override
 	public void setId(long id) {
+	}
+
+	public List<FinanceScheduleDetail> getFinanceScheduleDetailList() {
+		return financeScheduleDetailList;
+	}
+
+	public void setFinanceScheduleDetailList(List<FinanceScheduleDetail> financeScheduleDetailList) {
+		this.financeScheduleDetailList = financeScheduleDetailList;
 	}
 
 }
