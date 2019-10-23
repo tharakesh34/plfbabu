@@ -40,7 +40,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 		sql.append(
 				"Select Id ,Reference ,FinReference ,StartDate ,EndDate ,Term ,CoverageAmount ,PolicyNumber ,IssuanceDate ,IssuanceStatus ,PartnerPremium ,");
 		sql.append(
-				"PartnerReceivedDate ,AWBNo1 ,AWBNo2 ,AWBNo3 ,DispatchStatus1 ,DispatchStatus2 ,DispatchStatus3 ,ReasonOfRTO1 ,ReasonOfRTO2 ,ReasonOfRTO3");
+				"PartnerReceivedDate ,AWBN`o1 ,AWBNo2 ,AWBNo3 ,DispatchStatus1 ,DispatchStatus2 ,DispatchStatus3 ,ReasonOfRTO1 ,ReasonOfRTO2 ,ReasonOfRTO3");
 		sql.append(
 				",DispatchDateAttempt1 ,DispatchDateAttempt2 ,DispatchDateAttempt3 ,MedicalStatus ,PendencyReasonCategory ,PendencyReason ,InsPendencyResReq");
 		sql.append(
@@ -298,7 +298,7 @@ public class InsuranceDetailDAOImpl extends SequenceDao<InsuranceDetails> implem
 
 	@Override
 	public long getSeqNumber() {
-		return getNextId("SeqPaymentHeader");
+		return getNextValue("SeqAdvpayment");
 	}
 
 	/**
