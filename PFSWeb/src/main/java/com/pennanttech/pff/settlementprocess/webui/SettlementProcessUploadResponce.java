@@ -18,19 +18,23 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.zkoss.util.media.Media;
 
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
+import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.payorderissue.impl.DisbursementPostings;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.DataEngineImport;
@@ -51,7 +55,16 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private DisbursementPostings disbursementPostings;
-	private PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager	transactionManager;
+	private FinFeeDetailDAO finFeeDetailDAO;
+
+	public FinFeeDetailDAO getFinFeeDetailDAO() {
+		return finFeeDetailDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
+	}
 
 	public void setDisbursementPostings(DisbursementPostings disbursementPostings) {
 		this.disbursementPostings = disbursementPostings;
@@ -160,11 +173,12 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					new BigDecimal((String) record.getValue("MaxValueOfProduct")));
 			settlementMapdata.addValue("MerchantName", (String) record.getValue("MerchantName"));
 
+
 			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
 			txStatus = this.transactionManager.getTransaction(txDef);
-
+			
 			validate(settlementMapdata);
 
 			settlementProcessDAO.saveSettlementProcessRequest(settlementMapdata);
@@ -219,10 +233,21 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 			finMain = financeMainDAO
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 			if (finMain == null) {
-				throw new AppException("HostReference is not avilable in PLF or inacive");
+					throw new AppException("HostReference is not avilable in PLF or inacive");
 			}
 		}
+		List<FinFeeDetail>feeList=finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
+		BigDecimal feeAmount= BigDecimal.ZERO;
 
+		for (FinFeeDetail finFeeDetail : feeList) {
+			if(finFeeDetail.isOriginationFee()){
+				feeAmount=feeAmount.add(finFeeDetail.getActualAmount());
+			}
+		}
+		BigDecimal d=finMain.getDownPayment().add(feeAmount);
+		BigDecimal tranAmount=finMain.getFinAmount().subtract(d);
+		
+		settlementMapdata.addValue("TransactionAmount",PennantApplicationUtil.formateAmount(tranAmount,CurrencyUtil.getFormat(finMain.getFinCcy())));
 		List<ExtendedField> extData = new ArrayList<>();
 
 		if (settlementMapdata.getValue("TerminalId") == null) {
@@ -294,8 +319,8 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 		dataEngine = new DataEngineExport(dataSource, userId, App.DATABASE.name(), true,
 				SysParamUtil.getAppValueDate());
 
-		DataEngineStatus status = genetare(dataEngine, userName, filterMap, parameterMap);
-
+		DataEngineStatus status= genetare(dataEngine, userName, filterMap, parameterMap);
+		
 		return status;
 
 	}

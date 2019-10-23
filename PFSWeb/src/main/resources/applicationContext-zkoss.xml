@@ -5382,6 +5382,7 @@
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 		<property name="finAdvancePaymentsDAO" ref="finAdvancePaymentsDAO" />
 		<property name="disbursementPostings" ref="disbursementPostings" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>

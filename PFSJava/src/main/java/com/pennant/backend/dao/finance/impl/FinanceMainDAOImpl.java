@@ -4841,7 +4841,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		MapSqlParameterSource source = new MapSqlParameterSource();
 
 		StringBuilder selectSql = new StringBuilder("SELECT  FinReference, PlanDeferCount, ");
-		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange,");
+		selectSql.append("  AllowedDefRpyChange, AvailedDefRpyChange, AllowedDefFrqChange, FinAmount, DownPayment,");
 		selectSql.append(
 				" AvailedDefFrqChange, FinIsActive,PromotionCode,OldFinReference, FinCategory,PromotionSeqId,FinType");
 		selectSql.append(" From FinanceMain");
