@@ -791,7 +791,8 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 			createNewPage("/WEB-INF/pages/InterfaceBajaj/DisbursementFileDownloadList.zul",
 					"menu_Item_DisbursementFileDownlaods", args);
 		} catch (Exception e) {
-			MessageUtil.showError(e);
+			MessageUtil.showError(e.getMessage());
+			
 		} finally {
 			this.disbursementMap.clear();
 			this.listHeader_CheckBox_Comp.setChecked(false);

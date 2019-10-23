@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.message.MessageUtils;
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -191,12 +192,12 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 				if (idList == null || idList.isEmpty() || (idList.size() != disbusments.size())) {
 					throw new ConcurrencyException();
 				}
-				int configCount = checkConfigName(configName);
-				if (configCount > 0) {
-					generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
-				} else {
-					MessageUtil.showMessage("Data engine:" + configName + "not configured");
+				
+				if (!isConfigExists(configName)) {
+					throw new AppException("Data engine configuration for " + configName
+							+ "not found. Please contact the system administrator..");
 				}
+				generateFile(configName, idList, paymentType, bank, finType, userId, fileNamePrefix);
 
 			} catch (Exception e) {
 				conclude(null, idList);
@@ -206,19 +207,18 @@ public class DefaultDisbursementRequest extends AbstractInterface implements Dis
 
 	}
     //config name getting empty show message
-	@SuppressWarnings("deprecation")
-	public int checkConfigName(String configName) {
-		int count = 0;
+	public boolean isConfigExists(String configName) {
 		try {
-			String sql = "select * from data_engine_config  where NAME= :NAME";
+			String sql = "select Name from data_engine_config  where Name= :Name";
 			MapSqlParameterSource paramSource = new MapSqlParameterSource();
-			paramSource.addValue("NAME", configName);
-			count = namedJdbcTemplate.queryForInt(sql.toString(), paramSource);
-
-		} catch (Exception e) {
-			return count = 0;
+			paramSource.addValue("Name", configName);
+			if (namedJdbcTemplate.queryForObject(sql.toString(), paramSource, String.class) == null) {
+				return false;
+			}
+		} catch (DataAccessException e) {
+			return false;
 		}
-		return count;
+		return true;
 	}
 	
 
