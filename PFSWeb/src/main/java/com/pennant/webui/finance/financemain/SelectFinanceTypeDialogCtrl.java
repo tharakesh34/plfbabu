@@ -836,8 +836,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				PrimaryAccount primaryAccount = new PrimaryAccount();
 				primaryAccount.setPanNumber(this.eidNumber.getValue());
 				primaryAccountService.retrivePanDetails(primaryAccount);
-				MessageUtil.showMessage("PAN Validation Successfull::: " + primaryAccount.getCustFName()
-						+ primaryAccount.getCustMName() + primaryAccount.getCustLName());
+				MessageUtil.showMessage("PAN Validation Successfull:" + "\n" + "First Name:"
+						+ primaryAccount.getCustFName() + "\n" + "Middle Name:" + primaryAccount.getCustMName() + "\n"
+						+ "Last Name:" + primaryAccount.getCustLName());
 			} catch (Exception e) {
 				if (MessageUtil.YES == MessageUtil.confirm("InValid PAN Number. Are you sure you want to continue?")) {
 				} else {

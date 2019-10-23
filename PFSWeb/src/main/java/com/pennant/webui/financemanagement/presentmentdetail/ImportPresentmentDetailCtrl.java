@@ -154,14 +154,18 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
 		instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
-		String smtInstrumentTypeConfig = SysParamUtil.getValueAsString(instrumentTypeConfigName);
-		if (smtInstrumentTypeConfig != null) {
-			config = dataEngineConfig.getConfigurationByName(smtInstrumentTypeConfig);
-			PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(config.getName());
-		} else {
-			config = dataEngineConfig.getConfigurationByName("PRESENTMENT_RESPONSE");
-			PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution("PRESENTMENT_RESPONSE");
+		String configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		if (configName == null) {
+			configName = "PRESENTMENT_RESPONSE";
 		}
+
+		try {
+			config = dataEngineConfig.getConfigurationByName(configName);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
+		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
 
 		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
 
