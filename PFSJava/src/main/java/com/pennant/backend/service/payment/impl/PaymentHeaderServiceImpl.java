@@ -269,7 +269,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			paymentHeader.setPaymentDetailList(list);
 			for (PaymentDetail paymentDetail : list) {
 				paymentDetail.setPaymentTaxDetail(
-						getPaymentTaxDetailDAO().getTaxDetailByID(paymentDetail.getPaymentDetailId(), "_Temp"));
+						getPaymentTaxDetailDAO().getTaxDetailByID(paymentDetail.getPaymentDetailId(), "_View"));
 			}
 		}
 

@@ -16281,4 +16281,18 @@ UNION ALL
 
 						  	</createView>
 	</changeSet> 
+	
+	<changeSet id="301" author="vijaya.a">
+		<createView viewName="PAYMENTTAXDETAIL_VIEW" replaceIfExists="true">
+			SELECT T1.paymentdetailid, T1.paymentid, T1.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidugst, T1.paidigst, T1.totalgst
+			FROM PaymentTaxDetail_temp T1
+			
+			UNION ALL
+			 
+			SELECT T1.paymentdetailid, T1.paymentid, T1.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidugst, T1.paidigst, T1.totalgst
+			FROM PaymentTaxDetail T1
+			WHERE NOT (EXISTS (SELECT 1 FROM PaymentTaxDetail_temp WHERE PaymentTaxDetail_temp.paymentdetailid = T1.paymentdetailid))
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
