@@ -72,6 +72,7 @@ import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
 import com.pennant.backend.model.rulefactory.Notifications;
+import com.pennant.backend.service.drawingpower.DrawingPowerService;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
@@ -83,7 +84,6 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.notification.NotificationAttribute;
 import com.pennanttech.pennapps.notification.email.EmailEngine;
@@ -94,7 +94,6 @@ import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
 import com.pennanttech.pff.core.util.DataMapUtil;
 import com.pennanttech.pff.core.util.DataMapUtil.FieldPrefix;
-import com.pennanttech.pff.external.DrawingPower;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -120,6 +119,7 @@ public class NotificationService {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private EmailEngine emailEngine;
 	private SmsEngine smsEngine;
+	private DrawingPowerService drawingPowerService;
 
 	public NotificationService() {
 		super();
@@ -1189,14 +1189,12 @@ public class NotificationService {
 					DateUtility.formatToLongDate(finOption.getCurrentOptionDate()));
 		}
 		
-		//Adding the customer drawing power
-		DrawingPower drawingPower = SpringBeanUtil.getBean(DrawingPower.class);
-		if (drawingPower != null) {
-			BigDecimal drawingPowerVal = drawingPower.getDrawingPower(aFinanceDetail.getFinReference());
-			declaredFieldValues.put("drawingPower", drawingPowerVal == null ? BigDecimal.ZERO
-					: PennantApplicationUtil.amountFormate(drawingPowerVal, 2));
-			declaredFieldValues.put("currentDate", DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
-		}		
+		// Adding the customer drawing power
+
+		BigDecimal drawingPowerVal = drawingPowerService.getDrawingPower(aFinanceDetail.getFinReference());
+		declaredFieldValues.put("drawingPower",
+				drawingPowerVal == null ? BigDecimal.ZERO : PennantApplicationUtil.amountFormate(drawingPowerVal, 2));
+		declaredFieldValues.put("currentDate", DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
 
 		return declaredFieldValues;
 	}
@@ -1444,6 +1442,14 @@ public class NotificationService {
 
 	public void setSmsEngine(SmsEngine smsEngine) {
 		this.smsEngine = smsEngine;
+	}
+
+	public DrawingPowerService getDrawingPowerService() {
+		return drawingPowerService;
+	}
+
+	public void setDrawingPowerService(DrawingPowerService drawingPowerService) {
+		this.drawingPowerService = drawingPowerService;
 	}
 
 }

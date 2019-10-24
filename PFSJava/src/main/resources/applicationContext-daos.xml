@@ -124,6 +124,7 @@
 		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
 		<property name="emailEngine" ref="emailEngine" />
 		<property name="smsEngine" ref="smsEngine" />
+		<property name="drawingPowerService" ref="drawingPowerService" />
 	</bean>
 
 	<bean id="prepareMailData" class="com.pennant.app.util.PrepareMailData" scope="prototype">

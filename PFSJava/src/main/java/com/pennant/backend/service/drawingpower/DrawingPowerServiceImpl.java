@@ -199,4 +199,12 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	@Override
+	public BigDecimal getDrawingPower(String finreference) {
+		if (drawingPower == null) {
+			return BigDecimal.ZERO;
+		}
+		return drawingPower.getDrawingPower(finreference);
+	}
+
 }
