@@ -1771,9 +1771,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			this.mandRole.setButtonDisabled(true);
 			this.mandRole.setValue(null);
 		} else if (this.mandRole.getValue() != null && !this.mandRole.getValue().equals("")) {
-			this.pdd.setDisabled(true);
 			this.pdd.setChecked(false);
-			this.otc.setDisabled(true);
 			this.otc.setChecked(false);
 		} else {
 			this.pdd.setDisabled(false);
