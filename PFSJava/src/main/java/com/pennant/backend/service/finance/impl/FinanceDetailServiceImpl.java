@@ -2245,7 +2245,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		} else {
 			// set Customer Details Audit
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)) {
+			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+					|| auditHeader.getApiHeader() == null) {
 				if (financeDetail.getCustomerDetails() != null
 						&& StringUtils.equals(financeDetail.getModuleDefiner(), FinanceConstants.FINSER_EVENT_ORG)) {
 					auditDetails.addAll(getCustomerDetailsService().saveOrUpdate(financeDetail, ""));
@@ -2265,6 +2266,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		getFinMandateService().saveOrUpdate(financeDetail, auditHeader, tableType.getSuffix());
 
 		if (financeMain.isNew()) {
+			// Lock Functionality not required while Creating loan From API
+			if (StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+					&& auditHeader.getApiHeader() != null) {
+				financeMain.setNextUserId(null);
+			}
 			getFinanceMainDAO().save(financeMain, tableType, isWIF);
 
 			// Save Finance Premium Details
