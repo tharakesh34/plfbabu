@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  ExternalInterfaceConfigurationDialogCtrl.java                                                   * 	  
+ * FileName    		:  InterfaceServiceListCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -113,8 +113,8 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 	private JdbcSearchObject<InterfaceServiceLog> searchObject;
 	protected Paging paging_interfaceService;
 	protected Window window_InterfaceServiceList;
-	protected Listheader listheader_Refernce;
-	protected Listheader listheader_Date;
+	protected Listheader listheader_InterfaceService_Reference;
+	protected Listheader listheader_InterfaceService_InitiateDate;
 	protected Listheader listheader_InterfaceService_Status;
 	protected Listheader listheader_InterfaceService_Error;
 	protected Listheader listheader_InterfaceService_RecordProcessed;
@@ -296,6 +296,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			searchObject.addField("REQUEST");
 			searchObject.addField("RESPONSE");
 			searchObject.addField("REQSENTON");
+			searchObject.addField("RESPRECEIVEDON");
 			searchObject.addField("STATUS");
 			searchObject.addField("ERRORCODE");
 			searchObject.addField("ERRORDESC");
@@ -306,6 +307,7 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 			searchObject.addField("INTERFACE_NAME");
 			searchObject.addField("RECORDS_PROCESSED");
 			searchObject.addField("START_DATE");
+			searchObject.addField("END_DATE");
 			searchObject.addField("STATUS");
 			searchObject.addField("STATUS_DESC");
 			searchObject.addField("INTERFACE_INFO");
@@ -405,7 +407,11 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					Listcell lc;
 					lc = new Listcell(interfaceDetails.getReference());
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.formateDate(interfaceDetails.getReqSentOn(), "dd-MM-yyyy"));
+					lc = new Listcell(
+							PennantAppUtil.formateDate(interfaceDetails.getReqSentOn(), "dd-MM-yyyy HH:mm:ss"));
+					lc.setParent(item);
+					lc = new Listcell(
+							PennantAppUtil.formateDate(interfaceDetails.getRespReceivedOn(), "dd-MM-yyyy HH:mm:ss"));
 					lc.setParent(item);
 					lc = new Listcell(interfaceDetails.getStatus());
 					lc.setParent(item);
@@ -431,7 +437,11 @@ public class InterfaceServiceListCtrl extends GFCBaseCtrl<InterfaceConfiguration
 					Listcell lc;
 					lc = new Listcell(interfaceDetails.getRef_num());
 					lc.setParent(item);
-					lc = new Listcell(PennantAppUtil.formateDate(interfaceDetails.getStart_Date(), "dd-MM-yyyy"));
+					lc = new Listcell(
+							PennantAppUtil.formateDate(interfaceDetails.getStart_Date(), "dd-MM-yyyy HH:mm:ss"));
+					lc.setParent(item);
+					lc = new Listcell(
+							PennantAppUtil.formateDate(interfaceDetails.getEnd_Date(), "dd-MM-yyyy HH:mm:ss"));
 					lc.setParent(item);
 					lc = new Listcell(interfaceDetails.getStatus());
 					lc.setParent(item);

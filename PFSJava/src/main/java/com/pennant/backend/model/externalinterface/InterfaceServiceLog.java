@@ -1,3 +1,33 @@
+
+
+/**
+ ********************************************************************************************
+ *                                 FILE HEADER                                              *
+ ********************************************************************************************
+ *																							*
+ * FileName    		:  InterfaceServiceLog.java                                                   * 	  
+ *                                                                    						*
+ * Author      		:  PENNANT TECHONOLOGIES              									*
+ *                                                                  						*
+ *                                                                  						*
+ * Modified Date    :  22-10-2019    														*
+ *                                                                  						*
+ * Description 		:                                             							*
+ *                                                                                          *
+ ********************************************************************************************
+ * Date             Author                   Version      Comments                          *
+ ********************************************************************************************
+ * 10-08-2019       PENNANT	                 0.1                                            * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ *                                                                                          * 
+ ********************************************************************************************
+*/
 package com.pennant.backend.model.externalinterface;
 
 import java.sql.Timestamp;
@@ -14,7 +44,7 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 	private String request;
 	private String response;
 	private Date reqSentOn;
-	private Timestamp respReceivedOn;
+	private Date respReceivedOn;
 	private String status;
 	private String errorCode;
 	private String errorDesc;
@@ -25,7 +55,7 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 	private Timestamp start_Date;
 	private String status_Desc;
 	private String interface_Info;
-
+	private Date end_Date;
 	private InterfaceServiceLog befImage;
 
 	public InterfaceServiceLog() {
@@ -99,6 +129,14 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 		this.response = response;
 	}
 
+	public Date getEnd_Date() {
+		return end_Date;
+	}
+
+	public void setEnd_Date(Date end_Date) {
+		this.end_Date = end_Date;
+	}
+
 	public Date getReqSentOn() {
 		return reqSentOn;
 	}
@@ -107,11 +145,11 @@ public class InterfaceServiceLog extends AbstractWorkflowEntity {
 		this.reqSentOn = reqSentOn;
 	}
 
-	public Timestamp getRespReceivedOn() {
+	public Date getRespReceivedOn() {
 		return respReceivedOn;
 	}
 
-	public void setRespReceivedOn(Timestamp respReceivedOn) {
+	public void setRespReceivedOn(Date respReceivedOn) {
 		this.respReceivedOn = respReceivedOn;
 	}
 

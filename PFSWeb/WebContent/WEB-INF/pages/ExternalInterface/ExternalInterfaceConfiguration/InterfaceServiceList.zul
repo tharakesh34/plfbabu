@@ -106,6 +106,10 @@
 								label="${c:l('listheader_InterfaceService_InitiateDate.label')}"
 								sort="auto" hflex="20%" />
 							<listheader
+								id="listheader_InterfaceService_EndDate"
+								label="${c:l('listheader_InterfaceService_EndDate.label')}"
+								sort="auto" hflex="20%" />
+							<listheader
 								id="listheader_InterfaceService_Status"
 								label="${c:l('listheader_InterfaceService_Status.label')}"
 								sort="auto" hflex="20%" />
