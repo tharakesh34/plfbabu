@@ -367,6 +367,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 import com.pennanttech.pff.external.InitiateHunterService;
+import com.pennanttech.pff.external.pan.service.EligibilityService;
 import com.pennanttech.pff.notifications.service.NotificationService;
 import com.pennanttech.pff.service.sampling.SamplingService;
 import com.pennanttech.webui.sampling.FinSamplingDialogCtrl;
@@ -1101,6 +1102,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	@Autowired(required = false)
 	private InitiateHunterService initiateHunterService;
+	
+	@Autowired(required = false)
+	private EligibilityService eligibilityService;
 
 	/**
 	 * default constructor.<br>
@@ -21695,6 +21699,51 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showMessage("Hunter Service Problem");
 			}
 		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onClickExtbtnINITIATEFINFORT() {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+				return;
+			}
+			if (eligibilityService != null) {
+				getFinanceDetail()
+						.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
+				FinanceDetail financeDetail = eligibilityService.getEligibilityDetails(getFinanceDetail());
+				MessageUtil.showMessage("Order Submited Successfully");
+			}
+		} catch (Exception e) {
+			if (e.getMessage() != null) {
+				MessageUtil.showMessage(e.getMessage());
+			} else {
+				MessageUtil.showMessage("Initiate Finfort Service Problem");
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void onClickExtbtnDOWNLOADFINFORT() {
+		logger.debug(Literal.ENTERING);
+
+		try {
+			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+				return;
+			}
+			if (eligibilityService != null) {
+				FinanceDetail financeDetail = eligibilityService.getEligibilityStatus(getFinanceDetail());
+			}
+		} catch (Exception e) {
+			if (e.getMessage() != null) {
+				MessageUtil.showMessage(e.getMessage());
+			} else {
+				MessageUtil.showMessage("Download  Finfort Service Problem");
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
