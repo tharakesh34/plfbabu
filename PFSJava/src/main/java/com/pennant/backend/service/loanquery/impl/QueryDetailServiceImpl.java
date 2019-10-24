@@ -246,27 +246,37 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
 		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		if (!"Save".equalsIgnoreCase(financeDetail.getUserAction())
+				&& !"Cancel".equalsIgnoreCase(financeDetail.getUserAction())
+				&& !financeDetail.getUserAction().contains("Reject")
+				&& !financeDetail.getUserAction().contains("Resubmit")
+				&& !financeDetail.getUserAction().contains("Decline")
+				&& !financeDetail.getUserAction().contains("Hold")) {
 
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = financeMain.getFinReference();
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = financeMain.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + valueParm[0];
 
-		List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "_AView");
+			List<QueryDetail> list = getQueryDetailDAO().getQueryMgmtList(financeMain.getFinReference(), "_AView");
 
-		if (list != null && list.size() > 0) {
-			for (QueryDetail queryDetail : list) {
-				if (!StringUtils.equals(queryDetail.getStatus(), Labels.getLabel("label_QueryDetailDialog_Closed"))) {
-					auditDetail.setErrorDetail(ErrorUtil
-							.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
-					auditHeader.setAuditDetail(auditDetail);
-					auditHeader.setErrorList(auditDetail.getErrorDetails());
+			if (list != null && list.size() > 0) {
+				for (QueryDetail queryDetail : list) {
+					if (!StringUtils.equals(queryDetail.getStatus(),
+							Labels.getLabel("label_QueryDetailDialog_Closed"))) {
+						auditDetail.setErrorDetail(ErrorUtil
+								.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "Q001", null, null), "EN"));
+						auditHeader.setAuditDetail(auditDetail);
+						auditHeader.setErrorList(auditDetail.getErrorDetails());
 
-					break;
+						break;
+					}
 				}
 			}
 		}
+
 		return auditHeader;
+
 	}
 
 	/**
