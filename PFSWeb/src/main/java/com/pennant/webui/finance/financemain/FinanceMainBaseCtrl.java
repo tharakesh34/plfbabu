@@ -21702,17 +21702,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 	
+	/*
+	 * on click event for INITIATEFINFORT button
+	 */
 	public void onClickExtbtnINITIATEFINFORT() {
 		logger.debug(Literal.ENTERING);
-
 		try {
 			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
 				return;
 			}
 			if (eligibilityService != null) {
-				getFinanceDetail()
-						.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
-				FinanceDetail financeDetail = eligibilityService.getEligibilityDetails(getFinanceDetail());
+				getFinanceDetail().setUserDetails(getUserWorkspace().getLoggedInUser());
+				eligibilityService.getEligibilityDetails(getFinanceDetail());
 				MessageUtil.showMessage("Order Submited Successfully");
 			}
 		} catch (Exception e) {
@@ -21722,19 +21723,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showMessage("Initiate Finfort Service Problem");
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 	
+	/*
+	 * on click event for DOWNLOADFINFORT button
+	 */
 	public void onClickExtbtnDOWNLOADFINFORT() {
 		logger.debug(Literal.ENTERING);
-
 		try {
 			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
 				return;
 			}
 			if (eligibilityService != null) {
-				FinanceDetail financeDetail = eligibilityService.getEligibilityStatus(getFinanceDetail());
+				eligibilityService.getEligibilityStatus(getFinanceDetail());
 			}
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
@@ -21743,7 +21745,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showMessage("Download  Finfort Service Problem");
 			}
 		}
-
 		logger.debug(Literal.LEAVING);
 	}
 
