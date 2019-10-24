@@ -237,18 +237,18 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="28" author="Varaprasad.K">
-	<comment>New columns added for Raised user display in Deviations</comment>
-	<addColumn tableName="AdtFinanceDeviations">
-		<column name="RaisedUser" type="varchar(50)" />
-	</addColumn>
-</changeSet>
+		<comment>New columns added for Raised user display in Deviations</comment>
+		<addColumn tableName="AdtFinanceDeviations">
+			<column name="RaisedUser" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="29" author="Durgaprasad G">
 		<addColumn tableName="ADTRMTFinanceTypes">
-			<column name="SchdOnPMTCal" type="boolean" defaultValue="0"/>
+			<column name="SchdOnPMTCal" type="boolean" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="30" author="Durgaprasad G">
 		<sql>
 			<![CDATA[
@@ -256,7 +256,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="31" author="Durgaprasad G">
 		<sql>
 			<![CDATA[			
@@ -265,10 +265,10 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-	 <changeSet id="32" author="Varaprasad.K">
+
+	<changeSet id="32" author="Varaprasad.K" dbms="postgresql,oracle">
 		<createTable tableName="AdtAdviseUploads">
-		    <column name="AuditId" type="bigint">
+			<column name="AuditId" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="AuditDate" type="datetime">
@@ -280,17 +280,17 @@
 			<column name="AuditImage" type="varchar(2)">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-		    <column name="AdviseId" type="bigint">
+			<column name="AdviseId" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="UploadId" type="bigint">
 				<constraints nullable="false" />
 			</column>
-			<column name="FinReference" type="varchar(20)"/>
-			<column name="AdviseType" type="char(1)"/>
-			<column name="FeeTypeCode" type="varchar(8)"/>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="AdviseType" type="char(1)" />
+			<column name="FeeTypeCode" type="varchar(8)" />
 			<column name="ValueDate" type="datetime" />
-			<column name="AdviseAmount" type="decimal(18,2)" defaultValue="0"/>
+			<column name="AdviseAmount" type="decimal(18,2)" defaultValue="0" />
 			<column name="Remarks" type="varchar(100)" />
 			<column name="Status" type="char(1)" />
 			<column name="Reason" type="varchar(500)" />
@@ -310,7 +310,61 @@
 			<column name="manualadviseid" type="bigint" />
 		</createTable>
 	</changeSet>
-	
+
+	<changeSet id="32" author="Varaprasad.K" dbms="mssql">
+		<createTable tableName="AdtAdviseUploads">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AdviseId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="UploadId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)" />
+			<column name="AdviseType" type="char(1)" />
+			<column name="FeeTypeCode" type="varchar(8)" />
+			<column name="ValueDate" type="datetime" />
+			<column name="AdviseAmount" type="decimal(18,2)" />
+			<column name="Remarks" type="varchar(100)" />
+			<column name="Status" type="char(1)" />
+			<column name="Reason" type="varchar(500)" />
+			<column name="version" type="int" />
+			<column name="lastmntby" type="bigint" />
+			<column name="lastmnton" type="datetime" />
+			<column name="recordstatus" type="varchar(50)" />
+			<column name="rolecode" type="varchar(100)" />
+			<column name="nextrolecode" type="varchar(200)" />
+			<column name="taskid" type="varchar(50)" />
+			<column name="nexttaskid" type="varchar(200)" />
+			<column name="recordtype" type="varchar(50)" />
+			<column name="workflowid" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="RejectStage" type="varchar(50)" />
+			<column name="manualadviseid" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="33_pre" author="Varaprasad.K" dbms="mssql">
+		<sql>
+			<![CDATA[	
+			alter table AdtAdviseUploads add constraint DF_AdtAdviseUploads_AdvsAmount DEFAULT 0 for AdviseAmount;
+			alter table AdtAdviseUploads add constraint DF_AdtAdviseUploads_workflowid DEFAULT 0 for workflowid;
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="33" author="Varaprasad.K">
 		<addColumn tableName="AdtManualAdvise">
 			<column name="FinSource" type="varchar(8)" defaultValue="PFF">
@@ -318,34 +372,34 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="34" author="Varaprasad.K">
-	<addColumn tableName="AdtUploadHeader">
-	    <column name="FILEDOWNLOAD" type="Boolean" />
-		<column name="ApprovedDate" type="datetime" />
-		<column name="MakerId" type="bigint" defaultValue="0" />
-		<column name="ApproverId" type="bigint" defaultValue="0" />
-	</addColumn>
-    </changeSet> 
-	
+		<addColumn tableName="AdtUploadHeader">
+			<column name="FILEDOWNLOAD" type="Boolean" />
+			<column name="ApprovedDate" type="datetime" />
+			<column name="MakerId" type="bigint" defaultValue="0" />
+			<column name="ApproverId" type="bigint" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
 	<changeSet id="35" author="Pradeep Varma">
 		<addColumn tableName="adtfinscheduledetails">
 			<column name="cpzbalance" type="decimal(18,0)" defaultValue="0" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="36" author="satyanarayana.g">
 		<addColumn tableName="ADTBANKBRANCHES">
-			<column name="PARENTBRANCH" type="varchar(8)"/>
+			<column name="PARENTBRANCH" type="varchar(8)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="37" author="satyanarayana.g">
 		<addColumn tableName="ADTBANKBRANCHES">
-			<column name="PARENTBRANCHDESC" type="varchar(200)"/>
+			<column name="PARENTBRANCHDESC" type="varchar(200)" />
 		</addColumn>
 	</changeSet>
-	
+
 	<changeSet id="38" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
