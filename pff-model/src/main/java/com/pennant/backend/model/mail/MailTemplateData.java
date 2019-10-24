@@ -185,6 +185,8 @@ public class MailTemplateData {
 	private int finCurODDays;
 	private String recordStatus;
 	private String receiptPurpose;
+	private String drawingPower;
+	private String currentDate;
 
 	public MailTemplateData() {
 
@@ -1397,6 +1399,22 @@ public class MailTemplateData {
 
 	public void setUserBranchPhone(String userBranchPhone) {
 		this.userBranchPhone = userBranchPhone;
+	}
+
+	public String getDrawingPower() {
+		return drawingPower;
+	}
+
+	public void setDrawingPower(String drawingPower) {
+		this.drawingPower = drawingPower;
+	}
+
+	public String getCurrentDate() {
+		return currentDate;
+	}
+
+	public void setCurrentDate(String currentDate) {
+		this.currentDate = currentDate;
 	}
 
 }
