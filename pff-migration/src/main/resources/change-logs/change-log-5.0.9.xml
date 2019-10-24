@@ -15861,14 +15861,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	 <changeSet id="289.0" author="satyanarayana.g">
+	<changeSet id="289.0" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
 				DELETE FROM ERRORDETAILS WHERE CODE='MD0001';
 				INSERT INTO ERRORDETAILS  VALUES ('MD0001','EN','E','Parent Branch is Mandatory.',null,'Approved',null,null,null,null,null,0,CURRENT_TIMESTAMP,1000,0);
 			]]>
 		</sql>
-	</changeSet> 
+	</changeSet>
 
 	<changeSet id="290" author="murthy.y">
 		<createView viewName="FinODPenaltyRates_AView" replaceIfExists="true">
@@ -15940,7 +15940,7 @@ UNION ALL
 			    ))
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="293" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -15949,7 +15949,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="293" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -15978,7 +15978,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="294" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -16007,7 +16007,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="295" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -16036,7 +16036,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="296" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -16053,7 +16053,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="297" author="satyanarayana.g">
 		<sql>
 			<![CDATA[
@@ -16065,7 +16065,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="298" author="satyanarayana.g">
 		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
 			SELECT T1.FINREFERENCE,
@@ -16131,8 +16131,8 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	
-	
+
+
 	<changeSet id="300" author="vijaya.a">
 		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
 	
@@ -16280,8 +16280,8 @@ UNION ALL
 				          WHERE feewaiverheader_temp.finreference = t1.finreference))	
 
 						  	</createView>
-	</changeSet> 
-	
+	</changeSet>
+
 	<changeSet id="301" author="vijaya.a">
 		<createView viewName="PAYMENTTAXDETAIL_VIEW" replaceIfExists="true">
 			SELECT T1.paymentdetailid, T1.paymentid, T1.taxcomponent, T1.paidcgst, T1.paidsgst, T1.paidugst, T1.paidigst, T1.totalgst
@@ -16294,5 +16294,5 @@ UNION ALL
 			WHERE NOT (EXISTS (SELECT 1 FROM PaymentTaxDetail_temp WHERE PaymentTaxDetail_temp.paymentdetailid = T1.paymentdetailid))
 		</createView>
 	</changeSet>
-	
+
 </databaseChangeLog>
