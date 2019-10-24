@@ -3838,6 +3838,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setReceiptDate(rcd.getReceivedDate());
 		}
 
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(rcd.getReceivedDate());
+		}
+		
 		if (rch.getValueDate() == null) {
 			rch.setValueDate(fsi.getValueDate());
 		}
