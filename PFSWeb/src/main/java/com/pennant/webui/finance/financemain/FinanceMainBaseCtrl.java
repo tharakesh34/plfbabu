@@ -1102,7 +1102,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	@Autowired(required = false)
 	private InitiateHunterService initiateHunterService;
-	
+
 	@Autowired(required = false)
 	private EligibilityService eligibilityService;
 
@@ -2632,7 +2632,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				HashMap<String, Object> map = getDefaultArguments();
 				map.put("parentTab", getTab(AssetConstants.UNIQUE_ID_COVENANTTYPE));
 				//remove the current role and display allowed roles.
-				map.put("allowedRoles", StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));//
+				map.put("allowedRoles",
+						StringUtils.join(getWorkFlow().getActors(false), ';').replace(getRole().concat(";"), ""));//
 				map.put("module", "Organization");
 				covenantTypeWindow = Executions.createComponents(url,
 						getTabpanel(AssetConstants.UNIQUE_ID_COVENANTTYPE), map);
@@ -4658,9 +4659,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					BigDecimal finAmt = this.finAmount.getActualValue();
 					BigDecimal compreValue = BigDecimal.ZERO;
 					if (finAmt.compareTo(compreValue) != 0) {
-						BigDecimal abbEmiValue = creditReviewDetail.getAvgBankBal().divide(finAmt, 1,
-								RoundingMode.HALF_DOWN);
-						creditReviewDetail.setAddToEMI(abbEmiValue);
+						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal().divide(finAmt);
+						creditReviewDetail.setTotalAbb(totalAbb);
 
 					}
 
@@ -21416,9 +21416,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		boolean isLiabilitiesChanged = false;
 		BigDecimal roi = BigDecimal.ZERO;
 		int tenor = 0;
-		BigDecimal abbEmiValue = BigDecimal.ZERO;
-		BigDecimal finAmt = BigDecimal.ZERO;
-		BigDecimal finAmtvalue = BigDecimal.ZERO;
 		CreditReviewDetails crRevDetails = new CreditReviewDetails();
 		StringBuilder fields = new StringBuilder();
 		Map<String, Object> dataMap = new HashMap<>();
@@ -21443,44 +21440,59 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fields.append("TENOR,");
 			dataMap.put("TENOR", tenor);
 		}
-		finAmt = this.finAmount.getActualValue();
-		abbEmiValue = creditReviewDetails.getAvgBankBal().divide(finAmt, 1, RoundingMode.HALF_DOWN);
+		BigDecimal finAmountValue = this.finAmount.getActualValue();
+		BigDecimal compreValue = BigDecimal.ZERO;
+		BigDecimal totalAbb = BigDecimal.ZERO;
+		if (finAmountValue.compareTo(compreValue) != 0) {
+			totalAbb = creditReviewDetails.getAvgBankBal().divide(finAmountValue);
+			creditReviewDetails.setTotalAbb(totalAbb);
+		}
 
-		if (abbEmiValue.compareTo(creditReviewDetails.getAddToEMI()) != 0) {
+		if (totalAbb.compareTo(creditReviewDetails.getTotalAbb()) != 0) {
 			fields.append("ABB_EMI,");
-			dataMap.put("ABB_EMI", abbEmiValue);
+			dataMap.put("ABB_EMI", totalAbb);
 		}
 
 		if (!isFromLoan) {
 			creditReviewDetails.setRoi(roi);
 			creditReviewDetails.setTenor(tenor);
-			creditReviewDetails.setAddToEMI(abbEmiValue);
+			creditReviewDetails.setTotalAbb(totalAbb);
 		}
 		setExtendedFieldsForCreditReview(fields, dataMap, creditReviewDetails, isFromLoan);
 		BigDecimal accBal = BigDecimal.ZERO;
 		BigDecimal bounceIn = BigDecimal.ZERO;
 		int debitNo = 0;
 		int noOfMonths = 0;
-		if (getCustomerDialogCtrl() != null) {
-			List<CustomerBankInfo> bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
-			for (CustomerBankInfo customerBankInfo : bankInfo) {
-				if (!PennantConstants.RECORD_TYPE_CAN.equals(customerBankInfo.getRecordType())
-						&& !PennantConstants.RECORD_TYPE_DEL.equals(customerBankInfo.getRecordType())) {
-					List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
-					// noOfMonths = noOfMonths +
-					// bankAccDetails.size();
-					for (BankInfoDetail bankInfoDetail : bankAccDetails) {
-						if (!PennantConstants.RECORD_TYPE_CAN.equals(bankInfoDetail.getRecordType())
-								&& !PennantConstants.RECORD_TYPE_DEL.equals(bankInfoDetail.getRecordType())) {
-							accBal = accBal.add(bankInfoDetail.getoDCCLimit());
-							bounceIn = bounceIn.add(bankInfoDetail.getBounceIn());
-							debitNo = debitNo + bankInfoDetail.getDebitNo();
-							noOfMonths = noOfMonths + 1;
-						}
-					}
+
+		List<CustomerBankInfo> bankInfo = new ArrayList<>();
+		if (customerDialogCtrl != null) {
+			bankInfo = customerDialogCtrl.getCustomerBankInfoDetailList();
+		}
+
+		String recordType = null;
+		for (CustomerBankInfo customerBankInfo : bankInfo) {
+			recordType = customerBankInfo.getRecordType();
+			if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+					|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+				continue;
+			}
+
+			List<BankInfoDetail> bankAccDetails = customerBankInfo.getBankInfoDetails();
+			// noOfMonths = noOfMonths +
+			// bankAccDetails.size();
+			for (BankInfoDetail bankInfoDetail : bankAccDetails) {
+				recordType = bankInfoDetail.getRecordType();
+				if (PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType)) {
+					continue;
 				}
 
+				accBal = accBal.add(bankInfoDetail.getoDCCLimit());
+				bounceIn = bounceIn.add(bankInfoDetail.getBounceIn());
+				debitNo = debitNo + bankInfoDetail.getDebitNo();
+				noOfMonths = noOfMonths + 1;
 			}
+
 			if (noOfMonths > 0) {
 				accBal = accBal.divide(new BigDecimal(noOfMonths), RoundingMode.HALF_DOWN);
 				// accBal = accBal.divide(new BigDecimal(bankInfo.size()), RoundingMode.HALF_DOWN);
@@ -21493,11 +21505,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		creditReviewDetails
 				.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
 		if (debitNo != 0) {
-
 			BigDecimal debitNoValue = bounceIn.divide(new BigDecimal(debitNo), RoundingMode.HALF_DOWN);
 			creditReviewDetails.setChequeBncOthEmi(
 					PennantApplicationUtil.formateAmount(debitNoValue, PennantConstants.defaultCCYDecPos));
-
 		}
 
 		if ((creditReviewDetails.getAvgBankBal()
@@ -21507,16 +21517,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (!isFromLoan) {
 				creditReviewDetails
 						.setAvgBankBal(PennantApplicationUtil.formateAmount(accBal, PennantConstants.defaultCCYDecPos));
-			}
-		}
-		if (!(creditReviewDetails.getAddToEMI().compareTo(abbEmiValue) == 0)) {
-			fields.append("ABB_EMI,");
-			dataMap.put("ABB_EMI",
-					PennantApplicationUtil.formateAmount(
-							new BigDecimal(getFinanceDetail().getDataMap().get("Y2_PBDIT_E_F1_F2_F3_D1")),
-							PennantConstants.defaultCCYDecPos));
-			if (!isFromLoan) {
-				creditReviewDetails.setAddToEMI(abbEmiValue);
 			}
 		}
 		crRevDetails.setFields(fields.toString());
@@ -21701,7 +21701,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	/*
 	 * on click event for INITIATEFINFORT button
 	 */

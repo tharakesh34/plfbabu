@@ -16,7 +16,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
@@ -45,26 +44,18 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
 
 public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpreadsheetCtrl.class);
-	private static final String String = null;
+
 	protected Window window_SpreadSheetDialog;
 	protected Button button_FetchData;
 	protected Spreadsheet spreadSheet = null;
@@ -74,7 +65,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private CreditReviewDetails creditReviewDetails = null;
 	private CreditReviewData creditReviewData = null;
 	private List<CustomerIncome> customerIncomeList = new ArrayList<CustomerIncome>();
-	private transient CreditApplicationReviewService creditApplicationReviewService;
 
 	private Object financeMainDialogCtrl = null;
 	private boolean isEditable;
@@ -83,12 +73,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 	private FinanceDetail financeDetail = null;
 	private BigDecimal totalExposure = BigDecimal.ZERO;
 	StringBuilder fields = new StringBuilder();
-	//boolean isCheckedEligibility = false;
-	@Autowired
-	protected ExternalLiabilityDAO externalLiabilityDAO;
-	@Autowired
-	private CustomerDetailsService customerDetailsService;
-	private CustomerDialogCtrl customerDialogCtrl = null;
 
 	/**
 	 * default constructor.<br>
@@ -144,9 +128,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 			if (arguments.containsKey("externalLiabilities")) {
 				appExtLiabilities = (List<CustomerExtLiability>) arguments.get("externalLiabilities");
-			}
-			if (financeMainDialogCtrl != null) {
-				customerDialogCtrl = ((FinanceMainBaseCtrl) getFinanceMainDialogCtrl()).getCustomerDialogCtrl();
 			}
 
 			if (this.creditReviewDetails != null) {
@@ -255,7 +236,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
+			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
 
@@ -273,7 +254,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
 			dataMap.put("SP_DBTEQTRATIO", btMap.get("DEBTEQUITY"));
 			dataMap.put("DSCR", btMap.get("DSCR_GF"));
-			dataMap.put("ABB_EMI", creditReviewDetails.getAddToEMI());
+			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
 		}
@@ -663,14 +644,6 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 		this.creditReviewData = creditReviewData;
 	}
 
-	public CreditApplicationReviewService getCreditApplicationReviewService() {
-		return creditApplicationReviewService;
-	}
-
-	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
-		this.creditApplicationReviewService = creditApplicationReviewService;
-	}
-
 	public BigDecimal getTotalExposure() {
 		return totalExposure;
 	}
@@ -685,13 +658,5 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 
 	public void setCustomerIncomeList(List<CustomerIncome> customerIncomeList) {
 		this.customerIncomeList = customerIncomeList;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
 	}
 }

@@ -21,6 +21,7 @@ import javax.script.ScriptEngineManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
@@ -67,7 +68,6 @@ import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.finance.JountAccountDetailDAO;
 import com.pennant.backend.dao.financemanagement.bankorcorpcreditreview.CreditApplicationReviewDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -104,7 +104,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.ReportGenerationUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
-import com.pennant.webui.finance.financemain.SpreadsheetCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -118,63 +117,61 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private static final long serialVersionUID = 966281186831332116L;
 	private static final Logger logger = Logger.getLogger(CreditApplicationReviewEnquiryCtrl.class);
 
-	protected Window window_CreditApplicationReviewDialog; // autowired
-	protected Borderlayout borderlayout_CreditApplicationReview; // autowired
-	protected Grid creditApplicationReviewGrid; // autowired
-	protected Longbox custID; // autowired
-	protected Intbox toYear; // autowired
-	protected Textbox custCIF; // autowired
-	protected Label custShrtName; // autowired
-	protected Groupbox gb_CreditReviwDetails; // autowired
-	protected Tabbox tabBoxIndexCenter; // autowired
-	protected Tabs tabsIndexCenter; // autowired
-	protected Tabpanels tabpanelsBoxIndexCenter; // autowired
-	protected Button btnSearch; // autowired
-	protected Button btnPrint; // autowired
+	protected Window window_CreditApplicationReviewDialog;
+	protected Borderlayout borderlayout_CreditApplicationReview;
+	protected Grid creditApplicationReviewGrid;
+	protected Longbox custID;
+	protected Intbox toYear;
+	protected Textbox custCIF;
+	protected Label custShrtName;
+	protected Groupbox gb_CreditReviwDetails;
+	protected Tabbox tabBoxIndexCenter;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Button btnSearch;
+	protected Button btnPrint;
 
 	// Customer Details
-	protected Textbox bankName; // autowired
-	protected Textbox auditors; // autowired
-	protected Radiogroup conSolOrUnConsol; // autowired
-	protected Radio conSolidated; // autowired
-	protected Radio unConsolidated; // autowired
-	protected Textbox location; // autowired
-	protected Textbox auditedYear; // autowired
-	protected Datebox auditedDate; // autowired
-	protected Decimalbox conversionRate; // autowired
-	protected Longbox noOfShares; // autowired
-	protected CurrencyBox marketPrice; // autowired
-	protected Combobox auditPeriod; // autowired
-	protected Combobox auditType; // autowired
-	protected Radiogroup qualifiedUnQualified; // autowired
-	protected Radio qualRadio; // autowired
-	protected Radio unQualRadio; // autowired
-	protected Textbox lovDescFinCcyName; // autowired
-	protected ExtendedCombobox currencyType; // autowired
+	protected Textbox bankName;
+	protected Textbox auditors;
+	protected Radiogroup conSolOrUnConsol;
+	protected Radio conSolidated;
+	protected Radio unConsolidated;
+	protected Textbox location;
+	protected Textbox auditedYear;
+	protected Datebox auditedDate;
+	protected Decimalbox conversionRate;
+	protected Longbox noOfShares;
+	protected CurrencyBox marketPrice;
+	protected Combobox auditPeriod;
+	protected Combobox auditType;
+	protected Radiogroup qualifiedUnQualified;
+	protected Radio qualRadio;
+	protected Radio unQualRadio;
+	protected Textbox lovDescFinCcyName;
+	protected ExtendedCombobox currencyType;
 
-	protected Label label_CreditApplicationReviewDialog_NoOfYearsToDisplay; // autowired
-	protected Row row1; // autowired
-	protected Row row2; // autowired
-	protected Row row3; // autowired
-	protected Row row4; // autowired
-	protected Row row5; // autowired
-	protected Row row6; // autowired
-	protected Row row7; // autowired
-	protected Row row8; // autowired
+	protected Label label_CreditApplicationReviewDialog_NoOfYearsToDisplay;
+	protected Row row1;
+	protected Row row2;
+	protected Row row3;
+	protected Row row4;
+	protected Row row5;
+	protected Row row6;
+	protected Row row7;
+	protected Row row8;
 
 	protected Label label_CreditApplicationReviewDialog_RecordStatus;
-	protected Groupbox gb_CustDetails; // autowired
-	protected Listbox listBoxCust; // autowired
+	protected Groupbox gb_CustDetails;
+	protected Listbox listBoxCust;
 
 	protected Button btnSearchPRCustid;
 	private JdbcSearchObject<Customer> newSearchObject;
-	private transient CreditApplicationReviewService creditApplicationReviewService;
-	private transient CreditReviewSummaryData creditReviewSummaryData;
+
 	private List<CreditReviewSubCtgDetails> creditReviewSubtgDetailsList = new ArrayList<CreditReviewSubCtgDetails>();
 	private FinCreditReviewDetails finCreditReviewDetails = null;
 	private transient WorkFlowDetails workFlowDetails = null;
 	public List<Notes> notesList = new ArrayList<Notes>();
-	private NotificationService notificationService;
 	private CreditApplicationReviewListCtrl creditApplicationReviewListCtrl = null;
 
 	private List<FinCreditRevCategory> listOfFinCreditRevCategory = new ArrayList<>();
@@ -205,7 +202,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	protected Div div_SearchBtntoolbar;
 	protected Div divDel;
 	protected Groupbox gb_basicDetails;
-	Date appldate = DateUtility.getAppDate();
+	Date appldate = SysParamUtil.getAppDate();
 	Date appDftStrtDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 	String maxAuditYear = null;
 	boolean showCurrentYear;
@@ -217,23 +214,16 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	private int roundingTarget = 0;
 	private int numberOfTerms = 0;
-	HashMap<String, String> extendedDataMap = new HashMap<String, String>();
+	private Map<String, String> extDataMap = new HashMap<String, String>();
 	int finFormatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 
-	private CustomerBankInfoService customerBankInfoService;
-	private CustomerExtLiabilityService customerExtLiabilityService;
-
-	private JountAccountDetailDAO jountAccountDetailDAO;
-	private CreditApplicationReviewDAO creditApplicationReviewDAO;
-	private String finReference;
 	private FinanceDetail financeDetail;
 	Set<Long> custIds = new HashSet<>();
 	private List<FinCreditReviewDetails> auditYears;
 	private List<JointAccountDetail> coAppIds = new ArrayList<>();
-	CustomerBankInfo customerBankInfo = null;
+	CustomerBankInfo custBankInfo = null;
 	BigDecimal sumOfEMI = BigDecimal.ZERO;
 
-	private IncomeExpenseDetailDAO incomeExpenseDetailDAO;
 	private List<Map<String, Object>> schlDataMap = new ArrayList<>();
 	private boolean fromLoan = false;
 	private String eligibilityMethods = "";
@@ -241,10 +231,17 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	//Spread Sheet changes
 	protected CreditReviewDetails creditReviewDetails;
 	protected CreditReviewData creditReviewData;
-	protected ArrayList<Object> finBasicDetails;
-	private transient SpreadsheetCtrl spreadSheetCtrl;
+	protected List<Object> finBasicDetails;
 	private FinanceMainBaseCtrl financeMainBaseCtrl = null;
 	List<CustomerExtLiability> extLiabilities = new ArrayList<>();
+
+	private transient CreditApplicationReviewService creditApplicationReviewService;
+	private CreditReviewSummaryData creditReviewSummaryData;
+	private transient NotificationService notificationService;
+	private transient CustomerBankInfoService customerBankInfoService;
+	private transient CustomerExtLiabilityService customerExtLiabilityService;
+	private transient CreditApplicationReviewDAO creditApplicationReviewDAO;
+	private transient IncomeExpenseDetailDAO incomeExpenseDetailDAO;
 
 	/**
 	 * default constructor.<br>
@@ -258,8 +255,20 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		super.pageRightName = "CreditApplicationReviewDialog";
 	}
 
-	private String unFormat(String amount) {
-		return PennantAppUtil.formateAmount(new BigDecimal(amount), finFormatter).toString();
+	private String unFormat(BigDecimal amount) {
+		if (amount == null) {
+			amount = BigDecimal.ZERO;
+		}
+
+		return PennantApplicationUtil.formateAmount(amount, finFormatter).toString();
+	}
+
+	private String unFormat(Integer amount) {
+		if (amount == null) {
+			amount = 0;
+		}
+
+		return String.valueOf(amount);
 	}
 
 	/**
@@ -308,9 +317,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 							.getCreditRevCategoryByCreditRevCode(this.custCtgCode);
 				}
 
-				this.finReference = (String) arguments.get("finReference");
-				this.maxAuditYear = getCreditApplicationReviewService()
-						.getMaxAuditYearByCustomerId(this.custID.longValue(), "_VIEW");
+				this.maxAuditYear = creditApplicationReviewService.getMaxAuditYearByCustomerId(this.custID.longValue(),
+						"_VIEW");
 
 				this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 
@@ -338,7 +346,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				//getting audit years from credit review details 
 				auditYears = creditApplicationReviewDAO.getAuditYearsByCustId(custIds);
-				customerBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
+				custBankInfo = customerBankInfoService.getSumOfAmtsCustomerBankInfoByCustId(custIds);
 				sumOfEMI = customerExtLiabilityService.getSumAmtCustomerExtLiabilityById(custIds);
 				custIds.remove(this.custID.getValue());
 
@@ -351,60 +359,53 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					isEnquiry = true;
 				}
 
-				if (customerBankInfo != null) {
-					extendedDataMap.put("EXT_CREDITTRANNO",
-							unFormat(String.valueOf(customerBankInfo.getCreditTranNo())));
-					extendedDataMap.put("EXT_CREDITTRANAMT", unFormat(customerBankInfo.getCreditTranAmt().toString()));
-					extendedDataMap.put("EXT_CREDITTRANAVG", unFormat(customerBankInfo.getCreditTranAvg().toString()));
-					extendedDataMap.put("EXT_DEBITTRANNO", unFormat(String.valueOf(customerBankInfo.getDebitTranNo())));
-					extendedDataMap.put("EXT_DEBITTRANAMT", unFormat(customerBankInfo.getDebitTranAmt().toString()));
-					extendedDataMap.put("EXT_CASHDEPOSITNO",
-							unFormat(String.valueOf(customerBankInfo.getCashDepositNo())));
-					extendedDataMap.put("EXT_CASHDEPOSITAMT",
-							unFormat(customerBankInfo.getCashDepositAmt().toString()));
-					extendedDataMap.put("EXT_CASHWITHDRAWALNO",
-							unFormat(String.valueOf(customerBankInfo.getCashWithdrawalNo())));
-					extendedDataMap.put("EXT_CASHWITHDRAWALAMT",
-							unFormat(customerBankInfo.getCashWithdrawalAmt().toString()));
-					extendedDataMap.put("EXT_CHQDEPOSITNO",
-							unFormat(String.valueOf(customerBankInfo.getChqDepositNo())));
-					extendedDataMap.put("EXT_CHQDEPOSITAMT", unFormat(customerBankInfo.getChqDepositAmt().toString()));
-					extendedDataMap.put("EXT_CHQISSUENO", unFormat(String.valueOf(customerBankInfo.getChqIssueNo())));
-					extendedDataMap.put("EXT_CHQISSUEAMT", unFormat(customerBankInfo.getChqIssueAmt().toString()));
-					extendedDataMap.put("EXT_INWARDCHQBOUNCENO",
-							unFormat(String.valueOf(customerBankInfo.getInwardChqBounceNo())));
-					extendedDataMap.put("EXT_OUTWARDCHQBOUNCENO",
-							unFormat(String.valueOf(customerBankInfo.getOutwardChqBounceNo())));
-					extendedDataMap.put("EXT_EODBALAVG", unFormat(customerBankInfo.getEodBalAvg().toString()));
-					extendedDataMap.put("EXT_EODBALMAX", unFormat(customerBankInfo.getEodBalMax().toString()));
-					extendedDataMap.put("EXT_EODBALMIN", unFormat(customerBankInfo.getEodBalMin().toString()));
+				if (custBankInfo != null) {
+					extDataMap.put("EXT_CREDITTRANNO", unFormat(custBankInfo.getCreditTranNo()));
+					extDataMap.put("EXT_CREDITTRANAMT", unFormat(custBankInfo.getCreditTranAmt()));
+					extDataMap.put("EXT_CREDITTRANAVG", unFormat(custBankInfo.getCreditTranAvg()));
+					extDataMap.put("EXT_DEBITTRANNO", unFormat(custBankInfo.getDebitTranNo()));
+					extDataMap.put("EXT_DEBITTRANAMT", unFormat(custBankInfo.getDebitTranAmt()));
+					extDataMap.put("EXT_CASHDEPOSITNO", unFormat(custBankInfo.getCashDepositNo()));
+					extDataMap.put("EXT_CASHDEPOSITAMT", unFormat(custBankInfo.getCashDepositAmt()));
+					extDataMap.put("EXT_CASHWITHDRAWALNO", unFormat(custBankInfo.getCashWithdrawalNo()));
+					extDataMap.put("EXT_CASHWITHDRAWALAMT", unFormat(custBankInfo.getCashWithdrawalAmt()));
+					extDataMap.put("EXT_CHQDEPOSITNO", unFormat(custBankInfo.getChqDepositNo()));
+					extDataMap.put("EXT_CHQDEPOSITAMT", unFormat(custBankInfo.getChqDepositAmt()));
+					extDataMap.put("EXT_CHQISSUENO", unFormat(custBankInfo.getChqIssueNo()));
+					extDataMap.put("EXT_CHQISSUEAMT", unFormat(custBankInfo.getChqIssueAmt()));
+					extDataMap.put("EXT_INWARDCHQBOUNCENO", unFormat(custBankInfo.getInwardChqBounceNo()));
+					extDataMap.put("EXT_OUTWARDCHQBOUNCENO", unFormat(custBankInfo.getOutwardChqBounceNo()));
+					extDataMap.put("EXT_EODBALAVG", unFormat(custBankInfo.getEodBalAvg()));
+					extDataMap.put("EXT_EODBALMAX", unFormat(custBankInfo.getEodBalMax()));
+					extDataMap.put("EXT_EODBALMIN", unFormat(custBankInfo.getEodBalMin()));
 
 				}
 
-				extendedDataMap.put("EXT_OBLIGATION", unFormat(sumOfEMI.toString()));
+				extDataMap.put("EXT_OBLIGATION", unFormat(sumOfEMI));
+
 				if (arguments.containsKey("numberOfTerms")) {
 					numberOfTerms = (int) arguments.get("numberOfTerms");
-					extendedDataMap.put("EXT_NUMBEROFTERMS", String.valueOf(numberOfTerms));
+					extDataMap.put("EXT_NUMBEROFTERMS", String.valueOf(numberOfTerms));
 				}
 				if (arguments.containsKey("repayProfitRate")) {
 					repayProfitRate = (BigDecimal) arguments.get("repayProfitRate");
-					extendedDataMap.put("EXT_REPAYPROFITRATE", String.valueOf(repayProfitRate));
+					extDataMap.put("EXT_REPAYPROFITRATE", String.valueOf(repayProfitRate));
 				}
 				if (arguments.containsKey("roundingTarget")) {
 					roundingTarget = (int) arguments.get("roundingTarget");
-					extendedDataMap.put("EXT_ROUNDINGTARGET", String.valueOf(roundingTarget));
+					extDataMap.put("EXT_ROUNDINGTARGET", String.valueOf(roundingTarget));
 				}
 				if (arguments.containsKey("finAssetValue")) {
 					finAssetValue = (BigDecimal) arguments.get("finAssetValue");
-					extendedDataMap.put("EXT_FINASSETVALUE", unFormat(finAssetValue.toString()));
+					extDataMap.put("EXT_FINASSETVALUE", unFormat(finAssetValue));
 				}
 				if (arguments.containsKey("finAmount")) {
 					finAmount = (BigDecimal) arguments.get("finAmount");
-					extendedDataMap.put("EXT_FINAMOUNT", unFormat(finAmount.toString()));
+					extDataMap.put("EXT_FINAMOUNT", unFormat(finAmount));
 				}
 				if (arguments.containsKey("firstRepay")) {
 					firstRepay = (BigDecimal) arguments.get("firstRepay");
-					extendedDataMap.put("EXT_FIRSTREPAY", unFormat(firstRepay.toString()));
+					extDataMap.put("EXT_FIRSTREPAY", unFormat(firstRepay));
 				}
 
 				if (arguments.containsKey("creditReviewDetails")) {
@@ -422,7 +423,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					extLiabilities = (List<CustomerExtLiability>) arguments.get("externalLiabilities");
 				}
 
-				this.finBasicDetails = (ArrayList<Object>) arguments.get("finHeaderList");
+				this.finBasicDetails = (List<Object>) arguments.get("finHeaderList");
 
 				//School Funding Extended fields data setting
 				if (this.toYear.getValue() > 0 && this.custID.getValue() > 0) {
@@ -442,8 +443,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 						//BigDecimal expenses = (BigDecimal) map.get("sum");
 					}
 				}
-				extendedDataMap.put("EXT_TOT_TUT_FEE", unFormat(coreIncome.toString()));
-				extendedDataMap.put("EXT_TOT_NON_COR_INC", unFormat(nonCoreIncome.toString()));
+				extDataMap.put("EXT_TOT_TUT_FEE", unFormat(coreIncome));
+				extDataMap.put("EXT_TOT_NON_COR_INC", unFormat(nonCoreIncome));
 
 				setTabs(isEnquiry);
 
@@ -479,7 +480,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				isEnquiry = false;
 
 				if (finCreditReviewDetails != null) {
-					maxAuditYear = getCreditApplicationReviewService()
+					maxAuditYear = creditApplicationReviewService
 							.getMaxAuditYearByCustomerId(finCreditReviewDetails.getCustomerId(), "_VIEW");
 					creditReviewDetailsMap = this.creditApplicationReviewService.getListCreditReviewDetailsByCustId(
 							finCreditReviewDetails.getCustomerId(), noOfYears, Integer.parseInt(maxAuditYear));
@@ -919,22 +920,22 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 				if (StringUtils.isBlank(method)) {
 					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getCreditApplicationReviewService().delete(auditHeader);
+						auditHeader = creditApplicationReviewService.delete(auditHeader);
 						deleteNotes = true;
 					} else {
-						auditHeader = getCreditApplicationReviewService().saveOrUpdate(auditHeader);
+						auditHeader = creditApplicationReviewService.saveOrUpdate(auditHeader);
 					}
 
 				} else {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getCreditApplicationReviewService().doApprove(auditHeader);
+						auditHeader = creditApplicationReviewService.doApprove(auditHeader);
 
 						if (aCreditReviewDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getCreditApplicationReviewService().doReject(auditHeader);
+						auditHeader = creditApplicationReviewService.doReject(auditHeader);
 						if (aCreditReviewDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
@@ -1024,7 +1025,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 
 		if (isEnquiry) {
 			this.dataMap = this.creditReviewSummaryData.setDataMap(this.custID.getValue(), custIds,
-					this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extendedDataMap,
+					this.toYear.getValue(), noOfYears, this.custCtgCode, true, isEnquiry, extDataMap,
 					listOfFinCreditRevCategory);
 		} else if (maxAuditYear != null) {
 			custIds.add(custID.longValue());
@@ -1095,7 +1096,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		int i = 2;
 		for (Long custId : custIds) {
 			custWiseDataMap = this.creditReviewSummaryData.setDataMap1(custId, Integer.parseInt(maxAuditYear),
-					noOfYears, true, extendedDataMap, listOfFinCreditRevCategory);
+					noOfYears, true, extDataMap, listOfFinCreditRevCategory);
 			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_FNL_CSH_PFT_INCSRD"));
 			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)).concat("_PRE"),
 					custWiseDataMap.get("Y1_FNL_CSH_PFT_INCSRD"));
@@ -1109,54 +1110,12 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
 			btMap.put("MARGINI", custWiseDataMap.get("Y2_SM_MARGIN"));
 
-			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
-				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
-						this.currFormatter));
-			} else {
-				btMap.put("DSCR_GF", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_CRNT_RATIO") != null) {
-				btMap.put("CRNTRATIO", PennantAppUtil
-						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_CRNT_RATIO")), this.currFormatter));
-			} else {
-				btMap.put("CRNTRATIO", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_DSCR_GF") != null) {
-				btMap.put("DSCR_GF", PennantAppUtil.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_GF")),
-						this.currFormatter));
-			} else {
-				btMap.put("DSCR_GF", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_DSCR_PBDIT") != null) {
-				btMap.put("DSCR_PBDIT", PennantAppUtil
-						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DSCR_PBDIT")), this.currFormatter));
-			} else {
-				btMap.put("DSCR_PBDIT", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_EMI_12_ALL_LOANS") != null) {
-				btMap.put("EMI_ALL_LOANS", PennantAppUtil
-						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS")), this.currFormatter));
-			} else {
-				btMap.put("EMI_ALL_LOANS", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_SALES_OTHER_INCOME") != null) {
-				btMap.put("ANNUAL_TURNOVER", PennantAppUtil.formateAmount(
-						new BigDecimal(custWiseDataMap.get("Y2_SALES_OTHER_INCOME")), this.currFormatter));
-			} else {
-				btMap.put("ANNUAL_TURNOVER", 0);
-			}
-
-			if (custWiseDataMap.get("Y2_DEBT_EQUITY") != null) {
-				btMap.put("DEBTEQUITY", PennantAppUtil
-						.formateAmount(new BigDecimal(custWiseDataMap.get("Y2_DEBT_EQUITY")), this.currFormatter));
-			} else {
-				btMap.put("DEBTEQUITY", 0);
-			}
+			btMap.put("DSCR_GF", format(custWiseDataMap.get("Y2_DSCR_GF")));
+			btMap.put("CRNTRATIO", format(custWiseDataMap.get("Y2_CRNT_RATIO")));
+			btMap.put("DSCR_PBDIT", format(custWiseDataMap.get("Y2_DSCR_PBDIT")));
+			btMap.put("EMI_ALL_LOANS", format(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS")));
+			btMap.put("ANNUAL_TURNOVER", format(custWiseDataMap.get("Y2_SALES_OTHER_INCOME")));
+			btMap.put("DEBTEQUITY", format(custWiseDataMap.get("Y2_DEBT_EQUITY")));
 
 			if (i == 0) {
 				break;
@@ -1172,6 +1131,15 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Spreadsheet.zul", tabPanel, map);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String format(String data) {
+		BigDecimal amount = BigDecimal.ZERO;
+		if (StringUtils.isNotEmpty(data)) {
+			amount = new BigDecimal(data);
+		}
+
+		return PennantApplicationUtil.formatAmount(amount, 2, false);
 	}
 
 	/**
@@ -1303,7 +1271,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 				BigDecimal tempValue = new BigDecimal(value == null ? "0" : value);
 				if (tempValue.compareTo(BigDecimal.ZERO) != 0) {
 					if (this.conversionRate.getValue() != null) {
-						convrsnPrice = PennantAppUtil.formateAmount(tempValue, this.currFormatter).divide(
+						convrsnPrice = PennantApplicationUtil.formateAmount(tempValue, this.currFormatter).divide(
 								this.conversionRate.getValue(), FacilityConstants.CREDIT_REVIEW_USD_SCALE,
 								RoundingMode.HALF_DOWN);
 					} else if (isEnquiry) {
@@ -1311,7 +1279,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 								&& creditReviewDetailsMap.get(String.valueOf(year)) != null) {
 							FinCreditReviewDetails finCreditReviewDetails = creditReviewDetailsMap
 									.get(String.valueOf(year));
-							convrsnPrice = PennantAppUtil.formateAmount(tempValue, this.currFormatter).divide(
+							convrsnPrice = PennantApplicationUtil.formateAmount(tempValue, this.currFormatter).divide(
 									finCreditReviewDetails.getConversionRate(),
 									FacilityConstants.CREDIT_REVIEW_USD_SCALE, RoundingMode.HALF_DOWN);
 						}
@@ -1334,13 +1302,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 					) {
 						value = "--";
 					} else if (finCreditRevSubCategory.isFormat()) {
-						value = PennantAppUtil.amountFormate(new BigDecimal(value), this.currFormatter);
+						value = PennantApplicationUtil.amountFormate(new BigDecimal(value), this.currFormatter);
 					} else if (finCreditRevSubCategory.isPercentCategory()) {
-						value = PennantAppUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)), 2,
-								false);
+						value = PennantApplicationUtil.formatAmount(new BigDecimal(value).multiply(new BigDecimal(100)),
+								2, false);
 						value = value + " %";
 					} else {
-						value = PennantAppUtil.formatAmount(new BigDecimal(value), 2, false);
+						value = PennantApplicationUtil.formatAmount(new BigDecimal(value), 2, false);
 					}
 				} catch (Exception e) {
 					value = "--";
@@ -1466,12 +1434,13 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			if (subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_WRKCAP)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_EBITDA4)
 					|| subCategoryCode.equals(FacilityConstants.CORP_CRDTRVW_RATIOS_FCF)) {
-				return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
+				return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE,
+						false);
 			} else {
 				return "";
 			}
 		} else {
-			return PennantAppUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
+			return PennantApplicationUtil.formatAmount(convrsnPrice, FacilityConstants.CREDIT_REVIEW_USD_SCALE, false);
 		}
 	}
 
@@ -1529,7 +1498,7 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		CreditReviewSubCtgDetails creditReviewSubCtgDetailsHeader = new CreditReviewSubCtgDetails();
 		int noOfYears = fcrc.getNoOfyears();
 		for (int j = noOfYears; j >= 1; j--) {
-			int prevAuditPeriod = getCreditApplicationReviewService().getCreditReviewAuditPeriodByAuditYear(
+			int prevAuditPeriod = creditApplicationReviewService.getCreditReviewAuditPeriodByAuditYear(
 					this.custID.longValue(), String.valueOf(year - j + 1), 0, true, "_VIew");
 			String prevPeriodLabel = "-" + String.valueOf(prevAuditPeriod) + FacilityConstants.MONTH;
 
@@ -1819,14 +1788,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving");
 	}
 
-	public CreditApplicationReviewService getCreditApplicationReviewService() {
-		return creditApplicationReviewService;
-	}
-
-	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
-		this.creditApplicationReviewService = creditApplicationReviewService;
-	}
-
 	/**
 	 * If we close the dialog window. <br>
 	 * 
@@ -2001,14 +1962,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void setCreditReviewSummaryData(CreditReviewSummaryData creditReviewSummaryData) {
-		this.creditReviewSummaryData = creditReviewSummaryData;
-	}
-
-	public CreditReviewSummaryData getCreditReviewSummaryData() {
-		return creditReviewSummaryData;
-	}
-
 	private List<Filter> getFilterList() {
 		filterList = new ArrayList<Filter>();
 		filterList.add(new Filter("lovDescCustCtgType",
@@ -2050,30 +2003,6 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.finCreditReviewDetails = finCreditReviewDetails;
 	}
 
-	public void setNotificationService(NotificationService notificationService) {
-		this.notificationService = notificationService;
-	}
-
-	public void setJountAccountDetailDAO(JountAccountDetailDAO jountAccountDetailDAO) {
-		this.jountAccountDetailDAO = jountAccountDetailDAO;
-	}
-
-	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
-		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
-	}
-
-	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
-		this.customerBankInfoService = customerBankInfoService;
-	}
-
-	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
-		this.customerExtLiabilityService = customerExtLiabilityService;
-	}
-
-	public void setIncomeExpenseDetailDAO(IncomeExpenseDetailDAO incomeExpenseDetailDAO) {
-		this.incomeExpenseDetailDAO = incomeExpenseDetailDAO;
-	}
-
 	public FinanceDetail getFinanceDetail() {
 		return financeDetail;
 	}
@@ -2082,11 +2011,47 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		this.financeDetail = financeDetail;
 	}
 
-	public ArrayList<Object> getFinBasicDetails() {
+	public List<Object> getFinBasicDetails() {
 		return finBasicDetails;
 	}
 
 	public void setFinBasicDetails(ArrayList<Object> finBasicDetails) {
 		this.finBasicDetails = finBasicDetails;
 	}
+
+	@Autowired
+	public void setCreditApplicationReviewService(CreditApplicationReviewService creditApplicationReviewService) {
+		this.creditApplicationReviewService = creditApplicationReviewService;
+	}
+
+	@Autowired
+	public void setCreditReviewSummaryData(CreditReviewSummaryData creditReviewSummaryData) {
+		this.creditReviewSummaryData = creditReviewSummaryData;
+	}
+
+	@Autowired
+	public void setNotificationService(NotificationService notificationService) {
+		this.notificationService = notificationService;
+	}
+
+	@Autowired
+	public void setCustomerBankInfoService(CustomerBankInfoService customerBankInfoService) {
+		this.customerBankInfoService = customerBankInfoService;
+	}
+
+	@Autowired
+	public void setCustomerExtLiabilityService(CustomerExtLiabilityService customerExtLiabilityService) {
+		this.customerExtLiabilityService = customerExtLiabilityService;
+	}
+
+	@Autowired
+	public void setCreditApplicationReviewDAO(CreditApplicationReviewDAO creditApplicationReviewDAO) {
+		this.creditApplicationReviewDAO = creditApplicationReviewDAO;
+	}
+
+	@Autowired
+	public void setIncomeExpenseDetailDAO(IncomeExpenseDetailDAO incomeExpenseDetailDAO) {
+		this.incomeExpenseDetailDAO = incomeExpenseDetailDAO;
+	}
+
 }

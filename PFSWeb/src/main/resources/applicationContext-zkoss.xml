@@ -3069,13 +3069,6 @@
 
 	<bean id="creditApplicationReviewEnquiryCtrl" class="com.pennant.webui.financemanagement.bankorcorpcreditreview.CreditApplicationReviewEnquiryCtrl"
 		parent="basisCtrl" scope="prototype">
-		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
-		<property name="creditReviewSummaryData" ref="creditReviewSummaryData" />
-		<property name="notificationService" ref="notificationService" />
-		<property name="jountAccountDetailDAO" ref="jountAccountDetailDAO" />
-		<property name="creditApplicationReviewDAO" ref="creditApplicationReviewDAO" />
-		<property name="customerBankInfoService" ref="customerBankInfoService" />
-		<property name="customerExtLiabilityService" ref="customerExtLiabilityService" />
 		<property name="incomeExpenseDetailDAO" ref="incomeExpenseDetailDAO" />
 	</bean>
 
@@ -5454,9 +5447,7 @@
 		parent="basisCtrl" scope="prototype">
 	</bean>
 
-	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype">
-		<property name="creditApplicationReviewService" ref="creditApplicationReviewService" />
-	</bean>
+	<bean id="spreadsheetCtrl" class="com.pennant.webui.finance.financemain.SpreadsheetCtrl" parent="basisCtrl" scope="prototype"/>
 
 	<bean id="vocherDownloadListCtrl" class="com.pennanttech.webui.downloads.VocherDownloadListctrl" parent="basisListCtrl"
 		scope="prototype" />
