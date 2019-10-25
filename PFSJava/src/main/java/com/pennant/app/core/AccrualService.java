@@ -463,18 +463,20 @@ public class AccrualService extends ServiceHelper {
 		if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
 			if ((curSchd.isFrqDate() && !isHoliday(curSchd.getBpiOrHoliday()))
 					|| curSchd.getSchDate().compareTo(pftDetail.getMaturityDate()) == 0) {
-				//Installments, Paid and OD
-				pftDetail.setNOInst(pftDetail.getNOInst() + 1);
+				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+					//Installments, Paid and OD
+					pftDetail.setNOInst(pftDetail.getNOInst() + 1);
 
-				if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
-					pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
-				}
+					if (curSchd.isSchPftPaid() && curSchd.isSchPriPaid()) {
+						pftDetail.setNOPaidInst(pftDetail.getNOPaidInst() + 1);
+					}
 
-				//First Repayments Date and Amount
-				if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
-					if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
-						pftDetail.setFirstRepayDate(curSchd.getSchDate());
-						pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+					//First Repayments Date and Amount
+					if (curSchd.getSchDate().compareTo(pftDetail.getFinStartDate()) > 0) {
+						if (pftDetail.getFirstRepayDate().compareTo(pftDetail.getFinStartDate()) == 0) {
+							pftDetail.setFirstRepayDate(curSchd.getSchDate());
+							pftDetail.setFirstRepayAmt(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
+						}
 					}
 				}
 			}
@@ -578,7 +580,9 @@ public class AccrualService extends ServiceHelper {
 					pftDetail.setNSchdPriDue(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
 					pftDetail.setNSchdPftDue(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
 				}
-				pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
+				if (!StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+					pftDetail.setFutureInst(pftDetail.getFutureInst() + 1);
+				}
 			}
 		}
 

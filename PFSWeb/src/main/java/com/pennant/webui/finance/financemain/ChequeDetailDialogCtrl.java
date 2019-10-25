@@ -1481,6 +1481,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		Listcell chequeType;
 		Listcell checkSerialNum;
 		Listcell ifsc;
+		
+		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (Listitem listitem : listBoxChequeDetail.getItems()) {
 			list = listitem.getChildren();
@@ -1538,7 +1540,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					}
 				}
 
-				// Validation of Cheque EMI Amount.
+				// Validation of Cheque EMI Amount & Cheque Emi Reference.
 				Combobox comboItem = getCombobox(getComboboxValue(emiComboBox));
 				Date emiDate = DateUtility.parse(comboItem.getSelectedItem().getLabel(), PennantConstants.dateFormat);
 				if (getFinanceSchedules() != null) {
@@ -1548,7 +1550,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 
 					for (FinanceScheduleDetail detail : schedules) {
 						if (DateUtility.compare(emiDate, detail.getSchDate()) == 0) {
-
+							if ("B".equals(detail.getBpiOrHoliday())
+									&& FinanceConstants.BPI_DISBURSMENT.equals(main.getBpiTreatment())) {
+								try {
+									throw new WrongValueException(emiComboBox,
+											Labels.getLabel("ChequeDetailDialog_ChkEMIRef_BPI_DeductDisb"));
+								} catch (WrongValueException e) {
+									wve.add(e);
+							}
+							}
 							boolean isTDS = false;
 							BigDecimal repayAmount = detail.getRepayAmount();
 							BigDecimal emiAmounte = BigDecimal.ZERO;
@@ -1566,10 +1576,12 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 									if (isTDS) {
 										throw new WrongValueException(emiAmount,
 												Labels.getLabel("ChequeDetailDialog_EMI_TDS_Amount"));
-									} else {
+									} 
+									 else {
 										throw new WrongValueException(emiAmount,
 												Labels.getLabel("ChequeDetailDialog_EMI_Amount"));
 									}
+									
 								} catch (WrongValueException e) {
 									wve.add(e);
 									break;

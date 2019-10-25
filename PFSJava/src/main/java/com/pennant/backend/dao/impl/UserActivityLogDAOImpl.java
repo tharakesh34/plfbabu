@@ -42,8 +42,6 @@
 */
 package com.pennant.backend.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -138,7 +136,7 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 	}
 
 	@Override
-	public String getPreviousRole(String module, String reference, String role, String compareRoles) {
+	public String getPreviousRole(String module, String reference, String role, String compareRole) {
 		logger.debug(Literal.ENTERING);
 
 		String result = "";
@@ -158,17 +156,12 @@ public class UserActivityLogDAOImpl extends BasicDao<UserActivityLog> implements
 
 		List<UserActivityLog> activities = jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 
-		List<String> roles = new ArrayList<>();
-
-		if (StringUtils.isNotEmpty(compareRoles)) {
-			roles = Arrays.asList(compareRoles.split("\\s*,\\s*"));
+		// The previous role of compare role to be considered if one specified.	
+		if (StringUtils.isNotEmpty(compareRole)) {
+			role = compareRole;
 		}
 
 		for (UserActivityLog activity : activities) {
-			if (!roles.isEmpty() && !roles.contains(activity.getRoleCode())) {
-				continue;
-			}
-
 			if (StringUtils.equals(activity.getNextRoleCode(), role) && isForwardDirection(activity.getActivity())) {
 				result = activity.getRoleCode();
 

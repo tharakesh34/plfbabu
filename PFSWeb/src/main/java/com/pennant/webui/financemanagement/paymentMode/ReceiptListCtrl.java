@@ -191,7 +191,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptList(Event event) {
 		logger.debug("Entering " + event.toString());
@@ -295,7 +295,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '' or NEXTROLECODE='"
+						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '' or NEXTROLECODE='"
 								+ module + "')");
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
 				searchObject.addWhereClause(
@@ -402,7 +402,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReceiptList_ReceiptSearchDialog(Event event) {
 		search();
@@ -431,7 +431,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doRefresh();
@@ -458,7 +458,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
 	 * @param event
-	 *            An event sent to the event handler of the component.
+	 *        An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();

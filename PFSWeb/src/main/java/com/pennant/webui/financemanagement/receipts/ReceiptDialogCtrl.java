@@ -304,6 +304,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox cancelRemarks;
 	protected Row row_ReceiptModeStatus;
 	protected Hbox hbox_ReceiptDialog_DepositDate;
+	protected Hbox hbox_ReceiptDialog_RealizationDate;
 
 	protected Textbox loanClosure_custCIF;
 	protected ExtendedCombobox loanClosure_finReference;
@@ -391,6 +392,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Hybrid Changes
 	protected Label label_FinGracePeriodEndDate;
+	protected Label label_ReceiptDialog_RealizationDate;
 
 	// Buttons
 	protected Tabs tabsIndexCenter;
@@ -866,6 +868,9 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			this.hbox_ReceiptModeStatus.setVisible(true);
 			this.receiptModeStatus.setVisible(true);
 			this.realizationDate.setVisible(false);
+			this.label_ReceiptDialog_RealizationDate.setVisible(false);
+			this.hbox_ReceiptDialog_RealizationDate.setVisible(false);
+
 		}
 
 		if (isKnockOff) {
