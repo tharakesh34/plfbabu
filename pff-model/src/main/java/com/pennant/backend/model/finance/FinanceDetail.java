@@ -44,8 +44,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -281,6 +283,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private CreditReviewData creditReviewData;
 	private AdvancePaymentDetail advancePaymentDetail;
 	private Map<String, Object> creditRevDataMap = new HashMap<>();
+	private String orderStatus;
 
 	// used for Interfaces
 	private Long usrID;
@@ -288,6 +291,13 @@ public class FinanceDetail implements java.io.Serializable {
 
 	public FinanceDetail() {
 		super();
+	}
+	
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<String>();
+		excludeFields.add("orderStatus");
+		
+		return excludeFields;
 	}
 
 	public String getFinReference() {
@@ -1443,4 +1453,13 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
 		this.paymentTransaction = paymentTransaction;
 	}
+
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+	
 }
