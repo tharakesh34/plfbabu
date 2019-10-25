@@ -63,6 +63,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -260,7 +261,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	 * Method for getting OverDue Details Object
 	 * 
 	 * @param finReference
-	 *            ,type
+	 *        ,type
 	 */
 	public int getPendingOverDuePayment(String finReference) {
 		logger.debug("Entering");
@@ -484,6 +485,11 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" FinLMdfDate, ODRuleCode, LpCpz, LpCpzAmount, LpCurCpzBal ");
 
 		sql.append(" From FinODDetails");
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
+
 		sql.append(" Where FinReference =:FinReference ");
 
 		if (odSchdDate != null) {
@@ -869,7 +875,8 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		source.addValue("FinReference", finReference);
 
 		StringBuilder deleteSql = new StringBuilder(" Delete From FinODDetails ");
-		deleteSql.append(" Where FinReference = :FinReference");
+		//		deleteSql.append(" Where FinReference = :FinReference");
+		deleteSql.append(" Where FinReference = '" + finReference + "'");
 		deleteSql.append(" AND FinOdSchdDate >= :FinOdSchdDate ");
 
 		logger.debug("deleteSql: " + deleteSql.toString());

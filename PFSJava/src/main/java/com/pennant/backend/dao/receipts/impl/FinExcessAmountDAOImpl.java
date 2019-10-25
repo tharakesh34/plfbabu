@@ -61,7 +61,10 @@ import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinExcessMovement;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -494,6 +497,10 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select ExcessID, AmountType, Amount, UtilisedAmt, ReservedAmt, BalanceAmt From FinExcessAmount");
 		sql.append(StringUtils.trimToEmpty(type));
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
 		sql.append(" Where FinReference =:FinReference ");
 
 		logger.debug(Literal.SQL + sql.toString());

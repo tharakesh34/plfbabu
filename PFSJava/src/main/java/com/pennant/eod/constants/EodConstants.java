@@ -25,4 +25,6 @@ public interface EodConstants {
 
 	String RECORD_INSERT = "I";
 	String RECORD_UPDATE = "U";
+
+	String SQL_NOLOCK = " with (nolock) ";
 }

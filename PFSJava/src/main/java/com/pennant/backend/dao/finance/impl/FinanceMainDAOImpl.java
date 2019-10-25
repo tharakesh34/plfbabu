@@ -87,6 +87,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.eod.constants.EodConstants;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
@@ -183,9 +184,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -276,9 +277,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -383,9 +384,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -423,9 +424,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -462,9 +463,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -502,7 +503,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -577,9 +578,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -930,9 +931,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * DataAccessException with error 41004. update Finance Main Detail by key FinReference and Version
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1479,9 +1480,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * save Finance Main Detail
 	 * 
 	 * @param Finance
-	 *            Main Detail (financeMain)
+	 *        Main Detail (financeMain)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -2060,7 +2061,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * 
 	 * @return FinanceMain
 	 */
@@ -2327,9 +2328,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2606,9 +2607,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override
@@ -2861,7 +2862,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" FinStatus, DueBucket, FinStsReason, BankName, Iban, AccountType, DdaReferenceNo, PromotionCode, ");
 		sql.append(" FinCategory, ProductCategory, ReAgeBucket,TDSApplicable,BpiTreatment,FinRepaymentAmount");
 		sql.append(", GrcAdvType, AdvType, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount ");
-		sql.append(" FROM FinanceMain Where CustID=:CustID");
+		sql.append(" FROM FinanceMain");
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
+		sql.append(" Where CustID=:CustID");
 
 		if (isActive) {
 			sql.append(" and FinIsActive = :FinIsActive ");
@@ -2981,9 +2987,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	 * Fetch the Record Finance Main Detail details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return FinanceMain
 	 */
 	@Override

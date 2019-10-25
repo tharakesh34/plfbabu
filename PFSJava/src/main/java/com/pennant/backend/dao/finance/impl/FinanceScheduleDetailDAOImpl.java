@@ -70,6 +70,9 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennant.backend.model.finance.ScheduleMapDetails;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
@@ -560,6 +563,10 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
 		sql.append(" Where FinReference =:FinReference  order by SchDate asc");
 
 		logger.debug(Literal.SQL + sql.toString());

@@ -64,6 +64,9 @@ import com.pennant.backend.model.finance.AccountHoldStatus;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.MonthlyAccumulateDetail;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -133,6 +136,10 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 		finProfitDetails.setFinIsActive(isActive);
 
 		StringBuilder sql = getProfitDetailQuery();
+
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
 		sql.append(" Where CustId =:CustId");
 
 		if (isActive) {
@@ -856,7 +863,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * @param finReference
 	 * @param type
 	 * 
-	 *            method return curOddays from FinPFtDetails Based On Reference
+	 *        method return curOddays from FinPFtDetails Based On Reference
 	 */
 	@Override
 	public int getCurOddays(String finReference, String type) {
@@ -882,7 +889,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	 * @param finReference
 	 * @param type
 	 * 
-	 *            method return PFTINSUSP from FinPFtDetails Based On Reference
+	 *        method return PFTINSUSP from FinPFtDetails Based On Reference
 	 */
 	@Override
 	public boolean isSuspenseFinance(String finReference) {

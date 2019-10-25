@@ -58,8 +58,11 @@ import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.financemanagement.Provision;
 import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -111,9 +114,9 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 * Fetch the Record Provision details by key field
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return Provision
 	 */
 	@Override
@@ -155,9 +158,9 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 * DataAccessException with error 41003. delete Provision by key FinReference
 	 * 
 	 * @param Provision
-	 *            (provision)
+	 *        (provision)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -190,9 +193,9 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 * save Provision
 	 * 
 	 * @param Provision
-	 *            (provision)
+	 *        (provision)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -228,9 +231,9 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 	 * DataAccessException with error 41004. update Provision by key FinReference and Version
 	 * 
 	 * @param Provision
-	 *            (provision)
+	 *        (provision)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -341,6 +344,9 @@ public class ProvisionDAOImpl extends BasicDao<Provision> implements ProvisionDA
 
 		StringBuilder sql = new StringBuilder("Select NpaBucketID ");
 		sql.append(" From FinProvisions");
+		if (App.DATABASE == Database.SQL_SERVER) {
+			sql.append(EodConstants.SQL_NOLOCK);
+		}
 		sql.append(" Where FinReference =:FinReference");
 
 		logger.trace(Literal.SQL + sql.toString());
