@@ -4366,5 +4366,141 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 	       ]]>
 		</sql>
 	</changeSet>	
-	
+	<changeSet id="107" author="Saikiran.V" dbms="oracle">
+		<createView viewName="DEMAND_ALERT_VIEW" replaceIfExists="true">
+				SELECT  FM.FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FM.FINAMOUNT ,
+				FSD.PRINCIPALSCHD,
+				FSD.PROFITSCHD,
+				FSD.REPAYAMOUNT,
+				FSD.SCHDATE,
+				FSD.TDSAMOUNT,
+				(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE 
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+				where  CUS.dnd= 0 and  CEM.CUSTEMAILPRIORITY=5 and  (SCHDATE = to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+2 OR SCHDATE =systemDate+5)        
+		</createView>
+	</changeSet>
+	<changeSet id="108" author="Saikiran.V" dbms="oracle">
+		<createView viewName="OVER_ALERT_VIEW" replaceIfExists="true">
+				select
+				CUS.CUSTID ,
+				CEM.CUSTEMAIL,
+				FM.FINREFERENCE,
+				FM.FINAMOUNT ,
+				FSD.PRINCIPALSCHD,
+				FSD.PROFITSCHD,
+				FSD.REPAYAMOUNT,
+				FSD.SCHDATE,
+				FOD.TOTPENALTYBAL,
+				(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE 
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINSCHEDULEDETAILS FSD ON FM.FINREFERENCE=FSD.FINREFERENCE
+				INNER JOIN FINODDETAILS FOD ON FM.FINREFERENCE=FOD.FINREFERENCE and FOD.FINODSCHDDATE=FSD.SCHDATE
+				where  CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5  and 
+        SCHDATE >=  to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+3 AND
+        FSD.PRINCIPALSCHD+FSD.PROFITSCHD > 50000
+        AND SCHDPRIPAID = 0 AND SCHDPFTPAID = 0
+		</createView>
+	</changeSet>
+	<changeSet id="109" author="Saikiran.V" dbms="oracle">
+		<createView viewName="RECEIPTADVICE_ALERT_VIEW" replaceIfExists="true">
+				SELECT  FM.FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FRH.receiptAmount,
+				FRH.receiptDate,
+				FRH.receiptId
+				FROM  FINANCEMAIN FM 
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				INNER JOIN FINRECEIPTHEADER FRH ON FM.FINREFERENCE=FRH.REFERENCE
+				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+				WHERE CUS.dnd=0 and CEM.CUSTEMAILPRIORITY=5 and 
+        FRH.RECEIPTDATE=to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')
+		</createView>
+	</changeSet>
+	<changeSet id="110" author="Saikiran.V" dbms="oracle">
+		<createView viewName="MATURITY_DATE_ALERT_VIEW" replaceIfExists="true">
+					SELECT  FM.FINREFERENCE,
+					FM.CUSTID,
+					CEM.CUSTEMAIL,
+					CS.CustShrtName,
+					CS.CustCif ,
+					(CASE 
+					when FM.VANCODE  is null then ' '
+					else FM.VANCODE  end) VANCODE ,
+					FM.MaturityDate,
+					FM.finAmount,
+					MA.amtPayable
+					FROM  FINANCEMAIN FM 
+					INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+					INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+					Left JOIN (select finreference,sum(paidamount) amtPayable from ManualAdvise where Advisetype = 2
+					group by finreference ) MA on MA.finreference=FM.finreference 
+					WHERE CS.DND=0  and CEM.CUSTEMAILPRIORITY=5  and  
+          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+     
+		</createView>
+	</changeSet>
+	<changeSet id="111" author="Saikiran.V" dbms="oracle">
+		<createView viewName="SOA_ALERT_VIEW" replaceIfExists="true">
+				Select FINREFERENCE,
+				FM.CUSTID,
+				CEM.CUSTEMAIL,
+				FINSTARTDATE finStartDate ,
+				to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd') toDate
+				from financemain FM
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CS ON FM.CUSTID=CS.CUSTID 
+				where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5  and 
+          MATURITYDATE= add_months(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd'),-1)
+		</createView>
+	</changeSet>
+	<changeSet id="112" author="Saikiran.V" dbms="oracle">
+		<createView viewName="TDS_ALERT_VIEW" replaceIfExists="true">
+					select to_char(FSD.schDate,'MON''YY') tdsMonth,CEM.CUSTEMAIL,TDSAMOUNT,FSD.TDSAPPLICABLE,TDSPAID,FSD.FINREFERENCE,FM.FINASSETVALUE  from FINSCHEDULEDETAILS FSD
+				INNER join financeMain FM On FM.FINREFERENCE=FSD.FINREFERENCE
+				INNER JOIN CUSTOMEREMAILS CEM ON FM.CUSTID=CEM.CUSTID 
+				INNER JOIN CUSTOMERS CUS ON FM.CUSTID=CUS.CUSTID 
+				   Where  	     	CUS.dnd= 0  and CEM.CUSTEMAILPRIORITY=5  and FSD.TDSAPPLICABLE = 1 and (to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+45 ,'dd-mm-yy') OR
+                                    to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+30 ,'dd-mm-yy') OR 
+                                    to_char(schDate) = to_char(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE ='APP_DATE'),'yyyy-mm-dd')+15 ,'dd-mm-yy') )
+		</createView>
+	</changeSet>
+	<changeSet id="113" author="Saikiran.V">
+		<modifyDataType tableName="SYS_NOTIFICATIONS" columnName="CRITERIAQUERY" newDataType="VARCHAR2(2000) " />
+	</changeSet>
+	<changeSet id="114" author="Saikiran.V">
+		<sql>
+		<![CDATA[
+				update SYS_NOTIFICATIONS set CRITERIAQUERY ='From (select CS.CUSTCIF,CS.CUSTSHRTNAME,to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') DateVal , CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 		(Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''730'' and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null union all 				Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''2929'' and	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null	union all Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''3650'' and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null)  EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )'
+				where CODE='REKYC_ALERT_CORP';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="115" author="Saikiran.V">
+		<sql>
+		<![CDATA[
+				update SYS_NOTIFICATIONS set CRITERIAQUERY ='From (select CS.CUSTCIF,CS.CUSTSHRTNAME,to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') DateVal , CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 		(Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''730'' and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null union all 				Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''2929'' and	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null	union all Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''3650'' and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null)  EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )'
+				where CODE='REKYC_ALERT_RETAIL';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
