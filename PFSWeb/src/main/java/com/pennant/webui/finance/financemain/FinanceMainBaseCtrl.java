@@ -21713,8 +21713,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (eligibilityService != null) {
 				getFinanceDetail().setUserDetails(getUserWorkspace().getLoggedInUser());
-				eligibilityService.getEligibilityDetails(getFinanceDetail());
-				MessageUtil.showMessage("Order Submited Successfully");
+				FinanceDetail financeDetail = eligibilityService.getEligibilityDetails(getFinanceDetail());
+				MessageUtil.showMessage("Order Submited Successfully for Customer CIF:" + financeDetail.getCustomerDetails().getCustomer().getCustCIF()+" ");
 			}
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
