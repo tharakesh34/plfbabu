@@ -2762,12 +2762,14 @@ public class ReceiptCalculator implements Serializable {
 			}
 		}
 
-		// always we are taking the inclusive type here because we are doing
-		// reverse calculation here
-		calAllocationPaidGST(receiptData.getFinanceDetail(), odDuePaid, allocate, taxType);
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
-			allocate.setPaidAmount(odDuePaid.add(allocate.getPaidGST()));
-			allocate.setTotalPaid(odDuePaid.add(allocate.getPaidGST()));
+		/*
+		 * BUG FIX 138534, In Receipt Screen Penalty is showing GST Amount if there no GST configuration for Penalty. In
+		 * case of Penalty checking configuration, if there is TaxApplicable then only calculating GST
+		 */
+		if (lppFeeType != null && lppFeeType.isTaxApplicable()) {
+			//always we are taking the inclusive type here because we are doing reverse calculation here
+			calAllocationPaidGST(receiptData.getFinanceDetail(), allocate.getTotalPaid(), allocate,
+					FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 		}
 
 		return receiptData;
@@ -3196,12 +3198,14 @@ public class ReceiptCalculator implements Serializable {
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		partPayAmount = getPartPaymentAmount(receiptData);
 
-		// TODO verify with Bharath why we are subtracting the Fees here
-		if (receiptPurposeCtg != 0) {
+		//TODO verify with Bharath why we are subtracting the Fees here
+		//#BugFix 138608 while doing Early settlement FeeeAmount goes to excess
+		String event = receiptData.getFinanceDetail().getFinScheduleData().getFeeEvent();
+		if (AccountEventConstants.ACCEVENT_EARLYPAY.equals(event)
+				|| AccountEventConstants.ACCEVENT_EARLYSTL.equals(event)) {
 			remainingBal = partPayAmount.subtract(rch.getTotalFees().getTotalPaid());
 		} else {
-			remainingBal = partPayAmount; // Temporarily we are proceeding with
-											// removing the Fees
+			remainingBal = partPayAmount;
 		}
 
 		rch.setPartPayAmount(partPayAmount);
@@ -4124,6 +4128,18 @@ public class ReceiptCalculator implements Serializable {
 			payType = RepayConstants.EXAMOUNTTYPE_EMIINADV;
 		} else if (StringUtils.equals(mode, RepayConstants.RECEIPTMODE_EXCESS)) {
 			payType = RepayConstants.EXAMOUNTTYPE_EXCESS;
+			/*
+			 * while doing EarlySettlement or Closure receipt is used below payments, if we again open the same record
+			 * below mode of payments are shown as Zero to fix this we are adding these PayemtTypes here.
+			 */
+		} else if (StringUtils.equals(mode, RepayConstants.RECEIPTMODE_ADVEMI)) {
+			payType = RepayConstants.RECEIPTMODE_ADVEMI;
+		} else if (StringUtils.equals(mode, RepayConstants.RECEIPTMODE_ADVINT)) {
+			payType = RepayConstants.RECEIPTMODE_ADVINT;
+		} else if (StringUtils.equals(mode, RepayConstants.RECEIPTMODE_CASHCLT)) {
+			payType = RepayConstants.RECEIPTMODE_CASHCLT;
+		} else if (StringUtils.equals(mode, RepayConstants.RECEIPTMODE_DSF)) {
+			payType = RepayConstants.RECEIPTMODE_DSF;
 		} else {
 			payType = RepayConstants.EXAMOUNTTYPE_PAYABLE;
 		}
