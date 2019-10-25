@@ -37,5 +37,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="2" author="saiteja.r">
+		<sql>
+			<![CDATA[
+				update SMTparameters set SysParmValue = 'Y'  where SysParmCode = 'ALLOW_LOWER_TAX_DED_REQ';
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
