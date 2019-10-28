@@ -462,7 +462,12 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 				usrDeptCode.setValue("");
 				usrDesg.setValue("");
 			}
-			MessageUtil.showError(e.getMessage());
+			// Giving user confirmation If any exception coming, while creating the external user.
+			if (MessageUtil.OVERIDE == MessageUtil.confirm(
+					"Unable to fetch the user details, do you want proceed with the user creation? ",
+					MessageUtil.CANCEL | MessageUtil.OVERIDE)) {
+				findUser = true;
+			}
 		}
 	}
 
