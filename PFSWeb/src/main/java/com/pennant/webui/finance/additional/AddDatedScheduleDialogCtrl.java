@@ -509,10 +509,10 @@ public class AddDatedScheduleDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				comboitem.setValue(curSchd.getSchDate());
 				dateCombobox.appendChild(comboitem);
 			}
-			
-			if(validateFromDate.compareTo(curBussDate) < 0){
+			//Commented to Allowing BackDated Form Date.
+			/*if(validateFromDate.compareTo(curBussDate) < 0){
 				validateFromDate = curBussDate;
-			}
+			}*/
 		}
 		logger.debug("Leaving");
 	}
