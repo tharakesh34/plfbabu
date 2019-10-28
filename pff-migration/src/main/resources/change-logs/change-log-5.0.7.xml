@@ -4407,7 +4407,7 @@
             	update REPORTCONFIGURATION set REPORTJASPERNAME = 'CovenantRegisterReport' where REPORTJASPERNAME = 'CovenantRegisterReportl';
             	update REPORTCONFIGURATION set MENUITEMCODE = 'menu_Item_CollateralRegisterReport' where MENUITEMCODE = 'menu_Item_CollateralRegister';
 				update REPORTFILTERFIELDS set fieldDBName = 'c.CustCIF' where reportId = (select ReportId from REPORTCONFIGURATION where MENUITEMCODE = 'menu_Item_CollateralRegisterReport');
-				update REPORTCONFIGURATION set ReportHeading = 'Put Call Report', REPORTNAME = 'Excel:Put Call Report' where MENUITEMCODE = 'menu_Item_putcallreport'
+				update REPORTCONFIGURATION set ReportHeading = 'Put Call Report', REPORTNAME = 'Excel:Put Call Report' where MENUITEMCODE = 'menu_Item_putcallreport';
             ]]>
 		</sql>
 	</changeSet>
