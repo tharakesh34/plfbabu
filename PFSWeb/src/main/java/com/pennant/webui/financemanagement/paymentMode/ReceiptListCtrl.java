@@ -239,6 +239,11 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					Operators.DEFAULT);
 			registerField("favourNumber");
 		}
+		//Bug fix while click on list header of knock off from in Knock off maker and approver 
+		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
+				|| StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_APPROVER)) {
+			registerField("PaymentType", listheader_ExcessType);
+		}
 		registerField("recordStatus", listheader_RecordStatus);
 		registerField("receiptModeStatus", listheader_ReceiptModeStatus);
 		registerField("nextRoleCode", listheader_NextRoleCode);
