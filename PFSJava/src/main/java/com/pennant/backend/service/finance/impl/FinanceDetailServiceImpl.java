@@ -1923,8 +1923,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				String mandInputInStage = StringUtils.trimToEmpty(finrefDetail.getMandInputInStage());
 				String allowInputInStage = StringUtils.trimToEmpty(finrefDetail.getAllowInputInStage());
 				String ruleReturnType = StringUtils.trimToEmpty(finrefDetail.getLovDescRuleReturnType());
-
-				if ((!finrefDetail.isIsActive()) || StringUtils.isEmpty(reference)) {
+                //fix in mandate tab show only OPRAPPROVER stage
+				if ((!finrefDetail.isIsActive()) || ((FinanceConstants.PROCEDT_FINANCETABS != finRefType) &&
+						(StringUtils.isEmpty(reference)))) {
 					continue;
 				}
 
