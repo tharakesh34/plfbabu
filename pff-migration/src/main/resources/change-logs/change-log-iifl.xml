@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -23,7 +23,8 @@
 	<property name="call.date" value="now()" dbms="postgresql" />
 
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -133,7 +134,8 @@
 	</changeSet>
 
 	<changeSet id="3" author="vijaya.a">
-		<createView viewName="PRESENTMENT_REQ_DETAILS_VIEW" replaceIfExists="true">
+		<createView viewName="PRESENTMENT_REQ_DETAILS_VIEW"
+			replaceIfExists="true">
 			SELECT t1.txn_ref,
 					    t1.entity_code,
 					    t1.cycle_type,
@@ -3275,7 +3277,7 @@
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="14" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3314,7 +3316,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="15" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3322,5 +3324,22 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="16" author="srihari">
+		<createTable tableName="CUSTOMERTAXDETAILS">
+			<column name="REQUESTID" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+				 
+			</column>
+			<column name="CUSTOMERID" type="bigint" />
+			<column name="LOANREFENO" type="VARCHAR(20)" />
+			<column name="TRANSACTIONID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="REQUESTEDBY" type="VARCHAR(20)" />
+			<column name="ORDERSTATUS" type="VARCHAR(20)" />
+			<column name="REQUESTEDATE" type="datetime" />
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
