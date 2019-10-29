@@ -3013,4 +3013,11 @@
 			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
 		</createView>
 	</changeSet>
+	<changeSet id = "49" author="prabhakar.g">	
+		<sql>
+		<![CDATA[
+			update SMTPARAMETERS set SYSPARMVALUE = 'Y' where sysparmcode = 'ALLOW_LIMIT_NOTIFICATION'
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>	
