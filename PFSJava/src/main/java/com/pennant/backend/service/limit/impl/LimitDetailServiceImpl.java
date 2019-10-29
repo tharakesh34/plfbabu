@@ -489,7 +489,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			sendMailNotification(limitHeader, "Email");
 			sendSMSNotification(limitHeader, "SMS");
 		}
-		sendSMSNotification(limitHeader, "SMS");
 		logger.debug("Leaving");
 		return auditHeader;
 	}

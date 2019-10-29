@@ -1139,6 +1139,7 @@ public class NotificationService {
 	private HashMap<String, Object> getTemplateData(FinanceDetail aFinanceDetail, FinReceiptHeader receiptHeader) {
 		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
+		int format = CurrencyUtil.getFormat(main.getFinCcy());
 		// Role Code For Alert Notification
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
 			if (StringUtils.isNotEmpty(main.getRoleCode())) {
@@ -1168,9 +1169,11 @@ public class NotificationService {
 		if (receiptHeader != null) {
 			declaredFieldValues.put("recordStatus", receiptHeader.getRecordStatus());
 			declaredFieldValues.put("rh_receiptPurpose", receiptHeader.getReceiptPurpose());
-			declaredFieldValues.put("rh_receiptAmount", receiptHeader.getReceiptAmount());
+			declaredFieldValues.put("rh_receiptAmount",
+					PennantApplicationUtil.amountFormate(receiptHeader.getReceiptAmount(), format));
 			declaredFieldValues.put("rh_receiptDate", DateUtility.formatToLongDate(receiptHeader.getReceiptDate()));
-			declaredFieldValues.put("rh_balAmount", receiptHeader.getBalAmount());
+			declaredFieldValues.put("rh_balAmount",
+					PennantApplicationUtil.amountFormate(receiptHeader.getBalAmount(), format));
 		}
 		if (aFinanceDetail.getPromotion() != null) {
 			declaredFieldValues.put("rh_actualInterestRate", aFinanceDetail.getPromotion().getActualInterestRate());
