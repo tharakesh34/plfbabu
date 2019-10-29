@@ -4509,7 +4509,7 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 		<sql>
 		<![CDATA[
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='DEMAND_ALERT.FTL' where CODE='DEMAND_ALERT';
-				update SYS_NOTIFICATIONS set CONTENTFILENAME='DEMAND_ALERT.FTL' where CODE='OVERDUE_ALERT';
+				update SYS_NOTIFICATIONS set CONTENTFILENAME='OVERDUE_ALERT.FTL' where CODE='OVERDUE_ALERT';
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='RECEIPTADVICE_ALERT.FTL' where CODE='RECEIPTADVICE_ALERT';
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='MATURITY_DATE_ALERT.FTL' where CODE='MATURITY_DATE_ALERT';
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='SOA_ALERT.FTL' where CODE='SOA_ALERT';
@@ -4519,6 +4519,36 @@ update SEQRMTLOVFIELDDETAIL set seqno = (SELECT MAX(FIELDCODEID)+1 FROM RMTLOVFI
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='REKYC_ALERT.FTL' where CODE='REKYC_ALERT_RETAIL';
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='REKYC_ALERT.FTL' where CODE='REKYC_ALERT_SME';
 				update SYS_NOTIFICATIONS set CONTENTFILENAME='REPAYMENT_ALERT.FTL' where CODE='REPAYMENT_ALERT';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="117" author="Saikiran.V">
+		<sql>
+		<![CDATA[
+				update SYS_NOTIFICATIONS set CRITERIAQUERY =' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') DateVal , CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 		(Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''730'' and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null union all 				Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''2929'' and	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null	union all Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_CORP_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''3650'' and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null)  EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )'
+				where CODE='REKYC_ALERT_CORP';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="118" author="Saikiran.V">
+		<sql>
+		<![CDATA[
+				update SYS_NOTIFICATIONS set CRITERIAQUERY =' From (select CS.CUSTCIF,CS.CUSTSHRTNAME,to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') DateVal , CEM.CUSTEMAIL from CUSTOMERS  CS INNER JOIN 		(Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''730'' and CUSTOMERRISK=''H'' and LASTKYCREVIEWDATE is not null union all 				Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''2929'' and	CUSTOMERRISK=''M'' and LASTKYCREVIEWDATE is not null	union all Select reference, to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') from CUSTOMER_RETAIL_ED 
+				where ROUND(to_date((select SYSPARMVALUE from SMTPARAMETERS where SYSPARMCODE =''APP_DATE''),''yyyy-mm-dd'') - LASTKYCREVIEWDATE)=''3650'' and CUSTOMERRISK=''L''  and LASTKYCREVIEWDATE is not null)  EXT ON  EXT.reference=CS.CUSTCIF	INNER JOIN CUSTOMEREMAILS CEM ON CS.CUSTID=CEM.CUSTID where CS.dnd=0  and CEM.CUSTEMAILPRIORITY=5 )'
+				where CODE='REKYC_ALERT_RETAIL';
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="119" author="Saikiran.V">
+		<sql>
+		<![CDATA[
+				delete LIMITCODEDETAIL where LIMITCODE='PRECHECK';
+				Insert into LIMITCODEDETAIL (LIMITID,LIMITCODE,LIMITDESC,ACTIVE) values (1,'PRECHECK','Limits','1');
 			]]>
 		</sql>
 	</changeSet>
