@@ -408,4 +408,34 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="39" author="vijaya.a">
+		<addColumn tableName="AdtLimitHeader">
+			<column name="CUSTOMERIDS" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="40" author="vijaya.a" dbms = "Oracle">
+		<sql>
+			<![CDATA[ 
+				update AdtLimitHeader set CustomerIDs = cast(CUSTOMERID As NUMBER);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="41" author="vijaya.a" dbms = "postgresql,mssql">
+		<sql>
+			<![CDATA[ 
+				update AdtLimitHeader set CustomerIDs = cast(CUSTOMERID As Bigint);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="42" author="vijaya.a">
+		<dropColumn tableName="ADTLimitHeader" columnName="CUSTOMERID"/>
+	</changeSet>
+	
+	<changeSet id="43" author="vijaya.a">
+		<renameColumn tableName="ADTLimitHeader" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
+	</changeSet>
 </databaseChangeLog>

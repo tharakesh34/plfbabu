@@ -16446,4 +16446,54 @@ UNION ALL
 		</createView>
 	</changeSet>
 
+	<changeSet id="303" author="vijaya.a">
+		<addColumn tableName="LimitHeader_temp">
+			<column name="CUSTOMERIDS" type="bigint" />
+		</addColumn>
+		<addColumn tableName="LimitHeader">
+			<column name="CUSTOMERIDS" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="304" author="vijaya.a" dbms = "Oracle">
+		<sql>
+			<![CDATA[ 
+				update LimitHeader_temp set CustomerIDs = cast(CUSTOMERID As NUMBER);
+				update LimitHeader set CustomerIDs = cast(CUSTOMERID As NUMBER);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="305" author="vijaya.a" dbms = "postgresql,mssql">
+		<sql>
+			<![CDATA[ 
+				update LimitHeader_temp set CustomerIDs = cast(CUSTOMERID As BigInt);
+				update LimitHeader set CustomerIDs = cast(CUSTOMERID As BigInt);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="307" author="vijaya.a">
+		<dropColumn tableName="LimitHeader_temp" columnName="CUSTOMERID"/>
+		<dropColumn tableName="LimitHeader" columnName="CUSTOMERID"/>
+	</changeSet>
+	
+	<changeSet id="308" author="vijaya.a">
+		<renameColumn tableName="LimitHeader_temp" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
+		<renameColumn tableName="LimitHeader" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
+	</changeSet>
+	
+	<changeSet id="309" author="vijaya.a">
+		<createView viewName="LIMITCUSTOMERS_VIEW">
+		select custid, 
+				custcif, 
+				CustShrtName,
+			    CustCtgCode,
+			    CustFName,
+			    CustLName 
+			    from Customers 
+			    where custId Not in (Select cast(coalesce(CustomerID,0), BIGINT) FROM LimitHeader_view)
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
