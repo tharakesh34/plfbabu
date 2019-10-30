@@ -2411,4 +2411,29 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		logger.debug(Literal.LEAVING);
 		return exists;
 	}
+	@Override
+	public boolean isDuplicateCoreBankId(long custId,String custCoreBank) {
+		logger.debug(Literal.ENTERING);
+
+		boolean exists = false;
+
+		// Prepare the parameter source.
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("CustID", custId);
+		paramSource.addValue("CustCoreBank", custCoreBank);
+
+		// Check whether the document id exists for another customer.
+		String sql = QueryUtil.getCountQuery(new String[] { "Customers_Temp", "Customers" },
+				"CustID != :CustID and CustCoreBank  = :CustCoreBank");
+
+		logger.trace(Literal.SQL + sql);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+
+		if (count > 0) {
+			exists = true;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }
