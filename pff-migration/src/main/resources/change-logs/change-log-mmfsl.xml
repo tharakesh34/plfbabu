@@ -3020,4 +3020,36 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="50" author="naga.g">
+		<addUniqueConstraint columnNames="CUSTCOREBANK"
+			constraintName="UK_CONSTRAINT_CUSTCOREBANK" tableName="customers" />
+	</changeSet>
+
+	<changeSet id="51" author="naga.g">
+		<addUniqueConstraint columnNames="CUSTCOREBANK"
+			constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEMP" tableName="customers_temp" />
+	</changeSet>
+	
+	<changeSet id="52" author="naga.g">
+		<sql>
+			<![CDATA[
+			UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+            UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+ 
+            delete from secrights where rightname='CustomerDialog_coreBankID';
+
+            insert into SecRights Values((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS),3,'CustomerDialog_coreBankID','CustomerDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0 );
+            insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CUSTOMER_DDE_MAKER'), (select RightID from SecRights WHERE RightName='CustomerDialog_coreBankID'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );
+            insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='BFSD_ORIGINATION_MAKER'), (select RightID from SecRights WHERE RightName='CustomerDialog_coreBankID'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 ); 
+            insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CENTRALIZED_GROUP_MAKER'), (select RightID from SecRights WHERE RightName='CustomerDialog_coreBankID'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );		 
+            insert into SecGroupRights Values((SELECT MAX(GRPRIGHTID)+1 FROM SECGROUPRIGHTS), (SELECT GRPID FROM SECGROUPS WHERE GRPCODE='CL_ORIGINATION_WRM'), (select RightID from SecRights WHERE RightName='CustomerDialog_coreBankID'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0 );		 
+
+            UPDATE SEQSECGROUPRIGHTS SET SEQNO = (SELECT MAX(GRPRIGHTID) FROM SECGROUPRIGHTS); 
+            UPDATE SEQSECRIGHTS SET SEQNO= (SELECT MAX(RIGHTID) FROM SECRIGHTS);
+			
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>	
