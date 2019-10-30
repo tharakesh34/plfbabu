@@ -1,7 +1,9 @@
 package com.pennanttech.pff.external.cibil;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -9,18 +11,27 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerDetails;
@@ -41,8 +52,11 @@ import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 import com.pennanttech.service.AmazonS3Bucket;
 
 public class RetailCibilReport extends BasicDao<Object> {
-	protected static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
+	private static final Logger logger = LoggerFactory.getLogger(RetailCibilReport.class);
 	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_RETAIL_EXPORT_STATUS");
+
+	private static final String MEMBER_FIELDS = "Reporting Member ID, Short Name, Cycle Identification, DateReported, Reporting Password, Authentication Method,	Future Use,	Member Data";
+	private static final String HEADER_FIELDS = "Consumer Name,Date Of Birth,Gender,Income Tax ID Number,Passport Number,Passport Issue Date,Passport Expiry Date,Voter ID Number,Driving License Number,Driving License Issue Date,Driving License Expiry Date,Ration Card Number,Universal ID Number,Additional ID #1,Additional ID #2,Telephone No.Mobile,Telephone No.Residence,Telephone No.Office,Extension Office,Telephone No.Other ,Extension Other,Email ID 1,Email ID 2,Address Line1,State Code1,PIN Code,Address Category 1,Residence Code 1,Address 2,State Code 2,PIN Code2,Address Category 2,Residence Code 2,Current/New Member Code,Current/New Member Short Name,Current New Account Number,Account Type,Ownership Indicator,Date Opened/Disbursed,Date Of Last Payment,Date Closed,Date Reported,High Credit/Sanctioned Amount,Current Balance,Amount Overdue,Number Of Days Past Due,Old Member Code,Old Member Short Name,Old Account Number,Old Acc Type,Old Ownership Indicator,Suit Filed / Wilful Default,Written-off and Settled Status,Asset Classification,Value of Collateral,Type of Collateral,Credit Limit,Cash Limit,Rate of Interest,RepaymentTenure,EMI Amount,Writtenoff Amount Total ,Writtenoff Principal Amount,Settlement Amt,Payment Frequency,Actual Payment Amt,Occupation Code,Income,Net/Gross Income Indicator,Monthly/AnnualIncome Indicator";
 
 	private static final String DATE_FORMAT = "ddMMyyyy";
 	private CibilFileInfo fileInfo;
@@ -53,8 +67,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	private long processedRecords;
 	private long successCount;
 	private long failedCount;
+	private int xlsxRowCount = 3;
 
-	@Autowired
 	private CIBILService cibilService;
 
 	public RetailCibilReport() {
@@ -66,34 +80,89 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		initlize();
 
-		File cibilFile = createFile();
+		File cibilFile = null;
+		if ("TUFF".equals(memberDetails.getFileFormate())) {
+			cibilFile = createFile();
+		} else {
+			cibilFile = createXlsFile();
+		}
 
-		final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile));
 		try {
 			fileInfo = new CibilFileInfo();
-			fileInfo.setFileName(cibilFile.getName());
 			fileInfo.setCibilMemberDetail(memberDetails);
 			fileInfo.setTotalRecords(totalRecords);
 			fileInfo.setProcessedRecords(processedRecords);
 			fileInfo.setSuccessCount(successCount);
 			fileInfo.setFailedCount(failedCount);
 			fileInfo.setRemarks(updateRemarks());
-
+			fileInfo.setFileName(cibilFile.getName());
 			cibilService.logFileInfo(fileInfo);
 
 			headerId = fileInfo.getId();
-
 			/* Clear CIBIL_CUSTOMER_EXTRACT table */
 			cibilService.deleteDetails();
-
 			/* Prepare the data and store in CIBIL_CUSTOMER_EXTRACT table */
 			totalRecords = cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_INDIV);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
 
-			new HeaderSegment(writer).write();
+			if ("TUFF".equals(memberDetails.getFileFormate())) {
+				tuffFormat(cibilFile);
+			} else {
+				xlsxFormat(cibilFile);
+			}
 
+			if ("F".equals(EXTRACT_STATUS.getStatus())) {
+				return;
+			}
+
+			updateCiblilData();
+
+		} catch (Exception e) {
+			EXTRACT_STATUS.setStatus("F");
+			logger.error(Literal.EXCEPTION, e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void updateCiblilData() {
+		// Move the File into S3 bucket
+		try {
+			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
+			AmazonS3Bucket bucket = null;
+			if (properties != null && properties.getStorageType().equals("S3")) {
+				String accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
+				String secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
+				String bucketName = properties.getBucketName();
+				bucket = new AmazonS3Bucket(properties.getRegionName(), bucketName, accessKey, secretKey);
+				bucket.setSseAlgorithm(properties.getSseAlgorithm());
+			}
+			EXTRACT_STATUS.setStatus("S");
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			EXTRACT_STATUS.setRemarks(e.getMessage());
+			EXTRACT_STATUS.setStatus("F");
+		}
+		String remarks = updateRemarks();
+		fileInfo.setRemarks(remarks);
+		fileInfo.setRemarks(remarks);
+		fileInfo.setStatus(EXTRACT_STATUS.getStatus());
+		fileInfo.setTotalRecords(totalRecords);
+		fileInfo.setProcessedRecords(processedRecords);
+		fileInfo.setFailedCount(failedCount);
+		fileInfo.setSuccessCount(successCount);
+		fileInfo.setRemarks(remarks);
+		cibilService.updateFileStatus(fileInfo);
+
+	}
+
+	private void tuffFormat(File cibilFile) throws Exception, IOException {
+		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile))) {
+			new HeaderSegment(writer).write();
 			StringBuilder sql = new StringBuilder();
 			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+			sql.append(" where segment_type = :segment_type ");
+			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
 			jdbcTemplate.query(sql.toString(), new MapSqlParameterSource(), new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
@@ -121,7 +190,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 						new AccountSegment(builder, customer.getCustomerFinance()).write();
 						List<FinanceEnquiry> list = new ArrayList<FinanceEnquiry>();
 						list.add(customer.getCustomerFinance());
-						// FIX ME BAJAJ ASKED TO REMOVE COMPLETELY
+
 						// new AccountSegmentHistory(builder, list).write();
 						new EndofSubjectSegment(builder).write();
 
@@ -136,57 +205,607 @@ public class RetailCibilReport extends BasicDao<Object> {
 					}
 				}
 			});
-
 			new TrailerSegment(writer).write();
+		}
+	}
 
-		} catch (Exception e) {
-			EXTRACT_STATUS.setStatus("F");
-			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			if (writer != null) {
-				writer.flush();
-				writer.close();
+	private void xlsxFormat(File cibilFile) throws Exception, IOException {
+		try (FileOutputStream outputStream = new FileOutputStream(cibilFile)) {
+			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
+				try (Workbook workbook = new XSSFWorkbook()) {
+					int rowIndex = 0;
+
+					Sheet sheet = workbook.createSheet();
+
+					createHeading(sheet, rowIndex++);
+
+					createFields(workbook, sheet, rowIndex++, MEMBER_FIELDS);
+
+					createFields(sheet, rowIndex++, getMemberDetails());
+
+					createFields(sheet, rowIndex++, HEADER_FIELDS);
+
+					StringBuilder sql = new StringBuilder();
+					sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+					sql.append(" where segment_type = :segment_type ");
+					MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+					parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
+					jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
+						@Override
+						public void processRow(ResultSet rs) throws SQLException {
+							EXTRACT_STATUS.setProcessedRecords(processedRecords++);
+							xlsxRowCount++;
+							String finreference = rs.getString("FINREFERENCE");
+							long customerId = rs.getLong("CUSTID");
+							try {
+								CustomerDetails customer = cibilService.getCustomerDetails(customerId, finreference,
+										PennantConstants.PFF_CUSTCTG_INDIV);
+								if (customer == null) {
+									failedCount++;
+									cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+											"Unable to fetch the details.");
+									return;
+								}
+								appendRow(customer, xlsxRowCount, sheet);
+								EXTRACT_STATUS.setSuccessRecords(successCount++);
+							} catch (Exception e) {
+								EXTRACT_STATUS.setFailedRecords(failedCount++);
+								cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
+								logger.error(Literal.EXCEPTION, e);
+							}
+						}
+					});
+					workbook.write(bos);
+				}
 			}
 		}
+	}
 
-		if ("F".equals(EXTRACT_STATUS.getStatus())) {
+	private void appendRow(CustomerDetails customerDetal, int rowIndex, Sheet sheet) {
+		Customer customer = customerDetal.getCustomer();
+
+		if (customer == null) {
 			return;
 		}
 
-		// Move the File into S3 bucket
-		try {
-			EventProperties properties = cibilService.getEventProperties("CIBIL_REPORT", "S3");
-			AmazonS3Bucket bucket = null;
-			if (properties != null && properties.getStorageType().equals("S3")) {
-				String accessKey = EncryptionUtil.decrypt(properties.getAccessKey());
-				String secretKey = EncryptionUtil.decrypt(properties.getSecretKey());
-				String bucketName = properties.getBucketName();
+		List<CustomerDocument> documents = customerDetal.getCustomerDocumentsList();
+		List<CustomerAddres> addressList = customerDetal.getAddressList();
+		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetal.getCustomerPhoneNumList();
 
-				bucket = new AmazonS3Bucket(properties.getRegionName(), bucketName, accessKey, secretKey);
-				bucket.setSseAlgorithm(properties.getSseAlgorithm());
+		Row row = sheet.createRow(rowIndex);
+		Cell cell = row.createCell(0);
+		cell.setCellValue(getCustomerFullName(customer));
 
-				bucket.putObject(cibilFile, properties.getPrefix());
+		cell = row.createCell(1);
+
+		cell.setCellValue(getDateOfBirth(customer.getCustDOB()));
+
+		cell = row.createCell(2);
+
+		cell.setCellValue(getCustGenCode(customer.getCustGenderCode()));
+
+		String docCategory;
+		String docTitle;
+		for (CustomerDocument document : documents) {
+
+			docCategory = document.getCustDocCategory();
+			docTitle = document.getCustDocTitle();
+
+			if (StringUtils.equals(docCategory, "01")) {
+				cell = row.createCell(3);
+				cell.setCellValue(docTitle);
 			}
+			/* MasterDefUtil.getDocCode(DocType.PASSPORT) */
+			if (StringUtils.equals(docCategory, "02")) {
+				cell = row.createCell(4);
+				cell.setCellValue(docTitle);
 
-			EXTRACT_STATUS.setStatus("S");
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			EXTRACT_STATUS.setRemarks(e.getMessage());
-			EXTRACT_STATUS.setStatus("F");
+				cell = row.createCell(5);
+				cell.setCellValue(DateUtil.format(document.getCustDocIssuedOn(), DATE_FORMAT));
+
+				cell = row.createCell(6);
+				cell.setCellValue(DateUtil.format(document.getCustDocExpDate(), DATE_FORMAT));
+			}
+			/* MasterDefUtil.getDocCode(DocType.VOTER_ID) */
+			if (StringUtils.equals(docCategory, "03")) {
+				cell = row.createCell(7);
+				cell.setCellValue(docTitle);
+			}
+			/* MasterDefUtil.getDocCode(DocType.DRIVING_LICENCE) */
+			if (StringUtils.equals(docCategory, "04")) {
+				cell = row.createCell(8);
+				cell.setCellValue(docTitle);
+
+				cell = row.createCell(9);
+				cell.setCellValue(DateUtil.format(document.getCustDocIssuedOn(), DATE_FORMAT));
+
+				cell = row.createCell(10);
+				cell.setCellValue(DateUtil.format(document.getCustDocExpDate(), DATE_FORMAT));
+			}
+			/* MasterDefUtil.getDocCode(DocType.RATION_CARD) */
+			if (StringUtils.equals(docCategory, "05")) {
+				cell = row.createCell(11);
+				cell.setCellValue(docTitle);
+			}
+			// MasterDefUtil.getDocCode(DocType.AADHAAR))
+			if (StringUtils.equals(docCategory, "06")) {
+				cell = row.createCell(12);
+				cell.setCellValue(docTitle);
+			}
 		}
 
-		String remarks = updateRemarks();
-		fileInfo.setRemarks(remarks);
-		fileInfo.setRemarks(remarks);
-		fileInfo.setStatus(EXTRACT_STATUS.getStatus());
-		fileInfo.setTotalRecords(totalRecords);
-		fileInfo.setProcessedRecords(processedRecords);
-		fileInfo.setFailedCount(failedCount);
-		fileInfo.setSuccessCount(successCount);
-		fileInfo.setRemarks(remarks);
-		cibilService.updateFileStatus(fileInfo);
+		/* Additional ID #1 */
+		cell = row.createCell(13);
 
-		logger.debug(Literal.LEAVING);
+		/* Additional ID #2 */
+		cell = row.createCell(14);
+
+		for (CustomerPhoneNumber phoneNum : customerPhoneNumbers) {
+			String phoneNumber = phoneNum.getPhoneNumber();
+			/* Telephone No.Mobile */
+			if ("01".equals(phoneNum.getPhoneTypeCode())) {
+				cell = row.createCell(15);
+				cell.setCellValue(phoneNumber);
+			}
+			/* Telephone No.Residence */
+			if ("02".equals(phoneNum.getPhoneTypeCode())) {
+				cell = row.createCell(16);
+				cell.setCellValue(phoneNumber);
+			}
+			/* Telephone No.Office */
+			if ("03".equals(phoneNum.getPhoneTypeCode())) {
+				cell = row.createCell(17);
+				cell.setCellValue(phoneNumber);
+			}
+		}
+
+		/* Extension Office */
+		cell = row.createCell(18);
+
+		/* Telephone No.Other */
+		cell = row.createCell(19);
+
+		/* Extension Other */
+		cell = row.createCell(20);
+
+		if (customerDetal.getCustomerEMailList() != null) {
+			int count = 0;
+			List<CustomerEMail> customerEMailListList = customerDetal.getCustomerEMailList();
+			for (CustomerEMail customerEMail : customerEMailListList) {
+				count++;
+				if (count == 1) {
+					cell = row.createCell(21);
+					cell.setCellValue(customerEMail.getCustEMail());
+				}
+				if (count == 2) {
+					cell = row.createCell(22);
+					cell.setCellValue(customerEMail.getCustEMail());
+					break;
+				}
+			}
+		}
+
+		int count = 0;
+		for (CustomerAddres custAddr : addressList) {
+			count++;
+			if (count == 1) {
+				/* Address1 */
+				cell = row.createCell(23);
+				cell.setCellValue(writeCustAddress(custAddr));
+
+				/* State Code1 */
+				cell = row.createCell(24);
+				cell.setCellValue(custAddr.getCustAddrProvince());
+
+				/* PIN Code1 */
+				cell = row.createCell(25);
+				cell.setCellValue(custAddr.getCustAddrZIP());
+
+				/* Address Category1 */
+				cell = row.createCell(26);
+				cell.setCellValue(getAddrTypeCode(custAddr.getCustAddrType()));
+
+				/* ResidenceCode1 */
+				cell = row.createCell(27);
+			}
+			if (count == 2) {
+				/* Address2 */
+				cell = row.createCell(28);
+				cell.setCellValue(writeCustAddress(custAddr));
+
+				/* State Code2 */
+				cell = row.createCell(29);
+				cell.setCellValue(custAddr.getCustAddrProvince());
+
+				/* PIN Code2 */
+				cell = row.createCell(30);
+				cell.setCellValue(custAddr.getCustAddrZIP());
+
+				/* Address Category2 */
+				cell = row.createCell(31);
+				cell.setCellValue(getAddrTypeCode(custAddr.getCustAddrType()));
+
+				/* ResidenceCode2 */
+				cell = row.createCell(32);
+				break;
+			}
+		}
+
+		/* Current New Member Code */
+		cell = row.createCell(33);
+		cell.setCellValue(memberDetails.getMemberCode());
+
+		/* Current New Member Name */
+		cell = row.createCell(34);
+		cell.setCellValue(memberDetails.getMemberName());
+
+		/* Current New Account Number */
+		cell = row.createCell(35);
+
+		/* Ownership Indicator */
+		cell = row.createCell(37);
+
+		/* Old Member Code */
+		cell = row.createCell(46);
+
+		/* Old Member ShortName */
+		cell = row.createCell(48);
+
+		/* Old AccType */
+		cell = row.createCell(49);
+
+		/* Old Ownership Indicator */
+		cell = row.createCell(50);
+
+		/* Suit Filed Willful Default */
+		cell = row.createCell(51);
+
+		/* Written-off and Settled Status */
+		cell = row.createCell(52);
+
+		if (customerDetal.getCustomerFinance() != null) {
+			FinanceEnquiry finance = customerDetal.getCustomerFinance();
+			/* Account Type */
+			cell = row.createCell(36);
+			cell.setCellValue(finance.getFinType());
+
+			/* DateOpened/Disbursed */
+			cell = row.createCell(38);
+			cell.setCellValue(DateUtil.format(finance.getFinApprovedDate(), DATE_FORMAT));
+
+			/* Ownership Indicator */
+			cell = row.createCell(47);
+			cell.setCellValue(finance.getOwnership());
+
+			/* Date Of LastPayment */
+			cell = row.createCell(39);
+			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
+
+			/* Date Closed */
+			cell = row.createCell(40);
+
+			/* Date Reported */
+			cell = row.createCell(41);
+			cell.setCellValue(DateUtil.format(finance.getFinStartDate(), DATE_FORMAT));
+
+			/* High Credit/Sanctioned Amount */
+			cell = row.createCell(42);
+			cell.setCellValue(String.valueOf(finance.getFinAssetValue()));
+
+			/* Current Balance */
+			cell = row.createCell(43);
+			cell.setCellValue(String.valueOf(currentBalance(finance)));
+
+			/* Amount Overdue */
+			cell = row.createCell(44);
+			cell.setCellValue(String.valueOf(amountOverDue(finance)));
+
+			/* Number Of Days PastDue */
+			cell = row.createCell(45);
+			cell.setCellValue(finance.getCurODDays());
+
+			/* Repayment Tenure */
+			cell = row.createCell(59);
+			cell.setCellValue(finance.getNumberOfTerms());
+
+			/* EMI Amount */
+			cell = row.createCell(60);
+			cell.setCellValue(String.valueOf(finance.getInstalmentDue()));
+
+			/* Written off AmountTotal */
+			cell = row.createCell(61);
+			BigDecimal writnAmount = writtenOffAmount(finance);
+			cell.setCellValue(String.valueOf(writnAmount));
+
+			/* Written off Principal Amount */
+			cell = row.createCell(62);
+			BigDecimal writnPrincpl = writtenOffPrincipal(finance);
+			cell.setCellValue(String.valueOf(writnPrincpl));
+
+			/* Income */
+			cell = row.createCell(67);
+			cell.setCellValue("");
+		}
+
+		/* Asset Classification */
+		cell = row.createCell(53);
+
+		/* Value of Collateral */
+		cell = row.createCell(54);
+
+		/* Type of Collateral */
+		cell = row.createCell(55);
+
+		/* Rate of Interest */
+		cell = row.createCell(58);
+
+		/* Payment Frequency */
+		cell = row.createCell(64);
+
+		/* Credit Limit */
+		cell = row.createCell(56);
+
+		/* Cash Limit */
+		cell = row.createCell(57);
+
+		/* Settlement Amt */
+		cell = row.createCell(63);
+
+		/* Actual Payment Amt */
+		cell = row.createCell(65);
+
+		/* Occupation Code */
+		cell = row.createCell(66);
+
+		/* Net/Gross Income Indicator */
+		cell = row.createCell(68);
+
+		/* Monthly/Annual Income Indicator */
+		cell = row.createCell(69);
+	}
+
+	private String getAddrTypeCode(String custAddrType) {
+		String addrsCode = "";
+		if (custAddrType != null) {
+			if ("01".equals(custAddrType)) {
+				addrsCode = "1";
+			} else if ("02".equals(custAddrType)) {
+				addrsCode = "2";
+			} else if ("03".equals(custAddrType)) {
+				addrsCode = "3";
+			}
+		}
+		return addrsCode;
+	}
+
+	private String getCustomerFullName(Customer customer) {
+		StringBuilder builder = new StringBuilder();
+
+		if (customer.getCustFName() != null) {
+			builder.append(StringUtils.trimToEmpty(customer.getCustFName()));
+			if (customer.getCustMName() != null || customer.getCustLName() != null) {
+				builder.append(" ");
+			}
+		}
+
+		if (customer.getCustMName() != null) {
+			builder.append(StringUtils.trimToEmpty(customer.getCustMName()));
+			if (customer.getCustLName() != null) {
+				builder.append(" ");
+			}
+		}
+
+		if (customer.getCustLName() != null) {
+			builder.append(StringUtils.trimToEmpty(customer.getCustLName()));
+		}
+
+		String custName = builder.toString();
+		return custName;
+	}
+
+	private String getDateOfBirth(Date custDOB) {
+		String costDob = DateUtil.format(custDOB, DATE_FORMAT);
+		return costDob;
+	}
+
+	private String getCustGenCode(String custGenCode) {
+		String genderCode = "";
+		if ("M".equals(custGenCode) || "MALE".equals(custGenCode)) {
+			genderCode = "2";
+		} else if ("F".equals(custGenCode) || "FEMALE".equals(custGenCode)) {
+			genderCode = "1";
+		} else {
+			genderCode = "3";
+		}
+		return genderCode;
+	}
+
+	private BigDecimal writtenOffAmount(FinanceEnquiry customerFinance) {
+		BigDecimal writtenOffAmount = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
+				.add(customerFinance.getTotalPftSchd().subtract(customerFinance.getTotalPftPaid())
+						.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid()))));
+
+		if (writtenOffAmount.compareTo(BigDecimal.ZERO) < 0) {
+			writtenOffAmount = BigDecimal.ZERO;
+		}
+		return writtenOffAmount;
+	}
+
+	private BigDecimal writtenOffPrincipal(FinanceEnquiry customerFinance) {
+		BigDecimal writtenOffPrincipal = (customerFinance.getTotalPriSchd().subtract(customerFinance.getTotalPriPaid())
+				.subtract(customerFinance.getExcessAmount().subtract(customerFinance.getExcessAmtPaid())));
+
+		if (writtenOffPrincipal.compareTo(BigDecimal.ZERO) < 0) {
+			writtenOffPrincipal = BigDecimal.ZERO;
+		}
+		return writtenOffPrincipal;
+	}
+
+	private BigDecimal amountOverDue(FinanceEnquiry customerFinance) {
+		BigDecimal amountOverdue = BigDecimal.ZERO;
+		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
+		if (odDays > 0) {
+			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
+			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
+			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
+			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
+			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
+			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
+			BigDecimal excessAmount = getAmount(customerFinance.getExcessAmount());
+			BigDecimal excessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
+			amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
+					.add(penaltyDue.subtract(penaltyPaid).subtract(excessAmount.subtract(excessAmountPaid))));
+		} else {
+			amountOverdue = BigDecimal.ZERO;
+		}
+		if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
+			amountOverdue = BigDecimal.ZERO;
+		}
+		return amountOverdue;
+	}
+
+	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
+		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
+		BigDecimal currentBalance = BigDecimal.ZERO;
+		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
+		if (odDays > 0) {
+			BigDecimal futureSchedulePrincipal = getAmount(customerFinance.getFutureSchedulePrin());
+			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
+			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
+			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
+			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
+			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
+			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
+			BigDecimal ExcessAmount = getAmount(customerFinance.getExcessAmount());
+			BigDecimal ExcessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
+			currentBalance = futureSchedulePrincipal
+					.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid)
+							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
+
+		} else {
+			currentBalance = getAmount(customerFinance.getFutureSchedulePrin());
+		}
+		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+			currentBalance = BigDecimal.ZERO;
+		}
+		// and overdue amount should be 0
+		if (StringUtils.equals("C", closingstatus)) {
+			currentBalance = BigDecimal.ZERO;
+		}
+		return currentBalance;
+	}
+
+	private String writeCustAddress(CustomerAddres custAddr) {
+		StringBuilder builder = new StringBuilder();
+
+		if (custAddr.getCustAddrHNbr() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrHNbr()));
+			if (custAddr.getCustFlatNbr() != null || custAddr.getCustAddrStreet() != null
+					|| custAddr.getCustAddrLine1() != null || custAddr.getCustAddrLine2() != null) {
+				builder.append(",");
+			}
+		}
+
+		if (custAddr.getCustAddrStreet() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrStreet()));
+			if (custAddr.getCustFlatNbr() != null || custAddr.getCustAddrLine1() != null
+					|| custAddr.getCustAddrLine2() != null) {
+				builder.append(",");
+			}
+		}
+
+		if (custAddr.getCustFlatNbr() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustFlatNbr()));
+			if (custAddr.getCustAddrLine1() != null || custAddr.getCustAddrLine2() != null) {
+				builder.append(",");
+			}
+		}
+
+		if (custAddr.getCustAddrLine1() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrLine1()));
+			if (custAddr.getCustAddrLine2() != null) {
+				builder.append(",");
+			}
+		}
+		if (custAddr.getCustAddrCity() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrCity()));
+			if (custAddr.getCustAddrCity() != null) {
+				builder.append(",");
+			}
+		}
+
+		if (custAddr.getCustAddrProvince() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrProvince()));
+			if (custAddr.getCustAddrProvince() != null) {
+				builder.append(",");
+			}
+		}
+
+		if (custAddr.getCustAddrCountry() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrCountry()));
+			if (custAddr.getCustAddrCountry() != null) {
+				builder.append("-");
+			}
+		}
+
+		if (custAddr.getCustAddrZIP() != null) {
+			builder.append(StringUtils.trimToEmpty(custAddr.getCustAddrZIP()));
+			if (custAddr.getCustAddrZIP() != null) {
+				builder.append(" ");
+			}
+		}
+		String custAddress = builder.toString();
+		return custAddress;
+	}
+
+	private String getMemberDetails() {
+		StringBuilder detais = new StringBuilder();
+		detais.append(memberDetails.getMemberId()).append(",");
+		detais.append(memberDetails.getMemberShortName()).append(",");
+		detais.append("").append(",");
+		detais.append(DateUtil.format(SysParamUtil.getAppDate(), DATE_FORMAT)).append(",");
+		detais.append(memberDetails.getMemberPassword()).append(",");
+		detais.append("").append(",");
+		detais.append(memberDetails.getMemberCode());
+		return detais.toString();
+	}
+
+	private void createHeading(Sheet sheet, int rowIndex) {
+		Row row = sheet.createRow((int) rowIndex);
+		Cell cella = row.createCell(0);
+		cella.setCellValue("CIBIL HEADING");
+		sheet.addMergedRegion(CellRangeAddress.valueOf("A1:E1"));
+	}
+
+	private void createFields(Workbook workbook, Sheet sheet, int rowIndex, String header) {
+		Row row = sheet.createRow((int) rowIndex);
+		int cellIndex = 0;
+		final Font font = workbook.createFont();
+		final CellStyle style = workbook.createCellStyle();
+		font.setBold(true);
+		style.setFont(font);
+		for (String fieldName : header.split(",")) {
+			createCell(row, cellIndex++, fieldName.trim(), style);
+		}
+	}
+
+	private void createCell(Row row, int index, String cellValue, CellStyle style) {
+		Cell cell = row.createCell(index);
+		cell.setCellValue(cellValue);
+		cell.setCellStyle(style);
+	}
+
+	private void createFields(Sheet sheet, int rowIndex, String header) {
+		Row row = sheet.createRow((int) rowIndex);
+		int cellIndex = 0;
+		for (String fieldName : header.split(",")) {
+			createCell(row, cellIndex++, fieldName.trim());
+		}
+	}
+
+	private void createCell(Row row, int index, String cellValue) {
+		Cell cell = row.createCell(index);
+		cell.setCellValue(cellValue);
 	}
 
 	private File createFile() throws Exception {
@@ -200,7 +819,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
-
 		StringBuilder builder = new StringBuilder(reportLocation);
 		builder.append(File.separator);
 		builder.append(memberId);
@@ -210,9 +828,29 @@ public class RetailCibilReport extends BasicDao<Object> {
 		builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
-
 		reportName.createNewFile();
+		return reportName;
+	}
 
+	private File createXlsFile() throws Exception {
+		logger.debug("Creating the file");
+		File reportName = null;
+		String reportLocation = memberDetails.getFilePath();
+		String memberId = memberDetails.getMemberId();
+		File directory = new File(reportLocation);
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		StringBuilder builder = new StringBuilder(reportLocation);
+		builder.append(File.separator);
+		builder.append(memberId);
+		builder.append("-");
+		builder.append(DateUtil.getSysDate("ddMMYYYY"));
+		builder.append("-");
+		builder.append(DateUtil.getSysDate("Hms"));
+		builder.append(".xlsx");
+		reportName = new File(builder.toString());
+		reportName.createNewFile();
 		return reportName;
 	}
 
@@ -221,7 +859,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	 * <li>It is a Required segment.</li>
 	 * <li>It is of a fixed size of 146 bytes.</li>
 	 * <li>It occurs only once per update file.</li>
-	 * <li>All the fields must be provided; otherwise, the entire data input file is rejected.</li>
+	 * <li>All the fields must be provided; otherwise, the entire data input
+	 * file is rejected.</li>
 	 *
 	 */
 	public class HeaderSegment {
@@ -233,18 +872,16 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		public void write() throws Exception {
 			StringBuilder builder = new StringBuilder();
-
 			writeValue(builder, "TUDF");
 			writeValue(builder, "12");
 			writeValue(builder, rightPad(memberDetails.getMemberId(), 30, ""));
 			writeValue(builder, rightPad(memberDetails.getMemberShortName(), 16, ""));
 			writeValue(builder, rightPad("", 2, ""));
-			writeValue(builder, DateUtility.getAppDate(DATE_FORMAT));
+			writeValue(builder, SysParamUtil.getAppDate(DATE_FORMAT));
 			writeValue(builder, rightPad(memberDetails.getMemberPassword(), 30, ""));
 			writeValue(builder, "L");
 			writeValue(builder, rightPad("0", 5, "0"));
 			writeValue(builder, rightPad("", 48, ""));
-
 			writer.write(builder.toString());
 		}
 	}
@@ -256,7 +893,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PN Segment describes personal consumer information, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 174 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 174
+	 * bytes.</li>
 	 * <li>It occurs only once per record.</li>
 	 * <li>Tag 06 is reserved for future use.</li>
 	 */
@@ -323,13 +961,15 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	/**
 	 * The PT Segment contains the known phone numbers of the consumer, and:
-	 * <li>This is a Required segment if at least one valid ID segment (with ID Type of 01, 02, 03, 04, or 06) is not
-	 * present.</li>
-	 * <li>It is variable in length and can be of a maximum size of 28 bytes.</li>
+	 * <li>This is a Required segment if at least one valid ID segment (with ID
+	 * Type of 01, 02, 03, 04, or 06) is not present.</li>
+	 * <li>It is variable in length and can be of a maximum size of 28
+	 * bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
-	 * <li>For accounts opened on/after June 1, 2007, at least one valid Telephone (PT) segment or at least one valid
-	 * Identification (ID) segment (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the record is
-	 * rejected.</li>
+	 * <li>For accounts opened on/after June 1, 2007, at least one valid
+	 * Telephone (PT) segment or at least one valid Identification (ID) segment
+	 * (with ID Type of 01, 02, 03, 04, or 06) is required. If not provided, the
+	 * record is rejected.</li>
 	 *
 	 */
 	public class TelephoneSegment {
@@ -367,7 +1007,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The EC Segment contains the email address of the consumer, and:
 	 * <li>This is a When Available segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 81 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 81
+	 * bytes.</li>
 	 * <li>This can occur maximum of 10 times per record.</li>
 	 */
 	public class EmailContactSegment {
@@ -401,10 +1042,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * The PA Segment contains the known address of the consumer, and:
 	 * <li>It is a Required segment.</li>
-	 * <li>It is variable in length and can be of a maximum size of 259 bytes.</li>
+	 * <li>It is variable in length and can be of a maximum size of 259
+	 * bytes.</li>
 	 * <li>This can occur maximum of 5 times per record.</li>
 	 * <li>Any extra PA Segments after the 5th one will be rejected.</li>
-	 * <li>At least one valid PA Segment is required. All invalid PA Segments will be rejected.</li>
+	 * <li>At least one valid PA Segment is required. All invalid PA Segments
+	 * will be rejected.</li>
 	 * <li>It can be provided as free format in Address Line Fields 1-5.</li>
 	 *
 	 */
@@ -501,8 +1144,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 				currentBalance = loan.getFutureSchedulePrin();
 			}
 
-			if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
-				currentBalance = BigDecimal.ZERO;
+			if (currentBalance != null) {
+				if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
+					currentBalance = BigDecimal.ZERO;
+				}
 			}
 
 			// ### PSD --127340 20-06-2018 FOr cancelled loans current balnce
@@ -511,12 +1156,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 				currentBalance = BigDecimal.ZERO;
 			}
 			// ### PSD --127340 20-06-2018
-
-			if (currentBalance.compareTo(BigDecimal.ZERO) == 0 && loan.getLatestRpyDate() != null) {
-				writeValue(builder, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
+			if (currentBalance != null) {
+				if (currentBalance.compareTo(BigDecimal.ZERO) == 0 && loan.getLatestRpyDate() != null) {
+					writeValue(builder, "10", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
+				}
 			}
-
-			writeValue(builder, "11", DateUtility.getAppDate(DATE_FORMAT), "08");
+			writeValue(builder, "11", SysParamUtil.getAppDate(DATE_FORMAT), "08");
 			writeValue(builder, "12", loan.getFinAssetValue(), 9, "TL");
 			writeValue(builder, "13", currentBalance, 9, "TL");
 
@@ -606,7 +1251,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				}
 				writeValue(builder, "TH", "H".concat(StringUtils.leftPad(String.valueOf(i), 2, "0")), "03");
 
-				writeValue(builder, "01", DateUtility.getAppDate(DATE_FORMAT), "08");
+				writeValue(builder, "01", SysParamUtil.getAppDate(DATE_FORMAT), "08");
 				writeValue(builder, "02", getOdDays(loan.getCurODDays()), "03");
 				writeValue(builder, "03", loan.getAmountOverdue(), 9, "TH");
 				writeValue(builder, "04", loan.getFinAssetValue(), 9, "TH");
@@ -690,10 +1335,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 		if (StringUtils.isBlank(value)) {
 			return;
 		}
-
 		int size = value.length();
 		String length = null;
-
 		if (maxLength < 99) {
 			length = StringUtils.leftPad(String.valueOf(size), 2, "0");
 		} else if (maxLength < 999) {
@@ -701,12 +1344,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		} else if (maxLength < 9999) {
 			length = StringUtils.leftPad(String.valueOf(size), 4, "0");
 		}
-
 		if (value.length() > maxLength) {
 			throw new IllegalArgumentException(
 					String.format("Max length exceeded for the tag %s in segment %s", fieldTag, segment));
 		}
-
 		builder.append(concat(fieldTag, length, value));
 
 	}
@@ -727,6 +1368,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		processedRecords = 0;
 		successCount = 0;
 		failedCount = 0;
+		xlsxRowCount = 3;
 
 		EXTRACT_STATUS.reset();
 	}
@@ -774,7 +1416,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 				regexMatcher = regex.matcher(customerName);
 			} else {
 				throw new Exception("Customer Name should not contain numbers");
-
 			}
 
 			builder = new StringBuilder();
@@ -913,4 +1554,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 		return remarks.toString();
 	}
+
+	@Autowired
+	public void setCibilService(CIBILService cibilService) {
+		this.cibilService = cibilService;
+	}
+
 }

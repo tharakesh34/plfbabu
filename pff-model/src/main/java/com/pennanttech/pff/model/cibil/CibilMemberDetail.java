@@ -15,6 +15,7 @@ public class CibilMemberDetail implements Serializable {
 	private String memberPassword;
 	private String filePath;
 	private String delimiter;
+	private String fileFormate;
 
 	public CibilMemberDetail() {
 		super();
@@ -98,6 +99,14 @@ public class CibilMemberDetail implements Serializable {
 
 	public void setDelimiter(String delimiter) {
 		this.delimiter = delimiter;
+	}
+
+	public String getFileFormate() {
+		return fileFormate;
+	}
+
+	public void setFileFormate(String fileFormate) {
+		this.fileFormate = fileFormate;
 	}
 
 }

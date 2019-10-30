@@ -28,6 +28,7 @@ public class CIBILServiceImpl implements CIBILService {
 			customer.setAddressList(cibildao.getCustomerAddres(customerId, segmentType));
 			customer.setCustomerDocumentsList(cibildao.getCustomerDocuments(customerId, segmentType));
 			customer.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(customerId, segmentType));
+			customer.setCustomerEMailList(cibildao.getCustomerEmails(customerId));
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finreference, segmentType));

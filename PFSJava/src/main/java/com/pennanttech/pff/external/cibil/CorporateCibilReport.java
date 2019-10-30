@@ -23,6 +23,7 @@ import com.northconcepts.datapipeline.csv.CSVWriter;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -60,7 +61,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	private long borrowerCount;
 	private long creditfacilityCount;
 
-	@Autowired
 	private CIBILService cibilService;
 
 	public CorporateCibilReport() {
@@ -237,10 +237,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			addField(record, "");
 
 			/* Date of Creation & Certification of Input File */
-			addField(record, DateUtility.getAppDate(DATE_FORMAT));
+			addField(record, SysParamUtil.getAppDate(DATE_FORMAT));
 
 			/* Reporting / Cycle Date */
-			addField(record, DateUtility.getAppDate(DATE_FORMAT));
+			addField(record, SysParamUtil.getAppDate(DATE_FORMAT));
 
 			/* Information Type */
 			addField(record, "01");
@@ -967,7 +967,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				creditfacilityCount++;
 				try {
 					new GuarantorSegment(writer, loan.getFinGuarenters()).write();
-					// new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
+					// new SecuritySegment(writer,
+					// loan.getCollateralSetupDetails()).write();
 					new DishonourOfChequeSegment(writer, loan.getChequeDetail()).write();
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
@@ -1391,10 +1392,6 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		return remarks.toString();
 	}
 
-	public void setCibilService(CIBILService cibilService) {
-		this.cibilService = cibilService;
-	}
-
 	private String getOdDays(int odDays) {
 		if (odDays > 900) {
 			odDays = 900;
@@ -1519,5 +1516,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		value = value.setScale(0, BigDecimal.ROUND_DOWN);
 
 		addField(record, value.toString());
+	}
+
+	@Autowired
+	public void setCibilService(CIBILService cibilService) {
+		this.cibilService = cibilService;
 	}
 }
