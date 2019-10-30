@@ -2219,12 +2219,12 @@ public class CreateFinanceController extends SummaryDetailService {
 			if (financeDetail != null) {
 				FinODPenaltyRate finODPenaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
 				if (finODPenaltyRate != null
-						&& StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						&& (StringUtils.equals(finODPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ONETIME)
 						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
 						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
-								FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
+								FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH))) {
 					BigDecimal totPerc = PennantApplicationUtil.formateAmount(finODPenaltyRate.getODChargeAmtOrPerc(),
 							2);
 					finODPenaltyRate.setODChargeAmtOrPerc(totPerc);
