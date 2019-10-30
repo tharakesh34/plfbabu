@@ -4079,6 +4079,15 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
+		boolean isDuplicateCoreBankId = false;
+		if ( StringUtils.isNotBlank(customer.getCustCoreBank())) {
+			 isDuplicateCoreBankId = customerDAO.isDuplicateCoreBankId(customer.getCustID(), customer.getCustCoreBank());
+		}
+		if (isDuplicateCoreBankId) {
+			String[] errorParameters = new String[1];
+			errorParameters[0] = PennantJavaUtil.getLabel("label_CustCoreBank") + ":" + customer.getCustCoreBank();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
+		}
 		boolean isDuplicateCrcpr = false;
 		if (StringUtils.isNotBlank(customer.getCustCRCPR())
 				&& SysParamUtil.isAllowed(SMTParameterConstants.CUST_PAN_VALIDATION)) {
