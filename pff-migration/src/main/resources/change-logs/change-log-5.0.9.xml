@@ -16315,18 +16315,5 @@ UNION ALL
   			WHERE NOT (EXISTS ( SELECT 1 FROM receiptallocationdetail_temp WHERE receiptallocationdetail_temp.receiptid = t1.receiptid))
 		</createView>
 	</changeSet>
-
-	<changeSet id="303" author="vijaya.a">
-		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
-			select custid, 
-				custcif, 
-				CustShrtName,
-			    CustCtgCode,
-			    CustFName,
-			    CustLName 
-			    from Customers 
-			    where CustId Not in (Select coalesce(CustomerID,0) FROM LimitHeader_view)
-		</createView>
-	</changeSet>
 	
 </databaseChangeLog>
