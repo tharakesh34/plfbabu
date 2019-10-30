@@ -194,5 +194,6 @@ public interface CustomerDAO {
 	boolean isDuplicateCif(long custId, String cif, String custCtgCode);
 
 	boolean isDuplicateCrcpr(long custId, String custCRCPR, String custCtgCode);
-
+	
+	boolean isDuplicateCoreBankId(long custId, String custCoreBank);
 }
