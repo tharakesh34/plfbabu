@@ -2847,6 +2847,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.custCoreBank.setReadonly(true);
 			this.custCtgCode.setReadonly(true);
 			this.custRelatedParty.setReadonly(true);
+			
+			if (!isReadOnly("CustomerDialog_coreBankID")) {
+				Customer aCustomer = this.customerDetails.getCustomer();
+				if (aCustomer.isNew()) {
+					this.custCoreBank.setReadonly(false);
+				}
+				if (PennantConstants.RECORD_TYPE_NEW.equals(aCustomer.getRecordType())) {
+					this.custCoreBank.setReadonly(false);
+				}
+              }						
 			if (StringUtils.isBlank(getCustomerDetails().getCustomer().getCustCoreBank())
 					|| ImplementationConstants.ALLOW_CUSTOMER_MAINTENANCE) {
 				if (isRetailCustomer) {
