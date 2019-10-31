@@ -4659,7 +4659,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					BigDecimal finAmt = this.finAmount.getActualValue();
 					BigDecimal compreValue = BigDecimal.ZERO;
 					if (finAmt.compareTo(compreValue) != 0) {
-						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal().divide(finAmt);
+						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal().divide(finAmt,RoundingMode.HALF_DOWN);
 						creditReviewDetail.setTotalAbb(totalAbb);
 
 					}
@@ -21444,7 +21444,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal compreValue = BigDecimal.ZERO;
 		BigDecimal totalAbb = BigDecimal.ZERO;
 		if (finAmountValue.compareTo(compreValue) != 0) {
-			totalAbb = creditReviewDetails.getAvgBankBal().divide(finAmountValue);
+			totalAbb = creditReviewDetails.getAvgBankBal().divide(finAmountValue,RoundingMode.HALF_DOWN);
 			creditReviewDetails.setTotalAbb(totalAbb);
 		}
 
@@ -21542,7 +21542,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			CreditReviewDetails creditReviewDetails, boolean isFromLoan) {
 		logger.debug(Literal.ENTERING);
 
-		BigDecimal finAmount = financeDetail.getFinScheduleData().getFinanceMain().getFinAmount();
 		if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
 			return;
 		} else {

@@ -231,6 +231,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("TENOR", creditReviewDetails.getTenor());
 			dataMap.put("ROI", creditReviewDetails.getRoi());
 			dataMap.put("ABB", creditReviewDetails.getAvgBankBal());
+			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
+			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
+			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
+			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
 			dataMap.put("DSCR_PBDIT", btMap.get("DSCR_PBDIT"));
 			dataMap.put("EMI_ALL_LOANS", btMap.get("EMI_ALL_LOANS"));
 			dataMap.put("CRNTRATIO", btMap.get("CRNTRATIO"));
@@ -257,6 +261,10 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
+			dataMap.put("SNCTNAMNT", creditReviewDetails.getSanctionedAmt());
+			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
+			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
+			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
 		}
 
 		financeDetail.setCreditRevDataMap(dataMap);
