@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,7 +22,8 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Jayant" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
@@ -30,7 +31,8 @@
 
 	<changeSet id="1" author="murthy.y">
 		<comment>Map the PAYMENT_DETAIL3 with DebitAccount Number, this view is on top of core version 14.11.0</comment>
-		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW" replaceIfExists="true">
+		<createView viewName="INT_DISBURSEMENT_REQUEST_VIEW"
+			replaceIfExists="true">
 			SELECT FA. PAYMENTID,
 				   FA.FINREFERENCE,
 				   'D' CHANNEL, 
@@ -210,7 +212,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="277" author="prabhakar.g">
 		<sql>
 			<![CDATA[
@@ -218,6 +220,37 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="278" author="kranthikumar.k">
+		<sql>
+			<![CDATA[
+				Insert into REPORTFILTERFIELDS values ((select reportid from reportconfiguration where menuitemcode='menu_Item_NPAReport'),6,'Date','DATERANGE','Date','provisioncaldate',null,'---Select----',null,null,0,0,0,0,6,0,null,null,null,null,150,0,'=',3,1000,'Approved',null,null,null,null,null,0,current_timestamp,null);
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="279" author="kranthikumar.k">
+		<sql>
+			<![CDATA[
+INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'RETAIL', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0);
+INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'CORP', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0); 
+INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('01', 'RETAIL', 'PERM',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('02', 'RETAIL', 'CURR', 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('03', 'RETAIL', 'OFFICE',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="280" author="kranthikumar.k">
+	<comment>DROP INTEREST CERTIFICATE VIEW</comment>
+		<sql>
+			<![CDATA[
+				
+				Drop view WIFFinanceMain_View;
+				Drop view Interestcertificate_view;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
-	
-	

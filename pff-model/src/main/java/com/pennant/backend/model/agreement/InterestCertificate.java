@@ -46,6 +46,13 @@ public class InterestCertificate {
 	private String addressType4;
 	private String addressType5;
 	private String custFlatNbr;
+	private String courseName;
+	private String collegeName;
+	private String universityName;
+	private String country;
+	private String totOustandingamt;
+	private String totalPftBal;
+	private String totalPriBal;
 
 	// Getter and Setter
 	public String getCustName() {
@@ -375,4 +382,61 @@ public class InterestCertificate {
 	public void setCustFlatNbr(String custFlatNbr) {
 		this.custFlatNbr = custFlatNbr;
 	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
+	public String getCollegeName() {
+		return collegeName;
+	}
+
+	public void setCollegeName(String collegeName) {
+		this.collegeName = collegeName;
+	}
+
+	public String getUniversityName() {
+		return universityName;
+	}
+
+	public void setUniversityName(String universityName) {
+		this.universityName = universityName;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getTotOustandingamt() {
+		return totOustandingamt;
+	}
+
+	public void setTotOustandingamt(String totOustandingamt) {
+		this.totOustandingamt = totOustandingamt;
+	}
+
+	public String getTotalPftBal() {
+		return totalPftBal;
+	}
+
+	public void setTotalPftBal(String totalPftBal) {
+		this.totalPftBal = totalPftBal;
+	}
+
+	public String getTotalPriBal() {
+		return totalPriBal;
+	}
+
+	public void setTotalPriBal(String totalPriBal) {
+		this.totalPriBal = totalPriBal;
+	}
+
 }

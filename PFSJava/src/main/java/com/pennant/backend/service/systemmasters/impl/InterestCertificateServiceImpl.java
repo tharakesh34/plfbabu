@@ -45,8 +45,10 @@ package com.pennant.backend.service.systemmasters.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.dao.systemmasters.InterestCertificateDAO;
@@ -54,16 +56,19 @@ import com.pennant.backend.model.agreement.InterestCertificate;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.systemmasters.InterestCertificateService;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
- * Service implementation for methods that depends on <b>InterestCertficate</b>.<br>
+ * Service implementation for methods that depends on
+ * <b>InterestCertficate</b>.<br>
  * 
  */
 public class InterestCertificateServiceImpl extends GenericService<InterestCertificate>
 		implements InterestCertificateService {
-
 	private static Logger logger = Logger.getLogger(InterestCertificateServiceImpl.class);
 
+	private ExtendedFieldService extendedFieldService;
 	private InterestCertificateDAO interestCertificateDAO;
 
 	public InterestCertificateServiceImpl() {
@@ -73,84 +78,86 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	@Override
 	public InterestCertificate getInterestCertificateDetails(String finReference, String startDate, String endDate)
 			throws ParseException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		InterestCertificate interestCertificate = getInterestCertificateDAO()
-				.getInterestCertificateDetails(finReference);
-		if (interestCertificate != null) {
-			int format = CurrencyUtil.getFormat(interestCertificate.getFinCcy());
-			InterestCertificate certificate = getInterestCertificateDAO()
-					.getSumOfPrinicipalAndProfitAmount(finReference, startDate, endDate);
-			if (certificate != null && certificate.getFinSchdPftPaid() != null
-					&& certificate.getFinSchdPriPaid() != null) {
-				String finSchdPftPaid = PennantApplicationUtil.amountFormate(certificate.getFinSchdPftPaid(), format);
-				finSchdPftPaid = finSchdPftPaid.replace(",", "");
-				String finSchdPriPaid = PennantApplicationUtil.amountFormate(certificate.getFinSchdPriPaid(), format);
-				finSchdPriPaid = finSchdPriPaid.replace(",", "");
-				interestCertificate.setFinSchdPftPaid(new BigDecimal(finSchdPftPaid));
-				interestCertificate.setFinSchdPriPaid(new BigDecimal(finSchdPriPaid));
-				interestCertificate
-						.setSchdPftPaid(PennantApplicationUtil.amountFormate(certificate.getFinSchdPftPaid(), format));
-				interestCertificate
-						.setSchdPriPaid(PennantApplicationUtil.amountFormate(certificate.getFinSchdPriPaid(), format));
-				interestCertificate.setTotalPaid(PennantApplicationUtil
-						.amountFormate(certificate.getFinSchdPriPaid().add(certificate.getFinSchdPftPaid()), format));
-			} else {
-				interestCertificate.setFinSchdPftPaid(
-						new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
-				interestCertificate.setFinSchdPriPaid(
-						new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
-				interestCertificate.setSchdPftPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
-				interestCertificate.setSchdPriPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
-				interestCertificate.setTotalPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
-			}
+		InterestCertificate intCert = interestCertificateDAO.getInterestCertificateDetails(finReference);
 
-			interestCertificate.setFinAmount(
-					PennantApplicationUtil.amountFormate(new BigDecimal(interestCertificate.getFinAmount()), format));
+		if (intCert == null) {
+			return null;
+		}
 
-			//collateral address setup
-			String collateralRef = getInterestCertificateDAO().getCollateralRef(interestCertificate.getFinReference());
-			if (collateralRef != null) {
-				String collateralType = getInterestCertificateDAO().getCollateralType(collateralRef);
-				if (collateralType != null) {
-					for (int j = 1; j <= 5; j++) {
-						String ColumnField = getInterestCertificateDAO().getCollateralTypeField(
-								"PROVISIONALCERTIFICATE", "COLLATERAL_" + collateralType + "_ED", "Addresstype" + j);
-						if (ColumnField != null) {
-							String ColumnValue = getInterestCertificateDAO().getCollateralTypeValue(
-									"COLLATERAL_" + collateralType + "_ED", ColumnField, collateralRef);
-							if (ColumnValue != null) {
-								try {
-									interestCertificate.getClass()
-											.getMethod("setAddressType" + j, new Class[] { String.class })
-											.invoke(interestCertificate, ColumnValue);
-								} catch (Exception e) {
-									logger.error("Exception: ", e);
-								}
+		// Get Co-Applicants
+
+		List<String> coApplicantList = interestCertificateDAO.getCoApplicantNames(finReference);
+		StringBuilder coapplicant = new StringBuilder();
+		for (String object : coApplicantList) {
+			coapplicant.append(object).append(" , ");
+		}
+		intCert.setCoApplicant(coapplicant.toString());
+		// set Loan ExtendedFields
+		if (extendedFieldService != null) {
+			extendedFieldService.setExtendedFields(intCert);
+		}
+
+		int format = CurrencyUtil.getFormat(intCert.getFinCcy());
+		InterestCertificate summary = interestCertificateDAO.getSumOfPrinicipalAndProfitAmount(finReference, startDate,
+				endDate);
+		if (summary != null && summary.getFinSchdPftPaid() != null && summary.getFinSchdPriPaid() != null) {
+			String finSchdPftPaid = PennantApplicationUtil.amountFormate(summary.getFinSchdPftPaid(), format);
+			finSchdPftPaid = finSchdPftPaid.replace(",", "");
+			String finSchdPriPaid = PennantApplicationUtil.amountFormate(summary.getFinSchdPriPaid(), format);
+			finSchdPriPaid = finSchdPriPaid.replace(",", "");
+			intCert.setFinSchdPftPaid(new BigDecimal(finSchdPftPaid));
+			intCert.setFinSchdPriPaid(new BigDecimal(finSchdPriPaid));
+			intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(summary.getFinSchdPftPaid(), format));
+			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(summary.getFinSchdPriPaid(), format));
+			intCert.setTotalPaid(PennantApplicationUtil
+					.amountFormate(summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format));
+		} else {
+			intCert.setFinSchdPftPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
+			intCert.setFinSchdPriPaid(new BigDecimal(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format)));
+			intCert.setSchdPftPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
+			intCert.setSchdPriPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
+			intCert.setTotalPaid(PennantApplicationUtil.amountFormate(BigDecimal.ZERO, format));
+		}
+
+		intCert.setFinAmount(PennantApplicationUtil.amountFormate(new BigDecimal(intCert.getFinAmount()), format));
+
+		// collateral address setup
+		String collateralRef = interestCertificateDAO.getCollateralRef(intCert.getFinReference());
+		if (collateralRef != null) {
+			String collateralType = interestCertificateDAO.getCollateralType(collateralRef);
+			if (collateralType != null) {
+				for (int j = 1; j <= 5; j++) {
+					String ColumnField = interestCertificateDAO.getCollateralTypeField("PROVISIONALCERTIFICATE",
+							"COLLATERAL_" + collateralType + "_ED", "Addresstype" + j);
+					if (ColumnField != null) {
+						String ColumnValue = interestCertificateDAO.getCollateralTypeValue(
+								"COLLATERAL_" + collateralType + "_ED", ColumnField, collateralRef);
+						if (ColumnValue != null) {
+							try {
+								intCert.getClass().getMethod("setAddressType" + j, new Class[] { String.class })
+										.invoke(intCert, ColumnValue);
+							} catch (Exception e) {
+								logger.error(Literal.EXCEPTION, e);
 							}
-
 						}
 					}
 				}
 			}
-			logger.debug("Leaving");
-			return interestCertificate;
-		} else {
-			logger.debug("Leaving");
-			return null;
 		}
-	}
+		logger.debug(Literal.LEAVING);
+		return intCert;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public InterestCertificateDAO getInterestCertificateDAO() {
-		return interestCertificateDAO;
 	}
 
 	public void setInterestCertificateDAO(InterestCertificateDAO interestCertificateDAO) {
 		this.interestCertificateDAO = interestCertificateDAO;
+	}
+
+	@Autowired(required = false)
+	public void setExtendedFieldService(ExtendedFieldService extendedFieldService) {
+		this.extendedFieldService = extendedFieldService;
 	}
 
 }

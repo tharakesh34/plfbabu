@@ -44,6 +44,7 @@
 package com.pennant.backend.dao.systemmasters;
 
 import java.text.ParseException;
+import java.util.List;
 
 import com.pennant.backend.model.agreement.InterestCertificate;
 
@@ -65,5 +66,7 @@ public interface InterestCertificateDAO {
 	String getCollateralTypeField(String interfaceType, String table, String field);
 
 	String getCollateralTypeValue(String table, String columnField, String reference);
+
+	List<String> getCoApplicantNames(String finReference);
 
 }
