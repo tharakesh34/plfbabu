@@ -16446,16 +16446,19 @@ UNION ALL
 		</createView>
 	</changeSet>
 
-	<changeSet id="303" author="vijaya.a">
+	<changeSet id="304" author="vijaya.a">
 		<addColumn tableName="LimitHeader_temp">
 			<column name="CUSTOMERIDS" type="bigint" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet id="305" author="vijaya.a">
 		<addColumn tableName="LimitHeader">
 			<column name="CUSTOMERIDS" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="304" author="vijaya.a" dbms = "Oracle">
+
+	<changeSet id="305.1" author="vijaya.a" dbms="Oracle">
 		<sql>
 			<![CDATA[ 
 				update LimitHeader_temp set CustomerIDs = cast(CUSTOMERID As NUMBER);
@@ -16463,8 +16466,8 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
-	<changeSet id="305" author="vijaya.a" dbms = "postgresql,mssql">
+
+	<changeSet id="306" author="vijaya.a" dbms="postgresql,mssql">
 		<sql>
 			<![CDATA[ 
 				update LimitHeader_temp set CustomerIDs = cast(CUSTOMERID As BigInt);
@@ -16472,19 +16475,39 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="307_pre" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'limitheader_temp');
+				select deps_save_and_drop_dependencies ('plf', 'limitheader');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="307" author="vijaya.a">
-		<dropColumn tableName="LimitHeader_temp" columnName="CUSTOMERID"/>
-		<dropColumn tableName="LimitHeader" columnName="CUSTOMERID"/>
+		<dropColumn tableName="LimitHeader_temp" columnName="CUSTOMERID" />
+		<dropColumn tableName="LimitHeader" columnName="CUSTOMERID" />
 	</changeSet>
-	
+
 	<changeSet id="308" author="vijaya.a">
-		<renameColumn tableName="LimitHeader_temp" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
-		<renameColumn tableName="LimitHeader" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
+		<renameColumn tableName="LimitHeader_temp" oldColumnName="CUSTOMERIDS"
+			newColumnName="CUSTOMERID" />
+		<renameColumn tableName="LimitHeader" oldColumnName="CUSTOMERIDS"
+			newColumnName="CUSTOMERID" />
 	</changeSet>
-	
+
+	<changeSet id="309_post" author="satyanarayana.g" dbms="postgresql">
+		<sql>
+			<![CDATA[
+			   select deps_restore_dependencies ('plf', 'limitheader_temp');
+			   select deps_restore_dependencies ('plf', 'limitheader');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="309" author="vijaya.a">
-		<createView viewName="LIMITCUSTOMERS_VIEW">
+		<createView viewName="LIMITCUSTOMERS_VIEW" replaceIfExists="true">
 		select custid, 
 				custcif, 
 				CustShrtName,
@@ -16492,8 +16515,8 @@ UNION ALL
 			    CustFName,
 			    CustLName 
 			    from Customers 
-			    where custId Not in (Select cast(coalesce(CustomerID,0), BIGINT) FROM LimitHeader_view)
+			    where custId Not in (Select coalesce(CustomerID,0) FROM LimitHeader_view)
 		</createView>
 	</changeSet>
-	
+
 </databaseChangeLog>
