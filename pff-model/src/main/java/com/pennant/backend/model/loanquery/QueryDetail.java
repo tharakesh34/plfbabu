@@ -115,6 +115,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 	private String responseUser;
 	private String closerUser;
 	private String categoryDescription;
+	private String finType;
 	private String module;
 	private String reference;
 	@XmlElementWrapper(name = "documents")
@@ -141,6 +142,7 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("documentDetailsList");
 		excludeFields.add("responseUser");
 		excludeFields.add("closerUser");
+		excludeFields.add("finType");
 		return excludeFields;
 	}
 
@@ -382,6 +384,14 @@ public class QueryDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setReference(String reference) {
 		this.reference = reference;
+	}
+
+	public String getFinType() {
+		return finType;
+	}
+
+	public void setFinType(String finType) {
+		this.finType = finType;
 	}
 
 }

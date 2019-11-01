@@ -592,6 +592,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			QueryCategory details = (QueryCategory) dataObject;
 			if (details != null) {
 				this.qryCategory.setAttribute("Id", details.getId());
+				this.qryCategory.setAttribute("Code", details.getCode());
 			} else {
 				this.qryCategory.setValue("");
 				this.qryCategory.setAttribute("Id", Long.MIN_VALUE);
@@ -962,6 +963,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			Object obj = this.qryCategory.getAttribute("Id");
 			if (obj != null) {
 				aQueryDetail.setCategoryId(Long.valueOf(String.valueOf(obj)));
+				aQueryDetail.setCategoryCode(String.valueOf(this.qryCategory.getAttribute("Code")));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1079,6 +1081,8 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 
 		// Document Details
 		aQueryDetail.setDocumentDetailsList(getDocumentDetails());
+		
+		aQueryDetail.setFinType(financeMain.getFinType());
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
