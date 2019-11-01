@@ -16518,5 +16518,7 @@ UNION ALL
 			    where custId Not in (Select coalesce(CustomerID,0) FROM LimitHeader_view)
 		</createView>
 	</changeSet>
-
+	<changeSet id="310" author="kranthi.k">
+		<dropView viewName="Interestcertificate_view" />
+	</changeSet>
 </databaseChangeLog>

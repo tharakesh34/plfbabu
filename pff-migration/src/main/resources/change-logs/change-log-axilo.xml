@@ -232,21 +232,11 @@
 	<changeSet id="279" author="kranthikumar.k">
 		<sql>
 			<![CDATA[
-INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'RETAIL', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0);
-INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'CORP', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0); 
-INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('01', 'RETAIL', 'PERM',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
-INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('02', 'RETAIL', 'CURR', 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
-INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('03', 'RETAIL', 'OFFICE',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
-
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="280.1" author="kranthikumar.k">
-	<comment>DROP INTEREST CERTIFICATE VIEW</comment>
-		<sql>
-			<![CDATA[
-			Drop view Interestcertificate_view;
+				INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'RETAIL', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0);
+				INSERT INTO CIBIL_STATES_MAPPING VALUES ('36', 'CORP', 'IN', 'TL', 'Telangana', 50, 56, 1, 1000, current_timestamp, 'Approved', '','','','','', 0); 
+				INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('01', 'RETAIL', 'PERM',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('02', 'RETAIL', 'CURR', 1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
+				INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('03', 'RETAIL', 'OFFICE',  1, 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 			]]>
 		</sql>
 	</changeSet>
