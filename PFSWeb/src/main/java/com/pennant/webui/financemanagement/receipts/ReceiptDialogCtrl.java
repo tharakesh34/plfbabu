@@ -2451,10 +2451,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		try {
 
 			File file = new File(TEMPLATE_PATH + File.separator + RECEIPT_TEMPLATE);
-			/*
-			 * if (!file.exists()) { throw new AppException( String.format("%s Template not available in %s loaction",
-			 * RECEIPT_TEMPLATE, TEMPLATE_PATH)); }
-			 */
+
+			if (!file.exists()) {
+				throw new AppException(
+						String.format("%s Template not available in %s loaction", RECEIPT_TEMPLATE, TEMPLATE_PATH));
+			}
 
 			if (doProcess(aReceiptData, tranType)) {
 
