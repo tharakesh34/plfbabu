@@ -242,13 +242,11 @@ INSERT INTO CIBIL_ADDRESS_TYPES_MAPPING VALUES('03', 'RETAIL', 'OFFICE',  1, 100
 		</sql>
 	</changeSet>
 	
-	<changeSet id="280" author="kranthikumar.k">
+	<changeSet id="280.1" author="kranthikumar.k">
 	<comment>DROP INTEREST CERTIFICATE VIEW</comment>
 		<sql>
 			<![CDATA[
-				
-				Drop view WIFFinanceMain_View;
-				Drop view Interestcertificate_view;
+			Drop view Interestcertificate_view;
 			]]>
 		</sql>
 	</changeSet>
