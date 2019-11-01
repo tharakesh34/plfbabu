@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.aspose.words.SaveFormat;
 import com.pennant.app.constants.AccountEventConstants;
+import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CDScheduleCalculator;
@@ -39,6 +40,7 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
+import com.pennant.backend.dao.applicationmaster.ReasonTypesDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -57,6 +59,7 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
+import com.pennant.backend.model.applicationmaster.ReasonTypes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -101,6 +104,8 @@ import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.model.reason.details.ReasonDetails;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.model.solutionfactory.StepPolicyDetail;
@@ -200,7 +205,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RemarksController remarksController;
 	private PartnerBankService partnerBankService;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
-
+	private ReasonTypesDAO reasonTypesDAO;
 	/**
 	 * Method for process create finance request
 	 * 
@@ -1314,27 +1319,6 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 		}
 
-		// Set VAS reference as feeCode for VAS related fees
-		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-				if (StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)
-						&& StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
-					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
-					feeDetail.setVasReference(vasRecording.getVasReference());
-					feeDetail.setCalculatedAmount(vasRecording.getFee());
-					feeDetail.setFixedAmount(vasRecording.getFee());
-					feeDetail.setAlwDeviation(true);
-					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
-					// feeDetail.setAlwModifyFee(true);
-					feeDetail.setAlwModifyFeeSchdMthd(true);
-					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-					// Fee Details set to the VasRecording
-					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
-					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
-				}
-			}
-		}
-
 		if (financeDetail.getFinanceTaxDetail() != null) {
 			FinanceTaxDetail financeTaxDetail = financeDetail.getFinanceTaxDetail();
 			financeTaxDetail.setFinReference(financeMain.getFinReference());
@@ -1374,6 +1358,80 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.setRcdVisible(false);
 				feeDetail.setVersion(1);
 				feeDetail.setWorkflowId(financeMain.getWorkflowId());
+			}
+		}
+		if (!stp) {
+			if (CollectionUtils.isNotEmpty(finScheduleData.getVasRecordingList())) {
+				if (CollectionUtils.isNotEmpty(finScheduleData.getFinFeeDetailList())) {
+					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+						FinFeeDetail finFeeDetail = new FinFeeDetail();
+						finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+						finFeeDetail.setFeeTypeCode(vasRecording.getProductCode());
+						finFeeDetail.setFinReference(financeMain.getFinReference());
+						finFeeDetail.setRecordStatus("");
+						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						finFeeDetail.setRcdVisible(false);
+						finFeeDetail.setVersion(1);
+						finFeeDetail.setNewRecord(true);
+						finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+						finFeeDetail.setLastMntBy(userDetails.getUserId());
+						finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finFeeDetail.setWorkflowId(financeMain.getWorkflowId());
+						finFeeDetail.setOriginationFee(true);
+						finFeeDetail.setFeeTypeID(0);
+						finFeeDetail.setFeeSeq(0);
+						finFeeDetail.setFeeOrder(0);
+						finFeeDetail.setRemainingFee(vasRecording.getFee());
+						financeMain.setFeeChargeAmt(vasRecording.getFee());
+						finScheduleData.getFinFeeDetailList().add(finFeeDetail);
+						
+					}
+				} else {
+					List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
+					for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+						FinFeeDetail finFeeDetail = new FinFeeDetail();
+						finFeeDetail.setFinEvent(AccountEventConstants.ACCEVENT_VAS_FEE);
+						finFeeDetail.setFinReference(financeMain.getFinReference());
+						finFeeDetail.setFeeTypeCode(vasRecording.getProductCode());
+						finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+						finFeeDetail.setRecordStatus(financeMain.getRecordStatus());
+						finFeeDetail.setRcdVisible(false);
+						finFeeDetail.setVersion(1);
+						finFeeDetail.setNewRecord(true);
+						finFeeDetail.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+						finFeeDetail.setLastMntBy(userDetails.getUserId());
+						finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+						finFeeDetail.setWorkflowId(financeMain.getWorkflowId());
+						finFeeDetail.setOriginationFee(true);
+						finFeeDetail.setFeeTypeID(0);
+						finFeeDetail.setFeeSeq(0);
+						finFeeDetail.setFeeOrder(0);
+						finFeeDetail.setRemainingFee(vasRecording.getFee());
+						financeMain.setFeeChargeAmt(vasRecording.getFee());
+						finFeeDetailList.add(finFeeDetail);
+					}
+				}
+			}
+		}
+		// Set VAS reference as feeCode for VAS related fees
+		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
+			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+				if (StringUtils.equals(feeDetail.getFinEvent(), AccountEventConstants.ACCEVENT_VAS_FEE)
+						&& StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
+					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
+					feeDetail.setVasReference(vasRecording.getVasReference());
+					feeDetail.setCalculatedAmount(vasRecording.getFee());
+					feeDetail.setFixedAmount(vasRecording.getFee());
+					feeDetail.setAlwDeviation(true);
+					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+					// feeDetail.setAlwModifyFee(true);
+					feeDetail.setAlwModifyFeeSchdMthd(true);
+					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					// Fee Details set to the VasRecording
+					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
+					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
+					feeDetail.setActualAmount(vasRecording.getFee());
+				}
 			}
 		}
 
@@ -3246,6 +3304,46 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			findetail.setExtendedFieldRender(exdFieldRender);
 		}
+		ReasonHeader reasonHeader= financeDetail.getReasonHeader();
+		if (reasonHeader != null) {
+			if (!CollectionUtils.isEmpty(reasonHeader.getDetailsList())) {
+				for (ReasonDetails reasonDetails : reasonHeader.getDetailsList()) {
+					if (StringUtils.isBlank(reasonDetails.getReasonCode())) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "reasonCode";
+						ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "30561", valueParm, null),
+								userDetails.getLanguage());
+
+						response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(
+								APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
+						logger.debug("Leaving");
+						return response;
+					}
+					ReasonTypes reasonTypes = reasonTypesDAO.getReasonTypesByCode(reasonDetails.getReasonCode());
+					if (reasonTypes != null) {
+						reasonDetails.setReasonId(reasonTypes.getId());
+					} else {
+						String[] valueParm = new String[2];
+						valueParm[0] = " reasonCode";
+						valueParm[1] = reasonDetails.getReasonCode();
+						ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "90224", valueParm, null),
+								userDetails.getLanguage());
+						response = new FinanceDetail();
+						doEmptyResponseObject(response);
+						response.setReturnStatus(
+								APIErrorHandlerService.getFailedStatus("60407", errorDetails.getError()));
+						logger.debug("Leaving");
+						return response;
+					}
+				}
+				financeMain.setDetailsList(reasonHeader.getDetailsList());
+				financeMain.setCancelRemarks(reasonHeader.getRemarks());
+			}
+		}
 		AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, findetail);
 		AuditHeader auditHeader = new AuditHeader(findetail.getFinReference(), null, null, null, auditDetail,
 				findetail.getFinScheduleData().getFinanceMain().getUserDetails(),
@@ -3903,4 +4001,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.agreementDefinitionDAO = agreementDefinitionDAO;
 	}
 
+	public void setReasonTypesDAO(ReasonTypesDAO reasonTypesDAO) {
+		this.reasonTypesDAO = reasonTypesDAO;
+	}
+	
 }

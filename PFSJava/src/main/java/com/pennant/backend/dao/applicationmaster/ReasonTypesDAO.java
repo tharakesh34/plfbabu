@@ -72,4 +72,6 @@ public interface ReasonTypesDAO extends BasicCrudDao<ReasonTypes> {
 	 */
 	boolean isDuplicateKey(String code, TableType tableType);
 
+	ReasonTypes getReasonTypesByCode(String code);
+
 }

@@ -1,12 +1,18 @@
 package com.pennant.backend.model.reason.details;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
 
 public class ReasonDetails implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long headerId;
 	private long reasonId;
+	@XmlElement
+	private String reasonCode;
 
 	public boolean isNew() {
 		return false;
@@ -34,6 +40,20 @@ public class ReasonDetails implements Serializable {
 
 	public void setId(long id) {
 
+	}
+
+	public Set<String> getExcludeFields() {
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("reasonCode");
+		return excludeFields;
+	}
+
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
 	}
 
 }

@@ -7,18 +7,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class ReasonHeader implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long id = Long.MIN_VALUE;
 	private String module;
 	private String reference;
+	@XmlElement
 	private String remarks;
 	private String roleCode;
 	private String activity;
 	private long toUser;
 	private Timestamp logTime;
 	private Long reasonId;
+	@XmlElement(name = "reasonDetails")
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
 
 	public Set<String> getExcludeFields() {
