@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,12 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennanttech.dataengine.DataEngineExport;
-import com.pennanttech.dataengine.util.DateUtil;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.InterfaceConstants;
 import com.pennanttech.pff.external.AbstractInterface;
 import com.pennanttech.pff.external.PresentmentRequest;
@@ -129,7 +130,7 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			dataEngine.setFilterMap(filterMap);
 			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
-			parameterMap.put("DepositeDate", DateUtil.getSysDate("dd-MMM-yy"));
+			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
 			parameterMap.put("clientCode", "VEHCLIX162");
 			parameterMap.put("AccountNo", bankAccNo);
@@ -542,6 +543,25 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 		}
 
 		return amount.toString();
+	}
+
+	//For Presentment schedule date populated in PDC Download
+	private Date getScheduleDate(long presentmentId) {
+		Date schDate = null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Distinct SchDate from PRESENTMENTDETAILS Where PresentmentId = :presentmentId");
+		MapSqlParameterSource parmMap;
+
+		parmMap = new MapSqlParameterSource();
+		parmMap.addValue("presentmentId", presentmentId);
+		try {
+			schDate = this.namedJdbcTemplate.queryForObject(sql.toString(), parmMap, Date.class);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn(Literal.EXCEPTION, e);
+			return schDate;
+		}
+
+		return DateUtil.getSqlDate(schDate);
 	}
 
 }
