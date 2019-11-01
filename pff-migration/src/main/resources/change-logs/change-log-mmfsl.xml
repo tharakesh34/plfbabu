@@ -2958,10 +2958,10 @@
             left join fintypefees_aview fp2 on pm.promotionCode = fp2.finType and fp2.moduleid=2 and fp2.FeeTypeID = 133;
 		</createView>
 	</changeSet>
-	<changeSet id="45" author="naga.g" dbms="oracle">
+	<changeSet id="45.0" author="naga.g" dbms="oracle">
 		<sql>
 			<![CDATA[
-			    update from DATA_ENGINE_TABLE set FILTER='LASTMNTON > :LAST_MNT_ON' where configId in ('CD_SCHEME_DEALERGROUP','CD_SCHEME_PRODUCTGROUP','SCHEMEMASTER_VIEW')
+			    update  DATA_ENGINE_TABLE set FILTER='LASTMNTON > :LAST_MNT_ON' where name in ('CD_SCHEME_DEALERGROUP','CD_SCHEME_PRODUCTGROUP','SCHEMEMASTER_VIEW')
 			]]>
 		</sql>
 	</changeSet>
@@ -3021,15 +3021,6 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="50" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK"
-			constraintName="UK_CONSTRAINT_CUSTCOREBANK" tableName="customers" />
-	</changeSet>
-
-	<changeSet id="51" author="naga.g">
-		<addUniqueConstraint columnNames="CUSTCOREBANK"
-			constraintName="UK_CONSTRAINT_CUSTCOREBANK_TEMP" tableName="customers_temp" />
-	</changeSet>
 	
 	<changeSet id="52" author="naga.g">
 		<sql>
