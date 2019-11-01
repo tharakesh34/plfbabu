@@ -9,6 +9,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.DisbRequest;
+import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
 
 @WebService
 public interface FinServiceInstSOAPService {
@@ -45,5 +47,12 @@ public interface FinServiceInstSOAPService {
 
 	public WSReturnStatus updateGSTDetails(@WebParam(name = "financeTaxDetail") FinanceTaxDetail financeTaxDetail)
 			throws ServiceException;
+
+	@WebResult(name = "finance")
+	public FinAdvPaymentDetail getDisbursmentDetails(@WebParam(name = "finReference") String finReference)
+			throws ServiceException;
+
+	@WebResult(name = "finance")
+	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) throws ServiceException;
 
 }

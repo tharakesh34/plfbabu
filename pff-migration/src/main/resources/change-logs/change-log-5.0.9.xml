@@ -16521,4 +16521,12 @@ UNION ALL
 	<changeSet id="310" author="kranthi.k">
 		<dropView viewName="Interestcertificate_view" />
 	</changeSet>
+	
+	<changeSet id="311" author="shahbaj.b">
+		<sql>
+            <![CDATA[ 
+				INSERT INTO SMTparameters  VALUES ('DISB_REQ_REQUIRED', 'Disbursement Request Required', 'String', '1', 'N', 1, 0, NULL, NULL,'Disbursement request required', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, '', NULL, NULL, NULL,0);
+    	     ]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

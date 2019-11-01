@@ -283,5 +283,6 @@ public class SMTParameterConstants {
 	public static final String DMS_REQ = "DMS_REQ";
 	public static final String ALLOW_PAN_VALIDATION_RULE = "ALLOW_PAN_VALIDATION_RULE";
 	public static final String DMS_DOCURI_REQ = "DMS_DOCURI_REQ";
+	public static final String DISB_REQUEST_REQUIRED = "DISB_REQ_REQUIRED";
 
 }

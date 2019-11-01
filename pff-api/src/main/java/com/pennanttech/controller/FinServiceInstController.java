@@ -35,11 +35,13 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepayCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinODPenaltyRateDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
@@ -132,6 +134,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.rits.cloning.Cloner;
 
@@ -173,7 +176,8 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceWorkFlowService financeWorkFlowService;
 	protected transient WorkflowEngine workFlow = null;
 	private FinanceTaxDetailService financeTaxDetailService;
-
+	private FinAdvancePaymentsDAO finAdvancePaymensDAO;
+	private PostingsPreparationUtil postingsPreparationUtil;
 	private ManualAdviseDAO manualAdviseDAO;
 
 	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
@@ -2947,6 +2951,42 @@ public class FinServiceInstController extends SummaryDetailService {
 		return returnStatus;
 	}
 
+	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) {
+		FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
+		finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
+		FinAdvancePayments finAdv = finAdvancePaymentsService.getFinAdvancePaymentsById(finAdvancePayments, "");
+		if (finAdv == null) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "PaymentId";
+			return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+		} else {
+			if (StringUtils.equals(finAdv.getStatus(), "Rejected") || StringUtils.equals(finAdv.getStatus(), "Paid")) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "PaymentId";
+				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
+			}
+			finAdvancePayments.setPaymentId(disbRequest.getPaymentId());
+			finAdvancePayments.setStatus(disbRequest.getStatus());
+			finAdvancePayments.setFinReference(disbRequest.getFinReference());
+			finAdvancePayments.setClearingDate(disbRequest.getClearingDate());
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(disbRequest.getDisbType())
+					|| DisbursementConstants.PAYMENT_TYPE_DD.equals(disbRequest.getDisbType())) {
+				finAdvancePayments.setClearingDate(disbRequest.getDisbDate());
+				finAdvancePayments.setLLReferenceNo(disbRequest.getChequeNo());
+			}
+			finAdvancePayments.setRejectReason(disbRequest.getRejectReason());
+			finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
+			if (StringUtils.equals("R", disbRequest.getStatus())) {
+				postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
+				finAdvancePayments.setStatus("Rejected");
+			} else {
+				finAdvancePayments.setStatus("Paid");
+			}
+			finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
+		}
+		return APIErrorHandlerService.getSuccessStatus();
+	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -3094,6 +3134,18 @@ public class FinServiceInstController extends SummaryDetailService {
 	@Autowired
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
+	}
+	@Autowired
+	public void setFinAdvancePaymensDAO(FinAdvancePaymentsDAO finAdvancePaymensDAO) {
+		this.finAdvancePaymensDAO = finAdvancePaymensDAO;
+	}
+	
+	public PostingsPreparationUtil getPostingsPreparationUtil() {
+		return postingsPreparationUtil;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 }

@@ -12,6 +12,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.ws.exception.ServiceException;
+import com.pennanttech.ws.model.finance.DisbRequest;
+import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
 
 @Produces("application/json")
 public interface FinServiceInstRESTService {
@@ -104,5 +106,14 @@ public interface FinServiceInstRESTService {
 	@POST
 	@Path("/loanInstructionService/updateGSTDetails")
 	public WSReturnStatus updateGSTDetails(FinanceTaxDetail financeTaxDetail) throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/approveDisbursementResponse")
+	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) throws ServiceException;
+
+	@GET
+	@Path("/loanInstructionService/getDisbursmentDetails/{finReference}")
+	public FinAdvPaymentDetail getDisbursmentDetails(@PathParam("finReference") String finReference)
+			throws ServiceException;
 
 }

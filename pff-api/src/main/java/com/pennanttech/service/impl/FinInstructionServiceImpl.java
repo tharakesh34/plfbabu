@@ -15,6 +15,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -35,6 +36,7 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.applicationmaster.LoanPendingDetails;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
@@ -46,13 +48,16 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.service.fees.FeeDetailService;
+import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.impl.FinanceDataValidation;
+import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.validation.AddDisbursementGroup;
 import com.pennant.validation.AddRateChangeGroup;
@@ -79,6 +84,9 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
+import com.pennanttech.ws.model.finance.DisbRequest;
+import com.pennanttech.ws.model.finance.DisbResponse;
+import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 import com.pennanttech.ws.service.FinanceValidationService;
 
@@ -111,6 +119,7 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private SecurityUserDAO securityUserDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -1746,6 +1755,112 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 		return returnStatus;
 	}
 
+	@Override
+	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) throws ServiceException {
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		// validation
+		returnStatus = validateDisbursementResponse(disbRequest);
+		if (returnStatus != null) {
+			return returnStatus;
+		}
+		int count = financeMainDAO.getFinanceCountById(disbRequest.getFinReference(), " ", false);
+		if (count <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = disbRequest.getFinReference();
+			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
+		} else {
+			returnStatus = finServiceInstController.approveDisbursementResponse(disbRequest);
+		}
+		return returnStatus;
+	}
+
+	private WSReturnStatus validateDisbursementResponse(DisbRequest disbRequest) {
+		if (StringUtils.isBlank(disbRequest.getFinReference())) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "FinReference";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		}
+
+		if (StringUtils.isBlank(disbRequest.getType())) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "Type";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		} else {
+			if (!(StringUtils.equals("D", disbRequest.getType()) || StringUtils.equals("P", disbRequest.getType())
+					|| StringUtils.equals("I", disbRequest.getType()))) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "Type";
+				valueParam[1] = "D," + "P," + "I";
+				return APIErrorHandlerService.getFailedStatus("90337", valueParam);
+			}
+		}
+		if (disbRequest.getPaymentId() < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "PaymentId";
+			valueParam[1] = "1";
+			return APIErrorHandlerService.getFailedStatus("90205", valueParam);
+		}
+		if (disbRequest.getClearingDate() == null) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "ClearingDate";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		}
+		if (StringUtils.isBlank(disbRequest.getStatus())) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "Status";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		} else {
+			if (!(StringUtils.equals("R", disbRequest.getStatus()) || StringUtils.equals("P", disbRequest.getStatus()))) {
+				String[] valueParam = new String[2];
+				valueParam[0] = "Status";
+				valueParam[1] = "P," + "R";
+				return APIErrorHandlerService.getFailedStatus("90337", valueParam);
+			}
+		}
+		if (StringUtils.equals("R", disbRequest.getStatus()) && StringUtils.isBlank(disbRequest.getRejectReason())) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "RejectReason";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		}
+
+		if (StringUtils.isBlank(disbRequest.getDisbType())) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "DisbType";
+			return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+		} else {
+
+			List<ValueLabel> paymentTypes = PennantStaticListUtil.getPaymentTypesWithIST();
+			boolean paymentTypeSts = false;
+			for (ValueLabel value : paymentTypes) {
+				if (StringUtils.equals(value.getValue(), disbRequest.getDisbType())) {
+					paymentTypeSts = true;
+					break;
+				}
+			}
+			if (!paymentTypeSts) {
+				String[] valueParm = new String[1];
+				valueParm[0] = disbRequest.getDisbType();
+				return APIErrorHandlerService.getFailedStatus("90216", valueParm);
+			}
+
+		}
+		if (StringUtils.equals(disbRequest.getDisbType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
+				|| StringUtils.equals(disbRequest.getDisbType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
+			if (StringUtils.isBlank(disbRequest.getChequeNo())) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "ChequeNo";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+			}
+			if (disbRequest.getDisbDate() == null) {
+				String[] valueParam = new String[1];
+				valueParam[0] = "DisbDate";
+				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Method for nullify the response object to prepare valid response message.
 	 * 
@@ -1953,6 +2068,65 @@ public class FinInstructionServiceImpl implements FinServiceInstRESTService, Fin
 	@Autowired
 	public void setFinanceTaxDetailsService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
+	}
+
+	@Override
+	public FinAdvPaymentDetail getDisbursmentDetails(String finReference) throws ServiceException {
+
+		logger.debug("Entering");
+
+		List<DisbResponse> disbResponse = new ArrayList<DisbResponse>();
+		// Mandatory validation
+		if (StringUtils.isBlank(finReference)) {
+			validationUtility.fieldLevelException();
+		}
+		// for logging purpose
+		APIErrorHandlerService.logReference(finReference);
+		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
+		// validation
+
+		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
+		if (count <= 0) {
+			String[] valueParam = new String[1];
+			valueParam[0] = finReference;
+
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+
+		} else {
+			List<FinAdvancePayments> finAdvancePaymentsList = finAdvancePaymentsService
+					.getFinAdvancePaymentsById(finReference, " ");
+			String disbReqRequired = SysParamUtil.getValueAsString(SMTParameterConstants.DISB_REQUEST_REQUIRED);
+			for (FinAdvancePayments finAdvancePayments : finAdvancePaymentsList) {
+				DisbResponse detail = new DisbResponse();
+				if (StringUtils.equals("Y", disbReqRequired)) {
+					if (StringUtils.equalsIgnoreCase(DisbursementConstants.STATUS_APPROVED,
+							finAdvancePayments.getStatus())) {
+						continue;
+					}
+				} else {
+					if (StringUtils.equalsIgnoreCase(DisbursementConstants.STATUS_AWAITCON,
+							finAdvancePayments.getStatus())) {
+						continue;
+					}
+				}
+				detail.setPaymentId(finAdvancePayments.getPaymentId());
+				detail.setAccountNo(finAdvancePayments.getBeneficiaryAccNo());
+				detail.setDisbAmount(finAdvancePayments.getAmtToBeReleased());
+				detail.setDisbDate(finAdvancePayments.getLlDate());
+				disbResponse.add(detail);
+			}
+			response.setDisbResponse(disbResponse);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		}
+		logger.info(Literal.LEAVING);
+
+		return response;
+	}
+	
+	@Autowired
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }
