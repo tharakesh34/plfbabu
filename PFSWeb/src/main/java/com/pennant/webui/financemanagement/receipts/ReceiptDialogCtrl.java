@@ -472,6 +472,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private static final String RECEIPT_PREFIX = "Receipt";
 	private static final String RECEIPT_TEMPLATE = RECEIPT_PREFIX + PennantConstants.DOC_TYPE_WORD_EXT;
 	private static final String TEMPLATE_PATH = App.getResourcePath(PathUtil.FINANCE_AGREEMENTS, "Receipts");
+	
+	private boolean isLinkedBtnClick = false;
 
 	/**
 	 * default constructor.<br>
@@ -1183,16 +1185,21 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			 * receiptData = calculateRepayments(); setRepayDetailData();
 			 */
 		}
-
+		
 		Listitem item;
 		for (int i = 0; i < receiptData.getReceiptHeader().getAllocationsSummary().size(); i++) {
-
 			item = listBoxPastdues.getItems().get(i);
 			CurrencyBox allocationWaived = (CurrencyBox) item.getFellowIfAny("AllocateWaived_" + i);
 			allocationWaived.setReadonly(true);
 		}
-
-		// Do readonly to all components
+		
+		// Reload user authorities after clicking linked loans but.
+		if(isLinkedBtnClick) {
+			getUserWorkspace().allocateAuthorities(super.pageRightName, getRole(), menuItemRightName);
+			isLinkedBtnClick = false;
+		}
+		
+		
 		if (isCalcCompleted) {
 			doReadOnly(true);
 			this.btnReceipt.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnReceipt"));
@@ -2439,10 +2446,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		try {
 
 			File file = new File(TEMPLATE_PATH + File.separator + RECEIPT_TEMPLATE);
-			if (!file.exists()) {
-				throw new AppException(
-						String.format("%s Template not available in %s loaction", RECEIPT_TEMPLATE, TEMPLATE_PATH));
-			}
+			/*
+			 * if (!file.exists()) { throw new AppException( String.format("%s Template not available in %s loaction",
+			 * RECEIPT_TEMPLATE, TEMPLATE_PATH)); }
+			 */
 
 			if (doProcess(aReceiptData, tranType)) {
 
@@ -2481,8 +2488,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
 					try {
-						notificationService.sendNotifications(notification, receiptData,
-								financeMain.getFinType(), getFinanceDetail().getDocumentDetailsList());
+						notificationService.sendNotifications(notification, receiptData, financeMain.getFinType(),
+								getFinanceDetail().getDocumentDetailsList());
 					} catch (Exception e) {
 						logger.debug(Literal.EXCEPTION, e);
 
@@ -5323,7 +5330,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			setOverideMap(auditHeader.getOverideMap());
 
 		} catch (AppException e) {
-			MessageUtil.showError(e);
+			MessageUtil.showError(e.getMessage());
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("Exception: ", e);
 		}
@@ -6042,6 +6049,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void onClick$btn_LinkedLoan(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING); // FIXME: PV: CODE
 		// REVIEW PENDING
+		isLinkedBtnClick = true;
 		List<FinanceMain> financeMains = new ArrayList<FinanceMain>();
 		List<FinanceProfitDetail> finpftDetails = new ArrayList<FinanceProfitDetail>();
 		financeMains.addAll(getFinanceDetailService().getFinanceMainForLinkedLoans(finReference.getValue()));
