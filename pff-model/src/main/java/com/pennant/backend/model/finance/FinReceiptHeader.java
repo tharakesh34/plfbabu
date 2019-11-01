@@ -80,7 +80,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 	protected Date loanClosureReceiptDate;
 	protected Date loanClosureIntTillDate;
 
-	private Date depositeDate;
+	private Date depositDate;
 	private String depositBank;
 	private Date cancelDate;
 	private String lovDescRequestStage;
@@ -247,7 +247,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("loanClosureRefId");
 		excludeFields.add("loanClosureReceiptDate");
 		excludeFields.add("loanClosureIntTillDate");
-		excludeFields.add("depositeDate");
+		excludeFields.add("depositDate");
 		excludeFields.add("depositBank");
 		excludeFields.add("cancelDate");
 		excludeFields.add("partnerBankCode");
@@ -1034,12 +1034,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity implements Entity {
 		this.futPriIdx = futPriIdx;
 	}
 
-	public Date getDepositeDate() {
-		return depositeDate;
+	public Date getDepositDate() {
+		return depositDate;
 	}
 
-	public void setDepositeDate(Date depositeDate) {
-		this.depositeDate = depositeDate;
+	public void setDepositDate(Date depositDate) {
+		this.depositDate = depositDate;
 	}
 
 	public String getDepositBank() {

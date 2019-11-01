@@ -586,7 +586,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc.setParent(item);
 
 			lc = new Listcell(
-					PennantAppUtil.formateDate(finReceiptHeader.getDepositeDate(), DateFormat.SHORT_DATE.getPattern()));
+					PennantAppUtil.formateDate(finReceiptHeader.getDepositDate(), DateFormat.SHORT_DATE.getPattern()));
 			lc.setParent(item);
 
 			lc = new Listcell(finReceiptHeader.getPartnerBankCode());
