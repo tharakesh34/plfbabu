@@ -12,4 +12,8 @@ public interface ReasonDetailDAO {
 
 	public boolean isreasonCodeExists(long reasonCode);
 
+	public List<ReasonHeader> getCancelReasonDetails(String reference);
+
+	void deleteCancelReasonDetails(String finReference);
+
 }

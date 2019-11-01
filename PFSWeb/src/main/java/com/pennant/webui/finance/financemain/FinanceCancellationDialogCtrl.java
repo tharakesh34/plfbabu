@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -40,12 +41,15 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.reason.details.ReasonDetails;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FinanceCancellationService;
@@ -59,8 +63,10 @@ import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
+import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.rits.cloning.Cloner;
@@ -107,6 +113,9 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	protected Hbox hbox_PromotionProduct;
 	private Label label_FinanceMainDialog_PromotionProduct;;
 	private Label label_FinanceMainDialog_FinType;
+	protected Textbox cancelRemarks;
+	protected Uppercasebox reasons;
+	protected Button btnReasons;
 
 	/**
 	 * default constructor.<br>
@@ -227,6 +236,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		}
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
+		
 		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
@@ -431,6 +441,24 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescPromoFinTypeDesc());
 			this.label_FinanceMainDialog_FinType
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
+		}
+
+		List<ReasonHeader> details = getFinanceCancellationService()
+				.getCancelReasonDetails(aFinanceMain.getFinReference());
+		String data = "";
+		if (details.size() > 0) {
+			for (ReasonHeader header : details) {
+				if (data.length() == 0) {
+					data += header.getReasonId();
+				} else {
+					data += "," + header.getReasonId();
+				}
+
+			}
+		}
+		this.reasons.setText(data);
+		if (details.size() > 0) {
+			this.cancelRemarks.setText(details.get(0).getRemarks());
 		}
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isManualSchedule()) {
 			this.row_ManualSchedule.setVisible(true);
@@ -644,12 +672,50 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			ArrayList<ReasonDetails> reasonList = new ArrayList<>();
+			for (String reasonId : this.reasons.getValue().split(",")) {
+				ReasonDetails reasonDetails = new ReasonDetails();
+				reasonDetails.setReasonId(Long.valueOf(reasonId));
+				reasonList.add(reasonDetails);
+			}
+			aFinanceMain.setDetailsList(reasonList);
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		try {
+			aFinanceMain.setCancelRemarks(this.cancelRemarks.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		aFinanceMain.setManualSchedule(this.manualSchedule.isChecked());
+		doRemoveValidation();
 		// FinanceMain Details Tab Validation Error Throwing
 		showErrorDetails(wve, financeTypeDetailsTab);
 
 		logger.debug("Leaving");
 	}
+
+	private void doSetValidation() {
+		logger.debug(Literal.ENTERING);
+
+		if (!this.reasons.isReadonly()) {
+			this.reasons.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_CancelReason.value"), null, true));
+		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	
+	private void doRemoveValidation() {
+		logger.debug(Literal.ENTERING);
+		this.reasons.setConstraint("");
+		logger.debug(Literal.LEAVING);
+	}
+
+	
 
 	/**
 	 * Method to show error details if occurred
@@ -815,6 +881,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
+		doSetValidation();
 		doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
 		aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
@@ -1572,6 +1639,59 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onClick$btnReasons(Event event) {
+		logger.debug("Entering  " + event.toString());
+		// FIXME
+		Map<String, Object> resonTypesMap = new HashMap<String, Object>();
+		Object dataObject = null;
+
+		String[] resonTypes = this.reasons.getValue().split(",");
+		for (int i = 0; i < resonTypes.length; i++) {
+			resonTypesMap.put(resonTypes[i], null);
+		}
+		dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "CancelReasonCode",
+				resonTypesMap);
+		
+		if (dataObject instanceof String) {
+			this.reasons.setValue(dataObject.toString());
+			this.reasons.setTooltiptext("");
+		} else {
+			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			if (details != null) {
+				String tempReasons = details.keySet().toString();
+				tempReasons = tempReasons.replace("[", " ").replace("]", "").replace(" ", "");
+				if (tempReasons.startsWith(",")) {
+					tempReasons = tempReasons.substring(1);
+				}
+				if (tempReasons.endsWith(",")) {
+					tempReasons = tempReasons.substring(0, tempReasons.length() - 1);
+				}
+				this.reasons.setValue(tempReasons);
+			}
+
+			// Setting tooltip with Descriptions
+			String toolTipDesc = "";
+			for (String key : details.keySet()) {
+				Object obj = (Object) details.get(key);
+				if (obj instanceof String) {
+					// Do Nothing
+				} else {
+					ReasonCode type = (ReasonCode) obj;
+					if (type != null) {
+						toolTipDesc = toolTipDesc.concat(type.getCode().concat(" , "));
+					}
+				}
+			}
+			if (StringUtils.isNotBlank(toolTipDesc) && toolTipDesc.endsWith(", ")) {
+				toolTipDesc = toolTipDesc.substring(0, toolTipDesc.length() - 2);
+			}
+			this.reasons.setTooltiptext(toolTipDesc);
+		}
+
+		logger.debug("Leaving " + event.toString());
 	}
 
 }

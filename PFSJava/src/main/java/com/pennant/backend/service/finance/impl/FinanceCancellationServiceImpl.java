@@ -66,6 +66,7 @@ import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
@@ -85,6 +86,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.service.collateral.CollateralMarkProcess;
 import com.pennant.backend.service.dda.DDAControllerService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
@@ -123,6 +125,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	@Autowired(required = false)
 	private NotificationService notificationService;
 	private long tempWorkflowId;
+
+	ReasonDetailDAO reasonDetailDAO;
 
 	public FinanceCancellationServiceImpl() {
 		super();
@@ -303,6 +307,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		} else {
 			getFinanceMainDAO().update(financeMain, tableType, false);
 		}
+		// ***cancel loans reason implemented.
+		if (financeMain.getDetailsList().size() > 0) {
+			saveCancelReasonData(financeMain);
+		}
 
 		// Save Fee Charges List
 		//=======================================
@@ -337,6 +345,22 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private void saveCancelReasonData(FinanceMain financeMain) {
+		reasonDetailDAO.deleteCancelReasonDetails(financeMain.getFinReference());
+		ReasonHeader reasonHeader = new ReasonHeader();
+		reasonHeader.setModule("FINANCE");
+		reasonHeader.setReference(financeMain.getFinReference());
+		reasonHeader.setRemarks(financeMain.getCancelRemarks());
+		reasonHeader.setActivity("Cancled");
+		reasonHeader.setDetailsList(financeMain.getDetailsList());
+		reasonDetailDAO.save(reasonHeader);
+	}
+
+	@Override
+	public List<ReasonHeader> getCancelReasonDetails(String reference) {
+		return reasonDetailDAO.getCancelReasonDetails(reference);
 	}
 
 	/**
@@ -622,6 +646,8 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 					financeDetail.getExtendedFieldHeader(), "", serviceUID);
 			auditDetails.addAll(details);
 		}
+
+		saveCancelReasonData(financeMain);
 
 		// Notification
 		tempWorkflowId = financeMain.getWorkflowId();
@@ -1027,6 +1053,14 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public ReasonDetailDAO getReasonDetailDAO() {
+		return reasonDetailDAO;
+	}
+
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
 	}
 
 }

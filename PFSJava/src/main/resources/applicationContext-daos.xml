@@ -4990,6 +4990,7 @@
 		<!-- Stage Accounting -->
 		<property name="ruleExecutionUtil" ref="ruleExecutionUtil" />
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
 	</bean>
 
 	<!--============ Finance Maintenance Details ============== -->

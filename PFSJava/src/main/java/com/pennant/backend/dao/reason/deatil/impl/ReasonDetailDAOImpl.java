@@ -3,6 +3,7 @@ package com.pennant.backend.dao.reason.deatil.impl;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,6 +16,7 @@ import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.model.reason.details.ReasonHeader;
+import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -131,6 +133,24 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 	}
 
 	@Override
+	public List<ReasonHeader> getCancelReasonDetails(String reference) {
+		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder();
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		try {
+			source.addValue("Reference", reference);
+			sql.append("SELECT RD.reasonid, RH.remarks");
+			sql.append(" From ReasonHeader RH  ");
+			sql.append(" left join ReasonDetails RD ON RH.ID = RD.HeaderId ");
+			sql.append(" Where RH.Reference=:Reference");
+			RowMapper<ReasonHeader> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonHeader.class);
+			return jdbcTemplate.query(sql.toString(), source, mapper);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
 	public boolean isreasonCodeExists(long reasonCode) {
 		logger.debug("Entering");
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -146,4 +166,45 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug("Leaving");
 		return rcdCount > 0 ? true : false;
 	}
+
+	public void deleteReasonDetails(String finReference) {
+		logger.debug(Literal.ENTERING);
+
+		ReasonHeader reference = new ReasonHeader();
+		reference.setReference(finReference);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("delete from ReasonDetails");
+		sql.append(" where headerId In(select  ");
+		sql.append("id from ReasonHeader where reference=:reference)");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reference);
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public void deleteCancelReasonDetails(String finReference) {
+		deleteReasonDetails(finReference);
+		// Prepare the SQL.
+		ReasonHeader reference = new ReasonHeader();
+		reference.setReference(finReference);
+		StringBuilder sql = new StringBuilder("delete from ReasonHeader");
+		sql.append(" where reference=:reference");
+
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql.toString());
+		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reference);
+		try {
+			jdbcTemplate.update(sql.toString(), paramSource);
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
 }

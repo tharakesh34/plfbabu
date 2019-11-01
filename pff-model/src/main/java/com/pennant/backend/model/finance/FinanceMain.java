@@ -62,6 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -764,6 +765,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	@XmlElement
 	private BigDecimal appliedLoanAmt = BigDecimal.ZERO;
 	private boolean skipRateReset;
+	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
+	private String cancelRemarks;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -964,6 +967,9 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("bRRpyRvwFrq");
 		excludeFields.add("totalFinAmount");
 		excludeFields.add("skipRateReset");
+		// cancelReason
+		excludeFields.add("cancelReason");
+		excludeFields.add("cancelRemarks");
 
 		return excludeFields;
 	}
@@ -4533,6 +4539,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setSkipRateReset(boolean skipRateReset) {
 		this.skipRateReset = skipRateReset;
+	}
+
+	public String getCancelRemarks() {
+		return cancelRemarks;
+	}
+
+	public void setCancelRemarks(String cancelRemarks) {
+		this.cancelRemarks = cancelRemarks;
+	}
+
+	public List<ReasonDetails> getDetailsList() {
+		return detailsList;
+	}
+
+	public void setDetailsList(List<ReasonDetails> detailsList) {
+		this.detailsList = detailsList;
 	}
 
 }

@@ -3,7 +3,9 @@ package com.pennant.backend.model.reason.details;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReasonHeader implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -16,7 +18,16 @@ public class ReasonHeader implements Serializable {
 	private String activity;
 	private long toUser;
 	private Timestamp logTime;
+	private Long reasonId;
 	private List<ReasonDetails> detailsList = new ArrayList<ReasonDetails>();
+
+	public Set<String> getExcludeFields() {
+
+		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("reasonId");
+		return excludeFields;
+
+	}
 
 	public long getId() {
 		return id;
@@ -92,6 +103,14 @@ public class ReasonHeader implements Serializable {
 
 	public boolean isNew() {
 		return false;
+	}
+
+	public Long getReasonId() {
+		return reasonId;
+	}
+
+	public void setReasonId(Long reasonId) {
+		this.reasonId = reasonId;
 	}
 
 }
