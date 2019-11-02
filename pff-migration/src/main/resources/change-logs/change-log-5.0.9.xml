@@ -16525,7 +16525,7 @@ UNION ALL
 	<changeSet id="311" author="shahbaj.b">
 		<sql>
             <![CDATA[ 
-				INSERT INTO SMTparameters  VALUES ('DISB_REQ_REQUIRED', 'Disbursement Request Required', 'String', '0', 'Y', 1, 0, NULL, NULL,'Disbursement request required', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, '', NULL, NULL, NULL,0);
+				INSERT INTO SMTparameters VALUES ('DISB_REQ_REQUIRED', 'Disbursement Request Required', 'String', '0', 'Y', 1, 0, NULL, NULL,'Disbursement request required', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, '', NULL, NULL, NULL,0);
     	     ]]>
 		</sql>
 	</changeSet>
