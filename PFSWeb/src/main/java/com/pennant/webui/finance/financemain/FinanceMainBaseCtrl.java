@@ -366,6 +366,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAO;
+import com.pennanttech.pff.external.HunterService;
 import com.pennanttech.pff.external.InitiateHunterService;
 import com.pennanttech.pff.external.pan.service.EligibilityService;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -1102,7 +1103,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected CurrencyBox appliedLoanAmt;
 
 	@Autowired(required = false)
-	private InitiateHunterService initiateHunterService;
+	private HunterService hunterService;
 
 	@Autowired(required = false)
 	private EligibilityService eligibilityService;
@@ -21731,21 +21732,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClickExtbtnBUTTON() {
+	public void onClickExtbtnINITHUNTER() {
 		logger.debug(Literal.ENTERING);
 		try {
 			String matches = "";
-			if (initiateHunterService != null) {
+			
+			if (hunterService != null) {
 				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
 				if (hunterReq) {
-
-					CustomerDetails customerDetails = initiateHunterService
-							.getHunterResponse(financeDetail.getCustomerDetails());
-					matches = customerDetails.getMatches();
+					financeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+					AuditHeader auditHeader = getAuditHeader(financeDetail, PennantConstants.TRAN_WF);
+					auditHeader = hunterService.getHunterStatus(auditHeader);
+					FinanceDetail finDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+					matches = (String) finDetail.getExtendedFieldRender().getMapValues().get("CIN");
 				}
-				if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
-					return;
-				} else {
+				
 					Window window = extendedFieldCtrl.getWindow();
 					Textbox hunterResult = null;
 					Groupbox hunterGrpBox = null;
@@ -21771,7 +21772,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 					}
-				}
+				
 			}
 		} catch (Exception e) {
 			if (e.getMessage() != null) {
