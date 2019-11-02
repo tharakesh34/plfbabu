@@ -25,6 +25,10 @@ public class DisbResponse implements Serializable {
 	@XmlElement
 	private String accountNo;
 
+	public DisbResponse() {
+		super();
+	}
+
 	public Long getPaymentId() {
 		return paymentId;
 	}

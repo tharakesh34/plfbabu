@@ -10,17 +10,21 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.pennant.backend.model.WSReturnStatus;
 
-@XmlType(propOrder = { "finReference", "disbResponse","returnStatus" })
+@XmlType(propOrder = { "finReference", "disbResponse", "returnStatus" })
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinAdvPaymentDetail implements Serializable{
+public class FinAdvPaymentDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@XmlElement
 	private String finReference;
 	@XmlElement
 	private List<DisbResponse> disbResponse;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+
+	public FinAdvPaymentDetail() {
+		super();
+	}
 
 	public String getFinReference() {
 		return finReference;

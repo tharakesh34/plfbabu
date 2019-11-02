@@ -1,5 +1,6 @@
 package com.pennanttech.ws.model.finance;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,7 +10,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "finReference", "type", "clearingDate", "rejectReason", "transactionRef", "status", "chequeNo",
 		"disbDate" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DisbRequest {
+public class DisbRequest implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private String finReference;
 	private String type;
@@ -21,6 +23,10 @@ public class DisbRequest {
 	private Date disbDate;
 	private long paymentId;
 	private String disbType;
+
+	public DisbRequest() {
+		super();
+	}
 
 	public String getFinReference() {
 		return finReference;

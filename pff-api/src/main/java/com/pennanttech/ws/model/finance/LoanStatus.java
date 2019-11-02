@@ -1,5 +1,7 @@
 package com.pennanttech.ws.model.finance;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -11,7 +13,9 @@ import com.pennant.backend.model.WSReturnStatus;
 @XmlType(propOrder = { "finReference", "roleCode", "recordStatus", "nextRoleCode", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoanStatus {
+public class LoanStatus implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -22,6 +26,10 @@ public class LoanStatus {
 	private String nextRoleCode;
 	@XmlElement
 	private WSReturnStatus returnStatus;
+
+	public LoanStatus() {
+		super();
+	}
 
 	public String getNextRoleCode() {
 		return nextRoleCode;

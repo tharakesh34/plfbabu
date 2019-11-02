@@ -2841,7 +2841,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * Method <b>getFinanceTaxDetails(finReference)</b> - Retrieves Finance Tax Details for finReference
 	 * 
 	 * @param finReference
-	 *            - {@link String}
+	 *        - {@link String}
 	 * @return {@link WSReturnStatus}
 	 */
 	public FinanceTaxDetail getFinanceTaxDetails(String finReference) {
@@ -2877,7 +2877,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * Method <b>saveGSTDetails(FinanceTaxDetail)</b> - Saves GST Details for a finReference
 	 * 
 	 * @param financeTaxDetail
-	 *            - {@link FinanceTaxDetail}
+	 *        - {@link FinanceTaxDetail}
 	 * @return {@link AuditHeader}
 	 */
 	public WSReturnStatus saveGSTDetails(final FinanceTaxDetail financeTaxDetail) {
@@ -2915,7 +2915,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	 * Method <b>rejuvenateGSTDetails(FinanceTaxDetail)</b> - updates GST Details for a finReference
 	 * 
 	 * @param financeTaxDetail
-	 *            - {@link FinanceTaxDetail}
+	 *        - {@link FinanceTaxDetail}
 	 * @param i
 	 * @return {@link AuditHeader}
 	 */
@@ -2960,7 +2960,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			valueParam[0] = "PaymentId";
 			return APIErrorHandlerService.getFailedStatus("90405", valueParam);
 		} else {
-			if (StringUtils.equals(finAdv.getStatus(), "Rejected") || StringUtils.equals(finAdv.getStatus(), "Paid")) {
+			if (DisbursementConstants.STATUS_REJECTED.equals(finAdv.getStatus())
+					|| DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 				String[] valueParam = new String[2];
 				valueParam[0] = "PaymentId";
 				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
@@ -2978,9 +2979,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			finAdvancePayments.setTransactionRef(disbRequest.getTransactionRef());
 			if (StringUtils.equals("R", disbRequest.getStatus())) {
 				postingsPreparationUtil.postReversalsByLinkedTranID(finAdv.getLinkedTranId());
-				finAdvancePayments.setStatus("Rejected");
+				finAdvancePayments.setStatus(DisbursementConstants.STATUS_REJECTED);
 			} else {
-				finAdvancePayments.setStatus("Paid");
+				finAdvancePayments.setStatus(DisbursementConstants.STATUS_PAID);
 			}
 			finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 		}
@@ -3135,11 +3136,12 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
+
 	@Autowired
 	public void setFinAdvancePaymensDAO(FinAdvancePaymentsDAO finAdvancePaymensDAO) {
 		this.finAdvancePaymensDAO = finAdvancePaymensDAO;
 	}
-	
+
 	public PostingsPreparationUtil getPostingsPreparationUtil() {
 		return postingsPreparationUtil;
 	}

@@ -206,6 +206,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private PartnerBankService partnerBankService;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
 	private ReasonTypesDAO reasonTypesDAO;
+
 	/**
 	 * Method for process create finance request
 	 * 
@@ -1360,6 +1361,7 @@ public class CreateFinanceController extends SummaryDetailService {
 				feeDetail.setWorkflowId(financeMain.getWorkflowId());
 			}
 		}
+
 		if (!stp) {
 			if (CollectionUtils.isNotEmpty(finScheduleData.getVasRecordingList())) {
 				if (CollectionUtils.isNotEmpty(finScheduleData.getFinFeeDetailList())) {
@@ -1384,7 +1386,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						finFeeDetail.setRemainingFee(vasRecording.getFee());
 						financeMain.setFeeChargeAmt(vasRecording.getFee());
 						finScheduleData.getFinFeeDetailList().add(finFeeDetail);
-						
+
 					}
 				} else {
 					List<FinFeeDetail> finFeeDetailList = new ArrayList<FinFeeDetail>();
@@ -2276,9 +2278,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			if (financeDetail != null) {
 				FinODPenaltyRate finODPenaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
-				if (finODPenaltyRate != null
-						&& (StringUtils.equals(finODPenaltyRate.getODChargeType(),
-								FinanceConstants.PENALTYTYPE_PERC_ONETIME)
+				if (finODPenaltyRate != null && (StringUtils.equals(finODPenaltyRate.getODChargeType(),
+						FinanceConstants.PENALTYTYPE_PERC_ONETIME)
 						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
 						|| StringUtils.equals(finODPenaltyRate.getODChargeType(),
@@ -3304,7 +3305,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 			findetail.setExtendedFieldRender(exdFieldRender);
 		}
-		ReasonHeader reasonHeader= financeDetail.getReasonHeader();
+
+		ReasonHeader reasonHeader = financeDetail.getReasonHeader();
 		if (reasonHeader != null) {
 			if (!CollectionUtils.isEmpty(reasonHeader.getDetailsList())) {
 				for (ReasonDetails reasonDetails : reasonHeader.getDetailsList()) {
@@ -4004,5 +4006,5 @@ public class CreateFinanceController extends SummaryDetailService {
 	public void setReasonTypesDAO(ReasonTypesDAO reasonTypesDAO) {
 		this.reasonTypesDAO = reasonTypesDAO;
 	}
-	
+
 }

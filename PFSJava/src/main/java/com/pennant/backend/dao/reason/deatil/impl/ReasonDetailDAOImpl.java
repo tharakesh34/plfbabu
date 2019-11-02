@@ -50,26 +50,23 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 	}
 
 	private long saveHeader(ReasonHeader reasonHeader) throws Exception {
-		StringBuilder sql = null;
-		SqlParameterSource beanParameters = null;
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Insert Into  ReasonHeader ");
+		sql.append(" (Id, Module, Reference, Remarks, Rolecode, Activity, ToUser, LogTime)");
+		sql.append(" Values(:Id, :Module, :Reference, :Remarks, :RoleCode, :Activity, :ToUser, :LogTime)");
+		logger.debug("insertSql: " + sql.toString());
+
+		if (reasonHeader.getId() == Long.MIN_VALUE) {
+			reasonHeader.setId(getNextId("SeqReasonHeader"));
+		}
 
 		try {
-			if (reasonHeader.getId() == Long.MIN_VALUE) {
-				reasonHeader.setId(getNextId("SeqReasonHeader"));
-			}
-			sql = new StringBuilder("Insert Into  ReasonHeader ");
-			sql.append(" (Id, Module, Reference, Remarks, Rolecode, Activity, ToUser, LogTime)");
-			sql.append(" Values(:Id, :Module, :Reference, :Remarks, :RoleCode, :Activity, :ToUser, :LogTime)");
-			logger.debug("insertSql: " + sql.toString());
-
-			beanParameters = new BeanPropertySqlParameterSource(reasonHeader);
+			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reasonHeader);
 			this.jdbcTemplate.update(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			beanParameters = null;
-			sql = null;
 		}
 		return reasonHeader.getId();
 	}
@@ -77,22 +74,17 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 	private void saveDetails(List<ReasonDetails> detailsList) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = null;
-		SqlParameterSource[] beanParameters = null;
-		try {
-			sql = new StringBuilder("Insert Into  ReasonDetails ");
-			sql.append(" (HeaderId, ReasonId)");
-			sql.append(" Values( :HeaderId, :ReasonId)");
-			logger.debug("insertSql: " + sql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into  ReasonDetails");
+		sql.append("(HeaderId, ReasonId)");
+		sql.append(" Values( :HeaderId, :ReasonId)");
+		logger.trace(Literal.SQL + sql.toString());
 
-			beanParameters = SqlParameterSourceUtils.createBatch(detailsList.toArray());
+		try {
+			SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(detailsList.toArray());
 			this.jdbcTemplate.batchUpdate(sql.toString(), beanParameters);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
-		} finally {
-			beanParameters = null;
-			sql = null;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -102,48 +94,49 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 	public List<ReasonDetailsLog> getReasonDetailsLog(String reference) {
 		logger.debug(Literal.ENTERING);
 
-		RowMapper<ReasonDetailsLog> mapper = null;
-		MapSqlParameterSource source = null;
-
 		StringBuilder sql = new StringBuilder();
-		sql.append(
-				" Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode,SR.RoleDesc, RH.Activity, RC.Code, RC.Description,");
-		sql.append(" RH.Touser,SU.UsrLogin,SU.Usrfname ,SU.Usrmname ,SU.Usrlname , RH.Logtime ");
-		sql.append(" from ReasonHeader RH inner join ReasonDetails RD ON RH.ID = RD.HeaderId");
+		sql.append("Select RH.Module, RH.Reference, RH.Remarks, RH.Rolecode, SR.RoleDesc");
+		sql.append(", RH.Activity, RC.Code, RC.Description, RH.Touser, SU.UsrLogin, SU.Usrfname");
+		sql.append(", SU.Usrmname ,SU.Usrlname , RH.Logtime ");
+		sql.append(" from ReasonHeader RH");
+		sql.append(" inner join ReasonDetails RD ON RH.ID = RD.HeaderId");
 		sql.append(" inner join Reasons RS ON RS.ID = RD.ReasonID");
 		sql.append(" inner join ReasonCategory RC ON RC.ID = RS.ReasonCategoryId");
 		sql.append(" inner join ReasonTypes RT ON RT.ID = RS.ReasonTypeID ");
-		sql.append(" inner join SecUsers SU ON SU.UsrId = RH.Touser ");
-		sql.append(" inner join SecRoles SR ON SR.RoleCd = RH.Rolecode Where RH.Reference = :Reference");
+		sql.append(" inner join SecUsers SU ON SU.UsrId = RH.Touser");
+		sql.append(" inner join SecRoles SR ON SR.RoleCd = RH.Rolecode");
+		sql.append(" Where RH.Reference = :Reference");
 		logger.debug(Literal.SQL + sql.toString());
 
-		mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
-		source = new MapSqlParameterSource();
+		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
+
 		try {
+			RowMapper<ReasonDetailsLog> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonDetailsLog.class);
 			return this.jdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
-		} finally {
-			source = null;
-			mapper = null;
-			logger.debug(Literal.LEAVING);
 		}
+		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public List<ReasonHeader> getCancelReasonDetails(String reference) {
 		logger.debug(Literal.ENTERING);
+
 		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT RD.reasonid, RH.remarks");
+		sql.append(" From ReasonHeader RH  ");
+		sql.append(" left join ReasonDetails RD ON RH.ID = RD.HeaderId ");
+		sql.append(" Where RH.Reference=:Reference");
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+
+		RowMapper<ReasonHeader> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonHeader.class);
+
 		try {
-			source.addValue("Reference", reference);
-			sql.append("SELECT RD.reasonid, RH.remarks");
-			sql.append(" From ReasonHeader RH  ");
-			sql.append(" left join ReasonDetails RD ON RH.ID = RD.HeaderId ");
-			sql.append(" Where RH.Reference=:Reference");
-			RowMapper<ReasonHeader> mapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonHeader.class);
 			return jdbcTemplate.query(sql.toString(), source, mapper);
 		} catch (Exception e) {
 			return null;
@@ -152,18 +145,19 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 
 	@Override
 	public boolean isreasonCodeExists(long reasonCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reasonid", reasonCode);
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(reasonid)");
-		selectSql.append(" From ReasonDetails ");
-		selectSql.append(" Where reasonid=:reasonid");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(reasonid)");
+		sql.append(" From ReasonDetails ");
+		sql.append(" Where reasonid=:reasonid");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		int rcdCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		logger.trace(Literal.SQL + sql.toString());
+		int rcdCount = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return rcdCount > 0 ? true : false;
 	}
 
@@ -172,34 +166,36 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 
 		ReasonHeader reference = new ReasonHeader();
 		reference.setReference(finReference);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from ReasonDetails");
-		sql.append(" where headerId In(select  ");
-		sql.append("id from ReasonHeader where reference=:reference)");
 
-		// Execute the SQL, binding the arguments.
+		StringBuilder sql = new StringBuilder("delete from ReasonDetails");
+		sql.append(" where headerId In(select Id from ReasonHeader where Reference = :Reference)");
+
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reference);
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Reference", finReference);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void deleteCancelReasonDetails(String finReference) {
 		deleteReasonDetails(finReference);
-		// Prepare the SQL.
+
 		ReasonHeader reference = new ReasonHeader();
 		reference.setReference(finReference);
+
 		StringBuilder sql = new StringBuilder("delete from ReasonHeader");
 		sql.append(" where reference=:reference");
-
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(reference);
+
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Reference", finReference);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {

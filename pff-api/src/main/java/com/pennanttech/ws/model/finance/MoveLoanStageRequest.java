@@ -1,5 +1,6 @@
 package com.pennanttech.ws.model.finance;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,11 +11,17 @@ import com.pennant.backend.model.Notes;
 
 @XmlType(propOrder = { "finReference", "currentStage", "action", "remarks" })
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MoveLoanStageRequest {
+public class MoveLoanStageRequest implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private String finReference;
 	private String currentStage;
 	private String action;
 	private List<Notes> remarks;
+
+	public MoveLoanStageRequest() {
+		super();
+	}
 
 	public String getFinReference() {
 		return finReference;
