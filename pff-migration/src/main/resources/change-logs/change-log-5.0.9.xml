@@ -16538,7 +16538,7 @@ UNION ALL
 		</sql>	
 	</changeSet>
 	
-	<changeSet id="312" author="meena.a">
+	<changeSet id="313" author="meena.a">
 		<sql>
 			<![CDATA[ 
 				insert into ReasonCategory (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) values( (select (seqno+1) from seqReasonCategory), 'LOANCANCEL', 'Loan Cancelation',  1 , 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
