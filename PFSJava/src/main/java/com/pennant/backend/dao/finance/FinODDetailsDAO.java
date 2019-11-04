@@ -129,5 +129,7 @@ public interface FinODDetailsDAO {
 	void updateWaiverAmount(String finReference, Date odDate, BigDecimal waivedAmount, BigDecimal penAmount);
 
 	List<FinODDetails> getCustomerDues(long custId);
+	
+	void updateODDetailsBatch(List<FinODDetails> overdues);
 
 }

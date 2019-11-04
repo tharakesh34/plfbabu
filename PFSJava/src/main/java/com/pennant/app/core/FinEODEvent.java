@@ -32,6 +32,8 @@ public class FinEODEvent implements Serializable {
 	private List<RepayInstruction> RepayInstructions = new ArrayList<>(1);
 	private FinanceProfitDetail finProfitDetail = new FinanceProfitDetail();
 	private List<FinODDetails> finODDetails = new ArrayList<FinODDetails>(1);
+	//this is used to store the date which is in database, this should not be modified
+	private List<FinODDetails> finODDetailsLBD = new ArrayList<FinODDetails>(1);
 	private List<OverdueChargeRecovery> odcRecoveries = new ArrayList<>(1);
 	private FinODPenaltyRate penaltyrate;
 	private List<FinanceDisbursement> financeDisbursements = new ArrayList<>(1);
@@ -448,5 +450,13 @@ public class FinEODEvent implements Serializable {
 		this.provisions.clear();
 		this.incomeAMZList.clear();
 		this.projectedAccrualList.clear();
+	}
+
+	public List<FinODDetails> getFinODDetailsLBD() {
+		return finODDetailsLBD;
+	}
+
+	public void setFinODDetailsLBD(List<FinODDetails> finODDetailsLBD) {
+		this.finODDetailsLBD = finODDetailsLBD;
 	}
 }

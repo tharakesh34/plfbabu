@@ -114,6 +114,7 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.DirectorDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.AgreementDetail;
@@ -570,7 +571,7 @@ public class AgreementGeneration implements Serializable {
 					agreement.setCustSalutation(StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
 					agreement.setCustGender(StringUtils.trimToEmpty(customer.getLovDescCustGenderCodeName()));
 					agreement.setCustCtgCode(StringUtils.trimToEmpty(customer.getCustCtgCode()));
-					//TODO:: Added as part of CAM
+					//TODO :: Added as part of CAM
 					agreement.setCustCategory(StringUtils.trimToEmpty(customer.getLovDescCustCtgCodeName()));
 					agreement.setCustType(StringUtils.trimToEmpty(customer.getLovDescCustTypeCodeName()));
 					agreement.setCustMaritalStatus(StringUtils.trimToEmpty(customer.getLovDescCustMaritalStsName()));
@@ -1858,9 +1859,9 @@ public class AgreementGeneration implements Serializable {
 			}
 			setNetFinanceAmount(agreement, detail);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug("Leaving");
 		return agreement;
 	}
@@ -2526,6 +2527,7 @@ public class AgreementGeneration implements Serializable {
 
 	private void setCustomerDocuments(AgreementDetail agreement, List<CustomerDocument> customerDocuments) {
 		customerDocuments.forEach((customerDocument) -> {
+			DocumentManager documentManager;
 			Document document = agreement.new Document();
 			document.setCusDocName(StringUtils.stripToEmpty(customerDocument.getCustDocCategory()) + "-"
 					+ StringUtils.stripToEmpty(customerDocument.getLovDescCustDocCategory()));
@@ -2534,7 +2536,11 @@ public class AgreementGeneration implements Serializable {
 			document.setDocCategory(StringUtils.trimToEmpty(customerDocument.getCustDocCategory()));
 			document.setUserName(StringUtils.stripToEmpty(document.getUserName()));
 			document.setFileType(StringUtils.trimToEmpty(customerDocument.getCustDocType()));
-			document.setDocImage(documentManagerDAO.getById(customerDocument.getDocRefId()).getDocImage());
+
+			documentManager = documentManagerDAO.getById(customerDocument.getDocRefId());
+			if (documentManager != null) {
+				document.setDocImage(documentManager.getDocImage());
+			}
 			agreement.getDocuments().add(document);
 		});
 	}
@@ -2579,6 +2585,7 @@ public class AgreementGeneration implements Serializable {
 	private void setLoanDocuments(AgreementDetail agreement, List<DocumentDetails> documentDetailsList) {
 		documentDetailsList.forEach((documentDetail) -> {
 			if (null != documentDetail && StringUtils.equalsIgnoreCase(documentDetail.getDocModule(), "Finance")) {
+				DocumentManager documentManager;
 				Document document = agreement.new Document();
 				Optional<DocumentType> findFirst = null;
 				if (CollectionUtils.isNotEmpty(documentTypeList)) {
@@ -2596,7 +2603,11 @@ public class AgreementGeneration implements Serializable {
 				document.setDocCategory(StringUtils.trimToEmpty(documentDetail.getDocCategory()));
 				document.setUserName(StringUtils.trimToEmpty(document.getUserName()));
 				document.setFileType(StringUtils.trimToEmpty(documentDetail.getDoctype()));
-				document.setDocImage(documentManagerDAO.getById(documentDetail.getDocRefId()).getDocImage());
+
+				documentManager = documentManagerDAO.getById(documentDetail.getDocRefId());
+				if (documentManager != null) {
+					document.setDocImage(documentManager.getDocImage());
+				}
 
 				agreement.getDocuments().add(document);
 			}

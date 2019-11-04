@@ -53,7 +53,7 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		try {
 			documentManager = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn("Exception: ID = " + id, e);
 			documentManager = null;
 		}
 

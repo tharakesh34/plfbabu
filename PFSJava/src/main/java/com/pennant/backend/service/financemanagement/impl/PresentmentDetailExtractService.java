@@ -205,9 +205,10 @@ public class PresentmentDetailExtractService {
 				Date defSchDate = rs.getDate("DEFSCHDDATE");
 				String bankCode = rs.getString("BANKCODE");
 				String entity = rs.getString("ENTITYCODE");
+				long partnerBankId = rs.getLong("PARTNERBANKID");
 				if (defSchDate != null) {
 					if (!map.containsKey(defSchDate)
-							|| (!map.containsKey(bankCode)
+							|| (!map.containsKey(partnerBankId)
 									&& SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK))
 							|| !map.containsKey(entity)) {
 						ph.setSchdate(defSchDate);
@@ -333,9 +334,10 @@ public class PresentmentDetailExtractService {
 				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_REALISED);
 			}
 			//COMMENTED THIS CODE FOR REPRESENTMENT PROCESS i.e, if Check got bounced also it shouldbe allowed for Representment
-			/*if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
-				presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE);
-			}*/
+			/*
+			 * if (PennantConstants.CHEQUESTATUS_BOUNCE.equals(presentmentDetail.getMandateStatus())) {
+			 * presentmentDetail.setExcludeReason(RepayConstants.CHEQUESTATUS_BOUNCE); }
+			 */
 			return;
 		}
 

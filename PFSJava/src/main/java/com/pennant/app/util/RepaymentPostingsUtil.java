@@ -570,9 +570,9 @@ public class RepaymentPostingsUtil implements Serializable {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose) throws Exception {
+			String receiptPurpose, boolean isPresentProc) throws Exception {
 
-		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose);
+		return updateRepayStatus(financeMain, dateValueDate, scheduleDetails, pftDetail, overdueList, receiptPurpose, isPresentProc);
 	}
 
 	/**
@@ -587,7 +587,7 @@ public class RepaymentPostingsUtil implements Serializable {
 	 */
 	private FinanceMain updateRepayStatus(FinanceMain financeMain, Date dateValueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail pftDetail, List<FinODDetails> overdueList,
-			String receiptPurpose) throws Exception {
+			String receiptPurpose,  boolean isPresentProc) throws Exception {
 		logger.debug("Entering");
 
 		//Finance Profit Details Updation
@@ -607,7 +607,7 @@ public class RepaymentPostingsUtil implements Serializable {
 		financeMain.setFinStsReason(FinanceConstants.FINSTSRSN_MANUAL);
 
 		// If Penalty fully paid && Schedule payment completed then make status as Inactive
-		if (isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
+		if (!isPresentProc && isSchdFullyPaid(financeMain.getFinReference(), scheduleDetails)) {
 
 			pftDetail.setSvnAcrCalReq(false);
 			financeMain.setFinIsActive(false);

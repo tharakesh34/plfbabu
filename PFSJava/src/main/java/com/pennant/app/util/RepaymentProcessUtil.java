@@ -1649,9 +1649,9 @@ public class RepaymentProcessUtil {
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose) throws Exception {
+			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) throws Exception {
 		return getRepayPostingUtil().updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
-				receiptPurpose);
+				receiptPurpose, isPresentProc);
 	}
 
 	/**

@@ -250,7 +250,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -312,7 +312,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -353,7 +353,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 * @throws Exception
 	 * @throws AccountNotFoundException
@@ -516,7 +516,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -1607,7 +1607,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Status Updation
 				repaymentPostingsUtil.updateStatus(financeMain, valueDate, scheduleData.getFinanceScheduleDetails(),
-						pftDetail, finEodEvent.getFinODDetails(), null);
+						pftDetail, overdueList, null, false);
 
 				// Overdue Details Updation after Recalculation with Current Data
 				if (finEodEvent.getFinODDetails() != null && !finEodEvent.getFinODDetails().isEmpty()) {
@@ -2251,9 +2251,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference
-	 *            (String)
+	 *        (String)
 	 * @param isWIF
-	 *            (boolean)
+	 *        (boolean)
 	 **/
 	private FinScheduleData getFinSchDataByFinRef(String finReference, long logKey, String type) {
 		logger.debug("Entering");

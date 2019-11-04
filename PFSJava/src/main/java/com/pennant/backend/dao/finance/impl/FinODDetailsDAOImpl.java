@@ -174,6 +174,26 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 	}
 
 	@Override
+	public void updateODDetailsBatch(List<FinODDetails> overdues) {
+		logger.debug("Entering");
+
+		StringBuilder updateSql = new StringBuilder("Update FinODDetails ");
+		updateSql.append(" Set  FinODTillDate= :FinODTillDate, FinCurODAmt= :FinCurODAmt, ");
+		updateSql.append(" FinCurODPri= :FinCurODPri, FinCurODPft= :FinCurODPft, ");
+		updateSql.append(" FinCurODDays= :FinCurODDays, TotPenaltyAmt= :TotPenaltyAmt, TotWaived= :TotWaived, ");
+		updateSql.append(" TotPenaltyPaid= :TotPenaltyPaid, TotPenaltyBal= :TotPenaltyBal, FinLMdfDate= :FinLMdfDate,");
+		updateSql.append(" LPIAmt= :LPIAmt, LPIPaid= :LPIPaid, LPIBal= :LPIBal, LPIWaived= :LPIWaived");
+		updateSql.append(" Where FinReference =:FinReference AND FinODSchdDate =:FinODSchdDate");
+		updateSql.append(" AND FinODFor =:FinODFor");
+
+		logger.debug("updateSql: " + updateSql.toString());
+		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(overdues.toArray());
+		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
+
+		logger.debug("Leaving");
+	}
+
+	@Override
 	public void updateBatch(FinODDetails finOdDetails) {
 		logger.debug("Entering");
 

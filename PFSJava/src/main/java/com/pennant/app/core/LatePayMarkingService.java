@@ -248,7 +248,9 @@ public class LatePayMarkingService extends ServiceHelper {
 		//Get details first time from DB
 		String finRef = finMain.getFinReference();
 		Date finStartDate = finMain.getFinStartDate();
-		finEODEvent.setFinODDetails(getFinODDetailsDAO().getFinODDByFinRef(finRef, finStartDate));
+		List<FinODDetails> finODdetails = getFinODDetailsDAO().getFinODDByFinRef(finRef, finStartDate);
+		finEODEvent.setFinODDetails(finODdetails);
+		finEODEvent.setFinODDetailsLBD(new ArrayList<>(finODdetails));
 		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finRef, "");
 
 		// Include Today in Late payment Calculation or NOT?

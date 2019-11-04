@@ -326,22 +326,55 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			// Update overdue details
+			//			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+			//			if (odDetails != null && !odDetails.isEmpty()) {
+			//				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
+			//				// delete and insert based on the current OD index
+			//				if (odschd != null) {
+			//					getFinODDetailsDAO().deleteAfterODDate(finRef, odschd.getSchDate());
+			//					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
+			//					for (FinODDetails finODDetails : odDetails) {
+			//						if (finODDetails.getFinODSchdDate().compareTo(odschd.getSchDate()) >= 0) {
+			//							listSave.add(finODDetails);
+			//						}
+			//					}
+			//					if (!listSave.isEmpty()) {
+			//						getFinODDetailsDAO().saveList(listSave);
+			//					}
+			//					listSave = null;
+			//				}
+			//			}
+
+			//insert or Update
 			List<FinODDetails> odDetails = finEODEvent.getFinODDetails();
+			List<FinODDetails> odDetailsLBD = finEODEvent.getFinODDetailsLBD();
 			if (odDetails != null && !odDetails.isEmpty()) {
 				FinanceScheduleDetail odschd = finEODEvent.getFinanceScheduleDetails().get(finEODEvent.getIdxPD());
 				// delete and insert based on the current OD index
 				if (odschd != null) {
-					getFinODDetailsDAO().deleteAfterODDate(finRef, odschd.getSchDate());
 					List<FinODDetails> listSave = new ArrayList<FinODDetails>();
+					List<FinODDetails> listupdate = new ArrayList<FinODDetails>();
 					for (FinODDetails finODDetails : odDetails) {
-						if (finODDetails.getFinODSchdDate().compareTo(odschd.getSchDate()) >= 0) {
+						if (finODDetails.getFinODSchdDate().compareTo(odschd.getSchDate()) < 0) {
+							continue;
+						}
+
+						boolean exists = checkExsistInList(finODDetails, odDetailsLBD);
+						if (exists) {
+							listupdate.add(finODDetails);
+						} else {
 							listSave.add(finODDetails);
 						}
 					}
+
 					if (!listSave.isEmpty()) {
 						getFinODDetailsDAO().saveList(listSave);
 					}
 					listSave = null;
+					if (!listupdate.isEmpty()) {
+						getFinODDetailsDAO().updateODDetailsBatch(listupdate);
+					}
+					listupdate = null;
 				}
 			}
 
@@ -395,6 +428,17 @@ public class LoadFinanceData extends ServiceHelper {
 		 */
 		logger.debug(" Leaving ");
 		returnDataSets.clear();
+	}
+
+	private boolean checkExsistInList(FinODDetails finODDetails, List<FinODDetails> odDetails_PRV) {
+
+		for (FinODDetails finODDet : odDetails_PRV) {
+			if (finODDetails.getFinODSchdDate().compareTo(finODDet.getFinODSchdDate()) == 0) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

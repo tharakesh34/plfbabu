@@ -1,19 +1,15 @@
 package com.pennant.backend.model.documentdetails;
 
-import org.apache.log4j.Logger;
-
 import com.pennant.backend.model.Entity;
 
 public class DocumentManager implements java.io.Serializable, Entity {
-
 	private static final long serialVersionUID = 1L;
-	private static Logger logger = Logger.getLogger(DocumentManager.class);
 
 	long id = Long.MIN_VALUE;
 	byte[] docImage;
 
 	public DocumentManager() {
-		logger.info("DocumentManager = " + this.hashCode() + ", " + this);
+		super();
 	}
 
 	public long getId() {
@@ -36,10 +32,5 @@ public class DocumentManager implements java.io.Serializable, Entity {
 	//This method is not used, only dummy implementation is provided
 	public boolean isNew() {
 		return false;
-	}
-
-	@Override
-	public String toString() {
-		return "DocumentManager [id=" + id + ", docImage=" + docImage + "]";
 	}
 }
