@@ -75,7 +75,7 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 	public ReasonTypes getReasonTypes(long id, String type) {
 		logger.debug(Literal.ENTERING);
 
-		StringBuilder sql = new StringBuilder("SELECT ");
+		StringBuilder sql = new StringBuilder();
 		sql.append("Select Id, Code, Description");
 		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");

@@ -1643,8 +1643,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	
 	@SuppressWarnings("unchecked")
 	public void onClick$btnReasons(Event event) {
-		logger.debug("Entering  " + event.toString());
-		// FIXME
+		logger.debug(Literal.ENTERING);
+		
 		Map<String, Object> resonTypesMap = new HashMap<String, Object>();
 		Object dataObject = null;
 
@@ -1652,14 +1652,15 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		for (int i = 0; i < resonTypes.length; i++) {
 			resonTypesMap.put(resonTypes[i], null);
 		}
-		dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "CancelReasonCode",
+		
+		dataObject = ExtendedMultipleSearchListBox.show(this.window_FinanceCancellationDialog, "LoanCancelReasons",
 				resonTypesMap);
 		
 		if (dataObject instanceof String) {
 			this.reasons.setValue(dataObject.toString());
 			this.reasons.setTooltiptext("");
 		} else {
-			HashMap<String, Object> details = (HashMap<String, Object>) dataObject;
+			Map<String, Object> details = (Map<String, Object>) dataObject;
 			if (details != null) {
 				String tempReasons = details.keySet().toString();
 				tempReasons = tempReasons.replace("[", " ").replace("]", "").replace(" ", "");
@@ -1691,7 +1692,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			this.reasons.setTooltiptext(toolTipDesc);
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 }

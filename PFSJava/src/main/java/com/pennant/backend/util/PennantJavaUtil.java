@@ -3461,10 +3461,10 @@ public class PennantJavaUtil {
 						new String[] { "AdviseUploads", "AdviseUploads_AView" }, masterWF,
 						new String[] { "UploadId", "Entity", "FileName" }, null, 600));
 
-		ModuleUtil.register("CancelReasonCode",
+		ModuleUtil.register("LoanCancelReasons",
 				new ModuleMapping("ReasonCode", ReasonCode.class, new String[] { "Reasons", "Reasons_AView" }, masterWF,
 						new String[] { "Id", "Code", "Description" },
-						new Object[][] { { "Active", "0", 1 }, { "REASONCATEGORYCODE", "0", "CANCEL" } }, 600));
+						new Object[][] { { "Active", "0", 1 }, { "REASONCATEGORYCODE", "0", "LOANCANCEL" }, { "ReasonTypeCode", "0", "LOANCANCEL" } }, 600));
 
 		registerCustomModules();
 	}

@@ -126,7 +126,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT RD.reasonid, RH.remarks");
+		sql.append("Select RD.reasonid, RH.remarks");
 		sql.append(" From ReasonHeader RH  ");
 		sql.append(" left join ReasonDetails RD ON RH.ID = RD.HeaderId ");
 		sql.append(" Where RH.Reference=:Reference");
