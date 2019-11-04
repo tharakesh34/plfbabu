@@ -3051,5 +3051,27 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id = "53" author="naga.g">
+		<createView viewName="SETTLEMENT_REQUEST_VIEW" replaceIfExists="true">
+			SELECT DISTINCT(SR.REQUESTBATCHID), 
+        		DC.ID, 
+				DC.NAME, 
+			  	DC.UPLOADPATH FILELOCATION, 
+			  	DS.FILENAME, 
+			  	DS.ENDTIME, 
+			  	DS.STATUS, 
+			  	DC.Id As ConfigId,
+			  	DC.PostEvent,
+				'' As HOSTREFERENCE , 
+				SR.TRANSACTIONAMOUNT,
+				SR.TRANSACTIONDATETIME, 
+				SR.MERCHANTNAME, 
+				SR.TERMINALID, 
+				SR.MANUFACTUREID
+			FROM DATA_ENGINE_CONFIG DC
+			INNER JOIN DATA_ENGINE_STATUS DS ON DS.NAME = DC.NAME 
+			INNER JOIN SETTLEMENT_REQUEST SR ON SR.REQUESTBATCHID=DS.ID
+		</createView>
+	</changeSet>
 	
 </databaseChangeLog>	

@@ -91,7 +91,6 @@ public class SettlementProcessDownloadListCtrl extends GFCBaseListCtrl<Settlemen
 
 		registerField("ID");
 		registerField("Hostreference");
-		registerField("Customerref");
 		registerField("Transactionamount");
 		registerField("Status");
 		registerField("Name");
