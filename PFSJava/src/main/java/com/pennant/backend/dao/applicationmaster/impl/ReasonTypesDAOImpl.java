@@ -228,34 +228,4 @@ public class ReasonTypesDAOImpl extends SequenceDao<ReasonTypes> implements Reas
 		logger.debug(Literal.LEAVING);
 	}
 
-	@Override
-	public ReasonTypes getReasonTypesByCode(String code) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("Select Id, Code, Description ");
-		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From ReasonTypes");
-		sql.append(" Where Code = :Code");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		ReasonTypes reasonTypes = new ReasonTypes();
-		reasonTypes.setCode(code);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("Code", code);
-
-		RowMapper<ReasonTypes> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonTypes.class);
-
-		try {
-			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
 }

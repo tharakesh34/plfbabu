@@ -2,6 +2,7 @@ package com.pennant.backend.dao.reason.deatil.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,9 +14,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.reason.details.ReasonDetails;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.model.reason.details.ReasonHeader;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -201,6 +204,40 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
+	}
+
+	@Override
+	public ReasonCode getCancelReasonByCode(String code, String type) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		StringBuilder sql = new StringBuilder("Select Id, ReasonTypeId, ReasonCategoryId, Code");
+		
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", ReasonCategoryCode, ReasonTypeCode");
+		}
+		
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Reasons");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Code = :Code");
+		sql.append(" and ReasonCategoryCode = :ReasonCategoryCode and ReasonTypeCode = :ReasonTypeCode");
+		logger.trace(Literal.SQL + sql.toString());
+
+	
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("Code", code);
+		paramSource.addValue("ReasonCategoryCode", PennantConstants.LOAN_CANCEL);
+		paramSource.addValue("ReasonTypeCode",  PennantConstants.LOAN_CANCEL);
+		RowMapper<ReasonCode> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(ReasonCode.class);
+		try {
+			return jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return null;
 	}
 
 }

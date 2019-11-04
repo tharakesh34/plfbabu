@@ -898,5 +898,8 @@ public class PennantConstants {
 	public static final String NotificationTYPE_Email = "2";
 	public static final String INTERFACE_TYPE_IDB = "IDB";
 	public static final String INTERFACE_TYPE_INTERFACE = "INTERFACE";
+	
+	//cancel loan API
+	public static final String LOAN_CANCEL = "LOANCANCEL";
 
 }

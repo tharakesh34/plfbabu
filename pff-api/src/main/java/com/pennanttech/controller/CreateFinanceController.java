@@ -40,7 +40,6 @@ import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.AgreementDefinitionDAO;
-import com.pennant.backend.dao.applicationmaster.ReasonTypesDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -50,6 +49,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
+import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyDetailDAO;
 import com.pennant.backend.dao.solutionfactory.StepPolicyHeaderDAO;
@@ -59,7 +59,7 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.AgreementDefinition;
-import com.pennant.backend.model.applicationmaster.ReasonTypes;
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -205,7 +205,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	private RemarksController remarksController;
 	private PartnerBankService partnerBankService;
 	private AgreementDefinitionDAO agreementDefinitionDAO;
-	private ReasonTypesDAO reasonTypesDAO;
+	private ReasonDetailDAO reasonDetailDAO;
 
 	/**
 	 * Method for process create finance request
@@ -3324,9 +3324,9 @@ public class CreateFinanceController extends SummaryDetailService {
 						logger.debug("Leaving");
 						return response;
 					}
-					ReasonTypes reasonTypes = reasonTypesDAO.getReasonTypesByCode(reasonDetails.getReasonCode());
-					if (reasonTypes != null) {
-						reasonDetails.setReasonId(reasonTypes.getId());
+					ReasonCode details = reasonDetailDAO.getCancelReasonByCode(reasonDetails.getReasonCode(), "_AView");
+					if (details != null) {
+						reasonDetails.setReasonId(details.getReasonCategoryID());
 					} else {
 						String[] valueParm = new String[2];
 						valueParm[0] = " reasonCode";
@@ -4003,8 +4003,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		this.agreementDefinitionDAO = agreementDefinitionDAO;
 	}
 
-	public void setReasonTypesDAO(ReasonTypesDAO reasonTypesDAO) {
-		this.reasonTypesDAO = reasonTypesDAO;
+	public void setReasonDetailDAO(ReasonDetailDAO reasonDetailDAO) {
+		this.reasonDetailDAO = reasonDetailDAO;
 	}
 
 }

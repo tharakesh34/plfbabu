@@ -2,6 +2,7 @@ package com.pennant.backend.dao.reason.deatil;
 
 import java.util.List;
 
+import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.model.reason.details.ReasonHeader;
 
@@ -16,4 +17,6 @@ public interface ReasonDetailDAO {
 
 	void deleteCancelReasonDetails(String finReference);
 
+	ReasonCode getCancelReasonByCode(String code, String type);
+	
 }
