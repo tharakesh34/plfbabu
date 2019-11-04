@@ -67,7 +67,7 @@
 									<hbox>
 										<uppercasebox id="custCIF" width="150px" />
 										<button id="btnSearchCustCIF" tooltiptext="${c:l('label_PayOrderIssueSearch_btnSearchCustCIF.tooltiptext')}"
-											image="/images/icons/more.png" />
+											image="/images/icons/more.png" autodisable="btnSearchCustCIF,btnSearchBranch,btnSearchFinType" />
 									</hbox>
 									<label id="label_PayOrderIssueSearch_FinReference" value="${c:l('label_PayOrderIssueSearch_FinReference.value')}" />
 									<listbox id="sortOperator_finReference" width="43px" mold="select" rows="1" />

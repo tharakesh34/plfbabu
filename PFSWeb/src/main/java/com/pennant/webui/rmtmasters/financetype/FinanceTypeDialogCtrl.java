@@ -1360,7 +1360,9 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 
 		this.equalRepayment.setChecked(aFinanceType.isEqualRepayment());
-		this.schdOnPMTCal.setChecked(aFinanceType.isSchdOnPMTCal());
+		if (!isOverdraft && !consumerDurable) {
+			this.schdOnPMTCal.setChecked(aFinanceType.isSchdOnPMTCal());
+		}
 
 		String pftFrq = aFinanceType.getFinDftIntFrq();
 		this.finDftIntFrq.setValue(pftFrq);
@@ -4648,7 +4650,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.cbfinSchdMthd.setDisabled(isTrue);
 		this.cbfinSchCalCodeOnRvw.setDisabled(isTrue);
 		this.equalRepayment.setDisabled(isTrue);
-		this.schdOnPMTCal.setDisabled(isTrue);
 		this.finIntRate.setReadonly(isTrue);
 		this.fInMinRate.setReadonly(isTrue);
 		this.finMaxRate.setReadonly(isTrue);
@@ -4735,6 +4736,7 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			this.cashCollateralReq.setDisabled(isTrue);
 			this.sanctionAmount.setDisabled(isTrue);
 			this.sanctionAmountOverride.setDisabled(isTrue);
+			this.schdOnPMTCal.setDisabled(isTrue);
 		}
 		// tasks # >>End Advance EMI and DSF
 
