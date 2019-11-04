@@ -1696,11 +1696,10 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_CHGRPY)) {
 			this.btnChangeRepay.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
 			this.btnChangeRepay.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
-
 			this.btnAddDatedSchedule
-					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+					.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
 			this.btnAddDatedSchedule
-					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnChangeRepay"));
+					.setDisabled(!getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDatedSchd"));
 
 		} else if (moduleDefiner.equals(FinanceConstants.FINSER_EVENT_ADDDISB)) {
 			this.btnAddDisbursement.setVisible(getUserWorkspace().isAllowed("button_" + dialogName + "_btnAddDisb"));
