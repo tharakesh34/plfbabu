@@ -195,7 +195,7 @@ public class ReasonDetailDAOImpl extends SequenceDao<ReasonHeader> implements Re
 		logger.trace(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("Reference", finReference);
+		paramSource.addValue("reference", finReference);
 		try {
 			jdbcTemplate.update(sql.toString(), paramSource);
 		} catch (DataAccessException e) {
