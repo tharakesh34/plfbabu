@@ -5268,8 +5268,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			break;
 		case PennantConstants.METHOD_DOMAINCHECKSERVICE:
 			if (null != domainCheckService) {
-				boolean hunterReq = SysParamUtil.isAllowed(SMTParameterConstants.HUNTER_REQ);
-				if (hunterReq) {
+				boolean domainCheq = SysParamUtil.isAllowed(SMTParameterConstants.DOMAIN_CHEQ);
+				if (domainCheq) {
 					domainCheckService.validateDomain(financeDetail);
 				}
 			}
