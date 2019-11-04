@@ -36,7 +36,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="murthy.y">
+	<changeSet id="2" author="murthy.y">
 		<sql>
 			<![CDATA[
 				update SMTparameters set sysparmvalue = 'N' where sysparmcode = 'DISB_REQ_REQUIRED';
