@@ -331,7 +331,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					customerDetails = getCustomerDetailsService().getCustomerById(customer.getId());
 				}
 
-				if (customer == null && "Y".equals(SysParamUtil.getValueAsString("EXT_CRM_INT_ENABLED"))
+				if (customer == null
 						&& customerExternalInterfaceService != null) {
 					newRecord = true;
 					customer = new Customer();
@@ -341,7 +341,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					}
 					customerDetails = customerExternalInterfaceService.getCustomerDetail(customer);
 					if (customerDetails == null) {
-						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
+						throw new AppException("9999", Labels.getLabel("Cust_NotFound"));
 					}
 
 					proceedAsNewCustomer(customerDetails, customerDetails.getCustomer().getCustCtgCode(),
@@ -352,7 +352,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 					newRecord = true;
 					customerDetails = getCustomerInterfaceService().getCustomerInfoByInterface(cif, "");
 					if (customerDetails == null) {
-						throw new InterfaceException("9999", Labels.getLabel("Cust_NotFound"));
+						throw new AppException("9999", Labels.getLabel("Cust_NotFound"));
 					}
 				}
 
@@ -494,10 +494,10 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 			window_CoreCustomer.onClose();
 		} catch (WrongValueException | WrongValuesException wve) {
 			throw wve;
-		} catch (InterfaceException pfe) {
-			MessageUtil.showError(pfe);
+		} catch (AppException pfe) {
+			MessageUtil.showError(pfe.getMessage());
 		} catch (Exception e) {
-			MessageUtil.showError(e);
+			MessageUtil.showError(e.getMessage());
 		}
 
 		logger.debug(Literal.LEAVING);
