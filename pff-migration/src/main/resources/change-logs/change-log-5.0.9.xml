@@ -16521,7 +16521,7 @@ UNION ALL
 	<changeSet id="310" author="kranthi.k">
 		<dropView viewName="Interestcertificate_view" />
 	</changeSet>
-	
+
 	<changeSet id="311" author="shahbaj.b">
 		<sql>
             <![CDATA[ 
@@ -16529,26 +16529,44 @@ UNION ALL
     	     ]]>
 		</sql>
 	</changeSet>
-	
+
+
+	<changeSet id="312_pre" author="meena.a">
+		<sql>
+			<![CDATA[ 
+				delete From ReasonTypes where code='LOANCANCEL';
+	 		]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="312" author="meena.a">
 		<sql>
 			<![CDATA[ 
 				insert into ReasonTypes (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) values( (select (seqno+1) from seqreasontypes), 'LOANCANCEL', 'Loan Cancelation',  1 , 1000, current_timestamp, 'Approved', '', '', '', '','', 0);
 	 		]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
+	<changeSet id="313_pre" author="meena.a">
+		<sql>
+			<![CDATA[ 
+				delete From ReasonCategory where code='LOANCANCEL';
+	 		]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="313" author="meena.a">
 		<sql>
 			<![CDATA[ 
 				insert into ReasonCategory (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) values( (select (seqno+1) from seqReasonCategory), 'LOANCANCEL', 'Loan Cancelation',  1 , 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 	 		]]>
-		</sql>	
+		</sql>
 	</changeSet>
+
 	<changeSet id="314" author="Varaprasad.K">
 		<createTable tableName="RISKS_MITIGANTS_TEMP">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -16559,7 +16577,7 @@ UNION ALL
 			<column name="Risk" type="varchar(200)" />
 			<column name="Mitigants" type="varchar(200)" />
 			<column name="Version" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -16577,8 +16595,8 @@ UNION ALL
 
 	<changeSet id="315" author="Varaprasad.K">
 		<createTable tableName="RISKS_MITIGANTS">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -16589,7 +16607,7 @@ UNION ALL
 			<column name="Risk" type="varchar(200)" />
 			<column name="Mitigants" type="varchar(200)" />
 			<column name="Version" type="int">
-				<constraints nullable="false"/>
+				<constraints nullable="false" />
 			</column>
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -16604,15 +16622,15 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="316" author="Varaprasad.K">
-		<createSequence sequenceName="SEQ_RISKS_MITIGANTS" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQ_RISKS_MITIGANTS"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	<changeSet id="317" author="Varaprasad.K">
 		<createTable tableName="SANCTION_CONDITIONS_TEMP">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -16639,8 +16657,8 @@ UNION ALL
 
 	<changeSet id="318" author="Varaprasad.K">
 		<createTable tableName="SANCTION_CONDITIONS">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -16664,13 +16682,15 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="319" author="Varaprasad.K">
-		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
+	
 	<changeSet id="320" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_aview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_aview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16703,8 +16723,10 @@ UNION ALL
 				
 			</createView>
 	</changeSet>
+	
 	<changeSet id="321" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16736,8 +16758,10 @@ UNION ALL
 				     JOIN customers t3 ON t1.custcif = t3.custcif
 			</createView>
 	</changeSet>
+	
 	<changeSet id="322" author="Varaprasad.K">
-		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.jointaccountid,
 				    t1.finreference,
 				    t1.custcif,
@@ -16802,8 +16826,10 @@ UNION ALL
 				          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
 			</createView>
 	</changeSet>
+	
 	<changeSet id="323" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_view" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_view"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 				    t1.finreference,
 				    t1.bankcustomer,
@@ -16905,7 +16931,8 @@ UNION ALL
 			</createView>
 	</changeSet>
 	<changeSet id="324" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_tview" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_tview"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 				    t1.finreference,
 				    t1.bankcustomer,
@@ -16956,7 +16983,8 @@ UNION ALL
 			</createView>
 	</changeSet>
 	<changeSet id="325" author="Varaprasad.K">
-		<createView viewName="finguarantorsdetails_aview" replaceIfExists="true">
+		<createView viewName="finguarantorsdetails_aview"
+			replaceIfExists="true">
 			SELECT t1.guarantorid,
 					    t1.finreference,
 					    t1.bankcustomer,
@@ -17008,8 +17036,8 @@ UNION ALL
 	</changeSet>
 	<changeSet id="326" author="Varaprasad.K">
 		<createTable tableName="DealRecommendation_Merits_Temp">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -17035,8 +17063,8 @@ UNION ALL
 
 	<changeSet id="327" author="Varaprasad.K">
 		<createTable tableName="DealRecommendation_Merits">
-			<column name="Id" type="bigint" >
-				<constraints nullable="false"/>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="SeqNo" type="bigint">
 				<constraints nullable="false" />
@@ -17059,10 +17087,10 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="328" author="Varaprasad.K">
-		<createSequence sequenceName="Seq_DealRecommendation_Merits" incrementBy="1" startValue="1" minValue="1"
-			maxValue="999999999999999999" />
+		<createSequence sequenceName="Seq_DealRecommendation_Merits"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	<changeSet id="329" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCE_CHECKLIST_TEMP">
@@ -17070,7 +17098,7 @@ UNION ALL
 				<constraints nullable="false" />
 			</column>
 			<column name="Particulars" type="varchar(200)" />
-			<column name="Status" type="varchar(500)" />		
+			<column name="Status" type="varchar(500)" />
 			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -17084,14 +17112,14 @@ UNION ALL
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	 </changeSet>
-	 <changeSet id="330" author="Varaprasad.K">
+	</changeSet>
+	<changeSet id="330" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCE_CHECKLIST">
 			<column name="id" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="Particulars" type="varchar(200)" />
-			<column name="Status" type="varchar(500)" />		
+			<column name="Status" type="varchar(500)" />
 			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -17105,9 +17133,10 @@ UNION ALL
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-	 </changeSet>
-	 <changeSet id="331" author="Varaprasad.K">
-		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW" replaceIfExists="true">
+	</changeSet>
+	<changeSet id="331" author="Varaprasad.K">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW"
+			replaceIfExists="true">
 			SELECT
 				  T1.Id,
 				  T1.Particulars,
@@ -17146,7 +17175,8 @@ UNION ALL
 			</createView>
 	</changeSet>
 	<changeSet id="332" author="Varaprasad.K">
-		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW" replaceIfExists="true">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW"
+			replaceIfExists="true">
 				SELECT
 				  T1.Id,
 				  T1.Particulars,
@@ -17166,45 +17196,18 @@ UNION ALL
 			</createView>
 	</changeSet>
 	<changeSet id="333" author="Varaprasad.K">
-			<createTable tableName="DUE_DILIGENCES">
-				<column name="id" type="bigint">
-					<constraints nullable="false" />
-				</column>
-				<column name="FinReference" type="varchar(20)">
-					<constraints nullable="false" />
-				</column>
-				<column name="ParticularId" type="bigint" >
-					<constraints nullable="false" />				
-				</column>
-				<column name="Status" type="varchar(40)" />
-				<column name="Remarks" type="Varchar(500)" />		
-				<column name="Version" type="int" />
-				<column name="LastMntBy" type="bigint" />
-				<column name="LastMntOn" type="datetime" />
-				<column name="RecordStatus" type="varchar(50)" />
-				<column name="RoleCode" type="varchar(100)" />
-				<column name="NextRoleCode" type="varchar(200)" />
-				<column name="TaskId" type="varchar(50)" />
-				<column name="NextTaskId" type="varchar(200)" />
-				<column name="RecordType" type="varchar(50)" />
-				<column name="WorkFlowId" type="bigint">
-					<constraints nullable="false" />
-				</column>
-			</createTable>
-	</changeSet>
-	<changeSet id="334" author="Varaprasad.K">
-		<createTable tableName="DUE_DILIGENCES_TEMP">
+		<createTable tableName="DUE_DILIGENCES">
 			<column name="id" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="FinReference" type="varchar(20)">
 				<constraints nullable="false" />
 			</column>
-			<column name="ParticularId" type="bigint">	
-				<constraints nullable="false" />				
+			<column name="ParticularId" type="bigint">
+				<constraints nullable="false" />
 			</column>
 			<column name="Status" type="varchar(40)" />
-			<column name="Remarks" type="Varchar(500)" />		
+			<column name="Remarks" type="Varchar(500)" />
 			<column name="Version" type="int" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMntOn" type="datetime" />
@@ -17218,32 +17221,67 @@ UNION ALL
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-   </changeSet>
+	</changeSet>
+	<changeSet id="334" author="Varaprasad.K">
+		<createTable tableName="DUE_DILIGENCES_TEMP">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ParticularId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Status" type="varchar(40)" />
+			<column name="Remarks" type="Varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 	<changeSet id="335" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id"  constraintName="PK_DUE_DILIGENCES_Id"/>
+		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id"
+			constraintName="PK_DUE_DILIGENCES_Id" />
 	</changeSet>
 	<changeSet id="336" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP" columnNames="id"  constraintName="PK_DUE_DILIGENCES_TEMP_Id"/>
+		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP"
+			columnNames="id" constraintName="PK_DUE_DILIGENCES_TEMP_Id" />
 	</changeSet>
 	<changeSet id="337" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP" columnNames="id"  constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id"/>
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP"
+			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id" />
 	</changeSet>
 	<changeSet id="338" author="Varaprasad.K">
-		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST" columnNames="id"  constraintName="PK_DUE_DILIGNCE_CHKLIST_Id"/>
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST"
+			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_Id" />
 	</changeSet>
 	<changeSet id="339" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_DD_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST"
-		baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_DD_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="340" author="Varaprasad.K">
-		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP"
-		baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="341" author="Varaprasad.K">
-		<createSequence sequenceName="SeqDUE_DILIGENCES" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqDUE_DILIGENCES"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	<changeSet id="342" author="Varaprasad.K">
-		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 	<changeSet id="343" author="Varaprasad.K">
 		<sql>
@@ -17260,7 +17298,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
-	
-	
+
+
+
 </databaseChangeLog>
