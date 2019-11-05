@@ -103,4 +103,6 @@ public interface FinAdvancePaymentsService {
 	void processPayments(PaymentTransaction paymentTransaction);
 
 	void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type);
+
+	int getCountByPaymentId(String finReference, long paymentId);
 }

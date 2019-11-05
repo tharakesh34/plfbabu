@@ -1063,6 +1063,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public FinAdvancePayments getFinAdvancePaymentsById(FinAdvancePayments finAdvancePayments, String type) {
 		return finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, type);
 	}
+	
+	@Override
+	public int getCountByPaymentId(String finReference, long paymentId) {
+		return finAdvancePaymentsDAO.getCountByPaymentId(finReference, paymentId);
+	}
 
 	public MandateDAO getMandateDAO() {
 		return mandateDAO;
@@ -1103,5 +1108,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	public void setPaymentsProcessService(PaymentsProcessService paymentsProcessService) {
 		this.paymentsProcessService = paymentsProcessService;
 	}
+
+	
 
 }
