@@ -26,7 +26,7 @@
 									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" width="80%"/>
 									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" width="80%"/>
 									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" width="80%"/>
-									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Document Check List" width="80%"/>
+									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" width="80%"/>
 									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" width="80%"/>
 									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" width="80%"/>
 			 </div>
@@ -533,7 +533,7 @@
 									</listbox>
 					              </groupbox>
 					              <!-- Other Details -->
-									<groupbox sclass="gb_dialog">
+									<groupbox sclass="gb_dialog" id="gb_dialog">
 										<caption label="Other Details"></caption>
 										<tabbox width="100%" height="100%">
 											<tabs style="width:0px;height:0px;border:none;">
