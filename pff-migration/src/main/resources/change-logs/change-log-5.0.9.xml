@@ -17248,8 +17248,8 @@ UNION ALL
 	<changeSet id="343" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
-				  	DELETE from SMTparameters WHERE SYSPARMCODE='FIN_SUMMARY_REQUIRED';
-					INSERT INTO SMTparameters  VALUES ('FIN_SUMMARY_REQUIRED', 'Fianancial Summary Tab Visibility', 'String', '1', 'N', 1, 0, NULL, NULL,'Fianancial Summary Tab Visibility', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='FIN_SUMMARY_TAB_REQUIRED';
+					INSERT INTO SMTparameters  VALUES ('FIN_SUMMARY_TAB_REQUIRED', 'Fianancial Summary Tab Visibility', 'String', '1', 'N', 1, 0, NULL, NULL,'Fianancial Summary Tab Visibility', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
 				]]>
 		</sql>
 	</changeSet>

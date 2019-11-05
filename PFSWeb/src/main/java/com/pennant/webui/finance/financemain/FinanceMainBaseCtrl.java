@@ -2109,7 +2109,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendLegalDetailsTab(onLoad);
 		}
 		//Financial Summary
-		if (isTabVisible(StageTabConstants.FinancialSummary) && StringUtils.isEmpty(moduleDefiner) && SysParamUtil.isAllowed(SMTParameterConstants.FIN_SUMMARY_REQUIRED)) {
+		if (isTabVisible(StageTabConstants.FinancialSummary) && StringUtils.isEmpty(moduleDefiner) && SysParamUtil.isAllowed(SMTParameterConstants.FIN_SUMMARY_TAB_REQUIRED)) {
 			appendFinancialSummary(onLoad);
 		}
 		logger.debug(Literal.LEAVING);
