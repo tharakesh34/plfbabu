@@ -558,7 +558,7 @@
 																spacing="2px" />
 															<textbox
 																id="cancelRemarks" width="330px" multiline="true"
-																rows="10" />
+																rows="4" />
 														</hbox>
 
 												</row>

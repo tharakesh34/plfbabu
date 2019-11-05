@@ -341,6 +341,32 @@
 												<label id="label_FinanceMainDialog_EligibilityMethod" value="${c:l('label_FinanceMainDialog_EligibilityMethod.value')}" />
 												<extendedcombobox id="eligibilityMethod" width="200px" />
 											</row>
+											<row
+												id="row_CancelReason">
+												<label
+													value="${c:l('label_FinanceMainDialog_CancelReason.value')}" />
+												<hlayout
+													spacing="2px">
+													<space spacing="2px"
+														sclass="mandatory" />
+													<uppercasebox
+														id="reasons" width="160px" disabled="true"/>
+													<button
+														id="btnReasons" image="/images/icons/search.png" disabled="true"/>
+												</hlayout>
+
+												<label
+													id="label_FinanceMainDialog_cancelRemarks"
+													value="${c:l('label_FinanceMainDialog_cancelRemarks.value')}" />
+												<hbox>
+													<space
+														spacing="2px" />
+													<textbox
+														id="cancelRemarks" width="330px" multiline="true"
+														rows="4" disabled="true"/>
+												</hbox>
+											</row>
+
 											<row id="row_SancationAmount">
 												<label id="label_SancationAmt" value="${c:l('label_FinanceMainDialog_SancationAmt.value')}" />
 												<hbox>

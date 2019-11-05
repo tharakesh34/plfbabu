@@ -117,9 +117,11 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
+import com.pennant.backend.model.reason.details.ReasonHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.commitment.CommitmentService;
 import com.pennant.backend.service.customermasters.CustomerService;
+import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -137,15 +139,17 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
+ * This is the controller class for the
+ * /WEB-INF/pages/Finance/financeMain/LoanDetailsEnquiry.zul file.
  */
 public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 6004939933729664895L;
 	private static final Logger logger = Logger.getLogger(FinanceEnquiryDialogCtrl.class);
 
 	/*
-	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
-	 * are getting autoWired by our 'extends GFCBaseCtrl' GenericForwardComposer.
+	 * All the components that are defined here and have a corresponding
+	 * component with the same 'id' in the ZUL-file are getting autoWired by our
+	 * 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_FinanceEnquiryDialog;
 	protected Borderlayout borderlayoutFinanceEnquiryDialog;
@@ -200,19 +204,19 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Row row_FinAcctId;
 	protected Row row_commitment;
 
-	//	protected Label disbAcctBal; 
+	// protected Label disbAcctBal;
 	protected Textbox repayAcctId;
-	//	protected Label repayAcctBal; 
+	// protected Label repayAcctBal;
 	protected Textbox finAcctId;
 	protected Textbox unEarnAcctId;
-	//	protected Label finAcctBal; 
+	// protected Label finAcctBal;
 	protected Textbox collateralRef;
 	protected FrequencyBox depreciationFrq;
 	protected Decimalbox finAssetValue;
-	//protected Decimalbox				finCurAssetValue;
+	// protected Decimalbox finCurAssetValue;
 	protected Combobox finRepayMethod;
 
-	//UD_LOANS START
+	// UD_LOANS START
 	protected Row row_Revolving_DP;
 	protected Checkbox allowRevolving;
 	protected Label label_FinanceTypeDialog_AllowRevolving;
@@ -304,7 +308,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Checkbox cpzAtPlanEmi;
 	private Label label_FinanceMainDialog_PlanEmiHolidayMethod;
 
-	//Unplanned Emi Holidays
+	// Unplanned Emi Holidays
 	protected Row row_UnPlanEmiHLockPeriod;
 	protected Row row_MaxUnPlannedEMIH;
 	protected Row row_ReAge;
@@ -376,7 +380,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected BigDecimal curContributionCalAmt = null;
 	// not auto wired variables
 	private FinScheduleData finScheduleData; // over handed per parameters
-	private List<ContractorAssetDetail> assetDetails = null; // over handed per parameters
+	private List<ContractorAssetDetail> assetDetails = null; // over handed per
+																// parameters
 	private FinContributorHeader finContributorHeader; // over handed per
 														// parameters
 	private FinanceDetail financeDetail;
@@ -431,7 +436,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label unPaidInstlments;
 	protected Label unPaidInstlementPft;
 
-	//Finance Document Details Tab
+	// Finance Document Details Tab
 	protected Label disb_finType;
 	protected Label disb_finReference;
 	protected Label disb_finCcy;
@@ -514,6 +519,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox businessVertical;
 	protected Decimalbox appliedLoanAmt;
 	protected Label label_FinanceMainDialog_AppliedLoanAmt;
+	// cancel reason
+	private FinanceCancellationService financeCancellationService;
+	protected Uppercasebox reasons;
+	protected Button btnReasons;
+	protected Textbox cancelRemarks;
 
 	public FinanceSummary getFinSummary() {
 		return finSummary;
@@ -538,8 +548,9 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	// Component Events
 
 	/**
-	 * Before binding the data and calling the dialog window we check, if the ZUL-file is called with a parameter for a
-	 * selected financeMain object in a Map.
+	 * Before binding the data and calling the dialog window we check, if the
+	 * ZUL-file is called with a parameter for a selected financeMain object in
+	 * a Map.
 	 * 
 	 * @param event
 	 * @throws Exception
@@ -762,7 +773,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.utilizedAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.availableAmt.setMaxlength(18);
 		this.availableAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
+		// Field visibility & Naming for FinAsset value and finCurrent asset
+		// value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
 	}
@@ -787,7 +799,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!isOverdraft && financeType.isAlwMaxDisbCheckReq()) {
 					readOnlyComponent(isReadOnly("FinanceMainDialog_finAssetValue"), this.finAssetValue);
 					this.row_FinAssetValue.setVisible(true);
-					//this.finAssetValue.setMandatory(true);
+					// this.finAssetValue.setMandatory(true);
 					this.finCurrentAssetValue.setReadonly(true);
 					this.label_FinanceMainDialog_FinAssetValue
 							.setValue(Labels.getLabel("label_FinanceMainDialog_FinMaxDisbAmt.value"));
@@ -818,7 +830,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method Used for set list of values been class to components finance flags list
+	 * Method Used for set list of values been class to components finance flags
+	 * list
 	 * 
 	 * @param Collateral
 	 */
@@ -871,7 +884,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.appliedLoanAmt
 					.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), formatter));
 
-			//FXIME: PV. 28AUG19. SOme confusion over deducting DISBDEDUCT amounts from current asset value.
+			// FXIME: PV. 28AUG19. SOme confusion over deducting DISBDEDUCT
+			// amounts from current asset value.
 			BigDecimal curFinAmountValue = BigDecimal.ZERO;
 
 			curFinAmountValue = aFinanceMain.getFinCurrAssetValue().add(aFinanceMain.getFeeChargeAmt())
@@ -925,13 +939,13 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getRepayAccountId()));
 			this.finAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getFinAccount()));
 			this.unEarnAcctId.setValue(PennantApplicationUtil.formatAccountNumber(aFinanceMain.getFinCustPftAccount()));
-			//	this.disbAcctBal.setValue(getAcBalance(aFinanceMain.getDisbAccountId()));
-			//	this.repayAcctBal.setValue(getAcBalance(aFinanceMain.getRepayAccountId()));
-			//	this.finAcctBal.setValue(getAcBalance(aFinanceMain.getFinAccount()));
+			// this.disbAcctBal.setValue(getAcBalance(aFinanceMain.getDisbAccountId()));
+			// this.repayAcctBal.setValue(getAcBalance(aFinanceMain.getRepayAccountId()));
+			// this.finAcctBal.setValue(getAcBalance(aFinanceMain.getFinAccount()));
 			fillComboBox(this.finRepayMethod, aFinanceMain.getFinRepayMethod(), PennantStaticListUtil.getRepayMethods(),
 					"");
 
-			//Allow Drawing power, Allow Revolving
+			// Allow Drawing power, Allow Revolving
 			if (aFinanceMain.isAllowRevolving()) {
 				this.row_Revolving_DP.setVisible(true);
 				this.label_FinanceTypeDialog_AllowRevolving.setVisible(true);
@@ -1038,7 +1052,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			this.repaySchdMethod.setValue(aFinanceMain.getScheduleMethod());
-			///Frequency Inquiry Code
+			/// Frequency Inquiry Code
 			if (StringUtils.trimToEmpty(aFinanceMain.getRepayFrq()).length() == 5) {
 				this.repayFrq.setValue(aFinanceMain.getRepayFrq());
 				this.repayFrq.setDisabled(true);
@@ -1121,7 +1135,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.linkedFinRef.setValue(aFinanceMain.getLinkedFinRef());
 		}
 
-		//Accounts should be displayed only to the Banks
+		// Accounts should be displayed only to the Banks
 		if (!ImplementationConstants.ACCOUNTS_APPLICABLE) {
 			this.row_disbAcctId.setVisible(false);
 			this.row_FinAcctId.setVisible(false);
@@ -1285,7 +1299,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (finSummary != null) {
-			//profit Deatils
+			// profit Deatils
 			this.totalPriSchd.setValue(
 					PennantAppUtil.amountFormate(finSummary.getTotalPriSchd().subtract(finSummary.getTotalCpz()),
 							CurrencyUtil.getFormat(finSummary.getFinCcy())));
@@ -1377,7 +1391,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.repayGraphTab.setVisible(true);
 		}
 
-		//Showing Product Details for Promotion Type
+		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(getFinScheduleData().getFinanceType().getFinDivision());
 		if (StringUtils.isNotBlank(aFinanceMain.getPromotionCode())) {
 			this.hbox_PromotionProduct.setVisible(true);
@@ -1425,7 +1439,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		this.quickDisb.setChecked(aFinanceMain.isQuickDisb());
-		//TDSApplicable Visiblitly based on Financetype Selection
+		// TDSApplicable Visiblitly based on Financetype Selection
 		if (aFinanceMain.isTDSApplicable()) {
 			this.hbox_tdsApplicable.setVisible(true);
 			this.label_FinanceMainDialog_TDSApplicable.setVisible(true);
@@ -1462,7 +1476,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.downPayAccount.setMandatoryStyle(false);
 			this.row_downPayBank.setVisible(false);
 		}
-		//fill od penality details
+		// fill od penality details
 		dofillOdPenalityDetails(getFinScheduleData().getFinODPenaltyRate());
 
 		// tasks #1152 Business Vertical Tagged with Loan
@@ -1479,6 +1493,23 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.vanReq.setChecked(aFinanceMain.isVanReq());
 			this.vanCode.setValue(aFinanceMain.getVanCode());
 			this.vanCode.setDisabled(true);
+		}
+		List<ReasonHeader> details = getFinanceCancellationService()
+				.getCancelReasonDetails(aFinanceMain.getFinReference());
+		String data = "";
+		if (details.size() > 0) {
+			for (ReasonHeader header : details) {
+				if (data.length() == 0) {
+					data += header.getReasonId();
+				} else {
+					data += "," + header.getReasonId();
+				}
+
+			}
+		}
+		this.reasons.setText(data);
+		if (details.size() > 0) {
+			this.cancelRemarks.setText(details.get(0).getRemarks());
 		}
 
 		logger.debug("Leaving");
@@ -1640,8 +1671,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
-	 * parameter
+	 * This method will create tab and will assign corresponding tab selection
+	 * method and makes tab visibility based on parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible
@@ -1767,7 +1798,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for calculations of Contribution Details Amount , Mudarib rate and Total Investments
+	 * Method for calculations of Contribution Details Amount , Mudarib rate and
+	 * Total Investments
 	 * 
 	 * @param contributorDetails
 	 */
@@ -1818,7 +1850,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			curContributionCalAmt = PennantAppUtil.unFormateAmount(this.curContributionAmt.getValue(), formatter);
 		}
 
-		//Adding Totals for Total List
+		// Adding Totals for Total List
 		addBankShareOrTotal(false, PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter));
 
 		logger.debug("Leaving");
@@ -1930,7 +1962,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	/**
 	 * Opens the Dialog window modal.
 	 * 
-	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
+	 * It checks if the dialog opens with a new or existing object and set the
+	 * readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
 	 * @throws Exception
@@ -2009,7 +2042,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.sanctionAmt.setReadonly(true);
 		this.utilizedAmt.setReadonly(true);
 		this.availableAmt.setReadonly(true);
-		//protected 
+		// protected
 		this.applyODPenalty.setDisabled(true);
 		;
 		this.oDIncGrcDays.setDisabled(true);
@@ -2241,7 +2274,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onDisbursementItemDoubleClicked");
 			this.listBoxDisbursementDetail.appendChild(listitem);
 
-			//Amounts Calculation
+			// Amounts Calculation
 
 			if ("B".equals(disburse.getDisbType())) {
 				totBillingAmt = totBillingAmt.add(disburse.getDisbClaim());
@@ -2254,7 +2287,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			totIstisnaCost = totIstisnaCost.add(disburse.getDisbAmount());
 		}
 
-		//Amount Labels Reset with Amounts
+		// Amount Labels Reset with Amounts
 		this.disb_totalCost.setValue(PennantAppUtil.formateAmount(totIstisnaCost, formatter));
 		this.disb_consultFee.setValue(PennantAppUtil.formateAmount(conslFee, formatter));
 		this.disb_totalBilling.setValue(PennantAppUtil.formateAmount(totBillingAmt, formatter));
@@ -2508,6 +2541,14 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setCommitmentService(CommitmentService commitmentService) {
 		this.commitmentService = commitmentService;
+	}
+
+	public FinanceCancellationService getFinanceCancellationService() {
+		return financeCancellationService;
+	}
+
+	public void setFinanceCancellationService(FinanceCancellationService financeCancellationService) {
+		this.financeCancellationService = financeCancellationService;
 	}
 
 }
