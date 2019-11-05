@@ -3342,4 +3342,40 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="17" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				 insert into plf.master_def values ('OGL','ADDDBSF','R/Disbursement');
+				 insert into plf.master_def values ('OGL','DEFRPY','J/Differential Repay');
+				 insert into plf.master_def values ('OGL','NOCISU','J/NOC Voucher');
+				 insert into plf.master_def values ('OGL','EMIDAY','J/EMI Holiday');
+				 insert into plf.master_def values ('OGL','FEEAMZ','J/Fee Accrual');
+				 insert into plf.master_def values ('OGL','JVPOST','J/Journal voucher');
+				 insert into plf.master_def values ('OGL','LATEPAY','J/Late Payment');
+				 insert into plf.master_def values ('OGL','MANFEE','J/Manual Fee');
+				 insert into plf.master_def values ('OGL','RATCHG','J/Rate Change');
+				 insert into plf.master_def values ('OGL','REAGING','J/Reaging');
+				 insert into plf.master_def values ('OGL','SCDCHG','J/Schedule changes');
+				 insert into plf.master_def values ('OGL','VASACRUL','J/Vas Accrual');
+				 insert into plf.master_def values ('OGL','VASFEE','J/Vas Fee');
+				 insert into plf.master_def values ('OGL','WRITEOFF','J/Write off');
+				 insert into plf.master_def values ('OGL','FEEPAY','R/IMD RCEIPT');
+				 insert into plf.master_def values ('OGL','ADDDBSP','B/LOAN BOOKING'); 
+				 insert into plf.master_def values ('OGL','AMZ','J/ACCRUAL');
+				 insert into plf.master_def values ('OGL','DISBINS','R/Disbursement Instructions');
+				 insert into plf.master_def values ('OGL','INSTDATE','B/INSTALLMENT DUE DATE');
+				 insert into plf.master_def values ('OGL','REPAY','R/INSTALLMENT RECEIPT');
+				 insert into plf.master_def values ('OGL','EARLYPAY','R/Part Prepayment');
+				 insert into plf.master_def values ('OGL','EARLYSTL','R/Early Settlement');
+				 insert into plf.master_def values ('OGL','PAYMTINS','R/Payments - Refunds');
+				 insert into plf.master_def values ('OGL','ADDDBSN','R/Loan Servicing - Additional Disbursements');
+				 insert into plf.master_def values ('OGL','C2B','J/CASH TO BANK');
+				 insert into plf.master_def values ('OGL','CHQ2B','R/Cheque TO BANK');
+				 insert into plf.master_def values ('OGL','CHQ2BR','R/Cheque TO BANK RERVERSAL');
+				 insert into plf.master_def values ('OGL','B2C','J/CASH');
+				 insert into plf.master_def values ('OGL','WAIVER','J/waiver accounting');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
