@@ -5508,5 +5508,29 @@
 		<property name="financeMainService" ref="financeMainService" />
 	</bean>
 	
+	<!-- Financial Summary(CET) -->
+	<bean id="financialSummaryDialogCtrl" class="com.pennant.webui.finance.financialsummary.FinancialSummaryDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="risksAndMitigantsDAO" ref="risksAndMitigantsDAO" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="guarantorDetailService" ref="guarantorDetailService" />
+		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
+		<property name="notesDAO" ref="notesDAO" />
+		<property name="queryDetailDAO" ref="queryDetailDAO" />
+		
+	</bean>
+	<bean id="risksAndMitigantsDialogCtrl" class="com.pennant.webui.finance.financialsummary.RisksAndMitigantsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="risksAndMitigantsService" ref="risksAndMitigantsService" />
+	</bean>
+	<bean id="sanctionConditionsDialogCtrl" class="com.pennant.webui.finance.financialsummary.SanctionConditionsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="sanctionConditionsService" ref="sanctionConditionsService" />
+	</bean>
+	<bean id="dealRecommendationMeritsDialogCtrl" class="com.pennant.webui.finance.financialsummary.DealRecommendationMeritsDialogCtrl"
+		parent="basisCtrl" scope="prototype">
+		<property name="dealRecommendationMeritsService" ref="dealRecommendationMeritsService" />
+	</bean>
+	
 	
 </beans>

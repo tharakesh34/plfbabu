@@ -39,7 +39,7 @@
  *                                                                                          * 
  *                                                                                          * 
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -129,10 +129,10 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID ");
+			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -212,14 +212,14 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		StringBuilder insertSql = new StringBuilder("Insert Into FinJointAccountDetails");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:JointAccountId, :FinReference, :CustCIF, :IncludeRepay, :RepayAccountId, :CatOfcoApplicant, :AuthoritySignatory, :Sequence, :IncludeIncome");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql
+				.append(" (JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
+		insertSql
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql
+				.append(" Values(:JointAccountId, :FinReference, :CustCIF, :IncludeRepay, :RepayAccountId, :CatOfcoApplicant, :AuthoritySignatory, :Sequence, :IncludeIncome");
+		insertSql
+				.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -248,12 +248,12 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		logger.debug("Entering");
 		StringBuilder updateSql = new StringBuilder("Update FinJointAccountDetails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId, CatOfcoApplicant = :CatOfcoApplicant");
-		updateSql.append(
-				",AuthoritySignatory = :AuthoritySignatory, Sequence = :Sequence, IncludeIncome = :IncludeIncome");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		updateSql
+				.append(" Set FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId, CatOfcoApplicant = :CatOfcoApplicant");
+		updateSql
+				.append(",AuthoritySignatory = :AuthoritySignatory, Sequence = :Sequence, IncludeIncome = :IncludeIncome");
+		updateSql
+				.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where JointAccountId =:JointAccountId");
 
 		if (!type.endsWith("_Temp")) {
@@ -281,10 +281,10 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID ");
+			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -358,13 +358,13 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		jountAccountDetail.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(
-				" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome,");
+		selectSql
+				.append(" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome,");
 		selectSql.append(" Version , ");
 		selectSql.append(" LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID ");
+			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -388,8 +388,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		StringBuilder query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
 		query.append(" T1.FinCcy finCcy, T7.ccyEditField ccyEditField, T4.custStsDescription status,");
 		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
@@ -432,8 +431,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		;
 		StringBuilder query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
 		query.append(" T1.FinCcy finCcy, T7.ccyEditField ccyEditField, T4.custStsDescription status,");
 		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
@@ -470,8 +468,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
 		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
 		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
@@ -516,8 +513,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		StringBuilder query = null;
 		query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
 		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
 		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
@@ -555,8 +551,7 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		query = new StringBuilder();
 		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
+		query.append(" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
 		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
 		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
 		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
@@ -628,10 +623,10 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 
 		StringBuilder selectSql = new StringBuilder(
 				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql
+				.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID ");
+			selectSql.append(",LovDescCIFName, custID, lovCustDob  ");
 		}
 		selectSql.append(" From FinJointAccountDetails");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -666,8 +661,8 @@ public class JountAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		selectSql.append(" From FinJointAccountDetails_View F");
 		selectSql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF");
 		selectSql.append(" Left Join FinCreditReviewDetails FCRD on FCRD.CustomerId = C.CustId");
-		selectSql.append(
-				" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
+		selectSql
+				.append(" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
 
 		logger.debug("selectSql: " + selectSql.toString());
 		RowMapper<JointAccountDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper

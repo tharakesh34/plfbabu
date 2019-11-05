@@ -4074,4 +4074,12 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="110" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='FIN_SUMMARY_REQUIRED';
+					INSERT INTO SMTparameters  VALUES ('FIN_SUMMARY_REQUIRED', 'Fianancial Summary Tab Visibility', 'String', '1', 'Y', 1, 0, NULL, NULL,'Fianancial Summary Tab Visibility', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

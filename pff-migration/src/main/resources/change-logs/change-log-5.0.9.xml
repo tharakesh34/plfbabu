@@ -16545,6 +16545,721 @@ UNION ALL
 	 		]]>
 		</sql>	
 	</changeSet>
+	<changeSet id="314" author="Varaprasad.K">
+		<createTable tableName="RISKS_MITIGANTS_TEMP">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Risk" type="varchar(200)" />
+			<column name="Mitigants" type="varchar(200)" />
+			<column name="Version" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="315" author="Varaprasad.K">
+		<createTable tableName="RISKS_MITIGANTS">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Risk" type="varchar(200)" />
+			<column name="Mitigants" type="varchar(200)" />
+			<column name="Version" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="316" author="Varaprasad.K">
+		<createSequence sequenceName="SEQ_RISKS_MITIGANTS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="317" author="Varaprasad.K">
+		<createTable tableName="SANCTION_CONDITIONS_TEMP">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SanctionCondition" type="varchar(200)" />
+			<column name="Status" type="varchar(50)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="318" author="Varaprasad.K">
+		<createTable tableName="SANCTION_CONDITIONS">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SanctionCondition" type="varchar(200)" />
+			<column name="Status" type="varchar(50)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="319" author="Varaprasad.K">
+		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="320" author="Varaprasad.K">
+		<createView viewName="finjointaccountdetails_aview" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+				
+			</createView>
+	</changeSet>
+	<changeSet id="321" author="Varaprasad.K">
+		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails_temp t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+			</createView>
+	</changeSet>
+	<changeSet id="322" author="Varaprasad.K">
+		<createView viewName="finjointaccountdetails_tview" replaceIfExists="true">
+			SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails_temp t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+				UNION ALL
+				 SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM finjointaccountdetails_temp
+				          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
+			</createView>
+	</changeSet>
+	<changeSet id="323" author="Varaprasad.K">
+		<createView viewName="finguarantorsdetails_view" replaceIfExists="true">
+			SELECT t1.guarantorid,
+				    t1.finreference,
+				    t1.bankcustomer,
+				    t1.guarantorcif,
+				    t1.guarantoridtype,
+				    t1.guarantoridnumber,
+				    t1.guranteepercentage,
+				    t1.mobileno,
+				    t1.emailid,
+				    t1.guarantorproof,
+				    t1.guarantorproofname,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.guarantorcifname,
+				    t1.remarks,
+				    t1.addrhnbr,
+				    t1.flatnbr,
+				    t1.addrstreet,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.pobox,
+				    t1.addrcity,
+				    t1.addrprovince,
+				    t1.addrcountry,
+				    t1.addrzip,
+				    t1.guarantorgendercode,
+				    ( SELECT bmtidentitytype.identitydesc
+				           FROM bmtidentitytype
+				          WHERE bmtidentitytype.identitytype = t1.guarantoridtype) AS guarantoridtypename,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    t3.custshrtname,
+					t3.custdob lovCustDob
+				   FROM finguarantorsdetails_temp t1
+				     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
+				UNION ALL
+				 SELECT t1.guarantorid,
+				    t1.finreference,
+				    t1.bankcustomer,
+				    t1.guarantorcif,
+				    t1.guarantoridtype,
+				    t1.guarantoridnumber,
+				    t1.guranteepercentage,
+				    t1.mobileno,
+				    t1.emailid,
+				    t1.guarantorproof,
+				    t1.guarantorproofname,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.guarantorcifname,
+				    t1.remarks,
+				    t1.addrhnbr,
+				    t1.flatnbr,
+				    t1.addrstreet,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.pobox,
+				    t1.addrcity,
+				    t1.addrprovince,
+				    t1.addrcountry,
+				    t1.addrzip,
+				    t1.guarantorgendercode,
+				    ( SELECT bmtidentitytype.identitydesc
+				           FROM bmtidentitytype
+				          WHERE bmtidentitytype.identitytype = t1.guarantoridtype) AS guarantoridtypename,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    t3.custshrtname,
+					t3.custdob lovCustDob
+				   FROM finguarantorsdetails t1
+				     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM finguarantorsdetails_temp
+				          WHERE finguarantorsdetails_temp.guarantorid = t1.guarantorid))
+			</createView>
+	</changeSet>
+	<changeSet id="324" author="Varaprasad.K">
+		<createView viewName="finguarantorsdetails_tview" replaceIfExists="true">
+			SELECT t1.guarantorid,
+				    t1.finreference,
+				    t1.bankcustomer,
+				    t1.guarantorcif,
+				    t1.guarantoridtype,
+				    t1.guarantoridnumber,
+				    t1.guranteepercentage,
+				    t1.mobileno,
+				    t1.emailid,
+				    t1.guarantorproof,
+				    t1.guarantorproofname,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t1.guarantorcifname,
+				    t1.remarks,
+				    t1.addrhnbr,
+				    t1.flatnbr,
+				    t1.addrstreet,
+				    t1.addrline1,
+				    t1.addrline2,
+				    t1.pobox,
+				    t1.addrcity,
+				    t1.addrprovince,
+				    t1.addrcountry,
+				    t1.addrzip,
+				    t1.guarantorgendercode,
+				    ( SELECT bmtidentitytype.identitydesc
+				           FROM bmtidentitytype
+				          WHERE bmtidentitytype.identitytype = t1.guarantoridtype) AS guarantoridtypename,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    t3.custshrtname,
+					t3.custdob lovCustDob
+				   FROM finguarantorsdetails_temp t1
+				     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
+			</createView>
+	</changeSet>
+	<changeSet id="325" author="Varaprasad.K">
+		<createView viewName="finguarantorsdetails_aview" replaceIfExists="true">
+			SELECT t1.guarantorid,
+					    t1.finreference,
+					    t1.bankcustomer,
+					    t1.guarantorcif,
+					    t1.guarantoridtype,
+					    t1.guarantoridnumber,
+					    t1.guranteepercentage,
+					    t1.mobileno,
+					    t1.emailid,
+					    t1.guarantorproof,
+					    t1.guarantorproofname,
+					    t1.version,
+					    t1.lastmntby,
+					    t1.lastmnton,
+					    t1.recordstatus,
+					    t1.rolecode,
+					    t1.nextrolecode,
+					    t1.taskid,
+					    t1.nexttaskid,
+					    t1.recordtype,
+					    t1.workflowid,
+					    t1.guarantorcifname,
+					    t1.remarks,
+					    t1.addrhnbr,
+					    t1.flatnbr,
+					    t1.addrstreet,
+					    t1.addrline1,
+					    t1.addrline2,
+					    t1.pobox,
+					    t1.addrcity,
+					    t1.addrprovince,
+					    t1.addrcountry,
+					    t1.addrzip,
+					    t1.guarantorgendercode,
+					    ( SELECT bmtidentitytype.identitydesc
+					           FROM bmtidentitytype
+					          WHERE bmtidentitytype.identitytype = t1.guarantoridtype) AS guarantoridtypename,
+					    t2.usrlogin,
+					    t2.usrfname,
+					    t2.usrmname,
+					    t2.usrlname,
+					    COALESCE(t3.custid, 0::bigint) AS custid,
+					    t3.custshrtname,
+						t3.custdob lovCustDob
+					   FROM finguarantorsdetails t1
+					     JOIN secusers t2 ON t1.lastmntby = t2.usrid
+					     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
+			</createView>
+	</changeSet>
+	<changeSet id="326" author="Varaprasad.K">
+		<createTable tableName="DealRecommendation_Merits_Temp">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealMerits" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="327" author="Varaprasad.K">
+		<createTable tableName="DealRecommendation_Merits">
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealMerits" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="328" author="Varaprasad.K">
+		<createSequence sequenceName="Seq_DealRecommendation_Merits" incrementBy="1" startValue="1" minValue="1"
+			maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="329" author="Varaprasad.K">
+		<createTable tableName="DUE_DILIGENCE_CHECKLIST_TEMP">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Particulars" type="varchar(200)" />
+			<column name="Status" type="varchar(500)" />		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	 </changeSet>
+	 <changeSet id="330" author="Varaprasad.K">
+		<createTable tableName="DUE_DILIGENCE_CHECKLIST">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Particulars" type="varchar(200)" />
+			<column name="Status" type="varchar(500)" />		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	 </changeSet>
+	 <changeSet id="331" author="Varaprasad.K">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW" replaceIfExists="true">
+			SELECT
+				  T1.Id,
+				  T1.Particulars,
+				  T1.Status,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId
+				FROM
+				  due_diligence_checKlist_temp T1
+				UNION ALL
+				SELECT
+				  T1.Id,
+				  T1.Particulars,
+				  T1.Status,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId
+				FROM
+				  due_diligence_checKlist T1 
+				WHERE NOT EXISTS ( SELECT 1 FROM due_diligence_checKlist_temp WHERE id = T1.id)
+				
+			</createView>
+	</changeSet>
+	<changeSet id="332" author="Varaprasad.K">
+		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW" replaceIfExists="true">
+				SELECT
+				  T1.Id,
+				  T1.Particulars,
+				  T1.Status,
+				  T1.Version,
+				  T1.LastMntBy,
+				  T1.LastMntOn,
+				  T1.RecordStatus,
+				  T1.RoleCode,
+				  T1.NextRoleCode,
+				  T1.TaskId,
+				  T1.NextTaskId,
+				  T1.RecordType,
+				  T1.WorkflowId
+				FROM
+				  due_diligence_checKlist T1 
+			</createView>
+	</changeSet>
+	<changeSet id="333" author="Varaprasad.K">
+			<createTable tableName="DUE_DILIGENCES">
+				<column name="id" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="FinReference" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="ParticularId" type="bigint" >
+					<constraints nullable="false" />				
+				</column>
+				<column name="Status" type="varchar(40)" />
+				<column name="Remarks" type="Varchar(500)" />		
+				<column name="Version" type="int" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="varchar(50)" />
+				<column name="RoleCode" type="varchar(100)" />
+				<column name="NextRoleCode" type="varchar(200)" />
+				<column name="TaskId" type="varchar(50)" />
+				<column name="NextTaskId" type="varchar(200)" />
+				<column name="RecordType" type="varchar(50)" />
+				<column name="WorkFlowId" type="bigint">
+					<constraints nullable="false" />
+				</column>
+			</createTable>
+	</changeSet>
+	<changeSet id="334" author="Varaprasad.K">
+		<createTable tableName="DUE_DILIGENCES_TEMP">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ParticularId" type="bigint">	
+				<constraints nullable="false" />				
+			</column>
+			<column name="Status" type="varchar(40)" />
+			<column name="Remarks" type="Varchar(500)" />		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+   </changeSet>
+	<changeSet id="335" author="Varaprasad.K">
+		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id"  constraintName="PK_DUE_DILIGENCES_Id"/>
+	</changeSet>
+	<changeSet id="336" author="Varaprasad.K">
+		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP" columnNames="id"  constraintName="PK_DUE_DILIGENCES_TEMP_Id"/>
+	</changeSet>
+	<changeSet id="337" author="Varaprasad.K">
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP" columnNames="id"  constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id"/>
+	</changeSet>
+	<changeSet id="338" author="Varaprasad.K">
+		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST" columnNames="id"  constraintName="PK_DUE_DILIGNCE_CHKLIST_Id"/>
+	</changeSet>
+	<changeSet id="339" author="Varaprasad.K">
+		<addForeignKeyConstraint constraintName="fk_DD_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST"
+		baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="340" author="Varaprasad.K">
+		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId" referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP"
+		baseColumnNames="ParticularId" baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="341" author="Varaprasad.K">
+		<createSequence sequenceName="SeqDUE_DILIGENCES" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="342" author="Varaprasad.K">
+		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST" incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
+	<changeSet id="343" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	DELETE from SMTparameters WHERE SYSPARMCODE='FIN_SUMMARY_REQUIRED';
+					INSERT INTO SMTparameters  VALUES ('FIN_SUMMARY_REQUIRED', 'Fianancial Summary Tab Visibility', 'String', '1', 'N', 1, 0, NULL, NULL,'Fianancial Summary Tab Visibility', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '',0);
+				]]>
+		</sql>
+	</changeSet>
+	<changeSet id="344" author="Varaprasad.K">
+		<sql>
+				<![CDATA[
+				  	INSERT INTO plf.STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (15, 'FinSumry', 'Financial Summary', 1)
+				]]>
+		</sql>
+	</changeSet>
 	
 	
 	

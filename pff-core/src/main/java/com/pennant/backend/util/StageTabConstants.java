@@ -17,5 +17,6 @@ public class StageTabConstants {
 	public static final long PSLDetails = 12;
 	public static final long CreditReviewDetails = 13;
 	public static final long LegalDetails = 14;
+	public static final long FinancialSummary = 15;
 
 }

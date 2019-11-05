@@ -74,6 +74,10 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.contractor.ContractorAssetDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
+import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
+import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -284,6 +288,12 @@ public class FinanceDetail implements java.io.Serializable {
 	private CreditReviewData creditReviewData;
 	private AdvancePaymentDetail advancePaymentDetail;
 	private Map<String, Object> creditRevDataMap = new HashMap<>();
+	private boolean financialSummaryTab = true;
+	private List<RisksAndMitigants> risksAndMitigantsList = new ArrayList<>(1);
+	private List<SanctionConditions> sanctionDetailsList = new ArrayList<>(1);
+	private List<DealRecommendationMerits> dealRecommendationMeritsDetailsList = new ArrayList<>(1);
+	private List<DueDiligenceDetails> dueDiligenceDetailsList = new ArrayList<>(1);
+	private DueDiligenceDetails dueDiligenceDetails;
 	private String orderStatus;
 
 	// used for Interfaces
@@ -293,11 +303,11 @@ public class FinanceDetail implements java.io.Serializable {
 	public FinanceDetail() {
 		super();
 	}
-	
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("orderStatus");
-		
+
 		return excludeFields;
 	}
 
@@ -1447,12 +1457,61 @@ public class FinanceDetail implements java.io.Serializable {
 		this.creditRevDataMap = creditRevDataMap;
 	}
 
+	public boolean isFinancialSummaryTab() {
+		return financialSummaryTab;
+	}
+
+	public void setFinancialSummaryTab(boolean financialSummaryTab) {
+		this.financialSummaryTab = financialSummaryTab;
+	}
+
 	public PaymentTransaction getPaymentTransaction() {
 		return paymentTransaction;
 	}
 
 	public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
 		this.paymentTransaction = paymentTransaction;
+	}
+
+	public List<RisksAndMitigants> getRisksAndMitigantsList() {
+		return risksAndMitigantsList;
+	}
+
+	public void setRisksAndMitigantsList(List<RisksAndMitigants> risksAndMitigantsList) {
+		this.risksAndMitigantsList = risksAndMitigantsList;
+	}
+
+	public List<SanctionConditions> getSanctionDetailsList() {
+		return sanctionDetailsList;
+	}
+
+	public void setSanctionDetailsList(List<SanctionConditions> sanctionDetailsList) {
+		this.sanctionDetailsList = sanctionDetailsList;
+	}
+
+	public List<DealRecommendationMerits> getDealRecommendationMeritsDetailsList() {
+		return dealRecommendationMeritsDetailsList;
+	}
+
+	public void setDealRecommendationMeritsDetailsList(
+			List<DealRecommendationMerits> dealRecommendationMeritsDetailsList) {
+		this.dealRecommendationMeritsDetailsList = dealRecommendationMeritsDetailsList;
+	}
+
+	public List<DueDiligenceDetails> getDueDiligenceDetailsList() {
+		return dueDiligenceDetailsList;
+	}
+
+	public void setDueDiligenceDetailsList(List<DueDiligenceDetails> dueDiligenceDetailsList) {
+		this.dueDiligenceDetailsList = dueDiligenceDetailsList;
+	}
+
+	public DueDiligenceDetails getDueDiligenceDetails() {
+		return dueDiligenceDetails;
+	}
+
+	public void setDueDiligenceDetails(DueDiligenceDetails dueDiligenceDetails) {
+		this.dueDiligenceDetails = dueDiligenceDetails;
 	}
 
 	public String getOrderStatus() {
@@ -1462,5 +1521,5 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setOrderStatus(String orderStatus) {
 		this.orderStatus = orderStatus;
 	}
-	
+
 }

@@ -102,5 +102,6 @@ public class AssetConstants {
 	public static final int DEFAULT_ITEMNO = 1;
 
 	public static final String UNIQUE_ID_EXPENSES = "EXPENSES";
+	public static final String UNIQUE_ID_FINANCIALSUMMARY = "FINANCIALSUMMARY";
 
 }

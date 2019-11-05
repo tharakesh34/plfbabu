@@ -438,4 +438,194 @@
 	<changeSet id="43" author="vijaya.a">
 		<renameColumn tableName="ADTLimitHeader" oldColumnName="CUSTOMERIDS" newColumnName="CUSTOMERID"/>
 	</changeSet>
+	<changeSet id="44" author="Varaprasad.K">
+		<createTable tableName="AdtRisks_Mitigants">
+		    <column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Risk" type="varchar(200)" />
+			<column name="Mitigants" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="45" author="Varaprasad.K">
+		<createTable tableName="AdtSanction_Conditions">
+		    <column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SanctionConditions" type="varchar(200)" />
+			<column name="Status" type="varchar(50)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="46" author="Varaprasad.K">
+		<createTable tableName="AdtDealRecommendationMerits">
+		    <column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="Id" type="bigint" >
+				<constraints nullable="false"/>
+			</column>
+			<column name="SeqNo" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealMerits" type="varchar(200)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="47" author="Varaprasad.K">
+		<createTable tableName="AdtDUE_DILIGENCE_CHECKLIST">
+		    <column name="AuditId" type="bigint">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Particulars" type="varchar(200)" />
+			<column name="Status" type="varchar(500)" />		
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	 </changeSet>
+	 <changeSet id="48" author="Varaprasad.K">
+			<createTable tableName="AdtDUE_DILIGENCES">
+				<column name="AuditId" type="bigint">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditDate" type="datetime">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditSeq" type="int">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditImage" type="varchar(2)">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="id" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="FinReference" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="ParticularId" type="bigint" >	
+					<constraints nullable="false" />				
+				</column>
+				<column name="Status" type="varchar(40)" />
+				<column name="Remarks" type="Varchar(500)" />
+				
+				<column name="Version" type="int" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="varchar(50)" />
+				<column name="RoleCode" type="varchar(100)" />
+				<column name="NextRoleCode" type="varchar(200)" />
+				<column name="TaskId" type="varchar(50)" />
+				<column name="NextTaskId" type="varchar(200)" />
+				<column name="RecordType" type="varchar(50)" />
+				<column name="WorkFlowId" type="bigint">
+					<constraints nullable="false" />
+				</column>
+			</createTable>
+	</changeSet> 
 </databaseChangeLog>

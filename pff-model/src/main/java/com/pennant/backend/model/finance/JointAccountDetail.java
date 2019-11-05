@@ -24,6 +24,7 @@
  */
 package com.pennant.backend.model.finance;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,8 +45,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  * Model class for the <b>JountAccountDetail table</b>.<br>
  * 
  */
-@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory",
-		"sequence" })
+@XmlType(propOrder = { "custCIF", "lovDescCIFName", "includeRepay", "repayAccountId", "authoritySignatory", "sequence" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class JointAccountDetail extends AbstractWorkflowEntity implements Entity {
 	private static final long serialVersionUID = 1L;
@@ -90,6 +90,8 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 	private long custID;
 	private String auditYear;
 
+	private Date lovCustDob;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -120,6 +122,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 		excludeFields.add("customerExtLiabilityList");
 		excludeFields.add("custFinanceExposureList");
 		excludeFields.add("auditYear");
+		excludeFields.add("lovCustDob");
 
 		return excludeFields;
 	}
@@ -358,5 +361,13 @@ public class JointAccountDetail extends AbstractWorkflowEntity implements Entity
 
 	public void setAuditYear(String auditYear) {
 		this.auditYear = auditYear;
+	}
+
+	public Date getLovCustDob() {
+		return lovCustDob;
+	}
+
+	public void setLovCustDob(Date lovCustDob) {
+		this.lovCustDob = lovCustDob;
 	}
 }

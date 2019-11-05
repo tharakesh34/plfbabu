@@ -25,6 +25,7 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -128,6 +129,7 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 	private String custShrtName;
 
 	private CustomerDetails customerDetails;
+	private Date lovCustDob;
 
 	public GuarantorDetail() {
 		super();
@@ -153,6 +155,8 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 		excludeFields.add("custID");
 		excludeFields.add("custShrtName");
 		excludeFields.add("customerDetails");
+		excludeFields.add("lovCustDob");
+
 		return excludeFields;
 	}
 
@@ -551,5 +555,13 @@ public class GuarantorDetail extends AbstractWorkflowEntity implements Entity {
 
 	public void setCustomerDetails(CustomerDetails customerDetails) {
 		this.customerDetails = customerDetails;
+	}
+
+	public Date getLovCustDob() {
+		return lovCustDob;
+	}
+
+	public void setLovCustDob(Date lovCustDob) {
+		this.lovCustDob = lovCustDob;
 	}
 }
