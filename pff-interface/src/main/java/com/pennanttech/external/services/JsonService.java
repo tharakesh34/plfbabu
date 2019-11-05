@@ -121,7 +121,7 @@ public abstract class JsonService<T> {
 		HttpEntity<String> httpEntity = new HttpEntity<>(serviceDetail.getRequestString(),
 				getHttpHeader(serviceDetail.getHeaders(), serviceDetail.isXmlRequest()));
 		ResponseEntity<String> response = null;
-
+		logger.debug("HTTP Header Details :"+ httpEntity.getHeaders().toString());
 		String errorCode = "0000";
 		String errorDesc = null;
 		String status = InterfaceConstants.STATUS_SUCCESS;
@@ -240,11 +240,12 @@ public abstract class JsonService<T> {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP,
 					new InetSocketAddress(jsonServiceDetail.getProxyUrl(), jsonServiceDetail.getProxyPort()));
 			rf.setProxy(proxy);
+			logger.debug("Proxy Details:" +proxy.toString());
 		}
-
+		
 		return restTemplate;
 	}
-
+	
 	protected HttpHeaders getHttpHeader(HttpHeaders headers) {
 		return getHttpHeader(headers, false);
 	}
