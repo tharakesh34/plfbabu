@@ -559,7 +559,7 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 				cb = new Checkbox();
 				cb.setDisabled(true);
-				cb.setChecked(detail.isAllowPostPonement());
+				cb.setChecked(detail.isPdd());
 				lc = new Listcell();
 				cb.setParent(lc);
 				lc.setParent(item);
