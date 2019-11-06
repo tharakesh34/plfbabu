@@ -16627,7 +16627,7 @@ UNION ALL
 		<createSequence sequenceName="SEQ_RISKS_MITIGANTS"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="317" author="Varaprasad.K">
 		<createTable tableName="SANCTION_CONDITIONS_TEMP">
 			<column name="Id" type="bigint">
@@ -16688,7 +16688,7 @@ UNION ALL
 		<createSequence sequenceName="SEQ_SANCTION_CONDITIONS"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="320" author="Varaprasad.K">
 		<createView viewName="finjointaccountdetails_aview"
 			replaceIfExists="true">
@@ -16724,7 +16724,7 @@ UNION ALL
 				
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="321" author="Varaprasad.K">
 		<createView viewName="finjointaccountdetails_tview"
 			replaceIfExists="true">
@@ -16759,7 +16759,7 @@ UNION ALL
 				     JOIN customers t3 ON t1.custcif = t3.custcif
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="322" author="Varaprasad.K">
 		<createView viewName="finjointaccountdetails_tview"
 			replaceIfExists="true">
@@ -16827,7 +16827,7 @@ UNION ALL
 				          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="323" author="Varaprasad.K">
 		<createView viewName="finguarantorsdetails_view"
 			replaceIfExists="true">
@@ -16872,7 +16872,7 @@ UNION ALL
 				    t2.usrfname,
 				    t2.usrmname,
 				    t2.usrlname,
-				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    COALESCE(t3.custid, 0) AS custid,
 				    t3.custshrtname,
 					t3.custdob lovCustDob
 				   FROM finguarantorsdetails_temp t1
@@ -16920,7 +16920,7 @@ UNION ALL
 				    t2.usrfname,
 				    t2.usrmname,
 				    t2.usrlname,
-				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    COALESCE(t3.custid, 0) AS custid,
 				    t3.custshrtname,
 					t3.custdob lovCustDob
 				   FROM finguarantorsdetails t1
@@ -16931,7 +16931,7 @@ UNION ALL
 				          WHERE finguarantorsdetails_temp.guarantorid = t1.guarantorid))
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="324" author="Varaprasad.K">
 		<createView viewName="finguarantorsdetails_tview"
 			replaceIfExists="true">
@@ -16976,7 +16976,7 @@ UNION ALL
 				    t2.usrfname,
 				    t2.usrmname,
 				    t2.usrlname,
-				    COALESCE(t3.custid, 0::bigint) AS custid,
+				    COALESCE(t3.custid, 0) AS custid,
 				    t3.custshrtname,
 					t3.custdob lovCustDob
 				   FROM finguarantorsdetails_temp t1
@@ -16984,7 +16984,7 @@ UNION ALL
 				     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="325" author="Varaprasad.K">
 		<createView viewName="finguarantorsdetails_aview"
 			replaceIfExists="true">
@@ -17029,7 +17029,7 @@ UNION ALL
 					    t2.usrfname,
 					    t2.usrmname,
 					    t2.usrlname,
-					    COALESCE(t3.custid, 0::bigint) AS custid,
+					    COALESCE(t3.custid, 0) AS custid,
 					    t3.custshrtname,
 						t3.custdob lovCustDob
 					   FROM finguarantorsdetails t1
@@ -17037,7 +17037,7 @@ UNION ALL
 					     LEFT JOIN customers t3 ON t1.guarantorcif = t3.custcif
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="326" author="Varaprasad.K">
 		<createTable tableName="DealRecommendation_Merits_Temp">
 			<column name="Id" type="bigint">
@@ -17096,7 +17096,7 @@ UNION ALL
 		<createSequence sequenceName="Seq_DealRecommendation_Merits"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="329" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCE_CHECKLIST_TEMP">
 			<column name="id" type="bigint">
@@ -17118,7 +17118,7 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="330" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCE_CHECKLIST">
 			<column name="id" type="bigint">
@@ -17140,7 +17140,7 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="331" author="Varaprasad.K">
 		<createView viewName="DUE_DILIGENCE_CHECKLIST_VIEW"
 			replaceIfExists="true">
@@ -17181,7 +17181,7 @@ UNION ALL
 				
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="332" author="Varaprasad.K">
 		<createView viewName="DUE_DILIGENCE_CHECKLIST_AVIEW"
 			replaceIfExists="true">
@@ -17203,7 +17203,7 @@ UNION ALL
 				  due_diligence_checKlist T1 
 			</createView>
 	</changeSet>
-	
+
 	<changeSet id="333" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCES">
 			<column name="id" type="bigint">
@@ -17231,7 +17231,7 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="334" author="Varaprasad.K">
 		<createTable tableName="DUE_DILIGENCES_TEMP">
 			<column name="id" type="bigint">
@@ -17259,49 +17259,49 @@ UNION ALL
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="335" author="Varaprasad.K">
 		<addPrimaryKey tableName="DUE_DILIGENCES" columnNames="id"
 			constraintName="PK_DUE_DILIGENCES_Id" />
 	</changeSet>
-	
+
 	<changeSet id="336" author="Varaprasad.K">
 		<addPrimaryKey tableName="DUE_DILIGENCES_TEMP"
 			columnNames="id" constraintName="PK_DUE_DILIGENCES_TEMP_Id" />
 	</changeSet>
-	
+
 	<changeSet id="337" author="Varaprasad.K">
 		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST_TEMP"
 			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_TMP_Id" />
 	</changeSet>
-	
+
 	<changeSet id="338" author="Varaprasad.K">
 		<addPrimaryKey tableName="DUE_DILIGENCE_CHECKLIST"
 			columnNames="id" constraintName="PK_DUE_DILIGNCE_CHKLIST_Id" />
 	</changeSet>
-	
+
 	<changeSet id="339" author="Varaprasad.K">
 		<addForeignKeyConstraint constraintName="fk_DD_ParticularId"
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="340" author="Varaprasad.K">
 		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
 			referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
-	
+
 	<changeSet id="341" author="Varaprasad.K">
 		<createSequence sequenceName="SeqDUE_DILIGENCES"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="342" author="Varaprasad.K">
 		<createSequence sequenceName="SeqDUE_DILIGENCE_CHECKLIST"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="343" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
@@ -17310,7 +17310,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="344" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
@@ -17320,12 +17320,12 @@ UNION ALL
 	</changeSet>
 
 	<changeSet id="345" author="meena.a">
-	<sql>
+		<sql>
 			<![CDATA[ 
-				Delete ReasonCategory Where code = 'LOANCANCEL';
+				Delete from ReasonCategory Where code = 'LOANCANCEL';
 				Update seqReasonCategory set seqno = (seqno+1);
 				insert into ReasonCategory (id, code, description,  Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) values( (select (seqno+1) from seqReasonCategory), 'LOANCANCEL', 'Loan Cancelation',  1 , 1000, current_timestamp, 'Approved', '', '', '', '', '', 0);
 	 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
