@@ -4082,4 +4082,13 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="111" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				 update plf.data_engine_Column set constrainttype = 'O' where Name = 'MANDATE_REG_NO' And tableId IN (select Id from data_engine_table Where configId in (select id from data_engine_config where name = 'MANDATES_ACK'));
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
