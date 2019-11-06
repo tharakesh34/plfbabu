@@ -17314,7 +17314,7 @@ UNION ALL
 	<changeSet id="344" author="Varaprasad.K">
 		<sql>
 				<![CDATA[
-				  	INSERT INTO plf.STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES (SELECT MAX(TABID)+1 FROM STAGETABDETAIL, 'FinSumry', 'Financial Summary', 1)
+				  	 INSERT INTO STAGETABDETAIL (TABID, TABCODE, TABDESCRIPTION, active) VALUES ((select coalesce(max(tabid)+1,0 + 1) from STAGETABDETAIL), 'FinSumry', 'Financial Summary', 1)
 				]]>
 		</sql>
 	</changeSet>
