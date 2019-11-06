@@ -4053,7 +4053,7 @@ UNION ALL
 	<changeSet id="107" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				Delete from plf.ErrorDetails where Code = 'WFEE13'
+				Delete from plf.ErrorDetails where Code = 'WFEE13';
 				INSERT INTO plf.ErrorDetails VALUES ('WFEE13','EN','W','KYC details has changed, Do you want to proceed.','test','Approved','','','','','',0,null,1000,3);
 			]]>
 		</sql>
