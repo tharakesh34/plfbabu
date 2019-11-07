@@ -127,6 +127,8 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	private List<ExtendedFieldDetail> extendedFieldDetailsList = new ArrayList<ExtendedFieldDetail>();
 	private PagedListWrapper<ExtendedFieldDetail> extendedFieldPagedListWrapper;
 
+	private boolean isMarketableSecurities = false;
+
 	public ExtendedFieldDialogCtrl() {
 		super();
 	}
@@ -162,6 +164,9 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				setExtendedFieldHeader(null);
 			}
 
+			if (arguments.containsKey("isMarketableSecurities")) {
+				this.isMarketableSecurities = (boolean) arguments.get("isMarketableSecurities");
+			}
 			if (event.getTarget().getParent() != null) {
 				parentTabPanel = event.getTarget().getParent();
 			}
@@ -374,21 +379,23 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				unitPrice.setInputElement(true);
 				unitPrice.setEditable(true);
 
-				ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
-				hsnCode.setFieldName("HSNCODE");
-				hsnCode.setFieldLabel("HSN / ISIN Code");
-				hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
-				hsnCode.setFieldLength(20);
-				hsnCode.setFieldSeqOrder(50);
-				hsnCode.setFieldMandatory(true);
-				hsnCode.setRecordType(PennantConstants.RCD_ADD);
-				hsnCode.setVersion(1);
-				hsnCode.setInputElement(true);
-				hsnCode.setFieldList("HSNCodeData");
-				hsnCode.setFieldConstraint("HSNCode");
-				hsnCode.setEditable(true);
+				if (this.isMarketableSecurities) {
+					ExtendedFieldDetail hsnCode = new ExtendedFieldDetail();
+					hsnCode.setFieldName("HSNCODE");
+					hsnCode.setFieldLabel("HSN / ISIN Code");
+					hsnCode.setFieldType(ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO);
+					hsnCode.setFieldLength(20);
+					hsnCode.setFieldSeqOrder(50);
+					hsnCode.setFieldMandatory(true);
+					hsnCode.setRecordType(PennantConstants.RCD_ADD);
+					hsnCode.setVersion(1);
+					hsnCode.setInputElement(true);
+					hsnCode.setFieldList("HSNCodeData");
+					hsnCode.setFieldConstraint("HSNCode");
+					hsnCode.setEditable(true);
+					aExtendedFieldHeader.getExtendedFieldDetails().add(hsnCode);
+				}
 
-				aExtendedFieldHeader.getExtendedFieldDetails().add(hsnCode);
 				aExtendedFieldHeader.getExtendedFieldDetails().add(unitPrice);
 				aExtendedFieldHeader.getExtendedFieldDetails().add(unitCount);
 
@@ -894,5 +901,15 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		if (StringUtils.trimToNull(this.tabHeading.getValue()) == null) {
 			this.tabHeading.setValue(subModuledesc);
 		}
+	}
+
+	public void doSetList(boolean isMarketableSecurities, ExtendedFieldHeader extendedFieldHeader) {
+		this.isMarketableSecurities = isMarketableSecurities;
+		if (isMarketableSecurities) {
+			extendedFieldHeader.setNumberOfColumns("3");
+		} else {
+			extendedFieldHeader.setNumberOfColumns("2");
+		}
+		doWriteBeanToComponents(extendedFieldHeader);
 	}
 }

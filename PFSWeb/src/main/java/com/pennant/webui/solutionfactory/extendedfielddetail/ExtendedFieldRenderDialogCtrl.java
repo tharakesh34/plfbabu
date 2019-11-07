@@ -239,7 +239,9 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 				map.put("queryCode", this.queryCode);
 				map.put("currentValue", this.currentValue);
 				map.put("isCommodity", this.isCommodity);
-				map.put("hsnCodes", getSelectedHSNCodes(getHSNCodeValue(fieldRender.getMapValues())));
+				if(this.isCommodity) {
+					map.put("hsnCodes", getSelectedHSNCodes(getHSNCodeValue(fieldRender.getMapValues())));
+				}
 				// call the zul-file with the parameters packed in a map
 				try {
 					Executions.createComponents(
@@ -317,8 +319,10 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 		map.put("queryCode", this.queryCode);
 		map.put("currentValue", this.currentValue);
 		map.put("isCommodity", this.isCommodity);
-		map.put("hsnCodes", getSelectedHSNCodes(null));
-
+		if(this.isCommodity) {
+			map.put("hsnCodes", getSelectedHSNCodes(null));
+		}
+		
 		Executions.createComponents("/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldCaptureDialog.zul",
 				window_ExtendedFieldRenderDialog, map);
 
