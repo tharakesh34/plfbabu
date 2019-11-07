@@ -17328,4 +17328,106 @@ UNION ALL
 	 		]]>
 		</sql>
 	</changeSet>
+	<changeSet id="346" author="Varaprasad.K">
+		<createView viewName="finjointaccountdetails_tview"
+			replaceIfExists="true">
+			SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails_temp t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+			</createView>
+	</changeSet>
+	
+	<changeSet id="347" author="Varaprasad.K">
+		<createView viewName="finjointaccountdetails_view"
+			replaceIfExists="true">
+			SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails_temp t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+				UNION ALL
+				 SELECT t1.jointaccountid,
+				    t1.finreference,
+				    t1.custcif,
+				    t1.includerepay,
+				    t1.repayaccountid,
+				    t1.catofcoapplicant,
+				    t1.authoritysignatory,
+				    t1.sequence,
+				    t1.includeincome,
+				    t1.version,
+				    t1.lastmntby,
+				    t1.lastmnton,
+				    t1.recordstatus,
+				    t1.rolecode,
+				    t1.nextrolecode,
+				    t1.taskid,
+				    t1.nexttaskid,
+				    t1.recordtype,
+				    t1.workflowid,
+				    t2.usrlogin,
+				    t2.usrfname,
+				    t2.usrmname,
+				    t2.usrlname,
+				    t3.custshrtname AS lovdesccifname,
+				    t3.custid,
+					t3.custdob lovCustDob
+				   FROM finjointaccountdetails t1
+				     LEFT JOIN secusers t2 ON t1.lastmntby = t2.usrid
+				     JOIN customers t3 ON t1.custcif = t3.custcif
+				  WHERE NOT (EXISTS ( SELECT 1
+				           FROM finjointaccountdetails_temp
+				          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
+			</createView>
+	</changeSet>
 </databaseChangeLog>
