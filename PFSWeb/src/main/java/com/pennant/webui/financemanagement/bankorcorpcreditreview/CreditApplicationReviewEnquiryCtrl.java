@@ -1108,15 +1108,16 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
 			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
 			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
-			btMap.put("MARGINI", custWiseDataMap.get("Y2_SM_MARGIN"));
 
 			btMap.put("DSCR_GF", format(custWiseDataMap.get("Y2_DSCR_GF")));
 			btMap.put("CRNTRATIO", format(custWiseDataMap.get("Y2_CRNT_RATIO")));
-			btMap.put("DSCR_PBDIT", format(custWiseDataMap.get("Y2_DSCR_PBDIT")));
-			btMap.put("EMI_ALL_LOANS", format(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS")));
-			btMap.put("ANNUAL_TURNOVER", format(custWiseDataMap.get("Y2_SALES_OTHER_INCOME")));
+			btMap.put("DSCR_PBDIT", format(custWiseDataMap.get("Y2_DSCR_PBDIT")).replace(",", ""));
+			
 			btMap.put("DEBTEQUITY", format(custWiseDataMap.get("Y2_DEBT_EQUITY")));
-
+			btMap.put("ANNUAL_TURNOVER", unFormat(new BigDecimal(custWiseDataMap.get("Y2_SALES_OTHER_INCOME"))));
+			btMap.put("EMI_ALL_LOANS", unFormat(new BigDecimal(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"))));
+			btMap.put("MARGINI", unFormat(new BigDecimal(custWiseDataMap.get("Y2_SM_MARGIN"))));
+			
 			if (i == 0) {
 				break;
 			}

@@ -243,6 +243,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("ABB_EMI", creditReviewDetails.getTotalAbb());
 			dataMap.put("MARGINI", btMap.get("MARGINI"));
 			dataMap.put("ANNUAL_TURNOVER", btMap.get("ANNUAL_TURNOVER"));
+			financeDetail.setCreditRevDataMap(dataMap);
 
 		} else {
 			doFillExternalLiabilities(appExtLiabilities, dataMap);
@@ -265,9 +266,9 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 			dataMap.put("OTSTNDNGAMNT", creditReviewDetails.getOutStandingLoanAmt());
 			dataMap.put("CC_ACNTKIMIT", creditReviewDetails.getAccountLimit());
 			dataMap.put("LNAMNT_BT", creditReviewDetails.getLoanAmount());
+			financeDetail.setCreditRevDataMap(dataMap);
 		}
-
-		financeDetail.setCreditRevDataMap(dataMap);
+	
 		String fields = creditReviewDetails.getFields();
 
 		if (StringUtils.isNotBlank(fields)) {

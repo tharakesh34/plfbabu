@@ -4689,10 +4689,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					}
 
-					BigDecimal finAmt = this.finAmount.getActualValue();
+					BigDecimal repayAmt = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(1)
+							.getRepayAmount();
 					BigDecimal compreValue = BigDecimal.ZERO;
-					if (finAmt.compareTo(compreValue) != 0) {
-						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal().divide(finAmt, RoundingMode.HALF_DOWN);
+					if (repayAmt.compareTo(compreValue) != 0) {
+						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal()
+								.divide(PennantApplicationUtil.formateAmount(repayAmt, 2), RoundingMode.HALF_DOWN);
 						creditReviewDetail.setTotalAbb(totalAbb);
 
 					}
@@ -21533,11 +21535,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			fields.append("TENOR,");
 			dataMap.put("TENOR", tenor);
 		}
-		BigDecimal finAmountValue = this.finAmount.getActualValue();
+		BigDecimal repayAmountValue = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails().get(1)
+				.getRepayAmount();
 		BigDecimal compreValue = BigDecimal.ZERO;
 		BigDecimal totalAbb = BigDecimal.ZERO;
-		if (finAmountValue.compareTo(compreValue) != 0) {
-			totalAbb = creditReviewDetails.getAvgBankBal().divide(finAmountValue, RoundingMode.HALF_DOWN);
+		if (repayAmountValue.compareTo(compreValue) != 0) {
+			totalAbb = creditReviewDetails.getAvgBankBal()
+					.divide(PennantApplicationUtil.formateAmount(repayAmountValue, 2), RoundingMode.HALF_DOWN);
 			creditReviewDetails.setTotalAbb(totalAbb);
 		}
 
