@@ -505,6 +505,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			jVPosting.setWorkflowId(0);
 			jVPosting.setRecordType("");
 			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
+			//Bug fix before main table saving delete data in temp table
+			getjVPostingDAO().delete(jVPosting, "_Temp");
 			// Saving In main Table
 			getjVPostingDAO().save(jVPosting, "");
 		}

@@ -6338,6 +6338,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//TODO for API Fix me
 		FinanceMain financeMainAvl = getFinanceMainDAO().getFinanceMainById(financeMain.getFinReference(), "_Temp",
 				false);
+		financeMain.setLastMntOn(new Timestamp(DateUtility.getAppDate().getTime()));
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl != null) {
 			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, isWIF);
 		}
