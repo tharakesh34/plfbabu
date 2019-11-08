@@ -483,7 +483,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.leadId.setValue(financeMainDetails.getApplicationNo());
 			this.proposedTenor.setValue(financeMainDetails.getNumberOfTerms());
 			this.actualTenor.setValue(financeMainDetails.getNumberOfTerms());
-			this.source.setValue(financeMainDetails.getDsaCodeDesc());
+			this.source.setValue(financeMainDetails.getDsaName());
 			this.proposedLoanAmount.setValue(PennantApplicationUtil.formateAmount(
 					financeMainDetails.getFinAssetValue(), format));
 			this.overallLTV.setValue("");
