@@ -1837,8 +1837,8 @@ public class ReceiptCalculator implements Serializable {
 					if (RepayConstants.ALLOCATION_NPFT.equals(allocate.getAllocationType())) {
 						for (ReceiptAllocationDetail all : rch.getAllocations()) {
 							if (RepayConstants.ALLOCATION_EMI.equals(all.getAllocationType())) {
-								all.setTotalPaid(allocate.getTotalPaid().add(payNow));
-								all.setPaidAmount(allocate.getPaidAmount().add(payNow));
+								all.setTotalPaid(all.getTotalPaid().add(payNow));
+								all.setPaidAmount(all.getPaidAmount().add(payNow));
 								break;
 							}
 						}
@@ -1917,8 +1917,9 @@ public class ReceiptCalculator implements Serializable {
 				BigDecimal pftPaid = allocate.getTotalPaid();
 
 				// 27-08-19 Rounding Off issue
+				//Advance Interest not adjected in loan issue fixed
 				if (lastSchd.isTDSApplicable()) {
-					pftPaid = npftPaid.add(getTDS(npftPaid));
+					pftPaid = getNetOffTDS(npftPaid);
 				} else {
 					npftPaid = pftPaid;
 				}

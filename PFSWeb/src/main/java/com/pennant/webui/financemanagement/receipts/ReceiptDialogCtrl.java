@@ -5721,6 +5721,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return false;
 			}
 		}
+		//validation throw in manuval advice payable in receipts
+		if (receiptData.getPaidNow().compareTo(BigDecimal.ZERO) <= 0 && isKnockOff && receiptPurposeCtg == 0)  {
+			MessageUtil.showError(Labels.getLabel("label_Allocation_No_Due_KnockedOff"));
+			return false;
+		}
 
 		// No excess amount validation on partial Settlement
 		if (receiptPurposeCtg == 1) {
