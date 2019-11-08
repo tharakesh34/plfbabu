@@ -3432,6 +3432,8 @@
 		<property name="sanctionConditionsDAO" ref="sanctionConditionsDAO" />
 		<property name="dealRecommendationMeritsDAO" ref="dealRecommendationMeritsDAO" />
 		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
+		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
+		
 		
 		
 	</bean>
@@ -11532,6 +11534,34 @@
 
 	<bean name="dueDiligenceDetailsServiceTarget" class="com.pennant.backend.service.finance.financialsummary.impl.DueDiligenceDetailsServiceImpl">
 		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		
+	</bean>
+	
+	<!--============ Financial Summary Recommendation Notes Details ============== -->
+	<bean id="recommendationNotesDetailsDAO" class="com.pennant.backend.dao.finance.financialSummary.impl.RecommendationNotesDetailsDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="recommendationNotesDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="recommendationNotesDetailsServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="recommendationNotesDetailsServiceTarget" class="com.pennant.backend.service.finance.financialsummary.impl.RecommendationNotesDetailsServiceImpl">
+		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		
 	</bean>
