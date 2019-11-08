@@ -7344,6 +7344,7 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="vehicleDealerService" ref="vehicleDealerService" />
 		<property name="insuranceDetailDAO" ref="insuranceDetailDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
 	</bean>
 
 	<!-- Beneficiary -->

@@ -103,7 +103,7 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 		APIErrorHandlerService.logKeyFields(logFields);
 		VASRecording response = null;
 		try {
-			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording);
+			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording,false);
 
 			if (auditDetail.getErrorDetails() != null) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -339,6 +339,45 @@ public class VASWebServiceImpl implements VASSoapService, VASRestService {
 			vASRecordingDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 		}
 		return vASRecordingDetail;
+	}
+	
+	@Override
+	public VASRecording pendingRecordVAS(VASRecording vasRecording) throws ServiceException {
+		logger.debug("Enetring");
+		// validate recordVAS details as per the API specification
+		// bean validations
+		validationUtility.validate(vasRecording, SaveValidationGroup.class);
+		if (StringUtils.isNotBlank(vasRecording.getPrimaryLinkRef())) {
+			APIErrorHandlerService.logReference(vasRecording.getPrimaryLinkRef());
+		}
+		// for logging purpose
+		String[] logFields = new String[4];
+		logFields[0] = vasRecording.getProductCode();
+		logFields[1] = vasRecording.getPostingAgainst();
+		logFields[2] = String.valueOf(vasRecording.getFee());
+		logFields[3] = vasRecording.getFeePaymentMode();
+		APIErrorHandlerService.logKeyFields(logFields);
+		VASRecording response = null;
+		try {
+			AuditDetail auditDetail = vASRecordingService.doValidations(vasRecording, true);
+
+			if (auditDetail.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
+					response = new VASRecording();
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+			// call controller
+			response = vasController.pendingRecordVAS(vasRecording);
+		} catch (Exception e) {
+			logger.error(e);
+			response = new VASRecording();
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+		logger.debug("Leaving");
+		return response;
 	}
 
 	@Autowired

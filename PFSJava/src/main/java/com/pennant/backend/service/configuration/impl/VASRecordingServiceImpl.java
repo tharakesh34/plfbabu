@@ -56,6 +56,7 @@ import java.util.regex.Pattern;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -66,6 +67,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.AccountProcessUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
@@ -88,6 +90,7 @@ import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
+import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
 import com.pennant.backend.dao.rulefactory.FinFeeScheduleDetailDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -196,6 +199,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private AccountingSetDAO accountingSetDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private InsuranceDetailDAO insuranceDetailDAO;
+	private FinanceTypeDAO financeTypeDAO;
 
 	public AuditHeaderDAO getAuditHeaderDAO() {
 		return auditHeaderDAO;
@@ -351,6 +355,25 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					vASRecording.getVasConfiguration().getExtendedFieldHeader(), tableType, 0);
 
 			auditDetails.addAll(details);
+		}
+		if (StringUtils.equals(vASRecording.getSourceId(), PennantConstants.FINSOURCE_ID_API)
+				&& !CollectionUtils.isEmpty(vASRecording.getFinFeeDetailsList())) {
+			for (FinFeeDetail finFeeDetail : vASRecording.getFinFeeDetailsList()) {
+				long id = getFinFeeDetailDAO().save(finFeeDetail, false, "_temp");
+				finFeeDetail.setFeeID(id);
+				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+						CalculationConstants.REMFEE_PART_OF_SALE_PRICE)
+						&& StringUtils.equals(vASRecording.getPostingAgainst(), VASConsatnts.VASAGAINST_FINANCE)) {
+					String errorCodes = procAddVasFees(vASRecording, finFeeDetail);
+					if (StringUtils.isNotBlank(errorCodes)) {
+						ErrorDetail errorDetail = new ErrorDetail(errorCodes, null);
+						auditHeader
+								.setErrorDetails(ErrorUtil.getErrorDetail(errorDetail, auditHeader.getUsrLanguage()));
+						logger.debug("Leaving");
+						return auditHeader;
+					}
+				}
+			}
 		}
 
 		auditHeader.setAuditDetails(auditDetails);
@@ -891,7 +914,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		}
 
 		// Get Schedule Details of Primary Link Reference and check paid Status
-		FinScheduleData scheduleData = getFinSchDataByFinRef(recording.getPrimaryLinkRef());
+		FinScheduleData scheduleData = getFinSchDataByFinRef(recording.getPrimaryLinkRef(),false);
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		boolean isSchdPaid = false;
 		Date recalFromDate = null;
@@ -956,12 +979,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 
 			// Finance Data Deletion
-			listDeletion(financeMain.getFinReference());
+			listDeletion(financeMain.getFinReference(),false);
 
 			// Schedule Updations
 			scheduleData.getFinanceMain().setVersion(financeMain.getVersion() + 1);
 			financeMainDAO.update(scheduleData.getFinanceMain(), TableType.MAIN_TAB, false);
-			listSave(scheduleData);
+			listSave(scheduleData,false);
 
 		} else if (StringUtils.equals(vasFeeDetail.getFeeScheduleMethod(),
 				CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
@@ -1005,15 +1028,27 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param isWIF
 	 *            (boolean)
 	 **/
-	private FinScheduleData getFinSchDataByFinRef(String finReference) {
+	private FinScheduleData getFinSchDataByFinRef(String finReference, boolean isPennding) {
 		logger.debug("Entering");
 
 		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
-		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
-		finSchData
-				.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false));
-		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, "", false));
+		if (!isPennding) {
+			finSchData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "", false));
+			finSchData
+					.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false));
+			finSchData.setDisbursementDetails(
+					financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false));
+			finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, "", false));
+		} else {
+			finSchData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, "_View", false));
+			finSchData.setFinanceScheduleDetails(
+					financeScheduleDetailDAO.getFinScheduleDetails(finReference, "_View", false));
+			finSchData.setDisbursementDetails(
+					financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "_View", false));
+			finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, "_View", false));
+			finSchData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "_View"));
+			finSchData.setFinanceType(financeTypeDAO.getFinanceTypeByFinType(finSchData.getFinanceMain().getFinType()));
+		}
 		logger.debug("Leaving");
 		return finSchData;
 	}
@@ -1025,35 +1060,54 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	 * @param tableType
 	 * @param isWIF
 	 */
-	private void listDeletion(String finReference) {
+	private void listDeletion(String finReference, boolean isPennding) {
 		logger.debug("Entering");
-		financeScheduleDetailDAO.deleteByFinReference(finReference, "", false, 0);
-		financeDisbursementDAO.deleteByFinReference(finReference, "", false, 0);
-		repayInstructionDAO.deleteByFinReference(finReference, "", false, 0);
+		if (!isPennding) {
+			financeScheduleDetailDAO.deleteByFinReference(finReference, "", false, 0);
+			financeDisbursementDAO.deleteByFinReference(finReference, "", false, 0);
+			repayInstructionDAO.deleteByFinReference(finReference, "", false, 0);
+		} else {
+			financeScheduleDetailDAO.deleteByFinReference(finReference, "_temp", false, 0);
+			financeDisbursementDAO.deleteByFinReference(finReference, "_temp", false, 0);
+			repayInstructionDAO.deleteByFinReference(finReference, "_temp", false, 0);
+		}
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Method to save Finance Details
 	 */
-	private void listSave(FinScheduleData schData) {
+	private void listSave(FinScheduleData schData, boolean isPendding) {
 		logger.debug("Entering");
+		if (!isPendding) {
+			for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
+				schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
 
-		for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
-			schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
+				schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "", false);
+
+			for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
+				schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			repayInstructionDAO.saveList(schData.getRepayInstructions(), "", false);
+		} else {
+			for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
+				schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "_Temp", false);
+			for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
+				schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "_Temp", false);
+			for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
+				schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
+			}
+			repayInstructionDAO.saveList(schData.getRepayInstructions(), "_Temp", false);
 		}
-		financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
-
-		for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
-			schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-		}
-		financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "", false);
-
-		for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
-			schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-		}
-		repayInstructionDAO.saveList(schData.getRepayInstructions(), "", false);
-
 		logger.debug("Leaving");
 	}
 
@@ -1976,7 +2030,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	//validations For API Specific
 	@Override
-	public AuditDetail doValidations(VASRecording vasRecording) {
+	public AuditDetail doValidations(VASRecording vasRecording, boolean isPending) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
@@ -2072,7 +2126,19 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			} else if (StringUtils.equalsIgnoreCase(VASConsatnts.VASAGAINST_FINANCE,
 					vasRecording.getPostingAgainst())) {
-				int count = financeMainDAO.getFinanceCountById(vasRecording.getPrimaryLinkRef(), "", false);
+				int count = 0;
+				if (isPending) {
+					count = financeMainDAO.getFinanceCountById(vasRecording.getPrimaryLinkRef(), "_Temp", false);
+					if (count > 0) {
+						FinanceMain financeMain = financeMainDAO.getFinanceMainById(vasRecording.getPrimaryLinkRef(),
+								"_Temp", false);
+						if (financeMain != null) {
+							vasRecording.setWorkflowId(financeMain.getWorkflowId());
+						}
+					}
+				} else {
+					count = financeMainDAO.getFinanceCountById(vasRecording.getPrimaryLinkRef(), "", false);
+				}
 				if (count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = vasRecording.getPrimaryLinkRef();
@@ -2461,6 +2527,69 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				}
 			}
 		}
+		if (isPending) {
+			if (CollectionUtils.isEmpty(vasRecording.getFinFeeDetailsList())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "fees";
+				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+				auditDetail.setErrorDetail(errorDetail);
+				return auditDetail;
+			}
+			for (FinFeeDetail finFeeDetail : vasRecording.getFinFeeDetailsList()) {
+				if (finFeeDetail.getActualAmount().compareTo(BigDecimal.ZERO) <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "feeAmount";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				} else {
+					if (finFeeDetail.getActualAmount().compareTo(vasRecording.getFee()) != 0) {
+						String[] valueParm = new String[3];
+						valueParm[0] = "fee ";
+						valueParm[1] = "feeAmount";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90277", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+				if (StringUtils.isBlank(finFeeDetail.getFeeScheduleMethod())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "feeMethod";
+					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm));
+					auditDetail.setErrorDetail(errorDetail);
+					return auditDetail;
+				} else {
+					if (!StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), FinanceConstants.BPI_NO)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_DISBURSE)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PART_OF_SALE_PRICE)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_PAID_BY_CUSTOMER)
+							&& !StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+									CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+						String[] valueParm = new String[2];
+						valueParm[0] = finFeeDetail.getFeeScheduleMethod();
+						valueParm[1] = CalculationConstants.REMFEE_PART_OF_DISBURSE + ","
+								+ CalculationConstants.REMFEE_PART_OF_SALE_PRICE + ","
+								+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
+								+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
+								+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ","
+								+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ","
+								+ CalculationConstants.REMFEE_WAIVED_BY_BANK;
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90243", "", valueParm));
+						auditDetail.setErrorDetail(errorDetail);
+						return auditDetail;
+					}
+				}
+			}
+		}
 		logger.debug("Leaving");
 		return auditDetail;
 	}
@@ -2516,6 +2645,64 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		return auditDetailsList;
 	}
 
+	private String procAddVasFees(VASRecording vASRecording, FinFeeDetail finFeeDetail) {
+		// get Schedule date
+		FinScheduleData finScheduleData = getFinSchDataByFinRef(vASRecording.getPrimaryLinkRef(), true);
+		FinanceMain finMian = finScheduleData.getFinanceMain();
+		List<FinanceScheduleDetail> schdList = finScheduleData.getFinanceScheduleDetails();
+		boolean isSchdPaid = false;
+		Date recalFromDate = null;
+		for (int i = 1; i < schdList.size(); i++) {
+			FinanceScheduleDetail curSchd = schdList.get(i);
+			if (recalFromDate == null) {
+				recalFromDate = curSchd.getSchDate();
+			}
+			if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdFeePaid().compareTo(BigDecimal.ZERO) > 0
+					|| curSchd.getSchdInsPaid().compareTo(BigDecimal.ZERO) > 0) {
+				if (!StringUtils.equals(FinanceConstants.FLAG_BPI, curSchd.getBpiOrHoliday())) {
+					isSchdPaid = true;
+					break;
+				}
+			}
+		}
+
+		// If Schedules Paid for any dates then VAS not allowed
+		if (isSchdPaid) {
+			logger.debug("Leaving");
+			return "90325";
+		}
+		if (!vASRecording.getFinFeeDetailsList().isEmpty() && finScheduleData != null) {
+			finScheduleData.getFinFeeDetailList().addAll(vASRecording.getFinFeeDetailsList());
+			finMian.setEventFromDate(finMian.getFinStartDate());
+			finMian.setEventToDate(finMian.getMaturityDate());
+			finMian.setRecalFromDate(recalFromDate);
+			finMian.setRecalToDate(finMian.getMaturityDate());
+			finMian.setFeeChargeAmt(finMian.getFeeChargeAmt().add(finFeeDetail.getActualAmount()));
+			finMian.setBefImage(finMian);
+			FinanceScheduleDetail fsd = finScheduleData.getFinanceScheduleDetails().get(0);
+			if (fsd != null) {
+				fsd.setFeeChargeAmt(finMian.getFeeChargeAmt() == null ? BigDecimal.ZERO : finMian.getFeeChargeAmt());
+			}
+			// Schedule Recalculation
+			finScheduleData = ScheduleCalculator.reCalSchd(finScheduleData, finMian.getScheduleMethod());
+			// Schedule Recalculation
+			if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
+				finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
+			}
+			// Finance Data Deletion
+			listDeletion(finMian.getFinReference(), true);
+
+			// Schedule Updations
+			finScheduleData.getFinanceMain().setVersion(finMian.getVersion() + 1);
+			financeMainDAO.update(finScheduleData.getFinanceMain(), TableType.TEMP_TAB, false);
+			listSave(finScheduleData, true);
+		}
+
+		return null;
+	}
+	
 	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
 		return financeReferenceDetailDAO;
 	}
@@ -2714,6 +2901,18 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
 		this.insuranceDetailDAO = insuranceDetailDAO;
+	}
+
+	public FinFeeDetailDAO getFinFeeDetailDAO() {
+		return finFeeDetailDAO;
+	}
+
+	public FinanceTypeDAO getFinanceTypeDAO() {
+		return financeTypeDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
 	}
 
 }

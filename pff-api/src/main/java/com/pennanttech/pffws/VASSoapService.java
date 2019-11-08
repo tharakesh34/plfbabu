@@ -26,4 +26,7 @@ public interface VASSoapService {
 
 	@WebResult(name = "vasRecording")
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException;
+
+	@WebResult(name = "vasRecording")
+	public VASRecording pendingRecordVAS(VASRecording vasRecording) throws ServiceException;
 }

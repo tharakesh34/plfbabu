@@ -171,6 +171,7 @@ public class VASRecording extends AbstractWorkflowEntity {
 	private List<FinanceReferenceDetail> checkLists = null;
 	private VasCustomer vasCustomer = null;
 	private List<ReturnDataSet> returnDataSetList = new ArrayList<ReturnDataSet>(1);
+	@XmlElement(name = "fees")
 	private List<FinFeeDetail> finFeeDetailsList = new ArrayList<FinFeeDetail>();
 	@XmlElementWrapper(name = "extendedDetails")
 	@XmlElement(name = "extendedDetail")

@@ -69,7 +69,7 @@ public interface VASRecordingService {
 
 	VASRecording getProcessEditorDetails(VASRecording vASRecording, String role, String finserEventOrg);
 
-	AuditDetail doValidations(VASRecording vasRecording);
+	AuditDetail doValidations(VASRecording vasRecording, boolean isPending);
 
 	VasCustomer getVasCustomerDetails(String primaryLinkRef, String postingAgainst);
 

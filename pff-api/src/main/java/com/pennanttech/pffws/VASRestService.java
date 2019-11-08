@@ -34,4 +34,8 @@ public interface VASRestService {
 	@Path("/vasService/getVASRecordings")
 	public VASRecordingDetail getVASRecordings(VASRecording vasRecording) throws ServiceException;
 
+	@POST
+	@Path("/vasService/pendingRecordVAS")
+	public VASRecording pendingRecordVAS(VASRecording vasRecording) throws ServiceException;
+
 }
