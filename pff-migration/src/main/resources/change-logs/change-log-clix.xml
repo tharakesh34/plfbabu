@@ -4090,5 +4090,26 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="112" author="Varaprasad.K">
+		<sql>
+		    <![CDATA[
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(1,'Promoter Background & Succession');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(2,'Promoter Background & Business Details - Change in business ( Addition/Deletion of outlets/Porducts etc>) and ownership/shareholding');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(3,'Post our last Funding');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(4,'Business Model/ Nature of Business');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(5,'Business Background (including reference to current POS machine usage)');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(6,'Customer/Suppliers Details');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(7,'Financial Synopsis and Comments');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(8,'End Use of Funds');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(9,'End Use of our earlier Loan and new Loan and how has old end use impacted his business');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(10,'Banking- CARD Sales and Total Sales');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(11,'RTR details/Summary');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(12,'Comment on Location and catchment area of outlet/Infrastructure changes happening around the location');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(13,'Comment on Existing Clix loan performance for Top-up cases');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(14,'Incase the account has been above 10 DPD in the last 15 days  - please check for reason behind this delay (and whether payment came via NACH/RTGS)');
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(15,'No of POS Machines used by customer at Outlet/Outlet’s where our Machine is being installed Other Information');
+			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>

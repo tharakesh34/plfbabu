@@ -5518,7 +5518,7 @@
 		<property name="dueDiligenceDetailsDAO" ref="dueDiligenceDetailsDAO" />
 		<property name="notesDAO" ref="notesDAO" />
 		<property name="queryDetailDAO" ref="queryDetailDAO" />
-		
+		<property name="recommendationNotesDetailsDAO" ref="recommendationNotesDetailsDAO" />
 	</bean>
 	<bean id="risksAndMitigantsDialogCtrl" class="com.pennant.webui.finance.financialsummary.RisksAndMitigantsDialogCtrl"
 		parent="basisCtrl" scope="prototype">

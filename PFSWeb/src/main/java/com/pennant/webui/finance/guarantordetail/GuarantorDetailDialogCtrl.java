@@ -249,6 +249,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	private String addrProvinceTemp;
 	private BigDecimal totSharePerc;
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
+	private boolean isEnqProcess = false;
+	private boolean finsumryGurnatorEnq = false;
 
 	/**
 	 * default constructor.<br>
@@ -369,6 +371,20 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 				primaryList = getGuarantorDetailService().getPrimaryExposureList(getGuarantorDetail());
 				secoundaryList = getGuarantorDetailService().getSecondaryExposureList(getGuarantorDetail());
 				guarantorList = getGuarantorDetailService().getGuarantorExposureList(getGuarantorDetail());
+			}
+			if (enqiryModule) {
+				this.moduleType = PennantConstants.MODULETYPE_ENQ;
+			}
+			if (arguments.containsKey("isEnqProcess")) {
+				isEnqProcess = (Boolean) arguments.get("isEnqProcess");
+				this.moduleType = PennantConstants.MODULETYPE_ENQ;
+			}
+			if (arguments.containsKey("CustomerEnq")) {
+				setNewRecord(false);
+				setNewGuarantor(false);
+			}
+			if (arguments.containsKey("finsumryGurnatorEnq")) {
+				finsumryGurnatorEnq = (Boolean) arguments.get("finsumryGurnatorEnq");
 			}
 			doSetFieldProperties();
 			doShowDialog(getGuarantorDetail());
@@ -691,11 +707,17 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			}
 			this.window_GuarantorDetailDialog.setHeight("90%");
 			this.window_GuarantorDetailDialog.setWidth("90%");
+			if(finsumryGurnatorEnq){
+				dofinSummaryReadOnly();
+				this.window_GuarantorDetailDialog.doModal();
+			}
 			if (isNewGuarantor()) {
 				this.groupboxWf.setVisible(false);
 				this.window_GuarantorDetailDialog.doModal();
 			} else {
-				setDialog(DialogType.EMBEDDED);
+				if(!finsumryGurnatorEnq){
+					setDialog(DialogType.EMBEDDED);
+				}
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -773,6 +795,21 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.recordStatus.setValue("");
 			this.userAction.setSelectedIndex(0);
 		}
+		// Address Details
+		if(finsumryGurnatorEnq){
+			this.addrHNbr.setReadonly(true);
+			this.flatNbr.setReadonly(true);
+			this.addrStreet.setReadonly(true);
+			this.addrLine1.setReadonly(true);
+			this.addrLine2.setReadonly(true);
+			this.poBox.setReadonly(true);
+			this.addrCountry.setReadonly(true);
+			this.addrProvince.setReadonly(true);
+			this.addrCity.setReadonly(true);
+			this.cityName.setReadonly(true);
+			this.addrZIP.setReadonly(true);
+		}
+		
 		logger.debug("Leaving");
 	}
 
@@ -821,6 +858,20 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 			this.addrCity.setValue("");
 			this.cityName.setValue("");
 			this.addrZIP.setValue("");
+			// Address Details
+			if(finsumryGurnatorEnq){
+				this.addrHNbr.setReadonly(true);
+				this.flatNbr.setReadonly(true);
+				this.addrStreet.setReadonly(true);
+				this.addrLine1.setReadonly(true);
+				this.addrLine2.setReadonly(true);
+				this.poBox.setReadonly(true);
+				this.addrCountry.setReadonly(true);
+				this.addrProvince.setReadonly(true);
+				this.addrCity.setReadonly(true);
+				this.cityName.setReadonly(true);
+				this.addrZIP.setReadonly(true);
+			}
 		}
 	}
 
@@ -2418,6 +2469,26 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		logger.debug("Leaving");
 
 		return custID;
+	}
+	public void dofinSummaryReadOnly() {
+		logger.debug("Entering");
+		
+		// Address Details
+		if(finsumryGurnatorEnq){
+			this.addrHNbr.setReadonly(true);
+			this.flatNbr.setReadonly(true);
+			this.addrStreet.setReadonly(true);
+			this.addrLine1.setReadonly(true);
+			this.addrLine2.setReadonly(true);
+			this.poBox.setReadonly(true);
+			this.addrCountry.setReadonly(true);
+			this.addrProvince.setReadonly(true);
+			this.addrCity.setReadonly(true);
+			this.cityName.setReadonly(true);
+			this.addrZIP.setReadonly(true);
+		}
+		
+		logger.debug("Leaving");
 	}
 
 	// ******************************************************//

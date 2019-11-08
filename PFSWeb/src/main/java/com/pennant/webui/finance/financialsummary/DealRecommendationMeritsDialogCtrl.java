@@ -226,7 +226,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 
 		this.btnNew.setVisible(true);
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnDelete"));
+		//this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_DealRecommendationMeritsDialog_btnDelete"));
+		this.btnDelete.setVisible(true);
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");

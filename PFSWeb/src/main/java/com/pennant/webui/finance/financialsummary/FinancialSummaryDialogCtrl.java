@@ -1,5 +1,5 @@
 /**
- * Copyright 2011 - Pennant Technologies
+O * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. 
  * All components/modules/functions/classes/logic in this software, unless 
@@ -16,7 +16,7 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  PSLDetailDialogCtrl.java                                                   * 	  
+ * FileName    		:  FinancialSummaryDialogCtrl.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
@@ -50,6 +50,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,6 +85,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
+import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.loanquery.QueryDetailDAO;
 import com.pennant.backend.delegationdeviation.DeviationHelper;
@@ -104,6 +106,8 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotesConfiguration;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -172,9 +176,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Listbox listBoxDocumentCheckListDetails;
 	protected Listbox listBoxDealRecommendationMeritsDetails;
 	protected Listbox listBoxDueDiligenceDetail;
+	protected Listbox listBoxRecommendationNoteDetails;
 
 	List<RisksAndMitigants> risksAndMitigantsDetials = new ArrayList<RisksAndMitigants>();
 	List<DeviationParam> deviationParams = PennantAppUtil.getDeviationParams();
+	ArrayList<ValueLabel> documentTypes = PennantAppUtil.getDocumentTypes();
 
 	private FinanceDetail financeDetail = null;
 	private boolean newFinance = false;
@@ -193,11 +199,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private List<DealRecommendationMerits> dealRecommendationMeritsDetailList = new ArrayList<DealRecommendationMerits>();
 	private List<DueDiligenceDetails> dueDiligenceDetailsList = new ArrayList<DueDiligenceDetails>();
 	private List<DueDiligenceCheckList> dueDiligenceCheckListDetails = new ArrayList<DueDiligenceCheckList>();
+	private List<RecommendationNotesConfiguration> recommendationNotesConfigDetails = new ArrayList<RecommendationNotesConfiguration>();
+	private List<RecommendationNotes> recommendationNotesDetailsList = new ArrayList<RecommendationNotes>();
 	ArrayList<ValueLabel> secRolesList = PennantAppUtil.getSecRolesList(null);
-
 	private RisksAndMitigantsDAO risksAndMitigantsDAO;
 	private DueDiligenceDetailsDAO dueDiligenceDetailsDAO;
 	private QueryDetailDAO queryDetailDAO;
+	private RecommendationNotesDetailsDAO recommendationNotesDetailsDAO;
 
 	long idCount = 0;
 	private Image imgBasicDetails;
@@ -220,6 +228,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Image imgCollateralDetails;
 	private Image imgAssetDetails;
 	private Image imgOtherDetails;
+	private Image imgRecommendationNote;
+	
 
 	private Groupbox gb_basicDetails;
 	private Groupbox gb_btDetails;
@@ -241,6 +251,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Groupbox gb_convenantsDetails;
 	private Groupbox gb_documentCheckListDetails;
 	private Groupbox gb_dialog;
+	private Groupbox gb_recommendationNoteDetails;
 
 	private CustomerDetailsService customerDetailsService;
 	private GuarantorDetailService guarantorDetailService;
@@ -330,6 +341,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.listBoxDocumentCheckListDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
 			this.listBoxDealRecommendationMeritsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
 			this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights + "px");
+			this.listBoxRecommendationNoteDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
 			doShowDialog(this.financeDetail);
 			doCheckRights();
 		} catch (Exception e) {
@@ -428,18 +440,34 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		doFillQueriesDetails(queryDetails);
 		doFillConvenantsDetails(financeDetail.getCovenantTypeList());
-		List<FinanceReferenceDetail> financeReferenceDetail = financeDetail.getCheckList();
 
 		doFillDocumentCheckListDetails(financeDetail.getDocumentDetailsList());
 		doFillDealRecommendationMeritsDetails(financeDetail.getDealRecommendationMeritsDetailsList());
 		doFillOtherDetails(financeDetail);
 
 		dueDiligenceCheckListDetails = getRisksAndMitigantsDAO().getDueDiligenceCheckListDetails();
-		if (CollectionUtils.isNotEmpty(financeDetail.getDueDiligenceDetailsList())) {
-			doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList());
-		} else {
-			renderDueDiligenceDetails(dueDiligenceCheckListDetails);
+		if(CollectionUtils.isNotEmpty(dueDiligenceCheckListDetails)){
+			if (CollectionUtils.isNotEmpty(financeDetail.getDueDiligenceDetailsList())) {
+				doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList());
+			} else {
+				renderDueDiligenceDetails(dueDiligenceCheckListDetails);
+			}
+		}else{
+			imgDueDiligence.setVisible(false);
+			gb_dueDiligenceDetail.setVisible(false);
 		}
+		recommendationNotesConfigDetails = getRecommendationNotesDetailsDAO().getRecommendationNotesConfigurationDetails();
+		if(CollectionUtils.isNotEmpty(recommendationNotesConfigDetails)){
+			if (CollectionUtils.isNotEmpty(financeDetail.getRecommendationNoteList())) {
+				doFillRecommendationNotesDetails(financeDetail.getRecommendationNoteList());
+			} else {
+				renderRecommendationNotesDetails(recommendationNotesConfigDetails);
+			}
+		}else {
+			imgRecommendationNote.setVisible(false);
+			gb_recommendationNoteDetails.setVisible(false);
+		}
+		
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -773,12 +801,17 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 		this.listBoxDocumentCheckListDetails.getItems().clear();
 		int checkListSerialNo = 0;
+		
+		
 		for (DocumentDetails documentDetails : documentDetailsList) {
 			Listitem item = new Listitem();
 			Listcell lc;
 			lc = new Listcell(String.valueOf(checkListSerialNo + 1));
 			lc.setParent(item);
-			lc = new Listcell(documentDetails.getDoctype());
+			String docdesc = getlabelDesc(documentDetails.getDocCategory(), documentTypes);
+			documentDetails.setLovDescDocCategoryName(docdesc);
+			lc = new Listcell(
+					documentDetails.getDocCategory() + " - " + documentDetails.getLovDescDocCategoryName());
 			lc.setParent(item);
 			lc = new Listcell(documentDetails.getDocName());
 			lc.setParent(item);
@@ -862,19 +895,19 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		final Listitem item = this.listBoxSanctionConditionsDetails.getSelectedItem();
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
-			final RisksAndMitigants risksAndMitigants = (RisksAndMitigants) item.getAttribute("data");
-			if (isDeleteRecord(risksAndMitigants.getRecordType())) {
+			final SanctionConditions sanctionConditions = (SanctionConditions) item.getAttribute("data");
+			if (isDeleteRecord(sanctionConditions.getRecordType())) {
 				MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 			} else {
 				final HashMap<String, Object> map = new HashMap<String, Object>();
 
-				map.put("risksAndMitigants", risksAndMitigants);
+				map.put("sanctionConditions", sanctionConditions);
 				map.put("financialSummaryDialogCtrl", this);
 				map.put("isFinanceProcess", isFinanceProcess);
 				map.put("roleCode", getRole());
 				// call the zul-file with the parameters packed in a map
 				try {
-					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/RisksAndMitigantsDialog.zul", null,
+					Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/SanctionConditionsDialog.zul", null,
 							map);
 				} catch (Exception e) {
 					MessageUtil.showError(e);
@@ -1103,8 +1136,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("guarantorDetail", guarantorDetail);
-		map.put("newRecord", false);
 		map.put("enqModule", true);
+		map.put("moduleType", "ENQ");
+		map.put("finsumryGurnatorEnq", true);
+		
+		
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 		Executions.createComponents("/WEB-INF/pages/Finance/GuarantorDetail/GuarantorDetailDialog.zul", null, map);
 
@@ -1123,7 +1159,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			extendedFieldCtrl = new ExtendedFieldCtrl();
 			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
-					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinType());
+					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory());
 			if (extendedFieldHeader == null) {
 				return;
 			}
@@ -1244,6 +1280,64 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			setDueDiligenceDetailsList(dueDiligenceDetailsList);
 		}
 	}
+	public void renderRecommendationNotesDetails(List<RecommendationNotesConfiguration> recommendationNoteDetailsList) {
+		this.listBoxRecommendationNoteDetails.getItems().clear();
+
+		List<RecommendationNotes> recommendationNotesList = new ArrayList<RecommendationNotes>();
+
+		for (RecommendationNotesConfiguration recommendationNotes : recommendationNoteDetailsList) {
+			RecommendationNotes recommendationNotesDetails = new RecommendationNotes();
+			recommendationNotesDetails.setId(recommendationNotes.getId());
+			recommendationNotesDetails.setParticularId(recommendationNotes.getId());
+			recommendationNotesDetails.setParticulars(recommendationNotes.getParticulars());
+			recommendationNotesDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			recommendationNotesDetails.setNewRecord(true);
+			recommendationNotesList.add(recommendationNotesDetails);
+		}
+		doFillRecommendationNotesDetails(recommendationNotesList);
+	}
+
+	public void doFillRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesList) {
+		this.listBoxRecommendationNoteDetails.getItems().clear();
+
+		if (CollectionUtils.isNotEmpty(recommendationNotesList)) {
+			for (RecommendationNotes recommendationNotesDetails : recommendationNotesList) {
+				Listitem item = new Listitem();
+				Listcell lc;
+				//IDo
+				lc = new Listcell(String.valueOf(recommendationNotesDetails.getId()));
+				lc.setParent(item);
+
+				//PARTICULARS
+				lc = new Listcell(String.valueOf(recommendationNotesDetails.getParticulars()));
+				lc.setParent(item);
+
+				//Reference
+
+				lc = new Listcell();
+				Textarea comments = new Textarea();
+				comments.setParent(lc);
+				comments.setReadonly(false);
+
+				comments.setAttribute("recommendationNotesDetails", recommendationNotesDetails);
+
+				comments.addForward("onChange", self, "onChangeComments", recommendationNotesDetails);
+				comments.setWidth("200px");
+				comments.setValue(recommendationNotesDetails.getRemarks());
+				lc.setParent(item);
+
+				item.setAttribute("data", recommendationNotesList);
+				this.listBoxRecommendationNoteDetails.appendChild(item);
+
+				if (!recommendationNotesDetails.isNewRecord()) {
+					recommendationNotesDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					recommendationNotesDetails.setNewRecord(false);
+					recommendationNotesDetails.setParticularId(recommendationNotesDetails.getParticularId());
+				}
+			}
+			setRecommendationNotesDetailsList(recommendationNotesList);
+		}
+	}
 
 	public void onChangeStatus(ForwardEvent event) throws Exception {
 		logger.debug("Entering");
@@ -1262,6 +1356,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		DueDiligenceDetails dueDiligenceDetails = (DueDiligenceDetails) remarksTextArea
 				.getAttribute("dueDiligenceDetails");
 		dueDiligenceDetails.setRemarks(remarksTextArea.getValue());
+
+		logger.debug("Leaving");
+	}
+	public void onChangeComments(ForwardEvent event) throws Exception {
+		logger.debug("Entering");
+
+		Textarea commentsTextArea = (Textarea) event.getOrigin().getTarget();
+		RecommendationNotes recommendationNotesDetails = (RecommendationNotes) commentsTextArea
+				.getAttribute("recommendationNotesDetails");
+		recommendationNotesDetails.setRemarks(commentsTextArea.getValue());
 
 		logger.debug("Leaving");
 	}
@@ -1385,6 +1489,20 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		gb_dialog.focus();
 		logger.debug("Leaving");
 	}
+	public void onClick$imgRecommendationNote(Event event) throws Exception {
+		logger.debug("Entering");
+		gb_recommendationNoteDetails.focus();
+		logger.debug("Leaving");
+	}
+	public static String getlabelDesc(String value, List<ValueLabel> list) {
+		for (ValueLabel valueLabel : list) {
+			if (valueLabel.getValue().equalsIgnoreCase(value)) {
+				return valueLabel.getLabel();
+			}
+		}
+		return "";
+	}
+	
 
 	private boolean isDeleteRecord(String rcdType) {
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, rcdType)
@@ -1498,6 +1616,22 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setQueryDetailDAO(QueryDetailDAO queryDetailDAO) {
 		this.queryDetailDAO = queryDetailDAO;
+	}
+
+	public List<RecommendationNotes> getRecommendationNotesDetailsList() {
+		return recommendationNotesDetailsList;
+	}
+
+	public void setRecommendationNotesDetailsList(List<RecommendationNotes> recommendationNotesDetailsList) {
+		this.recommendationNotesDetailsList = recommendationNotesDetailsList;
+	}
+
+	public RecommendationNotesDetailsDAO getRecommendationNotesDetailsDAO() {
+		return recommendationNotesDetailsDAO;
+	}
+
+	public void setRecommendationNotesDetailsDAO(RecommendationNotesDetailsDAO recommendationNotesDetailsDAO) {
+		this.recommendationNotesDetailsDAO = recommendationNotesDetailsDAO;
 	}
 
 }

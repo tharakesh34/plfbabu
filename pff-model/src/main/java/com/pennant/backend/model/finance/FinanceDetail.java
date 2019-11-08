@@ -76,6 +76,7 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -293,6 +294,7 @@ public class FinanceDetail implements java.io.Serializable {
 	private List<SanctionConditions> sanctionDetailsList = new ArrayList<>(1);
 	private List<DealRecommendationMerits> dealRecommendationMeritsDetailsList = new ArrayList<>(1);
 	private List<DueDiligenceDetails> dueDiligenceDetailsList = new ArrayList<>(1);
+	private List<RecommendationNotes> recommendationNoteList = new ArrayList<>(1);
 	private DueDiligenceDetails dueDiligenceDetails;
 	private String orderStatus;
 
@@ -1521,5 +1523,14 @@ public class FinanceDetail implements java.io.Serializable {
 	public void setOrderStatus(String orderStatus) {
 		this.orderStatus = orderStatus;
 	}
+
+	public List<RecommendationNotes> getRecommendationNoteList() {
+		return recommendationNoteList;
+	}
+
+	public void setRecommendationNoteList(List<RecommendationNotes> recommendationNoteList) {
+		this.recommendationNoteList = recommendationNoteList;
+	}
+
 
 }

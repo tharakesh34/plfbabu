@@ -7669,11 +7669,17 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setDealRecommendationMeritsDetailsList(null);
 		}
 
-		// DealRecommendationMeritsDetails  Saving
+		// DueDiligenceDetails  Saving
 		if (financialSummaryDialogCtrl != null) {
 			aFinanceDetail.setDueDiligenceDetailsList(financialSummaryDialogCtrl.getDueDiligenceDetailsList());
 		} else {
 			aFinanceDetail.setDueDiligenceDetailsList(null);
+		}
+		// RecommendationNotesDetails  Saving
+		if (financialSummaryDialogCtrl != null) {
+			aFinanceDetail.setRecommendationNoteList(financialSummaryDialogCtrl.getRecommendationNotesDetailsList());
+		} else {
+			aFinanceDetail.setRecommendationNoteList(null);
 		}
 
 		// Validation For Mandatory Recommendation

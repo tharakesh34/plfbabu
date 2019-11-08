@@ -17362,7 +17362,6 @@ UNION ALL
 				     JOIN customers t3 ON t1.custcif = t3.custcif
 			</createView>
 	</changeSet>
-	
 	<changeSet id="347" author="Varaprasad.K">
 		<createView viewName="finjointaccountdetails_view"
 			replaceIfExists="true">
@@ -17429,5 +17428,91 @@ UNION ALL
 				           FROM finjointaccountdetails_temp
 				          WHERE finjointaccountdetails_temp.jointaccountid = t1.jointaccountid))
 			</createView>
+	</changeSet>
+	<changeSet id="348" author="Varaprasad.K">
+		<createTable tableName="RECOMMENDATION_NOTES_CONFIG">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Particulars" type="Varchar(500)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="349" author="Varaprasad.K">
+		<createTable tableName="RECOMMENDATION_NOTES">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ParticularId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="Varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="350" author="Varaprasad.K">
+		<createTable tableName="RECOMMENDATION_NOTES_TEMP">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ParticularId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Remarks" type="Varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="351" author="Varaprasad.K">
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES_TEMP" columnNames="id"
+			constraintName="PK_RECOMENDTN_NOTES_TEMP_Id" />
+	</changeSet>
+	<changeSet id="352" author="Varaprasad.K">
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_Id" />
+	</changeSet>
+	<changeSet id="353" author="Varaprasad.K">
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES_CONFIG"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_CONFIG_Id" />
+	</changeSet>
+	<changeSet id="354" author="Varaprasad.K">
+		<addForeignKeyConstraint constraintName="fk_RN_ParticularId"
+			referencedTableName="RECOMMENDATION_NOTES_CONFIG" baseColumnNames="ParticularId"
+			baseTableName="RECOMMENDATION_NOTES" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="355" author="Vara prasad K">
+		<addForeignKeyConstraint constraintName="fk_RNT_ParticularId"
+			referencedTableName="RECOMMENDATION_NOTES_CONFIG" baseColumnNames="ParticularId"
+			baseTableName="RECOMMENDATION_NOTES_TEMP" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="356" author="Vara prasad K">
+		<createSequence sequenceName="SeqRECOMMENDATION_NOTE"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
 </databaseChangeLog>

@@ -16,6 +16,7 @@
 									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" width="80%"/>
 									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" width="80%" />
 									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" width="80%"/>
+									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" width="80%"/>
 									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" width="80%"/>
 									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" width="80%"/>
 									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" width="80%"/>
@@ -332,6 +333,20 @@
 															<listheader id="listheader_deviationsRiskLayer" label="${c:l('listheader_DeviationsRiskLayer.label')}" sort="false"
 																hflex="min" />
 															<listheader id="listheader_deviationsMitigants" label="${c:l('listheader_DeviationsMitigants.label')}" sort="false"
+																hflex="min" />
+														</listhead>
+									</listbox>
+					              </groupbox>
+					                <groupbox  id="gb_recommendationNoteDetails">
+					                   <caption label="Recommendations Note"></caption>
+					                   <listbox id="listBoxRecommendationNoteDetails" span="true" sizedByContent="true" fixedLayout="true"
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														<listhead sizable="true">
+															<listheader id="listheader_recommendationNoteDetailsSerialNo" label="${c:l('listheader_RecommendationNoteDetailsSerialNo.label')}" sort="false"
+																hflex="min" />
+															<listheader id="listheader_recommendationNoteDetailsParticulars" label="${c:l('listheader_RecommendationNoteDetailsParticulars.label')}" sort="false"
+																hflex="min" />
+															<listheader id="listheader_recommendationNoteDetailsComments" label="${c:l('listheader_RecommendationNoteDetailsComments.label')}" sort="false"
 																hflex="min" />
 														</listhead>
 									</listbox>

@@ -111,6 +111,7 @@ import com.pennant.backend.dao.finance.RolledoverFinanceDAO;
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.dao.finance.financialSummary.DealRecommendationMeritsDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
+import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
 import com.pennant.backend.dao.limits.LimitInterfaceDAO;
@@ -213,6 +214,7 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -259,6 +261,7 @@ import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.PSLDetailService;
 import com.pennant.backend.service.finance.financialsummary.DealRecommendationMeritsService;
 import com.pennant.backend.service.finance.financialsummary.DueDiligenceDetailsService;
+import com.pennant.backend.service.finance.financialsummary.RecommendationNotesDetailsService;
 import com.pennant.backend.service.finance.financialsummary.RisksAndMitigantsService;
 import com.pennant.backend.service.finance.financialsummary.SanctionConditionsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditFinancialService;
@@ -446,6 +449,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private DealRecommendationMeritsDAO dealRecommendationMeritsDAO;
 
 	private DueDiligenceDetailsDAO dueDiligenceDetailsDAO;
+	
+	private RecommendationNotesDetailsDAO recommendationNotesDetailsDAO;
 
 	@Autowired(required = false)
 	private RisksAndMitigantsService risksAndMitigantsService;
@@ -458,6 +463,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private DueDiligenceDetailsService dueDiligenceDetailsService;
+	
+	@Autowired(required = false)
+	private RecommendationNotesDetailsService recommendationNotesDetailsService;
 
 	private long tempWorkflowId;
 
@@ -786,7 +794,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<DealRecommendationMerits> dealRecommendationMeritsList = getDealRecommendationMeritsDAO()
 				.getDealRecommendationMerits(finReference);
 		if (financeDetail.getDealRecommendationMeritsDetailsList() != null
-				&& !financeDetail.getSanctionDetailsList().isEmpty()) {
+				&& !financeDetail.getDealRecommendationMeritsDetailsList().isEmpty()) {
 			financeDetail.getDealRecommendationMeritsDetailsList().addAll(dealRecommendationMeritsList);
 		} else {
 			financeDetail.setDealRecommendationMeritsDetailsList(dealRecommendationMeritsList);
@@ -794,10 +802,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		//Financial Summary DueDiligences Details
 		List<DueDiligenceDetails> dueDiligenceDetailsList = getDueDiligenceDetailsDAO().getDueDiligenceDetails(
 				finReference);
-		if (financeDetail.getDueDiligenceDetailsList() != null && !financeDetail.getSanctionDetailsList().isEmpty()) {
+		if (financeDetail.getDueDiligenceDetailsList() != null && !financeDetail.getDueDiligenceDetailsList().isEmpty()) {
 			financeDetail.getDueDiligenceDetailsList().addAll(dueDiligenceDetailsList);
 		} else {
 			financeDetail.setDueDiligenceDetailsList(dueDiligenceDetailsList);
+		}
+		//Financial Summary DueDiligences Details
+		List<RecommendationNotes> recommendationNotesDetailsList = getRecommendationNotesDetailsDAO().getRecommendationNotesDetails(finReference);
+		if (financeDetail.getRecommendationNoteList() != null && !financeDetail.getRecommendationNoteList().isEmpty()) {
+			financeDetail.getRecommendationNoteList().addAll(recommendationNotesDetailsList);
+		} else {
+			financeDetail.setRecommendationNoteList(recommendationNotesDetailsList);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -3040,6 +3055,22 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				dueDiligenceDetails.setLastMntOn(financeMain.getLastMntOn());
 			}
 			auditDetails.addAll(dueDiligenceDetailsService.doProcess(financeDetail.getDueDiligenceDetailsList(),
+					tableType, auditTranType, false));
+		}
+		// FinancialSummary DueDiligence Details 
+		// =======================================
+		if (financeDetail.getRecommendationNoteList() != null && recommendationNotesDetailsService != null) {
+			for (RecommendationNotes recommendationNotesDetails : financeDetail.getRecommendationNoteList()) {
+				recommendationNotesDetails.setFinReference(finReference);
+				recommendationNotesDetails.setTaskId(financeMain.getTaskId());
+				recommendationNotesDetails.setNextTaskId(financeMain.getNextTaskId());
+				recommendationNotesDetails.setRoleCode(financeMain.getRoleCode());
+				recommendationNotesDetails.setNextRoleCode(financeMain.getNextRoleCode());
+				recommendationNotesDetails.setRecordStatus(financeMain.getRecordStatus());
+				recommendationNotesDetails.setWorkflowId(financeMain.getWorkflowId());
+				recommendationNotesDetails.setLastMntOn(financeMain.getLastMntOn());
+			}
+			auditDetails.addAll(recommendationNotesDetailsService.doProcess(financeDetail.getRecommendationNoteList(),
 					tableType, auditTranType, false));
 		}
 
@@ -11741,6 +11772,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setDueDiligenceDetailsDAO(DueDiligenceDetailsDAO dueDiligenceDetailsDAO) {
 		this.dueDiligenceDetailsDAO = dueDiligenceDetailsDAO;
+	}
+
+	public RecommendationNotesDetailsDAO getRecommendationNotesDetailsDAO() {
+		return recommendationNotesDetailsDAO;
+	}
+
+	public void setRecommendationNotesDetailsDAO(RecommendationNotesDetailsDAO recommendationNotesDetailsDAO) {
+		this.recommendationNotesDetailsDAO = recommendationNotesDetailsDAO;
 	}
 
 }

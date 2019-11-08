@@ -628,4 +628,42 @@
 				</column>
 			</createTable>
 	</changeSet> 
+	<changeSet id="49" author="Vara prasad K">
+		<createTable tableName="AdtRECOMMENDATION_NOTES">
+				<column name="AuditId" type="bigint">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditDate" type="datetime">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditSeq" type="int">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="AuditImage" type="varchar(2)">
+					<constraints primaryKey="true" nullable="false" />
+				</column>
+				<column name="id" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="FinReference" type="varchar(20)">
+					<constraints nullable="false" />
+				</column>
+				<column name="ParticularId" type="bigint">
+					<constraints nullable="false" />
+				</column>
+				<column name="Remarks" type="Varchar(500)" />
+				<column name="Version" type="int" />
+				<column name="LastMntBy" type="bigint" />
+				<column name="LastMntOn" type="datetime" />
+				<column name="RecordStatus" type="varchar(50)" />
+				<column name="RoleCode" type="varchar(100)" />
+				<column name="NextRoleCode" type="varchar(200)" />
+				<column name="TaskId" type="varchar(50)" />
+				<column name="NextTaskId" type="varchar(200)" />
+				<column name="RecordType" type="varchar(50)" />
+				<column name="WorkFlowId" type="bigint">
+					<constraints nullable="false" />
+				</column>
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
