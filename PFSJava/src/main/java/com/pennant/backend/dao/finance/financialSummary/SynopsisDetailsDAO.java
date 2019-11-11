@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerPhoneNumberService.java                                                   * 	  
+ * FileName    		:  PSLDetailDAO.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  26-05-2011    														*
+ * Creation Date    :  20-06-2018    														*
  *                                                                  						*
- * Modified Date    :  26-05-2011    														*
+ * Modified Date    :  20-06-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
+ * 20-06-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,42 +40,23 @@
  *                                                                                          * 
  ********************************************************************************************
  */
+package com.pennant.backend.dao.finance.financialSummary;
 
-package com.pennant.backend.service.finance.financialsummary;
+import com.pennant.backend.dao.impl.BasicCrudDao;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 
-import java.util.List;
+public interface SynopsisDetailsDAO extends BasicCrudDao<SynopsisDetails> {
 
-import com.pennant.backend.model.audit.AuditDetail;
-import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
-import com.pennanttech.pff.core.TableType;
+	/**
+	 * Fetch the Record PSLDetail by key field
+	 * 
+	 * @param finReference
+	 *            finReference of the PSLDetail.
+	 * @param tableType
+	 *            The type of the table.
+	 * @return PSLDetail
+	 */
 
-/**
- * Service declaration for methods that depends on <b>CustomerPhoneNumber</b>.<br>
- * 
- */
-public interface RecommendationNotesDetailsService {
-
-	AuditHeader saveOrUpdate(AuditHeader auditHeader);
-
-	AuditHeader doReject(AuditHeader auditHeader);
-
-	int getVersion(long id, String typeCode);
-
-	void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
-
-	List<AuditDetail> doProcess(List<RecommendationNotes> recommendationNotesDetails,
-
-	TableType tableType, String auditTranType, boolean isApproveRcd);
-
-	List<AuditDetail> doApprove(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
-			String auditTranType);
-
-	List<AuditDetail> delete(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
-			String auditTranType);
-
-	List<AuditDetail> processRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesDetailsList,
-			TableType tableType, String auditTranType, boolean isApproveRcd);
-
+	SynopsisDetails getSynopsisDetails(String finReference);
 }

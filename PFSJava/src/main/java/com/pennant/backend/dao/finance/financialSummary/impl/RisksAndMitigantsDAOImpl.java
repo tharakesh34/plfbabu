@@ -56,8 +56,8 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
-import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
@@ -232,6 +232,28 @@ public class RisksAndMitigantsDAOImpl extends SequenceDao<RisksAndMitigants> imp
 		logger.debug("Leaving");
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+	}
+
+	public List<InterfaceLogDetail> getInterfaceLogDetails(String reference) {
+		logger.debug("Entering");
+
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(" SELECT  T1.serviceName,T1.status,T1.errorDesc");
+		selectSql.append(" FROM  INTERFACELOGDETAILS T1");
+		selectSql.append(" WHERE T1.reference = :reference ");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		InterfaceLogDetail interfaceLogDetail = new InterfaceLogDetail();
+		interfaceLogDetail.setReference(reference);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(interfaceLogDetail);
+		RowMapper<InterfaceLogDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterfaceLogDetail.class);
+
+		List<InterfaceLogDetail> interfaceLogDetails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
+				typeRowMapper);
+		logger.debug("Leaving ");
+		return interfaceLogDetails;
+
 	}
 
 }

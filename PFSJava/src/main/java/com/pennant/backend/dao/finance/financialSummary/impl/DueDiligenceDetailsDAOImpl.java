@@ -85,7 +85,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		dueDiligenceDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  T1.id,T1.ParticularId,T3.Particulars,T1.Status,T1.Remarks");
+		selectSql.append(" SELECT  T1.id,T1.FinReference, T1.ParticularId,T3.Particulars,T1.Status,T1.Remarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
 		selectSql.append(" FROM  DUE_DILIGENCES_TEMP T1");
@@ -93,7 +93,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		selectSql.append(" LEFT JOIN DUE_DILIGENCE_CHECKLIST_TEMP T3 ON T3.id =  T1.ParticularId");
 		selectSql.append(" Where T1.finReference = :finReference");
 		selectSql.append(" UNION ALL");
-		selectSql.append(" SELECT  T1.id,T1.ParticularId,T3.Particulars,T1.Status,T1.Remarks");
+		selectSql.append(" SELECT  T1.id, T1.FinReference, T1.ParticularId,T3.Particulars,T1.Status,T1.Remarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId ");
 		selectSql.append(" FROM  DUE_DILIGENCES T1");
@@ -252,5 +252,5 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, String.class);
 	}
-	
+
 }

@@ -105,14 +105,16 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 		}
 
 		String tableType = "";
-		RecommendationNotes recommendationNotesDetails = (RecommendationNotes) auditHeader.getAuditDetail().getModelData();
+		RecommendationNotes recommendationNotesDetails = (RecommendationNotes) auditHeader.getAuditDetail()
+				.getModelData();
 
 		if (recommendationNotesDetails.isWorkflow()) {
 			tableType = "_Temp";
 		}
 
 		if (recommendationNotesDetails.isNew()) {
-			recommendationNotesDetails.setId(getRecommendationNotesDetailsDAO().save(recommendationNotesDetails, tableType));
+			recommendationNotesDetails.setId(getRecommendationNotesDetailsDAO().save(recommendationNotesDetails,
+					tableType));
 			auditHeader.getAuditDetail().setModelData(recommendationNotesDetails);
 		} else {
 			getRecommendationNotesDetailsDAO().update(recommendationNotesDetails, tableType);
@@ -196,9 +198,10 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 			int auditSeq = 1;
 			for (RecommendationNotes recommendationNotesDetails : recommendationNotesDetailsList) {
 				getRecommendationNotesDetailsDAO().delete(recommendationNotesDetails, tableType.toString());
-				fields = PennantJavaUtil.getFieldDetails(recommendationNotesDetails, recommendationNotesDetails.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], recommendationNotesDetails
-						.getBefImage(), recommendationNotesDetails));
+				fields = PennantJavaUtil.getFieldDetails(recommendationNotesDetails,
+						recommendationNotesDetails.getExcludeFields());
+				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
+						recommendationNotesDetails.getBefImage(), recommendationNotesDetails));
 				auditSeq++;
 			}
 		}
@@ -224,7 +227,8 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 			return auditHeader;
 		}
 
-		RecommendationNotes recommendationNotesDetails = (RecommendationNotes) auditHeader.getAuditDetail().getModelData();
+		RecommendationNotes recommendationNotesDetails = (RecommendationNotes) auditHeader.getAuditDetail()
+				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getRecommendationNotesDetailsDAO().delete(recommendationNotesDetails, "_Temp");
@@ -248,13 +252,15 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 	public List<AuditDetail> doProcess(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
 			String auditTranType, boolean isApproveRcd) {
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.addAll(processDueDiligenceDetails(recommendationNotesDetails, tableType, auditTranType, isApproveRcd));
+		auditDetails.addAll(processRecommendationNotesDetails(recommendationNotesDetails, tableType, auditTranType,
+				isApproveRcd));
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> processDueDiligenceDetails(List<RecommendationNotes> recommendationNotesDetailsList,
-			TableType tableType, String auditTranType, boolean isApproveRcd) {
+	public List<AuditDetail> processRecommendationNotesDetails(
+			List<RecommendationNotes> recommendationNotesDetailsList, TableType tableType, String auditTranType,
+			boolean isApproveRcd) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -288,9 +294,14 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 				recommendationNotesDetails.setTaskId("");
 				recommendationNotesDetails.setNextTaskId("");
 			}
+			if (StringUtils.isEmpty(tableType.getSuffix())) {
+				recommendationNotesDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				recommendationNotesDetails.setNewRecord(true);
+			}
 
 			recommendationNotesDetails.setWorkflowId(0);
-			if (StringUtils.equalsIgnoreCase(recommendationNotesDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+			if (StringUtils.equalsIgnoreCase(recommendationNotesDetails.getRecordType(),
+					PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
 			} else if (recommendationNotesDetails.isNewRecord()) {
 				saveRecord = true;
@@ -370,6 +381,5 @@ public class RecommendationNotesDetailsServiceImpl extends GenericService<Recomm
 	public void setRecommendationNotesDetailsDAO(RecommendationNotesDetailsDAO recommendationNotesDetailsDAO) {
 		this.recommendationNotesDetailsDAO = recommendationNotesDetailsDAO;
 	}
-
 
 }

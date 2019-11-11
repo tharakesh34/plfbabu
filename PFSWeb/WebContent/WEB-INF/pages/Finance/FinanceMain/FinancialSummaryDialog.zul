@@ -9,27 +9,27 @@
 		<borderlayout id="borderlayoutCreditPDDetails" style="overflow:auto">
 		  <west autoscroll="true">
 		       <div align="vertial">
-									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details"     width="80%"/>
-									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details"  width="80%"/>
-									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" width="80%"/>
-									<image id="imgDueDiligence" src="/images/icons/dueDiligence.svg" tooltiptext="Due Diligence Details" width="80%"/>
-									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" width="80%"/>
-									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" width="80%" />
-									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" width="80%"/>
-									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" width="80%"/>
-									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" width="80%"/>
-									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" width="80%"/>
-									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" width="80%"/>
-									<image id="imgInterfaces" src="/images/icons/interface.svg" tooltiptext="Interface" width="80%"/>
-									<image id="imgScoring" src="/images/icons/scoring.svg" tooltiptext="Scoring" width="80%"/>
-									<image id="imgEligibility" src="/images/icons/eligibility.svg" tooltiptext="Eligibility" width="80%"/>
-									<image id="imgRecommendations" src="/images/icons/recommendations.svg" tooltiptext="Recommendations" width="80%"/>
-									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" width="80%"/>
-									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" width="80%"/>
-									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" width="80%"/>
-									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" width="80%"/>
-									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" width="80%"/>
-									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" width="80%"/>
+									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details"     width="100%"/>
+									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details"  width="100%"/>
+									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" width="100%"/>
+									<image id="imgDueDiligence" src="/images/icons/dueDiligence.svg" tooltiptext="Due Diligence Details" width="100%"/>
+									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" width="100%"/>
+									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" width="100%" />
+									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" width="100%"/>
+									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" width="100%"/>
+									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" width="100%"/>
+									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" width="100%"/>
+									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" width="100%"/>
+									<image id="imgInterfaces" src="/images/icons/interface.svg" tooltiptext="Interface" width="100%"/>
+									<image id="imgScoring" src="/images/icons/scoring.svg" tooltiptext="Scoring" width="100%"/>
+									<image id="imgEligibility" src="/images/icons/eligibility.svg" tooltiptext="Eligibility" width="100%"/>
+									<image id="imgRecommendations" src="/images/icons/recommendations.svg" tooltiptext="Recommendations" width="100%"/>
+									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" width="100%"/>
+									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" width="100%"/>
+									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" width="100%"/>
+									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" width="100%"/>
+									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" width="100%"/>
+									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" width="100%"/>
 			 </div>
 		    </west>
         <center border="none" autoscroll="true">
@@ -274,7 +274,7 @@
 					                           <label id="label_customerBackground"  value="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}" style="font-weight:bold;" />
 					                       </row>
 					                       <row>
-					                           <textbox id="customerBackground" maxlength="1000" width="1280px" multiline="true" rows="5"  />
+					                           <textbox id="customerBackground" maxlength="500" width="1280px" multiline="true" rows="5"  />
 					                       </row>
 					                       <row></row>
 					                       <row></row>
@@ -282,7 +282,7 @@
 					                           <label id="label_detailedBusinessProfile"  value="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}" style="font-weight:bold;"  />
 					                       </row>
 					                       <row>
-					                           <textbox id="detailedBusinessProfile" maxlength="1000" width="1280px" multiline="true" rows="5"  />
+					                           <textbox id="detailedBusinessProfile" maxlength="500" width="1280px" multiline="true" rows="5"  />
 					                       </row>
 					                       <row></row>
 					                       <row></row>
@@ -290,20 +290,20 @@
 					                           <label id="label_detailedofGroupCompanies"  value="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}" style="font-weight:bold;" />
 					                       </row>
 					                       <row>
-					                           <textbox id="detailedofGroupCompanies" maxlength="1000" width="1280px" multiline="true" rows="5" style="font-weight:bold;" />
+					                           <textbox id="detailsofGroupCompaniesIfAny" maxlength="500" width="1280px" multiline="true" rows="5"  />
 					                       </row>
 					                       <row></row>
 					                       <row></row>
 					                       <row>
-					                           <label id="label_pdDetails"  value="${c:l('label_FinancialSummaryDailog_PdDetails.value')}" style="font-weight:bold;" />
+					                           <label id="label_pdDetails"  value="${c:l('label_FinancialSummaryDailog_PdDetails.value')}" />
 					                       </row>
 					                       <row>
-					                           <textbox id="pdDetails" maxlength="1000" width="1280px" multiline="true" rows="5" />
+					                           <textbox id="pdDetails" maxlength="500" width="1280px" multiline="true" rows="5" />
 					                       </row>
 					                       <row></row>
 					                       <row></row>
 					                       <row>
-					                           <label id="label_majorProduct"  value="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}" style="font-weight:bold;" />
+					                           <label id="label_majorProduct"  value="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}"  />
 					                       </row>
 					                       <row>
 					                           <textbox id="majorProduct" maxlength="1000" width="1280px" multiline="true" rows="5" />
@@ -311,10 +311,10 @@
 					                       <row></row>
 					                       <row></row>
 					                        <row>
-					                           <label id="label_otherRemarks"  value="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}" style="font-weight:bold;" />
+					                           <label id="label_otherRemarks"  value="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}"  />
 					                       </row>
 					                       <row>
-					                           <textbox id="otherRemarks" maxlength="1000" width="1280px" multiline="true" rows="5" />
+					                           <textbox id="otherRemarks" maxlength="500" width="1280px" multiline="true" rows="5" />
 					                       </row>
 					                     </rows>
 					                  </grid>

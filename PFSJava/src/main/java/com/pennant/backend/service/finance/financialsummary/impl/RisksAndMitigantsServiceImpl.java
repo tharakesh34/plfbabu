@@ -204,7 +204,7 @@ public class RisksAndMitigantsServiceImpl extends GenericService<RisksAndMitigan
 		if (risksAndMitigantsList != null && !risksAndMitigantsList.isEmpty()) {
 			int auditSeq = 1;
 			for (RisksAndMitigants finOption : risksAndMitigantsList) {
-				getRisksAndMitigantsDAO().delete(finOption, tableType.toString());
+				getRisksAndMitigantsDAO().delete(finOption, tableType.getSuffix());
 				fields = PennantJavaUtil.getFieldDetails(finOption, finOption.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
 						finOption.getBefImage(), finOption));

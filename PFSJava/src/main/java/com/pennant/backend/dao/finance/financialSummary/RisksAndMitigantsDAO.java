@@ -46,6 +46,7 @@ import java.util.List;
 
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
+import com.pennanttech.logging.model.InterfaceLogDetail;
 
 /**
  * DAO methods declaration for the <b>CustomerPhoneNumber model</b> class.<br>
@@ -64,5 +65,7 @@ public interface RisksAndMitigantsDAO {
 	List<RisksAndMitigants> getRisksAndMitigants(String finReference);
 
 	List<DueDiligenceCheckList> getDueDiligenceCheckListDetails();
+
+	List<InterfaceLogDetail> getInterfaceLogDetails(String finReference);
 
 }

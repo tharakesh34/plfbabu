@@ -72,7 +72,8 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
-public class RecommendationNotesDetailsDAOImpl extends SequenceDao<RecommendationNotesDetailsDAO> implements RecommendationNotesDetailsDAO {
+public class RecommendationNotesDetailsDAOImpl extends SequenceDao<RecommendationNotesDetailsDAO> implements
+		RecommendationNotesDetailsDAO {
 	private static Logger logger = Logger.getLogger(RecommendationNotesDetailsDAOImpl.class);
 
 	public RecommendationNotesDetailsDAOImpl() {
@@ -87,7 +88,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		recommendationNotesDetails.setFinReference(finReference);
 
 		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT  T1.id,T1.ParticularId,T3.Particulars,T1.Remarks");
+		selectSql.append(" SELECT  T1.id, T1.finReference, T1.ParticularId,T3.Particulars,T1.Remarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
 		selectSql.append(" FROM  RECOMMENDATION_NOTES_TEMP T1");
@@ -95,7 +96,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		selectSql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG T3 ON T3.id =  T1.ParticularId");
 		selectSql.append(" Where T1.finReference = :finReference");
 		selectSql.append(" UNION ALL");
-		selectSql.append(" SELECT  T1.id,T1.ParticularId,T3.Particulars,T1.Remarks");
+		selectSql.append(" SELECT  T1.id, T1.finReference, T1.ParticularId,T3.Particulars,T1.Remarks");
 		selectSql.append(", T1.Version, T1.LastMntBy, T1.LastMntOn, T1.RecordStatus, T1.RoleCode, T1.NextRoleCode");
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
 		selectSql.append(" FROM  RECOMMENDATION_NOTES T1");
@@ -229,6 +230,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
 	}
+
 	public List<RecommendationNotesConfiguration> getRecommendationNotesConfigurationDetails() {
 
 		RecommendationNotesConfiguration recommendationNotesConfigurationDetails = new RecommendationNotesConfiguration();
@@ -242,8 +244,8 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		RowMapper<RecommendationNotesConfiguration> typeRowMapper = ParameterizedBeanPropertyRowMapper
 				.newInstance(RecommendationNotesConfiguration.class);
 
-		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate.query(
+				selectSql.toString(), beanParameters, typeRowMapper);
 		logger.debug("Leaving ");
 		return recommendationNotesConfigurationList;
 

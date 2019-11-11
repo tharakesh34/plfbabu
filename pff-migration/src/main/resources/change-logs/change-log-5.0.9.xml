@@ -18749,5 +18749,64 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+	<changeSet id="360" author="Vara prasad K">
+		<createTable tableName="SynopsisDetails_Temp">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerBackGround" type="Varchar(500)" />
+			<column name="DetailedBusinessProfile" type="Varchar(500)" />
+			<column name="DetailsofGroupCompaniesIfAny" type="Varchar(500)" />
+			<column name="PdDetails" type="Varchar(500)" />
+			<column name="MajorProduct" type="Varchar(500)" />
+			<column name="OtherRemarks" type="Varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="361" author="Vara prasad K">
+		<createTable tableName="SynopsisDetails">
+			<column name="id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="FinReference" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="CustomerBackGround" type="Varchar(500)" />
+			<column name="DetailedBusinessProfile" type="Varchar(500)" />
+			<column name="DetailsofGroupCompaniesIfAny" type="Varchar(500)" />
+			<column name="PdDetails" type="Varchar(500)" />
+			<column name="MajorProduct" type="Varchar(500)" />
+			<column name="OtherRemarks" type="Varchar(500)" />
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="362" author="Vara prasad K">
+		<createSequence sequenceName="SeqSynopsisDetails"
+			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
+	</changeSet>
 </databaseChangeLog>

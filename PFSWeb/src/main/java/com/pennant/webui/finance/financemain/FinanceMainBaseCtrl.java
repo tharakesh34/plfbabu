@@ -2109,7 +2109,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendLegalDetailsTab(onLoad);
 		}
 		//Financial Summary
-		if (isTabVisible(StageTabConstants.FinancialSummary) && StringUtils.isEmpty(moduleDefiner) && SysParamUtil.isAllowed(SMTParameterConstants.FIN_SUMMARY_TAB_REQUIRED)) {
+		if (isTabVisible(StageTabConstants.FinancialSummary) && StringUtils.isEmpty(moduleDefiner)
+				&& SysParamUtil.isAllowed(SMTParameterConstants.FIN_SUMMARY_TAB_REQUIRED)) {
 			appendFinancialSummary(onLoad);
 		}
 		logger.debug(Literal.LEAVING);
@@ -4693,8 +4694,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							.getRepayAmount();
 					BigDecimal compreValue = BigDecimal.ZERO;
 					if (repayAmt.compareTo(compreValue) != 0) {
-						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal()
-								.divide(PennantApplicationUtil.formateAmount(repayAmt, 2), RoundingMode.HALF_DOWN);
+						BigDecimal totalAbb = creditReviewDetail.getAvgBankBal().divide(
+								PennantApplicationUtil.formateAmount(repayAmt, 2), RoundingMode.HALF_DOWN);
 						creditReviewDetail.setTotalAbb(totalAbb);
 
 					}
@@ -7682,6 +7683,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setRecommendationNoteList(financialSummaryDialogCtrl.getRecommendationNotesDetailsList());
 		} else {
 			aFinanceDetail.setRecommendationNoteList(null);
+		}
+		if (financialSummaryDialogCtrl != null) {
+			financialSummaryDialogCtrl.doFillSynopsisDetails(aFinanceDetail.getFinScheduleData().getFinanceMain()
+					.getFinReference());
+			aFinanceDetail.setSynopsisDetails(financialSummaryDialogCtrl.getSynopsisDetails());
+		} else {
+			aFinanceDetail.setSynopsisDetails(null);
 		}
 
 		// Validation For Mandatory Recommendation
@@ -21540,8 +21548,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal compreValue = BigDecimal.ZERO;
 		BigDecimal totalAbb = BigDecimal.ZERO;
 		if (repayAmountValue.compareTo(compreValue) != 0) {
-			totalAbb = creditReviewDetails.getAvgBankBal()
-					.divide(PennantApplicationUtil.formateAmount(repayAmountValue, 2), RoundingMode.HALF_DOWN);
+			totalAbb = creditReviewDetails.getAvgBankBal().divide(
+					PennantApplicationUtil.formateAmount(repayAmountValue, 2), RoundingMode.HALF_DOWN);
 			creditReviewDetails.setTotalAbb(totalAbb);
 		}
 

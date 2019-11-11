@@ -285,6 +285,10 @@ public class DueDiligenceDetailsServiceImpl extends GenericService<DueDiligenceD
 				dueDiligenceDetails.setTaskId("");
 				dueDiligenceDetails.setNextTaskId("");
 			}
+			if (StringUtils.isEmpty(tableType.getSuffix())) {
+				dueDiligenceDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				dueDiligenceDetails.setNewRecord(true);
+			}
 
 			dueDiligenceDetails.setWorkflowId(0);
 			if (StringUtils.equalsIgnoreCase(dueDiligenceDetails.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {

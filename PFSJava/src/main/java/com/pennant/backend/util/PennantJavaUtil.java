@@ -286,7 +286,12 @@ import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
+import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
+import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
+import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.finance.psl.PSLCategory;
@@ -2970,6 +2975,22 @@ public class PennantJavaUtil {
 						"FileName" }, null, 600));
 		ModuleUtil.register("RisksAndMitigants", new ModuleMapping("RisksAndMitigants", RisksAndMitigants.class,
 				new String[] { "RisksAndMitigants" }, masterWF, new String[] { "Risk", "Mitigants" }, null, 300));
+		ModuleUtil.register("SanctionConditions", new ModuleMapping("SanctionConditions", SanctionConditions.class,
+				new String[] { "SanctionConditions" }, masterWF, new String[] { "SanctionCondition", "Status" }, null,
+				300));
+		ModuleUtil.register("DealRecommendationMerits", new ModuleMapping("DealRecommendationMerits",
+				DealRecommendationMerits.class, new String[] { "DealRecommendationMerits" }, masterWF,
+				new String[] { "dealMerits" }, null, 300));
+		ModuleUtil.register("DueDiligenceDetails", new ModuleMapping("DueDiligenceDetails", DueDiligenceDetails.class,
+				new String[] { "DueDiligenceDetails" }, masterWF, new String[] { "Status", "Remarks" }, null, 300));
+		ModuleUtil
+				.register("RecommendationNotes", new ModuleMapping("RecommendationNotes", RecommendationNotes.class,
+						new String[] { "RecommendationNotes" }, masterWF, new String[] { "Particulars", "Remarks" },
+						null, 300));
+		ModuleUtil.register("SynopsisDetails", new ModuleMapping("SynopsisDetails", SynopsisDetails.class,
+				new String[] { "SynopsisDetails" }, masterWF, new String[] { "CustomerBackGround",
+						"DetailedBusinessProfile", "DetailsofGroupCompaniesIfAny", "PdDetails", "MajorProduct",
+						"OtherRemarks" }, null, 300));
 
 		ModuleUtil.register("LoanCancelReasons", new ModuleMapping("ReasonCode", ReasonCode.class, new String[] {
 				"Reasons", "Reasons_AView" }, masterWF, new String[] { "Id", "Code", "Description" }, new Object[][] {

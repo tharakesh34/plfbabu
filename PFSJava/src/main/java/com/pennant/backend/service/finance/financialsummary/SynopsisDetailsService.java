@@ -16,20 +16,20 @@
  *                                 FILE HEADER                                              *
  ********************************************************************************************
  *																							*
- * FileName    		:  CustomerPhoneNumberService.java                                                   * 	  
+ * FileName    		:  PSLDetailService.java                                                   * 	  
  *                                                                    						*
  * Author      		:  PENNANT TECHONOLOGIES              									*
  *                                                                  						*
- * Creation Date    :  26-05-2011    														*
+ * Creation Date    :  20-06-2018    														*
  *                                                                  						*
- * Modified Date    :  26-05-2011    														*
+ * Modified Date    :  20-06-2018    														*
  *                                                                  						*
  * Description 		:                                             							*
  *                                                                                          *
  ********************************************************************************************
  * Date             Author                   Version      Comments                          *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
+ * 20-06-2018       PENNANT	                 0.1                                            * 
  *                                                                                          * 
  *                                                                                          * 
  *                                                                                          * 
@@ -40,42 +40,31 @@
  *                                                                                          * 
  ********************************************************************************************
  */
-
 package com.pennant.backend.service.finance.financialsummary;
-
-import java.util.List;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
+import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennanttech.pff.core.TableType;
 
-/**
- * Service declaration for methods that depends on <b>CustomerPhoneNumber</b>.<br>
- * 
- */
-public interface RecommendationNotesDetailsService {
+public interface SynopsisDetailsService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
+	AuditHeader delete(AuditHeader auditHeader);
+
+	AuditHeader doApprove(AuditHeader auditHeader);
+
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	int getVersion(long id, String typeCode);
+	AuditDetail saveOrUpdate(SynopsisDetails synopsisDetails, TableType tableType, String auditTranType);
 
-	void saveOrUpdate(FinanceDetail financeDetail, AuditHeader auditHeader, String tableType);
+	AuditDetail delete(SynopsisDetails synopsisDetails, TableType tableType, String auditTranType);
 
-	List<AuditDetail> doProcess(List<RecommendationNotes> recommendationNotesDetails,
+	AuditDetail doApprove(SynopsisDetails synopsisDetails, TableType tableType, String auditTranType);
 
-	TableType tableType, String auditTranType, boolean isApproveRcd);
+	SynopsisDetails getSynopsisDetails(String finReference);
 
-	List<AuditDetail> doApprove(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
-			String auditTranType);
-
-	List<AuditDetail> delete(List<RecommendationNotes> recommendationNotesDetails, TableType tableType,
-			String auditTranType);
-
-	List<AuditDetail> processRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesDetailsList,
-			TableType tableType, String auditTranType, boolean isApproveRcd);
-
+	AuditDetail validate(SynopsisDetails synopsisDetails, String method, String auditTranType, String usrLanguage);
 }
