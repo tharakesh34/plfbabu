@@ -7366,6 +7366,9 @@ public class ScheduleCalculator {
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
 		finMain.setCalculateRepay(true);
+		if(StringUtils.isEmpty(finMain.getRecalSchdMethod())){
+			finScheduleData = getSchdMethod(finScheduleData);
+		}
 		if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isSchdOnPMTCal()
 				&& StringUtils.equals(finMain.getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
 				&& StringUtils.equals(finMain.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
