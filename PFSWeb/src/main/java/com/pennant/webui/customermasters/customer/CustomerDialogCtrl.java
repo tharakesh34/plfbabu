@@ -462,6 +462,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private boolean isEnqProcess = false;
 	private boolean isFirstTask = false;
 	private boolean isPromotionPickProcess = false;
+	private boolean isFromCustomer =false;
+	private boolean fromLoan =false;
 
 	private FinBasicDetailsCtrl finBasicDetailsCtrl;
 	private CollateralBasicDetailsCtrl collateralBasicDetailsCtrl;
@@ -577,6 +579,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 			if (arguments.containsKey("isFirstTask")) {
 				isFirstTask = (Boolean) arguments.get("isFirstTask");
+			}
+			if (arguments.containsKey("isFromCustomer")) {
+				isFromCustomer = (Boolean) arguments.get("isFromCustomer");
+			}
+			if (arguments.containsKey("fromLoan")) {
+				fromLoan = (Boolean) arguments.get("fromLoan");
 			}
 			if (arguments.containsKey("isNotFinanceProcess")) {
 				isNotFinanceProcess = (Boolean) arguments.get("isNotFinanceProcess");
@@ -2144,9 +2152,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private void doCheckCibil() {
 		logger.debug(Literal.ENTERING);
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_CIBIL_REQUEST) && (isFirstTask() || this.isFirstTask)
-				&& isRetailCustomer) {
-			this.btn_GenerateCibil.setVisible(true);
+		String roles = SysParamUtil.getValueAsString(SMTParameterConstants.ALLOW_CIBIL_VALIDATION_RULE);
+		roles = StringUtils.trimToEmpty(roles);
+		if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_CIBIL_REQUEST)) {
+			String status = getCustomerDetails().getCustomer().getRecordStatus();
+			if (fromLoan) {
+				if ((roles.contains(getRole()) && isRetailCustomer)
+						|| (getFinancedetail() != null && getFinancedetail().isNewRecord() && isRetailCustomer)) {
+					this.btn_GenerateCibil.setVisible(true);
+				}
+			} else if (status != null && isFromCustomer) {
+				if (isRetailCustomer && status.equals("Approved")) {
+					this.btn_GenerateCibil.setVisible(true);
+				} else {
+					this.btn_GenerateCibil.setVisible(false);
+				}
+			}
 		} else {
 			this.btn_GenerateCibil.setVisible(false);
 		}

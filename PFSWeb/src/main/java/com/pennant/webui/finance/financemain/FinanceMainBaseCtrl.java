@@ -2708,6 +2708,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				map.put("rcuVerificationDialogCtrl", rcuVerificationDialogCtrl);
 				map.put("isFirstTask", isFirstTask());
+				map.put("fromLoan", true);
 				customerWindow = Executions.createComponents(
 						"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
@@ -21859,6 +21860,27 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				MessageUtil.showMessage(e.getMessage());
 			} else {
 				MessageUtil.showMessage("Initiate Finfort Service Problem");
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onClickExtbtnINS_CAL_URL() {
+		logger.debug(Literal.ENTERING);
+		String insuranceUrl = "";
+		try {
+			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
+				return;
+			}
+			insuranceUrl = SysParamUtil.getValueAsString(SMTParameterConstants.INSURANCE_CAL_REQUEST_URL);
+			if (StringUtils.isNotEmpty(insuranceUrl)) {
+				Executions.getCurrent().sendRedirect(insuranceUrl, "_blank");
+			}
+		} catch (Exception e) {
+			if (e.getMessage() != null) {
+				MessageUtil.showMessage(e.getMessage());
+			} else {
+				MessageUtil.showError(e);
 			}
 		}
 		logger.debug(Literal.LEAVING);

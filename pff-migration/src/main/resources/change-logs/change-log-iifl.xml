@@ -3377,5 +3377,22 @@
 			]]>
 		</sql>
 	</changeSet>
+	<changeSet id="18" author="saikumar b">
+	<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'INSURANCE_CAL_REQUEST_URL';
+				INSERT INTO SMTparameters  VALUES ('INSURANCE_CAL_REQUEST_URL', 'Insurance Calculator Request Url.', 'String', '1', 'http://loansuat.iifl.in/insuranceweb/Insurance/ShowDetail/', 200, 0, NULL, NULL, 'Insurance Calculator Request Url.', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
+			]]>
+	</sql>
+	</changeSet>
+
+	<changeSet id="19" author="saikumar b">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'ALLOW_CIBIL_VALIDATION_RULE';
+				INSERT INTO SMTparameters  VALUES ('ALLOW_CIBIL_VALIDATION_RULE', 'Check Cibil Validation Rule', 'String', '1', 'CRA', 5, 0, NULL, NULL, 'Check Cibil Validation Rule.', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

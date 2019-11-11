@@ -263,6 +263,7 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("customerListCtrl", this);
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 		arg.put("module", module);
+		arg.put("isFromCustomer", true);
 
 		try {
 			if (enqiryModule) {
