@@ -143,6 +143,7 @@ public abstract class JsonService<T> {
 			logDetail.setReqSentOn(reqSentOn);
 			logRequest(logDetail);
 			response = getTemplate(serviceDetail).exchange(url, method, httpEntity, String.class);
+			serviceDetail.setResponseHeaders(response.getHeaders());
 			serviceDetail.setResponseString(response.getBody());
 		} catch (ResourceAccessException e) {
 			logger.error(Literal.EXCEPTION, e);

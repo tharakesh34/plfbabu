@@ -29,7 +29,8 @@ public class JsonServiceDetail implements Serializable {
 	private boolean proxyRequired = false;
 	private String proxyUrl;
 	private int proxyPort = 0;
-
+	private HttpHeaders responseHeaders;
+	
 	public String getReference() {
 		return reference;
 	}
@@ -174,4 +175,11 @@ public class JsonServiceDetail implements Serializable {
 		this.proxyPort = proxyPort;
 	}
 
+	public HttpHeaders getResponseHeaders() {
+		return responseHeaders;
+	}
+
+	public void setResponseHeaders(HttpHeaders responseHeaders) {
+		this.responseHeaders = responseHeaders;
+	}
 }
