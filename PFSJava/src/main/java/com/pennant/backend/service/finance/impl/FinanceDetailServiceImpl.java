@@ -822,7 +822,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// SynopsisDetails details
-		financeDetail.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finReference));
+		if(financeDetail.getSynopsisDetails() != null){
+			financeDetail.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finReference));
+		}
 
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
