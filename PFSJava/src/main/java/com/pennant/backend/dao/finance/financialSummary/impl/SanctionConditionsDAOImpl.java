@@ -159,7 +159,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		logger.debug("Entering");
 
 		if (sanctionConditions.getId() == Long.MIN_VALUE) {
-			sanctionConditions.setId(getNextValue("SeqSanctionConditions"));
+			sanctionConditions.setId(getNextValue("SEQ_SANCTION_CONDITIONS"));
 			logger.debug("get NextID:" + sanctionConditions.getId());
 		}
 
