@@ -398,7 +398,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			return;
 		}
 
-		parenttab.setSelected(true);
+		if (parenttab != null) {
+			parenttab.setSelected(true);
+		}
+
 		try {
 			GSTINInfo gstinInfo = new GSTINInfo();
 			gstinInfo.setgSTNNumber(gSTNNumber);

@@ -517,7 +517,7 @@ public class PennantJavaUtil {
 	private final static String WF_VERIFICATION_RCU = "VERIFICATION_RCU";
 	private final static String PRESENTMENT_BATCH = "PRESENTMENTBATCH";
 	private final static String GST_WF = "GSTDETAILS";
-	private final static String CHEQUE_WF = "CHEQUEDETAIL";
+	private final static String CHEQUE_WF = "CHEQUEMAINTENANCE";
 	private final static String LEGAL_DETAILS = "LEGAL_DETAILS";
 	private final static String costCenters_WF = "COSTCENTERS";
 	private final static String profitCenters_WF = "PROFITCENTERS";
