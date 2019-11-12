@@ -152,5 +152,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+	 <changeSet id="8" author="meena.a">
+		<sql>
+			<![CDATA[
+				delete from BMTCustCategories where CustCtgCode='SME';
+				insert into BMTCustCategories values('SME','Small or Medum Enterprise','E',1,1,1000,Current_TimeStamp,'Approved','','','','','',0);
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
