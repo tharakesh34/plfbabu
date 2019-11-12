@@ -259,7 +259,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Groupbox gb_queriesDetails;
 	private Groupbox gb_convenantsDetails;
 	private Groupbox gb_documentCheckListDetails;
-	private Groupbox gb_dialog;
+	private Groupbox gb_otherDetails;
 	private Groupbox gb_recommendationNoteDetails;
 
 	private CustomerDetailsService customerDetailsService;
@@ -273,6 +273,28 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private NotesDAO notesDAO;
 	@Autowired
 	private DeviationHelper deviationHelper;
+	
+	private boolean isbasicDetailsVisible = false;
+	private boolean isbtDetailsVisible = false;
+	private boolean iscustomerDetailsVisible = false;
+	private boolean isdueDiligenceDetailsVisible = false;
+	private boolean isreferencesVisible = false;
+	private boolean iscollateralDetailsVisible = false;
+	private boolean isassetDetailsVisible = false;
+	private boolean issynopsisAndPdDetailsVisible = false;
+	private boolean isdeviationsDetailsVisible = false;
+	private boolean isrecommendationNoteDetailsVisible = false;
+	private boolean isdealRecommendationMeritsDetailsVisible = false;
+	private boolean issanctionConditionsDetailsVisible = false;
+	private boolean isrisksAndMitigantsDetailsVisible = false;
+	private boolean isinterfacesDetailsVisible = false;
+	private boolean isscoringDetailsVisible = false;
+	private boolean iseligibilityDetailsVisible = false;
+	private boolean isrecommendationsDetailsVisible = false;
+	private boolean isqueriesDetailsVisible = false;
+	private boolean isconvenantsDetailsVisible = false;
+	private boolean isdocumentCheckListDetailsVisible = false;
+	private boolean isotherDetailsVisible = false;
 
 	/**
 	 * default constructor.<br>
@@ -361,7 +383,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doShowDialog(FinanceDetail financeDetail) {
 		logger.debug(Literal.LEAVING);
-
+		
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		String cetGroupBoxesVisibility ="CET_"+financeMain.getFinType();
+		doShowCetGroupBoxes(SysParamUtil.getValueAsString(cetGroupBoxesVisibility));
+		
 		doWriteBeanToComponents(financeDetail);
 		doReadOnly();
 
@@ -371,6 +397,119 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
+		logger.debug(Literal.LEAVING);
+	}
+	
+	public void doShowCetGroupBoxes(String cetGroupBoxesVisibility) {
+
+		logger.debug(Literal.LEAVING);
+
+		if (cetGroupBoxesVisibility.contains("gb_basicDetails")) {
+			isbasicDetailsVisible = true;
+			imgBasicDetails.setVisible(true);
+			gb_basicDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_btDetails")) {
+			isbtDetailsVisible = true;
+			imgBtDetails.setVisible(true);
+			gb_btDetails.setVisible(true);
+			
+		}
+		if (cetGroupBoxesVisibility.contains("gb_customerDetails")) {
+			iscustomerDetailsVisible = true;
+			imgCustomerDetails.setVisible(true);
+			gb_customerDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_dueDiligenceDetail")) {
+			isdueDiligenceDetailsVisible = true;
+			imgDueDiligence.setVisible(true);
+			gb_dueDiligenceDetail.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_references")) {
+			isreferencesVisible = true;
+			imgReferences.setVisible(true);
+			gb_references.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_collateralDetails")) {
+			iscollateralDetailsVisible = true;
+			gb_collateralDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_assetDetails")) {
+			isassetDetailsVisible = true;
+			gb_assetDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_synopsisAndPdDetails")) {
+			issynopsisAndPdDetailsVisible = true;
+			imgSynopsisandpddetails.setVisible(true);
+			gb_synopsisAndPdDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_deviations")) {
+			isdeviationsDetailsVisible = true;
+			imgDeviations.setVisible(true);
+			gb_deviations.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_recommendationNoteDetails")) {
+			isrecommendationNoteDetailsVisible = true;
+			imgRecommendationNote.setVisible(true);
+			gb_recommendationNoteDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_dealRecommendationMeritsDetails")) {
+			isdealRecommendationMeritsDetailsVisible = true;
+			imgDealRecommendationMerits.setVisible(true);
+			gb_dealRecommendationMeritsDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_sanctionConditionsDetails")) {
+			issanctionConditionsDetailsVisible = true;
+			imgSanctionConditions.setVisible(true);
+			gb_sanctionConditionsDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_risksAndMitigants")) {
+			isrisksAndMitigantsDetailsVisible = true;
+			imgRisksMigigants.setVisible(true);
+			gb_risksAndMitigants.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_interfacesDetails")) {
+			isinterfacesDetailsVisible = true;
+			imgInterfaces.setVisible(true);
+			gb_interfacesDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_scoringDetails")) {
+			isscoringDetailsVisible = true;
+			imgScoring.setVisible(true);
+			gb_scoringDetails.setVisible(true);
+			
+		}
+		if (cetGroupBoxesVisibility.contains("gb_eligibilityDetails")) {
+			iseligibilityDetailsVisible = true;
+			imgEligibility.setVisible(true);
+			gb_eligibilityDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_recommendationsDetails")) {
+			isrecommendationsDetailsVisible = true;
+			imgRecommendations.setVisible(true);
+			gb_recommendationsDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_queriesDetails")) {
+			isqueriesDetailsVisible = true;
+			imgQueries.setVisible(true);
+			gb_queriesDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_convenantsDetails")) {
+			isconvenantsDetailsVisible = true;
+			imgConvents.setVisible(true);
+			gb_convenantsDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_documentCheckListDetails")) {
+			isdocumentCheckListDetailsVisible = true;
+			imgDocumentCheckList.setVisible(true);
+			gb_documentCheckListDetails.setVisible(true);
+		}
+		if (cetGroupBoxesVisibility.contains("gb_otherDetails")) {
+			isotherDetailsVisible = true;
+			imgOtherDetails.setVisible(true);
+			gb_otherDetails.setVisible(true);
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -385,6 +524,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		List<FinanceScheduleDetail> fsdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
 
 		this.custCif.setValue(customerDetails.getCustomer().getCustCIF());
 		this.lanNo.setValue(financeMain.getFinReference());
@@ -404,89 +544,120 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.majorProduct.setValue(financeDetail.getSynopsisDetails().getMajorProduct());
 			this.otherRemarks.setValue(financeDetail.getSynopsisDetails().getOtherRemarks());
 		}
+		if (isbasicDetailsVisible) {
+			doFillBasicDetails(financeMain, fsdList);
+		}
+		if (iscustomerDetailsVisible) {
+			Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
+			renderCustomerDetails(customerDetails.getCustomer().getCustID(), customerDetails.getCustomer()
+					.getCustShrtName(), customerDetails.getCustomer().getCustDOB(), "Primary", maturityDate);
+			if (!financeDetail.getJountAccountDetailList().isEmpty()) {
+				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJountAccountDetailList();
+				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
+					renderCustomerDetails(jointAccountDetail.getCustID(), jointAccountDetail.getLovDescCIFName(),
+							jointAccountDetail.getLovCustDob(), "Co-Applicant", maturityDate);
 
-		List<FinanceScheduleDetail> fsdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
-		doFillBasicDetails(financeMain, fsdList);
+				}
+			}
+			if (!financeDetail.getGurantorsDetailList().isEmpty()) {
+				List<GuarantorDetail> guarantorDetailList = financeDetail.getGurantorsDetailList();
+				for (GuarantorDetail guarantorDetail : guarantorDetailList) {
+					renderCustomerDetails(guarantorDetail.getGuarantorId(), guarantorDetail.getGuarantorCIFName(),
+							guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
 
-		Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
-		renderCustomerDetails(customerDetails.getCustomer().getCustID(), customerDetails.getCustomer()
-				.getCustShrtName(), customerDetails.getCustomer().getCustDOB(), "Primary", maturityDate);
-		if (!financeDetail.getJountAccountDetailList().isEmpty()) {
-			List<JointAccountDetail> jointAccountDetailList = financeDetail.getJountAccountDetailList();
-			for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
-				renderCustomerDetails(jointAccountDetail.getCustID(), jointAccountDetail.getLovDescCIFName(),
-						jointAccountDetail.getLovCustDob(), "Co-Applicant", maturityDate);
-
+				}
 			}
 		}
-		if (!financeDetail.getGurantorsDetailList().isEmpty()) {
-			List<GuarantorDetail> guarantorDetailList = financeDetail.getGurantorsDetailList();
-			for (GuarantorDetail guarantorDetail : guarantorDetailList) {
-				renderCustomerDetails(guarantorDetail.getGuarantorId(), guarantorDetail.getGuarantorCIFName(),
-						guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
 
-			}
+		if (isreferencesVisible) {
+			doFillReferencesDetails(customerDetails);
 		}
 
-		doFillReferencesDetails(customerDetails);
+		if (isdeviationsDetailsVisible) {
+			List<FinanceDeviations> financeDeviations = financeDetail.getFinanceDeviations();
+			List<FinanceDeviations> approvedFinanceDeviations = financeDetail.getApprovedFinanceDeviations();
+			List<FinanceDeviations> manualDeviations = financeDetail.getManualDeviations();
+			List<FinanceDeviations> approvedManualDeviations = financeDetail.getApprovedManualDeviations();
 
-		List<FinanceDeviations> financeDeviations = financeDetail.getFinanceDeviations();
-		List<FinanceDeviations> approvedFinanceDeviations = financeDetail.getApprovedFinanceDeviations();
-		List<FinanceDeviations> manualDeviations = financeDetail.getManualDeviations();
-		List<FinanceDeviations> approvedManualDeviations = financeDetail.getApprovedManualDeviations();
+			List<FinanceDeviations> totalDevaitons = Stream
+					.of(financeDeviations, approvedFinanceDeviations, manualDeviations, approvedManualDeviations)
+					.flatMap(x -> x.stream()).collect(Collectors.toList());
+			doFillDeviationsDetails(totalDevaitons);
+		}
 
-		List<FinanceDeviations> totalDevaitons = Stream
-				.of(financeDeviations, approvedFinanceDeviations, manualDeviations, approvedManualDeviations)
-				.flatMap(x -> x.stream()).collect(Collectors.toList());
-		doFillDeviationsDetails(totalDevaitons);
-		doFillSanctionConditionsDetails(financeDetail.getSanctionDetailsList());
-		doFillRisksAndMitigants(financeDetail.getRisksAndMitigantsList());
+		if (issanctionConditionsDetailsVisible) {
+			doFillSanctionConditionsDetails(financeDetail.getSanctionDetailsList());
+		}
+		if (isrisksAndMitigantsDetailsVisible) {
+			doFillRisksAndMitigants(financeDetail.getRisksAndMitigantsList());
+		}
 
-		List<InterfaceLogDetail> interfaceLogDetail = getRisksAndMitigantsDAO().getInterfaceLogDetails(
-				financeMain.getFinReference());
+		if (isinterfacesDetailsVisible) {
+			List<InterfaceLogDetail> interfaceLogDetail = getRisksAndMitigantsDAO().getInterfaceLogDetails(
+					financeMain.getFinReference());
 
-		doFillInterfacesDetails(interfaceLogDetail);
-		Notes notes = new Notes();
-		notes.setModuleName("FinanceMain");
-		notes.setReference(financeMain.getFinReference());
-		List<Notes> notesList = notesDAO.getNotesList(notes, false);
+			doFillInterfacesDetails(interfaceLogDetail);
 
-		doFillRecommendationsDetails(notesList);
-		doFillScoringDetails();
-		doFillEligibilityDetails();
+		}
+		if (isrecommendationsDetailsVisible) {
+			Notes notes = new Notes();
+			notes.setModuleName("FinanceMain");
+			notes.setReference(financeMain.getFinReference());
+			List<Notes> notesList = notesDAO.getNotesList(notes, false);
+			doFillRecommendationsDetails(notesList);
+		}
+		if (iscollateralDetailsVisible) {
+			doFillScoringDetails();
+		}
+		if (iseligibilityDetailsVisible) {
+			doFillEligibilityDetails();
+		}
+		if (isqueriesDetailsVisible) {
+			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(
+					financeMain.getFinReference(), "_View");
+			doFillQueriesDetails(queryDetails);
+		}
+		if (isconvenantsDetailsVisible) {
+			doFillConvenantsDetails(financeDetail.getCovenantTypeList());
+		}
+		if (isdocumentCheckListDetailsVisible) {
+			doFillDocumentCheckListDetails(financeDetail.getDocumentDetailsList());
+		}
 
-		List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinReference(),
-				"_View");
+		if (isdealRecommendationMeritsDetailsVisible) {
+			doFillDealRecommendationMeritsDetails(financeDetail.getDealRecommendationMeritsDetailsList());
+		}
+		if (isotherDetailsVisible) {
+			doFillOtherDetails(financeDetail);
+		}
 
-		doFillQueriesDetails(queryDetails);
-		doFillConvenantsDetails(financeDetail.getCovenantTypeList());
-
-		doFillDocumentCheckListDetails(financeDetail.getDocumentDetailsList());
-		doFillDealRecommendationMeritsDetails(financeDetail.getDealRecommendationMeritsDetailsList());
-		doFillOtherDetails(financeDetail);
-
-		dueDiligenceCheckListDetails = getRisksAndMitigantsDAO().getDueDiligenceCheckListDetails();
-		if (CollectionUtils.isNotEmpty(dueDiligenceCheckListDetails)) {
-			if (CollectionUtils.isNotEmpty(financeDetail.getDueDiligenceDetailsList())) {
-				doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList());
+		if (isdueDiligenceDetailsVisible) {
+			dueDiligenceCheckListDetails = getRisksAndMitigantsDAO().getDueDiligenceCheckListDetails();
+			if (CollectionUtils.isNotEmpty(dueDiligenceCheckListDetails)) {
+				if (CollectionUtils.isNotEmpty(financeDetail.getDueDiligenceDetailsList())) {
+					doFillDueDiligenceDetails(financeDetail.getDueDiligenceDetailsList());
+				} else {
+					renderDueDiligenceDetails(dueDiligenceCheckListDetails);
+				}
 			} else {
-				renderDueDiligenceDetails(dueDiligenceCheckListDetails);
+				imgDueDiligence.setVisible(false);
+				gb_dueDiligenceDetail.setVisible(false);
 			}
-		} else {
-			imgDueDiligence.setVisible(false);
-			gb_dueDiligenceDetail.setVisible(false);
 		}
-		recommendationNotesConfigDetails = getRecommendationNotesDetailsDAO()
-				.getRecommendationNotesConfigurationDetails();
-		if (CollectionUtils.isNotEmpty(recommendationNotesConfigDetails)) {
-			if (CollectionUtils.isNotEmpty(financeDetail.getRecommendationNoteList())) {
-				doFillRecommendationNotesDetails(financeDetail.getRecommendationNoteList());
+
+		if (isrecommendationNoteDetailsVisible) {
+			recommendationNotesConfigDetails = getRecommendationNotesDetailsDAO()
+					.getRecommendationNotesConfigurationDetails();
+			if (CollectionUtils.isNotEmpty(recommendationNotesConfigDetails)) {
+				if (CollectionUtils.isNotEmpty(financeDetail.getRecommendationNoteList())) {
+					doFillRecommendationNotesDetails(financeDetail.getRecommendationNoteList());
+				} else {
+					renderRecommendationNotesDetails(recommendationNotesConfigDetails);
+				}
 			} else {
-				renderRecommendationNotesDetails(recommendationNotesConfigDetails);
+				imgRecommendationNote.setVisible(false);
+				gb_recommendationNoteDetails.setVisible(false);
 			}
-		} else {
-			imgRecommendationNote.setVisible(false);
-			gb_recommendationNoteDetails.setVisible(false);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1244,7 +1415,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		for (DueDiligenceCheckList dueDiligenceCheck : dueDiligenceCheckListDetails) {
 			DueDiligenceDetails dueDiligenceDts = new DueDiligenceDetails();
-			dueDiligenceDts.setId(dueDiligenceCheck.getId());
 			dueDiligenceDts.setParticularId(dueDiligenceCheck.getId());
 			dueDiligenceDts.setParticulars(dueDiligenceCheck.getParticulars());
 			dueDiligenceDts.setStatus(dueDiligenceCheck.getStatus());
@@ -1257,13 +1427,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetailsList) {
 		this.listBoxDueDiligenceDetail.getItems().clear();
-
+        long dueDiligenceCount = 0;
 		if (CollectionUtils.isNotEmpty(dueDiligenceDetailsList)) {
 			for (DueDiligenceDetails dueDiligenceDetails : dueDiligenceDetailsList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				//ID
-				lc = new Listcell(String.valueOf(dueDiligenceDetails.getId()));
+				lc = new Listcell(String.valueOf(dueDiligenceCount+1));
 				lc.setParent(item);
 
 				//PARTICULARS
@@ -1318,6 +1488,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					dueDiligenceDetails.setNewRecord(false);
 					dueDiligenceDetails.setParticularId(dueDiligenceDetails.getParticularId());
 				}
+				dueDiligenceCount++;
 			}
 			setDueDiligenceDetailsList(dueDiligenceDetailsList);
 		}
@@ -1330,7 +1501,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		for (RecommendationNotesConfiguration recommendationNotes : recommendationNoteDetailsList) {
 			RecommendationNotes recommendationNotesDetails = new RecommendationNotes();
-			recommendationNotesDetails.setId(recommendationNotes.getId());
 			recommendationNotesDetails.setParticularId(recommendationNotes.getId());
 			recommendationNotesDetails.setParticulars(recommendationNotes.getParticulars());
 			recommendationNotesDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
@@ -1342,13 +1512,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesList) {
 		this.listBoxRecommendationNoteDetails.getItems().clear();
-
+        long recommendationNotesCount = 0;
 		if (CollectionUtils.isNotEmpty(recommendationNotesList)) {
 			for (RecommendationNotes recommendationNotesDetails : recommendationNotesList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				//IDo
-				lc = new Listcell(String.valueOf(recommendationNotesDetails.getId()));
+				lc = new Listcell(String.valueOf(recommendationNotesCount+1));
 				lc.setParent(item);
 
 				//PARTICULARS
@@ -1377,6 +1547,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					recommendationNotesDetails.setNewRecord(false);
 					recommendationNotesDetails.setParticularId(recommendationNotesDetails.getParticularId());
 				}
+				recommendationNotesCount++;
 			}
 			setRecommendationNotesDetailsList(recommendationNotesList);
 		}
@@ -1530,7 +1701,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void onClick$imgOtherDetails(Event event) throws Exception {
 		logger.debug("Entering");
-		gb_dialog.focus();
+		gb_otherDetails.focus();
 		logger.debug("Leaving");
 	}
 

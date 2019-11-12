@@ -19079,6 +19079,55 @@ UNION ALL
 			1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 		]]>
 	</sql>
-</changeSet>	
+</changeSet>
+<changeSet id="369" author="varaprasad.k" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				truncate table deps_saved_ddl;
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="370_pre" author="varaprasad.k" dbms="postgresql">
+			<sql>
+				<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'smtparameters');
+				]]>
+			</sql>
+	</changeSet>
+	<changeSet id="370" author="Varaprasad.k" >
+			<modifyDataType tableName="smtparameters" columnName="sysparmvalue"
+				newDataType="varchar(1000)" />
+	</changeSet>
+	<changeSet id="370_post" author="varaprasad.k" dbms="postgresql">
+			<sql>
+				<![CDATA[
+					select deps_restore_dependencies ('plf', 'smtparameters');
+				]]>
+			</sql>
+	</changeSet>
+	<changeSet id="371" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_BL';
+				INSERT INTO SMTparameters  VALUES ('CET_BL', 'Business Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_dealRecommendationMeritsDetails,gb_risksAndMitigants,gb_deviations,gb_convenantsDetails,gb_recommendationNoteDetails,gb_sanctionConditionsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Business Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="372" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_PL';
+				INSERT INTO SMTparameters  VALUES ('CET_PL', 'Personal Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_recommendationNoteDetails,gb_deviations,gb_otherDetails', 1, 0, NULL, NULL, 'Personal Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="373" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_LAEP';
+				INSERT INTO SMTparameters  VALUES ('CET_LAEP', 'Leap Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_risksAndMitigants,gb_recommendationNoteDetails,gb_dealRecommendationMeritsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Leap Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>	
 	
 </databaseChangeLog>

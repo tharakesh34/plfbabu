@@ -955,7 +955,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 					documentDetails.setFinEvent(procEdtEvent);
 					// Save the document (documentDetails object) into DocumentManagerTable using documentManagerDAO.save(?) get the long Id.
 					// This will be used in the getDocumentDetailsDAO().save, Update & delete methods
-					if (documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocRefId() != null && documentDetails.getDocRefId() <= 0) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));

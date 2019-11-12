@@ -74,7 +74,7 @@
 					                            </rows>
 					                  </grid>
 					                </groupbox>
-					              <groupbox id="gb_basicDetails">
+					              <groupbox id="gb_basicDetails" visible="false">
 									  <caption label="Basic Details"></caption>
 					                  <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 					                            <rows>
@@ -135,7 +135,7 @@
 					                            </rows>
 					                  </grid>
 					              </groupbox>
-					              <groupbox id="gb_btDetails" open="false">
+					              <groupbox id="gb_btDetails" visible="false">
 					                   <caption label="BT Details"></caption>
 					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 					                            <rows>
@@ -190,7 +190,7 @@
 					                            </rows>
 					                  </grid>
 					              </groupbox>
-					              <groupbox id="gb_customerDetails">
+					              <groupbox id="gb_customerDetails" visible="false">
 					                  <caption label="Customer Details"></caption>
 					                   <div>
 						                   <listbox id="listBoxCustomerDetails" span="true" sizedByContent="true" fixedLayout="true"
@@ -213,7 +213,7 @@
 										    </listbox>
 									  </div>
 					              </groupbox>
-					              <groupbox id="gb_dueDiligenceDetail">
+					              <groupbox id="gb_dueDiligenceDetail" visible="false">
 					                  <caption label="Due Diligence Detail"></caption>
 					                   <div>
 						                   <listbox id="listBoxDueDiligenceDetail" span="true" sizedByContent="true" fixedLayout="true"
@@ -231,7 +231,7 @@
 										    </listbox>
 									  </div>
 					              </groupbox>
-					              <groupbox  id="gb_references" open="false">
+					              <groupbox  id="gb_references" visible="false">
 					                  <caption label="References"></caption>
 					                  <listbox id="listBoxReferencesDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -261,7 +261,7 @@
 					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 					                  </grid>
 					              </groupbox>
-					              <groupbox id="gb_synopsisAndPdDetails">
+					              <groupbox id="gb_synopsisAndPdDetails" visible="false">
 					                   <caption label="Case Synopsis/PD Details"></caption>
 					                   <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 					                     <rows>
@@ -319,7 +319,7 @@
 					                     </rows>
 					                  </grid>
 					              </groupbox>
-					              <groupbox  id="gb_deviations">
+					              <groupbox  id="gb_deviations" visible="false">
 					                   <caption label="Deviations"></caption>
 					                   <listbox id="listBoxDeviationsDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -337,7 +337,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					                <groupbox  id="gb_recommendationNoteDetails">
+					                <groupbox  id="gb_recommendationNoteDetails" visible="false">
 					                   <caption label="Recommendations Note"></caption>
 					                   <listbox id="listBoxRecommendationNoteDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -351,7 +351,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_dealRecommendationMeritsDetails">
+					              <groupbox  id="gb_dealRecommendationMeritsDetails" visible="false">
 					                   <caption label="Deal Recommendation Merits"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
@@ -375,7 +375,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_sanctionConditionsDetails">
+					              <groupbox  id="gb_sanctionConditionsDetails" visible="false">
 					                   <caption label="Sanction Conditons"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
@@ -401,7 +401,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox id="gb_risksAndMitigants">
+					              <groupbox id="gb_risksAndMitigants" visible="false">
 					                   <caption label="Risks and Mitigants"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
 													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
@@ -427,7 +427,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					               <groupbox  id="gb_interfacesDetails">
+					               <groupbox  id="gb_interfacesDetails" visible="false">
 					                   <caption label="Interfaces"></caption>
 					                   <listbox id="listBoxInterfacesDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -443,7 +443,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_scoringDetails" open="false">
+					              <groupbox  id="gb_scoringDetails" visible="false">
 					                   <caption label="Scoring"></caption>
 					                   <listbox id="listBoxScoringDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -457,7 +457,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_eligibilityDetails" open="false">
+					              <groupbox  id="gb_eligibilityDetails" visible="false">
 					                   <caption label="Eligibility"></caption>
 					                   <listbox id="listBoxEligibilityDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -471,7 +471,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_recommendationsDetails">
+					              <groupbox  id="gb_recommendationsDetails" visible="false">
 					                   <caption label="Recommendations"></caption>
 					                   <listbox id="listBoxRecommendationsDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -485,7 +485,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_queriesDetails">
+					              <groupbox  id="gb_queriesDetails" visible="false">
 					                   <caption label="Queries"></caption>
 					                   <listbox id="listBoxQueriesDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -505,7 +505,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_convenantsDetails">
+					              <groupbox  id="gb_convenantsDetails" visible="false">
 					                   <caption label="Convenants"></caption>
 					                   <listbox id="listBoxConvenantsDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -527,7 +527,7 @@
 														</listhead>
 									</listbox>
 					              </groupbox>
-					              <groupbox  id="gb_documentCheckListDetails">
+					              <groupbox  id="gb_documentCheckListDetails" visible="false">
 					                   <caption label="Document Check List"></caption>
 					                   <listbox id="listBoxDocumentCheckListDetails" span="true" sizedByContent="true" fixedLayout="true"
 														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
@@ -548,7 +548,7 @@
 									</listbox>
 					              </groupbox>
 					              <!-- Other Details -->
-									<groupbox sclass="gb_dialog" id="gb_dialog">
+									<groupbox sclass="gb_dialog" id="gb_otherDetails">
 										<caption label="Other Details"></caption>
 										<tabbox width="100%" height="100%">
 											<tabs style="width:0px;height:0px;border:none;">
