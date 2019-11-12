@@ -282,7 +282,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private String getCreditDebitQuery() {
-		if (Database.ORACLE.equals(App.Database.ORACLE)) {
+		if (App.DATABASE.equals(App.Database.ORACLE)) {
 			return getCreditDebitQueryOracle();
 		} else {
 			return getCreditDebitQueryDefault();
@@ -319,8 +319,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append("Update TRIAL_BALANCE_REPORT_WORK SET");
 		sql.append(" DebitAmount = T2.DebitAmount");
 		sql.append(", CreditAmount = T2.CreditAmount");
-		sql.append(" from select Distinct");
-		sql.append(" (T1.Account");
+		sql.append(" from (select Distinct");
+		sql.append(" T1.Account");
 		sql.append(", SUM(Case When DrOrCr = 'D' Then PostAmount Else 0 End) DebitAmount");
 		sql.append(", SUM(Case When DrOrCr = 'C' Then PostAmount * -1 Else 0 End)  CreditAmount");
 
@@ -329,7 +329,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" From Postings T1");
 			sql.append(" Inner Join RMTBranches T2 on T1.POSTBRANCH = T2.BRANCHCODE");
 			sql.append(" Where T1.ENTITYCODE = :EntityCode and T1.PostDate >= :FromDate and T1.PostDate <= :ToDate");
-			sql.append(" Group By Account, BranchProvince) T2");
+			sql.append(" Group By Account, BranchProvince)) T2");
 			sql.append(" TRIAL_BALANCE_REPORT_WORK.Account = T2.Account");
 			sql.append(" and TRIAL_BALANCE_REPORT_WORK.Province = T2.BranchProvince");
 		} else {
@@ -366,7 +366,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private StringBuilder getOpeningBalanceQuery() {
-		if (Database.ORACLE.equals(App.Database.ORACLE)) {
+		if (App.DATABASE.equals(App.Database.ORACLE)) {
 			return getOpeningBalanceQueryOracle();
 		} else {
 			return getOpeningBalanceQueryDefault();
@@ -430,7 +430,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		} else {
 			sql.append(" (Select Distinct");
 			sql.append(" ac.AcNumber Account");
-			sql.append(", Sum(T1.ACBALANCE)*-1  OpeningBalance");
+			sql.append(", Sum(T1.ACBALANCE)*-1  OpeningBalance,");
 			sql.append(" (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
 			sql.append(" From Accounts_History_Details T1");
 			sql.append(" inner join accounts ac on ac.id = t1.accountid");
@@ -478,7 +478,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 	}
 
 	private StringBuilder getProfiTLossBalanceQuery() {
-		if (Database.ORACLE.equals(App.Database.ORACLE)) {
+		if (App.DATABASE.equals(App.Database.ORACLE)) {
 			return getProfiTLossBalanceQueryOracle();
 		} else {
 			return getProfiTLossBalanceQueryDefault();
@@ -524,7 +524,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		sql.append(" Update TRIAL_BALANCE_REPORT_WORK set");
 		sql.append(" PLACBalance = T3.openingBal");
 		sql.append(", OpeningBal = TRIAL_BALANCE_REPORT_WORK.OpeningBal - T3.openingBal");
-		sql.append("from (");
+		sql.append(" from (");
 		if (stateWiseReport) {
 			sql.append("select ac.AcNumber AccountID");
 			sql.append(", T1.BranchProvince");
@@ -552,7 +552,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" and TRIAL_BALANCE_REPORT_WORK.GroupCode IN ('INCOME','EXPENSE') ");
 
 		} else {
-			sql.append(" (Select ac.AcNumber AccountID, Sum(T1.ACBALANCE)*-1  OpeningBal ");
+			sql.append(" Select ac.AcNumber AccountID, Sum(T1.ACBALANCE)*-1  OpeningBal ");
 			sql.append(
 					" From Accounts_History_Details T1 inner join accounts ac on ac.id = t1.accountid Inner join (Select Distinct T2.AccountID,T2.BranchProvince,");
 			sql.append(" T2.PostBranch, T2.EntityCode, Max(T2.PostDate) PostDate From Accounts_History_Details T2");
@@ -612,7 +612,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		StringBuilder sql = new StringBuilder();
 
-		if (Database.ORACLE.equals(App.Database.ORACLE)) {
+		if (App.DATABASE.equals(App.Database.ORACLE)) {
 			sql.append(" MERGE INTO TRIAL_BALANCE_REPORT_WORK T1 USING (");
 			if (stateWiseReport) {
 				sql.append(" Select Account, Province, (OpeningBal + CreditAmount + DebitAmount) ClosingBal,");
@@ -793,7 +793,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		logger.debug(Literal.ENTERING);
 		jdbcTemplate.execute("DELETE FROM TRIAL_BALANCE_REPORT_FILE");
 
-		if (App.DATABASE == App.Database.ORACLE) {
+		if (App.DATABASE.equals(App.Database.ORACLE)) {
 			jdbcTemplate
 					.execute("alter table TRIAL_BALANCE_REPORT_FILE modify ID generated as identity (start with 1)");
 		} else if (App.DATABASE == App.Database.SQL_SERVER) {
