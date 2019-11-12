@@ -15,6 +15,8 @@ import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
+import com.pennanttech.ws.model.customer.CustDedupDetails;
+import com.pennanttech.ws.model.customer.CustDedupResponse;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustValidationResponse;
@@ -283,5 +285,13 @@ public interface CustomerRESTService {
 	@GET
 	@Path("/customerService/doCustomerValidation/{coreBankId}")
 	public CustValidationResponse doCustomerValidation(@PathParam("coreBankId") String custCIF) throws ServiceException;
+
+	@POST
+	@Path("/customerService/getCustDedup")
+	public CustDedupResponse getCustDedup(CustDedupDetails custDedupDetails) throws ServiceException;
+
+	@POST
+	@Path("/customerService/getNegativeListCustomer")
+	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
 
 }

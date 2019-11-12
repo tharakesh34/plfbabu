@@ -11,6 +11,8 @@ import com.pennant.backend.model.customermasters.ProspectCustomerDetails;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
+import com.pennanttech.ws.model.customer.CustDedupDetails;
+import com.pennanttech.ws.model.customer.CustDedupResponse;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustValidationResponse;
@@ -194,5 +196,9 @@ public interface CustomerSOAPService {
 
 	public CustValidationResponse doCustomerValidation(@WebParam(name = "cif") String custCIF) throws ServiceException;
 
+	@WebResult(name = "customer")
+	public CustDedupResponse getCustDedup(CustDedupDetails custDedupDetails) throws ServiceException;
 
+	@WebResult(name = "customer")
+	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
 }

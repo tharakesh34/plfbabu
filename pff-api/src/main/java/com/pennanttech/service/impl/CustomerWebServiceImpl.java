@@ -1,16 +1,22 @@
 package com.pennanttech.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pennant.app.util.DateUtility;
 import com.pennant.backend.dao.applicationmaster.BlackListCustomerDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerCategoryDAO;
 import com.pennant.backend.dao.custdedup.CustomerDedupDAO;
@@ -18,7 +24,9 @@ import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
+import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -75,6 +83,9 @@ import com.pennanttech.pffws.CustomerSOAPService;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.AgreementRequest;
 import com.pennanttech.ws.model.customer.CustAddress;
+import com.pennanttech.ws.model.customer.CustDedupDetails;
+import com.pennanttech.ws.model.customer.CustDedupRequest;
+import com.pennanttech.ws.model.customer.CustDedupResponse;
 import com.pennanttech.ws.model.customer.CustEMail;
 import com.pennanttech.ws.model.customer.CustPhoneNumber;
 import com.pennanttech.ws.model.customer.CustValidationResponse;
@@ -117,7 +128,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerCategoryDAO customerCategoryDAO;
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
 	private CustomerDAO customerDAO;
-
+	private DedupFieldsDAO dedupFieldsDAO;
 	private CreditApplicationReviewService creditApplicationReviewService;
 
 	/**
@@ -2916,6 +2927,316 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		logger.debug(Literal.LEAVING);
 		return response;
 	}
+	
+	/**
+	 * getCustDedup
+	 * @param custDedupDetails
+	 */
+
+	@Override
+	public CustDedupResponse getCustDedup(CustDedupDetails custDedupDetails) throws ServiceException {
+
+		logger.debug(Literal.ENTERING);
+		CustDedupResponse response = new CustDedupResponse();
+		CustomerDedup dedup = new CustomerDedup();
+
+		List<CustDedupRequest> dedupList = custDedupDetails.getDedupList();
+
+		if (CollectionUtils.isEmpty(dedupList)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Request";
+			valueParm[1] = " two fields";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+			return response;
+		} else {
+			if (dedupList.size() < 2) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Request";
+				valueParm[1] = " two fields";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+				return response;
+			}
+		}
+
+		String custCtgCode = null;
+		for (CustDedupRequest detail : dedupList) {
+			if (StringUtils.equalsIgnoreCase(detail.getName(), "CustCtgCode")) {
+				custCtgCode = String.valueOf(detail.getValue());
+				break;
+			}
+		}
+		if (StringUtils.isBlank(custCtgCode)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "CategoryCode";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+
+			// validate Customer category code
+			boolean isExist = customerCategoryDAO.isCustCtgExist(custCtgCode, "");
+			if (!isExist) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CustCtg";
+				valueParm[1] = custCtgCode;
+				response.setReturnStatus(getErrorDetails("90224", valueParm));
+				return response;
+			}
+		}
+		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("Customer"));
+		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
+
+		for (CustDedupRequest feild : dedupList) {
+			// mandatory validation
+			if (StringUtils.isBlank(feild.getName())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "value";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+
+			boolean fieldFound = false;
+			for (String dbField : fieldNamesList) {
+
+				if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
+					fieldFound = true;
+					if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
+						dedup.setCustCtgCode(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustShrtName")) {
+						dedup.setCustShrtName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustFName")) {
+						dedup.setCustFName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustLName")) {
+						dedup.setCustLName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("MobileNumber")) {
+						dedup.setMobileNumber(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustEMail")) {
+						dedup.setCustEMail(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustCIF")) {
+						dedup.setCustCIF(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
+						dedup.setCustCRCPR(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("AadharNumber")) {
+						dedup.setAadharNumber((String.valueOf(feild.getValue())));
+					}
+					if (feild.getName().equalsIgnoreCase("CustDOB")) {
+						try {
+							String fieldValue = Objects.toString(feild.getValue(), "");
+							SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
+							sdf.setLenient(false);
+							Date date1 = sdf.parse(fieldValue);
+							Date dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+							dedup.setCustDOB(dateValue);
+						} catch (Exception e) {
+							String[] valueParm = new String[2];
+							valueParm[0] = feild.getName();
+							valueParm[1] = "Date";
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+							return response;
+						}
+					}
+					if (feild.getName().equalsIgnoreCase("CustNationality")) {
+						dedup.setCustNationality(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
+						dedup.setCustPassportNo(String.valueOf(feild.getValue()));
+					}
+				}
+			}
+			if (!fieldFound) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "feild name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+				return response;
+			}
+
+		}
+
+		List<CustomerDedup> resDedupList = new ArrayList<CustomerDedup>();
+		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_CUSTOMER, custCtgCode,
+				"");
+		// TO Check duplicate customer in Local database
+		for (DedupParm dedupParm : dedupParmList) {
+			List<CustomerDedup> list = customerDedupDAO.fetchCustomerDedupDetails(dedup, dedupParm.getSQLQuery());
+			if (list != null && !list.isEmpty()) {
+				resDedupList.addAll(list);
+			}
+		}
+		if (CollectionUtils.isNotEmpty(resDedupList)) {
+			response.setDedupList(resDedupList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
+
+	@Override
+	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException {
+
+		logger.debug(Literal.ENTERING);
+		CustDedupResponse response = new CustDedupResponse();
+
+		BlackListCustomers blackListCustomers = new BlackListCustomers();
+
+		List<CustDedupRequest> dedupList = custDedupDetails.getDedupList();
+
+		if (CollectionUtils.isEmpty(dedupList)) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Request";
+			valueParm[1] = " two fields";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+			return response;
+		} else {
+			if (dedupList.size() < 2) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Request";
+				valueParm[1] = " two fields";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30507", valueParm));
+				return response;
+			}
+		}
+
+		String custCtgCode = null;
+		for (CustDedupRequest detail : dedupList) {
+			if (StringUtils.equalsIgnoreCase(detail.getName(), "CustCtgCode")) {
+				custCtgCode = String.valueOf(detail.getValue());
+				break;
+			}
+		}
+		if (StringUtils.isBlank(custCtgCode)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "CategoryCode";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+
+			// validate Customer category code
+			boolean isExist = customerCategoryDAO.isCustCtgExist(custCtgCode, "");
+			if (!isExist) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "CustCtg";
+				valueParm[1] = custCtgCode;
+				response.setReturnStatus(getErrorDetails("90224", valueParm));
+				return response;
+			}
+		}
+
+		List<BuilderTable> fieldList = dedupFieldsDAO.getFieldList(custCtgCode.concat("BlackList"));
+		List<String> fieldNamesList = fieldList.stream().map(d -> d.getFieldName()).collect(Collectors.toList());
+
+		for (CustDedupRequest feild : dedupList) {
+			// mandatory validation
+			if (StringUtils.isBlank(feild.getName())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+			if (StringUtils.isBlank(String.valueOf(feild.getValue()))) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "value";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return response;
+			}
+			boolean fieldFound = false;
+			for (String dbField : fieldNamesList) {
+
+				if (StringUtils.equalsIgnoreCase(dbField, feild.getName())) {
+					fieldFound = true;
+
+					if (feild.getName().equalsIgnoreCase("CustCIF")) {
+						blackListCustomers.setCustCIF(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustFName")) {
+						blackListCustomers.setCustFName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustLName")) {
+						blackListCustomers.setCustLName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustShrtName")) {
+						blackListCustomers.setCustShrtName(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustDOB")) {
+						try {
+							String fieldValue = Objects.toString(feild.getValue(), "");
+							SimpleDateFormat sdf = new SimpleDateFormat(PennantConstants.APIDateFormatter);
+							sdf.setLenient(false);
+							Date date = sdf.parse(fieldValue);
+							Date dateValue = DateUtility.parse(fieldValue, PennantConstants.APIDateFormatter);
+							blackListCustomers.setCustDOB(dateValue);
+						} catch (Exception e) {
+							String[] valueParm = new String[2];
+							valueParm[0] = feild.getName();
+							valueParm[1] = "Date";
+							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+							return response;
+
+						}
+					}
+					if (feild.getName().equalsIgnoreCase("MobileNumber")) {
+						blackListCustomers.setMobileNumber(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustNationality")) {
+						blackListCustomers.setCustNationality(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustCRCPR")) {
+						blackListCustomers.setCustAadhaar(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustPassportNo")) {
+						blackListCustomers.setCustAadhaar(String.valueOf(feild.getValue()));
+					}
+					if (feild.getName().equalsIgnoreCase("CustCtgCode")) {
+						blackListCustomers.setCustCtgCode(String.valueOf(feild.getValue()));
+					}
+				}
+
+			}
+			if (!fieldFound) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "feild name";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+				return response;
+			}
+
+		}
+
+		List<BlackListCustomers> negativeList = new ArrayList<BlackListCustomers>();
+		List<DedupParm> dedupParmList = dedupParmDAO.getDedupParmByModule(FinanceConstants.DEDUP_BLACKLIST, custCtgCode,
+				"");
+		// TO Check duplicate customer in Local database
+		for (DedupParm dedupParm : dedupParmList) {
+			List<BlackListCustomers> list = blacklistCustomerDAO.fetchBlackListedCustomers(blackListCustomers,
+					dedupParm.getSQLQuery());
+			if (list != null && !list.isEmpty()) {
+				negativeList.addAll(list);
+			}
+		}
+		if (CollectionUtils.isNotEmpty(negativeList)) {
+			response.setBlackList(negativeList);
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+		} else {
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		}
+		logger.debug(Literal.LEAVING);
+		return response;
+	}
 
 	@Override
 	public CustValidationResponse doCustomerValidation(String coreBankId) throws ServiceException {
@@ -3333,4 +3654,8 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
 	}
 
+	@Autowired
+	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
+		this.dedupFieldsDAO = dedupFieldsDAO;
+	}
 }
