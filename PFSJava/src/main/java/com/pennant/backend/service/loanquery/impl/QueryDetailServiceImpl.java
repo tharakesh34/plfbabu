@@ -162,7 +162,7 @@ public class QueryDetailServiceImpl extends GenericService<QueryDetail> implemen
 		if (queryDetail.getDocumentDetailsList() != null && !queryDetail.getDocumentDetailsList().isEmpty()) {
 			for (DocumentDetails documentDetails : queryDetail.getDocumentDetailsList()) {
 				documentDetails.setReferenceId(String.valueOf(queryDetail.getId()));
-				if (documentDetails.isNew() && documentDetails.getDocRefId() <= 0) {
+				if (documentDetails.isNew() && (documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0)) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(documentDetails.getDocImage());
 					documentDetails.setDocRefId(getDocumentManagerDAO().save(documentManager));

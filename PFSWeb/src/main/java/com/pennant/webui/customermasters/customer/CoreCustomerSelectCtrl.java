@@ -428,9 +428,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 						&& "Y".equals(SysParamUtil.getValueAsString("CUST_PAN_VALIDATION"))) {
 					cif = getCustomerDetailsService().getEIDNumberById(primaryIdNumber,
 							this.custCtgType.getSelectedItem().getValue(), "_View");
-				} else {
-					cif = getCustomerDetailsService().getEIDNumberById(primaryIdNumber, "_View");
-				}
+				} 
 				if (StringUtils.isNotBlank(cif)) {
 
 					String msg = Labels.getLabel("label_CoreCustomerDialog_ProspectExist",
