@@ -64,6 +64,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.verification.Agencies;
 
 /**
  * Service implementation for methods that depends on <b>VehicleDealer</b>.<br>
@@ -438,6 +439,43 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41018", errParmvendor, valueParmvendor), usrLanguage));
 		}
+
+		// setting error details for branch code if any branchCode from a comma separated string already exists 
+
+		if ((vehicleDealer.getRecordStatus().equals(PennantConstants.RCD_STATUS_SUBMITTED))
+				&& (vehicleDealer.getDealerType().equals(Agencies.FIAGENCY.getKey()))) {
+			int branchCodeCount = 0;
+			List<VehicleDealer> dealerBranchCodes = getVehicleDealerDAO()
+					.getVehicleDealerBranchCodes(vehicleDealer.getDealerType(), "_View");
+			for (VehicleDealer dealerCodes : dealerBranchCodes) {
+				if (dealerCodes.getBranchCode() != null) {
+					String[] branchesExisting = dealerCodes.getBranchCode().split(",");
+
+					for (int i = 0; i < branchesExisting.length; i++) {
+						String[] branchesSelected = vehicleDealer.getBranchCode().split(",");
+						for (int j = 0; j < branchesSelected.length; j++) {
+							if ((!vehicleDealer.getDealerName().equals(dealerCodes.getDealerName())
+									&& branchesExisting[i].equals(branchesSelected[j]))) {
+								branchCodeCount++;
+							}
+						}
+					}
+				}
+			}
+			if (branchCodeCount != 0) {
+				String[] errParmBranch = new String[2];
+				String[] valueParmBranch = new String[2];
+				valueParmBranch[0] = String.valueOf(vehicleDealer.getDealerName());
+				valueParmBranch[1] = String.valueOf(vehicleDealer.getBranchCode());
+
+				errParmBranch[0] = PennantJavaUtil.getLabel("label_DealerName") + ":" + valueParmBranch[0];
+				errParmBranch[1] = PennantJavaUtil.getLabel("label_BranchCode") + ":" + valueParmBranch[1];
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41096", errParmBranch, valueParmBranch),
+						usrLanguage));
+			}
+		}
+
 		if (StringUtils.trimToEmpty(vehicleDealer.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
 			int custCount = getCustomerDAO().getCustCountByDealerId(vehicleDealer.getDealerId());
 			if (custCount != 0) {

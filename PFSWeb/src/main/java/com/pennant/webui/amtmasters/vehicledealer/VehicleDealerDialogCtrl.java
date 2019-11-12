@@ -47,6 +47,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -93,6 +94,7 @@ import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
+import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -125,6 +127,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	protected ExtendedCombobox dealerCountry; // autowired
 	protected ExtendedCombobox dealerCity; // autowired
 	protected ExtendedCombobox dealerProvince; // autowired
+
+	protected Label label_VehicleDealerDialog_Branch;
+	protected ExtendedCombobox branch;
+	protected Space space_dealerBranch;
+
+	//protected Button btnBranch;
+
 	protected Textbox email;
 	protected Textbox dealerPoBox;
 	protected Space space_dealerPoBox;
@@ -383,6 +392,15 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.branchIFSCCode.setReadonly(true);
 		this.branchCity.setMaxlength(50);
 		this.branchCity.setReadonly(true);
+
+		this.branch.setModuleName("Branch");
+		this.branch.setValueColumn("BranchCode");
+		this.branch.setDescColumn("BranchDesc");
+		this.branch.setValidateColumns(new String[] { "BranchCode" });
+		this.branch.setMultySelection(true);
+		this.branch.setInputAllowed(false);
+		this.branch.setWidth("150px");
+		this.branch.setMandatoryStyle(true);
 
 		this.iBANnumber.setMaxlength(23);
 		this.dealerPoBox.setMaxlength(6);
@@ -783,6 +801,26 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			this.branchCity.setValue(aVehicleDealer.getBranchCity());
 		}
 
+		if (aVehicleDealer.getBranchCode() != null) {
+			Map<String, Object> map = new HashMap<>();
+			StringBuilder branches = new StringBuilder();
+			for (String branchCodes : aVehicleDealer.getBranchCode().split(",")) {
+				branchCodes = StringUtils.trim(branchCodes);
+
+				if (branches.length() > 0) {
+					branches.append(",");
+				}
+				branches.append(branchCodes);
+				map.put(branchCodes, branches);
+			}
+
+			this.branch.setValue(branches.toString());
+			this.branch.setAttribute("data", map);
+			this.branch.setTooltiptext(branches.toString());
+			this.branch.setInputAllowed(false);
+			this.branch.setSelectedValues(map);
+		}
+
 		this.active.setChecked(aVehicleDealer.isActive());
 		this.accountingSetId.setValue(aVehicleDealer.getAccountingSetCode());
 		this.commisionCalRule.setValue(aVehicleDealer.getCalculationRule());
@@ -1035,6 +1073,27 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			wve.add(we);
 		}
 		try {
+			// writing multiple selected values into branch field.
+			this.branch.getValue();
+			Map<String, Object> branchValues = getSelectedValues(this.branch);
+			if (branchValues != null) {
+				StringBuffer data = new StringBuffer();
+				for (String branches : branchValues.keySet()) {
+					if (data.length() > 0) {
+						data.append(",");
+					}
+					data.append(branches);
+				}
+
+				aVehicleDealer.setBranchCode(data.toString());
+			} else {
+				aVehicleDealer.setBranchCode(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (this.sellerType.getSelectedItem().getValue().equals(PennantConstants.List_Select)
 					&& !this.sellerType.isVisible()) {
 				throw new WrongValueException(this.sellerType, Labels.getLabel("FIELD_IS_MAND",
@@ -1058,6 +1117,12 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 
 		aVehicleDealer.setRecordStatus(this.recordStatus.getValue());
 		logger.debug(Literal.LEAVING);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getSelectedValues(ExtendedCombobox extendedCombobox) {
+		Object object = extendedCombobox.getAttribute("data");
+		return (Map<String, Object>) object;
 	}
 
 	/**
@@ -1409,6 +1474,13 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		this.accountNo.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_AccountNo"));
 		this.accountType.setDisabled(isReadOnly("VehicleDealerDialog_" + module + "_AccountType"));
 		this.bankBranchCode.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_BankBranchId"));
+
+		// making branch field enable or disable based on agency
+		if (!module.equals(Agencies.FIAGENCY.getKey())) {
+			this.label_VehicleDealerDialog_Branch.setVisible(false);
+			this.branch.setVisible(false);
+		}
+		this.branch.setReadonly(isReadOnly("VehicleDealerDialog_" + module + "_branch"));
 		// this.code.setReadonly(false);
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

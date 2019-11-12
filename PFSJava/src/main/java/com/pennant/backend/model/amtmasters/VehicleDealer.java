@@ -114,6 +114,7 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	private String branchIFSCCode;
 	private String branchMICRCode;
 	private String branchCity;
+	private String branchCode; // newly added field
 
 	public VehicleDealer() {
 		super();
@@ -645,5 +646,15 @@ public class VehicleDealer extends AbstractWorkflowEntity implements Entity {
 	public void setBranchCity(String branchCity) {
 		this.branchCity = branchCity;
 	}
+
+	public String getBranchCode() {
+		return branchCode;
+	}
+
+	public void setBranchCode(String branchCode) {
+		this.branchCode = branchCode;
+	}
+
+
 
 }

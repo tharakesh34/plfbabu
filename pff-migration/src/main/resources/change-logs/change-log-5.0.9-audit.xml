@@ -896,4 +896,11 @@
 		</createTable>
 	</changeSet>
 	
+	
+<changeSet id="56" author="saiteja.r">
+	<addColumn tableName="ADTAMTVehicleDealer">
+		<column name="BranchCode" type="varchar(2000)" />
+	</addColumn>
+</changeSet>
+	
 </databaseChangeLog>
