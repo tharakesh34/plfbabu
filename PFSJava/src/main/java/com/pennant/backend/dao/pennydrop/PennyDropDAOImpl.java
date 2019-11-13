@@ -8,11 +8,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class PennyDropDAOImpl extends SequenceDao<PennyDropStatus> implements PennyDropDAO {
+public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> implements PennyDropDAO {
 	private static Logger logger = Logger.getLogger(PennyDropDAOImpl.class);
 
 	public PennyDropDAOImpl() {
@@ -20,13 +22,13 @@ public class PennyDropDAOImpl extends SequenceDao<PennyDropStatus> implements Pe
 	}
 
 	@Override
-	public void savePennyDropSts(PennyDropStatus pennyDropStatus) {
+	public void savePennyDropSts(BankAccountValidation bankAccountValidations) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder insertSql = new StringBuilder(" Insert Into PENNY_DROP_STATUS");
 		insertSql.append(" (AcctNum, IFSC, InitiateType, Status, Reason)");
 		insertSql.append(" Values(:AcctNum, :iFSC , :initiateType, :Status, :Reason)");
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pennyDropStatus);
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankAccountValidations);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
 
 		logger.debug(Literal.LEAVING);
@@ -59,7 +61,7 @@ public class PennyDropDAOImpl extends SequenceDao<PennyDropStatus> implements Pe
 	}
 
 	@Override
-	public PennyDropStatus getPennyDropStatusByAcc(String accNum, String ifsc) {
+	public BankAccountValidation getPennyDropStatusByAcc(String accNum, String ifsc) {
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder sql = new StringBuilder();
@@ -72,8 +74,8 @@ public class PennyDropDAOImpl extends SequenceDao<PennyDropStatus> implements Pe
 		source.addValue("AcctNum", accNum);
 		source.addValue("IFSC", ifsc);
 
-		RowMapper<PennyDropStatus> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(PennyDropStatus.class);
+		RowMapper<BankAccountValidation> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(BankAccountValidation.class);
 
 		try {
 			return this.jdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);

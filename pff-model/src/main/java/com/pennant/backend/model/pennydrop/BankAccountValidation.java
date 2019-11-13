@@ -1,13 +1,16 @@
 package com.pennant.backend.model.pennydrop;
 
-public class PennyDropStatus {
-
+public class BankAccountValidation {
 	private long ID = Long.MIN_VALUE;
 	private String acctNum;
 	private String iFSC;
 	private String initiateType;
 	private boolean status;
 	private String reason;
+	
+	public BankAccountValidation() {
+		super();
+	}
 
 	public long getID() {
 		return ID;

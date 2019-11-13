@@ -68,7 +68,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.beneficiary.Beneficiary;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.beneficiary.BeneficiaryService;
 import com.pennant.backend.service.pennydrop.PennyDropService;
@@ -117,12 +117,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	private transient BeneficiaryListCtrl beneficiaryListCtrl;
 	private transient BeneficiaryService beneficiaryService;
 	private transient BankDetailService bankDetailService;
-	private transient AccountValidationService accountValidationService;
 	private transient BankAccountValidationService bankAccountValidationService;
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
-
-	private PennyDropStatus pennyDropstatus;
+	private transient BankAccountValidation bankAccountValidations;
 
 	/**
 	 * default constructor.<br>
@@ -415,8 +413,8 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.beneficiaryActive.setChecked(beneficiary.isBeneficiaryActive());
 		this.defaultBeneficiary.setChecked(beneficiary.isDefaultBeneficiary());
 
-		if (pennyDropstatus != null) {
-			this.pennyDropResult.setValue(pennyDropstatus.isStatus() ? "Success" : "Fail");
+		if (bankAccountValidationService != null) {
+			this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
 		}
@@ -494,26 +492,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			wve.add(we);
 		}
 
-		// Validate Account Number
-		if (wve.isEmpty()) {
-			try {
-				if (accountValidationService != null) {
-					aBeneficiary.setUsrID(getUserWorkspace().getLoggedInUser().getUserId());
-					aBeneficiary.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());
-
-					aBeneficiary = accountValidationService.validateAccount(aBeneficiary);
-				}
-			} catch (InterfaceException e) {
-				logger.error(Literal.EXCEPTION, e);
-				if (e != null) {
-					throw new WrongValueException(this.accNumber, e.getErrorCode() + " : " + e.getErrorMessage());
-				}
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				throw new WrongValueException(this.accNumber, "Invalid Account Number.");
-			}
-		}
-
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -535,6 +513,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	 * @param beneficiary
 	 *            The entity that need to be render.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void doShowDialog(Beneficiary beneficiary) {
 		logger.debug("Entering");
 
@@ -569,7 +548,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		}
 
 		if (beneficiary != null) {
-			pennyDropstatus = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(),
+			bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(),
 					beneficiary.getiFSC());
 		}
 		doWriteBeanToComponents(beneficiary);
@@ -1030,10 +1009,10 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation();
-		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		BankAccountValidation accountValidation = new BankAccountValidation();
 		try {
 			if (this.accNumber.getValue() != null) {
-				pennyDropStatus.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+				accountValidation.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1041,7 +1020,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 
 		try {
 			if (this.bankBranchID.getValue() != null) {
-				pennyDropStatus.setiFSC(this.bankBranchID.getValue());
+				accountValidation.setiFSC(this.bankBranchID.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1057,21 +1036,21 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(accountValidation.getAcctNum(), accountValidation.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("This Account number with IFSC code already validated.");
 			return;
 		} else {
 			try {
-				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				boolean status = bankAccountValidationService.validateBankAccount(accountValidation);
 				if (status) {
 					this.pennyDropResult.setValue("Sucess");
 				} else {
 					this.pennyDropResult.setValue("Fail");
 				}
-				pennyDropStatus.setStatus(status);
-				pennyDropStatus.setInitiateType("B");
-				getPennyDropService().savePennyDropSts(pennyDropStatus);
+				accountValidation.setStatus(status);
+				accountValidation.setInitiateType("B");
+				getPennyDropService().savePennyDropSts(accountValidation);
 			} catch (Exception e) {
 				MessageUtil.showMessage(e.getMessage());
 			}
@@ -1095,11 +1074,6 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 	@Qualifier(value = "bankAccountValidationService")
 	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
 		this.bankAccountValidationService = bankAccountValidationService;
-	}
-
-	@Autowired(required = false)
-	public void setAccountValidationService(AccountValidationService accountValidationService) {
-		this.accountValidationService = accountValidationService;
 	}
 
 	public PennyDropService getPennyDropService() {

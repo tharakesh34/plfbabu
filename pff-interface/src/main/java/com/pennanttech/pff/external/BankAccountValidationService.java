@@ -1,9 +1,9 @@
 package com.pennanttech.pff.external;
 
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
 
 public interface BankAccountValidationService {
 
-	public boolean getBankTransactionDetails(PennyDropStatus pennyDropStatus);
+	public boolean validateBankAccount(BankAccountValidation bankAccountValidations);
 
 }

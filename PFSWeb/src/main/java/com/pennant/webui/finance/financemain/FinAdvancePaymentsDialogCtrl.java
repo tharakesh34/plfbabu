@@ -92,7 +92,9 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
@@ -249,7 +251,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 	BankAccountValidationService bankAccountValidationService;
 	private transient PennyDropService pennyDropService;
 	private PennyDropDAO pennyDropDAO;
-	private PennyDropStatus pennyDropStatus;
+	private BankAccountValidation bankAccountValidations;
 
 	/**
 	 * default constructor.<br>
@@ -554,7 +556,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		try {
 			// fill the components with the data
 			if (aFinAdvancePayments != null) {
-				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(
+				bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(
 						aFinAdvancePayments.getBeneficiaryAccNo(), aFinAdvancePayments.getiFSC());
 			}
 			doWriteBeanToComponents(aFinAdvancePayments);
@@ -1000,8 +1002,8 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.recordStatus.setValue(aFinAdvnancePayments.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aFinAdvnancePayments.getRecordType()));
 
-		if (pennyDropStatus != null) {
-			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
+		if (bankAccountValidations != null) {
+			this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
 		}
@@ -2167,10 +2169,10 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation();
-		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		BankAccountValidation bankAccountValidations = new BankAccountValidation();
 		try {
 			if (this.beneficiaryAccNo.getValue() != null) {
-				pennyDropStatus
+				bankAccountValidations
 						.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.beneficiaryAccNo.getValue()));
 			}
 		} catch (WrongValueException we) {
@@ -2179,7 +2181,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 		try {
 			if (this.bankBranchID.getValue() != null) {
-				pennyDropStatus.setiFSC(this.bankBranchID.getValue());
+				bankAccountValidations.setiFSC(this.bankBranchID.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -2195,21 +2197,21 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(), bankAccountValidations.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("Penny Drop Verified for this AccountNumber");
 			return;
 		} else {
 			try {
-				boolean status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+				boolean status = bankAccountValidationService.validateBankAccount(bankAccountValidations);
 				if (status) {
 					this.pennyDropResult.setValue("Sucess");
 				} else {
 					this.pennyDropResult.setValue("Fail");
 				}
-				pennyDropStatus.setStatus(status);
-				pennyDropStatus.setInitiateType("D");
-				getPennyDropService().savePennyDropSts(pennyDropStatus);
+				bankAccountValidations.setStatus(status);
+				bankAccountValidations.setInitiateType("D");
+				getPennyDropService().savePennyDropSts(bankAccountValidations);
 			} catch (Exception e) {
 				MessageUtil.showMessage(e.getMessage());
 			}

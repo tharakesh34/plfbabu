@@ -1,11 +1,13 @@
 package com.pennant.backend.dao.pennydrop;
 
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+import com.pennanttech.pff.external.BankAccountValidationService;
+
 
 public interface PennyDropDAO {
-	void savePennyDropSts(PennyDropStatus pennyDropStatus);
+	void savePennyDropSts(BankAccountValidation bankAccountValidations);
 
 	int getPennyDropCount(String accNumber, String ifsc);
 
-	PennyDropStatus getPennyDropStatusByAcc(String accNum, String ifsc);
+	BankAccountValidation getPennyDropStatusByAcc(String accNum, String ifsc);
 }

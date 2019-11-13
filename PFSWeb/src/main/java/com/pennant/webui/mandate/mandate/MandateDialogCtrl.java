@@ -104,7 +104,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
-import com.pennant.backend.model.pennydrop.PennyDropStatus;
+import com.pennant.backend.model.pennydrop.BankAccountValidation;
+
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.mandate.MandateService;
@@ -253,7 +254,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 	private transient MandateDAO mandateDAO;
 	private transient PennyDropService pennyDropService;
 	private transient PennyDropDAO pennyDropDAO;
-	private transient PennyDropStatus pennyDropStatus;
+	private transient BankAccountValidation bankAccountValidations;
 
 	/**
 	 * default constructor.<br>
@@ -662,10 +663,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		// Interface Calling
 		doSetValidation(true);
-		PennyDropStatus pennyDropStatus = new PennyDropStatus();
+		BankAccountValidation bankAccountValidations = new BankAccountValidation();
 		try {
 			if (this.accNumber.getValue() != null) {
-				pennyDropStatus.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
+				bankAccountValidations.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -673,7 +674,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 
 		try {
 			if (this.bankBranchID.getValue() != null) {
-				pennyDropStatus.setiFSC(this.ifsc.getValue());
+				bankAccountValidations.setiFSC(this.ifsc.getValue());
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -689,7 +690,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			throw new WrongValuesException(wvea);
 		}
 
-		int count = getPennyDropService().getPennyDropCount(pennyDropStatus.getAcctNum(), pennyDropStatus.getiFSC());
+		int count = getPennyDropService().getPennyDropCount(bankAccountValidations.getAcctNum(), bankAccountValidations.getiFSC());
 		if (count > 0) {
 			MessageUtil.showMessage("This Account number with IFSC code already validated.");
 			return;
@@ -697,7 +698,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			try {
 				boolean status = false;
 				if (bankAccountValidationService != null) {
-					status = bankAccountValidationService.getBankTransactionDetails(pennyDropStatus);
+					status = bankAccountValidationService.validateBankAccount(bankAccountValidations);
 				}
 
 				if (status) {
@@ -705,10 +706,10 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 				} else {
 					this.pennyDropResult.setValue("Fail");
 				}
-				pennyDropStatus.setStatus(status);
-				pennyDropStatus.setInitiateType("M");
+				bankAccountValidations.setStatus(status);
+				bankAccountValidations.setInitiateType("M");
 
-				pennyDropService.savePennyDropSts(pennyDropStatus);
+				pennyDropService.savePennyDropSts(bankAccountValidations);
 			} catch (Exception e) {
 				MessageUtil.showMessage(e.getMessage());
 			}
@@ -928,7 +929,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		try {
 			// fill the components with the data
 			if (aMandate != null) {
-				pennyDropStatus = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(),
+				bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(aMandate.getAccNumber(),
 						aMandate.getIFSC());
 			}
 			doWriteBeanToComponents(aMandate);
@@ -1339,8 +1340,8 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 					StringUtils.trimToEmpty(aMandate.getEntityDesc()));
 		}
 
-		if (pennyDropStatus != null) {
-			this.pennyDropResult.setValue(pennyDropStatus.isStatus() ? "Success" : "Fail");
+		if (bankAccountValidations != null) {
+			this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
 		}
