@@ -54,6 +54,7 @@ import com.pennant.backend.dao.administration.SecurityGroupRightsDAO;
 import com.pennant.backend.dao.administration.SecurityRoleGroupsDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.administration.SecurityGroup;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.GenericService;
@@ -61,6 +62,8 @@ import com.pennant.backend.service.administration.SecurityGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>SecurityGroup</b>.<br>
@@ -324,113 +327,18 @@ public class SecurityGroupServiceImpl extends GenericService<SecurityGroup> impl
 	 * @return
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		logger.debug(Literal.ENTERING);
 		SecurityGroup securityGroup = (SecurityGroup) auditDetail.getModelData();
-		SecurityGroup tempSecurityGroup = null;
-		if (securityGroup.isWorkflow()) {
-			tempSecurityGroup = getSecurityGroupDAO().getSecurityGroupById(securityGroup.getId(), "_Temp");
-		}
-		SecurityGroup befSecurityGroup = getSecurityGroupDAO().getSecurityGroupById(securityGroup.getId(), "");
-		SecurityGroup aBefSecurityGroup = getSecurityGroupDAO().getSecurityGroupByCode(securityGroup.getGrpCode(), "");
-
-		SecurityGroup oldSecurityGroup = securityGroup.getBefImage();
-
-		String[] errParm = new String[4];
-		errParm[0] = PennantJavaUtil.getLabel("label_GrpID");
-		errParm[1] = String.valueOf(securityGroup.getId());
-
-		String[] parmGrpCodeExisted = new String[15];
-		parmGrpCodeExisted[0] = PennantJavaUtil.getLabel("label_GrpCode");
-		parmGrpCodeExisted[1] = securityGroup.getGrpCode();
-
-		String[] parmGrpIdAssigned = new String[10];
-		parmGrpIdAssigned[0] = PennantJavaUtil.getLabel("label_Group");
-		parmGrpIdAssigned[1] = PennantJavaUtil.getLabel("label_Role_Or_Right");
-
-		if (securityGroup.isNew()) { // for New record or new record into work flow
-
-			if (!securityGroup.isWorkflow()) {// With out Work flow only new records  
-				if (befSecurityGroup != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
-				}
-				if (aBefSecurityGroup != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parmGrpCodeExisted, null));
-
-				}
-
-			} else { // with work flow
-				if (tempSecurityGroup != null) { // if records already exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-				}
-
-				if (securityGroup.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSecurityGroup != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
-					}
-				} else { // if records not exists in the Main flow table
-					if (befSecurityGroup == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!securityGroup.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befSecurityGroup == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-				}
-
-				if (befSecurityGroup != null && oldSecurityGroup != null
-						&& !oldSecurityGroup.getLastMntOn().equals(befSecurityGroup.getLastMntOn())) {
-					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
-					} else {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
-					}
-
-				}
-
-			} else {
-
-				if (tempSecurityGroup == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-				}
-
-				if (tempSecurityGroup != null && oldSecurityGroup != null
-						&& !oldSecurityGroup.getLastMntOn().equals(tempSecurityGroup.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-				}
-
-			}
-		}
-
-		if ("delete".equals(StringUtils.trimToEmpty(method))) {
-			int groupIdCount = getSecurityRoleGroupsDAO().getGroupIdCount(securityGroup.getGrpID());
-			int aGroupIdCount = getSecurityGroupRightsDAO().getGroupIdCount(securityGroup.getGrpID());
-
-			if ((groupIdCount > 0) || (0 < aGroupIdCount)) {
-				auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "49001", parmGrpIdAssigned, null));
-
-			}
+		// Check the unique keys.
+		if (securityGroup.isNew() && securityGroupDAO.isDuplicateKey(securityGroup.getGrpCode(),
+				securityGroup.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_GrpCode") + ": " + securityGroup.getGrpCode();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))) {
-			securityGroup.setBefImage(befSecurityGroup);
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
-
 	}
 
 	// ******************************************************//

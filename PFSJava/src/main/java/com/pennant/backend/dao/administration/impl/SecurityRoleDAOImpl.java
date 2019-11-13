@@ -61,6 +61,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>SecurityRole model</b> class.<br>
@@ -376,5 +379,36 @@ public class SecurityRoleDAOImpl extends SequenceDao<SecurityRole> implements Se
 			logger.debug(e);
 		}
 		return null;
+	}
+
+	@Override
+	public boolean isDuplicateKey(long roleApp, String roleCd, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "RoleCd = :roleCd and RoleApp = :roleApp";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("SecRoles", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("SecRoles_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "SecRoles_Temp", "SecRoles" }, whereClause);
+			break;
+		}
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("roleApp", roleApp);
+		paramSource.addValue("roleCd", roleCd);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 }

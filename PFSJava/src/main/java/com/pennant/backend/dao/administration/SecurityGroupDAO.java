@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.administration;
 
 import com.pennant.backend.model.administration.SecurityGroup;
+import com.pennanttech.pff.core.TableType;
 
 public interface SecurityGroupDAO {
 
@@ -55,4 +56,6 @@ public interface SecurityGroupDAO {
 	long save(SecurityGroup securityGroup, String type);
 
 	SecurityGroup getSecurityGroupByCode(final String grpCode, String type);
+	
+	boolean isDuplicateKey(String grpCode, TableType tableType);
 }

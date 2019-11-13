@@ -49,6 +49,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -57,6 +58,9 @@ import com.pennant.backend.model.administration.SecurityGroup;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>SecurityGroup model</b> class.<br>
@@ -258,5 +262,35 @@ public class SecurityGroupDAOImpl extends SequenceDao<SecurityGroup> implements 
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving ");
+	}
+
+	@Override
+	public boolean isDuplicateKey(String grpCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "GrpCode = :grpCode";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("SecGroups", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("SecGroups_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "SecGroups_Temp", "SecGroups" }, whereClause);
+			break;
+		}
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("grpCode", grpCode);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
 	}
 }

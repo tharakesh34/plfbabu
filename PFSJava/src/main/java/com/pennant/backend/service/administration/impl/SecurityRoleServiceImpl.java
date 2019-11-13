@@ -57,11 +57,14 @@ import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.systemmasters.Academic;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.administration.SecurityRoleService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>SecurityRole</b>.<br>
@@ -322,119 +325,18 @@ public class SecurityRoleServiceImpl extends GenericService<SecurityRole> implem
 	 * @return
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		SecurityRole secRoles = (SecurityRole) auditDetail.getModelData();
-		SecurityRole tempSecurityRole = null;
-		if (secRoles.isWorkflow()) {
-			tempSecurityRole = getSecurityRoleDAO().getSecurityRoleById(secRoles.getId(), "_Temp");
-		}
-		SecurityRole befSecurityRole = getSecurityRoleDAO().getSecurityRoleById(secRoles.getId(), "");
-		//	SecurityRole aBefSecurityRole= getSecurityRoleDAO().getSecurityRoleByRoleCd(secRoles.getRoleCd(), "");
-		SecurityRole oldSecurityRole = secRoles.getBefImage();
-
-		String[] errParm = new String[4];
-		errParm[0] = PennantJavaUtil.getLabel("label_RoleID");
-		errParm[1] = String.valueOf(secRoles.getId());
-
-		String[] parmRoleCdExisted = new String[10];
-		parmRoleCdExisted[0] = PennantJavaUtil.getLabel("label_RoleCode");
-		parmRoleCdExisted[1] = String.valueOf(secRoles.getRoleCd());
-
-		String[] parmRoleIdAssigned = new String[10];
-		parmRoleIdAssigned[0] = PennantJavaUtil.getLabel("label_Role");
-		parmRoleIdAssigned[1] = PennantJavaUtil.getLabel("label_User_Or_Groups");
-
-		if (secRoles.isNew()) { // for New record or new record into work flow
-
-			if (!secRoles.isWorkflow()) {// With out Work flow only new records  
-				if (befSecurityRole != null) { // Record Already Exists in the table with same roleID  then error  
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
-				}
-
-				/*
-				 * if (aBefSecurityRole!=null ){ // Record Already Exists in the table with same roleCode then error
-				 * auditDetail.setErrorDetail(new
-				 * ErrorDetails(PennantConstants.KEY_FIELD,"41001",parmRoleCdExisted,null));
-				 * 
-				 * }
-				 */
-			} else { // with work flow
-				if (tempSecurityRole != null) { // if records already exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-				}
-
-				if (secRoles.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befSecurityRole != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
-
-					}
-				} else { // if records not exists in the Main flow table
-					if (befSecurityRole == null) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-
-					}
-				}
-				/*
-				 * if (aBefSecurityRole!=null ){ // if records already exists in the Work flow table
-				 * auditDetail.setErrorDetail(new
-				 * ErrorDetails(PennantConstants.KEY_FIELD,"41001",parmRoleCdExisted,null));
-				 * 
-				 * }
-				 */
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!secRoles.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befSecurityRole == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
-
-				}
-
-				if (befSecurityRole != null && oldSecurityRole != null
-						&& !oldSecurityRole.getLastMntOn().equals(befSecurityRole.getLastMntOn())) {
-					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
-					} else {
-						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, null));
-					}
-
-				}
-
-			} else {
-
-				if (tempSecurityRole == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-
-				if (tempSecurityRole != null && oldSecurityRole != null
-						&& !oldSecurityRole.getLastMntOn().equals(tempSecurityRole.getLastMntOn())) {
-					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
-				}
-			}
-		}
-		if ("delete".equals(StringUtils.trimToEmpty(method))) {
-			/* check whether roleId assigned to any user by calling SecurityUsersRolesDAO's getRoleIdCount() */
-			int roleIdCount = getSecurityUserOperationsDAO().getRoleIdCount(secRoles.getRoleID());
-			/* check whether roleId assigned to any group by calling SecurityRoleGroupsDAO's getRoleIdCount() */
-			int aRoleIdCount = getSecurityRoleGroupsDAO().getRoleIdCount(secRoles.getRoleID());
-			/* if roleId assigned for any user or group show error message */
-			if ((roleIdCount > 0) || (0 < aRoleIdCount)) {
-
-				auditDetail
-						.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "49001", parmRoleIdAssigned, null));
-
-			}
+		logger.debug(Literal.ENTERING);
+		// Get the model object.
+		SecurityRole securityRole = (SecurityRole) auditDetail.getModelData();
+		// Check the unique keys.
+		if (securityRole.isNew() && securityRoleDAO.isDuplicateKey(securityRole.getRoleApp(), securityRole.getRoleCd(),
+				securityRole.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_RoleCode") + ": " + securityRole.getRoleCd();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
-		if ("doApprove".equals(StringUtils.trimToEmpty(method))) {
-			secRoles.setBefImage(befSecurityRole);
-		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 

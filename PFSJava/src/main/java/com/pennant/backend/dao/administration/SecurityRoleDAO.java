@@ -45,6 +45,7 @@ package com.pennant.backend.dao.administration;
 import java.util.List;
 
 import com.pennant.backend.model.administration.SecurityRole;
+import com.pennanttech.pff.core.TableType;
 
 public interface SecurityRoleDAO {
 
@@ -67,4 +68,6 @@ public interface SecurityRoleDAO {
 	List<SecurityRole> getApprovedSecurityRoles();
 
 	List<SecurityRole> getSecurityRolesByRoleCodes(List<String> strings);
+
+	boolean isDuplicateKey(long roleApp, String roleCode, TableType tableType);
 }
