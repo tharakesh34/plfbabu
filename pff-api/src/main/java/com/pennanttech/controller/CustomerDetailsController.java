@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
@@ -11,12 +12,14 @@ import org.apache.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.customermasters.CustomerBankInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
 import com.pennant.backend.dao.customermasters.CustomerGstDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
+import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -38,6 +41,10 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.ExtLiabilityPaymentdetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
+import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.service.customermasters.CustomerAddresService;
 import com.pennant.backend.service.customermasters.CustomerBankInfoService;
 import com.pennant.backend.service.customermasters.CustomerCardSalesInfoService;
@@ -53,16 +60,21 @@ import com.pennant.backend.service.customermasters.validation.CustomerBankInfoVa
 import com.pennant.backend.service.customermasters.validation.CustomerChequeInfoValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
 import com.pennant.backend.service.customermasters.validation.CustomerGstInfoValidation;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
@@ -86,6 +98,9 @@ public class CustomerDetailsController {
 	private CustomerChequeInfoService customerChequeInfoService;
 	private CustomerExtLiabilityService customerExtLiabilityService;
 	private DocumentManagerDAO documentManagerDAO;
+	private ExtendedFieldHeaderDAO extendedFieldHeaderDAO;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * get the Customer PhoneNumbers By the Customer Id
@@ -2160,6 +2175,116 @@ public class CustomerDetailsController {
 	}
 
 	/**
+	 * Method for create Customer Extended in PLF system.
+	 * 
+	 * @param ExtendedFields
+	 * 
+	 */
+
+	public CustomerExtendedFieldDetails addCustomerExtendedFields(
+			CustomerExtendedFieldDetails customerExtendedFieldDetails, Customer customerDetails) {
+		int maxSeqNo = 0;
+		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
+		String tableName = getTableName(ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+		try {
+			// process Extended field details
+			// Get the ExtendedFieldHeader for given module and subModule
+			ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
+					ExtendedFieldConstants.MODULE_CUSTOMER, customerDetails.getCustCtgCode(), "");
+			customerExtendedFieldDetails.setExtendedFieldHeader(extendedFieldHeader);
+			List<ExtendedField> extendedFields = customerExtendedFieldDetails.getExtendedDetails();
+			if (extendedFieldHeader != null) {
+				try {
+					maxSeqNo = extendedFieldRenderDAO.getMaxSeqNoByRef(customerDetails.getCustCIF(),
+							tableName.toString());
+				} catch (Exception e) {
+					maxSeqNo = 0;
+				}
+				int seqNo = 0;
+				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
+				exdFieldRender.setReference(customerDetails.getCustomer().getCustCIF());
+				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				exdFieldRender.setLastMntBy(customerDetails.getLastMntBy());
+				if (maxSeqNo == 0) {
+					exdFieldRender.setSeqNo(++seqNo);
+					exdFieldRender
+							.setTypeCode(customerExtendedFieldDetails.getExtendedFieldHeader().getSubModuleName());
+					exdFieldRender.setNewRecord(true);
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					exdFieldRender.setVersion(1);
+				} else {
+					ExtendedFieldRender fieldRender = extendedFieldRenderDAO.getExtendedFieldDetails(
+							customerDetails.getCustCIF(), maxSeqNo, tableName, TableType.MAIN_TAB.getSuffix());
+					exdFieldRender.setSeqNo(fieldRender.getSeqNo());
+					exdFieldRender
+							.setTypeCode(customerExtendedFieldDetails.getExtendedFieldHeader().getSubModuleName());
+					exdFieldRender.setNewRecord(false);
+					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					exdFieldRender.setVersion(fieldRender.getVersion());
+				}
+
+				if (extendedFields != null) {
+					for (ExtendedField extendedField : extendedFields) {
+						Map<String, Object> mapValues = new HashMap<String, Object>();
+						if (extendedField.getExtendedFieldDataList() != null) {
+							for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
+								mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
+								exdFieldRender.setMapValues(mapValues);
+							}
+						} else {
+							Map<String, Object> map = new HashMap<String, Object>();
+							exdFieldRender.setMapValues(map);
+						}
+					}
+					if (extendedFields.isEmpty()) {
+						Map<String, Object> mapValues = new HashMap<String, Object>();
+						exdFieldRender.setMapValues(mapValues);
+					}
+				} else {
+					Map<String, Object> mapValues = new HashMap<String, Object>();
+					exdFieldRender.setMapValues(mapValues);
+				}
+
+				customerExtendedFieldDetails.setExtendedFieldRender(exdFieldRender);
+
+			}
+			if (customerExtendedFieldDetails.getExtendedFieldRender() != null) {
+				auditDetailMap.put("ExtendedFieldDetails",
+						extendedFieldDetailsService.setExtendedFieldsAuditData(
+								customerExtendedFieldDetails.getExtendedFieldRender(), PennantConstants.TRAN_WF,
+								"doApprove", null));
+			}
+			List<AuditDetail> details = auditDetailMap.get("ExtendedFieldDetails");
+			extendedFieldDetailsService.processingExtendedFieldDetailList(details, tableName,
+					TableType.MAIN_TAB.getSuffix());
+			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			logger.debug("Leaving");
+			return response;
+		} catch (Exception e) {
+
+			logger.error("Exception:" + e);
+			APIErrorHandlerService.logUnhandledException(e);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+	}
+	private String getTableName(String module, String subModuleName, String event) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(module);
+		sb.append("_");
+		sb.append(subModuleName);
+		if (StringUtils.trimToNull(event) != null) {
+			sb.append("_");
+			sb.append(PennantStaticListUtil.getFinEventCode(event));
+		}
+		sb.append("_ED");
+		return sb.toString();
+	}
+	
+	/**
 	 * Get Audit Header Details
 	 * 
 	 * @param aCustomerPhonenumber
@@ -2385,5 +2510,29 @@ public class CustomerDetailsController {
 	public void setCustomerCardSalesInfoService(CustomerCardSalesInfoService customerCardSalesInfoService) {
 		this.customerCardSalesInfoService = customerCardSalesInfoService;
 	}
-   
+
+	public ExtendedFieldHeaderDAO getExtendedFieldHeaderDAO() {
+		return extendedFieldHeaderDAO;
+	}
+
+	public void setExtendedFieldHeaderDAO(ExtendedFieldHeaderDAO extendedFieldHeaderDAO) {
+		this.extendedFieldHeaderDAO = extendedFieldHeaderDAO;
+	}
+
+	public ExtendedFieldRenderDAO getExtendedFieldRenderDAO() {
+		return extendedFieldRenderDAO;
+	}
+
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
+		return extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

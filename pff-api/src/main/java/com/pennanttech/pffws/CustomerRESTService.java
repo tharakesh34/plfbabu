@@ -25,6 +25,7 @@ import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -293,5 +294,9 @@ public interface CustomerRESTService {
 	@POST
 	@Path("/customerService/getNegativeListCustomer")
 	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
+	
+	@POST
+	@Path("/customerService/addCustomerExtendedFieldDetails")
+	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails) throws ServiceException;
 
 }

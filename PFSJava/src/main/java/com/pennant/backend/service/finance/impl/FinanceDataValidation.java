@@ -1516,6 +1516,14 @@ public class FinanceDataValidation {
 				return errorDetails;
 			}
 		}
+		
+		// validate coApplicants details
+		if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+			errorDetails = jointAccountDetailsValidation(financeDetail);
+			if (!errorDetails.isEmpty()) {
+				return errorDetails;
+			}
+		}
 		return errorDetails;
 	}
 

@@ -20,6 +20,7 @@ import com.pennanttech.ws.model.customer.CustomerBankInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -201,4 +202,9 @@ public interface CustomerSOAPService {
 
 	@WebResult(name = "customer")
 	public CustDedupResponse getNegativeListCustomer(CustDedupDetails custDedupDetails) throws ServiceException;
+
+	@WebResult(name = "customer")
+	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(
+			@WebParam(name = "customer") CustomerExtendedFieldDetails customerExtendedFieldDetails)
+			throws ServiceException;
 }

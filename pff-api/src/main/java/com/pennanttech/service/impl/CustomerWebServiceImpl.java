@@ -62,7 +62,9 @@ import com.pennant.backend.service.customermasters.CustomerIncomeService;
 import com.pennant.backend.service.customermasters.CustomerPhoneNumberService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.customermasters.validation.CustomerExtLiabilityValidation;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditApplicationReviewService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FacilityConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -94,6 +96,7 @@ import com.pennanttech.ws.model.customer.CustomerCardSaleInfoDetails;
 import com.pennanttech.ws.model.customer.CustomerChequeInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerDocumentDetail;
 import com.pennanttech.ws.model.customer.CustomerExtLiabilityDetail;
+import com.pennanttech.ws.model.customer.CustomerExtendedFieldDetails;
 import com.pennanttech.ws.model.customer.CustomerGstInfoDetail;
 import com.pennanttech.ws.model.customer.CustomerIncomeDetail;
 import com.pennanttech.ws.model.customer.EmploymentDetail;
@@ -130,6 +133,7 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	private CustomerDAO customerDAO;
 	private DedupFieldsDAO dedupFieldsDAO;
 	private CreditApplicationReviewService creditApplicationReviewService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -3266,6 +3270,62 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 
 	}
 
+	@Override
+	public CustomerExtendedFieldDetails addCustomerExtendedFieldDetails(CustomerExtendedFieldDetails customerExtendedFieldDetails)
+			throws ServiceException {
+		logger.debug("Entering");
+		Customer customerDetails = null;
+		CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
+		// bean validations
+		validationUtility.validate(customerExtendedFieldDetails, SaveValidationGroup.class);
+		if (CollectionUtils.isEmpty(customerExtendedFieldDetails.getExtendedDetails())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "extendedDetails";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+		if(StringUtils.isBlank(customerExtendedFieldDetails.getCif())){
+			String[] valueParm = new String[1];
+			valueParm[0] = "cif";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		} else {
+			customerDetails = customerDetailsService.getCustomerByCIF(customerExtendedFieldDetails.getCif());
+			if (customerDetails == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = customerExtendedFieldDetails.getCif();
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90101", valueParm));
+				return response;
+			}
+		}
+
+		// validate customer details as per the API specification
+		List<ErrorDetail> errorDetails = extendedFieldDetailsService.validateExtendedFieldDetails(
+				customerExtendedFieldDetails.getExtendedDetails(), ExtendedFieldConstants.MODULE_CUSTOMER,
+				customerDetails.getCustCtgCode(), "");
+        if(errorDetails.isEmpty()){
+		// call add Customer Employment method in case of no errors
+		response = customerDetailsController.addCustomerExtendedFields(customerExtendedFieldDetails,
+				customerDetails);
+		} else {
+			response.setErrorDetails(errorDetails);
+			return getErrorMessage(response);	
+		}
+
+		logger.debug("Leaving");
+		return response;
+
+	}
+	private CustomerExtendedFieldDetails getErrorMessage(CustomerExtendedFieldDetails customerExtendedFieldDetails) {
+		for (ErrorDetail erroDetail : customerExtendedFieldDetails.getErrorDetails()) {
+			CustomerExtendedFieldDetails response = new CustomerExtendedFieldDetails();
+			//doEmptyResponseObject(response);
+			response.setReturnStatus(
+					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+			return response;
+		}
+		return new CustomerExtendedFieldDetails();
+	}
 	/**
 	 * Get Audit Header Details
 	 * 
@@ -3658,4 +3718,10 @@ public class CustomerWebServiceImpl implements CustomerRESTService, CustomerSOAP
 	public void setDedupFieldsDAO(DedupFieldsDAO dedupFieldsDAO) {
 		this.dedupFieldsDAO = dedupFieldsDAO;
 	}
+	
+	@Autowired
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
 }

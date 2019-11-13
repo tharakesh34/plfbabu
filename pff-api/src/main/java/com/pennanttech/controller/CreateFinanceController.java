@@ -2482,8 +2482,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	 * @param financeDetail
 	 * @return
 	 */
-	public WSReturnStatus updateFinance(FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
+	public WSReturnStatus updateFinance(FinanceDetail financeDetail) { logger.debug(Literal.ENTERING);
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		TableType tableType = TableType.MAIN_TAB;
 		if (finMain.isWorkflow()) {
@@ -2514,6 +2513,10 @@ public class CreateFinanceController extends SummaryDetailService {
 			// save or update document details
 			if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
 				updatedFinanceDocuments(financeDetail);
+			}
+			// save or update coApplicants details
+			if (financeDetail.getJountAccountDetailList() != null && !financeDetail.getJountAccountDetailList().isEmpty()) {
+				updatedCoApplicants(financeDetail);
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -2600,6 +2603,55 @@ public class CreateFinanceController extends SummaryDetailService {
 		logger.debug(Literal.LEAVING);
 	}
 
+	/**
+	 * Method for Save or update Finance coApplicants.
+	 * 
+	 * @param financeDetail
+	 */
+	private void updatedCoApplicants(FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		AuditHeader auditHeader = null;
+		for (JointAccountDetail detail : financeDetail.getJountAccountDetailList()) {
+			detail.setNewRecord(true);
+			detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			detail.setVersion(1);
+			detail.setFinReference(financeMain.getFinReference());
+
+			// set update properties if exists
+			String finReference = financeMain.getFinReference();
+			String type = TableType.TEMP_TAB.getSuffix();
+			JointAccountDetail extDetail = jointAccountDetailService.getJountAccountDetailByRef(finReference,
+					detail.getCustCIF(), type);
+			if (extDetail != null) {
+				detail.setJointAccountId(extDetail.getJointAccountId());
+				detail.setNewRecord(false);
+				detail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				detail.setVersion(extDetail.getVersion() + 1);
+			}
+
+			detail.setUserDetails(financeMain.getUserDetails());
+			detail.setRecordStatus(financeMain.getRecordStatus());
+			detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			detail.setLastMntBy(financeMain.getLastMntBy());
+			// workflow relates
+			detail.setWorkflowId(financeMain.getWorkflowId());
+			detail.setRoleCode(financeMain.getRoleCode());
+			detail.setNextRoleCode(financeMain.getNextRoleCode());
+			detail.setTaskId(financeMain.getTaskId());
+			detail.setNextTaskId(financeMain.getNextTaskId());
+
+			if (StringUtils.equals(detail.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				auditHeader = getAuditHeader(detail, PennantConstants.TRAN_UPD);
+			} else {
+				auditHeader = getAuditHeader(detail, PennantConstants.TRAN_ADD);
+			}
+			jointAccountDetailService.saveOrUpdate(auditHeader);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	private WSReturnStatus updateDisbursementInst(FinanceDetail financeDetail, String type) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		// process disbursement instructions
@@ -2649,6 +2701,12 @@ public class CreateFinanceController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, aMandate.getBefImage(), aMandate);
 		return new AuditHeader(String.valueOf(aMandate.getMandateID()), null, null, null, auditDetail,
 				aMandate.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
+	}
+
+	private AuditHeader getAuditHeader(JointAccountDetail jointAccountDetail, String tranType) {
+		AuditDetail auditDetail = new AuditDetail(tranType, 1, jointAccountDetail.getBefImage(), jointAccountDetail);
+		return new AuditHeader(String.valueOf(jointAccountDetail.getJointAccountId()), null, null, null, auditDetail,
+				jointAccountDetail.getUserDetails(), new HashMap<String, ArrayList<ErrorDetail>>());
 	}
 
 	private void prepareResponse(FinanceDetail financeDetail) {
