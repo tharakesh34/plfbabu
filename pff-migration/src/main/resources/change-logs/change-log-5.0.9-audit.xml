@@ -902,5 +902,10 @@
 		<column name="BranchCode" type="varchar(2000)" />
 	</addColumn>
 </changeSet>
+
+	<changeSet id="57" author="satyanarayana.g">
+		<modifyDataType tableName="ADTBANKBRANCHES" columnName="PARENTBRANCH"
+		newDataType="varchar(12)" />
+	</changeSet>
 	
 </databaseChangeLog>

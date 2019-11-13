@@ -19128,6 +19128,16 @@ UNION ALL
 				INSERT INTO SMTparameters  VALUES ('CET_LAEP', 'Leap Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_risksAndMitigants,gb_recommendationNoteDetails,gb_dealRecommendationMeritsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Leap Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
+	</changeSet>
+	
+	<changeSet id="374" author="satyanarayana.g">
+		<modifyDataType tableName="BANKBRANCHES" columnName="PARENTBRANCH"
+		newDataType="varchar(12)" />
+	</changeSet>
+	
+	<changeSet id="375" author="satyanarayana.g">
+		<modifyDataType tableName="BANKBRANCHES_TEMP" columnName="PARENTBRANCH"
+		newDataType="varchar(12)" />
 	</changeSet>	
 	
 </databaseChangeLog>

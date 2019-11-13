@@ -198,7 +198,7 @@ public class BankBranchDialogCtrl extends GFCBaseCtrl<BankBranch> {
 		logger.debug("Entering");
 		// Empty sent any required attributes
 		this.bankCode.setMaxlength(8);
-		this.parentBranch.setMaxlength(8);
+		this.parentBranch.setMaxlength(12);
 		this.branchCode.setMaxlength(PennantConstants.branchCode_maxValue);
 		this.branchDesc.setMaxlength(200);
 		this.city.setMaxlength(8);
