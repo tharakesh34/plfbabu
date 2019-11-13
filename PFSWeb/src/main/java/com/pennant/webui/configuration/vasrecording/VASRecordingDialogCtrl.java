@@ -140,6 +140,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.core.EventManager;
@@ -160,6 +161,7 @@ import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -3119,6 +3121,17 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 				premiumCalcButton.setDisabled(true);
 			}
 		}
+	}
+	public void onClickExtbtnINS_CAL_URL() {
+		logger.debug(Literal.ENTERING);
+		String insuranceUrl = "";
+			insuranceUrl = SysParamUtil.getValueAsString(SMTParameterConstants.INSURANCE_CAL_REQUEST_URL);
+			if (StringUtils.isNotEmpty(insuranceUrl)) {
+				Executions.getCurrent().sendRedirect(insuranceUrl, "_blank");
+			}else{
+				MessageUtil.showError("Please Provide the Valid Url");
+			}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
