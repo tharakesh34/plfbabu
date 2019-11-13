@@ -19132,6 +19132,15 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+	<changeSet id="374_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_save_and_drop_dependencies ('plf', 'bankbranches');
+					select deps_save_and_drop_dependencies ('plf', 'bankbranches_temp');
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="374" author="satyanarayana.g">
 		<modifyDataType tableName="BANKBRANCHES" columnName="PARENTBRANCH"
 			newDataType="varchar(12)" />
@@ -19140,6 +19149,15 @@ UNION ALL
 	<changeSet id="375" author="satyanarayana.g">
 		<modifyDataType tableName="BANKBRANCHES_TEMP"
 			columnName="PARENTBRANCH" newDataType="varchar(12)" />
+	</changeSet>
+
+	<changeSet id="374_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'bankbranches');
+					select deps_restore_dependencies ('plf', 'bankbranches_temp');
+			]]>
+		</sql>
 	</changeSet>
 
 	<changeSet id="376" author="Murthy">
