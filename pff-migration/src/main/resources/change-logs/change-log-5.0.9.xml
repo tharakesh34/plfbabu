@@ -17490,8 +17490,8 @@ UNION ALL
 		</createTable>
 	</changeSet>
 	<changeSet id="351" author="Varaprasad.K">
-		<addPrimaryKey tableName="RECOMMENDATION_NOTES_TEMP" columnNames="id"
-			constraintName="PK_RECOMENDTN_NOTES_TEMP_Id" />
+		<addPrimaryKey tableName="RECOMMENDATION_NOTES_TEMP"
+			columnNames="id" constraintName="PK_RECOMENDTN_NOTES_TEMP_Id" />
 	</changeSet>
 	<changeSet id="352" author="Varaprasad.K">
 		<addPrimaryKey tableName="RECOMMENDATION_NOTES"
@@ -17515,7 +17515,7 @@ UNION ALL
 		<createSequence sequenceName="SeqRECOMMENDATION_NOTE"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
+
 	<changeSet id="357_pre" author="satyanarayana.g" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18809,24 +18809,25 @@ UNION ALL
 		<createSequence sequenceName="SeqSynopsisDetails"
 			incrementBy="1" startValue="1" minValue="1" maxValue="999999999999999999" />
 	</changeSet>
-	
-	
-
-<changeSet id="363" author="saiteja.r">
-	<addColumn tableName="AMTVehicleDealer_Temp">
-		<column name="BranchCode" type="varchar(2000)"/>
-	</addColumn>
-</changeSet>
 
 
-<changeSet id="364" author="saiteja.r">
-	<addColumn tableName="AMTVehicleDealer">
-		<column name="BranchCode" type="varchar(2000)"/>
-	</addColumn>
-</changeSet>
 
-<changeSet id="365" author="saiteja.r">
-	<createView viewName="AMTVehicleDealer_View" replaceIfExists="true">
+	<changeSet id="363" author="saiteja.r">
+		<addColumn tableName="AMTVehicleDealer_Temp">
+			<column name="BranchCode" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="364" author="saiteja.r">
+		<addColumn tableName="AMTVehicleDealer">
+			<column name="BranchCode" type="varchar(2000)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="365" author="saiteja.r">
+		<createView viewName="AMTVehicleDealer_View"
+			replaceIfExists="true">
 		SELECT t1.dealerid,
    			 t1.dealertype,
     		 t1.dealername,
@@ -18978,10 +18979,11 @@ UNION ALL
           	 FROM amtvehicledealer_temp
          	 WHERE amtvehicledealer_temp.dealerid = t1.dealerid))
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="366" author="saiteja.r">
-	<createView viewName="AMTVehicleDealer_AView" replaceIfExists="true">
+	<changeSet id="366" author="saiteja.r">
+		<createView viewName="AMTVehicleDealer_AView"
+			replaceIfExists="true">
 			 SELECT t1.dealerid,
     			t1.dealertype,
     			t1.dealername,
@@ -19056,19 +19058,19 @@ UNION ALL
 			    LEFT JOIN bmtbankdetail t13 ON t12.bankcode = t13.bankcode
 			    LEFT JOIN vasproductcategory t14 ON t1.productctg = t14.productctg
 	</createView>
-</changeSet>
+	</changeSet>
 
-<changeSet id="367" author="saiteja.r">
-	<sql>
+	<changeSet id="367" author="saiteja.r">
+		<sql>
 		<![CDATA[ 
 			delete from errordetails where code='41096';
 			INSERT INTO ErrorDetails VALUES('41096','EN','E','BranchCodes with multiple agencies will not be allowed','','Approved','','','','','',0,CURRENT_TIMESTAMP,1000,0);
 		]]>
-	</sql>
-</changeSet>
+		</sql>
+	</changeSet>
 
-<changeSet id="368" author="saiteja.r">
-	<sql>
+	<changeSet id="368" author="saiteja.r">
+		<sql>
 		<![CDATA[ 
 			INSERT INTO SECRIGHTS VALUES ((SELECT MAX(RIGHTID)+1 FROM SECRIGHTS), 3,
 			'VehicleDealerDialog_FIAGENCY_branch','VehicleDealerDialog',0,1000,CURRENT_TIMESTAMP,'
@@ -19078,9 +19080,9 @@ UNION ALL
 			(SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME='VehicleDealerDialog_FIAGENCY_branch'), 
 			1,0,1000,CURRENT_TIMESTAMP,' ',' ',' ',' ',' ',' ',0);
 		]]>
-	</sql>
-</changeSet>
-<changeSet id="369" author="varaprasad.k" dbms="postgresql">
+		</sql>
+	</changeSet>
+	<changeSet id="369" author="varaprasad.k" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				truncate table deps_saved_ddl;
@@ -19088,22 +19090,22 @@ UNION ALL
 		</sql>
 	</changeSet>
 	<changeSet id="370_pre" author="varaprasad.k" dbms="postgresql">
-			<sql>
+		<sql>
 				<![CDATA[
 					select deps_save_and_drop_dependencies ('plf', 'smtparameters');
 				]]>
-			</sql>
+		</sql>
 	</changeSet>
-	<changeSet id="370" author="Varaprasad.k" >
-			<modifyDataType tableName="smtparameters" columnName="sysparmvalue"
-				newDataType="varchar(1000)" />
+	<changeSet id="370" author="Varaprasad.k">
+		<modifyDataType tableName="smtparameters" columnName="sysparmvalue"
+			newDataType="varchar(1000)" />
 	</changeSet>
 	<changeSet id="370_post" author="varaprasad.k" dbms="postgresql">
-			<sql>
+		<sql>
 				<![CDATA[
 					select deps_restore_dependencies ('plf', 'smtparameters');
 				]]>
-			</sql>
+		</sql>
 	</changeSet>
 	<changeSet id="371" author="Varaprasad.k">
 		<sql>
@@ -19129,15 +19131,20 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="374" author="satyanarayana.g">
 		<modifyDataType tableName="BANKBRANCHES" columnName="PARENTBRANCH"
-		newDataType="varchar(12)" />
+			newDataType="varchar(12)" />
 	</changeSet>
-	
+
 	<changeSet id="375" author="satyanarayana.g">
-		<modifyDataType tableName="BANKBRANCHES_TEMP" columnName="PARENTBRANCH"
-		newDataType="varchar(12)" />
-	</changeSet>	
-	
+		<modifyDataType tableName="BANKBRANCHES_TEMP"
+			columnName="PARENTBRANCH" newDataType="varchar(12)" />
+	</changeSet>
+
+	<changeSet id="376" author="Murthy">
+		<dropForeignKeyConstraint baseTableName="FinExcessMovement"
+			constraintName="FK_FEM_RID_FRH_RID" />
+	</changeSet>
+
 </databaseChangeLog>
