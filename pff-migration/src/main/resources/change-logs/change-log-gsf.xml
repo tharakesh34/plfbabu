@@ -54,7 +54,7 @@
 	</changeSet>
 	
 		
-	<changeSet id="4" author="satyanarayana.g">
+	<changeSet id="4.0" author="satyanarayana.g">
 	 <comment>Disbursement Download Request</comment>
 		<sql>
 			<![CDATA[
@@ -62,7 +62,7 @@
 				Delete from DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'DISB_EXPORT_DEFAULT');
 				Delete from DATA_ENGINE_CONFIG where name = 'DISB_EXPORT_DEFAULT';
 				
-				Insert into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_EXPORT_DEFAULT','HDFC Bank Disbursements[NEFT/RTGS/CHEQUE/DD] Download.',2,null,null,null,',',0,0, null, null, null,'A','/opt/Creditsaison_8086/PFF/creditsaison/disbursement','${CLIENT_CODE}','.csv',0,'2019-03-28 12:56:37.200','${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
+				Insert into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_EXPORT_DEFAULT','HDFC Bank Disbursements[NEFT/RTGS/CHEQUE/DD] Download.',2,null,null,null,',',0,0, null, null, null,'A','/opt/Creditsaison_8086/PFF/creditsaison/disbursement','${CLIENT_CODE}','.csv',0,getdate(),'${ddmm},.${SEQ_DATE_FILE}',null,'0','MOVE_TO_S3_BUCKET,COPY_TO_SFTP',1,1);
 				Insert into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT'),'DISBURSEMENT_REQUESTS',0,'ID','ID IN (:ID)','UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = :FILEID, STATUS = ''AC'' WHERE ID IN (:ID)QUERY:UPDATE FINADVANCEPAYMENTS SET STATUS = ''AC'' WHERE PAYMENTID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')QUERY:UPDATE PAYMENTINSTRUCTIONS SET STATUS = ''AC'' WHERE PAYMENTINSTRUCTIONID IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE ID IN (:ID) AND STATUS = ''AC'')',null,null,null,null,null,0,0,0);
 				
 				Insert into DATA_ENGINE_COLUMN  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_EXPORT_DEFAULT')), 'DISBURSEMENT_TYPE',       0,'N',null,null,  null,null,'0',null,null,null,null,'O');
@@ -101,7 +101,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="5" author="satyanarayana.g">
+	<changeSet id="5.0" author="satyanarayana.g">
 	  <comment>Disbursement Upload Response</comment>
 		<sql>
 			<![CDATA[
@@ -109,7 +109,7 @@
 				DELETE FROM DATA_ENGINE_TABLE where configid = (select id from DATA_ENGINE_CONFIG where name = 'DISB_HDFC_IMPORT');
 				DELETE FROM DATA_ENGINE_CONFIG where name = 'DISB_HDFC_IMPORT';
 				
-				Insert into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_HDFC_IMPORT','HDFC Disbursement Response File.',1,null,null,null,',',0,0, null, null, null,'C','/opt/Creditsaison_8086/PFF/creditsaison/disbursement','','',0,'2019-03-19 12:56:37.200','${ddmm},.${SEQ_DATE_FILE}',null,'0','',1,1);
+				Insert into DATA_ENGINE_CONFIG  values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_CONFIG),'DISB_HDFC_IMPORT','HDFC Disbursement Response File.',1,null,null,null,',',0,0, null, null, null,'C','/opt/Creditsaison_8086/PFF/creditsaison/disbursement','','',0,getdate(),'${ddmm},.${SEQ_DATE_FILE}',null,'0','',1,1);
 				Insert into DATA_ENGINE_TABLE values ((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_TABLE),(Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT'),'DISBURSEMENT_REQUESTS',2,'ID',null,null,null,null,null,null,0,16,0,0);
 				
 				INSERT INTO data_engine_column VALUES((SELECT COALESCE(MAX(ID), 0) + 1 FROM DATA_ENGINE_COLUMN), (Select Id FROM DATA_ENGINE_TABLE WHERE Name = 'DISBURSEMENT_REQUESTS' and CONFIGID = (Select Id FROM DATA_ENGINE_CONFIG WHERE Name = 'DISB_HDFC_IMPORT')), 'RESP_BATCH_ID',               0,'N',NULL,NULL,'${FILE_ID}',NULL,'0',NULL,NULL,NULL,NULL,'O');
