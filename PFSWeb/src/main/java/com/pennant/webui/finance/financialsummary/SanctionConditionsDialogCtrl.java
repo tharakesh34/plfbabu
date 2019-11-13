@@ -227,7 +227,7 @@ public class SanctionConditionsDialogCtrl extends GFCBaseCtrl<SanctionConditions
 
 		this.btnNew.setVisible(true);
 		this.btnEdit.setVisible(getUserWorkspace().isAllowed("button_CustomerPhoneNumberDialog_btnEdit"));
-		this.btnDelete.setVisible(getUserWorkspace().isAllowed("button_CustomerPhoneNumberDialog_btnDelete"));
+		this.btnDelete.setVisible(true);
 		this.btnSave.setVisible(true);
 		this.btnCancel.setVisible(false);
 		logger.debug("Leaving");
