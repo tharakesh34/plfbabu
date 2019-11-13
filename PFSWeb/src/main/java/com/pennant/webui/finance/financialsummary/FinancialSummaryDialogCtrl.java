@@ -84,7 +84,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.dao.finance.financialSummary.RisksAndMitigantsDAO;
@@ -122,7 +121,6 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
@@ -171,6 +169,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Textbox pdDetails;
 	private Textbox majorProduct;
 	private Textbox otherRemarks;
+	private Textbox purposeOfLoan;
 
 	protected Listbox listBoxCustomerDetails;
 	protected Listbox listBoxReferencesDetails;
@@ -689,6 +688,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			this.emi.setValue(PennantApplicationUtil.formateAmount(this.emi.getValidateValue(), format));
+			this.purposeOfLoan.setValue(financeMainDetails.getLovDescFinPurposeName());
+
 
 		}
 		logger.debug("Leaving");
@@ -1178,6 +1179,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.actualTenor.setReadonly(true);
 		this.source.setReadonly(true);
 		this.emi.setReadonly(true);
+		this.purposeOfLoan.setReadonly(true);
 		this.proposedLoanAmount.setReadonly(true);
 		this.overallLTV.setReadonly(true);
 		this.roi.setReadonly(true);

@@ -8,28 +8,28 @@
 		height="100%" sizable="false">
 		<borderlayout id="borderlayoutCreditPDDetails" style="overflow:auto">
 		  <west autoscroll="true">
-		       <div align="vertial">
-									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details"     width="100%"/>
-									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details"  width="100%"/>
-									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" width="100%"/>
-									<image id="imgDueDiligence" src="/images/icons/dueDiligence.svg" tooltiptext="Due Diligence Details" width="100%"/>
-									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" width="100%"/>
-									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" width="100%" />
-									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" width="100%"/>
-									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" width="100%"/>
-									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" width="100%"/>
-									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" width="100%"/>
-									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" width="100%"/>
-									<image id="imgInterfaces" src="/images/icons/interface.svg" tooltiptext="Interface" width="100%"/>
-									<image id="imgScoring" src="/images/icons/scoring.svg" tooltiptext="Scoring" width="100%"/>
-									<image id="imgEligibility" src="/images/icons/eligibility.svg" tooltiptext="Eligibility" width="100%"/>
-									<image id="imgRecommendations" src="/images/icons/recommendations.svg" tooltiptext="Recommendations" width="100%"/>
-									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" width="100%"/>
-									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" width="100%"/>
-									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" width="100%"/>
-									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" width="100%"/>
-									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" width="100%"/>
-									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" width="100%"/>
+		       <div align="vertial" height="270px"   width="65px">
+									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgDueDiligence" src="/images/icons/dueDiligence.svg" tooltiptext="Due Diligence Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" style="display:block" height="40px"   width="40px"/>
+									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" style="display:block" height="40px"   width="40px" />
+									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" style="display:block" height="40px"   width="40px"/>
+									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" style="display:block" height="40px"   width="40px"/>
+									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" style="display:block" height="40px"   width="40px"/>
+									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" style="display:block" height="40px"   width="40px"/>
+									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" style="display:block" height="40px"   width="40px"/>
+									<image id="imgInterfaces" src="/images/icons/interface.svg" tooltiptext="Interface" style="display:block" height="40px"   width="40px"/>
+									<image id="imgScoring" src="/images/icons/scoring.svg" tooltiptext="Scoring" style="display:block" height="40px"   width="40px"/>
+									<image id="imgEligibility" src="/images/icons/eligibility.svg" tooltiptext="Eligibility" style="display:block" height="40px"   width="40px"/>
+									<image id="imgRecommendations" src="/images/icons/recommendations.svg" tooltiptext="Recommendations" style="display:block" height="40px"   width="40px"/>
+									<image id="imgQueries" src="/images/icons/quires.svg" tooltiptext="Queries" style="display:block" height="40px"   width="40px"/>
+									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" style="display:block" height="40px"   width="40px"/>
+									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" style="display:block" height="40px"   width="40px"/>
+									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" style="display:block" height="40px"   width="40px"/>
+									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" style="display:block" height="40px"   width="40px"/>
 			 </div>
 		    </west>
         <center border="none" autoscroll="true">
@@ -132,6 +132,13 @@
 														<textbox id="schemepromotions" maxlength="50" width="180px" />
 													  </hbox>
 					                               </row>
+					                               <row>
+					                                  <label id="label_purposeOfLoan"  value="${c:l('label_FinancialSummaryDailog_PurposeOfLoan.value')}" />
+					                                  <hbox>
+														<space spacing="2px" />
+														<textbox id="purposeOfLoan"  width="180px" />
+													  </hbox>
+												   </row>
 					                            </rows>
 					                  </grid>
 					              </groupbox>
