@@ -904,33 +904,6 @@
 		<modifyDataType tableName="ADTBANKBRANCHES" columnName="PARENTBRANCH"
 		newDataType="varchar(12)" />
 	</changeSet>
-	<changeSet id="58" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtDealRecommendationMerits"
-			tableName="AdtDealRecommendationMerits" />
-	</changeSet>
-	<changeSet id="59" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtRisksAndMitigants"
-			tableName="AdtRisksAndMitigants" />
-	</changeSet>
-	<changeSet id="60" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtSanctionConditions"
-			tableName="AdtSanctionConditions" />
-	</changeSet>
-	<changeSet id="61" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtDUEDILIGENCECHECKLIST"
-			tableName="AdtDUEDILIGENCECHECKLIST" />
-	</changeSet>
-	<changeSet id="62" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtDUEDILIGENCESDETAILS"
-			tableName="AdtDUEDILIGENCESDETAILS" />
-	</changeSet>
-	<changeSet id="63" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtRECOMMENDATIONNOTES"
-			tableName="AdtRECOMMENDATIONNOTES" />
-	</changeSet>
-	<changeSet id="64" author="Vara prasad K">
-		<addPrimaryKey columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="pk_AdtSynopsisDetails"
-			tableName="AdtSynopsisDetails" />
-	</changeSet>
+	
 	
 </databaseChangeLog>
