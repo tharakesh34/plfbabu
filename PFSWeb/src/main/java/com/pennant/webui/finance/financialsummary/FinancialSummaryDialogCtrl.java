@@ -355,23 +355,24 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 				getUserWorkspace().allocateRoleAuthorities(getRole(), pageRightName);
 			}
-			int divKycHeight = this.borderLayoutHeight - 80;
-			int semiBorderlayoutHeights = divKycHeight / 2;
-			this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxSanctionConditionsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxRisksAndMitigantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxRecommendationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxDocumentCheckListDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxDealRecommendationMeritsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
-			this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights + "px");
-			this.listBoxRecommendationNoteDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			/*
+			 * int divKycHeight = this.borderLayoutHeight - 80; int semiBorderlayoutHeights = divKycHeight / 2;
+			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxReferencesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDeviationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxSanctionConditionsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxRisksAndMitigantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxInterfacesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxRecommendationsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxScoringDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxEligibilityDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxQueriesDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxConvenantsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDocumentCheckListDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDealRecommendationMeritsDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 * this.listBoxDueDiligenceDetail.setHeight(semiBorderlayoutHeights + "px");
+			 * this.listBoxRecommendationNoteDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
+			 */
 			doShowDialog(this.financeDetail);
 			doCheckRights();
 		} catch (Exception e) {
@@ -1537,8 +1538,9 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				comments.setAttribute("recommendationNotesDetails", recommendationNotesDetails);
 
 				comments.addForward("onChange", self, "onChangeComments", recommendationNotesDetails);
-				comments.setWidth("200px");
 				comments.setValue(recommendationNotesDetails.getRemarks());
+				comments.setStyle("width:270px;height:70px");
+
 				lc.setParent(item);
 
 				item.setAttribute("data", recommendationNotesList);

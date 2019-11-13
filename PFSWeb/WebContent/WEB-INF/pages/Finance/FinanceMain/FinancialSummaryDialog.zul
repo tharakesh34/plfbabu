@@ -7,8 +7,8 @@
 	<window id="window_financialSummaryDialog" border="normal" apply="${financialSummaryDialogCtrl}" width="100%"
 		height="100%" sizable="false">
 		<borderlayout id="borderlayoutCreditPDDetails" style="overflow:auto">
-		  <west autoscroll="true">
-		       <div align="vertial" height="270px"   width="65px">
+		  <west>
+		       <div align="vertial" width="100%" height="100%">
 									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details" style="display:block" height="40px"   width="40px"/>
 									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details" style="display:block" height="40px"   width="40px"/>
 									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" style="display:block" height="40px"   width="40px"/>
@@ -32,7 +32,7 @@
 									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" style="display:block" height="40px"   width="40px"/>
 			 </div>
 		    </west>
-        <center border="none" autoscroll="true">
+        <center border="none">
 			<div width="100%" height="100%">
 					              <groupbox>
 					                  <grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
@@ -201,7 +201,7 @@
 					                  <caption label="Customer Details"></caption>
 					                   <div>
 						                   <listbox id="listBoxCustomerDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_CustType" label="${c:l('listheader_CustType.label')}" sort="false"
 																hflex="min" />
@@ -224,7 +224,7 @@
 					                  <caption label="Due Diligence Detail"></caption>
 					                   <div>
 						                   <listbox id="listBoxDueDiligenceDetail" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_dueDiligenceSerialNo" label="${c:l('listheader_DueDiligenceSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -241,7 +241,7 @@
 					              <groupbox  id="gb_references" visible="false">
 					                  <caption label="References"></caption>
 					                  <listbox id="listBoxReferencesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"  height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_ReferenceName" label="${c:l('listheader_CustName.label')}" sort="false"
 																hflex="min" />
@@ -329,7 +329,7 @@
 					              <groupbox  id="gb_deviations" visible="false">
 					                   <caption label="Deviations"></caption>
 					                   <listbox id="listBoxDeviationsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_deviationsSerialNo" label="${c:l('listheader_DeviationsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -347,7 +347,7 @@
 					                <groupbox  id="gb_recommendationNoteDetails" visible="false">
 					                   <caption label="Recommendations Note"></caption>
 					                   <listbox id="listBoxRecommendationNoteDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"  height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_recommendationNoteDetailsSerialNo" label="${c:l('listheader_RecommendationNoteDetailsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -361,7 +361,7 @@
 					              <groupbox  id="gb_dealRecommendationMeritsDetails" visible="false">
 					                   <caption label="Deal Recommendation Merits"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
 														<toolbar align="start" style="border:none;">
 															<label value="${c:l('DealRecommendationMerits')}" sclass="listboxHeading">
 															</label>
@@ -373,7 +373,7 @@
 													</hbox>
 										</div>
 					                   <listbox id="listBoxDealRecommendationMeritsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_dealRecommendationMeritsSerialNo" label="${c:l('listheader_DealRecommendationMeritsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -385,7 +385,7 @@
 					              <groupbox  id="gb_sanctionConditionsDetails" visible="false">
 					                   <caption label="Sanction Conditons"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
 														<toolbar align="start" style="border:none;">
 															<label value="${c:l('SanctionConditons')}" sclass="listboxHeading">
 															</label>
@@ -397,7 +397,7 @@
 													</hbox>
 										</div>
 					                   <listbox id="listBoxSanctionConditionsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_sanctionConditionsSerialNo" label="${c:l('listheader_SanctionConditionsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -411,7 +411,7 @@
 					              <groupbox id="gb_risksAndMitigants" visible="false">
 					                   <caption label="Risks and Mitigants"></caption>
 					                   <div sclass="z-toolbar" style="padding:0">
-													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%">
+													<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" width="100%" height="100%">
 														<toolbar align="start" style="border:none;">
 															<label value="${c:l('RisksandMitigants')}" sclass="listboxHeading">
 															</label>
@@ -423,7 +423,7 @@
 													</hbox>
 										</div>
 					                   <listbox id="listBoxRisksAndMitigantsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_risksAndMitigantsSerialNo" label="${c:l('listheader_RisksAndMitigantsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -437,7 +437,7 @@
 					               <groupbox  id="gb_interfacesDetails" visible="false">
 					                   <caption label="Interfaces"></caption>
 					                   <listbox id="listBoxInterfacesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_interfacesSerialNo" label="${c:l('listheader_InterfacesSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -453,7 +453,7 @@
 					              <groupbox  id="gb_scoringDetails" visible="false">
 					                   <caption label="Scoring"></caption>
 					                   <listbox id="listBoxScoringDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_scoringElements" label="${c:l('listheader_ScoringElements.label')}" sort="false"
 																hflex="min" />
@@ -467,7 +467,7 @@
 					              <groupbox  id="gb_eligibilityDetails" visible="false">
 					                   <caption label="Eligibility"></caption>
 					                   <listbox id="listBoxEligibilityDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_eligibilityElement" label="${c:l('listheader_EligibilityElement.label')}" sort="false"
 																hflex="min" />
@@ -481,7 +481,7 @@
 					              <groupbox  id="gb_recommendationsDetails" visible="false">
 					                   <caption label="Recommendations"></caption>
 					                   <listbox id="listBoxRecommendationsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_recommendationsSerialNo" label="${c:l('listheader_InterfacesSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -495,7 +495,7 @@
 					              <groupbox  id="gb_queriesDetails" visible="false">
 					                   <caption label="Queries"></caption>
 					                   <listbox id="listBoxQueriesDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_queryLoanReference" label="${c:l('listheader_QueryLoanReference.label')}" sort="false"
 																hflex="min" />
@@ -515,7 +515,7 @@
 					              <groupbox  id="gb_convenantsDetails" visible="false">
 					                   <caption label="Convenants"></caption>
 					                   <listbox id="listBoxConvenantsDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_convenantsSerialNo" label="${c:l('listheader_ConvenantsSerialNo.label')}" sort="false"
 																hflex="min" />
@@ -537,7 +537,7 @@
 					              <groupbox  id="gb_documentCheckListDetails" visible="false">
 					                   <caption label="Document Check List"></caption>
 					                   <listbox id="listBoxDocumentCheckListDetails" span="true" sizedByContent="true" fixedLayout="true"
-														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
+														tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" emptyMessage="${c:l('listbox.emptyMessage')}">
 														<listhead sizable="true">
 															<listheader id="listheader_documentCheckListSerialNo" label="${c:l('listheader_documentCheckListSerialNo.label')}" sort="false"
 																hflex="min" />
