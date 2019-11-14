@@ -403,6 +403,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void doShowCetGroupBoxes(String cetGroupBoxesVisibility) {
 
 		logger.debug(Literal.LEAVING);
+		cetGroupBoxesVisibility=StringUtils.trimToEmpty(cetGroupBoxesVisibility);
 
 		if (cetGroupBoxesVisibility.contains("gb_basicDetails")) {
 			isbasicDetailsVisible = true;
