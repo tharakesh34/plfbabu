@@ -407,28 +407,28 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (cetGroupBoxesVisibility.contains("gb_basicDetails")) {
 			isbasicDetailsVisible = true;
-			imgBasicDetails.setVisible(true);
+			imgBasicDetails.setStyle("display:block");
 			gb_basicDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_btDetails")) {
 			isbtDetailsVisible = true;
-			imgBtDetails.setVisible(true);
+			imgBtDetails.setStyle("display:block");
 			gb_btDetails.setVisible(true);
 			
 		}
 		if (cetGroupBoxesVisibility.contains("gb_customerDetails")) {
 			iscustomerDetailsVisible = true;
-			imgCustomerDetails.setVisible(true);
+			imgCustomerDetails.setStyle("display:block");
 			gb_customerDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_dueDiligenceDetail")) {
 			isdueDiligenceDetailsVisible = true;
-			imgDueDiligence.setVisible(true);
+			imgDueDiligence.setStyle("display:block");
 			gb_dueDiligenceDetail.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_references")) {
 			isreferencesVisible = true;
-			imgReferences.setVisible(true);
+			imgReferences.setStyle("display:block");
 			gb_references.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_collateralDetails")) {
@@ -441,73 +441,73 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		if (cetGroupBoxesVisibility.contains("gb_synopsisAndPdDetails")) {
 			issynopsisAndPdDetailsVisible = true;
-			imgSynopsisandpddetails.setVisible(true);
+			imgSynopsisandpddetails.setStyle("display:block");
 			gb_synopsisAndPdDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_deviations")) {
 			isdeviationsDetailsVisible = true;
-			imgDeviations.setVisible(true);
+			imgDeviations.setStyle("display:block");
 			gb_deviations.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_recommendationNoteDetails")) {
 			isrecommendationNoteDetailsVisible = true;
-			imgRecommendationNote.setVisible(true);
+			imgRecommendationNote.setStyle("display:block");
 			gb_recommendationNoteDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_dealRecommendationMeritsDetails")) {
 			isdealRecommendationMeritsDetailsVisible = true;
-			imgDealRecommendationMerits.setVisible(true);
+			imgDealRecommendationMerits.setStyle("display:block");
 			gb_dealRecommendationMeritsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_sanctionConditionsDetails")) {
 			issanctionConditionsDetailsVisible = true;
-			imgSanctionConditions.setVisible(true);
+			imgSanctionConditions.setStyle("display:block");
 			gb_sanctionConditionsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_risksAndMitigants")) {
 			isrisksAndMitigantsDetailsVisible = true;
-			imgRisksMigigants.setVisible(true);
+			imgRisksMigigants.setStyle("display:block");
 			gb_risksAndMitigants.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_interfacesDetails")) {
 			isinterfacesDetailsVisible = true;
-			imgInterfaces.setVisible(true);
+			imgInterfaces.setStyle("display:block");
 			gb_interfacesDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_scoringDetails")) {
 			isscoringDetailsVisible = true;
-			imgScoring.setVisible(true);
+			imgScoring.setStyle("display:block");
 			gb_scoringDetails.setVisible(true);
 			
 		}
 		if (cetGroupBoxesVisibility.contains("gb_eligibilityDetails")) {
 			iseligibilityDetailsVisible = true;
-			imgEligibility.setVisible(true);
+			imgEligibility.setStyle("display:block");
 			gb_eligibilityDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_recommendationsDetails")) {
 			isrecommendationsDetailsVisible = true;
-			imgRecommendations.setVisible(true);
+			imgRecommendations.setStyle("display:block");
 			gb_recommendationsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_queriesDetails")) {
 			isqueriesDetailsVisible = true;
-			imgQueries.setVisible(true);
+			imgQueries.setStyle("display:block");
 			gb_queriesDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_convenantsDetails")) {
 			isconvenantsDetailsVisible = true;
-			imgConvents.setVisible(true);
+			imgConvents.setStyle("display:block");
 			gb_convenantsDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_documentCheckListDetails")) {
 			isdocumentCheckListDetailsVisible = true;
-			imgDocumentCheckList.setVisible(true);
+			imgDocumentCheckList.setStyle("display:block");
 			gb_documentCheckListDetails.setVisible(true);
 		}
 		if (cetGroupBoxesVisibility.contains("gb_otherDetails")) {
 			isotherDetailsVisible = true;
-			imgOtherDetails.setVisible(true);
+			imgOtherDetails.setStyle("display:block");
 			gb_otherDetails.setVisible(true);
 		}
 
