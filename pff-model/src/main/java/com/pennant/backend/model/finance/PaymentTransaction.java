@@ -1,9 +1,14 @@
 package com.pennant.backend.model.finance;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PaymentTransaction {
+public class PaymentTransaction implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long transactionId;
 	private String tranModule;
 	private String tranReference;
@@ -19,6 +24,10 @@ public class PaymentTransaction {
 	private Date statusUpdateOn;
 	private PaymentTransaction befImage;
 	private int seqNo;
+	
+	private String requstedByUser;
+	private int bankId;
+	private String bankReference;
 
 	private FinAdvancePayments finAdvancePayments;
 
@@ -183,6 +192,30 @@ public class PaymentTransaction {
 
 	public void setSeqNo(int seqNo) {
 		this.seqNo = seqNo;
+	}
+
+	public String getRequstedByUser() {
+		return requstedByUser;
+	}
+
+	public void setRequstedByUser(String requstedByUser) {
+		this.requstedByUser = requstedByUser;
+	}
+
+	public int getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(int bankId) {
+		this.bankId = bankId;
+	}
+
+	public String getBankReference() {
+		return bankReference;
+	}
+
+	public void setBankReference(String bankReference) {
+		this.bankReference = bankReference;
 	}
 
 }
