@@ -19169,5 +19169,29 @@ UNION ALL
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
+	<changeSet id="377" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_BUSINESS';
+				INSERT INTO SMTparameters  VALUES ('CET_BUSINESS', 'Business Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_dealRecommendationMeritsDetails,gb_risksAndMitigants,gb_deviations,gb_recommendationNoteDetails,gb_sanctionConditionsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Business Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+</changeSet>
+	<changeSet id="378" author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_PL';
+				INSERT INTO SMTparameters  VALUES ('CET_PL', 'Personal Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_deviations,gb_deviations,gb_otherDetails', 1, 0, NULL, NULL, 'Personal Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="379 author="Varaprasad.k">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'CET_LAEP';
+				INSERT INTO SMTparameters  VALUES ('CET_LAEP', 'Leap Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_deviations,gb_risksAndMitigants,gb_sanctionConditionsDetails,gb_recommendationNoteDetails,gb_convenantsDetails,gb_dealRecommendationMeritsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Leap Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

@@ -286,7 +286,7 @@ public class SMTParameterConstants {
 	public static final String DISB_REQUEST_REQUIRED = "DISB_REQ_REQUIRED";
 	public static final String DOMAIN_CHEQ = "DOMAIN_CHEQ";
 	public static final String FIN_SUMMARY_TAB_REQUIRED = "FIN_SUMMARY_TAB_REQUIRED";
-	public static final String CET_BL = "CET_BL";
+	public static final String CET_BUSINESS = "CET_BUSINESS";
 	public static final String CET_PL = "CET_PL";
 	public static final String CET_LAEP = "CET_LAEP";
 	public static final String ALLOW_CIBIL_VALIDATION_RULE = "ALLOW_CIBIL_VALIDATION_RULE";
