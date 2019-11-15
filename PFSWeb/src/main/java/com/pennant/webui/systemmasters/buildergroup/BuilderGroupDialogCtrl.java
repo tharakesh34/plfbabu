@@ -42,6 +42,7 @@
  */
 package com.pennant.webui.systemmasters.buildergroup;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -53,18 +54,25 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zul.Decimalbox;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
+import com.pennant.backend.model.applicationmaster.PinCode;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
+import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
+import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
+import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -84,8 +92,16 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 	 * are getting by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_BuilderGroupDialog;
-	protected Uppercasebox name;
+	protected Textbox name;
 	protected ExtendedCombobox segmentation;
+	private Textbox peDeveloperId;
+	private ExtendedCombobox city;
+	private ExtendedCombobox province;
+	private ExtendedCombobox pinCode;
+	private CurrencyBox expLimitOnAmt;
+	private Decimalbox expLimitOnNoOfUnits;
+	private Decimalbox currentExpUnits;
+	private CurrencyBox currentExpAmt;
 	private BuilderGroup builderGroup; // overhanded per param
 
 	private transient BuilderGroupListCtrl builderGroupListCtrl; // overhanded per param
@@ -170,7 +186,6 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		this.name.setMaxlength(50);
 
 		this.segmentation.setModuleName("LovFieldDetail");
-		this.segmentation.setMandatoryStyle(true);
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setDisplayStyle(2);
@@ -178,6 +193,47 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		Filter segmentFilter[] = new Filter[1];
 		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
 		this.segmentation.setFilters(segmentFilter);
+
+		this.peDeveloperId.setMaxlength(100);
+
+		this.city.setMandatoryStyle(true);
+		this.city.setModuleName("City");
+		this.city.setValueColumn("PCCity");
+		this.city.setDescColumn("PCCityName");
+		this.city.setDisplayStyle(2);
+		this.city.setValidateColumns(new String[] { "PCCity" });
+
+		this.province.setMandatoryStyle(false);
+		this.province.setModuleName("Province");
+		this.province.setValueColumn("CPProvince");
+		this.province.setDescColumn("CPProvinceName");
+		this.province.setValidateColumns(new String[] { "CPProvince" });
+
+		this.pinCode.setMandatoryStyle(false);
+		this.pinCode.setModuleName("PinCode");
+		this.pinCode.setValueColumn("PinCode");
+		this.pinCode.setDescColumn("AreaName");
+		this.pinCode.setValidateColumns(new String[] { "PinCode" });
+
+		this.expLimitOnAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.expLimitOnAmt.setFormat(PennantConstants.rateFormate9);
+		this.expLimitOnAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.expLimitOnAmt.setScale(2);
+
+		this.expLimitOnNoOfUnits.setFormat(PennantConstants.rateFormate9);
+		this.expLimitOnNoOfUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.expLimitOnNoOfUnits.setScale(2);
+		this.expLimitOnNoOfUnits.setMaxlength(16);
+
+		this.currentExpUnits.setFormat(PennantConstants.rateFormate9);
+		this.currentExpUnits.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.currentExpUnits.setScale(2);
+		this.currentExpUnits.setMaxlength(16);
+
+		this.currentExpAmt.setProperties(false, PennantConstants.defaultCCYDecPos);
+		this.currentExpAmt.setFormat(PennantConstants.rateFormate9);
+		this.currentExpAmt.setRoundingMode(BigDecimal.ROUND_DOWN);
+		this.currentExpAmt.setScale(2);
 
 		setStatusDetails();
 
@@ -323,6 +379,54 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug("Leaving" + event.toString());
 	}
 
+	public void onFulfill$city(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = city.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.city.setValue("");
+			this.city.setDescription("");
+			this.city.setAttribute("City", null);
+		} else {
+			City details = (City) dataObject;
+			this.city.setAttribute("City", details.getId());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$province(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = province.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.province.setValue("");
+			this.province.setDescription("");
+			this.province.setAttribute("Province", null);
+		} else {
+			Province details = (Province) dataObject;
+			this.province.setAttribute("Province", details.getId());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void onFulfill$pinCode(Event event) {
+		logger.debug(Literal.ENTERING);
+
+		Object dataObject = pinCode.getObject();
+		if (dataObject instanceof String || dataObject == null) {
+			this.pinCode.setValue("");
+			this.pinCode.setDescription("");
+			this.pinCode.setAttribute("PinCode", null);
+		} else {
+			PinCode details = (PinCode) dataObject;
+			this.pinCode.setAttribute("PinCode", details.getId());
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
@@ -333,14 +437,53 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		logger.debug(Literal.ENTERING);
 
 		this.name.setValue(aBuilderGroup.getName());
-		this.segmentation.setValue(aBuilderGroup.getSegmentation());
-		this.segmentation.setDescColumn(aBuilderGroup.getSegmentationName());
-
+		this.segmentation.setValue(aBuilderGroup.getSegmentation(), aBuilderGroup.getSegmentationName());
 		if (aBuilderGroup.isNewRecord()) {
 			this.segmentation.setDescription("");
 		} else {
 			this.segmentation.setDescription(aBuilderGroup.getSegmentationName());
 		}
+		//PE Developer Id
+		this.peDeveloperId.setValue(aBuilderGroup.getPeDeveloperId());
+
+		if (!aBuilderGroup.isNewRecord()) {
+			this.city.setValue(StringUtils.trimToEmpty(aBuilderGroup.getCity()),
+					StringUtils.trimToEmpty(aBuilderGroup.getCityName()));
+			if (aBuilderGroup.getCity() != null) {
+				this.city.setAttribute("City", aBuilderGroup.getCity());
+			} else {
+				this.city.setAttribute("City", null);
+			}
+
+			this.province.setValue(StringUtils.trimToEmpty(aBuilderGroup.getProvince()),
+					StringUtils.trimToEmpty(aBuilderGroup.getProvinceName()));
+			if (aBuilderGroup.getProvince() != null) {
+				this.province.setAttribute("Province", aBuilderGroup.getProvince());
+			} else {
+				this.province.setAttribute("Province", null);
+			}
+
+			this.pinCode.setValue(StringUtils.trimToEmpty(aBuilderGroup.getPoBox()),
+					StringUtils.trimToEmpty(aBuilderGroup.getAreaName()));
+			if (aBuilderGroup.getPoBox() != null) {
+				this.pinCode.setAttribute("PinCode", aBuilderGroup.getPinCodeId());
+			} else {
+				this.pinCode.setAttribute("PinCode", null);
+			}
+		}
+		//Exposure Limit on Amount
+		this.expLimitOnAmt.setValue(
+				PennantAppUtil.formateAmount(aBuilderGroup.getExpLmtOnAmt(), PennantConstants.defaultCCYDecPos));
+
+		//Exposure Limit on number of  Units
+		this.expLimitOnNoOfUnits.setValue((aBuilderGroup.getExpLmtOnNoOfUnits()));
+
+		//Current Exposure (Units)
+		this.currentExpUnits.setValue((aBuilderGroup.getCurrExpUnits()));
+
+		//Current Exposure (Amount )
+		this.currentExpAmt.setValue(
+				PennantAppUtil.formateAmount(aBuilderGroup.getCurrExpAmt(), PennantConstants.defaultCCYDecPos));
 
 		this.recordStatus.setValue(aBuilderGroup.getRecordStatus());
 
@@ -368,6 +511,69 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		//Segmentation
 		try {
 			aBuilderGroup.setSegmentation(this.segmentation.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//PE Developer Id
+		try {
+			aBuilderGroup.setPeDeveloperId(this.peDeveloperId.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//City
+		try {
+			this.city.getValidatedValue();
+			Object obj = this.city.getAttribute("City");
+			if (obj != null) {
+				aBuilderGroup.setCity(obj.toString());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//Province
+		try {
+			this.province.getValidatedValue();
+			Object obj = this.province.getAttribute("Province");
+			if (obj != null) {
+				aBuilderGroup.setProvince(obj.toString());
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//POBox
+		try {
+			this.pinCode.getValidatedValue();
+			Object obj = this.pinCode.getAttribute("PinCode");
+			if (obj != null) {
+				aBuilderGroup.setPinCodeId(Long.parseLong(obj.toString()));
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Exposure Limit on Amount
+		try {
+			aBuilderGroup.setExpLmtOnAmt(PennantAppUtil.unFormateAmount(this.expLimitOnAmt.getActualValue(),
+					PennantConstants.defaultCCYDecPos));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Exposure Limit On Number Of Units
+		try {
+			aBuilderGroup.setExpLmtOnNoOfUnits((this.expLimitOnNoOfUnits.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Current Exposure (Units)
+		try {
+			aBuilderGroup.setCurrExpUnits((this.currentExpUnits.getValue()));
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		//Exposure Limit On Number Of Units
+		try {
+			aBuilderGroup.setCurrExpAmt(PennantAppUtil.unFormateAmount(this.currentExpAmt.getActualValue(),
+					PennantConstants.defaultCCYDecPos));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -437,9 +643,41 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 			this.name.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_name.value"),
 					PennantRegularExpressions.REGEX_ACC_HOLDER_NAME, true));
 		}
-		if (!this.segmentation.isReadonly()) {
-			this.segmentation.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_BuilderGroupDialog_segmentation.value"), null, true, true));
+		if (!this.peDeveloperId.isReadonly()) {
+			this.peDeveloperId.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_PEDeveloperId.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM_SPACE_SPL_CHAR, false));
+		}
+		if (!this.city.isReadonly()) {
+			this.city.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_City.value"), null, true, true));
+		}
+		if (!this.province.isReadonly()) {
+			this.province.setConstraint(
+					new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_State.value"), null, false, true));
+		}
+		if (!this.pinCode.isReadonly()) {
+			this.pinCode.setConstraint(new PTStringValidator(Labels.getLabel("label_BuilderGroupDialog_Pincode.value"),
+					null, false, true));
+		}
+
+		if (!this.expLimitOnAmt.isReadonly()) {
+			this.expLimitOnAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BuilderGroupDialog_ExposureLimitOnAmount.value"),
+							PennantConstants.defaultCCYDecPos, false, false));
+		}
+		if (!this.expLimitOnNoOfUnits.isReadonly()) {
+			this.expLimitOnNoOfUnits.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_BuilderGroupDialog_ExpLimitOnNoOfUnits.value"), 9, false, false, 999999999));
+		}
+		if (!this.currentExpAmt.isReadonly()) {
+			this.currentExpAmt.setConstraint(
+					new PTDecimalValidator(Labels.getLabel("label_BuilderGroupDialog_CurrentExpUnits.value"),
+							PennantConstants.defaultCCYDecPos, false, false));
+		}
+		if (!this.currentExpUnits.isReadonly()) {
+			this.currentExpUnits.setConstraint(new PTDecimalValidator(
+					Labels.getLabel("label_BuilderGroupDialog_CurrentExpAmt.value"), 9, false, false, 999999999));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -453,6 +691,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 
 		this.name.setConstraint("");
 		this.segmentation.setConstraint("");
+		this.peDeveloperId.setConstraint("");
+		this.city.setConstraint("");
+		this.province.setConstraint("");
+		this.pinCode.setConstraint("");
+		this.expLimitOnAmt.setConstraint("");
+		this.expLimitOnNoOfUnits.setConstraint("");
+		this.currentExpUnits.setConstraint("");
+		this.currentExpAmt.setConstraint("");
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -552,6 +798,14 @@ public class BuilderGroupDialogCtrl extends GFCBaseCtrl<BuilderGroup> {
 		}
 
 		readOnlyComponent(isReadOnly("BuilderGroupDialog_segmentation"), this.segmentation);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_city"), this.city);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_PEDeveloperId"), this.peDeveloperId);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_state"), this.province);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_Pincode"), this.pinCode);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_ExpLimitOnAmt"), this.expLimitOnAmt);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_ExpLimitOnNoOfUnits"), this.expLimitOnNoOfUnits);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_CurrentExpUnits"), this.currentExpUnits);
+		readOnlyComponent(isReadOnly("BuilderGroupDialog_CurrentExpAmt"), this.currentExpAmt);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

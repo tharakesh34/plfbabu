@@ -566,7 +566,7 @@ public class PennantJavaUtil {
 						"BMTAddressTypes_AView" }, masterWF, new String[] { "AddrTypeCode", "AddrTypeDesc" },
 						new Object[][] { { "AddrTypeIsActive", "0", 1 } }, 300));
 
-		ModuleUtil.register("BuilderGroup", new ModuleMapping("BubanilderGroup", BuilderGroup.class, new String[] {
+		ModuleUtil.register("BuilderGroup", new ModuleMapping("BuilderGroup", BuilderGroup.class, new String[] {
 				"BuilderGroup", "BuilderGroup_AView" }, masterWF, new String[] { "Name", "Segmentation" }, null, 350));
 
 		ModuleUtil.register("BuilderCompany", new ModuleMapping("BuilderCompany", BuilderCompany.class, new String[] {

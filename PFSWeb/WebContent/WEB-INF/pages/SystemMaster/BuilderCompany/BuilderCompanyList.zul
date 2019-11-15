@@ -49,7 +49,10 @@
 								<row>
 									<label id="label_BuilderCompanyList_name" value="${c:l('label_BuilderCompanyList_name.value')}" />
 									<listbox id="sortOperator_name" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
-									<uppercasebox id="name" width="200px" maxlength="50" />
+									<hbox>
+										<space width="2px" />
+										<textbox id="name" width="200px" maxlength="50" />
+									</hbox>
 									<label id="label_BuilderCompanyList_segmentation" value="${c:l('label_BuilderCompanyList_segmentation.value')}" />
 									<listbox id="sortOperator_segmentation" width="43px" mold="select" rows="1"
 										emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
@@ -59,15 +62,24 @@
 									<label id="label_BuilderCompanyList_groupId" value="${c:l('label_BuilderCompanyList_groupId.value')}" />
 									<listbox id="sortOperator_groupId" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
 									<extendedcombobox id="groupId" />
-								</row>
 
+									<label id="label_BuilderCompanyList_Active" value="${c:l('label_BuilderCompanyList_Active.value')}" />
+									<listbox id="sortOperator_Active" width="43px" mold="select" rows="1" emptyMessage="${c:l('listbox.NoEmptyMessage')}" />
+									<checkbox id="active" checked="false" />
+								</row>
 								<row>
 									<label id="label_BuilderCompanyList_RecordStatus" value="${c:l('label_BuilderCompanyList_RecordStatus.value')}" />
 									<listbox id="sortOperator_RecordStatus" width="43px" mold="select" rows="1" />
-									<textbox id="recordStatus" width="100px" maxlength="50" />
+									<hbox>
+										<space width="2px" />
+										<textbox id="recordStatus" width="100px" maxlength="50" />
+									</hbox>
 									<label id="label_BuilderCompanyList_RecordType" value="${c:l('label_BuilderCompanyList_RecordType.value')}" />
 									<listbox id="sortOperator_RecordType" width="43px" mold="select" rows="1" />
-									<listbox id="recordType" width="100px" mold="select" />
+									<hbox>
+										<space width="2px" />
+										<listbox id="recordType" width="100px" mold="select" />
+									</hbox>
 								</row>
 							</rows>
 						</grid>
@@ -79,6 +91,7 @@
 								<listheader id="listheader_segmentation" label="${c:l('listheader_segmentation.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_groupId" label="${c:l('listheader_groupId.label')}" sort="auto" hflex="min" />
+								<listheader id="listheader_active" label="${c:l('listheader_Active.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordStatus" label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 								<listheader id="listheader_RecordType" label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 							</listhead>

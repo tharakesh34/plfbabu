@@ -58,14 +58,15 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
 import com.pennant.backend.service.systemmasters.BuilderGroupService;
-import com.pennant.component.Uppercasebox;
 import com.pennant.webui.systemmasters.buildergroup.model.BuilderGroupListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -90,8 +91,8 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 	protected Button button_BuilderGroupList_BuilderGroupSearch;
 
 	// Search Fields
-	protected Uppercasebox name; // autowired
-	protected Textbox segmentation; // autowired
+	protected Textbox name; // autowired
+	protected ExtendedCombobox segmentation; // autowired
 
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_segmentation;
@@ -135,9 +136,9 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		registerField("name", listheader_name, SortOrder.NONE, name, sortOperator_name, Operators.STRING);
 		registerField("segmentation", listheader_segmentation, SortOrder.NONE, segmentation, sortOperator_segmentation,
 				Operators.STRING);
-		registerField("fieldCode");
 
 		// Render the page and display the data.
+		doSetFieldProperties();
 		doRenderPage();
 		search();
 	}
@@ -183,6 +184,21 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 	}
 
 	/**
+	 * Set the properties of the fields, like maxLength.<br>
+	 */
+	private void doSetFieldProperties() {
+		logger.debug("Entering ");
+		this.segmentation.setModuleName("LovFieldDetail");
+		this.segmentation.setValueColumn("FieldCodeValue");
+		this.segmentation.setDescColumn("ValueDesc");
+		this.segmentation.setValidateColumns(new String[] { "FieldCodeValue" });
+		Filter segmentFilter[] = new Filter[1];
+		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
+		this.segmentation.setFilters(segmentFilter);
+		logger.debug("Leaving ");
+	}
+
+	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
@@ -204,7 +220,7 @@ public class BuilderGroupListCtrl extends GFCBaseListCtrl<BuilderGroup> {
 		}
 
 		StringBuffer whereCond = new StringBuffer();
-		whereCond.append("  AND  id = ");
+		whereCond.append(" id = ");
 		whereCond.append(buildergroup.getId());
 		whereCond.append(" AND  version=");
 		whereCond.append(buildergroup.getVersion());

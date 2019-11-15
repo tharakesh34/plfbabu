@@ -51,10 +51,12 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Paging;
+import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -87,19 +89,23 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 	protected Listheader listheader_name;
 	protected Listheader listheader_segmentation;
 	protected Listheader listheader_groupId;
+	protected Listheader listheader_active;
 
 	// checkRights
 	protected Button button_BuilderCompanyList_NewBuilderCompany;
 	protected Button button_BuilderCompanyList_BuilderCompanySearch;
 
 	// Search Fields
-	protected Uppercasebox name; // autowired
+	protected Textbox name; // autowired
 	protected ExtendedCombobox segmentation; // autowired
 	protected ExtendedCombobox groupId; // autowired
+
+	protected Checkbox active; // autowired
 
 	protected Listbox sortOperator_name;
 	protected Listbox sortOperator_segmentation;
 	protected Listbox sortOperator_groupId;
+	protected Listbox sortOperator_Active;
 
 	private transient BuilderCompanyService builderCompanyService;
 
@@ -174,6 +180,10 @@ public class BuilderCompanyListCtrl extends GFCBaseListCtrl<BuilderCompany> {
 		this.segmentation.setValueColumn("FieldCodeValue");
 		this.segmentation.setDescColumn("ValueDesc");
 		this.segmentation.setValidateColumns(new String[] { "FieldCodeValue" });
+		Filter segmentFilter[] = new Filter[1];
+		segmentFilter[0] = new Filter("FieldCode", "SEGMENT", Filter.OP_EQUAL);
+		this.segmentation.setFilters(segmentFilter);
+
 		this.groupId.setModuleName("BuilderGroup");
 		this.groupId.setValueColumn("Id");
 		this.groupId.setValueType(DataType.LONG);

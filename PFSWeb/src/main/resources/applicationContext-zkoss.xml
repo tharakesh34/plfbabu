@@ -4235,6 +4235,7 @@
 	<bean id="builderCompanyDialogCtrl" class="com.pennant.webui.systemmasters.buildercompany.BuilderCompanyDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="builderCompanyService" ref="builderCompanyService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />	
 	</bean>
 
 	<!-- DealerGroup -->

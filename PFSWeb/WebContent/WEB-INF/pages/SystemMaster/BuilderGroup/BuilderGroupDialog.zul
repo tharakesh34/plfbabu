@@ -39,7 +39,7 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
+			<center border="none" autoscroll="true">
 				<groupbox id="gb_basicDetails" sclass="gb-dialog">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
@@ -53,10 +53,43 @@
 								<label id="label_name" value="${c:l('label_BuilderGroupDialog_name.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="name" maxlength="50" width="200px" />
+									<textbox id="name" maxlength="50" width="200px" />
 								</hbox>
 								<label id="label_segmentation" value="${c:l('label_BuilderGroupDialog_segmentation.value')}" />
 								<extendedcombobox id="segmentation" />
+							</row>
+							<row id="row1">
+								<label id="label_PEDeveloperId" value="${c:l('label_BuilderGroupDialog_PEDeveloperId.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="peDeveloperId" maxlength="100" width="300px" />
+								</hbox>
+								<label id="label_city" value="${c:l('label_BuilderGroupDialog_City.value')}" />
+								<extendedcombobox id="city" />
+							</row>
+							<row id="row2">
+								<label id="label_Province" value="${c:l('label_BuilderGroupDialog_Province.value')}" />
+								<extendedcombobox id="province" />
+								<label id="label_Pincode" value="${c:l('label_BuilderGroupDialog_Pincode.value')}" />
+								<extendedcombobox id="pinCode" />
+							</row>
+							<row id="row3">
+								<label id="label_CurrentExpUnits" value="${c:l('label_BuilderGroupDialog_CurrentExpUnits.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="currentExpUnits" width="117px" />
+								</hbox>
+								<label id="label_ExpLimitOnNoOfUnits" value="${c:l('label_BuilderGroupDialog_ExpLimitOnNoOfUnits.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<decimalbox id="expLimitOnNoOfUnits" width="117px" />
+								</hbox>
+							</row>
+							<row id="row4">
+								<label id="label_ExposureLimitOnAmount" value="${c:l('label_BuilderGroupDialog_ExposureLimitOnAmount.value')}" />
+								<currencyBox id="expLimitOnAmt" width="117px" />
+								<label id="label_CurrentExpAmt" value="${c:l('label_BuilderGroupDialog_CurrentExpAmt.value')}" />
+								<currencyBox id="currentExpAmt" width="117px" />
 							</row>
 						</rows>
 					</grid>

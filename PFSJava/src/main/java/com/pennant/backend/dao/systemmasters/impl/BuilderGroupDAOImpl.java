@@ -50,7 +50,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import com.pennant.backend.dao.systemmasters.BuilderGroupDAO;
 import com.pennant.backend.model.systemmasters.BuilderGroup;
@@ -77,30 +77,25 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, name, segmentation, ");
+		sql.append(" id, name, segmentation, pedeveloperid, city, province, pinCodeId, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt,");
 		if (type.contains("View")) {
-			sql.append(" segmentationName,fieldCode, ");
+			sql.append(" cityName, provinceName, poBox, areaName,");
 		}
 
 		sql.append(
 				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From BuilderGroup");
 		sql.append(type);
-		if (type.contains("View")) {
-			sql.append(" Where id = :id AND FieldCode =:FieldCode");
-		} else {
-			sql.append(" Where id = :id");
-		}
+		sql.append(" Where id = :id");
 
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 
 		BuilderGroup builderGroup = new BuilderGroup();
 		builderGroup.setId(id);
-		builderGroup.setFieldCode("SEGMENT");
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(builderGroup);
-		RowMapper<BuilderGroup> rowMapper = ParameterizedBeanPropertyRowMapper.newInstance(BuilderGroup.class);
+		RowMapper<BuilderGroup> rowMapper = BeanPropertyRowMapper.newInstance(BuilderGroup.class);
 
 		try {
 			builderGroup = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
@@ -156,11 +151,11 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder(" insert into BuilderGroup");
 		sql.append(tableType.getSuffix());
-		sql.append(" (id, name, segmentation, ");
+		sql.append(" (id, name, segmentation, pedeveloperid, city, province, pincodeid, expLmtOnAmt, expLmtOnNoOfUnits, currExpUnits, currExpAmt, ");
 		sql.append(
 				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :id, :name, :segmentation, ");
+		sql.append(" :id, :name, :segmentation, :peDeveloperId, :city, :province, :pinCodeId, :expLmtOnAmt, :expLmtOnNoOfUnits, :currExpUnits, :currExpAmt, ");
 		sql.append(
 				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -190,8 +185,9 @@ public class BuilderGroupDAOImpl extends SequenceDao<BuilderGroup> implements Bu
 		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update BuilderGroup");
 		sql.append(tableType.getSuffix());
-		sql.append("  set name = :name, segmentation = :segmentation, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
+		sql.append("  set name = :name, segmentation = :segmentation, pedeveloperid = :peDeveloperId, city = :city, province = :province, pincodeid = :pinCodeId, ");
+		sql.append(" expLmtOnAmt= :expLmtOnAmt, expLmtOnNoOfUnits = :expLmtOnNoOfUnits, currExpUnits = :currExpUnits, currExpAmt = :currExpAmt, ");
+		sql.append(" Version = :Version, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
 		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
 		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where id = :id ");

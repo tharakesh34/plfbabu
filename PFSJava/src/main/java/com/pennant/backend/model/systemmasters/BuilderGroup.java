@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.model.systemmasters;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -77,6 +78,18 @@ public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
 	private BuilderGroup befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private String peDeveloperId;
+	private String city;
+	private String cityName;
+	private String province;
+	private String provinceName;
+	private long pinCodeId;
+	private String poBox;
+	private String areaName;
+	private BigDecimal expLmtOnAmt = BigDecimal.ZERO;
+	private BigDecimal expLmtOnNoOfUnits = BigDecimal.ZERO;
+	private BigDecimal currExpUnits = BigDecimal.ZERO;
+	private BigDecimal currExpAmt = BigDecimal.ZERO;
 
 	public boolean isNew() {
 		return isNewRecord();
@@ -95,6 +108,10 @@ public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("segmentationName");
 		excludeFields.add("fieldCode");
+		excludeFields.add("cityName");
+		excludeFields.add("provinceName");
+		excludeFields.add("poBox");
+		excludeFields.add("areaName");
 		return excludeFields;
 	}
 
@@ -180,6 +197,102 @@ public class BuilderGroup extends AbstractWorkflowEntity implements Entity {
 
 	public void setFieldCode(String fieldCode) {
 		this.fieldCode = fieldCode;
+	}
+
+	public String getPeDeveloperId() {
+		return peDeveloperId;
+	}
+
+	public void setPeDeveloperId(String peDeveloperId) {
+		this.peDeveloperId = peDeveloperId;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
+	}
+
+	public long getPinCodeId() {
+		return pinCodeId;
+	}
+
+	public void setPinCodeId(long pinCodeId) {
+		this.pinCodeId = pinCodeId;
+	}
+
+	public String getPoBox() {
+		return poBox;
+	}
+
+	public void setPoBox(String poBox) {
+		this.poBox = poBox;
+	}
+
+	public String getAreaName() {
+		return areaName;
+	}
+
+	public void setAreaName(String areaName) {
+		this.areaName = areaName;
+	}
+
+	public BigDecimal getExpLmtOnAmt() {
+		return expLmtOnAmt;
+	}
+
+	public void setExpLmtOnAmt(BigDecimal expLmtOnAmt) {
+		this.expLmtOnAmt = expLmtOnAmt;
+	}
+
+	public BigDecimal getExpLmtOnNoOfUnits() {
+		return expLmtOnNoOfUnits;
+	}
+
+	public void setExpLmtOnNoOfUnits(BigDecimal expLmtOnNoOfUnits) {
+		this.expLmtOnNoOfUnits = expLmtOnNoOfUnits;
+	}
+
+	public BigDecimal getCurrExpUnits() {
+		return currExpUnits;
+	}
+
+	public void setCurrExpUnits(BigDecimal currExpUnits) {
+		this.currExpUnits = currExpUnits;
+	}
+
+	public BigDecimal getCurrExpAmt() {
+		return currExpAmt;
+	}
+
+	public void setCurrExpAmt(BigDecimal currExpAmt) {
+		this.currExpAmt = currExpAmt;
 	}
 
 }

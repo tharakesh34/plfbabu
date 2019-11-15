@@ -901,5 +901,22 @@ public class PennantConstants {
 	
 	//cancel loan API
 	public static final String LOAN_CANCEL = "LOANCANCEL";
+	//Builder Company
+	public static final String BRANCH_APF = "Branch APF";
+	public static final String DEEMED_APF = "Deemed APF";
+	public static final String NON_APF = "Non APF";
+	public static final String REJECT = "Reject";
+	public static final String NEGATIVE = "NEG";
+	public static final String TIER1 = "Tier1";
+	public static final String TIER2 = "Tier2";
+	public static final String TIER3 = "Tier3";
+	public static final String NAGATIVE = "NAGATIVE";
+	public static final String PARTNERSHIP = "PARTNERSHIP";
+	public static final String PUBLICLIMITED = "PUBLICLIMITED";
+	public static final String LLP = "LLP";
+	public static final String LLC = "LLC";
+	public static final String PROPRIETORSHIP = "PROPRIETORSHIP";
+	public static final String PRIVATELTD = "PRIVATELTD";
+	public static final String rateFormate11 = "###0.00#######";
 
 }

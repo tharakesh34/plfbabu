@@ -222,6 +222,10 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> channelTypes;
 	private static ArrayList<ValueLabel> phoneTypeRegex;
 	private static ArrayList<ValueLabel> custCreationFinoneStatus;
+	private static ArrayList<ValueLabel> apfType;
+	private static ArrayList<ValueLabel> cityType;
+	private static ArrayList<ValueLabel> approved;
+	private static ArrayList<ValueLabel> builderEntityType;
 
 	private static ArrayList<ValueLabel> extractionType;
 	private static ArrayList<ValueLabel> accountMapping;
@@ -2014,7 +2018,61 @@ public class PennantStaticListUtil {
 
 		return deviationComponents;
 	}
-
+	public static ArrayList<ValueLabel> getApfType() {
+		if (apfType == null) {
+			apfType = new ArrayList<ValueLabel>(1);
+			apfType.add(new ValueLabel(PennantConstants.BRANCH_APF,
+					Labels.getLabel("label_BuilderCompany_BranchAPF.value")));
+			apfType.add(new ValueLabel(PennantConstants.DEEMED_APF,
+					Labels.getLabel("label_BuilderCompany_DeemedAPF.value")));
+			apfType.add(new ValueLabel(PennantConstants.NON_APF,
+					Labels.getLabel("label_BuilderCompany_NonAPF.value")));
+			apfType.add(new ValueLabel(PennantConstants.REJECT,
+					Labels.getLabel("label_BuilderCompany_Reject.value")));
+			apfType.add(new ValueLabel(PennantConstants.NEGATIVE,
+					Labels.getLabel("label_BuilderCompany_Negative.value")));
+		}
+		return apfType;
+	}
+	
+	public static ArrayList<ValueLabel> getapproved() {
+		if (approved == null) {
+			approved = new ArrayList<ValueLabel>(3);
+			approved.add(new ValueLabel(PennantConstants.YES, Labels.getLabel("label_BuilderCompany_Yes.value")));
+			approved.add(new ValueLabel(PennantConstants.NO, Labels.getLabel("label_BuilderCompany_No.value")));
+			approved.add(
+					new ValueLabel(PennantConstants.NAGATIVE, Labels.getLabel("label_BuilderCompany_Negative.value")));
+		}
+		return approved;
+	}
+	
+	public static ArrayList<ValueLabel> getcityType() {
+		if (cityType == null) {
+			cityType = new ArrayList<ValueLabel>(3);
+			cityType.add(new ValueLabel(PennantConstants.TIER1, Labels.getLabel("label_BuilderCompany_Tier1.value")));
+			cityType.add(new ValueLabel(PennantConstants.TIER2, Labels.getLabel("label_BuilderCompany_Tier2.value")));
+			cityType.add(new ValueLabel(PennantConstants.TIER3, Labels.getLabel("label_BuilderCompany_Tier3.value")));
+		}
+		return cityType;
+	}
+	public static ArrayList<ValueLabel> getBuilderEntityType() {
+		if (builderEntityType == null) {
+			builderEntityType = new ArrayList<ValueLabel>(3);
+			builderEntityType.add(new ValueLabel(PennantConstants.PARTNERSHIP,
+					Labels.getLabel("label_BuilderCompany_Partnership.value")));
+			builderEntityType.add(new ValueLabel(PennantConstants.PUBLICLIMITED,
+					Labels.getLabel("label_BuilderCompany_PublicLimited.value")));
+			builderEntityType
+					.add(new ValueLabel(PennantConstants.LLP, Labels.getLabel("label_BuilderCompany_LLP.value")));
+			builderEntityType
+					.add(new ValueLabel(PennantConstants.LLC, Labels.getLabel("label_BuilderCompany_LLC.value")));
+			builderEntityType.add(new ValueLabel(PennantConstants.PROPRIETORSHIP,
+					Labels.getLabel("label_BuilderCompany_Proprietorship.value")));
+			builderEntityType.add(new ValueLabel(PennantConstants.PRIVATELTD,
+					Labels.getLabel("label_BuilderCompany_PrivateLtd.value")));
+		}
+		return builderEntityType;
+	}
 	public static ArrayList<ValueLabel> getCheckListDeviationType() {
 		if (checkListdeviationTypes == null) {
 			checkListdeviationTypes = new ArrayList<ValueLabel>();

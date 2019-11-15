@@ -39,32 +39,278 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
-				<groupbox id="gb_basicDetails" sclass="gb-dialog">
-					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-						<columns>
-							<column width="15%" />
-							<column width="35%" />
-							<column width="15%" />
-							<column width="35%" />
-						</columns>
-						<rows>
-							<row id="row0">
-								<label id="label_name" value="${c:l('label_BuilderCompanyDialog_name.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<uppercasebox id="name" maxlength="50" width="200px" />
-								</hbox>
-								<label id="label_segmentation" value="${c:l('label_BuilderCompanyDialog_segmentation.value')}" />
-								<extendedcombobox id="segmentation" />
-							</row>
-							<row id="row1">
-								<label id="label_groupId" value="${c:l('label_BuilderCompanyDialog_groupId.value')}" />
-								<extendedcombobox id="groupId" />
-							</row>
-						</rows>
-					</grid>
-				</groupbox>
+			<center border="none" autoscroll="true">
+				<div>
+					<groupbox id="gb_basicDetails" sclass="gb-dialog">
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row id="row0">
+									<label id="label_name" value="${c:l('label_BuilderCompanyDialog_name.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="name" maxlength="50" width="150px" />
+									</hbox>
+									<label id="label_CustCif" value="${c:l('label_BuilderCompanyDialog_custCif.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="custCIF" maxlength="20">
+										</textbox>
+										<longbox id="custId" visible="false" />
+										<button id="btnSearchCustId" tooltiptext="${c:l('label_FinanceMainSearch_CustID.tooltiptext')}" image="/images/icons/more.png" />
+										<label id="custDesc" style="margin-left:10px;display:inline-block;padding-top:3px;">
+										</label>
+									</hbox>
+								</row>
+								<row id="row1">
+									<label id="label_segmentation" value="${c:l('label_BuilderCompanyDialog_segmentation.value')}" />
+									<extendedcombobox id="segmentation" width="150px" />
+									<label id="label_groupId" value="${c:l('label_BuilderCompanyDialog_groupId.value')}" />
+									<hbox>
+										<extendedcombobox id="groupId" />
+									</hbox>
+								</row>
+								<row id="row2">
+									<label id="label_APFType" value="${c:l('label_BuilderCompanyDialog_APFType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="apfType" width="150px" />
+									</hbox>
+									<label id="label_PEdevId" value="${c:l('label_BuilderCompanyDialog_PEdevId.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="peDevId" maxlength="100" width="300px" />
+									</hbox>
+
+								</row>
+								<row id="row3">
+									<label id="label_entityType" value="${c:l('label_BuilderCompanyDialog_entityType.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="entityType" width="150px" />
+									</hbox>
+									<label id="label_emailId" value="${c:l('label_BuilderCompanyDialog_emailId.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="emailId" maxlength="100" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row4">
+									<label id="label_CityType" value="${c:l('label_BuilderCompanyDialog_CityType.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_CityType" />
+										<combobox id="cityType" width="150px" />
+									</hbox>
+									<label id="label_address1" value="${c:l('label_BuilderCompanyDialog_address1.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="address1" maxlength="255" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row5">
+									<label id="label_address2" value="${c:l('label_BuilderCompanyDialog_address2.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="address2" maxlength="255" width="150px" />
+									</hbox>
+									<label id="label_address3" value="${c:l('label_BuilderCompanyDialog_address3.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="address3" maxlength="255" width="150px" />
+									</hbox>
+								</row>
+								<row id="row6">
+									<label id="label_City" value="${c:l('label_BuilderCompanyDialog_City.value')}" />
+									<extendedcombobox id="city" />
+									<label id="label_Code" value="${c:l('label_BuilderCompanyDialog_Code.value')}" />
+									<extendedcombobox id="code" />
+
+								</row>
+								<row id="row7">
+									<label id="label_DevAvailablity" value="${c:l('label_BuilderCompanyDialog_DevAvailablity.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="devavailablity" width="150px" style="text-align:right" />
+									</hbox>
+									<label id="label_Magnitude" value="${c:l('label_BuilderCompanyDialog_Magnitude.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="magnitude" maxlength="19" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row8">
+									<label id="label_AbsAvailablity" value="${c:l('label_BuilderCompanyDialog_AbsAvailablity.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="absavailablity" maxlength="19" width="150px" />
+									</hbox>
+									<label id="label_TotalProj" value="${c:l('label_BuilderCompanyDialog_TotalProj.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="totalProj" maxlength="3" width="150px" style="text-align:right" />
+									</hbox>
+
+								</row>
+								<row id="row9">
+									<label id="label_Approved" value="${c:l('label_BuilderCompanyDialog_Approved.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<combobox id="approved" maxlength="30" width="150px" />
+									</hbox>
+									<label id="label_Remarks" value="${c:l('label_BuilderCompanyDialog_Remarks.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="remarks" maxlength="500" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row10">
+									<label id="label_PANDetails" value="${c:l('label_BuilderCompanyDialog_PANDetails.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="panDetails" maxlength="10" width="150px" />
+									</hbox>
+									<label id="label_BenfName" value="${c:l('label_BuilderCompanyDialog_BenfName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="benfName" maxlength="150" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row11">
+									<label id="label_AccountNo" value="${c:l('label_BuilderCompanyDialog_AccountNo.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="accountNo" maxlength="20" width="150px" />
+									</hbox>
+									<label id="label_BankName" value="${c:l('label_BuilderCompanyDialog_BankName.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="bankName" width="150px" />
+										<label id="bankNameDesc" style="margin-left:10px;display:inline-block;padding-top:3px;" />
+									</hbox>
+
+
+								</row>
+								<row id="row12">
+									<label id="label_BankBranch" value="${c:l('label_BuilderCompanyDialog_BankBranch.value')}" />
+									<extendedcombobox id="bankBranch" />
+									<label id="label_IFSC" value="${c:l('label_BuilderCompanyDialog_IFSCCode.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<textbox id="ifsc" maxlength="11" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row13">
+									<label id="label_LimitOnAmt" value="${c:l('label_BuilderCompanyDialog_LimitOnAmt.value')}" />
+									<currencyBox id="limitOnAmt" width="150px" />
+									<label id="label_LimitOnUnits" value="${c:l('label_BuilderCompanyDialog_LimitOnNoOfUnits.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<decimalbox id="limitOnUnits" maxlength="19" width="150px" />
+									</hbox>
+
+								</row>
+								<row id="row14">
+									<label id="label_CurrentExpUni" value="${c:l('label_BuilderCompanyDialog_CurrentExpUni.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<intbox id="currentExpUni" maxlength="18" width="150px" style="text-align:right" />
+									</hbox>
+									<label id="label_CurrentExpAmt" value="${c:l('label_BuilderCompanyDialog_CurrentExpAmt.value')}" />
+									<currencyBox id="currentExpAmt" width="150px" />
+								</row>
+
+								<row id="row15">
+									<label id="label_DateOfInCop" value="${c:l('label_BuilderCompanyDialog_DateOfInCop.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<datebox id="dateOfInCop" width="150px" />
+									</hbox>
+									<label id="label_Active" value="${c:l('label_BuilderCompanyDialog_Active.value')}" />
+									<hbox>
+										<space spacing="2px" />
+										<checkbox id="active" checked="false" />
+									</hbox>
+
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+
+					<groupbox id="gb_segmentationCalculation" sclass="gb-dialog">
+						<caption label="Segmentation Calculation" />
+						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+							<columns>
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
+							</columns>
+							<rows>
+								<row id="row16">
+
+									<label id="label_NoOfProj" value="${c:l('label_BuilderCompanyDialog_NoOfProj.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_NoOfProj" />
+										<intbox id="noOfProj" width="150px" style="text-align:right" />
+									</hbox>
+
+									<label id="label_AssHLPlayers" value="${c:l('label_BuilderCompanyDialog_AssHLPlayers.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_AssHLPlayers" />
+										<intbox id="assHLPlayers" maxlength="3" width="150px" style="text-align:right" />
+									</hbox>
+
+								</row>
+								<row id="row17">
+									<label id="label_OnGoingProj" value="${c:l('label_BuilderCompanyDialog_OnGoingProj.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_OnGoingProj" />
+										<intbox id="onGoingProj" width="150px" style="text-align:right" />
+									</hbox>
+
+									<label id="label_ExpInBusiness" value="${c:l('label_BuilderCompanyDialog_ExpInBusiness.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_ExpInBusiness" />
+										<intbox id="expInBusiness" maxlength="3" width="150px" style="text-align:right" />
+									</hbox>
+
+								</row>
+								<row id="row18">
+									<label id="label_Recommendation" value="${c:l('label_BuilderCompanyDialog_Recommendation.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_Recommendation" />
+										<combobox id="recommendation" maxlength="50" width="150px" />
+									</hbox>
+
+									<label id="label_MagintudeInLacs" value="${c:l('label_BuilderCompanyDialog_MagintudeInLacs.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_MagintudeInLacs" />
+										<intbox id="magintudeInLacs" width="150px" style="text-align:right" />
+									</hbox>
+
+								</row>
+								<row id="row19">
+									<label id="label_NoOfProjCons" value="${c:l('label_BuilderCompanyDialog_NoOfProjCons.value')}" />
+									<hbox>
+										<space spacing="2px" id="space_NoOfProjCons" />
+										<intbox id="noOfProjCons" width="150px" style="text-align:right" />
+									</hbox>
+								</row>
+							</rows>
+						</grid>
+					</groupbox>
+				</div>
 			</center>
 			<south sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%">

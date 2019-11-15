@@ -45,6 +45,7 @@ package com.pennant.webui.systemmasters.buildercompany.model;
 import java.io.Serializable;
 
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
@@ -72,7 +73,17 @@ public class BuilderCompanyListModelItemRenderer implements ListitemRenderer<Bui
 		lc.setParent(item);
 		lc = new Listcell(builderCompany.getSegmentation());
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getGroupIdName()));
+		if (builderCompany.getGroupId() > 0) {
+			lc = new Listcell(String.valueOf(builderCompany.getGroupId() + "-" + builderCompany.getGroupIdName()));
+		} else {
+			lc = new Listcell("");
+		}
+		lc.setParent(item);
+		lc = new Listcell();
+		Checkbox check = new Checkbox();
+		check.setDisabled(true);
+		check.setChecked(builderCompany.isActive());
+		lc.appendChild(check);
 		lc.setParent(item);
 		lc = new Listcell(builderCompany.getRecordStatus());
 		lc.setParent(item);

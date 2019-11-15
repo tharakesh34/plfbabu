@@ -42,9 +42,13 @@
 */
 package com.pennant.backend.service.systemmasters.impl;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
@@ -58,6 +62,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -68,6 +73,9 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private BuilderCompanyDAO builderCompanyDAO;
+	@Autowired(required = false)
+	@Qualifier("builderCompanyPostValidationHook")
+	private PostValidationHook builderCompanyPostValidationHook;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -312,6 +320,7 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
+		doPostHookValidation(auditHeader);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
@@ -337,8 +346,8 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 		BuilderCompany builderCompany = (BuilderCompany) auditDetail.getModelData();
 
 		String[] parameters = new String[2];
-		parameters[0] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
-		parameters[1] = PennantJavaUtil.getLabel("label_groupId") + ": " + builderCompany.getGroupId();
+		parameters[0] = PennantJavaUtil.getLabel("label_id") + ": " + builderCompany.getId();
+		parameters[1] = PennantJavaUtil.getLabel("label_name") + ": " + builderCompany.getName();
 
 		// Check the unique keys.
 		if (builderCompany.isNew() && builderCompanyDAO.isDuplicateKey(builderCompany.getId(), builderCompany.getName(),
@@ -358,6 +367,18 @@ public class BuilderCompanyServiceImpl extends GenericService<BuilderCompany> im
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+	// ### 28-11-2018 BuilderCompanySegmentation Rule 
+
+	private void doPostHookValidation(AuditHeader auditHeader) {
+		if (builderCompanyPostValidationHook != null) {
+			List<ErrorDetail> errorDetails = builderCompanyPostValidationHook.validation(auditHeader);
+
+			if (errorDetails != null) {
+				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
 	}
 
 }
