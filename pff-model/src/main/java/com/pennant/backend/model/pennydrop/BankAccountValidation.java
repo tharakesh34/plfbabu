@@ -1,5 +1,7 @@
 package com.pennant.backend.model.pennydrop;
 
+import com.pennanttech.pennapps.core.model.LoggedInUser;
+
 public class BankAccountValidation {
 	private long ID = Long.MIN_VALUE;
 	private String acctNum;
@@ -7,6 +9,9 @@ public class BankAccountValidation {
 	private String initiateType;
 	private boolean status;
 	private String reason;
+	private String initiateReference;
+	private LoggedInUser userDetails;
+	private boolean serviceActive;
 	
 	public BankAccountValidation() {
 		super();
@@ -60,4 +65,27 @@ public class BankAccountValidation {
 		this.acctNum = acctNum;
 	}
 
+	public String getInitiateReference() {
+		return initiateReference;
+	}
+
+	public void setInitiateReference(String initiateReference) {
+		this.initiateReference = initiateReference;
+	}
+
+	public LoggedInUser getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(LoggedInUser userDetails) {
+		this.userDetails = userDetails;
+	}
+
+	public boolean isServiceActive() {
+		return serviceActive;
+	}
+
+	public void setServiceActive(boolean serviceActive) {
+		this.serviceActive = serviceActive;
+	}
 }
