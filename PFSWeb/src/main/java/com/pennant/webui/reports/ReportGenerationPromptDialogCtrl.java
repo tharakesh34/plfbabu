@@ -1199,6 +1199,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		}
 
+		Date appDate = SysParamUtil.getAppDate();
 		// Prepare Where Condition for Date time type Range Components
 		for (String filedId : rangeFieldsMap.keySet()) {
 
@@ -1219,6 +1220,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							|| (fromDateBox instanceof Intbox && ((Intbox) fromDateBox).getValue() != null)
 							|| (fromDateBox instanceof Decimalbox && ((Decimalbox) fromDateBox).getValue() != null)) {
 						// Checking To value is selected or not
+						if (fromDateBox instanceof Datebox && ((Datebox) fromDateBox).getValue() != null
+								&& (toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue() == null)) {
+							throw new WrongValueException(toDateBox,
+									Labels.getLabel("label_Error_ToDateMandatory.vlaue"));
+						}
 						if ((toDateBox instanceof Datebox && ((Datebox) toDateBox).getValue() != null)
 								|| (toDateBox instanceof Timebox && ((Timebox) toDateBox).getValue() != null)
 								|| (toDateBox instanceof Intbox && ((Intbox) toDateBox).getValue() != null)
@@ -1228,7 +1234,15 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 									&& ((Datebox) toDateBox).getValue().before(((Datebox) fromDateBox).getValue())) {
 								throw new WrongValueException(fromDateBox,
 										Labels.getLabel("label_Error_FromDateMustBfrTo.vlaue"));
-							} else if (fromDateBox instanceof Timebox // Check From time is before To time
+							} else if (toDateBox instanceof Datebox
+									&& ((Datebox) toDateBox).getValue().after(appDate)) {
+								throw new WrongValueException(toDateBox,
+										Labels.getLabel("label_Error_ToDateMustbeBfrAppDate.vlaue"));
+							} else if (fromDateBox instanceof Datebox
+									&& ((Datebox) fromDateBox).getValue().after(appDate)) {
+								throw new WrongValueException(fromDateBox,
+										Labels.getLabel("label_Error_FromDateMustbeBfrAppDate.vlaue"));
+							} else if (fromDateBox instanceof Timebox // Check From time is before time
 									&& DateUtility.compareTime(((Timebox) toDateBox).getValue(),
 											((Timebox) fromDateBox).getValue(), true) == -1) {
 								throw new WrongValueException(fromDateBox,
