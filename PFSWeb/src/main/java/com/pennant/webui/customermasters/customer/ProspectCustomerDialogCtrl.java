@@ -67,6 +67,7 @@ import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.InterfaceException;
@@ -186,10 +187,11 @@ public class ProspectCustomerDialogCtrl extends GFCBaseCtrl<Customer> {
 			if (customer != null) {
 				CustomerDetails customerDetails = getCustomerDetailsService().getCustomerById(customer.getCustID());
 				final HashMap<String, Object> map = new HashMap<String, Object>();
+				String pageName = PennantAppUtil.getCustomerPageName();
 				map.put("customerDetails", customerDetails);
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 				map.put("ProspectCustomerEnq", "ProspectCustomerEnq");
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+				Executions.createComponents(pageName, null, map);
 			}
 		} catch (Exception e) {
 			logger.error("Exception: ", e);

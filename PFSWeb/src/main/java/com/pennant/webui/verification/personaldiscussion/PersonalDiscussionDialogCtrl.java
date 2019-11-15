@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -85,7 +86,6 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.verification.StatuReasons;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
-import com.pennanttech.pennapps.pff.verification.fi.FIStatus;
 import com.pennanttech.pennapps.pff.verification.fi.PDStatus;
 import com.pennanttech.pennapps.pff.verification.model.PersonalDiscussion;
 import com.pennanttech.pennapps.pff.verification.service.PersonalDiscussionService;
@@ -751,11 +751,12 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
 		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.personalDiscussion.getCustId());
+		String pageName = PennantAppUtil.getCustomerPageName();
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
 			map.put("CustomerEnq", true);
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+			Executions.createComponents(pageName, null, map);
 		}
 
 		logger.debug(Literal.LEAVING);

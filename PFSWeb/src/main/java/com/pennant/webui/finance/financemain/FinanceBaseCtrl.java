@@ -1510,8 +1510,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 				map.put("isEnqProcess", isEnquiry);
 			}
-			String zulFilePathName = "/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul";
-
+			String pageName = PennantAppUtil.getCustomerPageName();
 			custDetailTab = new Tab(Labels.getLabel("Customer"));
 			custDetailTab.setId("custDetailTab");
 			tabsIndexCenter.appendChild(custDetailTab);
@@ -1523,7 +1522,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			tabpanel.setHeight(this.borderLayoutHeight - 100 - 20 + "px");
 			ComponentsCtrl.applyForward(custDetailTab, "onSelect=onSelectCustomerDetailsTab");
 
-			customerWindow = Executions.createComponents(zulFilePathName, tabpanel, map);
+			customerWindow = Executions.createComponents(pageName, tabpanel, map);
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);

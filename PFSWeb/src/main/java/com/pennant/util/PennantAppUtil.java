@@ -66,6 +66,7 @@ import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.BuilderTable;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.ValueLabel;
@@ -2344,5 +2345,19 @@ public class PennantAppUtil {
 		}
 		return true;
 	}
+	
+	/**
+	 * This method will return customer Dialog page as per the client requirement by using system param value
+	 * 
+	 * @return String
+	 */
+	public static String getCustomerPageName(){
+		 String pageExt = SysParamUtil.getValueAsString("CUST_DIALOG_EXT");
+		 StringBuilder builder=new StringBuilder("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog");
+		 builder.append(StringUtils.trimToEmpty(pageExt));
+		 builder.append(".zul");
+		 return builder.toString();
+		
+	}		
 
 }

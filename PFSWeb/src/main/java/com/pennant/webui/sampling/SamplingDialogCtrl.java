@@ -563,6 +563,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(collSetup.getCustID(), true,
 				"_AView");
 		final HashMap<String, Object> map = new HashMap<String, Object>();
+		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", customerDetails);
 		map.put("newRecord", false);
 		map.put("isEnqProcess", true);
@@ -570,7 +571,7 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		map.put("enqiryModule", true);
 		map.put("enqModule", true);
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		Executions.createComponents(pageName, null, map);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -1011,10 +1012,11 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 		logger.debug(Literal.ENTERING);
 		createTab("CUSTOMERDETAIL", true);
 		final HashMap<String, Object> map = getDefaultArguments();
+		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", getSampling().getCustomerDetails());
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 		map.put("enqiryModule", true);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+		Executions.createComponents(pageName,
 				getTabpanel("CUSTOMERDETAIL"), map);
 		logger.debug(Literal.LEAVING);
 	}
@@ -1053,8 +1055,8 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	}
 
 	/**
-	 * This method will create tab and will assign corresponding tab selection method and makes tab visibility based on
-	 * parameter
+	 * This method will create tab and will assign corresponding tab selection
+	 * method and makes tab visibility based on parameter
 	 * 
 	 * @param moduleID
 	 * @param tabVisible

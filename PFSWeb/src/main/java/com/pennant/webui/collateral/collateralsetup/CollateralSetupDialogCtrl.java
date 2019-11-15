@@ -866,7 +866,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 				map.put("customerDetails", getCollateralSetup().getCustomerDetails());
 				map.put("moduleType", moduleType);
 
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+				String pageName = PennantAppUtil.getCustomerPageName();
+				Executions.createComponents(pageName,
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {

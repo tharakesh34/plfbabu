@@ -237,6 +237,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected ExtendedCombobox custSector; // autowired
 	protected ExtendedCombobox custIndustry; // autowired
 	protected ExtendedCombobox custSegment; // autowired
+	protected Label label_CustSegment; // autowired
 	protected ExtendedCombobox custCOB; // autowired
 	protected ExtendedCombobox custNationality; // autowired
 	protected Combobox custMaritalSts; // autowired
@@ -295,8 +296,17 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label label_CustomerDialog_Target;
 	protected Label label_ArabicName;
 	protected Label label_CustSubSegment;
+	protected Label label_CustRelatedParty;
+	protected Label label_CustomerDialog_CustLastName;
+	protected Label label_CustomerDialog_motherMaidenName;
+	protected Label label_CustomerDialog_CustReligion;
+	protected Label label_CustomerDialog_CustCaste;
+	protected Label label_CustomerDialog_EmploymentType;
+	protected Label	label_CustomerDialog_subCategory;
+	protected Hbox hbox_EmploymentType;
+     protected Hbox hbox_CustRelatedParty;
+	protected Label label_CustGroupId;
 	protected Row row_FirstMiddleName;
-	protected Row row_LastName;
 	protected Row row_GenderSalutation;
 	protected Row row_MartialDependents;
 	protected Row row_EmpName;
@@ -304,7 +314,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Row row_custTradeLicenceNum;
 	protected Row rowCustEmpSts;
 	protected Row rowCustCRCPR;
-	protected Row row_party_segment;
 	protected Row row_custStatus;
 	protected Row row_custStaff;
 	protected Row row_custDSA;
@@ -312,7 +321,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Row row_custSub;
 	protected Groupbox gp_CustEmployeeDetails;
 	protected Hbox hbox_SalariedCustomer;
-	protected Space space_CustShrtName;
+	protected Hbox hbox_CustLastName;
+	protected Hbox hbox_motherMaidenName;
+	protected Hbox hbox_CustReligion;
+	protected Hbox hbox_CustCaste;
+    protected Space space_CustShrtName;
 
 	protected Tab basicDetails;
 	protected Tab tabkYCDetails;
@@ -2179,13 +2192,22 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Entering");
 		if (isRetailCustomer) {
 			this.row_FirstMiddleName.setVisible(true);
-			this.row_LastName.setVisible(true);
-			this.row_GenderSalutation.setVisible(true);
+			this.label_CustomerDialog_CustLastName.setVisible(true);
+			this.label_CustomerDialog_motherMaidenName.setVisible(true);
+			this.hbox_CustLastName.setVisible(true);
+			this.hbox_motherMaidenName.setVisible(true);
+            this.row_GenderSalutation.setVisible(true);
 			this.row_MartialDependents.setVisible(true);
 			this.row_custDSA.setVisible(true);
 			this.label_CustSubSegment.setVisible(true);
 			this.custSubSegment.setVisible(true);
-			this.row_custStaff.setVisible(true);
+			this.label_CustomerDialog_CustReligion.setVisible(true);
+			this.label_CustomerDialog_CustCaste.setVisible(true);
+			this.label_CustomerDialog_subCategory.setVisible(true);
+			this.hbox_CustReligion.setVisible(true);
+			this.hbox_CustCaste.setVisible(true);
+			this.subCategory.setVisible(true);
+            this.row_custStaff.setVisible(true);
 			this.row_custCountry.setVisible(true);
 			this.hbox_SalariedCustomer.setVisible(true);
 			if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
@@ -2206,7 +2228,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			// this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(true);
 			this.tabfinancial.setVisible(ImplementationConstants.ALLOW_CUSTOMER_INCOMES);
-			this.row_party_segment.setVisible(true);
+			this.label_CustRelatedParty.setVisible(true);
+			this.hbox_CustRelatedParty.setVisible(true);
+			this.label_CustSegment.setVisible(true);
+			this.custSegment.setVisible(true);
+			//label
 			this.row_custStatus.setVisible(true);
 			this.label_CustomerDialog_Target.setVisible(true);
 			this.target.setVisible(true);
@@ -2214,7 +2240,16 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		} else {
 			this.row_FirstMiddleName.setVisible(false);
-			this.row_LastName.setVisible(false);
+			this.label_CustomerDialog_CustLastName.setVisible(false);
+			this.label_CustomerDialog_motherMaidenName.setVisible(false);
+			this.hbox_CustLastName.setVisible(false);
+			this.hbox_motherMaidenName.setVisible(false);
+			this.label_CustomerDialog_CustReligion.setVisible(false);
+			this.label_CustomerDialog_CustCaste.setVisible(false);
+			this.hbox_CustReligion.setVisible(false);
+			this.hbox_CustCaste.setVisible(false);
+			this.label_CustomerDialog_subCategory.setVisible(false);
+			this.subCategory.setVisible(false);
 			this.row_GenderSalutation.setVisible(false);
 			this.row_MartialDependents.setVisible(false);
 			this.row_custDSA.setVisible(false);
@@ -2237,7 +2272,11 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			this.space_CustArabicName.setSclass("");
 			this.custArabicName.setVisible(false);
 			this.directorDetails.setVisible(ImplementationConstants.ALLOW_CUSTOMER_SHAREHOLDERS);
-			this.row_party_segment.setVisible(false);
+			this.label_CustRelatedParty.setVisible(false);
+			this.hbox_CustRelatedParty.setVisible(false);
+			this.label_CustSegment.setVisible(false);
+			this.custSegment.setVisible(false);
+			
 			this.row_custStatus.setVisible(false);
 			this.label_CustomerDialog_Target.setVisible(false);
 			this.target.setVisible(false);

@@ -222,6 +222,8 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 		logger.debug("Entering");
 		try {
 			HashMap<String, Object> map = new HashMap<String, Object>();
+			String pageName = PennantAppUtil.getCustomerPageName();
+
 			map.put("roleCode", getRole());
 			map.put("promotionPickListCtrl", this);
 			setFinanceDetail(new FinanceDetail());
@@ -230,8 +232,7 @@ public class PromotionPickListCtrl extends GFCBaseCtrl<CustomerEligibilityCheck>
 			setProspectCustomerDetails(getNewCustomerDetail());
 			getFinanceDetail().setCustomerDetails(getProspectCustomerDetails());
 			map.put("financedetail", getFinanceDetail());
-			String zulFilePathName = "/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul";
-			childWindow = Executions.createComponents(zulFilePathName, gb_Cusotmer, map);
+			childWindow = Executions.createComponents(pageName, gb_Cusotmer, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}

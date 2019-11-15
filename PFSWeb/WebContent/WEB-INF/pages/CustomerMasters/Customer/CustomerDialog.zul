@@ -101,14 +101,14 @@
 														<textbox id="custMiddleName" maxlength="50" width="250px" style="overflow: hidden;" />
 													</hbox>
 												</row>
-												<row id="row_LastName">
-													<label value="${c:l('label_CustomerDialog_CustLastName.value')}" />
-													<hbox>
+												<row>
+													<label id="label_CustomerDialog_CustLastName" value="${c:l('label_CustomerDialog_CustLastName.value')}" />
+													<hbox id="hbox_CustLastName">
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="custLastName" maxlength="50" width="250px" style="overflow: hidden;" />
 													</hbox>
-													<label value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
-													<hbox>
+													<label id="label_CustomerDialog_motherMaidenName" value="${c:l('label_CustomerDialog_CustMotherMaiden.value')}" />
+													<hbox id="hbox_motherMaidenName">
 														<space spacing="2px" sclass="mandatory" />
 														<textbox id="motherMaidenName" maxlength="50" width="250px" style="overflow: hidden;" />
 													</hbox>
@@ -198,9 +198,9 @@
 														<textbox id="custSts" width="150px" />
 													</hbox>
 												</row>
-												<row id="row_party_segment">
-													<label value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
-													<hbox>
+												<row >
+													<label id ="label_CustRelatedParty" value="${c:l('label_CustomerDialog_RelatedParty.value')}" />
+													<hbox id="hbox_CustRelatedParty">
 														<space spacing="2px" />
 														<textbox id="custRelatedParty" width="250px" />
 													</hbox>
@@ -282,12 +282,16 @@
 														<space spacing="2px" />
 														<combobox id="subCategory" readonly="true" width="155px" />
 													</hbox>
-													<label value="${c:l('label_CustomerDialog_Religion.value')}" />
+													<label id="label_CustomerDialog_CustReligion"  value="${c:l('label_CustomerDialog_Religion.value')}" />
+													<hbox id="hbox_CustReligion">
 													<extendedcombobox id="religion" />
+													</hbox>
 												</row>
 												<row>
-													<label value="${c:l('label_CustomerDialog_Caste.value')}" />
+													<label id="label_CustomerDialog_CustCaste" value="${c:l('label_CustomerDialog_Caste.value')}" />
+													<hbox id="hbox_CustCaste">
 													<extendedcombobox id="caste" />
+														</hbox>
 												</row>
 											</rows>
 										</grid>

@@ -2701,6 +2701,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				ComponentsCtrl.applyForward(custDetailTab, selectMethodName);
 			} else {
 				HashMap<String, Object> map = getDefaultArguments();
+				String pageName = PennantAppUtil.getCustomerPageName();
 				// In Servicing the Customer Details are not been Editable
 				if (StringUtils.isNotBlank(moduleDefiner)) {
 					map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
@@ -2709,8 +2710,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				map.put("rcuVerificationDialogCtrl", rcuVerificationDialogCtrl);
 				map.put("isFirstTask", isFirstTask());
 				map.put("fromLoan", true);
-				customerWindow = Executions.createComponents(
-						"/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+				customerWindow = Executions.createComponents(pageName,
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {

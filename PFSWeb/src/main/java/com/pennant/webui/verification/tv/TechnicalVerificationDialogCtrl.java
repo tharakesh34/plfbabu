@@ -75,6 +75,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -839,11 +840,12 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 
 		CustomerDetails customerDetails = customerDetailsService
 				.getCustomerById(this.technicalVerification.getCustId());
+		String pageName = PennantAppUtil.getCustomerPageName();
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
 			map.put("CustomerEnq", true);
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+			Executions.createComponents(pageName, null, map);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());

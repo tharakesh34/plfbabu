@@ -729,13 +729,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("customerDetails", customerDetails);
+		String pageName = PennantAppUtil.getCustomerPageName();
+        arg.put("customerDetails", customerDetails);
 		arg.put("isNewCustCret", true);
 		arg.put("jointAccountDetailDialogCtrl", this);
 		arg.put("newRecord", customerDetails.getCustomer().isNew());
 
 		try {
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+			Executions.createComponents(pageName, null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -750,15 +751,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		}
 		try {
 			final HashMap<String, Object> map = new HashMap<String, Object>();
-
 			if (ImplementationConstants.CO_APP_ENQ_SAME_AS_CUST_ENQ) {
 				CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(this.custID.longValue(),
 						true, "_AView");
+			   String pageName = PennantAppUtil.getCustomerPageName();
+
 				map.put("customerDetails", customerDetails);
 				map.put("newRecord", false);
 				map.put("isEnqProcess", true);
 				map.put("CustomerEnq", true);
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+				Executions.createComponents(pageName, null, map);
 			} else {
 				map.put("custCIF", this.custCIF.getValue());
 				customer = (Customer) PennantAppUtil.getCustomerObject(this.custCIF.getValue(), null);

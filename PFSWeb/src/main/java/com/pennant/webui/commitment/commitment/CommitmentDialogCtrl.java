@@ -2133,10 +2133,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			} else {
 				clearTabpanelChildren(AssetConstants.UNIQUE_ID_CUSTOMERS);
 				HashMap<String, Object> map = getDefaultArguments();
+				String pageName = PennantAppUtil.getCustomerPageName();
 				map.put("customerDetails", getCommitment().getCustomerDetails());
 				map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul",
+				Executions.createComponents(pageName,
 						getTabpanel(AssetConstants.UNIQUE_ID_CUSTOMERS), map);
 			}
 		} catch (Exception e) {

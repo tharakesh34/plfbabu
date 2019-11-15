@@ -647,12 +647,13 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
+		String pageName = PennantAppUtil.getCustomerPageName();
 		map.put("customerDetails", customerDetails);
 		map.put("enqiryModule", true);
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
 		map.put("CustomerEnq", "CustomerEnq");
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		Executions.createComponents(pageName, null, map);
 
 		logger.debug("Leaving " + event.toString());
 	}

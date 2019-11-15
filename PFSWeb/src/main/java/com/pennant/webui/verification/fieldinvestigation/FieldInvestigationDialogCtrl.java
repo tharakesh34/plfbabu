@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -748,11 +749,14 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
 		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.fieldInvestigation.getCustId());
+		//Loading the customer page as per the system param
+		String pageName = PennantAppUtil.getCustomerPageName();
+
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
 			map.put("CustomerEnq", true);
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+			Executions.createComponents(pageName, null, map);
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -71,6 +71,7 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
@@ -910,11 +911,12 @@ public class LegalVerificationDialogCtrl extends GFCBaseCtrl<LegalVerification> 
 		HashMap<String, Object> map = new HashMap<String, Object>();
 
 		CustomerDetails customerDetails = customerDetailsService.getCustomerById(this.legalVerification.getCustId());
+		String pageName = PennantAppUtil.getCustomerPageName();
 		if (customerDetails != null) {
 			map.put("customerDetails", customerDetails);
 			map.put("isEnqProcess", true);
 			map.put("CustomerEnq", true);
-			Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+			Executions.createComponents(pageName, null, map);
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());

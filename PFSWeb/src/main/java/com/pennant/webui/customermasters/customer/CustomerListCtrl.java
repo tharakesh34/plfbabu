@@ -266,12 +266,13 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		arg.put("isFromCustomer", true);
 
 		try {
+			String pageName = PennantAppUtil.getCustomerPageName();
 			if (enqiryModule) {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+				Executions.createComponents(pageName, null, arg);
 			} else if (StringUtils.equals("360", module)) {
 				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/customerView.zul", null, arg);
 			} else {
-				Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, arg);
+				Executions.createComponents(pageName, null, arg);
 
 			}
 		} catch (Exception e) {

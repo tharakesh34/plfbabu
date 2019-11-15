@@ -291,5 +291,6 @@ public class SMTParameterConstants {
 	public static final String CET_LAEP = "CET_LAEP";
 	public static final String ALLOW_CIBIL_VALIDATION_RULE = "ALLOW_CIBIL_VALIDATION_RULE";
 	public static final String INSURANCE_CAL_REQUEST_URL = "INSURANCE_CAL_REQUEST_URL";
-
+	public static final String CUST_DIALOG_EXT = "CUST_DIALOG_EXT";
+	
 }

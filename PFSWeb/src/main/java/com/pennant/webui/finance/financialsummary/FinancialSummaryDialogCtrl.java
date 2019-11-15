@@ -1338,6 +1338,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			customerDetails = customerDetailsService.getCustomerDetailsById(custID, true, "_AView");
 
 		}
+		String pageName = PennantAppUtil.getCustomerPageName();
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("customerDetails", customerDetails);
 		map.put("newRecord", false);
@@ -1346,7 +1347,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		map.put("enqiryModule", true);
 		map.put("enqModule", true);
 		map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		Executions.createComponents(pageName, null, map);
 
 		logger.debug(Literal.LEAVING);
 	}

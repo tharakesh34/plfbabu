@@ -131,6 +131,7 @@ import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.document.generator.TemplateEngine;
 import com.pennant.fusioncharts.ChartSetElement;
 import com.pennant.fusioncharts.ChartsConfig;
+import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -377,12 +378,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		final HashMap<String, Object> map = new HashMap<String, Object>();
 		CustomerDetails customerDetails = getCustomerDetailsService()
 				.getCustomerById(getFinanceDetail().getFinScheduleData().getFinanceMain().getCustID());
-		map.put("customerDetails", customerDetails);
+		String pageName = PennantAppUtil.getCustomerPageName();
+        map.put("customerDetails", customerDetails);
 		map.put("enqiryModule", true);
 		map.put("dialogCtrl", this);
 		map.put("newRecord", false);
 		map.put("CustomerEnq", "CustomerEnq");
-		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerDialog.zul", null, map);
+		Executions.createComponents(pageName, null, map);
 
 		logger.debug("Leaving " + event.toString());
 	}
