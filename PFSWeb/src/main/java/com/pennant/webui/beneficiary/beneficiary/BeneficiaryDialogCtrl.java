@@ -410,7 +410,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		this.beneficiaryActive.setChecked(beneficiary.isBeneficiaryActive());
 		this.defaultBeneficiary.setChecked(beneficiary.isDefaultBeneficiary());
 
-		if (bankAccountValidationService != null) {
+		if (bankAccountValidationService != null && bankAccountValidations != null) {
 			this.pennyDropResult.setValue(bankAccountValidations.isStatus() ? "Success" : "Fail");
 		} else {
 			this.pennyDropResult.setValue("");
@@ -544,7 +544,7 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 			readOnlyComponent(true, this.txnDetails);
 		}
 
-		if (beneficiary != null) {
+		if (beneficiary != null && !beneficiary.isNew()) {
 			bankAccountValidations = getPennyDropService().getPennyDropStatusDataByAcc(beneficiary.getAccNumber(),
 					beneficiary.getiFSC());
 		}
