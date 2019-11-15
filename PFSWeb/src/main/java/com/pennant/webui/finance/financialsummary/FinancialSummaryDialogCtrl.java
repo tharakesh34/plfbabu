@@ -170,6 +170,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Textbox majorProduct;
 	private Textbox otherRemarks;
 	private Textbox purposeOfLoan;
+	private Textbox employeerName;
 
 	protected Listbox listBoxCustomerDetails;
 	protected Listbox listBoxReferencesDetails;
@@ -272,7 +273,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private NotesDAO notesDAO;
 	@Autowired
 	private DeviationHelper deviationHelper;
-	
+
 	private boolean isbasicDetailsVisible = false;
 	private boolean isbtDetailsVisible = false;
 	private boolean iscustomerDetailsVisible = false;
@@ -383,11 +384,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doShowDialog(FinanceDetail financeDetail) {
 		logger.debug(Literal.LEAVING);
-		
+
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String cetGroupBoxesVisibility ="CET_"+financeMain.getFinType();
+		String cetGroupBoxesVisibility = "CET_" + financeMain.getFinCategory();
 		doShowCetGroupBoxes(SysParamUtil.getValueAsString(cetGroupBoxesVisibility));
-		
+
 		doWriteBeanToComponents(financeDetail);
 		doReadOnly();
 
@@ -399,11 +400,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	
+
 	public void doShowCetGroupBoxes(String cetGroupBoxesVisibility) {
 
 		logger.debug(Literal.LEAVING);
-		cetGroupBoxesVisibility=StringUtils.trimToEmpty(cetGroupBoxesVisibility);
+		cetGroupBoxesVisibility = StringUtils.trimToEmpty(cetGroupBoxesVisibility);
 
 		if (cetGroupBoxesVisibility.contains("gb_basicDetails")) {
 			isbasicDetailsVisible = true;
@@ -414,7 +415,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			isbtDetailsVisible = true;
 			imgBtDetails.setStyle("display:block");
 			gb_btDetails.setVisible(true);
-			
+
 		}
 		if (cetGroupBoxesVisibility.contains("gb_customerDetails")) {
 			iscustomerDetailsVisible = true;
@@ -478,7 +479,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			isscoringDetailsVisible = true;
 			imgScoring.setStyle("display:block");
 			gb_scoringDetails.setVisible(true);
-			
+
 		}
 		if (cetGroupBoxesVisibility.contains("gb_eligibilityDetails")) {
 			iseligibilityDetailsVisible = true;
@@ -551,12 +552,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (iscustomerDetailsVisible) {
 			Date maturityDate = financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate();
 			renderCustomerDetails(customerDetails.getCustomer().getCustID(), customerDetails.getCustomer()
-					.getCustShrtName(), customerDetails.getCustomer().getCustDOB(), "Primary", maturityDate);
+					.getCustShrtName(), null, customerDetails.getCustomer().getCustDOB(), "Primary", maturityDate);
 			if (!financeDetail.getJountAccountDetailList().isEmpty()) {
 				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJountAccountDetailList();
 				for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
 					renderCustomerDetails(jointAccountDetail.getCustID(), jointAccountDetail.getLovDescCIFName(),
-							jointAccountDetail.getLovCustDob(), "Co-Applicant", maturityDate);
+							jointAccountDetail.getCatOfcoApplicant(), jointAccountDetail.getLovCustDob(),
+							"Co-Applicant", maturityDate);
 
 				}
 			}
@@ -564,14 +566,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<GuarantorDetail> guarantorDetailList = financeDetail.getGurantorsDetailList();
 				for (GuarantorDetail guarantorDetail : guarantorDetailList) {
 					renderCustomerDetails(guarantorDetail.getGuarantorId(), guarantorDetail.getGuarantorCIFName(),
-							guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
+							null, guarantorDetail.getLovCustDob(), "Guarantor", maturityDate);
 
 				}
 			}
 		}
 
 		if (isreferencesVisible) {
-			doFillReferencesDetails(customerDetails);
 		}
 
 		if (isdeviationsDetailsVisible) {
@@ -691,13 +692,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			this.emi.setValue(PennantApplicationUtil.formateAmount(this.emi.getValidateValue(), format));
 			this.purposeOfLoan.setValue(financeMainDetails.getLovDescFinPurposeName());
-
+			this.employeerName.setValue(financeMainDetails.getEmployeeNameDesc());
 
 		}
 		logger.debug("Leaving");
 	}
 
-	public void renderCustomerDetails(long custID, String custName, Date custDob, String customerType, Date maturityDate) {
+	public void renderCustomerDetails(long custID, String custName, String relationShipWithapplicant, Date custDob,
+			String customerType, Date maturityDate) {
 		logger.debug("Entering");
 		Listitem item = new Listitem();
 		Listcell lc;
@@ -705,8 +707,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		lc.setParent(item);
 		lc = new Listcell(custName);
 		lc.setParent(item);
-		lc = new Listcell("NA");
-		lc.setParent(item);
+		if (StringUtils.equals(customerType, "Co-Applicant")) {
+			lc = new Listcell(relationShipWithapplicant);
+			lc.setParent(item);
+		} else {
+			lc = new Listcell("NA");
+			lc.setParent(item);
+		}
+
 		lc = new Listcell("NA");
 		lc.setParent(item);
 		if (!StringUtils.equals(customerType, "Guarantor")) {
@@ -1182,6 +1190,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.source.setReadonly(true);
 		this.emi.setReadonly(true);
 		this.purposeOfLoan.setReadonly(true);
+		this.employeerName.setReadonly(true);
 		this.proposedLoanAmount.setReadonly(true);
 		this.overallLTV.setReadonly(true);
 		this.roi.setReadonly(true);
@@ -1431,13 +1440,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetailsList) {
 		this.listBoxDueDiligenceDetail.getItems().clear();
-        long dueDiligenceCount = 0;
+		long dueDiligenceCount = 0;
 		if (CollectionUtils.isNotEmpty(dueDiligenceDetailsList)) {
 			for (DueDiligenceDetails dueDiligenceDetails : dueDiligenceDetailsList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				//ID
-				lc = new Listcell(String.valueOf(dueDiligenceCount+1));
+				lc = new Listcell(String.valueOf(dueDiligenceCount + 1));
 				lc.setParent(item);
 
 				//PARTICULARS
@@ -1453,7 +1462,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				status.addForward("onChange", self, "onChangeStatus", dueDiligenceDetails);
 
-				String statusValues = dueDiligenceDetailsDAO.getStatus(dueDiligenceDetails.getId());
+				String statusValues = dueDiligenceDetailsDAO.getStatus(dueDiligenceDetails.getParticularId());
 
 				String statusComboBoxValues = statusValues;
 				List<String> statusComboBoxList = Arrays.asList(statusComboBoxValues.split(","));
@@ -1516,13 +1525,13 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void doFillRecommendationNotesDetails(List<RecommendationNotes> recommendationNotesList) {
 		this.listBoxRecommendationNoteDetails.getItems().clear();
-        long recommendationNotesCount = 0;
+		long recommendationNotesCount = 0;
 		if (CollectionUtils.isNotEmpty(recommendationNotesList)) {
 			for (RecommendationNotes recommendationNotesDetails : recommendationNotesList) {
 				Listitem item = new Listitem();
 				Listcell lc;
 				//IDo
-				lc = new Listcell(String.valueOf(recommendationNotesCount+1));
+				lc = new Listcell(String.valueOf(recommendationNotesCount + 1));
 				lc.setParent(item);
 
 				//PARTICULARS

@@ -16,7 +16,7 @@
 									<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References" style="display:none" height="40px"   width="40px"/>
 									<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg" tooltiptext="Case Synopsis/PD Details" style="display:none" height="40px"   width="40px" />
 									<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations" style="display:none" height="40px"   width="40px"/>
-									<image id="imgRecommendationNote" src="/images/icons/guarantorDetails.png" tooltiptext="Recommendation Note" style="display:none" height="40px"   width="40px"/>
+									<image id="imgRecommendationNote" src="/images/icons/recommendationNotes.svg" tooltiptext="Recommendation Note" style="display:none" height="40px"   width="40px"/>
 									<image id="imgDealRecommendationMerits" src="/images/icons/dealRecommendationMerits.svg" tooltiptext="Deal Recommendation Merits" style="display:none" height="40px"   width="40px"/>
 									<image id="imgSanctionConditions" src="/images/icons/sanctionConditons.svg" tooltiptext="Sanction Conditions" style="display:none" height="40px"   width="40px"/>
 									<image id="imgRisksMigigants" src="/images/icons/risksandMitigants.svg" tooltiptext="Risks and Mitigants" style="display:none" height="40px"   width="40px"/>
@@ -28,8 +28,8 @@
 									<image id="imgConvents" src="/images/icons/convenants.svg" tooltiptext="Convenants" style="display:none" height="40px"   width="40px"/>
 									<image id="imgDocumentCheckList" src="/images/icons/documemtCheckList.svg" tooltiptext="Document Check List" style="display:none" height="40px"   width="40px"/>
 									<image id="imgOtherDetails" src="/images/icons/other.svg" tooltiptext="Other Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.png" tooltiptext="Collateral Details" style="display:none" height="40px"   width="40px"/>
-									<image id="imgAssetDetails" src="/images/icons/btDetails.png" tooltiptext="Case Synopsis/PD Details" style="display:none" height="40px"   width="40px"/>
+									<image id="imgCollateralDetails" src="/images/icons/collateralDetails.svg" tooltiptext="Collateral Details" style="display:none" height="40px"   width="40px"/>
+									<image id="imgAssetDetails" src="/images/icons/assetDetails.png" tooltiptext="Case Synopsis/PD Details" style="display:none" height="40px"   width="40px"/>
 			 </div>
 		    </west>
         <center border="none">
@@ -138,6 +138,12 @@
 														<space spacing="2px" />
 														<textbox id="purposeOfLoan"  width="180px" />
 													  </hbox>
+													  <label id="label_employeerName"  value="${c:l('label_FinancialSummaryDailog_EmployeerName.value')}" />
+					                                  <hbox>
+														<space spacing="2px" />
+														<textbox id="employeerName"  width="180px" />
+													  </hbox>
+													  
 												   </row>
 					                            </rows>
 					                  </grid>

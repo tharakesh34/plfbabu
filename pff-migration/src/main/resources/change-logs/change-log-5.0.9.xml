@@ -19160,9 +19160,14 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<changeSet id="376" author="Murthy">
-		<dropForeignKeyConstraint baseTableName="FinExcessMovement"
-			constraintName="FK_FEM_RID_FRH_RID" />
+	<changeSet id="375" author="Varaprasad.K">
+		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCE_CHECKLIST_TEMP"
+			constraintName="fk_DDT_ParticularId" />
+	</changeSet>
+	<changeSet id="376" author="Varaprasad.K">
+		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
+			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
+			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
 
 </databaseChangeLog>
