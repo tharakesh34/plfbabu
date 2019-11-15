@@ -21864,28 +21864,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-
-	public void onClickExtbtnINS_CAL_URL() {
-		logger.debug(Literal.ENTERING);
-		String insuranceUrl = "";
-		try {
-			if (extendedFieldCtrl == null || extendedFieldCtrl.getWindow() == null) {
-				return;
-			}
-			insuranceUrl = SysParamUtil.getValueAsString(SMTParameterConstants.INSURANCE_CAL_REQUEST_URL);
-			if (StringUtils.isNotEmpty(insuranceUrl)) {
-				Executions.getCurrent().sendRedirect(insuranceUrl, "_blank");
-			}
-		} catch (Exception e) {
-			if (e.getMessage() != null) {
-				MessageUtil.showMessage(e.getMessage());
-			} else {
-				MessageUtil.showError(e);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	/*
 	 * on click event for DOWNLOADFINFORT button
 	 */

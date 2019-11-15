@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1087,42 +1088,24 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 		map.put("creditReviewData", creditReviewData);
 		map.put("externalLiabilities", extLiabilities);
 		btMap.put("EXT_MNTHLY_OBL", this.dataMap.get("EXT_EMI_CNSRD"));
-		Map<String, String> custWiseDataMap = new HashMap<>();
 
 		ArrayList<Long> custIdsList = new ArrayList<>(custIds);
 		custIdsList.add(0, this.custID.getValue());
 		custIds = new LinkedHashSet<>(custIdsList);
 
-		int i = 2;
-		for (Long custId : custIds) {
-			custWiseDataMap = this.creditReviewSummaryData.setDataMap1(custId, Integer.parseInt(maxAuditYear),
-					noOfYears, true, extDataMap, listOfFinCreditRevCategory);
-			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_FNL_CSH_PFT_INCSRD"));
-			btMap.put("FNL_CSH_PFT_INCSRD_".concat(String.valueOf(i)).concat("_PRE"),
-					custWiseDataMap.get("Y1_FNL_CSH_PFT_INCSRD"));
-			btMap.put("OTHR_INC_ELG_CAL_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_OTHR_INC_ELG_CAL"));
-			btMap.put("TOT_REV_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_TOT_REV"));
-			btMap.put("GRS_PFT_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_GRS_PFT"));
-			btMap.put("GRS_PFT_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_GRS_PFT"));
+		if(MapUtils.isNotEmpty(this.dataMap)){
+			btMap.put("DSCR_PBDIT", PennantApplicationUtil.amountFormate(new BigDecimal(this.dataMap.get("Y2_DEPRITIATION")),4));
+			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DEPRITIATION")));
+			btMap.put("TOTAL_REVENUE", this.dataMap.get("Y2_TOT_REV"));
 
-			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)), custWiseDataMap.get("Y2_PRF_RCPTS"));
-			btMap.put("PRF_RCPTS_".concat(String.valueOf(i)).concat("_PRE"), custWiseDataMap.get("Y1_PRF_RCPTS"));
-			btMap.put("TOTAL_REVENUE", custWiseDataMap.get("Y2_TOT_REV"));
-
-			btMap.put("DSCR_GF", format(custWiseDataMap.get("Y2_DSCR_GF")));
-			btMap.put("CRNTRATIO", format(custWiseDataMap.get("Y2_CRNT_RATIO")));
-			btMap.put("DSCR_PBDIT", format(custWiseDataMap.get("Y2_DSCR_PBDIT")).replace(",", ""));
+			btMap.put("DSCR_GF", format(this.dataMap.get("Y2_DSCR_GF")));
+			btMap.put("CRNTRATIO", format(this.dataMap.get("Y2_CRNT_RATIO")));
+			btMap.put("DSCR_PBDIT", format(this.dataMap.get("Y2_DSCR_PBDIT")).replace(",", ""));
 			
-			btMap.put("DEBTEQUITY", format(custWiseDataMap.get("Y2_DEBT_EQUITY")));
-			btMap.put("ANNUAL_TURNOVER", unFormat(new BigDecimal(custWiseDataMap.get("Y2_SALES_OTHER_INCOME"))));
-			btMap.put("EMI_ALL_LOANS", unFormat(new BigDecimal(custWiseDataMap.get("Y2_EMI_12_ALL_LOANS"))));
-			btMap.put("MARGINI", unFormat(new BigDecimal(custWiseDataMap.get("Y2_SM_MARGIN"))));
-			
-			if (i == 0) {
-				break;
-			}
-
-			i = i - 1;
+			btMap.put("DEBTEQUITY", format(this.dataMap.get("Y2_DEBT_EQUITY")));
+			btMap.put("ANNUAL_TURNOVER", unFormat(new BigDecimal(this.dataMap.get("Y2_SALES_OTHER_INCOME"))));
+			btMap.put("EMI_ALL_LOANS", unFormat(new BigDecimal(this.dataMap.get("Y2_EMI_12_ALL_LOANS"))));
+			btMap.put("MARGINI", unFormat(new BigDecimal(this.dataMap.get("Y2_SM_MARGIN"))));
 		}
 		custIds.remove(this.custID.getValue());
 		map.put("btMap", btMap);

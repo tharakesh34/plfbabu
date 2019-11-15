@@ -80,11 +80,8 @@ import com.pennant.util.Constraint.PTEmailValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.external.AccountValidationService;
 import com.pennanttech.pff.external.BankAccountValidationService;
 
 /**
@@ -1010,6 +1007,9 @@ public class BeneficiaryDialogCtrl extends GFCBaseCtrl<Beneficiary> {
 		// Interface Calling
 		doSetValidation();
 		BankAccountValidation accountValidation = new BankAccountValidation();
+		accountValidation.setInitiateReference(beneficiary.getCustCIF());
+		accountValidation.setUserDetails(getUserWorkspace().getLoggedInUser());
+		
 		try {
 			if (this.accNumber.getValue() != null) {
 				accountValidation.setAcctNum(PennantApplicationUtil.unFormatAccountNumber(this.accNumber.getValue()));

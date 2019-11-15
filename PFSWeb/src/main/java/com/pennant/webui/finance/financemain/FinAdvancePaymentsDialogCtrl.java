@@ -2170,6 +2170,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		// Interface Calling
 		doSetValidation();
 		BankAccountValidation bankAccountValidations = new BankAccountValidation();
+		bankAccountValidations.setInitiateReference(finAdvancePayments.getFinReference());
+		bankAccountValidations.setUserDetails(getUserWorkspace().getLoggedInUser());
+
 		try {
 			if (this.beneficiaryAccNo.getValue() != null) {
 				bankAccountValidations
