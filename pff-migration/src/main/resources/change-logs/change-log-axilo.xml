@@ -241,4 +241,24 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="280" author="kranthikumar.k">
+		<sql>
+			<![CDATA[
+				update data_engine_config set parser='3' where name='TRIAL_BALANCE_EXPORT_STATE';
+
+				update data_engine_config set parser='3' where name='TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="281" author="kranthikumar.k">
+	<comment>File Extension changed to .xlsx</comment>
+		<sql>
+			<![CDATA[
+				update data_engine_config set fileextension='.xlsx' where name='TRIAL_BALANCE_EXPORT_STATE';
+
+				update data_engine_config set fileextension='.xlsx' where name='TRIAL_BALANCE_EXPORT_CONSOLIDATE';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
