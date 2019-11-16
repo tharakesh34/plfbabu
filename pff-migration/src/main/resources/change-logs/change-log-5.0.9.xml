@@ -17285,11 +17285,21 @@ UNION ALL
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES" referencedColumnNames="id" />
 	</changeSet>
+	
+	<changeSet id="339.1" author="Manoj.P">
+			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES"
+			constraintName="fk_DD_ParticularId" />
+	</changeSet>
 
 	<changeSet id="340" author="Varaprasad.K">
 		<addForeignKeyConstraint constraintName="fk_DDT_ParticularId"
 			referencedTableName="DUE_DILIGENCE_CHECKLIST_TEMP" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
+	</changeSet>
+	
+	<changeSet id="340.1" author="Manoj.P">
+			<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
+			constraintName="fk_DDT_ParticularId" />
 	</changeSet>
 
 	<changeSet id="341" author="Varaprasad.K">
@@ -19168,6 +19178,12 @@ UNION ALL
 			referencedTableName="DUE_DILIGENCE_CHECKLIST" baseColumnNames="ParticularId"
 			baseTableName="DUE_DILIGENCES_TEMP" referencedColumnNames="id" />
 	</changeSet>
+	
+	<changeSet id="378.1" author="Varaprasad.K">
+		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
+		constraintName="fk_DT_ParticularId" />
+    </changeSet>
+	
 	<changeSet id="379" author="Varaprasad.k">
 		<sql>
 			<![CDATA[
@@ -19192,5 +19208,15 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
+	
+<changeSet id="382" author="Manoj.P">
+	<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
+		constraintName="fk_DT_ParticularId" />
+</changeSet>
+
+<changeSet id="383" author="Manoj.P">
+		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES"
+			constraintName="fk_DD_ParticularId" />
+</changeSet>
 
 </databaseChangeLog>
