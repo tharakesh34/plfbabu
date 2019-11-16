@@ -7,8 +7,8 @@
 	<window id="window_financialSummaryDialog" border="normal" apply="${financialSummaryDialogCtrl}" width="100%"
 		height="100%" sizable="false">
 		<borderlayout id="borderlayoutCreditPDDetails" style="overflow:auto">
-		  <west>
-		       <div align="vertial" width="100%" height="100%">
+		  <west style="position:fixed">
+		       <div align="vertial" width="100%" height="100%" >
 									<image id="imgBasicDetails" src="/images/icons/basicDetails.svg" tooltiptext="Basic Details" style="display:none" height="40px"   width="40px"/>
 									<image id="imgBtDetails" src="/images/icons/btDetails.svg" tooltiptext="BT Details" style="display:none" height="40px"   width="40px"/>
 									<image id="imgCustomerDetails" src="/images/icons/customerDetails.svg" tooltiptext="Customer Details" style="display:none" height="40px"   width="40px"/>
