@@ -1265,7 +1265,6 @@ public class AgreementDetail {
 	 * =""; //total Price private String deliveryOfLoc =""; //delivery Of Location private String bondNumFrom ="";
 	 * //bondNumFrom private String bondNumTo =""; //bondNumTo private String vehicleReg =""; // Emirates of
 	 * Registration
-	 * 
 	 */
 
 	//=============Gurantee Details==============//
@@ -2356,6 +2355,10 @@ public class AgreementDetail {
 	private String DD = "";
 	private String MM = "";
 	private String YY = "";
+	private String fiStatus;
+	private String rcuStatus;
+	private String fiFinalDecision;
+	private String rcuFinalDecision;
 
 	//Text
 	private String avlPeriodText = "";
@@ -9511,6 +9514,38 @@ public class AgreementDetail {
 
 	public void setPrimaryGuarantor(String primaryGuarantor) {
 		this.primaryGuarantor = primaryGuarantor;
+	}
+
+	public String getFiStatus() {
+		return fiStatus;
+	}
+
+	public void setFiStatus(String fiStatus) {
+		this.fiStatus = fiStatus;
+	}
+
+	public String getRcuStatus() {
+		return rcuStatus;
+	}
+
+	public void setRcuStatus(String rcuStatus) {
+		this.rcuStatus = rcuStatus;
+	}
+
+	public String getFiFinalDecision() {
+		return fiFinalDecision;
+	}
+
+	public void setFiFinalDecision(String fiFinalDecision) {
+		this.fiFinalDecision = fiFinalDecision;
+	}
+
+	public String getRcuFinalDecision() {
+		return rcuFinalDecision;
+	}
+
+	public void setRcuFinalDecision(String rcuFinalDecision) {
+		this.rcuFinalDecision = rcuFinalDecision;
 	}
 
 	public class KycDetail {
