@@ -42,16 +42,12 @@
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -59,16 +55,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
 import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
-import com.pennant.backend.model.finance.financialsummary.DueDiligenceCheckList;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
-import com.pennant.backend.model.finance.financialsummary.RecommendationNotesConfiguration;
-import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.TableType;
-import com.pennanttech.pff.core.util.QueryUtil;
 
 public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails> implements DueDiligenceDetailsDAO {
 	private static Logger logger = Logger.getLogger(DueDiligenceDetailsDAOImpl.class);
@@ -90,7 +81,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		selectSql.append(", T1.TaskId, T1.NextTaskId, T1.RecordType, T1.WorkflowId");
 		selectSql.append(" FROM  DUE_DILIGENCES_TEMP T1");
 		selectSql.append(" LEFT JOIN FinanceMain_TEMP T2 ON T2.finreference =  T1.finreference");
-		selectSql.append(" LEFT JOIN DUE_DILIGENCE_CHECKLIST_TEMP T3 ON T3.id =  T1.ParticularId");
+		selectSql.append(" LEFT JOIN DUE_DILIGENCE_CHECKLIST T3 ON T3.id =  T1.ParticularId");
 		selectSql.append(" Where T1.finReference = :finReference");
 		selectSql.append(" UNION ALL");
 		selectSql.append(" SELECT  T1.id, T1.FinReference, T1.ParticularId,T3.Particulars,T1.Status,T1.Remarks");
@@ -99,7 +90,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		selectSql.append(" FROM  DUE_DILIGENCES T1");
 		selectSql.append(" LEFT JOIN FinanceMain T2 ON T2.finreference =  T1.finreference");
 		selectSql.append(" LEFT JOIN DUE_DILIGENCE_CHECKLIST T3 ON T3.id =  T1.ParticularId");
-		selectSql.append(" WHERE NOT EXISTS ( SELECT 1 FROM SANCTION_CONDITIONS_TEMP WHERE id = T1.id)");
+		selectSql.append(" WHERE NOT EXISTS ( SELECT 1 FROM DUE_DILIGENCE_CHECKLIST_TEMP WHERE id = T1.id)");
 		selectSql.append(" AND T1.finReference = :finReference");
 
 		logger.debug("selectSql: " + selectSql.toString());
