@@ -19192,31 +19192,4 @@ UNION ALL
 			]]>
 		</sql>
 </changeSet>
-	<changeSet id="380" author="Varaprasad.k">
-		<sql>
-			<![CDATA[
-				Delete from SMTParameters where SysParmCode = 'CET_PL';
-				INSERT INTO SMTparameters  VALUES ('CET_PL', 'Personal Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_deviations,gb_deviations,gb_otherDetails', 1, 0, NULL, NULL, 'Personal Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-			]]>
-		</sql>
-	</changeSet>
-	<changeSet id="381" author="Varaprasad.k">
-		<sql>
-			<![CDATA[
-				Delete from SMTParameters where SysParmCode = 'CET_LAEP';
-				INSERT INTO SMTparameters  VALUES ('CET_LAEP', 'Leap Loan Groupboxes visibility.', 'String', '1', 'gb_basicDetails,gb_customerDetails,gb_dueDiligenceDetail,gb_deviations,gb_risksAndMitigants,gb_sanctionConditionsDetails,gb_recommendationNoteDetails,gb_convenantsDetails,gb_dealRecommendationMeritsDetails,gb_otherDetails', 1, 0, NULL, NULL, 'Leap Loan Groupboxes visibility.', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
-			]]>
-		</sql>
-	</changeSet>
-	
-<changeSet id="382" author="Manoj.P">
-	<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES_TEMP"
-		constraintName="fk_DT_ParticularId" />
-</changeSet>
-
-<changeSet id="383" author="Manoj.P">
-		<dropForeignKeyConstraint baseTableName="DUE_DILIGENCES"
-			constraintName="fk_DD_ParticularId" />
-</changeSet>
-
 </databaseChangeLog>
