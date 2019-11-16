@@ -12,4 +12,5 @@ public interface ApprovalStatusEnquiryDAO {
 	List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance, boolean facility,
 			String moduleDefiner);
 
+	List<CustomerFinanceDetail> getListOfCustomerFinanceDetailById(long custID, String type, boolean facility);
 }

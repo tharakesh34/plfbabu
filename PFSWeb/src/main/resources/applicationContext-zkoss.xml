@@ -2899,6 +2899,7 @@
 		<property name="notificationLogDetailsService" ref="notificationLogDetailsService" />
 		<property name="collateralSetupService" ref="collateralSetupService" />
 		<property name="finOptionService" ref="finOptionService" />
+		<property name="dpdEnquiryService" ref="dpdEnquiryService" />
 	</bean>
 
 	<bean id="financeEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.FinanceEnquiryDialogCtrl" parent="basisListCtrl"
@@ -4466,6 +4467,8 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="directorDetailService" ref="directorDetailService" />
 		<property name="externalDocumentManager" ref="externalDocumentManager" />
+		<property name="approvalStatusEnquiryDAO" ref="approvalStatusEnquiryDAO" />
+			<property name="notesDAO" ref="notesDAO" />
 	</bean>
 
 	<!-- External File Upload -->
@@ -5533,6 +5536,12 @@
 		parent="basisCtrl" scope="prototype">
 		<property name="dealRecommendationMeritsService" ref="dealRecommendationMeritsService" />
 	</bean>
+	<bean id="crmDialogCtrl" class="com.pennant.webui.customermasters.customer.CrmDialogCtrl" parent="basisCtrl" scope="prototype">
+	<property name="presentmentExtractService" ref="presentmentExtractService" />
+</bean>
+
+	<bean id="dpdEnquiryDialogCtrl" class="com.pennant.webui.finance.enquiry.DPDEnquiryDialogCtrl" parent="basisCtrl"
+		scope="prototype" />
 	
 	
 </beans>

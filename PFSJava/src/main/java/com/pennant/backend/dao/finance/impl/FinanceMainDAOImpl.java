@@ -5242,4 +5242,27 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	}
 
+	@Override
+	public List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId) {
+		logger.debug("Entering");
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		StringBuilder selectSql = new StringBuilder();
+		selectSql.append(
+				" SELECT FinReference , FinBranch , FinType , FinCcy , ScheduleMethod , ProfitDaysBasis , FinStartDate , NumberOfTerms , ");
+		selectSql.append(
+				" CustID , FinAmount , GrcPeriodEndDate , MaturityDate , FinRepaymentAmount , FinIsActive , AllowGrcPeriod , ");
+		selectSql.append(" LovDescFinTypeName, ");
+		selectSql.append(
+				" LovDescCustCIF , LovDescCustShrtName , LovDescFinBranchName , Blacklisted , LovDescFinScheduleOn , FeeChargeAmt , ");
+		selectSql.append(
+				" ClosingStatus , CustTypeCtg , GraceTerms , lovDescFinDivision , lovDescProductCodeName , Defferments , FinRepayMethod , MandateID ");
+		selectSql.append(" FROM FinanceEnquiry_View ");
+		selectSql.append(" Where CustID=:CustID ");
+		selectSql.append(" ORDER BY FinType, FinCcy ");
+		source.addValue("CustID", custId);
+		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
+		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+	}
 }

@@ -42,8 +42,6 @@
  */
 package com.pennant.backend.dao.systemmasters.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -75,79 +73,28 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		logger.debug(Literal.ENTERING);
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder();
-		sql.append("select distinct c.CustShrtName CustName, ce.CustEmail, cp.PhoneNumber CustPhoneNumber");
-		sql.append(", fm.FinReference, FinAssetValue FinAmount, EffectiveRateOfReturn EffectiveRate, fm.FinCCY");
-		sql.append(", ft.FinType, FinTypeDesc, e.EntityCode, EntityDesc");
-		sql.append(", PanNumber EntityPanNumber, EntityAddrHnbr, EntityFlatNbr, EntityAddrStreet");
-		sql.append(", rcp.CpProvinceName CustAddrState, Pincode EntityZip, PccityName EntityCity, ct.CountryDesc");
-		sql.append(", ca.CustAddrHnbr, ca.CustAddrStreet, ca.CustAddrZIP, ca.CustFlatNbr CustFlatNr");
-		// sql.append(", rd.FinPostDate, rd.FinSchdPftPaid, rd.FinschdPriPaid");
-		sql.append(", rcp.CpProvinceName EntityState, rpc.PccityName CustAddrCity");
-		sql.append(", (pft.TotalPftBal + pft.TotalPriBal)  TotOustandingAmt, pft.TotalPftBal, pft.TotalPriBal");
-		sql.append(" FROM FinanceMain fm");
-		sql.append(" inner join RmtFinanceTypes ft on ft.FinType = fm.FinType");
-		sql.append(" inner join Customers c on c.custId = fm.CustId");
-		sql.append(" inner join CustomerAddresses ca on ca.CustId = fm.CustId and ca.CustAddrPriority = 5");
-		sql.append(" inner join SMTDivisionDetail dd on dd.DivisionCode = dd.DivisionCode");
-		sql.append(" inner join Entity e on e.EntityCode = dd.Entitycode");
-		sql.append(" inner join RmtCountryVsProvince rcp on rcp.CpProVince = ca.CustAddrProvince");
-		sql.append(" inner join RmtProvinceVsCity rpc on rpc.PcCity = e.CityCode");
-		sql.append(" inner join BmtCountries ct on ct.CountryCode = ca.CustAddrCountry");
-		sql.append(" inner join RmtCountryVsProvince rcp on rcp.CpProVince = e.StateCode");
-		sql.append(" inner join CustomerEmails ce on ce.CustId = c.CustId and ce.CustEmailPriority = 5");
-		sql.append(" inner join CustomerPhoneNumbers cp on cp.PhoneCustId = c.CustId and cp.PhoneTypePriority = 5");
-		sql.append(" inner join FinPftDetails pft ON pft.Finreference = fm.Finreference");
-		// sql.append(" left join FinRepayDetails rd on rd.FinReference =
-		// fm.FinReference");
-		sql.append(" Where fm.FinReference = :FinReference");
 
-		logger.trace(Literal.SQL + sql.toString());
+		StringBuilder selectSql = new StringBuilder(
+				"SELECT distinct FINREFERENCE,CUSTNAME,CUSTADDRHNBR,CUSTADDRSTREET,COUNTRYDESC,CUSTADDRSTATE, ");
+		selectSql.append("CUSTADDRCITY,CUSTADDRZIP,CUSTEMAIL,CUSTPHONENUMBER,FINTYPEDESC,FINASSETVALUE,");
+		selectSql.append("EFFECTIVERATE,ENTITYCODE,ENTITYDESC,ENTITYPANNUMBER,ENTITYADDRHNBR,");
+		selectSql.append(
+				"ENTITYFLATNBR,ENTITYADDRSTREET,ENTITYSTATE,ENTITYCITY,FINCCY,FinAmount,fintype,custflatnbr,EntityZip ");
+		selectSql.append(" from INTERESTCERTIFICATE_VIEW ");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
 
 		source.addValue("FinReference", finReference);
 
+		RowMapper<InterestCertificate> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(InterestCertificate.class);
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), source, new RowMapper<InterestCertificate>() {
-
-				@Override
-				public InterestCertificate mapRow(ResultSet rs, int arg1) throws SQLException {
-					InterestCertificate ic = new InterestCertificate();
-
-					ic.setCustName(rs.getString("CustName"));
-					ic.setCustEmail(rs.getString("CustEmail"));
-					ic.setCustPhoneNumber(rs.getString("CustPhoneNumber"));
-					ic.setFinReference(rs.getString("FinReference"));
-					ic.setFinAmount(rs.getString("FinAmount"));
-					ic.setEffectiveRate(rs.getBigDecimal("EffectiveRate"));
-					ic.setFinCcy(rs.getString("FinCCY"));
-					ic.setFinType(rs.getString("FinType"));
-					ic.setFinTypeDesc(rs.getString("FinTypeDesc"));
-					ic.setEntityCode(rs.getString("EntityCode"));
-					ic.setEntityDesc(rs.getString("EntityDesc"));
-					ic.setEntityPanNumber(rs.getString("EntityPanNumber"));
-					ic.setEntityAddrHnbr(rs.getString("EntityAddrHnbr"));
-					ic.setEntityFlatNbr(rs.getString("EntityFlatNbr"));
-					ic.setEntityAddrStreet(rs.getString("EntityAddrStreet"));
-					ic.setCustAddrState(rs.getString("CustAddrState"));
-					ic.setEntityZip(rs.getString("EntityZip"));
-					ic.setEntityCity(rs.getString("EntityCity"));
-					ic.setCountryDesc(rs.getString("CountryDesc"));
-					ic.setCustAddrHnbr(rs.getString("CustAddrHnbr"));
-					ic.setCustAddrStreet(rs.getString("CustAddrStreet"));
-					ic.setCustAddrZIP(rs.getString("CustAddrZIP"));
-					ic.setCustFlatNbr(rs.getString("CustFlatNr"));
-					// ic.setFinPostDate(rs.getDate("FinPostDate"));
-					ic.setEntityState(rs.getString("EntityState"));
-					ic.setCustAddrCity(rs.getString("CustAddrCity"));
-					ic.setTotOustandingamt(rs.getString("TotOustandingAmt"));
-					ic.setTotalPftBal(rs.getString("TotalPftBal"));
-					ic.setTotalPriBal(rs.getString("TotalPriBal"));
-					return ic;
-				}
-			});
+			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			logger.warn("Exception: ", e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

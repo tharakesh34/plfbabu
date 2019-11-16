@@ -3,6 +3,8 @@ package com.pennant.backend.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +17,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 import org.zkoss.zkplus.spring.SpringUtil;
 
 import com.pennant.app.constants.AccountEventConstants;
@@ -33,6 +37,7 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.service.PagedListService;
+import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -957,5 +962,21 @@ public class PennantApplicationUtil {
 			return moduleCode + " with Reference: " + reference + " moved to "
 					+ (StringUtils.isBlank(roleCodeDesc) ? "" : roleCodeDesc) + " successfully.";
 		}
+	}
+
+	public static RestTemplate getTemplate() {
+		RestTemplate restTemplate = new RestTemplate();
+		SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+		String proxyUrl = App.getProperty("external.interface.proxy.host");
+		String proxyPort = App.getProperty("external.interface.proxy.port");
+		String proxyRequired = App.getProperty("portal.proxy.required");
+		if (StringUtils.equals(proxyRequired, "true") && StringUtils.isNotEmpty(proxyUrl)
+				&& StringUtils.isNotEmpty(proxyPort)) {
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl, Integer.parseInt(proxyPort)));
+			httpRequestFactory.setProxy(proxy);
+		}
+		restTemplate.setRequestFactory(httpRequestFactory);
+
+		return restTemplate;
 	}
 }

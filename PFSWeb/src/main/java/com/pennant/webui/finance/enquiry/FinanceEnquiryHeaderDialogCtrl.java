@@ -92,6 +92,7 @@ import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinMainReportData;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
@@ -113,6 +114,7 @@ import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.AgreementDetailService;
 import com.pennant.backend.service.finance.CheckListDetailService;
+import com.pennant.backend.service.finance.DPDEnquiryService;
 import com.pennant.backend.service.finance.EligibilityDetailService;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
@@ -210,6 +212,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinScheduleData finScheduleData;
 	private FinanceEnquiry financeEnquiry;
 	private FinanceSummary financeSummary;
+	private DPDEnquiryService dpdEnquiryService;
+	protected boolean customer360;
 
 	int listRows;
 	private String assetCode = "";
@@ -279,6 +283,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (arguments.containsKey("insuranceRebookingDialog")) {
 				this.setInsuranceRebookingDialogCtrl(
 						(InsuranceRebookingDialogCtrl) arguments.get("insuranceRebookingDialog"));
+			}
+			if (arguments.containsKey("customer360")) {
+				customer360 = true;
 			}
 
 			// Method for recall Enquiries
@@ -696,9 +703,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("financeDetail", financeDetail);
 			map.put("enqiryModule", true);
 			path = "/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul";
-		}
-
-		else if ("FINOPT".equals(this.enquiryType)) {
+		} else if ("FINOPT".equals(this.enquiryType)) {
 
 			FinanceMain financeMain = new FinanceMain();
 			financeMain.setFinStartDate(enquiry.getFinStartDate());
@@ -719,7 +724,18 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Finance/FinOption/FinOptionList.zul";
 
-		}
+		} else if ("DPDENQ".equals(this.enquiryType)) {
+
+			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DPDEnquiry.value"));
+			List<FinStatusDetail> finStatusDetails;
+
+			finStatusDetails = getDpdEnquiryService().getFinStatusDetailByRefId(this.finReference);
+
+			map.put("finStatusDetails", finStatusDetails);
+			map.put("finReference", this.finReference);
+			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DPDEnquiryDialog.zul";
+		} 
+		
 		if (StringUtils.isNotEmpty(path)) {
 
 			// Child Window Calling
@@ -1135,4 +1151,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finOptionService = finOptionService;
 	}
 
+	public DPDEnquiryService getDpdEnquiryService() {
+		return dpdEnquiryService;
+	}
+
+	public void setDpdEnquiryService(DPDEnquiryService dpdEnquiryService) {
+		this.dpdEnquiryService = dpdEnquiryService;
+	}
 }

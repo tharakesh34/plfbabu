@@ -67,6 +67,8 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 	private List<ValueLabel> financeYearList = null;
 
+	boolean isCustomer360 = false;
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -91,8 +93,9 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 		// Set the page level components.
 		setPageComponents(window_InterestCertificateGeneration);
-
-		tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
+		if (event.getTarget().getParent() != null && event.getTarget().getParent().getParent() != null) {
+			tabbox = (Tabbox) event.getTarget().getParent().getParent().getParent().getParent();
+		}
 		if (arguments.containsKey("window")) {
 			parentWindow = (Window) arguments.get("window");
 
@@ -104,6 +107,10 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			if ("interest".equalsIgnoreCase(getArgument("module"))) {
 				this.WindowTitle.setValue(Labels.getLabel("label_Item_InterestCertficate.value"));
 			}
+		}
+		// For customer360 Report should be displayed as modal 
+		if (arguments.containsKey("customer360")) {
+			isCustomer360 = (boolean) arguments.containsKey("customer360");
 		}
 
 		doSetFieldProperties();
@@ -409,11 +416,16 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			arg.put("reportName", reportName);
 			arg.put("isAgreement", false);
 			arg.put("docFormat", format);
-			arg.put("tabbox", tabbox);
 			arg.put("searchClick", false);
-			arg.put("selectTab", tabbox.getSelectedTab());
 			arg.put("dialogWindow", window);
-
+			// For customer360 Report should be displayed as modal 
+			if (isCustomer360) {
+				arg.put("Customer360", true);
+				arg.put("searchClick", true);
+			} else {
+				arg.put("selectTab", tabbox.getSelectedTab());
+				arg.put("tabbox", tabbox);
+			}
 			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", window, arg);
 		}
 		stream = null;

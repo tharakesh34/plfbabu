@@ -85,6 +85,13 @@ public class PathUtil {
 	public static final String MAIL_ATTACHMENT_AGGREMENT = "/Downloads/Mail/MailAttachments/Aggrements/";
 	public static final String MAIL_ATTACHMENT_REPORT = "/Downloads/Mail/Attachments/Reports/";
 	public static final String MAIL_BODY = "/Downloads/Mail/body/";
+	public static final String CUSTOMER_FAQ = "/Customer360/FAQ.pdf";
+	public static final String CUSTOMER_BALIC_CLAIM_FORM_FOR_CRITICAL_ILLNESS = "/Customer360/BAGIC Claim for Critical Illness.pdf";
+	public static final String CUSTOMER_DEALTH_CLAIM_FORM = "/Customer360/Death Claim Form.pdf";
+	public static final String CUSTOMER_FGI_CI_Claim_Form = "/Customer360/FGL Death Cliam Form.pdf";
+	public static final String CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM = "/Customer360/FGL Claim form.pdf";
+	public static final String CUSTOMER_HDFC_CLAIM_FORM = "/Customer360/HDFC Claim form.pdf";
+	public static final String CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM = "/Customer360/Checklist for Death - Critical Illness.xls";
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; //For Credit Review Details
 

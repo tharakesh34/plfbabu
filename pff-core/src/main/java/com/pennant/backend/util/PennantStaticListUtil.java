@@ -326,6 +326,7 @@ public class PennantStaticListUtil {
 	private static ArrayList<ValueLabel> frequencyType;
 	private static ArrayList<ValueLabel> frequency;
 	private static ArrayList<ValueLabel> year;
+	private static ArrayList<ValueLabel> crmRequestType;
 
 	/**
 	 * Gets the list of applications.
@@ -1219,6 +1220,7 @@ public class PennantStaticListUtil {
 			enquiryTypes.add(new ValueLabel("SAMENQ", Labels.getLabel("label_SamplingEnquiry")));
 			enquiryTypes.add(new ValueLabel("VERENQ", Labels.getLabel("label_VerificationEnquiry")));
 			enquiryTypes.add(new ValueLabel("NTFLENQ", Labels.getLabel("label_NotificationEnquiry")));
+			enquiryTypes.add(new ValueLabel("DPDENQ", Labels.getLabel("label_DPDEnquiry")));
 
 			if (ImplementationConstants.DDA_ALLOWED) {
 				enquiryTypes.add(new ValueLabel("DDAENQ", Labels.getLabel("label_DDAEnquiry")));
@@ -5281,6 +5283,17 @@ public class PennantStaticListUtil {
 
 		}
 		return interfaceStatusTypeList;
+	}
+
+	public static List<ValueLabel> getCrmRequestType() {
+		if (crmRequestType == null) {
+			crmRequestType = new ArrayList<ValueLabel>(4);
+			crmRequestType.add(new ValueLabel("DES", Labels.getLabel("label_DownloadEStatement")));
+			crmRequestType.add(new ValueLabel("MP", Labels.getLabel("label_MakePayment")));
+			crmRequestType.add(new ValueLabel("UCD", Labels.getLabel("label_UpdateContactDetails")));
+			crmRequestType.add(new ValueLabel("OTH", Labels.getLabel("label_Others")));
+		}
+		return crmRequestType;
 	}
 
 }

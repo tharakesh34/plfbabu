@@ -2,6 +2,7 @@ package com.pennant.backend.service.approvalstatusenquiry.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 
 import com.pennant.backend.dao.NotesDAO;
@@ -93,6 +94,23 @@ public class ApprovalStatusEnquiryServiceImpl implements ApprovalStatusEnquirySe
 	public List<ReasonDetailsLog> getResonDetailsLog(String reference) {
 		return this.reasonDetailDAO.getReasonDetailsLog(reference);
 
+	}
+
+
+	@Override
+	public List<CustomerFinanceDetail> getListOfCustomerFinanceById(long custID, String moduleDefiner) {
+		List<CustomerFinanceDetail> customerFinanceDetail = getApprovalStatusEnquiryDAO()
+				.getListOfCustomerFinanceDetailById(custID, "_View", false);
+		if (CollectionUtils.isNotEmpty(customerFinanceDetail)) {
+			for (CustomerFinanceDetail customerFinanceDetail2 : customerFinanceDetail) {
+				String finReference = customerFinanceDetail2.getFinReference();
+				customerFinanceDetail2.setAuditTransactionsList(getApprovalStatusEnquiryDAO()
+						.getFinTransactionsList(finReference, false, false, moduleDefiner));
+				customerFinanceDetail2
+						.setNotesList(getNotesDAO().getNotesListAsc(getNotes(finReference, MODULE_FINANCEMAIN)));
+			}
+		}
+		return customerFinanceDetail;
 	}
 
 	public ApprovalStatusEnquiryDAO getApprovalStatusEnquiryDAO() {

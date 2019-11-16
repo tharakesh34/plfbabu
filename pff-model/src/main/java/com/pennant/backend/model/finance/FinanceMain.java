@@ -88,7 +88,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"employeeName", "quickDisb", "unPlanEMIHLockPeriod", "unPlanEMICpz", "reAgeCpz", "maxUnplannedEmi",
 		"maxReAgeHolidays", "alwBPI", "bpiTreatment", "bpiPftDaysBasis", "planEMIHAlw", "planEMIHMethod",
 		"planEMIHMaxPerYear", "planEMIHMax", "planEMIHLockPeriod", "planEMICpz", "firstDisbDate", "lastDisbDate",
-		"stage", "status", "advTerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
+		"stage", "status", "product", "advTerms", "fixedRateTenor", "fixedTenorRate", "eligibilityMethod", "connector",
 		"legalRequired" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -402,6 +402,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private int maxUnplannedEmi;
 	@XmlElement
 	private int maxReAgeHolidays;
+	@XmlElement
+	private String product;
 
 	// ===========================================
 	// =========Schedule Build Usage ============
@@ -787,6 +789,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("proceedDedup");
 		excludeFields.add("curDisbursementAmt");
 		excludeFields.add("amount");
+		excludeFields.add("product");
 		excludeFields.add("exception");
 		excludeFields.add("amountBD");
 		excludeFields.add("maturity");
@@ -4555,6 +4558,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setDetailsList(List<ReasonDetails> detailsList) {
 		this.detailsList = detailsList;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
 	}
 
 }

@@ -64,6 +64,7 @@ import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -197,6 +198,8 @@ public class CustomerDetails implements java.io.Serializable {
 	private Long usrID;
 	private String usrLogin;
 	private String matches; //used for Interfaces(Hunter)
+	
+	private List<CustomerFinanceDetail> customerFinanceDetailList;
 
 	public WSReturnStatus getReturnStatus() {
 		return returnStatus;
@@ -665,4 +668,13 @@ public class CustomerDetails implements java.io.Serializable {
 	public void setMatches(String matches) {
 		this.matches = matches;
 	}
+	
+	public List<CustomerFinanceDetail> getCustomerFinanceDetailList() {
+		return customerFinanceDetailList;
+	}
+
+	public void setCustomerFinanceDetailList(List<CustomerFinanceDetail> customerFinanceDetailList) {
+		this.customerFinanceDetailList = customerFinanceDetailList;
+	}
+
 }

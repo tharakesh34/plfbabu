@@ -99,4 +99,22 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 		this.jdbcTemplate.batchUpdate(selectSql.toString(), beanParameters);
 	}
 
+	public List<FinStatusDetail> getFinStatusDetailByRefId(String finReference) {
+		logger.debug("Entering");
+
+		FinStatusDetail finStatusDetail = new FinStatusDetail();
+		finStatusDetail.setFinReference(finReference);
+
+		StringBuilder selectSql = new StringBuilder(" Select CustId , FinStatus, ValueDate, OdDays, FinReference");
+		selectSql.append(" From FinStatusDetail");
+		selectSql.append(" Where FinReference =:FinReference");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
+		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(FinStatusDetail.class);
+		logger.debug("Leaving");
+		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+
+	}
 }

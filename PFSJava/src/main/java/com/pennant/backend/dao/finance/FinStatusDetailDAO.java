@@ -14,4 +14,6 @@ public interface FinStatusDetailDAO {
 	void saveOrUpdateFinStatus(FinStatusDetail finStatusDetail);
 
 	void updateCustStatuses(List<FinStatusDetail> custStatuses);
+
+	public List<FinStatusDetail> getFinStatusDetailByRefId(String finReference);
 }

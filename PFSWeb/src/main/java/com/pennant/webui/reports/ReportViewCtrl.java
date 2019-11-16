@@ -28,6 +28,8 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 	private int docFormat = 0;
 	private String reportName = "PFSReport.pdf";
 	private boolean searchClick = true;
+	// For customer360 Report should displayed as  modal  
+	private boolean isCustomer360 = false;
 
 	public ReportViewCtrl() {
 		super();
@@ -87,6 +89,10 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			searchClick = (Boolean) arguments.get("searchClick");
 		}
 
+		if (arguments.containsKey("Customer360")) {
+			isCustomer360 = (boolean) arguments.containsKey("Customer360");
+		}
+		
 		AMedia amedia = null;
 		if (isAgreement) {
 
@@ -117,6 +123,12 @@ public class ReportViewCtrl extends GFCBaseCtrl<Object> {
 			buf = null;
 			amedia = null;
 			setDialog(DialogType.EMBEDDED);
+			if (isCustomer360) {
+				window_Report.setHeight("80%");
+				window_Report.setWidth("90%");
+				this.report.setHeight("739px");
+				setDialog(DialogType.MODAL);
+			}
 		}
 
 		logger.debug("Leaving" + event.toString());

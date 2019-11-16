@@ -16,5 +16,6 @@ public interface ApprovalStatusEnquiryService {
 	CustomerFinanceDetail getCustomerFacilityById(String facilityReference);
 
 	List<ReasonDetailsLog> getResonDetailsLog(String financeReference);
+	List<CustomerFinanceDetail> getListOfCustomerFinanceById(long custID, String moduleDefiner);
 
 }

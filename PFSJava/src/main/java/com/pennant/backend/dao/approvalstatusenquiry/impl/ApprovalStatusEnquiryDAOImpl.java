@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.approvalstatusenquiry.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
@@ -110,6 +112,38 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		return this.auditJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
+	@Override
+	public List<CustomerFinanceDetail> getListOfCustomerFinanceDetailById(long custID, String type, boolean facility) {
+		logger.debug("Entering");
+		List<CustomerFinanceDetail> customerFinanceDetail = new ArrayList<CustomerFinanceDetail>();
+		StringBuilder selectSql = new StringBuilder(
+				" SELECT FinReference, FinBranch, CustID, CustCIF, CustShrtName,FinReference,");
+		selectSql.append(" RoleCode, NextRoleCode, RecordType, DeptDesc, PrvRoleDesc, NextRoleDesc, ");
+		selectSql.append(
+				" FinType, FinAmount, FinStartDate, LastMntBy,UsrFName,lastMntByUser ,FinCcy,FinTypeDesc, LovDescFinDivision");
+		if (facility) {
+			selectSql.append(" from CustomerFacilityDetails");
+		} else {
+			selectSql.append(",feeChargeAmt from CustomerFinanceDetails");
+		}
+		selectSql.append(StringUtils.trimToEmpty(type));
+		selectSql.append(" Where CustID =:CustID");
+
+		logger.debug("selectSql: " + selectSql.toString());
+		RowMapper<CustomerFinanceDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
+				.newInstance(CustomerFinanceDetail.class);
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("CustID", custID);
+		try {
+			customerFinanceDetail = this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Exception: ", e);
+			customerFinanceDetail = null;
+		}
+		logger.debug("Leaving");
+		return customerFinanceDetail;
+	}
+	
 	public void setAuditDataSource(DataSource auditDataSource) {
 		this.auditJdbcTemplate = new NamedParameterJdbcTemplate(auditDataSource);
 	}

@@ -148,7 +148,9 @@ import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.reports.AvailPastDue;
 import com.pennant.backend.model.rmtmasters.CustomerType;
@@ -162,6 +164,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -256,6 +259,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private CustomerDocumentService customerDocumentService;
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
+	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
 
 	// Declaring Classes For validation for Lists
 	private CustomerRatingValidation customerRatingValidation;
@@ -661,6 +665,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerDetails getCustomerById(long id, String type) {
 		logger.debug("Entering");
 		List<VASRecording> vasRecordingList = null;
+		List<FinanceEnquiry> financeEnquiryList = null;
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
 		customerDetails.setCustID(id);
@@ -744,6 +749,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						customerGstDetailDAO.getCustomerGSTDetailsByCustomer(customerGST.getId(), type));
 			}
 		}
+		if (financeEnquiryList == null) {
+			financeEnquiryList = new ArrayList<FinanceEnquiry>();
+		}
+		financeEnquiryList.addAll(getFinanceMainDAO().getAllFinanceDetailsByCustId(id));
+		customerDetails.setCustomerFinances(financeEnquiryList);
+
+		List<CustomerFinanceDetail> customerFinanceDetail = approvalStatusEnquiryService
+				.getListOfCustomerFinanceById(id, null);
+		customerDetails.setCustomerFinanceDetailList(customerFinanceDetail);
+
 		logger.debug("Leaving");
 		return customerDetails;
 	}
@@ -4080,8 +4095,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		boolean isDuplicateCoreBankId = false;
-		if ( StringUtils.isNotBlank(customer.getCustCoreBank())) {
-			 isDuplicateCoreBankId = customerDAO.isDuplicateCoreBankId(customer.getCustID(), customer.getCustCoreBank());
+		if (StringUtils.isNotBlank(customer.getCustCoreBank())) {
+			isDuplicateCoreBankId = customerDAO.isDuplicateCoreBankId(customer.getCustID(), customer.getCustCoreBank());
 		}
 		if (isDuplicateCoreBankId) {
 			String[] errorParameters = new String[1];
@@ -7707,6 +7722,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
 		}
 		this.customerCardSalesValidation = customerCardSalesValidation;
+	}
+
+	public ApprovalStatusEnquiryService getApprovalStatusEnquiryService() {
+		return approvalStatusEnquiryService;
+	}
+
+	public void setApprovalStatusEnquiryService(ApprovalStatusEnquiryService approvalStatusEnquiryService) {
+		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
 	}
 
 	@Override

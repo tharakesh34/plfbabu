@@ -414,4 +414,7 @@ public interface FinanceMainDAO {
 	Date getFinStartDate(String finReference);
 
 	FinanceMain getFinanceMain(String finReference, String[] columns);
+	
+	List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId);
+	
 }
