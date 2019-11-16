@@ -277,7 +277,7 @@
 											</columns>
 											<rows>
 												<row>
-													<label value="${c:l('label_CustomerDialog_SubCategory.value')}" />
+													<label id="label_CustomerDialog_subCategory" value="${c:l('label_CustomerDialog_SubCategory.value')}" />
 													<hbox>
 														<space spacing="2px" />
 														<combobox id="subCategory" readonly="true" width="155px" />
