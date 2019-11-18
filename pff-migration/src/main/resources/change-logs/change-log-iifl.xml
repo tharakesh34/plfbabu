@@ -3563,5 +3563,26 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="27" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'PRESENTMENT_RESPONSE_PDC';
+        		Delete from SMTParameters where SysParmCode = 'PRESENTMENT_REQUEST_PDC';
+        		
+				INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_RESPONSE_PDC', 'PresentmentResponce_PDC', 'String', '1', 'PRESENTMENT_RESPONSE_PDC', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+           		INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_REQUEST_PDC', 'PresentmentRequest_PDC', 'String', '1', 'PRESENTMENT_REQUEST_PDC', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);   			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="28" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				Delete from SMTParameters where SysParmCode = 'PRESENTMENT_RESPONSE_NACH';
+        		Delete from SMTParameters where SysParmCode = 'PRESENTMENT_REQUEST_NACH';
+        		
+				INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_RESPONSE_NACH', 'PresentmentResponce_NACH', 'String', '1', 'PRESENTMENT_RESPONSE_NACH', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);
+           		INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_REQUEST_NACH', 'PresentmentRequest_NACH', 'String', '1', 'PRESENTMENT_REQUEST_NACH', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);   			]]>
+		</sql>
+	</changeSet>
 	
 </databaseChangeLog>
