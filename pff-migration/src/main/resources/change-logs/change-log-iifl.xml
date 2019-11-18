@@ -3378,12 +3378,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="18" author="saikumar b">
-	<sql>
+		<sql>
 			<![CDATA[
 				Delete from SMTParameters where SysParmCode = 'INSURANCE_CAL_REQUEST_URL';
 				INSERT INTO SMTparameters  VALUES ('INSURANCE_CAL_REQUEST_URL', 'Insurance Calculator Request Url.', 'String', '1', 'http://loansuat.iifl.in/insuranceweb/Insurance/ShowDetail/', 200, 0, NULL, NULL, 'Insurance Calculator Request Url.', 1, 1000, CURRENT_TIMESTAMP,'Approved', '', '', '', '', '', 0);
 			]]>
-	</sql>
+		</sql>
 	</changeSet>
 
 	<changeSet id="19" author="saikumar b">
@@ -3394,11 +3394,12 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="20" author="Durga Prasad G">
-		<modifyDataType tableName="PRESENTMENT_FILEIMPORT" columnName="Status" newDataType="varchar(50)"/>
+		<modifyDataType tableName="PRESENTMENT_FILEIMPORT"
+			columnName="Status" newDataType="varchar(50)" />
 	</changeSet>
- 
+
 	<changeSet id="21" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3432,7 +3433,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="22" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3459,7 +3460,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="23" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3487,7 +3488,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="24" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3514,10 +3515,10 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
-	
-	 
-	
+
+
+
+
 	<changeSet id="25" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3549,7 +3550,7 @@
 			 ]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="26" author="Durga Prasad G">
 		<sql>
 			<![CDATA[
@@ -3562,7 +3563,7 @@
    			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="27" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3573,7 +3574,7 @@
            		INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_REQUEST_PDC', 'PresentmentRequest_PDC', 'String', '1', 'PRESENTMENT_REQUEST_PDC', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);   			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="28" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -3584,5 +3585,30 @@
            		INSERT INTO SMTparameters (SysParmCode, SysParmDesc, SysParmType, SysParmMaint, SysParmValue, SysParmLength, SysParmDec, SysParmList, SysParmValdMod, SysParmDescription, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NexttaskId, RecordType, WorkflowId) VALUES ('PRESENTMENT_REQUEST_NACH', 'PresentmentRequest_NACH', 'String', '1', 'PRESENTMENT_REQUEST_NACH', 50, 0, NULL, NULL, '', 1, 1000, CURRENT_TIMESTAMP,'Approved', NULL, NULL, NULL, NULL, NULL, 0);   			]]>
 		</sql>
 	</changeSet>
-	
+
+	<changeSet id="29" author="srihari" dbms="mssql">
+		<createTable tableName="OGL_Transaction">
+			<column name="business" type="VARCHAR (5)" />
+			<column name="product" type="VARCHAR (15)" />
+			<column name="prospectNo" type="VARCHAR (20)" />
+			<column name="ledgerCode" type="VARCHAR (10)" />
+			<column name="valueDate" type="datetime" />
+			<column name="processDate" type="datetime" />
+			<column name="debitCredit" type="VARCHAR (1)" />
+			<column name="amount" type="decimal(18,2)" />
+			<column name="particular" type="VARCHAR (255)" />
+			<column name="documentType" type="boolean" />
+			<column name="documentNo" type="VARCHAR(250)" />
+			<column name="gstGroupNo" type="bigint" />
+			<column name="entryType" type="VARCHAR(50)" />
+			<column name="entrySourceType" type="VARCHAR(10)" />
+			<column name="BankStatementId" type="bigint" />
+			<column name="createdBy" type="VARCHAR(20)" />
+			<column name="createdOn" type="datetime" />
+			<column name="modifiedBy" type="VARCHAR(20)" />
+			<column name="modifiedOn" type="datetime" />
+			<column name="oldSrNo" type="decimal(18,0)" />
+			<column name="CreditHubCode" type="VARCHAR(15)" />
+		</createTable>
+	</changeSet>
 </databaseChangeLog>
