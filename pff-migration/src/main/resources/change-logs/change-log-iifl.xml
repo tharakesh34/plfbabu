@@ -3588,15 +3588,15 @@
 
 	<changeSet id="29" author="srihari" dbms="mssql">
 		<createTable tableName="OGL_Transaction">
-			<column name="business" type="VARCHAR (5)" />
-			<column name="product" type="VARCHAR (15)" />
-			<column name="prospectNo" type="VARCHAR (20)" />
-			<column name="ledgerCode" type="VARCHAR (10)" />
+			<column name="business" type="VARCHAR(5)" />
+			<column name="product" type="VARCHAR(15)" />
+			<column name="prospectNo" type="VARCHAR(20)" />
+			<column name="ledgerCode" type="VARCHAR(10)" />
 			<column name="valueDate" type="datetime" />
 			<column name="processDate" type="datetime" />
-			<column name="debitCredit" type="VARCHAR (1)" />
+			<column name="debitCredit" type="CHAR(1)" />
 			<column name="amount" type="decimal(18,2)" />
-			<column name="particular" type="VARCHAR (255)" />
+			<column name="particular" type="VARCHAR(255)" />
 			<column name="documentType" type="boolean" />
 			<column name="documentNo" type="VARCHAR(250)" />
 			<column name="gstGroupNo" type="bigint" />
