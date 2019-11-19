@@ -50,24 +50,6 @@
 			<version>5.3.4</version>
 		</dependency>
 
-		<!-- Spring Framework -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-ldap</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.batch</groupId>
-			<artifactId>spring-batch-core</artifactId>
-		</dependency>
-
 		<!-- ZKoss -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
@@ -185,18 +167,14 @@
 			<version>19.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>document-generator</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
-    <groupId>com.fasterxml.jackson.dataformat</groupId>
-    <artifactId>jackson-dataformat-xml</artifactId>
-    <version>2.9.7</version>
-</dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.9.7</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -209,32 +187,15 @@
 			<version>9.0.0.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennanttech.document</groupId>
-			<artifactId>document-parser</artifactId>
-			<version>1.0.8</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>log4j-over-slf4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>bouncycastle</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>org.infinispan</groupId>
 			<artifactId>infinispan-embedded</artifactId>
 			<version>9.0.0.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pennanttech.pennapps.pff</groupId>
-			<artifactId>account-updater</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>pennapps-spreadsheets</artifactId>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-dbcp</artifactId>
+			<version>8.5.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

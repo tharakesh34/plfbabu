@@ -23,22 +23,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>pennapps-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>pennapps-lic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>notification-engine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.pennanttech.framework.components</groupId>
-			<artifactId>data-engine</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>${pff.groupId}</groupId>
 			<artifactId>pff-model</artifactId>
 			<version>${project.version}</version>

@@ -51,7 +51,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,7 +85,7 @@ import eu.bitwalker.useragentutils.UserAgent;
  * Supports DAO, LDAP, and External authentication.
  */
 public class AuthenticationManager implements AuthenticationProvider {
-	private static final Logger logger = Logger.getLogger(Authentication.class);
+	private static final Logger logger = LogManager.getLogger(Authentication.class);
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -121,6 +122,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 	 */
 	@Override
 	public Authentication authenticate(Authentication authentication) {
+		logger.info("Auhenticating the user {}", authentication.getName());
 		Authentication result = null;
 
 		SecurityUser securityUser = null;
@@ -156,6 +158,7 @@ public class AuthenticationManager implements AuthenticationProvider {
 				}
 			}
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			logAttempt(authentication, e.getMessage());
 		}
 

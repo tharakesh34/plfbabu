@@ -31,7 +31,11 @@
 		<param-name>APP_TYPE</param-name>
 		<param-value>WEB</param-value>
 	</context-param>
-
+	<context-param>
+		<param-name>isLog4jAutoInitializationDisabled</param-name>
+        <param-value>true</param-value>
+	</context-param>
+	
 	<listener>
 		<listener-class>com.pennant.core.EventManager</listener-class>
 	</listener>

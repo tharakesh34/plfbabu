@@ -16,10 +16,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.pennanttech.pennapps</groupId>
-			<artifactId>pennapps-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>${jackson.version}</version>

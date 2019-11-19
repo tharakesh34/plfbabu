@@ -31,6 +31,11 @@
 		<param-name>APP_TYPE</param-name>
 		<param-value>API</param-value>
 	</context-param>
+	<context-param>
+		<param-name>isLog4jAutoInitializationDisabled</param-name>
+        <param-value>true</param-value>
+	</context-param>
+	
 	<listener>
 		<display-name>Application startup</display-name>
 		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
