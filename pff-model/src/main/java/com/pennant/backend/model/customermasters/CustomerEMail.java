@@ -82,6 +82,8 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 
 	private String sourceId;
 
+	private String domainCheck;
+
 	public boolean isNew() {
 		return isNewRecord();
 	}
@@ -221,6 +223,14 @@ public class CustomerEMail extends AbstractWorkflowEntity {
 
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
+	}
+
+	public String getDomainCheck() {
+		return domainCheck;
+	}
+
+	public void setDomainCheck(String domainCheck) {
+		this.domainCheck = domainCheck;
 	}
 
 }

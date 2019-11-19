@@ -19217,5 +19217,87 @@ UNION ALL
 			left join RMTCOUNTRYVSPROVINCE T14 on T14.CPPROVINCE=T10.STATECODE
 			inner join RMTPROVINCEVSCITY T15 on T15.PCCITY=T10.CITYCODE
 		</createView>
-</changeSet>
+		
+	<changeSet id="377" author="keerthi.p">
+		<comment>New columns added for CustomerEMails</comment>
+		<addColumn tableName="CustomerEMails">
+			<column name="DomainCheck" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="378" author="keerthi.p">
+		<comment>New columns added for CustomerEMails</comment>
+		<addColumn tableName="CustomerEMails_Temp">
+			<column name="DomainCheck" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="379" author="keerthi.p">
+		<createView viewName="CUSTOMEREMAILS_VIEW" replaceIfExists="true">
+			SELECT CE.CUSTID,
+					CE.CUSTEMAILTYPECODE,
+					E.EMAILTYPEDESC LOVDESCCUSTEMAILTYPECODE,
+					CE.CUSTEMAILPRIORITY,
+					CE.CUSTEMAIL,
+					CE.VERSION,
+					CE.LASTMNTBY,
+					CE.LASTMNTON,
+					CE.RECORDSTATUS,
+					CE.ROLECODE,
+					CE.NEXTROLECODE,
+					CE.TASKID,
+					CE.NEXTTASKID,
+					CE.RECORDTYPE,
+					CE.WORKFLOWID,
+					CE.DOMAINCHECK
+					FROM CUSTOMEREMAILS_TEMP CE
+					INNER JOIN BMTEMAILTYPES E ON CE.CUSTEMAILTYPECODE = E.EMAILTYPECODE
+					UNION ALL
+					SELECT CE.CUSTID,
+					CE.CUSTEMAILTYPECODE,
+					E.EMAILTYPEDESC LOVDESCCUSTEMAILTYPECODE,
+					CE.CUSTEMAILPRIORITY,
+					CE.CUSTEMAIL,
+					CE.VERSION,
+					CE.LASTMNTBY,
+					CE.LASTMNTON,
+					CE.RECORDSTATUS,
+					CE.ROLECODE,
+					CE.NEXTROLECODE,
+					CE.TASKID,
+					CE.NEXTTASKID,
+					CE.RECORDTYPE,
+					CE.WORKFLOWID,
+					CE.DOMAINCHECK
+					FROM CUSTOMEREMAILS CE
+					INNER JOIN BMTEMAILTYPES E ON CE.CUSTEMAILTYPECODE = E.EMAILTYPECODE
+					WHERE NOT EXISTS
+					(SELECT 1 FROM CUSTOMEREMAILS_TEMP WHERE CUSTID = CE.CUSTID
+					AND CUSTEMAILTYPECODE = CE.CUSTEMAILTYPECODE)
+		</createView>
+	</changeSet>
+	
+	<changeSet id="380" author="keerthi.p">
+		<createView viewName="CUSTOMEREMAILS_AVIEW" replaceIfExists="true">
+			SELECT CE.CUSTID,
+					CE.CUSTEMAILTYPECODE,
+					E.EMAILTYPEDESC LOVDESCCUSTEMAILTYPECODE,
+					CE.CUSTEMAILPRIORITY,
+					CE.CUSTEMAIL,
+					CE.VERSION,
+					CE.LASTMNTBY,
+					CE.LASTMNTON,
+					CE.RECORDSTATUS,
+					CE.ROLECODE,
+					CE.NEXTROLECODE,
+					CE.TASKID,
+					CE.NEXTTASKID,
+					CE.RECORDTYPE,
+					CE.WORKFLOWID,
+					CE.DOMAINCHECK
+					FROM CUSTOMEREMAILS CE
+					INNER JOIN BMTEMAILTYPES E ON CE.CUSTEMAILTYPECODE = E.EMAILTYPECODE
+		</createView>
+	</changeSet>
+
 </databaseChangeLog>

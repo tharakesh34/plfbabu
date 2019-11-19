@@ -905,5 +905,11 @@
 		newDataType="varchar(12)" />
 	</changeSet>
 	
+	<changeSet id="58" author="keerthi.p">
+		<comment>New columns added for CustomerEMails</comment>
+		<addColumn tableName="AdtCustomerEMails">
+			<column name="DomainCheck" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
 	
 </databaseChangeLog>

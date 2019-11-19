@@ -59,6 +59,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CustomerEMail model</b> class.<br>
@@ -82,32 +83,32 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	 */
 	@Override
 	public CustomerEMail getCustomerEMailById(final long id, String typeCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setId(id);
 		customerEMail.setCustEMailTypeCode(typeCode);
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode,");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck ");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCustEMailTypeCode,");
+			sql.append(", lovDescCustEMailTypeCode");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustomerEMails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID AND CustEMailTypeCode = :custEMailTypeCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId ");
+		sql.append(" FROM  CustomerEMails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = :custID AND CustEMailTypeCode = :custEMailTypeCode");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
 		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
 		try {
-			customerEMail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			customerEMail = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			logger.warn(Literal.EXCEPTION, e);
 			customerEMail = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerEMail;
 	}
 
@@ -115,29 +116,28 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	 * Method to return the customer email based on given customer id
 	 */
 	public List<CustomerEMail> getCustomerEmailByCustomer(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setId(id);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode,");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck");
 		if (type.contains("View")) {
-			selectSql.append(" lovDescCustEMailTypeCode,");
+			sql.append(", lovDescCustEMailTypeCode,");
 		}
-		selectSql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode,");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId ");
-		selectSql.append(" FROM  CustomerEMails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CustID = :custID");
+		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId ");
+		sql.append(" FROM  CustomerEMails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CustID = :custID");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
 		RowMapper<CustomerEMail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(CustomerEMail.class);
 
-		List<CustomerEMail> customerEMails = this.jdbcTemplate.query(selectSql.toString(), beanParameters,
-				typeRowMapper);
+		List<CustomerEMail> customerEMails = this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerEMails;
 	}
 
@@ -240,23 +240,23 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 	 */
 	@Override
 	public long save(CustomerEMail customerEMail, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into CustomerEMails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CustID, CustEMailTypeCode, CustEMailPriority, CustEMail,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:CustID, :CustEMailTypeCode, :CustEMailPriority, :CustEMail,");
-		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Insert Into CustomerEMails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (CustID, CustEMailTypeCode, CustEMailPriority, CustEMail, DomainCheck");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(:CustID, :CustEMailTypeCode, :CustEMailPriority, :CustEMail, :DomainCheck");
+		sql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
+		sql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerEMail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcTemplate.update(sql.toString(), beanParameters);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return customerEMail.getId();
 	}
 
@@ -280,11 +280,11 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		StringBuilder updateSql = new StringBuilder();
 		updateSql.append(" Update CustomerEMails");
 		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set CustEMailPriority = :CustEMailPriority, CustEMail = :CustEMail,");
-		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId ");
+		updateSql.append(" Set CustEMailPriority = :CustEMailPriority, CustEMail = :CustEMail");
+		updateSql.append(", DomainCheck = :DomainCheck, Version = :Version , LastMntBy = :LastMntBy");
+		updateSql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
+		updateSql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
+		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		updateSql.append(" Where CustID =:CustID AND CustEMailTypeCode =:custEMailTypeCode ");
 		if (!type.endsWith("_Temp")) {
 			updateSql.append("AND Version= :Version-1");

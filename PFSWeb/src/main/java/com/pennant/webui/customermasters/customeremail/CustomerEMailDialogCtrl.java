@@ -108,6 +108,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	protected Textbox custEMail; // autoWired
 	protected Textbox custCIF; // autoWired
 	protected Label custShrtName; // autoWired
+	protected Textbox domainCheck;
 
 	// not auto wired variables
 	private CustomerEMail customerEMail; // overHanded per parameter
@@ -272,6 +273,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		this.custEMailTypeCode.setDescColumn("EmailTypeDesc");
 		this.custEMailTypeCode.setValidateColumns(new String[] { "EmailTypeCode" });
 		this.custEMail.setMaxlength(100);
+		this.domainCheck.setMaxlength(50);
 
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
@@ -409,6 +411,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		} else {
 			this.custEMailTypeCode.setDescription(aCustomerEMail.getLovDescCustEMailTypeCode());
 		}
+		this.domainCheck.setValue(aCustomerEMail.getDomainCheck());
 		this.recordStatus.setValue(aCustomerEMail.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -693,6 +696,7 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 		this.custID.setReadonly(isReadOnly("CustomerEMailDialog_custID"));
 		this.custEMailPriority.setDisabled(isReadOnly("CustomerEMailDialog_custEMailPriority"));
 		this.custEMail.setReadonly(isReadOnly("CustomerEMailDialog_custEMail"));
+		this.domainCheck.setReadonly(true);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {

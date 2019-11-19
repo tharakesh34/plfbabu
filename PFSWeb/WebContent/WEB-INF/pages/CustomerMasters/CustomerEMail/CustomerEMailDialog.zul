@@ -73,6 +73,13 @@
 									<textbox id="custEMail" maxlength="100" width="200px" />
 								</hbox>
 							</row>
+							<row>
+								<label id="label_CustomerEMailDialog_DomainCheck" value="${c:l('label_CustomerEMailDialog_DomainCheck.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<textbox id="domainCheck" width="200px" maxlength="100" />
+								</hbox>
+							</row>
 						</rows>
 					</grid>
 				</groupbox>
