@@ -165,6 +165,10 @@ import com.pennant.backend.model.finance.FinanceScoreHeader;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.finance.financialsummary.DealRecommendationMerits;
+import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
+import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
+import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.psl.PSLCategory;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevCategory;
@@ -1857,6 +1861,66 @@ public class AgreementGeneration implements Serializable {
 						}
 					}
 					agreement.setTotalReceiptFeeAmount(PennantApplicationUtil.amountFormate(totalFeeAmount, formatter));
+				}
+			}
+			if (CollectionUtils.isNotEmpty(detail.getDueDiligenceDetailsList())) {
+
+				for (DueDiligenceDetails dueDiligenceDetails : detail.getDueDiligenceDetailsList()) {
+					if (CollectionUtils.isEmpty(agreement.getDueDiligenceDetails())) {
+						agreement.setDueDiligenceDetails(new ArrayList<>());
+					}
+					// General Data
+					if ((dueDiligenceDetails) != null) {
+						com.pennant.backend.model.finance.AgreementDetail.DueDiligenceDetails dueDiligenceGeneralData = agreement.new DueDiligenceDetails();
+						dueDiligenceGeneralData.setStatus(dueDiligenceDetails.getStatus());
+						dueDiligenceGeneralData.setRemarks(dueDiligenceDetails.getRemarks());
+						agreement.getDueDiligenceDetails().add(dueDiligenceGeneralData);
+					}
+				}
+			}
+			if (CollectionUtils.isNotEmpty(detail.getRecommendationNoteList())) {
+
+				for (RecommendationNotes recommendationNotes : detail.getRecommendationNoteList()) {
+					if (CollectionUtils.isEmpty(agreement.getRecommendationNotes())) {
+						agreement.setRecommendationNotes(new ArrayList<>());
+					}
+					// General Data
+					if ((recommendationNotes) != null) {
+						com.pennant.backend.model.finance.AgreementDetail.RecommendationNotes recommendationNotesGeneralData = agreement.new RecommendationNotes();
+						recommendationNotesGeneralData.setRemarks(recommendationNotes.getRemarks());
+						agreement.getRecommendationNotes().add(recommendationNotesGeneralData);
+					}
+				}
+			}
+			if (CollectionUtils.isNotEmpty(detail.getRisksAndMitigantsList())) {
+
+				for (RisksAndMitigants risksAndMitigants : detail.getRisksAndMitigantsList()) {
+					if (CollectionUtils.isEmpty(agreement.getRisksAndMitigants())) {
+						agreement.setRisksAndMitigants(new ArrayList<>());
+					}
+					// General Data
+					if ((risksAndMitigants) != null) {
+						com.pennant.backend.model.finance.AgreementDetail.RisksAndMitigants risksAndMitigantsGeneralData = agreement.new RisksAndMitigants();
+						risksAndMitigantsGeneralData.setRisk(risksAndMitigants.getRisk());
+						risksAndMitigantsGeneralData.setMitigants(risksAndMitigants.getMitigants());
+						agreement.getRisksAndMitigants().add(risksAndMitigantsGeneralData);
+					}
+				}
+			}
+			if (CollectionUtils.isNotEmpty(detail.getDealRecommendationMeritsDetailsList())) {
+
+				for (DealRecommendationMerits dealRecommendationMeritsDetails : detail
+						.getDealRecommendationMeritsDetailsList()) {
+					if (CollectionUtils.isEmpty(agreement.getDealRecommendationMerits())) {
+						agreement.setDealRecommendationMerits(new ArrayList<>());
+					}
+					// General Data
+					if ((dealRecommendationMeritsDetails) != null) {
+						com.pennant.backend.model.finance.AgreementDetail.DealRecommendationMerits dealRecommendationMeritsGeneralData = agreement.new DealRecommendationMerits();
+						dealRecommendationMeritsGeneralData.setDealMerits(dealRecommendationMeritsDetails
+								.getDealMerits());
+						agreement.getDealRecommendationMerits().add(dealRecommendationMeritsGeneralData);
+					}
 				}
 			}
 			setNetFinanceAmount(agreement, detail);

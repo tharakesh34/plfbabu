@@ -349,6 +349,11 @@ public class AgreementDetail {
 	 */
 	private String primaryGuarantor = "";
 
+	List<DueDiligenceDetails> dueDiligenceDetails;
+	List<RecommendationNotes> recommendationNotes;
+	List<RisksAndMitigants> risksAndMitigants;
+	List<DealRecommendationMerits> dealRecommendationMerits;
+
 	public String getVasPremium() {
 		return vasPremium;
 	}
@@ -9548,6 +9553,38 @@ public class AgreementDetail {
 		this.rcuFinalDecision = rcuFinalDecision;
 	}
 
+	public List<DueDiligenceDetails> getDueDiligenceDetails() {
+		return dueDiligenceDetails;
+	}
+
+	public void setDueDiligenceDetails(List<DueDiligenceDetails> dueDiligenceDetails) {
+		this.dueDiligenceDetails = dueDiligenceDetails;
+	}
+
+	public List<RecommendationNotes> getRecommendationNotes() {
+		return recommendationNotes;
+	}
+
+	public void setRecommendationNotes(List<RecommendationNotes> recommendationNotes) {
+		this.recommendationNotes = recommendationNotes;
+	}
+
+	public List<RisksAndMitigants> getRisksAndMitigants() {
+		return risksAndMitigants;
+	}
+
+	public void setRisksAndMitigants(List<RisksAndMitigants> risksAndMitigants) {
+		this.risksAndMitigants = risksAndMitigants;
+	}
+
+	public List<DealRecommendationMerits> getDealRecommendationMerits() {
+		return dealRecommendationMerits;
+	}
+
+	public void setDealRecommendationMerits(List<DealRecommendationMerits> dealRecommendationMerits) {
+		this.dealRecommendationMerits = dealRecommendationMerits;
+	}
+
 	public class KycDetail {
 		/**
 		 * Provides Current/ Co-applicant Customer Type.
@@ -9645,6 +9682,75 @@ public class AgreementDetail {
 
 		public void setExpiryDate(String expiryDate) {
 			this.expiryDate = expiryDate;
+		}
+
+	}
+
+	public class DueDiligenceDetails {
+		private String status;
+		private String remarks;
+
+		public String getStatus() {
+			return status;
+		}
+
+		public void setStatus(String status) {
+			this.status = status;
+		}
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+	}
+
+	public class RecommendationNotes {
+		private String remarks;
+
+		public String getRemarks() {
+			return remarks;
+		}
+
+		public void setRemarks(String remarks) {
+			this.remarks = remarks;
+		}
+
+	}
+
+	public class RisksAndMitigants {
+		private String risk;
+		private String mitigants;
+
+		public String getRisk() {
+			return risk;
+		}
+
+		public void setRisk(String risk) {
+			this.risk = risk;
+		}
+
+		public String getMitigants() {
+			return mitigants;
+		}
+
+		public void setMitigants(String mitigants) {
+			this.mitigants = mitigants;
+		}
+
+	}
+
+	public class DealRecommendationMerits {
+		private String dealMerits;
+
+		public String getDealMerits() {
+			return dealMerits;
+		}
+
+		public void setDealMerits(String dealMerits) {
+			this.dealMerits = dealMerits;
 		}
 
 	}
