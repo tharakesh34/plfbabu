@@ -3,6 +3,8 @@ package com.pennant.webui.customermasters.customer;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.pennant.backend.model.crm.CampaignDetails;
+
 public class ProductOfferDetails {
 	private long leadId;
 	private Long offerId = Long.MIN_VALUE;

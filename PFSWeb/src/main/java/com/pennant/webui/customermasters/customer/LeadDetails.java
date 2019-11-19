@@ -3,6 +3,8 @@ package com.pennant.webui.customermasters.customer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import com.pennant.backend.model.crm.AddressDetails;
+
 public class LeadDetails {
 	private float version;
 	private float lastMntBy;

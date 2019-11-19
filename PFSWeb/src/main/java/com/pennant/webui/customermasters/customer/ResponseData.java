@@ -1,5 +1,7 @@
 package com.pennant.webui.customermasters.customer;
 
+import com.pennant.backend.model.crm.CaseResponse;
+
 public class ResponseData {
 	private ReturnStatus returnStatus;
 
