@@ -11911,8 +11911,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		financeMain.setFinCcy(this.finCcy.getValue());
 		financeMain.setFinBranch(this.finBranch.getValue());
 		financeMain.setFinAmount(PennantApplicationUtil.unFormateAmount(this.finAmount.getActualValue(), formatter));
-		financeMain.setAppliedLoanAmt(PennantApplicationUtil.unFormateAmount(this.appliedLoanAmt.getActualValue(),
-				formatter));
 		financeMain.setFinAssetValue(PennantApplicationUtil.unFormateAmount(this.finAssetValue.getActualValue(),
 				formatter));
 		financeMain.setFinCurrAssetValue(PennantApplicationUtil.unFormateAmount(
