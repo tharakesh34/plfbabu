@@ -242,7 +242,6 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 								builder.setOMElement(builder, data.getKey(), value);
 							}
 
-							System.out.println((builder.getEnvelope().toString()));
 							logExecutionDetails(builder.getEnvelope().toString().getBytes("UTF-8"), id, email,
 									mobileNum, (int) systemNotifications.getId(), map);
 							successCount++;
@@ -261,8 +260,8 @@ public class InvokeSysNotifications extends BasicDao<SystemNotifications> {
 		SystemNotificationExecutionDetails details = new SystemNotificationExecutionDetails();
 
 		String ref = dataMap.get("FINREFERENCE");
-		if(ref==null){
-			ref=dataMap.get("CUSTCIF");
+		if (ref == null) {
+			ref = dataMap.get("CUSTCIF");
 		}
 		details.setNotificationData(notificationData);
 		details.setExecutionId(id);

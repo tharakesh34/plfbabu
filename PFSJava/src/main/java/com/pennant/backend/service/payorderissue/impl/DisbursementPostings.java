@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import com.pennant.app.constants.AccountEventConstants;
 import com.pennant.app.util.AccountEngineExecution;
 import com.pennant.app.util.PostingsPreparationUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
@@ -24,7 +23,6 @@ import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 

@@ -405,7 +405,7 @@ public class AdvancePaymentUtil {
 			return null;
 		}
 
-		// Calculate Total TDS Amount based on Terms from Scheduled Installments
+		/* Calculate Total TDS Amount based on Terms from Scheduled Installments */
 		AdvancePaymentDetail curAdvPay = calculateAdvancePayment(finScheduleData);
 		if (curAdvPay == null) {
 			return curAdvPay;
@@ -415,8 +415,10 @@ public class AdvancePaymentUtil {
 			return curAdvPay;
 		}
 
-		// Loan Already In servicing Process, Need to Cross Check whether Diff Incomization Required or not
-		// Find out the difference and adjust to Bean for Further Process
+		/*
+		 * Loan Already In servicing Process, Need to Cross Check whether diff incomization Required or not Find out the
+		 * difference and adjust to Bean for Further Process
+		 */
 		curAdvPay.setAdvInt(curAdvPay.getAdvInt().subtract(advPay.getAdvInt()));
 		curAdvPay.setAdvIntTds(curAdvPay.getAdvIntTds().subtract(advPay.getAdvIntTds()));
 		curAdvPay.setAdvEMI(curAdvPay.getAdvEMI().subtract(advPay.getAdvEMI()));
@@ -604,13 +606,13 @@ public class AdvancePaymentUtil {
 	 * This Method will calculate the Advance Interest at Grace terms.
 	 * 
 	 * @param schedules
-	 *            The number of schedules.
+	 *        The number of schedules.
 	 * @param terms
-	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 *        The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
 	 * @param gracePeriodEndDate
-	 *            Grace Period End Date.
+	 *        Grace Period End Date.
 	 * @param advanceType
-	 *            Advance Type either Advance EMI/Interest.
+	 *        Advance Type either Advance EMI/Interest.
 	 * @return The calculated Advance EMI/Interest.
 	 */
 	private static BigDecimal getGraceAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
@@ -640,13 +642,13 @@ public class AdvancePaymentUtil {
 	 * This Method will calculate the Advance Interest/EMI for Repay Terms.
 	 * 
 	 * @param schedules
-	 *            The number of schedules.
+	 *        The number of schedules.
 	 * @param terms
-	 *            The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
+	 *        The number of terms consider for Advance Interest/EMI, when the terms -1 consider as full terms.
 	 * @param gracePeriodEndDate
-	 *            Grace Period End Date.
+	 *        Grace Period End Date.
 	 * @param advanceType
-	 *            Advance Type either Advance EMI/Interest.
+	 *        Advance Type either Advance EMI/Interest.
 	 * @return The calculated Advance EMI/Interest.
 	 */
 	private static BigDecimal getRepayAdvPayment(List<FinanceScheduleDetail> schedules, int terms,
@@ -683,6 +685,7 @@ public class AdvancePaymentUtil {
 	public static void setAdvancePaymentDetails(FinScheduleData finScheduleData, AEAmountCodes amountCodes,
 			String moduleDefiner) {// Advance payment Details Resetting
 		AdvancePaymentDetail curAdvpay = null;
+
 		curAdvpay = getDiffOnAdvIntAndAdvEMI(finScheduleData, null, moduleDefiner);
 
 		if (curAdvpay == null) {
