@@ -4111,87 +4111,85 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	<changset id="113" author="Varaprasad.K">
+	<changset id="113" author="Varaprasad">
 		<sql>
 		    <![CDATA[
-		     	    INSERT INTO plf.due_diligence_checklist(
+		            delete from plf.due_diligence_checklist;
+		     	    INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (1,'CPV-Residence & Office','Positive,Negative,Refer to credit,Waive,Pending',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (2,'PD done by and status','Positive,Negative,Refer to credit,Waive,Pending',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (3,'SMA Dump Check','Positive,Negative,Waive,NA',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (4,'FCU/RCU','Positive,Negative,Refer to credit',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (5,'Dedupe/ Posidex','Positive,Negative,Waive',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (6,'CIBIL','Positive,Negative,Waive',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (7,'Corporate CIBIL','Positive,Negative,Waive,NO Match',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (8,'Google Search','Positive,Negative',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (9,'RBI Defaullter List','Positive,Negative,Waive',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (10,'Independent Reference Check','Positive,Negative,Waive',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (11,'External Rating','Positive,Negative,Waive,NA',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (12,'Priority Sector Lending','Applicable,Not Applicable',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (13,'GST Check done','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (14,'Property Ownership','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (15,'Overall Risk Rating as per AML Guideline ','High,Medium,Low',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (16,'Hunter match','Positive,Negative,Waive',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (17,'CA Check','Positive,Negative',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
 						VALUES (18,'Whether any co-borrower is being removed from the proposed Loan ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (19,'Any Other','',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (19,'SaveRisk Hit','Match,No Match',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (20,'SaveRisk Hit','Match,No Match',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (20,'ShareHolder Details Match with our borrower list ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (21,'ShareHolder Details Match with our borrower list ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (21,'Any Other','Positive,Negative,Waive,No Match',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (22,'Any Other','Positive,Negative,Waive,No Match',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (22,'Any Legal Cases underway ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (23,'Any Legal Cases underway ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (23,'Any cross holding in Real Estate / Negative Industry list ? ','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (24,'Any cross holding in Real Estate / Negative Industry list ? ','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
+						VALUES (24,'Any Neagative match in the "media" Section ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+					INSERT INTO due_diligence_checklist(
 						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (25,'Any Neagative match in the "media" Section ?','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
-					INSERT INTO plf.due_diligence_checklist(
-						id, particulars, status, version, lastmntby, lastmnton, recordstatus, rolecode, nextrolecode, taskid, nexttaskid, recordtype, workflowid)
-						VALUES (26,'Other comments','',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
+						VALUES (25,'Other comments','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
 	    	 ]]>
 		</sql>
 	</changset>

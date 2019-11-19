@@ -815,8 +815,6 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					lc.setParent(item);
 					lc = new Listcell("");
 					lc.setParent(item);
-					lc = new Listcell("");
-					lc.setParent(item);
 					this.listBoxDeviationsDetails.appendChild(item);
 					devSerialNo++;
 				}
@@ -1490,7 +1488,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				reference.setAttribute("dueDiligenceDetails", dueDiligenceDetails);
 
 				reference.addForward("onChange", self, "onChangeRemarks", dueDiligenceDetails);
-				reference.setWidth("1000px");
+				reference.setStyle("width:450px;height:70px");
 				reference.setValue(dueDiligenceDetails.getRemarks());
 				lc.setParent(item);
 
@@ -1550,7 +1548,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				comments.addForward("onChange", self, "onChangeComments", recommendationNotesDetails);
 				comments.setValue(recommendationNotesDetails.getRemarks());
-				comments.setStyle("width:270px;height:70px");
+				comments.setStyle("width:450px;height:70px");
 
 				lc.setParent(item);
 
