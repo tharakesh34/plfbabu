@@ -14,13 +14,13 @@
 }
 
 .z-tab-selected .z-tab-text {
-	font-weight: normal;
-	color: #f39a36;
+	font-weight: bold;
+	color: #003d66;
+	font-family : Verdana;
 	cursor: default;
 	text-align: left;
-	width: 135px;
-	font-size: 15px;
-	border-bottom: 1px solid #f39a36;
+	width: 100%;
+	font-size: 16px;
 	padding-bottom: 8px;
 }
 
@@ -48,7 +48,9 @@
 }
 
 .z-tabpanel {
-	border-style: none;
+	border: 1px solid black; 
+	border-radius: 7px;	
+	box-shadow: 1px 1px 1px 1px black;
 }
 
 .maintitle {

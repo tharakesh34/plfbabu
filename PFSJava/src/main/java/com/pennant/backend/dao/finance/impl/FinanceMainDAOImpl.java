@@ -5244,25 +5244,26 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public List<FinanceEnquiry> getAllFinanceDetailsByCustId(long custId) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT FinReference, FinBranch, FinType, FinCcy, ScheduleMethod, ProfitDaysBasis, FinStartDate");
+		sql.append(", NumberOfTerms, CustID, FinAmount, GrcPeriodEndDate, MaturityDate, FinRepaymentAmount");
+		sql.append(", FinIsActive, AllowGrcPeriod, LovDescFinTypeName, LovDescCustCIF, LovDescCustShrtName");
+		sql.append(", LovDescFinBranchName, Blacklisted, LovDescFinScheduleOn, FeeChargeAmt");
+		sql.append(", ClosingStatus, CustTypeCtg, GraceTerms, lovDescFinDivision, lovDescProductCodeName");
+		sql.append(", Defferments, FinRepayMethod, MandateID");
+		sql.append(" FROM FinanceEnquiry_View ");
+		sql.append(" Where CustID=:CustID ");
+
+		logger.trace(Literal.SQL + sql.toString());
+
 		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(
-				" SELECT FinReference , FinBranch , FinType , FinCcy , ScheduleMethod , ProfitDaysBasis , FinStartDate , NumberOfTerms , ");
-		selectSql.append(
-				" CustID , FinAmount , GrcPeriodEndDate , MaturityDate , FinRepaymentAmount , FinIsActive , AllowGrcPeriod , ");
-		selectSql.append(" LovDescFinTypeName, ");
-		selectSql.append(
-				" LovDescCustCIF , LovDescCustShrtName , LovDescFinBranchName , Blacklisted , LovDescFinScheduleOn , FeeChargeAmt , ");
-		selectSql.append(
-				" ClosingStatus , CustTypeCtg , GraceTerms , lovDescFinDivision , lovDescProductCodeName , Defferments , FinRepayMethod , MandateID ");
-		selectSql.append(" FROM FinanceEnquiry_View ");
-		selectSql.append(" Where CustID=:CustID ");
-		selectSql.append(" ORDER BY FinType, FinCcy ");
 		source.addValue("CustID", custId);
+
 		RowMapper<FinanceEnquiry> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinanceEnquiry.class);
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
+		logger.debug(Literal.LEAVING);
+
+		return this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
 	}
 }

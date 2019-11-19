@@ -108,12 +108,11 @@
 					</north>
 					<center border="none">
 						<borderlayout style="border:none;">
-							<north id="borderStyle">
-							<hlayout >
-							<vlayout id="freezeBar">
+							<north id="borderStyle" style="box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16);border-radius: 7px;">
+							<vlayout>
 							<hbox style="border-radius: 7px; padding-left:10px; padding-right:20px;" height="65px">
 										<hlayout
-											style="padding-left :15px; border:none ">
+											style="padding-left :30px; border:none ">
 											<image id="customerPic1"  sclass="circular--square" />
 										</hlayout>
 										<space bar="false" spacing="20px" />
@@ -176,14 +175,14 @@
 									</hbox>
 									<hbox id="statusBar" style="border-radius: 7px; padding-left:10px; padding-right:20px;" visible="false">
 										<vlayout
-											style="padding-left :15px; border:none ">
+											style="padding-left :15px;  ">
 									</vlayout>
 									<progressmeter
 													id="basicProgress" sclass="progressmeter" width="1150px"/>
 							</hbox>
 							</vlayout>
 													
-								</hlayout>
+							
 							</north>
 							<center
 								style="overflow-y: auto;overflow-x: hidden;" border="none" >
@@ -192,7 +191,7 @@
 									<div id="gb_basicDetails"
 										style="margin-left:-10%;margin-right:-10%">
 											<box id="retails"
-											width="100%" align="center" style="border-style : none; ">
+											 align="center" style="border-style : none; " hflex="max" >
 											<hbox pack="stretch" id=""
 												style="border-style : none;" sclass="hboxRemoveWhiteStrips"
 												width="100%" widths="100%,0%,0%">
@@ -213,7 +212,7 @@
 											<separator/>
 											<grid
 												style="border :none; overflow-x: hidden ; background: white; border-radius: 7px;
-										       box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16),1px 2px 10px 1px rgba(0,0,0,0.12)!important;">
+										       box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16),1px 2px 10px 1px rgba(0,0,0,0.12)!important;" hflex="max" >
 												<columns>
 													<column width="15%" />
 													<column width="15%" />
@@ -601,7 +600,7 @@
 											</grid>
 										</box>
 										<box id="Corporates"
-											width="100%" align="center" style="border-style : none; ">
+											width="100%" align="center" style="border-style : none; " >
 
 											<hbox pack="stretch" id=""
 												style="border-style : none;" sclass="hboxRemoveWhiteStrips"
@@ -622,7 +621,9 @@
 											<separator/>
 											<grid
 												style="border :none; overflow-x: hidden ; background: white; border-radius: 7px;
-										       box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16),0 2px 10px 1px rgba(0,0,0,0.12)!important;">
+										       box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16),0 2px 10px 1px rgba(0,0,0,0.12)!important;" 
+											span="true" sizedByContent="true"
+											fixedLayout="true" width="100%" >
 
 												<columns>
 													<column width="15%" />
@@ -1186,20 +1187,8 @@
 												<listheader
 													sclass="listheader-content"
 													style="color: #B3B3B3; font-size: 15px;"
-													id="listheader_CustEmail_Priority" width="0px"
-													label="${c:l('listheader_CustEMailPriority.label')}"
-													sort="false" hflex="min" />
-												<listheader
-													sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;"
 													id="listheader_CustEmail_EmailID"
 													label="${c:l('listheader_CustomerEmail.label')}"
-													sort="false" hflex="min" />
-												<listheader
-													sclass="listheader-content"
-													style="color: #B3B3B3; font-size: 15px;"
-													id="listheader_CustEmail_RecordStatus" width="0px"
-													label="${c:l('listheader_RecordStatus.label')}"
 													sort="false" hflex="min" />
 												<listheader
 													sclass="listheader-content"
@@ -1907,14 +1896,15 @@
 									<separator/>
 									<div id="gb_additionalDetails"
 										style="padding-left: 30px; padding-right: 30px;">
+										<separator/>
 										<tabbox tabscroll="false"
-											maximalHeight="true" style="border:none;" width="100%"
-											height="300px">
+											maximalHeight="true"  width="100%"
+											vflex="min" >
 											<tabs
-												id="tabsIndexCenter">
+												id="tabsIndexCenter" style="background:white;">
 											</tabs>
 											<tabpanels id="tabpanels"
-												vflex="min">
+												>
 											</tabpanels>
 										</tabbox>
 										<separator bar="true"></separator>

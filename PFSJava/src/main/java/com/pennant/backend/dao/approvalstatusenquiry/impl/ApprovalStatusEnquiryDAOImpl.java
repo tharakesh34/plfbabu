@@ -19,6 +19,7 @@ import com.pennant.backend.dao.approvalstatusenquiry.ApprovalStatusEnquiryDAO;
 import com.pennant.backend.model.finance.AuditTransaction;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail> implements ApprovalStatusEnquiryDAO {
 	private static final Logger logger = Logger.getLogger(ApprovalStatusEnquiryDAOImpl.class);
@@ -79,37 +80,36 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 	@Override
 	public List<AuditTransaction> getFinTransactionsList(String id, boolean approvedFinance, boolean facility,
 			String auditEvent) {
-
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, RecordType, UsrName ");
+		if (facility) {
+			sql.append(" from FacilityStsAprvlInquiry_View ");
+			sql.append(" Where AuditReference =:FinReference  ");
+		} else {
+			sql.append(" from FinStsAprvlInquiry_View ");
+			sql.append(" Where AuditReference =:FinReference and AUDITTRANTYPE='W' ");
+		}
+		if (StringUtils.isNotEmpty(auditEvent)) {
+			sql.append(" and AuditEvent = :FinEvent ");
+		}
+		if (approvedFinance) {
+			sql.append(" and RecordStatus <> :RecordStatus");
+		}
+		
+		logger.trace(Literal.SQL + sql.toString());
+		
 		CustomerFinanceDetail customerFinanceDetail = new CustomerFinanceDetail();
 		customerFinanceDetail.setFinReference(id);
 		customerFinanceDetail.setFinEvent(auditEvent);
 		customerFinanceDetail.setRecordStatus("Saved");
-		StringBuilder selectSql = new StringBuilder(" ");
-		selectSql.append(
-				"SELECT AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy, RecordStatus, RecordType, UsrName ");
-		if (facility) {
-			selectSql.append(" from FacilityStsAprvlInquiry_View ");
-			selectSql.append(" Where AuditReference =:FinReference  ");
-		} else {
-			selectSql.append(" from FinStsAprvlInquiry_View ");
-			selectSql.append(" Where AuditReference =:FinReference and AUDITTRANTYPE='W' ");
-
-		}
-		if (StringUtils.isNotEmpty(auditEvent)) {
-			selectSql.append(" and AuditEvent = :FinEvent ");
-		}
-		if (approvedFinance) {
-			selectSql.append(" and RecordStatus <> :RecordStatus");
-		}
-		selectSql.append(" Order by AuditDate ");
-		logger.debug("selectSql: " + selectSql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customerFinanceDetail);
-		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(AuditTransaction.class);
-
-		logger.debug("Leaving");
-		return this.auditJdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		RowMapper<AuditTransaction> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(AuditTransaction.class);
+		logger.debug(Literal.LEAVING);
+		
+		return this.auditJdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 	@Override

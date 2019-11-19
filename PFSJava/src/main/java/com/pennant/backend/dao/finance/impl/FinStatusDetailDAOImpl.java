@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import com.pennant.backend.dao.finance.FinStatusDetailDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements FinStatusDetailDAO {
 	private static Logger logger = Logger.getLogger(FinStatusDetailDAOImpl.class);
@@ -100,21 +101,23 @@ public class FinStatusDetailDAOImpl extends BasicDao<FinStatusDetail> implements
 	}
 
 	public List<FinStatusDetail> getFinStatusDetailByRefId(String finReference) {
-		logger.debug("Entering");
+		logger.debug(Literal.LEAVING);
 
 		FinStatusDetail finStatusDetail = new FinStatusDetail();
 		finStatusDetail.setFinReference(finReference);
 
-		StringBuilder selectSql = new StringBuilder(" Select CustId , FinStatus, ValueDate, OdDays, FinReference");
-		selectSql.append(" From FinStatusDetail");
-		selectSql.append(" Where FinReference =:FinReference");
+		StringBuilder sql = new StringBuilder(" Select CustId, FinStatus, ValueDate, OdDays, FinReference");
+		sql.append(" From FinStatusDetail");
+		sql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.trace(Literal.SQL + sql.toString());
+		
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finStatusDetail);
-		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper
-				.newInstance(FinStatusDetail.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		
+		RowMapper<FinStatusDetail> typeRowMapper = ParameterizedBeanPropertyRowMapper.newInstance(FinStatusDetail.class);
+		logger.debug(Literal.LEAVING);
+		
+		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 
 	}
 }

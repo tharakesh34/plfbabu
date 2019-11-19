@@ -61,7 +61,6 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
@@ -75,6 +74,8 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.crm.CrmLeadDetails;
+import com.pennant.backend.model.crm.ProductOfferDetails;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
@@ -99,6 +100,7 @@ import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.customermasters.CustomerOffersService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -289,7 +291,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Image customerPic;
 	protected North borderStyle;
 	protected Label custShrtName2;
-	protected Vlayout freezeBar;
 	protected Image customerPic1;
 	protected Label custShrtName;
 
@@ -1773,13 +1774,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(customerEMail.getLovDescCustEMailTypeCode());
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formateInt(customerEMail.getCustEMailPriority()));
-				lc.setStyle("font-size:15px");
-				lc.setParent(item);
 				lc = new Listcell(customerEMail.getCustEMail());
-				lc.setStyle("font-size:15px");
-				lc.setParent(item);
-				lc = new Listcell(customerEMail.getRecordStatus());
 				lc.setStyle("font-size:15px");
 				lc.setParent(item);
 				lc = new Listcell(PennantJavaUtil.getLabel(customerEMail.getRecordType()));
@@ -2219,7 +2214,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			Tab tab = getTab("Tab" + extendedFieldHeader.getModuleName() + extendedFieldHeader.getSubModuleName());
 			tab.setStyle(
 					"padding-left:5px;padding-right:5px; border-radius: 7px;box-shadow: 1px 1px 1px 1px #e6e6e6;font-family : Verdana; font-size:16px; font-weight :Bold; color: #003d66;");
-			tab.setWidth("10%");
+			tab.setWidth("2.5%");
 			tab.setHeight("50px");
 			aCustomerDetails.setExtendedFieldHeader(extendedFieldHeader);
 			aCustomerDetails.setExtendedFieldRender(extendedFieldRender);
@@ -3070,7 +3065,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Clients.scrollIntoView(gb_basicDetails);
 		this.customerTitle.setValue("Customer View");
 		statusBar.setVisible(false);
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		logger.debug("Leaving");
 	}
 
@@ -3080,7 +3075,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Clients.scrollIntoView(gb_kycDetails);
 		this.customerTitle.setValue("Customer View");
 		statusBar.setVisible(false);
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		logger.debug("Leaving");
 	}
 
@@ -3090,7 +3085,17 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Clients.scrollIntoView(gb_financialDetails);
 		this.customerTitle.setValue("Customer View");
 		statusBar.setVisible(false);
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
+		logger.debug("Leaving");
+	}
+
+	public void onClick$imgshareHolderDetails(Event event) throws Exception {
+		logger.debug("Entering");
+		Clients.scrollIntoView(shareHolder);
+		Clients.scrollIntoView(shareHolder);
+		statusBar.setVisible(false);
+		this.customerTitle.setValue("Customer View");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		logger.debug("Leaving");
 	}
 
@@ -3100,31 +3105,33 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		Clients.scrollIntoView(gb_bankingDetails);
 		this.customerTitle.setValue("Customer View");
 		statusBar.setVisible(false);
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		logger.debug("Leaving");
 	}
 
 	public void onClick$imghelp(Event event) throws Exception {
 		logger.debug("Entering");
-		Clients.scrollIntoView(gb_bankingDetails);
+		Clients.scrollIntoView(gb_help);
 		Clients.scrollIntoView(gb_help);
 		this.customerTitle.setValue("Customer View");
 		statusBar.setVisible(false);
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		logger.debug("Leaving");
 	}
 
 	public void onClick$imgadditionalDetails(Event event) throws Exception {
 		logger.debug("Entering");
 		Clients.scrollIntoView(gb_additionalDetails);
+		Clients.scrollIntoView(gb_additionalDetails);
 		this.customerTitle.setValue("Customer View");
-		borderStyle.setStyle("border-radius: 7px;");
+		borderStyle.setStyle("border-radius: 7px;box-shadow: 1px 2px 4px 1px rgba(0,0,0,0.16)");
 		statusBar.setVisible(false);
 		logger.debug("Leaving");
 	}
 
 	public void onClick$imgcustomerSummary(Event event) throws Exception {
 		logger.debug("Entering");
+		Clients.scrollIntoView(customerSumary);
 		Clients.scrollIntoView(customerSumary);
 		customerTitle.setValue("Customer Summary");
 		borderStyle.setStyle("border:none");
@@ -3135,14 +3142,16 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$imgloanDetails(Event event) throws Exception {
 		logger.debug("Entering");
 		Clients.scrollIntoView(loanDetails);
+		Clients.scrollIntoView(loanDetails);
 		this.customerTitle.setValue("Customer Summary");
-		borderStyle.setStyle("border:none");
+		borderStyle.setStyle("border:none;");
 		statusBar.setVisible(true);
 		logger.debug("Leaving");
 	}
 
 	public void onClick$imgcollateralDetails(Event event) throws Exception {
 		logger.debug("Entering");
+		Clients.scrollIntoView(collateralDetails);
 		Clients.scrollIntoView(collateralDetails);
 		this.customerTitle.setValue("Customer Summary");
 		borderStyle.setStyle("border:none");
@@ -3153,6 +3162,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$imgvasDetails(Event event) throws Exception {
 		logger.debug("Entering");
 		Clients.scrollIntoView(vasDetails);
+		Clients.scrollIntoView(vasDetails);
 		this.customerTitle.setValue("Customer Summary");
 		borderStyle.setStyle("border:none");
 		statusBar.setVisible(true);
@@ -3162,16 +3172,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void onClick$imgpendingLoanDetails(Event event) throws Exception {
 		logger.debug("Entering");
 		Clients.scrollIntoView(pendingLoanDetails);
+		Clients.scrollIntoView(pendingLoanDetails);
 		this.customerTitle.setValue("Customer Summary");
 		borderStyle.setStyle("border:none");
 		statusBar.setVisible(true);
-		logger.debug("Leaving");
-	}
-
-	public void onClick$imgshareHolderDetails(Event event) throws Exception {
-		logger.debug("Entering");
-		Clients.scrollIntoView(shareHolder);
-		this.customerTitle.setValue("Customer View");
 		logger.debug("Leaving");
 	}
 
