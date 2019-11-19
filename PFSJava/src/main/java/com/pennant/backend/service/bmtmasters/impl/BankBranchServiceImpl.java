@@ -57,6 +57,7 @@ import com.pennant.backend.dao.beneficiary.BeneficiaryDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
 import com.pennant.backend.dao.mandate.MandateDAO;
+import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
@@ -65,7 +66,9 @@ import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>BankBranch</b>.<br>
@@ -344,7 +347,7 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 		logger.debug("Leaving");
 		return auditHeader;
 	}
-	
+
 	private void doPostHookValidation(AuditHeader auditHeader) {
 		if (postValidationHook != null) {
 			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
@@ -355,7 +358,6 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 			}
 		}
 	}
-
 
 	/**
 	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
@@ -371,116 +373,20 @@ public class BankBranchServiceImpl extends GenericService<BankBranch> implements
 	 */
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+		logger.debug(Literal.ENTERING);
+
+		// Get the model object.
 		BankBranch bankBranch = (BankBranch) auditDetail.getModelData();
-
-		BankBranch tempBankBranch = null;
-		if (bankBranch.isWorkflow()) {
-			tempBankBranch = getBankBranchDAO().getBankBranchById(bankBranch.getId(), "_Temp");
-		}
-		BankBranch befBankBranch = getBankBranchDAO().getBankBranchById(bankBranch.getId(), "");
-
-		BankBranch oldBankBranch = bankBranch.getBefImage();
-
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = bankBranch.getIFSC();
-		errParm[0] = PennantJavaUtil.getLabel("label_IFSC") + ":" + valueParm[0];
-
-		if (bankBranch.isNew()) { // for New record or new record into work flow
-
-			if (!bankBranch.isWorkflow()) {// With out Work flow only new records  
-				if (befBankBranch != null) { // Record Already Exists in the table then error  
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-				}
-			} else { // with work flow
-				if (bankBranch.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befBankBranch != null || tempBankBranch != null) { // if records already exists in the main table
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
-					}
-				} else { // if records not exists in the Main flow table
-					if (befBankBranch == null || tempBankBranch != null) {
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-					}
-				}
-			}
-		} else {
-			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!bankBranch.isWorkflow()) { // With out Work flow for update and delete
-
-				if (befBankBranch == null) { // if records not exists in the main table
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
-				} else {
-					if (oldBankBranch != null && !oldBankBranch.getLastMntOn().equals(befBankBranch.getLastMntOn())) {
-						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
-								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, valueParm),
-									usrLanguage));
-						} else {
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "41004", errParm, valueParm),
-									usrLanguage));
-						}
-					}
-				}
-			} else {
-
-				if (tempBankBranch == null) { // if records not exists in the Work flow table 
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-				}
-
-				if (tempBankBranch != null && oldBankBranch != null
-						&& !oldBankBranch.getLastMntOn().equals(tempBankBranch.getLastMntOn())) {
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
-				}
-			}
-		}
-		int count = getBankBranchDAO().getBankBranchByIFSC(bankBranch.getIFSC(), bankBranch.getId(), "_View");
-		if (count != 0) {
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-					new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParm, valueParm), usrLanguage));
-
-		}
-		if (StringUtils.trimToEmpty(bankBranch.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)) {
-			int mandateCount = getMandateDAO().getBranch(bankBranch.getBankBranchID(), "");
-			int disbursementCount = getFinAdvancePaymentsDAO().getBranch(bankBranch.getBankBranchID(), "");
-			int beneficiaryCount = getBeneficiaryDAO().getBranch(bankBranch.getBankBranchID(), "");
-			if (mandateCount != 0 && disbursementCount != 0 && beneficiaryCount != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, valueParm), usrLanguage));
-			}
-		}
-		//Unique Validation For MICR Code
-		if (StringUtils.isNotBlank(bankBranch.getMICR())
-				&& !StringUtils.trimToEmpty(bankBranch.getRecordType()).equals(PennantConstants.RECORD_TYPE_DEL)
-				&& !StringUtils.equals(method, PennantConstants.method_doReject)) {
-
-			String[] errParmMICR = new String[1];
-			String[] valueParmMICR = new String[1];
-			valueParmMICR[0] = bankBranch.getMICR();
-			errParmMICR[0] = PennantJavaUtil.getLabel("label_MICR") + " : " + valueParmMICR[0];
-
-			int MICRCount = getBankBranchDAO().getBankBranchByMICR(bankBranch.getMICR(), bankBranch.getId(), "_View");
-
-			if (MICRCount != 0) {
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errParmMICR, valueParmMICR), usrLanguage));
-			}
+		// Check the unique keys.
+		if (bankBranch.isNew() && bankBranchDAO.isDuplicateKey(bankBranch.getBankCode(), bankBranch.getBranchCode(),
+				bankBranch.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			String[] parameters = new String[1];
+			parameters[0] = PennantJavaUtil.getLabel("label_BranchCode") + ": " + bankBranch.getBranchCode();
+			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if (StringUtils.trimToEmpty(method).equals("doApprove") || !bankBranch.isWorkflow()) {
-			auditDetail.setBefImage(befBankBranch);
-		}
-
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 

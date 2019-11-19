@@ -49,6 +49,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 
@@ -59,6 +60,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 /**
  * DAO methods implementation for the <b>BankBranch model</b> class.<br>
@@ -80,13 +84,13 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 	@Override
 	public BankBranch getBankBranch() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("BankBranch");
 		BankBranch bankBranch = new BankBranch();
 		if (workFlowDetails != null) {
 			bankBranch.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
@@ -99,10 +103,10 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 	@Override
 	public BankBranch getNewBankBranch() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BankBranch bankBranch = getBankBranch();
 		bankBranch.setNewRecord(true);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
@@ -117,7 +121,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public BankBranch getBankBranchById(final long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BankBranch bankBranch = getBankBranch();
 
 		bankBranch.setId(id);
@@ -143,7 +147,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			logger.warn("Exception: ", e);
 			bankBranch = null;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
@@ -158,7 +162,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public int getBankBranchByIFSC(final String iFSC, long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BankBranch bankBranch = getBankBranch();
 
 		bankBranch.setIFSC(iFSC);
@@ -172,7 +176,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
@@ -190,7 +194,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public void delete(BankBranch bankBranch, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		int recordCount = 0;
 
 		StringBuilder deleteSql = new StringBuilder("Delete From BankBranches");
@@ -207,7 +211,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -227,7 +231,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 	@Override
 	public long save(BankBranch bankBranch, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		if (bankBranch.getId() == Long.MIN_VALUE) {
 			bankBranch.setId(getNextId("SeqBankBranches"));
 			logger.debug("get NextID:" + bankBranch.getId());
@@ -250,7 +254,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch.getId();
 	}
 
@@ -269,7 +273,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	@Override
 	public void update(BankBranch bankBranch, String type) {
 		int recordCount = 0;
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		//since it has foreign key
 		bankBranch.setCity(StringUtils.trimToNull(bankBranch.getCity()));
 		StringBuilder updateSql = new StringBuilder("Update BankBranches");
@@ -294,7 +298,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -305,7 +309,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public BankBranch getBankBrachByIFSC(String ifsc, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BankBranch bankBranch = getBankBranch();
 		bankBranch.setIFSC(ifsc);
@@ -332,13 +336,13 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			bankBranch = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
 	@Override
 	public BankBranch getBankBrachByCode(String bankCode, String branchCode, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BankBranch bankBranch = getBankBranch();
 		bankBranch.setBankCode(bankCode);
@@ -366,7 +370,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			bankBranch = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
@@ -383,13 +387,13 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
 	public BankBranch getBankBrachByMicr(String micr, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BankBranch bankBranch = getBankBranch();
 		bankBranch.setMICR(micr);
@@ -412,7 +416,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			bankBranch = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
@@ -427,7 +431,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	 */
 	@Override
 	public int getBankBranchByMICR(final String mICR, long id, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		BankBranch bankBranch = getBankBranch();
 
 		bankBranch.setMICR(mICR);
@@ -441,13 +445,13 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug("selectSql: " + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(bankBranch);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
 	}
 
 	@Override
 	public BankBranch getBankBrachByIFSCandMICR(String ifsc, String micr, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BankBranch bankBranch = getBankBranch();
 		bankBranch.setIFSC(ifsc);
@@ -474,8 +478,38 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 			bankBranch = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return bankBranch;
 	}
 
+	@Override
+	public boolean isDuplicateKey(String bankCode, String branchCode, TableType tableType) {
+		logger.debug(Literal.ENTERING);
+		// Prepare the SQL.
+		String sql;
+		String whereClause = "BankCode = :bankCode and BranchCode = :branchCode";
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("BankBranches", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("BankBranches_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "BankBranches_Temp", "BankBranches" }, whereClause);
+			break;
+		}
+		// Execute the SQL, binding the arguments.
+		logger.trace(Literal.SQL + sql);
+		MapSqlParameterSource paramSource = new MapSqlParameterSource();
+		paramSource.addValue("bankCode", bankCode);
+		paramSource.addValue("branchCode", branchCode);
+		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		boolean exists = false;
+		if (count > 0) {
+			exists = true;
+		}
+		logger.debug(Literal.LEAVING);
+		return exists;
+	}
 }

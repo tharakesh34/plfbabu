@@ -43,6 +43,7 @@
 package com.pennant.backend.dao.bmtmasters;
 
 import com.pennant.backend.model.bmtmasters.BankBranch;
+import com.pennanttech.pff.core.TableType;
 
 public interface BankBranchDAO {
 	BankBranch getBankBranch();
@@ -70,4 +71,6 @@ public interface BankBranchDAO {
 	int getBankBranchByMICR(final String mICR, long id, String type);
 
 	BankBranch getBankBrachByIFSCandMICR(String ifsc, String micr, String type); //Refund Upload
+	
+	boolean isDuplicateKey(String bankCode, String branchCode, TableType tableType);
 }
