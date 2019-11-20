@@ -911,5 +911,58 @@
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
 	</changeSet>
+		
+	<changeSet id="59" author="rohith.s">
+		<addColumn tableName="ADTBuilderGroup">
+			<column name="PEDEVELOPERID" type="VARCHAR(100)"></column>
+			<column name="CITY" type="VARCHAR(8)"></column>
+			<column name="PROVINCE" type="VARCHAR(8)"></column>
+			<column name="PINCODEID" type="bigint"></column>
+			<column name="EXPLMTONAMT" type="decimal(18,0)"></column>
+			<column name="EXPLMTONNOOFUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPAMT" type="decimal(18,0)"></column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="60" author="rohith.s">
+		<addColumn tableName="ADTBUILDERCOMPANY">
+			<column name="CUSTID" type="BIGINT"></column>
+			<column name="APFTYPE" type="VARCHAR(50)"></column>
+			<column name="PEDEVID" type="VARCHAR(100)"></column>
+			<column name="ENTITYTYPE" type="VARCHAR(100)"></column>
+			<column name="EMAILID" type="VARCHAR(100)"></column>
+			<column name="CITYTYPE" type="VARCHAR(50)"></column>
+			<column name="ADDRESS1" type="VARCHAR(255)"></column>
+			<column name="ADDRESS2" type="VARCHAR(255)"></column>
+			<column name="ADDRESS3" type="VARCHAR(255)"></column>
+			<column name="CITY" type="VARCHAR(100)"></column>
+			<column name="CODE" type="VARCHAR(10)"></column>
+			<column name="DEVAVAILABLITY" type="bigint"></column>
+			<column name="MAGNITUDE" type="decimal(16,2)"></column>
+			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="APPROVED" type="VARCHAR(20)"></column>
+			<column name="REMARKS" type="VARCHAR(500)"></column>
+			<column name="PANDETAILS" type="VARCHAR(10)"></column>
+			<column name="BENFNAME" type="VARCHAR(150)"></column>
+			<column name="ACCOUNTNO" type="VARCHAR(20)"></column>
+			<column name="BANKBRANCHID" type="BIGINT"></column>
+			<column name="LIMITONAMT" type="decimal(16,2)"></column>
+			<column name="LIMITONUNITS" type="decimal(16,2)"></column>
+			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
+			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
+			<column name="DATEOFINCOP" type="datetime"></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
+			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
+			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
+			<column name="NOOFPROJCONS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+		</addColumn>
+	</changeSet>
+	
 	
 </databaseChangeLog>
