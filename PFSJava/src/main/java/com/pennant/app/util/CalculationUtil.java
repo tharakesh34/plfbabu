@@ -448,7 +448,7 @@ public class CalculationUtil implements Serializable {
 					isFebSetReq = false;
 				}
 			} else {
-				if (dayOfStart == 28 && dayOfEnd == 28) {
+				if ((dayOfStart == 28 || dayOfStart == 29) && dayOfEnd == 28) {
 					isFebSetReq = false;
 				}
 			}
@@ -467,7 +467,6 @@ public class CalculationUtil implements Serializable {
 		}
 
 		if (isFebSetReq && monthOfEnd == Calendar.FEBRUARY) {
-			dayOfEnd = 30;
 
 			if (DateUtility.isLeapYear(yearOfEnd)) {
 				if (dayOfEnd > 28) {
