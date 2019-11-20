@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
@@ -22,35 +22,39 @@
 	<property name="call.date" value="sysdate" dbms="oracle" />
 	<property name="call.date" value="now()" dbms="postgresql" />
 
-	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true"
+		dbms="postgresql">
 		<sql>
 			Set search_path = plf,public,pg_catalog;
 		</sql>
 	</changeSet>
+
 	<changeSet id="1" author="rohith.s">
 		<addColumn tableName="BuilderGroup_temp">
 			<column name="PEDEVELOPERID" type="VARCHAR(100)"></column>
 			<column name="CITY" type="VARCHAR(8)"></column>
 			<column name="PROVINCE" type="VARCHAR(8)"></column>
-			<column name="PINCODEID" type="NUMBER(19)"></column>
-			<column name="EXPLMTONAMT" type="NUMBER(18)"></column>
-			<column name="EXPLMTONNOOFUNITS" type="NUMBER(18)"></column>
-			<column name="CURREXPUNITS" type="NUMBER(18)"></column>
-			<column name="CURREXPAMT" type="NUMBER(18)"></column>
+			<column name="PINCODEID" type="bigint"></column>
+			<column name="EXPLMTONAMT" type="decimal(18,0)"></column>
+			<column name="EXPLMTONNOOFUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPAMT" type="decimal(18,0)"></column>
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="2" author="rohith.s">
 		<addColumn tableName="BuilderGroup">
 			<column name="PEDEVELOPERID" type="VARCHAR(100)"></column>
 			<column name="CITY" type="VARCHAR(8)"></column>
 			<column name="PROVINCE" type="VARCHAR(8)"></column>
-			<column name="PINCODEID" type="NUMBER(19)"></column>
-			<column name="EXPLMTONAMT" type="NUMBER(18)"></column>
-			<column name="EXPLMTONNOOFUNITS" type="NUMBER(18)"></column>
-			<column name="CURREXPUNITS" type="NUMBER(18)"></column>
-			<column name="CURREXPAMT" type="NUMBER(18)"></column>
+			<column name="PINCODEID" type="bigint"></column>
+			<column name="EXPLMTONAMT" type="decimal(18,0)"></column>
+			<column name="EXPLMTONNOOFUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPAMT" type="decimal(18,0)"></column>
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="3" author="rohith.s">
 		<addColumn tableName="BUILDERCOMPANY_temp">
 			<column name="CUSTID" type="BIGINT"></column>
@@ -64,31 +68,32 @@
 			<column name="ADDRESS3" type="VARCHAR(255)"></column>
 			<column name="CITY" type="VARCHAR(100)"></column>
 			<column name="CODE" type="VARCHAR(10)"></column>
-			<column name="DEVAVAILABLITY" type="NUMBER(19)"></column>
-			<column name="MAGNITUDE" type="NUMBER(16,2)"></column>
-			<column name="ABSAVAILABLITY" type="NUMBER(16,2)"></column>
-			<column name="TOTALPROJ" type="NUMBER(3)"></column>
+			<column name="DEVAVAILABLITY" type="bigint"></column>
+			<column name="MAGNITUDE" type="decimal(16,2)"></column>
+			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
 			<column name="BENFNAME" type="VARCHAR(150)"></column>
 			<column name="ACCOUNTNO" type="VARCHAR(20)"></column>
 			<column name="BANKBRANCHID" type="bigint"></column>
-			<column name="LIMITONAMT" type="NUMBER(16,2)"></column>
-			<column name="LIMITONUNITS" type="NUMBER(16,2)"></column>
-			<column name="CURRENTEXPUNI" type="NUMBER(18)"></column>
-			<column name="CURRENTEXPAMT" type="NUMBER(16,2)"></column>
+			<column name="LIMITONAMT" type="decimal(16,2)"></column>
+			<column name="LIMITONUNITS" type="decimal(16,2)"></column>
+			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
+			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="NUMBER(3)"></column>
-			<column name="ONGOINGPROJ" type="NUMBER(3)"></column>
-			<column name="EXPINBUSINESS" type="NUMBER(3)"></column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="SMALLINT"></column>
-			<column name="NOOFPROJCONS" type="NUMBER(5)"></column>
-			<column name="NOOFPROJ" type="NUMBER(5)"></column>
-			<column name="MAGINTUDEINLACS" type="NUMBER(8,2)"></column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJCONS" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
+
 	<changeSet id="4" author="rohith.s">
 		<addColumn tableName="BUILDERCOMPANY">
 			<column name="CUSTID" type="BIGINT"></column>
@@ -102,29 +107,29 @@
 			<column name="ADDRESS3" type="VARCHAR(255)"></column>
 			<column name="CITY" type="VARCHAR(100)"></column>
 			<column name="CODE" type="VARCHAR(10)"></column>
-			<column name="DEVAVAILABLITY" type="NUMBER(19)"></column>
-			<column name="MAGNITUDE" type="NUMBER(16,2)"></column>
-			<column name="ABSAVAILABLITY" type="NUMBER(16,2)"></column>
-			<column name="TOTALPROJ" type="NUMBER(3)"></column>
+			<column name="DEVAVAILABLITY" type="bigint"></column>
+			<column name="MAGNITUDE" type="decimal(16,2)"></column>
+			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
 			<column name="APPROVED" type="VARCHAR(20)"></column>
 			<column name="REMARKS" type="VARCHAR(500)"></column>
 			<column name="PANDETAILS" type="VARCHAR(10)"></column>
 			<column name="BENFNAME" type="VARCHAR(150)"></column>
 			<column name="ACCOUNTNO" type="VARCHAR(20)"></column>
 			<column name="BANKBRANCHID" type="BIGINT"></column>
-			<column name="LIMITONAMT" type="NUMBER(16,2)"></column>
-			<column name="LIMITONUNITS" type="NUMBER(16,2)"></column>
-			<column name="CURRENTEXPUNI" type="NUMBER(18)"></column>
-			<column name="CURRENTEXPAMT" type="NUMBER(16,2)"></column>
+			<column name="LIMITONAMT" type="decimal(16,2)"></column>
+			<column name="LIMITONUNITS" type="decimal(16,2)"></column>
+			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
+			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
 			<column name="DATEOFINCOP" type="datetime"></column>
-			<column name="ASSHLPLAYERS" type="NUMBER(3)"></column>
-			<column name="ONGOINGPROJ" type="NUMBER(3)"></column>
-			<column name="EXPINBUSINESS" type="NUMBER(3)"></column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
 			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
-			<column name="ACTIVE" type="SMALLINT"></column>
-			<column name="NOOFPROJCONS" type="NUMBER(5)"></column>
-			<column name="NOOFPROJ" type="NUMBER(5)"></column>
-			<column name="MAGINTUDEINLACS" type="NUMBER(8,2)"></column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJCONS" type="decimal(5)"></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
 		</addColumn>
 	</changeSet>
 
@@ -269,23 +274,13 @@
 			LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
 			LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 			left JOIN Customers T10 ON T1.CUSTID =  T10.CUSTID
-			WHERE
-			  NOT EXISTS
-			  (
-			    SELECT
-			      1
-			    FROM
-			      BUILDERCOMPANY_TEMP
-			    WHERE
-			      ID = T1.ID
-			  )
+			WHERE  NOT EXISTS (SELECT 1 FROM  BUILDERCOMPANY_TEMP  WHERE ID = T1.ID)
 		</createView>
-
-
 	</changeSet>
 
 	<changeSet id="6" author="rohith.s">
-		<createView viewName="BUILDERCOMPANY_AVIEW" replaceIfExists="true">
+		<createView viewName="BUILDERCOMPANY_AVIEW"
+			replaceIfExists="true">
 			SELECT
 		  T1.ID,
 		  T1.NAME,
@@ -358,11 +353,11 @@
 		LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
 		LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
 		</createView>
-
 	</changeSet>
 
 	<changeSet id="7" author="rohith.s">
-		<createView viewName="BUILDERCOMPANY_TVIEW" replaceIfExists="true">
+		<createView viewName="BUILDERCOMPANY_TVIEW"
+			replaceIfExists="true">
 			SELECT
 				  T1.ID,
 				  T1.NAME,
@@ -464,17 +459,10 @@
 				   T1.NextTaskId,
 				   T1.RecordType,
 				   T1.WorkflowId 
-				FROM
-				   BuilderGroup T1 
-				   INNER JOIN
-				      RMTProvinceVsCity T3 
-				      on T1.city = T3.PCCITY 
-				   left join
-				      RMTCountryVsProvince T4 
-				      on T1.province = T4.CPPROVINCE 
-				   left join
-				      PinCodes T5 
-				      on T1.pincodeid = T5.PINCODEID
+				FROM  BuilderGroup T1 
+				INNER JOIN RMTProvinceVsCity T3 on T1.city = T3.PCCITY 
+				left join RMTCountryVsProvince T4 on T1.province = T4.CPPROVINCE 
+				left join PinCodes T5 on T1.pincodeid = T5.PINCODEID
 		</createView>
 	</changeSet>
 
@@ -506,17 +494,10 @@
 				   T1.NextTaskId,
 				   T1.RecordType,
 				   T1.WorkflowId 
-				FROM
-				   BuilderGroup_Temp T1 
-				   INNER JOIN
-				      RMTProvinceVsCity T3 
-				      on T1.city = T3.PCCITY 
-				   left join
-				      RMTCountryVsProvince T4 
-				      on T1.province = T4.CPPROVINCE 
-				   left join
-				      PinCodes T5 
-				      on T1.pincodeid = T5.PINCODEID 
+				FROM BuilderGroup_Temp T1 
+				INNER JOIN RMTProvinceVsCity T3 on T1.city = T3.PCCITY 
+				LEFT JOIN RMTCountryVsProvince T4  on T1.province = T4.CPPROVINCE 
+				LEFT JOIN PinCodes T5  on T1.pincodeid = T5.PINCODEID 
 				   UNION ALL
 				   SELECT
 				      T1.Id,
@@ -544,34 +525,18 @@
 				      T1.NextTaskId,
 				      T1.RecordType,
 				      T1.WorkflowId 
-				   FROM
-				      BuilderGroup T1 
-				      INNER JOIN
-				         RMTProvinceVsCity T3 
-				         on T1.city = T3.PCCITY 
-				      left join
-				         RMTCountryVsProvince T4 
-				         on T1.province = T4.CPPROVINCE 
-				      left join
-				         PinCodes T5 
-				         on T1.pincodeid = T5.PINCODEID 
-				   WHERE
-				      NOT EXISTS 
-				      (
-				         SELECT
-				            1 
-				         FROM
-				            BuilderGroup_TEMP 
-				         WHERE
-				            Id = T1.Id
-				      )
+				   FROM BuilderGroup T1 
+				   INNER JOIN  RMTProvinceVsCity T3  on T1.city = T3.PCCITY 
+				   left join  RMTCountryVsProvince T4 on T1.province = T4.CPPROVINCE 
+				   left join  PinCodes T5  on T1.pincodeid = T5.PINCODEID 
+				   WHERE  NOT EXISTS  ( SELECT 1  FROM   BuilderGroup_TEMP   WHERE   Id = T1.Id )
 		</createView>
 	</changeSet>
 
-
 	<changeSet id="10" author="rohith.s">
+		<comment>new rights added for builder group</comment>
 		<sql>
-			<comment>new rights added for builder group</comment>
+			<![CDATA[
 			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			Update SeqSecGroupRights set SeqNo = (Select
 			max(GrpRightId) from SecGroupRights);
@@ -622,12 +587,14 @@
 			Update SeqSecGroupRights set SeqNo = (Select
 			max(GrpRightId) from
 			SecGroupRights);
+			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="11" author="rohith.s">
+		<comment>new rights added for builder company</comment>
 		<sql>
-			<comment>new rights added for builder company</comment>
+			<![CDATA[
 			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			Update SeqSecGroupRights set SeqNo = (Select
 			max(GrpRightId) from SecGroupRights);
@@ -933,11 +900,14 @@
 			Update SeqSecGroupRights set SeqNo =
 			(Select
 			max(GrpRightId) from SecGroupRights);
+			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="12" author="rohith.s">
+		<comment>adding right for city</comment>
 		<sql>
-			<comment>adding right for city</comment>
+			<![CDATA[
 			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
 			Update SeqSecGroupRights set SeqNo = (Select
 			max(GrpRightId) from SecGroupRights);
@@ -949,10 +919,14 @@
 			Update SeqSecRights set SeqNo = (Select max(RightId) from
 			SecRights);
 			Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="13" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 		<sql>
+		<![CDATA[
 			<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
 			Update buildercompany set custid=0 where custid is null;
 			Update buildercompany set bankbranchid=0 where bankbranchid is null;
@@ -966,38 +940,48 @@
 			Update buildercompany set expInBusiness = 0 where expInBusiness is null;
 			Update buildercompany set magintudeInLacs = 0 where magintudeInLacs is null;
 			Update buildercompany set noOfProjCons = 0 where noOfProjCons is null;	
+			]]>
 		</sql>
 	</changeSet>
+	
 	<changeSet id="14" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
 		<sql>
-			<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
+	<![CDATA[
 			Update buildergroup set city = 1 where city is null;
 			Update buildergroup set pincodeid = 0 where pincodeid is null;
-       </sql>
-	</changeSet> 
-	<changeSet id="15" author="rohith.s">
-	<sql>
-<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
-			Update buildercompany_temp set custid=0 where custid is null;
-			Update buildercompany_temp set bankbranchid=0 where bankbranchid is null;
-			Update buildercompany_temp set active=1 where active is null;
-			Update buildercompany_temp set devavailablity = 0 where devavailablity is null;
-			Update buildercompany_temp set totalProj = 0 where totalProj is null;
-			Update buildercompany_temp set currentExpUni = 0 where currentExpUni is null;
-			Update buildercompany_temp set noOfProj = 0 where noOfProj is null;
-			Update buildercompany_temp set assHLPlayers = 0 where assHLPlayers is null;
-			Update buildercompany_temp set onGoingProj = 0 where onGoingProj is null;
-			Update buildercompany_temp set expInBusiness = 0 where expInBusiness is null;
-			Update buildercompany_temp set magintudeInLacs = 0 where magintudeInLacs is null;
-			Update buildercompany_temp set noOfProjCons = 0 where noOfProjCons is null;	
-	</sql>
+			]]>
+		</sql>
 	</changeSet>
+	
+	<changeSet id="15" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
+		<sql>
+			<![CDATA[ 
+					Update buildercompany_temp set custid=0 where custid is null;
+					Update buildercompany_temp set bankbranchid=0 where bankbranchid is null;
+					Update buildercompany_temp set active=1 where active is null;
+					Update buildercompany_temp set devavailablity = 0 where devavailablity is null;
+					Update buildercompany_temp set totalProj = 0 where totalProj is null;
+					Update buildercompany_temp set currentExpUni = 0 where currentExpUni is null;
+					Update buildercompany_temp set noOfProj = 0 where noOfProj is null;
+					Update buildercompany_temp set assHLPlayers = 0 where assHLPlayers is null;
+					Update buildercompany_temp set onGoingProj = 0 where onGoingProj is null;
+					Update buildercompany_temp set expInBusiness = 0 where expInBusiness is null;
+					Update buildercompany_temp set magintudeInLacs = 0 where magintudeInLacs is null;
+					Update buildercompany_temp set noOfProjCons = 0 where noOfProjCons is null;	
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="16" author="rohith.s">
-	<sql>
-	<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
+		<sql>
+	    <![CDATA[ 
 			Update buildergroup_temp set city = 1 where city is null;
 			Update buildergroup_temp set pincodeid = 0 where pincodeid is null;
-	</sql>
+			]]>
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>
