@@ -123,9 +123,9 @@ public class CustomerEMailDAOImpl extends BasicDao<CustomerEMail> implements Cus
 		StringBuilder sql = new StringBuilder();
 		sql.append(" SELECT CustID, CustEMail, CustEMailPriority, CustEMailTypeCode, DomainCheck");
 		if (type.contains("View")) {
-			sql.append(", lovDescCustEMailTypeCode,");
+			sql.append(", lovDescCustEMailTypeCode");
 		}
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId ");
 		sql.append(" FROM  CustomerEMails");
 		sql.append(StringUtils.trimToEmpty(type));
