@@ -940,6 +940,12 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			rud.setChequeNo(strValue);
 		}
 
+		//Check no validation in case payment type cheque
+		if (StringUtils.equals(rud.getReceiptMode(), RepayConstants.RECEIPTMODE_CHEQUE)
+				&& StringUtils.isBlank(strValue)) {
+			setErrorToRUD(rud, "RU0040", "[CHEQUEACNO] is Mandatary");
+		}
+
 		if (strValue.length() > 50) {
 			setErrorToRUD(rud, "RU0040", "[CHEQUEACNO] with length more than 50");
 		}
