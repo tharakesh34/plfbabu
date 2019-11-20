@@ -19217,9 +19217,10 @@ UNION ALL
 			left join RMTCOUNTRYVSPROVINCE T14 on T14.CPPROVINCE=T10.STATECODE
 			inner join RMTPROVINCEVSCITY T15 on T15.PCCITY=T10.CITYCODE
 		</createView>
+	</changeSet>
 		
 	<changeSet id="377" author="keerthi.p">
-		<comment>New columns added for CustomerEMails</comment>
+		<comment> New columns added for CustomerEMails </comment>
 		<addColumn tableName="CustomerEMails">
 			<column name="DomainCheck" type="varchar(50)" />
 		</addColumn>
