@@ -19301,4 +19301,613 @@ UNION ALL
 		</createView>
 	</changeSet>
 
+	<changeSet id="381" author="rohith.s">
+		<addColumn tableName="BuilderGroup_temp">
+			<column name="PEDEVELOPERID" type="VARCHAR(100)"></column>
+			<column name="CITY" type="VARCHAR(8)"></column>
+			<column name="PROVINCE" type="VARCHAR(8)"></column>
+			<column name="PINCODEID" type="bigint"></column>
+			<column name="EXPLMTONAMT" type="decimal(18,0)"></column>
+			<column name="EXPLMTONNOOFUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPAMT" type="decimal(18,0)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="382" author="rohith.s">
+		<addColumn tableName="BuilderGroup">
+			<column name="PEDEVELOPERID" type="VARCHAR(100)"></column>
+			<column name="CITY" type="VARCHAR(8)"></column>
+			<column name="PROVINCE" type="VARCHAR(8)"></column>
+			<column name="PINCODEID" type="bigint"></column>
+			<column name="EXPLMTONAMT" type="decimal(18,0)"></column>
+			<column name="EXPLMTONNOOFUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPUNITS" type="decimal(18,0)"></column>
+			<column name="CURREXPAMT" type="decimal(18,0)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="383" author="rohith.s">
+		<addColumn tableName="BUILDERCOMPANY_temp">
+			<column name="CUSTID" type="BIGINT"></column>
+			<column name="APFTYPE" type="VARCHAR(50)"></column>
+			<column name="PEDEVID" type="VARCHAR(100)"></column>
+			<column name="ENTITYTYPE" type="VARCHAR(100)"></column>
+			<column name="EMAILID" type="VARCHAR(100)"></column>
+			<column name="CITYTYPE" type="VARCHAR(50)"></column>
+			<column name="ADDRESS1" type="VARCHAR(255)"></column>
+			<column name="ADDRESS2" type="VARCHAR(255)"></column>
+			<column name="ADDRESS3" type="VARCHAR(255)"></column>
+			<column name="CITY" type="VARCHAR(100)"></column>
+			<column name="CODE" type="VARCHAR(10)"></column>
+			<column name="DEVAVAILABLITY" type="bigint"></column>
+			<column name="MAGNITUDE" type="decimal(16,2)"></column>
+			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="APPROVED" type="VARCHAR(20)"></column>
+			<column name="REMARKS" type="VARCHAR(500)"></column>
+			<column name="PANDETAILS" type="VARCHAR(10)"></column>
+			<column name="BENFNAME" type="VARCHAR(150)"></column>
+			<column name="ACCOUNTNO" type="VARCHAR(20)"></column>
+			<column name="BANKBRANCHID" type="bigint"></column>
+			<column name="LIMITONAMT" type="decimal(16,2)"></column>
+			<column name="LIMITONUNITS" type="decimal(16,2)"></column>
+			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
+			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
+			<column name="DATEOFINCOP" type="datetime"></column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
+			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJCONS" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="384" author="rohith.s">
+		<addColumn tableName="BUILDERCOMPANY">
+			<column name="CUSTID" type="BIGINT"></column>
+			<column name="APFTYPE" type="VARCHAR(50)"></column>
+			<column name="PEDEVID" type="VARCHAR(100)"></column>
+			<column name="ENTITYTYPE" type="VARCHAR(100)"></column>
+			<column name="EMAILID" type="VARCHAR(100)"></column>
+			<column name="CITYTYPE" type="VARCHAR(50)"></column>
+			<column name="ADDRESS1" type="VARCHAR(255)"></column>
+			<column name="ADDRESS2" type="VARCHAR(255)"></column>
+			<column name="ADDRESS3" type="VARCHAR(255)"></column>
+			<column name="CITY" type="VARCHAR(100)"></column>
+			<column name="CODE" type="VARCHAR(10)"></column>
+			<column name="DEVAVAILABLITY" type="bigint"></column>
+			<column name="MAGNITUDE" type="decimal(16,2)"></column>
+			<column name="ABSAVAILABLITY" type="decimal(16,2)"></column>
+			<column name="TOTALPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="APPROVED" type="VARCHAR(20)"></column>
+			<column name="REMARKS" type="VARCHAR(500)"></column>
+			<column name="PANDETAILS" type="VARCHAR(10)"></column>
+			<column name="BENFNAME" type="VARCHAR(150)"></column>
+			<column name="ACCOUNTNO" type="VARCHAR(20)"></column>
+			<column name="BANKBRANCHID" type="BIGINT"></column>
+			<column name="LIMITONAMT" type="decimal(16,2)"></column>
+			<column name="LIMITONUNITS" type="decimal(16,2)"></column>
+			<column name="CURRENTEXPUNI" type="decimal(18,0)"></column>
+			<column name="CURRENTEXPAMT" type="decimal(16,2)"></column>
+			<column name="DATEOFINCOP" type="datetime"></column>
+			<column name="ASSHLPLAYERS" type="smallint"><constraints nullable="true" /></column>
+			<column name="ONGOINGPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="EXPINBUSINESS" type="smallint"><constraints nullable="true" /></column>
+			<column name="RECOMMENDATION" type="VARCHAR(50)"></column>
+			<column name="ACTIVE" type="smallint"><constraints nullable="true" /></column>
+			<column name="NOOFPROJCONS" type="decimal(5)"></column>
+			<column name="NOOFPROJ" type="smallint"><constraints nullable="true" /></column>
+			<column name="MAGINTUDEINLACS" type="decimal(8,2)"></column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="385" author="rohith.s">
+		<createView viewName="BUILDERCOMPANY_VIEW" replaceIfExists="true">
+				SELECT
+			  T1.ID,
+			  T1.NAME,
+			  T1.SEGMENTATION,
+			  T1.GROUPID ,
+			  T2.VALUEDESC SEGMENTATIONNAME,
+			  T2.FIELDCODE ,
+			  T3.NAME GROUPIDNAME,
+			  T1.APFTYPE,
+			  T1.PEDEVID,
+			  T1.ENTITYTYPE,
+			  T1.EMAILID,
+			  T1.CITYTYPE,
+			  T1.ADDRESS1,
+			  T1.ADDRESS2,
+			  T1.ADDRESS3,
+			  T1.CITY,
+			  T1.CODE,
+			  T1.DEVAVAILABLITY,
+			  T1.MAGNITUDE,
+			  T1.ABSAVAILABLITY,
+			  T1.TOTALPROJ,
+			  T1.APPROVED,
+			  T1.REMARKS,
+			  T1.PANDETAILS,
+			  T1.BENFNAME,
+			  T1.ACCOUNTNO,
+			  T7.BANKCODE,
+			  T9.BANKNAME,
+			  T1.BANKBRANCHID,
+			  T7.IFSC,
+			  T1.LIMITONAMT,
+			  T1.LIMITONUNITS,
+			  T1.CURRENTEXPUNI,
+			  T1.CURRENTEXPAMT,
+			  T1.DATEOFINCOP,
+			  T1.NOOFPROJ,
+			  T1.ASSHLPLAYERS,
+			  T1.ONGOINGPROJ,
+			  T1.EXPINBUSINESS,
+			  T1.RECOMMENDATION,
+			  T1.MAGINTUDEINLACS,
+			  T1.NOOFPROJCONS,
+			  T1.VERSION ,
+			  T1.LASTMNTBY,
+			  T1.LASTMNTON,
+			  T1.RECORDSTATUS,
+			  T1.ROLECODE,
+			  T1.NEXTROLECODE,
+			  T1.TASKID,
+			  T1.NEXTTASKID,
+			  T1.RECORDTYPE,
+			  T1.WORKFLOWID,
+			  T5.PCCITYNAME CITYNAME,
+			  T6.PINCODE AS CODENAME,
+			  T6.AREANAME,
+			  T7.BRANCHDESC BRANDESC,
+			  T8.CUSTTYPECTG ENTYDESC,
+        T1.ACTIVE,
+			T10.CustShrtName As LovDescCIFName , T10.CustCIF custCIF,T1.CUSTID
+			FROM BUILDERCOMPANY_TEMP T1
+			INNER JOIN RMTLOVFIELDDETAIL T2 ON T1.SEGMENTATION = T2.FIELDCODEVALUE AND T2.FIELDCODE  ='SEGMENT'
+			LEFT JOIN BUILDERGROUP T3 ON T1.GROUPID = T3.ID
+			LEFT JOIN RMTPROVINCEVSCITY T5 ON T1.CITY= T5.PCCITY
+			LEFT JOIN PINCODES T6 ON T1.CODE=T6.PINCODE
+			LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
+			LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
+			LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
+			left JOIN Customers T10 ON T1.CUSTID =  T10.CUSTID
+			UNION ALL
+			SELECT
+			  T1.ID,
+			  T1.NAME,
+			  T1.SEGMENTATION,
+			  T1.GROUPID ,
+			  T2.VALUEDESC SEGMENTATIONNAME,
+			  T2.FIELDCODE ,
+			  T3.NAME GROUPIDNAME,
+			  T1.APFTYPE,
+			  T1.PEDEVID,
+			  T1.ENTITYTYPE,
+			  T1.EMAILID,
+			  T1.CITYTYPE,
+			  T1.ADDRESS1,
+			  T1.ADDRESS2,
+			  T1.ADDRESS3,
+			  T1.CITY,
+			  T1.CODE,
+			  T1.DEVAVAILABLITY,
+			  T1.MAGNITUDE,
+			  T1.ABSAVAILABLITY,
+			  T1.TOTALPROJ,
+			  T1.APPROVED,
+			  T1.REMARKS,
+			  T1.PANDETAILS,
+			  T1.BENFNAME,
+			  T1.ACCOUNTNO,
+			  T7.BANKCODE,
+			  T9.BANKNAME,
+			  T1.BANKBRANCHID,
+			  T7.IFSC,
+			  T1.LIMITONAMT,
+			  T1.LIMITONUNITS,
+			  T1.CURRENTEXPUNI,
+			  T1.CURRENTEXPAMT,
+			  T1.DATEOFINCOP,
+			  T1.NOOFPROJ,
+			  T1.ASSHLPLAYERS,
+			  T1.ONGOINGPROJ,
+			  T1.EXPINBUSINESS,
+			  T1.RECOMMENDATION,
+			  T1.MAGINTUDEINLACS,
+			  T1.NOOFPROJCONS,
+			  T1.VERSION ,
+			  T1.LASTMNTBY,
+			  T1.LASTMNTON,
+			  T1.RECORDSTATUS,
+			  T1.ROLECODE,
+			  T1.NEXTROLECODE,
+			  T1.TASKID,
+			  T1.NEXTTASKID,
+			  T1.RECORDTYPE,
+			  T1.WORKFLOWID,
+			  T5.PCCITYNAME CITYNAME,
+			  T6.PINCODE AS CODENAME,
+			  T6.AREANAME,
+			  T7.BRANCHDESC BRANDESC,
+			  T8.CUSTTYPECTG ENTYDESC,
+        T1.ACTIVE,
+			T10.CustShrtName As LovDescCIFName ,T10.CustCIF custCIF,T1.CUSTID
+			FROM BUILDERCOMPANY T1
+			INNER JOIN RMTLOVFIELDDETAIL T2 ON T1.SEGMENTATION = T2.FIELDCODEVALUE AND T2.FIELDCODE  ='SEGMENT'
+			LEFT JOIN BUILDERGROUP T3 ON T1.GROUPID = T3.ID
+			LEFT JOIN RMTPROVINCEVSCITY T5 ON T1.CITY= T5.PCCITY
+			LEFT JOIN PINCODES T6 ON T1.CODE=T6.PINCODE
+			LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
+			LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
+			LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
+			left JOIN Customers T10 ON T1.CUSTID =  T10.CUSTID
+			WHERE  NOT EXISTS (SELECT 1 FROM  BUILDERCOMPANY_TEMP  WHERE ID = T1.ID)
+		</createView>
+	</changeSet>
+
+	<changeSet id="386" author="rohith.s">
+		<createView viewName="BUILDERCOMPANY_AVIEW"
+			replaceIfExists="true">
+			SELECT
+		  T1.ID,
+		  T1.NAME,
+		  T1.SEGMENTATION,
+		  T1.GROUPID ,
+		  T2.VALUEDESC SEGMENTATIONNAME,
+		  T2.FIELDCODE ,
+		  T3.NAME GROUPIDNAME,
+		  T1.APFTYPE,
+		  T1.PEDEVID,
+		  T1.ENTITYTYPE,
+		  T1.EMAILID,
+		  T1.CITYTYPE,
+		  T1.ADDRESS1,
+		  T1.ADDRESS2,
+		  T1.ADDRESS3,
+		  T1.CITY,
+		  T1.CODE,
+		  T1.DEVAVAILABLITY,
+		  T1.MAGNITUDE,
+		  T1.ABSAVAILABLITY,
+		  T1.TOTALPROJ,
+		  T1.APPROVED,
+		  T1.REMARKS,
+		  T1.PANDETAILS,
+		  T1.BENFNAME,
+		  T1.ACCOUNTNO,
+		  T7.BANKCODE,
+		  T9.BANKNAME,
+		  T1.BANKBRANCHID,
+		  T7.IFSC,
+		  T1.LIMITONAMT,
+		  T1.LIMITONUNITS,
+		  T1.CURRENTEXPUNI,
+		  T1.CURRENTEXPAMT,
+		  T1.DATEOFINCOP,
+		  T1.NOOFPROJ,
+		  T1.ASSHLPLAYERS,
+		  T1.ONGOINGPROJ,
+		  T1.EXPINBUSINESS,
+		  T1.RECOMMENDATION,
+		  T1.MAGINTUDEINLACS,
+		  T1.NOOFPROJCONS,
+		  T1.VERSION ,
+		  T1.LASTMNTBY,
+		  T1.LASTMNTON,
+		  T1.RECORDSTATUS,
+		  T1.ROLECODE,
+		  T1.NEXTROLECODE,
+		  T1.TASKID,
+		  T1.NEXTTASKID,
+		  T1.RECORDTYPE,
+		  T1.WORKFLOWID,
+		  T4.CUSTSHRTNAME LOVDESCCIFNAME ,
+		  T4.CUSTCIF CUSTCIF,
+		  T1.CUSTID,
+		  T5.PCCITYNAME CITYNAME,
+		  T6.PINCODE CODENAME,
+		  T6.AREANAME,
+		  T7.BRANCHDESC BRANDESC,
+		  T8.CUSTTYPECTG ENTYDESC,
+      	  T1.ACTIVE
+		FROM BUILDERCOMPANY T1
+		INNER JOIN RMTLOVFIELDDETAIL T2 ON T1.SEGMENTATION = T2.FIELDCODEVALUE AND T2.FIELDCODE  ='SEGMENT'
+		LEFT JOIN BUILDERGROUP T3 ON T1.GROUPID = T3.ID
+		LEFT JOIN CUSTOMERS T4 ON T1.CUSTID = T4.CUSTID
+		LEFT JOIN RMTPROVINCEVSCITY T5 ON T1.CITY= T5.PCCITY
+		LEFT JOIN PINCODES T6 ON T1.CODE=T6.PINCODE
+		LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
+		LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
+		LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
+		</createView>
+	</changeSet>
+
+	<changeSet id="387" author="rohith.s">
+		<createView viewName="BUILDERCOMPANY_TVIEW"
+			replaceIfExists="true">
+			SELECT
+				  T1.ID,
+				  T1.NAME,
+				  T1.SEGMENTATION,
+				  T1.GROUPID ,
+				  T2.VALUEDESC SEGMENTATIONNAME,
+				  T2.FIELDCODE ,
+				  T3.NAME GROUPIDNAME,
+				  T1.APFTYPE,
+				  T1.PEDEVID,
+				  T1.ENTITYTYPE,
+				  T1.EMAILID,
+				  T1.CITYTYPE,
+				  T1.ADDRESS1,
+				  T1.ADDRESS2,
+				  T1.ADDRESS3,
+				  T1.CITY,
+				  T1.CODE,
+				  T1.DEVAVAILABLITY,
+				  T1.MAGNITUDE,
+				  T1.ABSAVAILABLITY,
+				  T1.TOTALPROJ,
+				  T1.APPROVED,
+				  T1.REMARKS,
+				  T1.PANDETAILS,
+				  T1.BENFNAME,
+				  T1.ACCOUNTNO,
+				  T7.BANKCODE,
+				  T9.BANKNAME,
+				  T1.BANKBRANCHID,
+				  T7.IFSC,
+				  T1.LIMITONAMT,
+				  T1.LIMITONUNITS,
+				  T1.CURRENTEXPUNI,
+				  T1.CURRENTEXPAMT,
+				  T1.DATEOFINCOP,
+				  T1.NOOFPROJ,
+				  T1.ASSHLPLAYERS,
+				  T1.ONGOINGPROJ,
+				  T1.EXPINBUSINESS,
+				  T1.RECOMMENDATION,
+				  T1.MAGINTUDEINLACS,
+				  T1.NOOFPROJCONS,
+				  T1.VERSION ,
+				  T1.LASTMNTBY,
+				  T1.LASTMNTON,
+				  T1.RECORDSTATUS,
+				  T1.ROLECODE,
+				  T1.NEXTROLECODE,
+				  T1.TASKID,
+				  T1.NEXTTASKID,
+				  T1.RECORDTYPE,
+				  T1.WORKFLOWID,
+				  T4.CUSTSHRTNAME LOVDESCCIFNAME ,
+				  T4.CUSTCIF,
+				  T4.CUSTID,
+				  T5.PCCITYNAME CITYNAME,
+				  T6.PINCODE AS CODENAME,
+				  T6.AREANAME,
+				  T7.BRANCHDESC BRANDESC,
+				  T8.CUSTTYPECTG ENTYDESC
+				FROM BUILDERCOMPANY_TEMP T1
+				INNER JOIN RMTLOVFIELDDETAIL T2 ON T1.SEGMENTATION = T2.FIELDCODEVALUE AND T2.FIELDCODE  ='SEGMENT'
+				LEFT JOIN BUILDERGROUP T3 ON T1.GROUPID = T3.ID
+				LEFT JOIN CUSTOMERS T4 ON T1.CUSTID = T4.CUSTID
+				LEFT JOIN RMTPROVINCEVSCITY T5 ON T1.CITY= T5.PCCITY
+				LEFT JOIN PINCODES T6 ON T1.CODE=T6.PINCODE
+				LEFT JOIN BANKBRANCHES T7 ON T1.BANKBRANCHID = T7.BANKBRANCHID
+				LEFT JOIN RMTCUSTTYPES T8 ON T1.ENTITYTYPE=T8.CUSTTYPECODE
+				LEFT JOIN BMTBANKDETAIL T9 ON T9.BANKCODE = T7.BANKCODE
+		</createView>
+	</changeSet>
+
+	<changeSet id="388" author="rohith.s">
+		<createView viewName="BUILDERGROUP_AVIEW" replaceIfExists="true">
+			SELECT
+				   T1.Id,
+				   T1.Name,
+				   T1.Segmentation,
+				   T1.pedeveloperid,
+				   T1.city,
+				   T1.province,
+				   T1.pincodeid,
+				   T1.expLmtOnAmt,
+				   T1.expLmtOnNoOfUnits,
+				   T1.currExpUnits,
+				   T1.currExpAmt,
+				   T3.PCCITYNAME as cityname,
+				   T4.CPPROVINCENAME as provincename,
+				   T5.PINCODE as pobox,
+				   T5.AREANAME,
+				   T1.Version,
+				   T1.LastMntBy,
+				   T1.LastMntOn,
+				   T1.RecordStatus,
+				   T1.RoleCode,
+				   T1.NextRoleCode,
+				   T1.TaskId,
+				   T1.NextTaskId,
+				   T1.RecordType,
+				   T1.WorkflowId 
+				FROM  BuilderGroup T1 
+				INNER JOIN RMTProvinceVsCity T3 on T1.city = T3.PCCITY 
+				left join RMTCountryVsProvince T4 on T1.province = T4.CPPROVINCE 
+				left join PinCodes T5 on T1.pincodeid = T5.PINCODEID
+		</createView>
+	</changeSet>
+
+	<changeSet id="389" author="rohith.s">
+		<createView viewName="BUILDERGROUP_VIEW" replaceIfExists="true">
+			SELECT
+				   T1.Id,
+				   T1.Name,
+				   T1.Segmentation,
+				   T1.pedeveloperid,
+				   T1.city,
+				   T1.province,
+				   T1.pincodeid,
+				   T1.expLmtOnAmt,
+				   T1.expLmtOnNoOfUnits,
+				   T1.currExpUnits,
+				   T1.currExpAmt,
+				   T3.PCCITYNAME as cityname,
+				   T4.CPPROVINCENAME as provincename,
+				   T5.PINCODE as pobox,
+				   T5.AREANAME,
+				   T1.Version,
+				   T1.LastMntBy,
+				   T1.LastMntOn,
+				   T1.RecordStatus,
+				   T1.RoleCode,
+				   T1.NextRoleCode,
+				   T1.TaskId,
+				   T1.NextTaskId,
+				   T1.RecordType,
+				   T1.WorkflowId 
+				FROM BuilderGroup_Temp T1 
+				INNER JOIN RMTProvinceVsCity T3 on T1.city = T3.PCCITY 
+				LEFT JOIN RMTCountryVsProvince T4  on T1.province = T4.CPPROVINCE 
+				LEFT JOIN PinCodes T5  on T1.pincodeid = T5.PINCODEID 
+				   UNION ALL
+				   SELECT
+				      T1.Id,
+				      T1.Name,
+				      T1.Segmentation,
+				      T1.pedeveloperid,
+				      T1.city,
+				      T1.province,
+				      T1.pincodeid,
+				      T1.expLmtOnAmt,
+				      T1.expLmtOnNoOfUnits,
+				      T1.currExpUnits,
+				      T1.currExpAmt,
+				      T3.PCCITYNAME as cityname,
+				      T4.CPPROVINCENAME as provincename,
+				      T5.PINCODE as pobox,
+				      T5.AREANAME,
+				      T1.Version,
+				      T1.LastMntBy,
+				      T1.LastMntOn,
+				      T1.RecordStatus,
+				      T1.RoleCode,
+				      T1.NextRoleCode,
+				      T1.TaskId,
+				      T1.NextTaskId,
+				      T1.RecordType,
+				      T1.WorkflowId 
+				   FROM BuilderGroup T1 
+				   INNER JOIN  RMTProvinceVsCity T3  on T1.city = T3.PCCITY 
+				   left join  RMTCountryVsProvince T4 on T1.province = T4.CPPROVINCE 
+				   left join  PinCodes T5  on T1.pincodeid = T5.PINCODEID 
+				   WHERE  NOT EXISTS  ( SELECT 1  FROM   BuilderGroup_TEMP   WHERE   Id = T1.Id )
+		</createView>
+	</changeSet>
+
+	<changeSet id="390" author="rohith.s">
+		<comment>new rights added for builder group</comment>
+		<sql>
+			<![CDATA[
+			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights);
+			Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+
+			Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_PEDeveloperId','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_state','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_Pincode','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SECRIGHTS values((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_ExpLimitOnAmt','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_ExpLimitOnNoOfUnits','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_CurrentExpUnits','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_CurrentExpAmt','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0);
+			INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_PEDeveloperId'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_state'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_Pincode'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_ExpLimitOnAmt'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_ExpLimitOnNoOfUnits'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_CurrentExpUnits'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_CurrentExpAmt'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+			
+			Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights); ]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="391" author="rohith.s">
+		<comment>new rights added for builder company</comment>
+		<sql> 
+		<![CDATA[ 
+					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+					Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_custCIF','BuilderCompanyDialog',0,1000,CURRENT_TIMESTAMP,'',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_APFType','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_PEDevId','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_EntityType','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_EmailId','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_CityType','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Address1','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Address2','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Address3','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_City','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Code','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_DevAvailablity','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Magnitude','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_AbsAvailablity','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_TotalProj','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Approved','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Remarks','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_PanDetails','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_BenfName','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_AccountNo','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_BankName','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_BankBranch','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_LimitOnAmt','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_limitOnUnits','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_currentExpUni','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_currentExpAmt','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_DateOfInCop','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_NoOfProj','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_AssHLPlayers','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_OnGoingProj','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_ExpInBusiness','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_Recommendation','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_MagintudeInLacs','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0); Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),3,'BuilderCompanyDialog_NoOfProjCons','BuilderCompanyDialog',1,1000,CURRENT_TIMESTAMP,' ',null,null,null,null,null,0);
+					INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_custCIF'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_APFType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_PEDevId'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_EntityType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_EmailId'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_CityType'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Address1'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Address2'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Address3'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_City'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Code'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_DevAvailablity'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Magnitude'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_AbsAvailablity'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_TotalProj'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Approved'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Remarks'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_PanDetails'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_BenfName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_AccountNo'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_BankName'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_BankBranch'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_LimitOnAmt'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_limitOnUnits'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_currentExpUni'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_currentExpAmt'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_DateOfInCop'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_NoOfProj'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_AssHLPlayers'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_OnGoingProj'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_ExpInBusiness'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_Recommendation'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_MagintudeInLacs'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERCOMPANY_MAKER'), (Select RightID from SecRights where RightName = 'BuilderCompanyDialog_NoOfProjCons'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 );
+					Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); 
+					Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="392" author="rohith.s">
+		<comment>adding right for city</comment>
+		<sql> 
+		<![CDATA[ 
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); 
+				Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights);
+				Insert into SECRIGHTS values ((select max(RightId)+1 from SecRights),2,'BuilderGroupDialog_city','BuilderGroupDialog',1,1000,CURRENT_TIMESTAMP,'Approved',null,null,null,null,null,0); 
+				INSERT INTO secGroupRights Values((Select max(GrpRightID) + 1 from SecGroupRights), (Select GrpID from SecGroups where GrpCode = 'BUILDERGROUP_MAKER'), (Select RightID from SecRights where RightName = 'BuilderGroupDialog_city'), 1, 1, 1000, CURRENT_TIMESTAMP, null, null, null, null, null, null, 0 ); 
+				Update SeqSecRights set SeqNo = (Select max(RightId) from SecRights); Update SeqSecGroupRights set SeqNo = (Select max(GrpRightId) from SecGroupRights); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="393" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
+		<sql>
+		<![CDATA[ 
+				Update buildercompany set custid=0 where custid is null; 
+				Update buildercompany set bankbranchid=0 where bankbranchid is null; 
+				Update buildercompany set active=1 where active is null;
+				Update buildercompany set devavailablity = 0 where devavailablity is null;
+				Update buildercompany set totalProj = 0 where totalProj is null;
+				Update buildercompany set currentExpUni = 0 where currentExpUni is null; 
+				Update buildercompany set noOfProj = 0 where noOfProj is null; 
+				Update buildercompany set assHLPlayers = 0 where assHLPlayers is null; 
+				Update buildercompany set onGoingProj = 0 where onGoingProj is null; 
+				Update buildercompany set expInBusiness = 0 where expInBusiness is null; 
+				Update buildercompany set magintudeInLacs = 0 where magintudeInLacs is null;
+				Update buildercompany set noOfProjCons = 0 where noOfProjCons is null;	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="394" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
+		<sql>
+	    <![CDATA[ 
+			Update buildergroup set city = 1 where city is null; 
+			Update buildergroup set pincodeid = 0 where pincodeid is null; 
+		]]>
+		</sql>	
+	</changeSet>
+	
+	<changeSet id="395" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's</comment>
+		<sql> 
+			<![CDATA[  		
+					Update buildercompany_temp set custid=0 where custid is null; 		
+					Update buildercompany_temp set bankbranchid=0 where bankbranchid is null; 	
+					Update buildercompany_temp set active=1 where active is null; 		
+					Update buildercompany_temp set devavailablity = 0 where devavailablity is null; 	
+					Update buildercompany_temp set totalProj = 0 where totalProj is null; 	
+					Update buildercompany_temp set currentExpUni = 0 where currentExpUni is null; 	
+					Update buildercompany_temp set noOfProj = 0 where noOfProj is null; 	
+					Update buildercompany_temp set assHLPlayers = 0 where assHLPlayers is null; 
+					Update buildercompany_temp set onGoingProj = 0 where onGoingProj is null; 	
+					Update buildercompany_temp set expInBusiness = 0 where expInBusiness is null; 	
+					Update buildercompany_temp set magintudeInLacs = 0 where magintudeInLacs is null; 	
+					Update buildercompany_temp set noOfProjCons = 0 where noOfProjCons is null;	
+				]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="396" author="rohith.s">
+		<comment>updating newly added column values from null  to 0 or 1 to resolve error's </comment>
+		<sql>
+	    <![CDATA[  
+				Update buildergroup_temp set city = 1 where city is null; 
+				Update buildergroup_temp set pincodeid = 0 where pincodeid is null;
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
