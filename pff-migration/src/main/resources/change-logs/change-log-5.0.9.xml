@@ -19910,4 +19910,110 @@ UNION ALL
 		</sql>
 	</changeSet>
 
+		<changeSet id="397" author="vijaya.a">
+		<createView viewName="PRESENTMENT_DWNLD_DETAILS_VIEW" replaceIfExists="true">
+			SELECT t1.txn_ref,
+					    t1.entity_code,
+					    t1.cycle_type,
+					    t1.instrument_mode,
+					    t1.presentationdate,
+					    t1.bank_code,
+					    t1.product_code,
+					    t1.customerid,
+					    t1.agreementno,
+					    t1.chequeamount,
+					    t1.emi_no,
+					    t1.txn_type_code,
+					    t1.source_code,
+					    t1.br_code,
+					    t1.umrn_no,
+					    t1.bank_name,
+					    t1.micr_code,
+					    t1.accountno,
+					    t1.dest_acc_holder,
+					    t1.acc_type,
+					    t1.bank_address,
+					    t1.resub_flag,
+					    t1.orgin_system,
+					    t1.data_gen_date,
+					    t1.specialhit_file,
+					    t1.userid,
+					    t1.batchid,
+					    t1.job_id,
+					    t1.pickup_batchid,
+					    t1.processed_flag,
+					    t1.accountfield1,
+					    t1.accountfield2,
+					    t1.accountfield3,
+					    t1.cycledate,
+					    t1.partner_bank,
+					    t1.ifsc,
+					    t1.chequeserialno,
+					    t1.chequedate,
+						T4.AccHolderName
+					   FROM presentment_req_details_temp t1 
+					   INNER JOIN FINANCEMAIN T2 ON T2.FINREFERENCE = T1.agreementno
+					   INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+					   INNER JOIN MANDATES T4 ON T4.MANDATEID = T2.MANDATEID
+					   INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH
+					   INNER JOIN BANKBRANCHES T6 ON T4.BANKBRANCHID = T6.BANKBRANCHID
+					   INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
+		</createView>
+	</changeSet>
+	
+	<changeSet id="398" author="vijaya.a">
+		<createView viewName="PRESENTMENT_PDC_DETAILS_VIEW" replaceIfExists="true">
+			SELECT t1.txn_ref,
+					    t1.entity_code,
+					    t1.cycle_type,
+					    t1.instrument_mode,
+					    t1.presentationdate,
+					    t1.bank_code,
+					    t1.product_code,
+					    t1.customerid,
+					    t1.agreementno,
+					    t1.chequeamount,
+					    t1.emi_no,
+					    t1.txn_type_code,
+					    t1.source_code,
+					    t1.br_code,
+					    t1.umrn_no,
+					    t1.bank_name,
+					    t1.micr_code,
+					    t1.accountno,
+					    t1.dest_acc_holder,
+					    t1.acc_type,
+					    t1.bank_address,
+					    t1.resub_flag,
+					    t1.orgin_system,
+					    t1.data_gen_date,
+					    t1.specialhit_file,
+					    t1.userid,
+					    t1.batchid,
+					    t1.job_id,
+					    t1.pickup_batchid,
+					    t1.processed_flag,
+					    t1.accountfield1,
+					    t1.accountfield2,
+					    t1.accountfield3,
+					    t1.cycledate,
+					    t1.partner_bank,
+					    t1.ifsc,
+					    t1.chequeserialno,
+					    t1.chequedate,
+						t2.FinBranch,
+						t8.AccHolderName,
+						t6.BranchDesc
+					   FROM presentment_req_details_temp t1 
+					   INNER JOIN FINANCEMAIN T2 ON T2.FINREFERENCE = T1.agreementno
+					   INNER JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+			           INNER JOIN CHEQUEHEADER T4 ON T4.FINREFERENCE = T1.agreementno
+			           INNER JOIN CHEQUEDETAIL T8 ON T8.HEADERID = T4.HEADERID AND T8.EMIREFNO = T1.emi_no
+			           INNER JOIN RMTBRANCHES T5 ON T5.BRANCHCODE = T2.FINBRANCH
+			           INNER JOIN BANKBRANCHES T6 ON T8.BANKBRANCHID = T6.BANKBRANCHID
+			           INNER JOIN SMTDIVISIONDETAIL T7 ON T7.DIVISIONCODE=T3.FINDIVISION	
+		</createView>
+	</changeSet>
+
+	
 </databaseChangeLog>
