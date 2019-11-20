@@ -329,8 +329,8 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" From Postings T1");
 			sql.append(" Inner Join RMTBranches T2 on T1.POSTBRANCH = T2.BRANCHCODE");
 			sql.append(" Where T1.ENTITYCODE = :EntityCode and T1.PostDate >= :FromDate and T1.PostDate <= :ToDate");
-			sql.append(" Group By Account, BranchProvince)) T2");
-			sql.append(" TRIAL_BALANCE_REPORT_WORK.Account = T2.Account");
+			sql.append(" Group By Account, BranchProvince) T2");
+			sql.append(" Where TRIAL_BALANCE_REPORT_WORK.Account = T2.Account");
 			sql.append(" and TRIAL_BALANCE_REPORT_WORK.Province = T2.BranchProvince");
 		} else {
 			sql.append(" From Postings T1");
@@ -405,7 +405,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 			sql.append(" (Select Distinct");
 			sql.append(" ac.AcNumber Account");
 			sql.append(", T1.BranchProvince StateCode");
-			sql.append(", Sum(T1.ACBALANCE)*-1  OpeningBalance,");
+			sql.append(", Sum(T1.ACBALANCE)*-1  OpeningBalance");
 			sql.append(", (Case When Sum(T1.ACBALANCE)*-1 > 0 Then 'Dr' else 'Cr' End) OpeningBalType");
 			sql.append(" From Accounts_History_Details T1");
 			sql.append(" inner join accounts ac on ac.id = t1.accountid");
