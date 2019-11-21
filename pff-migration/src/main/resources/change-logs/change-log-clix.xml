@@ -4111,7 +4111,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	<changset id="113" author="Varaprasad">
+	<changeSet id="113" author="Varaprasad">
 		<sql>
 		    <![CDATA[
 		            delete from plf.due_diligence_checklist;
@@ -4192,7 +4192,14 @@ UNION ALL
 						VALUES (25,'Other comments','Yes,No',1, 1000,'2019-01-25','Approved','null','null','null','null','null',0);
 	    	 ]]>
 		</sql>
-	</changset>
+	</changeSet>
+	<changeSet id="114" author="Varaprasad.K">
+		<sql>
+		    <![CDATA[
+				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(16,'Business Vintage');
+			]]>
+		</sql>
+	</changeSet>
 
 	<changeSet id="114" author="Varaprasad.K">
 		<sql>
