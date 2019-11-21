@@ -3891,4 +3891,189 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="34" author="srihari" dbms="mssql">
+		<createTable tableName= "EXTINTERFACECONF">
+			<column name="ID" type="bigint"/>
+			<column name="CODE" type ="VARCHAR(10)"/>
+			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
+			<column name="TYPE" type ="VARCHAR(20)"/>
+			<column name="NOTIFICATIONTYPE" type="bigint"/>
+			<column name="ERRORCODES" type="VARCHAR(20)"/>
+			<column name="ACTIVE" type="bigint"/>
+			<column name="VERSION" type ="bigint"/>
+			<column name="LASTMNTBY" type ="bigint"/>
+			<column name="LASTMNTON" type ="DATETIME"/>
+			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
+			<column name="ROLECODE" type ="VARCHAR(100)"/>
+			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+			<column name="TASKID" type ="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
+	  		<column name="WORKFLOWID" type ="bigint" nullable="false" default=0/>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="35" author="srihari" dbms="mssql">
+		<createTable tableName= "EXTINTERFACECONF_TEMP">
+			<column name="ID" type="bigint"/>
+			<column name="CODE" type ="VARCHAR(10)"/>
+			<column name="DESCRIPTION" type ="VARCHAR(20)"/>
+			<column name="TYPE" type ="VARCHAR(20)"/>
+			<column name="NOTIFICATIONTYPE" type="bigint"/>
+			<column name="ERRORCODES" type="VARCHAR(20)"/>
+			<column name="ACTIVE" type="bigint"/>
+			<column name="VERSION" type ="bigint"/>
+			<column name="LASTMNTBY" type ="bigint"/>
+			<column name="LASTMNTON" type ="DATETIME"/>
+			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
+			<column name="ROLECODE" type ="VARCHAR(100)">
+			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+			<column name="TASKID" type ="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type ="bigint" nullable="false" default=0/>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+		</createTable>
+	</changeSet>
+   
+  <changeSet id="36" author="srihari" dbms="mssql">
+		<createView viewName= "EXTINTERFACECONF_VIEW" replaceIfExists="true">
+			SELECT	T1.Id, 
+			          T1.Code, 
+			          T1.Description, 
+			          T1.Type, 
+			          T1.NotificationType,
+					  T1.errorCodes, 
+					  T1.active, 
+			          T1.CONTACTSDETAIL,	
+					  T1.Version , 
+					  T1.LastMntBy, 
+					  T1.LastMntOn,
+					  T1.RecordStatus, 
+					  T1.RoleCode, 
+					  T1.NextRoleCode, 
+					  T1.TaskId, 
+					  T1.NextTaskId, 
+					  T1.RecordType, 
+					  T1.WorkflowId
+			 FROM    EXTINTERFACECONF_TEMP T1 
+             UNION ALL
+			SELECT	T1.Id, T1.Code, 
+			            T1.Description, 
+			            T1.Type, 
+			            T1.NotificationType,
+			            T1.errorCodes, 
+			            T1.active	, 
+			            T1.CONTACTSDETAIL,
+						T1.Version , 
+						T1.LastMntBy, 
+						T1.LastMntOn,
+						T1.RecordStatus, 
+						T1.RoleCode, 
+						T1.NextRoleCode, 
+						T1.TaskId, 
+						T1.NextTaskId, 
+						T1.RecordType, 
+						T1.WorkflowId
+						FROM    	
+						ExtInterfaceConf T1  WHERE  NOT EXISTS (SELECT 1 FROM EXTINTERFACECONF_TEMP WHERE Id = T1.Id);
+		</createView>
+	</changeSet>
+			
+	<changeSet id="37" author="srihari" dbms="mssql">
+		<createView viewName= "EXTINTERFACECONF_AVIEW" replaceIfExists="true">
+            SELECT		 T1.Id, 
+			    		 T1.Code, 
+			    		 T1.Description, 
+			    		 T1.Type, 
+			    		 T1.NotificationType, 
+			    		 T1.errorCodes, 
+			    		 T1.active,  
+			    		 T1.CONTACTSDETAIL,		
+						 T1.Version , 
+						 T1.LastMntBy, 
+						 T1.LastMntOn,
+						 T1.RecordStatus, 
+						 T1.RoleCode, 
+						 T1.NextRoleCode, 
+						 T1.TaskId, 
+						 T1.NextTaskId, 
+						 T1.RecordType, 
+						 T1.WorkflowId
+						FROM    	
+						ExtInterfaceConf T1;
+		</createView>
+	</changeSet>
+			
+	<changeSet id="38" author="srihari" dbms="mssql">
+		<createTable tableName= "ADTINTERFACECONFIGURATION">
+			<column name="AUDITID" type="bigint" nullable="false"/>
+			<column name="AUDITDATE" type ="datetime" nullable="false"/>
+			<column name="AUDITSEQ" type ="bigint" nullable="false"/>
+			<column name="AUDITIMAGE" type ="VARCHAR(20)" nullable="false"/>
+			<column name="ID" type="bigint"/>
+			<column name="CODE" type="VARCHAR(10)" />
+			<column name="DESCRIPTION" type="VARCHAR(20)" />
+			<column name="TYPE" type ="VARCHAR(20)"/>
+			<column name="NOTIFICATIONTYPE" type ="bigint"/>
+			<column name="ERRORCODES" type ="VARCHAR(20)"/>
+			<column name="ACTIVE" type ="bigint"/>
+			<column name="VERSION" type ="bigint">
+			<column name="LASTMNTBY" type ="bigint"/>
+			<column name="LASTMNTON" type ="datetime"/>
+			<column name="RECORDSTATUS" type ="VARCHAR(50)"/>
+			<column name="ROLECODE" type ="VARCHAR(100)">
+			<column name="NEXTROLECODE" type ="VARCHAR(200)"/>
+			<column name="TASKID" type ="VARCHAR(50)"/>
+			<column name="NEXTTASKID" type ="VARCHAR(200)"/>
+			<column name="RECORDTYPE" type ="VARCHAR(50)"/>
+			<column name="WORKFLOWID" type ="bigint" nullable="false"/>
+			<column name="CONTACTSDETAIL" type="VARCHAR(1000)"/>
+	</createTable>
+  </changeSet>
+  
+  <changeSet id="39" author="srihari" dbms="mssql">
+	<sql>
+		<![CDATA[
+		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID)	values ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'ACCNOVLD','AccountValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);
+		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values  ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'PANVLD','PANValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);   
+		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'DMNCHK','DomainValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);   
+		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values ((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'GSTNVLD','GSTNValidation','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);   
+		insert into EXTINTERFACECONF (ID,CODE,DESCRIPTION,TYPE,NOTIFICATIONTYPE,ACTIVE,VERSION,LASTMNTBY,LASTMNTON,RECORDSTATUS,ROLECODE,NEXTROLECODE,TASKID,NEXTTASKID,RECORDTYPE,WORKFLOWID) values((select COALESCE(max(ID),0)+1 from EXTINTERFACECONF),'HUUNER','Hunter','INTERFACE',0,1,1,'1000',CURRENT_TIMESTAMP,'Approved','','','','','',0);   
+		INSERT INTO SecGroups SELECT (SELECT Max(t.GRPID)+1 FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) as t),'ExtInterfaceConfiguration_VIEW', 'Allow to view ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 		
+		INSERT INTO SecGroups SELECT (SELECT Max(t.GRPID)+1 FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) as t),'ExtInterfaceConfiguration_MAKER', 'WF Maker for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroups SELECT (SELECT Max(t.GRPID)+1 FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP) as t),'ExtInterfaceConfiguration_APPROVER', 'WF Approver for ExtInterfaceConfiguration', 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);   
+		INSERT INTO SecRights SELECT (select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterfaceEnquiry','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+		INSERT INTO SecRights SELECT (select MAX(rightid)+1 from SecRights),0,'menuCat_ExtInterface','MENU',0,1000,current_timestamp,'Approved','','','','','',0);
+		INSERT INTO SecRights SELECT (select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_PrintList','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRights SELECT (select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationList_NewExtInterfaceConfiguration','ExtInterfaceConfigurationList',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRights SELECT (select MAX(rightid)+1 from SecRights),2,'button_ExtInterfaceConfigurationDialog_btnSave','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRights select (SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Description','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+		INSERT INTO SecRights select (SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_Type','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+		INSERT INTO SecRights select (SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_NotificationType','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+		INSERT INTO SecRights select (SELECT MAX(rightid)+1 from SecRights),3,'ExtInterfaceConfigurationDialog_active','ExtInterfaceConfigurationDialog',0,1000,current_timestamp,'Approved','',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Description'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_Type'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_NotificationType'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'),(select RightID from SecRights WHERE RightName='ExtInterfaceConfigurationDialog_active'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ApplicationMaster'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterface'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'),(select RightID from SecRights WHERE RightName='button_ExtInterfaceConfigurationDialog_btnSave'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecGroupRights SELECT (SELECT MAX(t.GRPrightID)+1 FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'),(select RightID from SecRights WHERE RightName='menuCat_ExtInterfaceEnquiry'),1,0,10000,current_timestamp,' ',' ',' ',' ',' ',' ',0);
+		INSERT INTO SecRoleGroups SELECT (select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_MAKER'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups SELECT (select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_APPROVER'), (select roleid from SecRoles where RoleCd='MSTGRP1_APPROVER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+		INSERT INTO SecRoleGroups SELECT (select MAX(ROLEGRPID)+1 from SecRoleGroups),(select GRPID from SecGroups where GRPCODE = 'ExtInterfaceConfiguration_VIEW'), (select roleid from SecRoles where RoleCd='MSTGRP1_MAKER'), 0,1000,current_timestamp,'Approved',' ',' ',' ',' ',' ',0); 
+		
+		UPDATE SeqSecGroups SET SeqNo= (SELECT MAX(GRPID) FROM ( SELECT GRPID FROM SECGROUPS UNION SELECT GRPID FROM SECGROUPS_TEMP)t);
+		UPDATE SeqSecRights SET SeqNo= (SELECT MAX(rightid) FROM SecRights );
+		UPDATE SeqSecGroupRights SET SeqNo= (SELECT MAX(GRPrightID) FROM (SELECT GRPrightID FROM SecGroupRights UNION SELECT GRPrightID FROM SecGroupRights_TEmp)t);
+		UPDATE SeqSecRoleGroups SET SeqNo= (SELECT MAX(ROLEGRPID) FROM SecRoleGroups);
+		]]>
+	</sql>
+ </changeSet>
+	
 </databaseChangeLog>
