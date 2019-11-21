@@ -109,7 +109,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	/**
 	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 *        the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -124,7 +124,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	/**
 	 * @param jVPostingDAO
-	 *            the jVPostingDAO to set
+	 *        the jVPostingDAO to set
 	 */
 	public void setJVPostingDAO(JVPostingDAO jVPostingDAO) {
 		this.jVPostingDAO = jVPostingDAO;
@@ -147,17 +147,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * JVPostings/JVPostings_Temp by using JVPostingDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using JVPostingDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table JVPostings/JVPostings_Temp by
+	 * using JVPostingDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using JVPostingDAO's update method 3) Audit the record in to AuditHeader and AdtJVPostings by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -166,19 +164,17 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business
-	 * validation by using businessValidation(auditHeader) method if there is
-	 * any error or warning message then return the auditHeader. 2) Do Add or
-	 * Update the Record a) Add new Record for the new record in the DB table
-	 * JVPostings/JVPostings_Temp by using JVPostingDAO's save method b) Update
-	 * the Record in the table. based on the module workFlow Configuration. by
-	 * using JVPostingDAO's update method 3) Audit the record in to AuditHeader
-	 * and AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader)
+	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
+	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
+	 * Do Add or Update the Record a) Add new Record for the new record in the DB table JVPostings/JVPostings_Temp by
+	 * using JVPostingDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
+	 * by using JVPostingDAO's update method 3) Audit the record in to AuditHeader and AdtJVPostings by using
+	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -288,15 +284,13 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * delete method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) delete Record for the DB
-	 * table JVPostings by using JVPostingDAO's delete method with type as Blank
-	 * 3) Audit the record in to AuditHeader and AdtJVPostings by using
-	 * auditHeaderDAO.addAudit(auditHeader)
+	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
+	 * JVPostings by using JVPostingDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
+	 * AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -319,13 +313,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * getJVPostingById fetch the details by using JVPostingDAO's
-	 * getJVPostingById method.
+	 * getJVPostingById fetch the details by using JVPostingDAO's getJVPostingById method.
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @param type
-	 *            (String) ""/_Temp/_View
+	 *        (String) ""/_Temp/_View
 	 * @return JVPosting
 	 */
 
@@ -355,12 +348,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * getApprovedJVPostingById fetch the details by using JVPostingDAO's
-	 * getJVPostingById method . with parameter id and type as blank. it fetches
-	 * the approved records from the JVPostings.
+	 * getApprovedJVPostingById fetch the details by using JVPostingDAO's getJVPostingById method . with parameter id
+	 * and type as blank. it fetches the approved records from the JVPostings.
 	 * 
 	 * @param id
-	 *            (String)
+	 *        (String)
 	 * @return JVPosting
 	 */
 
@@ -374,22 +366,18 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) based on the Record type
-	 * do following actions a) DELETE Delete the record from the main table by
-	 * using getJVPostingDAO().delete with parameters jVPosting,"" b) NEW Add
-	 * new record in to main table by using getJVPostingDAO().save with
-	 * parameters jVPosting,"" c) EDIT Update record in the main table by using
-	 * getJVPostingDAO().update with parameters jVPosting,"" 3) Delete the
-	 * record from the workFlow table by using getJVPostingDAO().delete with
-	 * parameters jVPosting,"_Temp" 4) Audit the record in to AuditHeader and
-	 * AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5) Audit the record in to AuditHeader and AdtJVPostings by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
+	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
+	 * following actions a) DELETE Delete the record from the main table by using getJVPostingDAO().delete with
+	 * parameters jVPosting,"" b) NEW Add new record in to main table by using getJVPostingDAO().save with parameters
+	 * jVPosting,"" c) EDIT Update record in the main table by using getJVPostingDAO().update with parameters
+	 * jVPosting,"" 3) Delete the record from the workFlow table by using getJVPostingDAO().delete with parameters
+	 * jVPosting,"_Temp" 4) Audit the record in to AuditHeader and AdtJVPostings by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtJVPostings by
+	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -554,15 +542,13 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * doReject method do the following steps. 1) Do the Business validation by
-	 * using businessValidation(auditHeader) method if there is any error or
-	 * warning message then return the auditHeader. 2) Delete the record from
-	 * the workFlow table by using getJVPostingDAO().delete with parameters
-	 * jVPosting,"_Temp" 3) Audit the record in to AuditHeader and AdtJVPostings
-	 * by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
+	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
+	 * workFlow table by using getJVPostingDAO().delete with parameters jVPosting,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -590,14 +576,13 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * businessValidation method do the following steps. 1) validate the audit
-	 * detail 2) if any error/Warnings then assign the to auditHeader 3)
-	 * identify the nextprocess
+	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
+	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -617,17 +602,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	}
 
 	/**
-	 * Validation method do the following steps. 1) get the details from the
-	 * auditHeader. 2) fetch the details from the tables 3) Validate the Record
-	 * based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from
-	 * getJVPostingDAO().getErrorDetail with Error ID and language as
+	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
+	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
+	 * mismatch conditions Fetch the error details from getJVPostingDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader
-	 *            (auditHeader)
+	 *        (auditHeader)
 	 * @param boolean
-	 *            onlineRequest
+	 *        onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -653,18 +636,18 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 			if (!jVPosting.isWorkflow()) {// With out Work flow only new records
 				if (befJVPosting != null) { // Record Already Exists in the
-											// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																								// records
 																							// type
 																							// is
 																							// new
 					if (befJVPosting != null || tempJVPosting != null) { // if
-																			// records
+																				// records
 																			// already
 																			// exists
 																			// in
@@ -685,10 +668,10 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!jVPosting.isWorkflow()) { // With out Work flow for update and
-											// delete
+												// delete
 
 				if (befJVPosting == null) { // if records not exists in the main
-											// table
+												// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -708,7 +691,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			} else {
 
 				if (tempJVPosting == null) { // if records not exists in the
-												// Work flow table
+													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -1123,15 +1106,15 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		}
 
-		int count = financeMainService.getFinanceCountById(posting.getReference(), false);
-		if (count <= 0) {
-			String[] valueParm = new String[1];
-			valueParm[0] = posting.getReference();
-
-			errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
-
-			return errorsList;
-		}
+		// Removing Validation because We should consider inactive loans also for miscellaneous postings.
+		/*
+		 * int count = financeMainService.getFinanceCountById(posting.getReference(), false); if (count <= 0) { String[]
+		 * valueParm = new String[1]; valueParm[0] = posting.getReference();
+		 * 
+		 * errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
+		 * 
+		 * return errorsList; }
+		 */
 
 		List<JVPostingEntry> postingEntries = posting.getJVPostingEntrysList();
 		if (CollectionUtils.isEmpty(postingEntries)) {
@@ -1251,7 +1234,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	 * This method gets the max endnum
 	 * 
 	 * @param Inventory
-	 *            (inventory)
+	 *        (inventory)
 	 * @return inventory
 	 */
 	public JVPostingDAO getjVPostingDAO() {
@@ -1457,9 +1440,8 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
 			// Post and save
 			/*
-			 * getPostingsPreparationUtil().postingsExecProcess(list,
-			 * jVPosting.getBranch(), DateUtility.getAppDate(), "Y", false,
-			 * false, linkedTranId, BigDecimal.ZERO, "", false);
+			 * getPostingsPreparationUtil().postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(),
+			 * "Y", false, false, linkedTranId, BigDecimal.ZERO, "", false);
 			 */
 
 			getAccountProcessUtil().procAccountUpdate(list);

@@ -484,6 +484,17 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					this.finReference.getValue(), startDate);
 		}
 
+		if (isKnockOff) {
+			BigDecimal receiptDues = this.receiptDues.getActualValue();
+			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
+			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			if (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose)
+					&& knockOffAmount.compareTo(receiptDues) > 0) {
+				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
+				return;
+			}
+		}
+
 		// PSD:138262
 		if (receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYSETTLE)
 				|| receiptPurpose.equals(FinanceConstants.FINSER_EVENT_EARLYRPY)) {

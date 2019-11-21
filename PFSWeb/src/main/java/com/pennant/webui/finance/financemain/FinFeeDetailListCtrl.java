@@ -1219,6 +1219,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				FinFeeDetail feeDetail = feelist.get(i);
 
 				if (StringUtils.equals(feeDetail.getVasReference(), vasReference)) {
+					vasFee.setFeeSeq(feeDetail.getFeeSeq());
+					vasFee.setFeeID(feeDetail.getFeeID());
+					vasFee.setRecordType(PennantConstants.RCD_UPD);
 					feelist.remove(i); // Removing Finance Fee Detail
 					break;
 				}
@@ -1228,6 +1231,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		doFillFinFeeDetailList(feelist);
 		setFinFeeDetailList(feelist);
 		this.dataChanged = true;
+
 		logger.debug("Leaving");
 	}
 
@@ -2167,7 +2171,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
 		}
 
-		boolean feeSchdMthdDisable = true;
+		boolean feeSchdMthdDisable = false;
 		if (finFeeDetail.isAlwModifyFeeSchdMthd() && remFeeBox.getValue().compareTo(BigDecimal.ZERO) == 0) {
 			feeSchdMthdDisable = readOnly;
 		}
@@ -2869,14 +2873,15 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
 				if (CollectionUtils.isNotEmpty(addressList)) {
 					for (CustomerAddres customerAddres : addressList) {
-						if (customerAddres.getCustAddrPriority() == Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+						if (customerAddres.getCustAddrPriority() == Integer
+								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
 							executionMap.put("customerProvince", customerAddres.getCustAddrProvince());
 							break;
 						}
 					}
 				} else {
 					executionMap.put("customerProvince", "");
-				}	
+				}
 			}
 
 			if (getFinanceDetail().getFinScheduleData() != null) {

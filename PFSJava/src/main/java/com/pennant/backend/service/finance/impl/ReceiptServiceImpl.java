@@ -2551,6 +2551,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
+		// validation for not allowing  early settlement when presentation is in progress.
+		if (FinanceConstants.FINSER_EVENT_EARLYSETTLE.equals(finReceiptHeader.getReceiptPurpose())) {
+			boolean isPending = isReceiptsPending(finReceiptHeader.getReference());
+			if (isPending) {
+				valueParm[0] = "Not allowed to do Early Settlement due to previous Presentments/Receipts are in process";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
+			}
+		}
+
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed
 		// to do an action
 		int eodProgressCount = customerQueuingDAO.getProgressCountByCust(finReceiptHeader.getCustID());

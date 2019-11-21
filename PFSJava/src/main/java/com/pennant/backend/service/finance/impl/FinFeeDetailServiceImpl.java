@@ -148,7 +148,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	/**
 	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 *        the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -871,6 +871,19 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
 				finFeeDetail.setNewRecord(true);
+				if (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent())
+						&& FinanceConstants.FINSER_EVENT_ORG.equals(finFeeDetail.getModuleDefiner())
+						&& PennantConstants.RECORD_TYPE_UPD.equals(finFeeDetail.getRecordType())) {
+					finFeeDetail.setNewRecord(false);
+				}
+			} else if ("doApprove".equals(method)
+					&& (AccountEventConstants.ACCEVENT_VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
+				if (!isRcdType || PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
+					finFeeDetail.setNewRecord(false);
+					finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(finFeeDetail.getRecordType())) {
+					finFeeDetail.setNewRecord(true);
+				}
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
