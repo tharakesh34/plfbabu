@@ -4027,7 +4027,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="105" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4038,7 +4038,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="106" author="manoj.p">
 		<sql>
 			<![CDATA[
@@ -4049,7 +4049,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="107" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4058,7 +4058,7 @@ UNION ALL
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="108" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4082,7 +4082,7 @@ UNION ALL
 				]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="111" author="vijaya.a">
 		<sql>
 			<![CDATA[
@@ -4193,13 +4193,16 @@ UNION ALL
 	    	 ]]>
 		</sql>
 	</changset>
+
 	<changeSet id="114" author="Varaprasad.K">
 		<sql>
 		    <![CDATA[
+			    DELETE FROM RECOMMENDATION_NOTES_TEMP WHERE PARTICULARID=(SELECT ID FROM RECOMMENDATION_NOTES_CONFIG WHERE particulars='Business vintage');
+			    DELETE FROM RECOMMENDATION_NOTES WHERE PARTICULARID=(SELECT ID FROM RECOMMENDATION_NOTES_CONFIG WHERE PARTICULARS='Business vintage');
+			    DELETE from RECOMMENDATION_NOTES_CONFIG WHERE PARTICULARS='Business vintage';
 				INSERT INTO RECOMMENDATION_NOTES_CONFIG VALUES(16,'Business Vintage');
 			]]>
 		</sql>
 	</changeSet>
-	
-	
+
 </databaseChangeLog>
