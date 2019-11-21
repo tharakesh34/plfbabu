@@ -1070,7 +1070,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						allocate.setTypeDesc(
 								Labels.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
 					}
-					else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)) {
+					else if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_BOUNCE)
+							|| StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
 						allocate.setTypeDesc(
 								Labels.getLabel("label_RecceiptDialog_AllocationType_" + allocate.getAllocationType()));
 
